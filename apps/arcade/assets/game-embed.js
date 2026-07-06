@@ -23,22 +23,30 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 56px;
-      padding: 0 12px;
+      height: 64px;
+      padding: 0 16px;
       background: #0a0f1a;
-      border-bottom: 2px solid rgba(34,184,160,0.6);
+      border-bottom: 3px solid rgba(34,184,160,0.65);
       box-shadow: 0 4px 18px rgba(0,0,0,0.55);
       font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    }
+    .kb-navbar::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 100%;
+      height: 56px;
+      background: linear-gradient(180deg, rgba(10,15,26,0.65), rgba(10,15,26,0));
+      pointer-events: none;
     }
     .kb-back {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 9px;
       text-decoration: none;
       color: #eef2f5;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
-      padding: 9px 16px;
+      padding: 11px 20px;
       border-radius: 999px;
       background: rgba(255,255,255,0.09);
       border: 1.5px solid rgba(255,255,255,0.32);
@@ -80,8 +88,9 @@
     }
     .kb-coffee:hover { background: rgba(255,183,3,0.32); transform: translateY(-1px); }
     @media (max-width: 480px) {
-      .kb-navbar { height: 58px; }
-      .kb-back { font-size: 17px; padding: 10px 18px; }
+      .kb-navbar { height: 68px; }
+      .kb-navbar::after { height: 64px; }
+      .kb-back { font-size: 18px; padding: 12px 22px; }
       .kb-brand { display: none; }
     }
   `;
@@ -93,7 +102,7 @@
   const back = document.createElement('a');
   back.href = gamesUrl;
   back.className = 'kb-back';
-  back.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L4 8l6 5"/></svg><span>All games</span>';
+  back.innerHTML = '<svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L4 8l6 5"/></svg><span>All games</span>';
   navbar.appendChild(back);
 
   const brand = document.createElement('span');
