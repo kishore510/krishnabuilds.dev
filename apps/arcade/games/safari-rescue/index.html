@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safari Rescue</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #4a3010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
+    background: #ffb703;
+    border-color: #ffb703;
+    color: #04121c;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Safari Rescue</h1>
+    <p id="subtitle">Tap left/right to switch lanes</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <div id="diffButtons">
+      <button id="easyBtn" type="button">Easy</button>
+      <button id="hardBtn" type="button">Hard</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+const LANE_COUNT = 3;
+const ROAD_LEFT = 60, ROAD_RIGHT = W - 60;
+const LANE_WIDTH = (ROAD_RIGHT - ROAD_LEFT) / LANE_COUNT;
+const JEEP_Y = H - 90;
+const JEEP_R = 20;
+const TIME_LIMIT = 42;
+const RESCUE_GOAL = 10;
+const COLLIDE_WINDOW = 16;
+
+function laneX(i) { return ROAD_LEFT + LANE_WIDTH * (i + 0.5); }
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// --- Each spawned item sits in exactly one lane, so at least two lanes are
+// always clear at any given point - never an unfair, fully-blocked row.
+// Speed ramps up but is clamped; animalChance is tuned generously enough
+// that reaching the rescue goal in time stays realistic even on Hard. ---
+const DIFFICULTY_PRESETS = {
+  easy: { speedStart: 2.6, speedMax: 5.2, ramp: 0.0007, gapMin: 150, gapMax: 260, animalChance: 0.5 },
+  hard: { speedStart: 3.6, speedMax: 6.8, ramp: 0.0011, gapMin: 115, gapMax: 195, animalChance: 0.38 }
+};
+
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let jeep, items, rescued, best, state, frame, scrollSpeed, timeLeft, popups;
+let bgTrees = [];
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('safariRescueMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playRescue() { tone(760, 0.1, 'triangle', 0.12); tone(1000, 0.11, 'triangle', 0.1, 0.05); }
+function playHit() { tone(160, 0.35, 'sawtooth', 0.15); }
+function playWin() { tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09); tone(1100, 0.18, 'triangle', 0.11, 0.19); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('safariRescueMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest(diff) { return parseInt(sessionStorage.getItem('safariRescueBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('safariRescueBest_' + diff, v); } catch (e) {} }
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+function randLane() { return Math.floor(Math.random() * LANE_COUNT); }
+
+function spawnItem(y) {
+  const lane = randLane();
+  const isAnimal = Math.random() < preset.animalChance;
+  const kind = isAnimal ? 'animal' : (Math.random() < 0.5 ? 'rock' : 'mound');
+  items.push({ y: y !== undefined ? y : -30, lane, kind, done: false });
+}
+
+function ensureItemsAbove() {
+  if (state !== 'playing') return;
+  while (items.length === 0 || items[items.length - 1].y > -60) {
+    const lastY = items.length ? items[items.length - 1].y : -30;
+    spawnItem(lastY - randRange(preset.gapMin, preset.gapMax));
+  }
+}
+
+function initBg() {
+  bgTrees = [];
+  const spots = [[45, 110], [W - 55, 150], [W / 2, 90]];
+  for (const [x, y] of spots) bgTrees.push({ x, y });
+}
+
+function reset() {
+  jeep = { lane: 1, x: laneX(1) };
+  items = [];
+  rescued = 0;
+  frame = 0;
+  scrollSpeed = 0;
+  timeLeft = TIME_LIMIT;
+  popups = [];
+  state = 'ready';
+  initBg();
+  title.textContent = 'Safari Rescue';
+  subtitle.textContent = 'Tap left/right to switch lanes';
+  scoreLine.style.display = 'none';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
+  best = loadBest(difficulty);
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  best = loadBest(difficulty);
+  jeep = { lane: 1, x: laneX(1) };
+  items = [];
+  rescued = 0;
+  frame = 0;
+  scrollSpeed = preset.speedStart;
+  timeLeft = TIME_LIMIT;
+  popups = [];
+  state = 'playing';
+  ensureItemsAbove();
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+function shiftLane(dir) {
+  if (state !== 'playing') return;
+  jeep.lane = clamp(jeep.lane + dir, 0, LANE_COUNT - 1);
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  shiftLane(x < W / 2 ? -1 : 1);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'ArrowLeft') shiftLane(-1);
+  if (e.code === 'ArrowRight') shiftLane(1);
+});
+
+function addPopup(text, x, y, color) {
+  popups.push({ text, x, y, life: 40, color });
+}
+
+function endGame(won) {
+  state = 'over';
+  if (won) playWin(); else playHit();
+  if (rescued > best) { best = rescued; saveBest(difficulty, best); }
+  if (won) {
+    title.textContent = 'All rescued!';
+    subtitle.textContent = 'Choose a mode to run again';
+  } else {
+    title.textContent = timeLeft <= 0 ? "Time's up!" : 'Ouch!';
+    subtitle.textContent = 'Choose a mode to try again';
+  }
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Rescued: ' + rescued + '/' + RESCUE_GOAL + '   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best + '/' + RESCUE_GOAL;
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
+
+function update() {
+  if (state !== 'playing') return;
+  frame++;
+  timeLeft -= 1 / 60;
+  if (timeLeft <= 0) { timeLeft = 0; endGame(false); return; }
+
+  scrollSpeed = Math.min(preset.speedMax, scrollSpeed + preset.ramp);
+  jeep.x += (laneX(jeep.lane) - jeep.x) * 0.28;
+
+  for (const it of items) it.y += scrollSpeed;
+  items = items.filter(it => it.y < H + 40);
+  ensureItemsAbove();
+
+  for (const it of items) {
+    if (it.done) continue;
+    if (Math.abs(it.y - JEEP_Y) < COLLIDE_WINDOW && it.lane === jeep.lane) {
+      it.done = true;
+      if (it.kind === 'animal') {
+        rescued++;
+        playRescue();
+        addPopup('Rescued!', laneX(it.lane), JEEP_Y - 40, '#ffd76a');
+        if (rescued >= RESCUE_GOAL) { endGame(true); return; }
+      } else {
+        endGame(false);
+        return;
+      }
+    }
+  }
+
+  popups = popups.filter(p => { p.life--; p.y -= 0.6; return p.life > 0; });
+}
+
+function drawBg() {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#e8b96b');
+  g.addColorStop(0.4, '#d99a4a');
+  g.addColorStop(1, '#c9853a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = 'rgba(60,40,15,0.35)';
+  for (const t of bgTrees) {
+    ctx.fillRect(t.x - 2, t.y, 4, 30);
+    ctx.beginPath();
+    ctx.ellipse(t.x, t.y, 28, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = '#8a6238';
+  ctx.fillRect(ROAD_LEFT, 0, ROAD_RIGHT - ROAD_LEFT, H);
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.setLineDash([14, 14]);
+  ctx.lineWidth = 3;
+  for (let i = 1; i < LANE_COUNT; i++) {
+    const x = ROAD_LEFT + LANE_WIDTH * i;
+    ctx.beginPath();
+    ctx.moveTo(x, (frame * scrollSpeed * 0.6) % 28 - 28);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+
+function drawItems() {
+  for (const it of items) {
+    const x = laneX(it.lane);
+    if (it.kind === 'rock') {
+      ctx.fillStyle = '#6b6258';
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 20, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#7d7368';
+      ctx.beginPath();
+      ctx.ellipse(x - 6, it.y - 6, 10, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (it.kind === 'mound') {
+      ctx.fillStyle = '#8a6238';
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 18, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x - 8, it.y + 8); ctx.lineTo(x + 6, it.y - 10);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = '#f2f0ea';
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 15, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#2a2a2a';
+      ctx.lineWidth = 2;
+      [-7, -2, 3, 8].forEach(dx => {
+        ctx.beginPath();
+        ctx.moveTo(x + dx, it.y - 9);
+        ctx.lineTo(x + dx, it.y + 9);
+        ctx.stroke();
+      });
+      ctx.fillStyle = '#f2f0ea';
+      ctx.beginPath();
+      ctx.ellipse(x + 15, it.y - 4, 6, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2a2a2a';
+      ctx.beginPath();
+      ctx.arc(x + 18, it.y - 6, 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function drawJeep() {
+  ctx.save();
+  ctx.translate(jeep.x, JEEP_Y);
+  ctx.fillStyle = '#4a6b3a';
+  ctx.fillRect(-24, -14, 48, 22);
+  ctx.fillRect(-16, -24, 32, 14);
+  ctx.fillStyle = '#bcd9e8';
+  ctx.fillRect(-11, -22, 12, 10);
+  ctx.fillRect(5, -22, 12, 10);
+  ctx.fillStyle = '#241608';
+  ctx.beginPath();
+  ctx.arc(-14, 10, 7, 0, Math.PI * 2);
+  ctx.arc(14, 10, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawPopups() {
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  for (const p of popups) {
+    ctx.globalAlpha = clamp(p.life / 40, 0, 1);
+    ctx.fillStyle = p.color;
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.strokeText(p.text, p.x, p.y);
+    ctx.fillText(p.text, p.x, p.y);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawHud() {
+  ctx.font = 'bold 16px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const rescueText = 'Rescued: ' + rescued + '/' + RESCUE_GOAL;
+  ctx.strokeText(rescueText, 12, 30);
+  ctx.fillText(rescueText, 12, 30);
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 13px Arial';
+  const timeText = 'Time: ' + Math.ceil(timeLeft) + 's';
+  ctx.strokeText(timeText, W - 12, 26);
+  ctx.fillText(timeText, W - 12, 26);
+}
+
+function loop() {
+  update();
+  drawBg();
+  drawItems();
+  drawJeep();
+  drawPopups();
+  drawHud();
+  requestAnimationFrame(loop);
+}
+
+reset();
+loop();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>

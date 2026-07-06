@@ -29,12 +29,17 @@ node -e "new Function(require('fs').readFileSync('index.html','utf8').match(/<sc
 ## Structure
 
 ```
-index.html                  — landing page; lists every game as a "cartridge" card
-assets/game-embed.js        — shared chrome every game page includes (nav bar, support link)
-assets/version.js           — single source of truth for the displayed version string
-games/fin-dash/index.html   — Fin Dash (canvas game)
-games/burrow-bash/index.html — Burrow Bash (DOM/CSS game, no canvas)
-games/<slug>/index.html     — next game goes here
+index.html                    — landing page; lists every game as a "cartridge" card
+assets/game-embed.js          — shared chrome every game page includes (nav bar, support link)
+assets/version.js             — single source of truth for the displayed version string
+games/fin-dash/index.html     — Fin Dash (canvas, single-tap flap physics)
+games/burrow-bash/index.html  — Burrow Bash (DOM/CSS game, no canvas)
+games/air-hockey/index.html   — Air Hockey (canvas, drag-controlled mallet vs. tunable-difficulty AI)
+games/jungle-runner/index.html — Jungle Runner (canvas, single-tap grounded-jump endless runner)
+games/koala-climb/index.html  — Koala Climb (canvas, drag-steered vertical bounce climber)
+games/turtle-trek/index.html  — Turtle Trek (canvas, tap-burst + drag, fixed-distance goal not endless)
+games/safari-rescue/index.html — Safari Rescue (canvas, discrete lane-switch dodge-and-collect vs. a timer)
+games/<slug>/index.html       — next game goes here
 ```
 
 ## Adding a new game
@@ -90,6 +95,28 @@ Bump both whenever you ship a change worth the user noticing, so the
 homepage footer (`v{VERSION} · updated {DATE}`) and the game nav bar's
 brand text confirm you're looking at the latest deploy rather than a
 stale cached copy.
+
+## Difficulty design pattern used across all games
+
+Every game exposes Easy/Hard, and in every one "harder" means retuning
+spawn/reaction parameters, never removing the safety margin that keeps
+the game fair:
+
+- Ramps (speed, spawn rate, branch spacing) always have a hard cap so
+  the game never becomes physically unreactable, no matter how long a
+  run goes on.
+- Procedurally-placed hazards (Jungle Runner's obstacles, Koala Climb's
+  branches, Safari Rescue's rocks/mounds) are spaced using a minimum
+  pixel/height gap derived from the player's actual jump arc or lane
+  count, so a hazard is never unreachable-fair or unavoidable-unfair by
+  construction, not by luck.
+- Air Hockey's AI difficulty isn't a speed multiplier: `reactionFrames`
+  delays which historical puck sample it reacts to (simulating slow
+  reflexes), `error` adds periodically-rerolled aim jitter, and
+  `predictFactor` is how far ahead of the puck's velocity it aims (0 on
+  Easy - no prediction at all). Reuse this shape (delay + jitter +
+  prediction) for any future AI opponent rather than just scaling a
+  single speed number.
 
 ## Mobile-first constraints learned the hard way
 
