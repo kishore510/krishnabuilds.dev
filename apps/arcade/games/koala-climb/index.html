@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koala Climb</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #8fd3e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: linear-gradient(#8fd3e8, #c9ecd8);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
+    background: #ffb703;
+    border-color: #ffb703;
+    color: #04121c;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Koala Climb</h1>
+    <p id="subtitle">Choose a mode to start</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <div id="diffButtons">
+      <button id="easyBtn" type="button">Easy</button>
+      <button id="hardBtn" type="button">Hard</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+const KOALA_R = 17;
+const GRAVITY = 0.46;
+const BOUNCE_VELOCITY = -12.6;
+const MAX_JUMP_HEIGHT = (BOUNCE_VELOCITY * BOUNCE_VELOCITY) / (2 * GRAVITY);
+const BRANCH_OFFSET = 55;
+const SCROLL_LINE = H * 0.42;
+const HEIGHT_SCALE = 0.09;
+const ACORN_BONUS = 5;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// --- Branch vertical spacing widens with height (sparser the higher you
+// climb) but is always kept under MAX_JUMP_HEIGHT with a safety margin, so
+// a branch is never physically unreachable no matter how far you've gone ---
+const DIFFICULTY_PRESETS = {
+  easy: { spacingMul: 0.8, branchWidth: 72 },
+  hard: { spacingMul: 1.05, branchWidth: 50 }
+};
+
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let koala, branches, acorns, heightScore, bonus, best, state, frame;
+let lastSide = 1;
+let clouds = [];
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('koalaClimbMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playBounce() { tone(360, 0.09, 'sine', 0.1); }
+function playAcorn() { tone(920, 0.09, 'triangle', 0.12); tone(1200, 0.1, 'triangle', 0.09, 0.05); }
+function playFall() { tone(200, 0.4, 'sawtooth', 0.15); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('koalaClimbMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest(diff) { return parseInt(sessionStorage.getItem('koalaClimbBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('koalaClimbBest_' + diff, v); } catch (e) {} }
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+
+function currentSpacingRange() {
+  const t = Math.min(1, heightScore / 380);
+  const min = (78 + t * 26) * preset.spacingMul;
+  const max = (120 + t * 30) * preset.spacingMul;
+  return { min: Math.min(min, MAX_JUMP_HEIGHT - 45), max: Math.min(max, MAX_JUMP_HEIGHT - 20) };
+}
+
+function spawnBranch(y) {
+  const flip = Math.random() < 0.8;
+  const side = flip ? -lastSide : lastSide;
+  lastSide = side;
+  const x = clamp(W / 2 + side * BRANCH_OFFSET + randRange(-12, 12), 40, W - 40);
+  const branch = { x, y, w: preset.branchWidth, hasAcorn: Math.random() < 0.25, acornCollected: false };
+  branches.push(branch);
+  if (branch.hasAcorn) {
+    acorns.push({ x: branch.x - side * 26, y: branch.y - 30, collected: false, branch });
+  }
+}
+
+function ensureBranchesAbove() {
+  while (branches.length === 0 || branches[branches.length - 1].y > -60) {
+    const range = currentSpacingRange();
+    const lastY = branches.length ? branches[branches.length - 1].y : koala.y + 30;
+    spawnBranch(lastY - randRange(range.min, range.max));
+  }
+}
+
+function initClouds() {
+  clouds = [];
+  for (let i = 0; i < 5; i++) {
+    clouds.push({ x: Math.random() * W, y: Math.random() * H, r: 20 + Math.random() * 14 });
+  }
+}
+
+function reset() {
+  koala = { x: W / 2, targetX: W / 2, y: H - 100, vy: 0 };
+  branches = [];
+  acorns = [];
+  lastSide = Math.random() < 0.5 ? 1 : -1;
+  branches.push({ x: koala.x, y: koala.y + 34, w: preset.branchWidth + 20, hasAcorn: false, acornCollected: false });
+  heightScore = 0;
+  bonus = 0;
+  frame = 0;
+  state = 'ready';
+  initClouds();
+  ensureBranchesAbove();
+  title.textContent = 'Koala Climb';
+  subtitle.textContent = 'Choose a mode to start';
+  scoreLine.style.display = 'none';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
+  best = loadBest(difficulty);
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  best = loadBest(difficulty);
+  koala = { x: W / 2, targetX: W / 2, y: H - 100, vy: BOUNCE_VELOCITY };
+  branches = [];
+  acorns = [];
+  lastSide = Math.random() < 0.5 ? 1 : -1;
+  branches.push({ x: koala.x, y: koala.y + 34, w: preset.branchWidth + 20, hasAcorn: false, acornCollected: false });
+  ensureBranchesAbove();
+  heightScore = 0;
+  bonus = 0;
+  frame = 0;
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+function setTarget(clientX) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (clientX - rect.left) * (canvas.width / rect.width);
+  koala.targetX = x;
+}
+canvas.addEventListener('pointerdown', (e) => { canvas.setPointerCapture(e.pointerId); setTarget(e.clientX); });
+canvas.addEventListener('pointermove', (e) => { if (e.pressure > 0 || e.buttons > 0) setTarget(e.clientX); });
+document.addEventListener('keydown', (e) => {
+  if (state !== 'playing') return;
+  if (e.code === 'ArrowLeft') koala.targetX = clamp(koala.targetX - 40, -KOALA_R, W + KOALA_R);
+  if (e.code === 'ArrowRight') koala.targetX = clamp(koala.targetX + 40, -KOALA_R, W + KOALA_R);
+});
+
+function update() {
+  if (state !== 'playing') return;
+  frame++;
+  koala.vy += GRAVITY;
+  const prevY = koala.y;
+  koala.y += koala.vy;
+  koala.x += (koala.targetX - koala.x) * 0.32;
+  if (koala.x < -KOALA_R) { koala.x = W + KOALA_R; koala.targetX = koala.x; }
+  if (koala.x > W + KOALA_R) { koala.x = -KOALA_R; koala.targetX = koala.x; }
+
+  if (koala.vy > 0) {
+    for (const b of branches) {
+      const withinX = koala.x + KOALA_R * 0.7 > b.x - b.w / 2 && koala.x - KOALA_R * 0.7 < b.x + b.w / 2;
+      if (withinX && prevY + KOALA_R <= b.y && koala.y + KOALA_R >= b.y) {
+        koala.vy = BOUNCE_VELOCITY;
+        koala.y = b.y - KOALA_R;
+        playBounce();
+        break;
+      }
+    }
+  }
+
+  for (const a of acorns) {
+    if (a.collected) continue;
+    const dx = koala.x - a.x, dy = koala.y - a.y;
+    if (dx * dx + dy * dy < (KOALA_R + 8) * (KOALA_R + 8)) {
+      a.collected = true;
+      bonus += ACORN_BONUS;
+      playAcorn();
+    }
+  }
+
+  if (koala.y < SCROLL_LINE) {
+    const shift = SCROLL_LINE - koala.y;
+    koala.y = SCROLL_LINE;
+    for (const b of branches) b.y += shift;
+    for (const a of acorns) a.y += shift;
+    heightScore += shift * HEIGHT_SCALE;
+  }
+
+  branches = branches.filter(b => b.y < H + 40);
+  acorns = acorns.filter(a => a.y < H + 40);
+  ensureBranchesAbove();
+
+  for (const c of clouds) {
+    c.y += 0.3;
+    if (c.y > H + 20) { c.y = -20; c.x = Math.random() * W; }
+  }
+
+  if (koala.y - KOALA_R > H) {
+    endGame();
+  }
+}
+
+function endGame() {
+  state = 'over';
+  playFall();
+  const total = Math.round(heightScore + bonus);
+  if (total > best) { best = total; saveBest(difficulty, best); }
+  title.textContent = 'Down you go!';
+  subtitle.textContent = 'Choose a mode to climb again';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Height: ' + total + ' m   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best + ' m';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
+
+function drawBg() {
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  for (const c of clouds) {
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, c.r, c.r * 0.55, 0, 0, Math.PI * 2);
+    ctx.ellipse(c.x + c.r * 0.7, c.y + c.r * 0.15, c.r * 0.65, c.r * 0.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#7a5230';
+  ctx.fillRect(W / 2 - 14, 0, 28, H);
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.fillRect(W / 2 - 14, 0, 6, H);
+}
+
+function drawBranches() {
+  for (const b of branches) {
+    const side = b.x > W / 2 ? 1 : -1;
+    ctx.fillStyle = '#5a3d22';
+    ctx.beginPath();
+    ctx.ellipse(b.x, b.y, b.w / 2, 8, -side * 0.12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#4a8a4f';
+    ctx.beginPath();
+    ctx.ellipse(b.x + side * (b.w / 2 - 6), b.y - 9, 18, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (const a of acorns) {
+    if (a.collected) continue;
+    ctx.fillStyle = '#8a5a2f';
+    ctx.beginPath();
+    ctx.ellipse(a.x, a.y, 7, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#5a3d22';
+    ctx.beginPath();
+    ctx.ellipse(a.x, a.y - 7, 8, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawKoala() {
+  ctx.save();
+  ctx.translate(koala.x, koala.y);
+  const squash = clamp(1 - koala.vy / 40, 0.85, 1.15);
+  ctx.scale(1 / squash, squash);
+
+  ctx.fillStyle = '#9aa3a8';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 17, 16, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(-14, -12, 7, 7, 0, 0, Math.PI * 2);
+  ctx.ellipse(14, -12, 7, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#eceff0';
+  ctx.beginPath();
+  ctx.ellipse(-14, -12, 4, 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(14, -12, 4, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#eceff0';
+  ctx.beginPath();
+  ctx.ellipse(0, 4, 12, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#241608';
+  ctx.beginPath();
+  ctx.arc(-6, 0, 2, 0, Math.PI * 2);
+  ctx.arc(6, 0, 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(0, 7, 4, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawHud() {
+  ctx.font = 'bold 20px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const heightText = 'Height: ' + Math.round(heightScore + bonus) + ' m';
+  ctx.strokeText(heightText, 12, 34);
+  ctx.fillText(heightText, 12, 34);
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 13px Arial';
+  const bestText = 'Best: ' + best + ' m';
+  ctx.strokeText(bestText, W - 12, 26);
+  ctx.fillText(bestText, W - 12, 26);
+}
+
+function loop() {
+  update();
+  drawBg();
+  drawBranches();
+  drawKoala();
+  drawHud();
+  requestAnimationFrame(loop);
+}
+
+reset();
+loop();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
