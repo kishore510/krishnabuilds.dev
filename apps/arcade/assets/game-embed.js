@@ -2,7 +2,7 @@
 // Drop this one line into any game page to get a consistent "back to games"
 // link and a support link, with no per-game CSS or markup needed:
 //
-//   <script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/yourname"></script>
+//   <script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
 //
 // Optional data attributes on the <script> tag:
 //   data-games-url  - where "All games" points (default: ../../index.html)
@@ -11,7 +11,7 @@
 (function () {
   const script = document.currentScript;
   const gamesUrl = (script && script.dataset.gamesUrl) || '../../index.html';
-  const coffeeUrl = (script && script.dataset.coffeeUrl) || 'https://buymeacoffee.com/yourname';
+  const coffeeUrl = (script && script.dataset.coffeeUrl) || 'https://buymeacoffee.com/Krishnabuilds';
 
   const style = document.createElement('style');
   style.textContent = `
