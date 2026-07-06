@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turtle Trek</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #0a2036;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
+    background: #ffb703;
+    border-color: #ffb703;
+    color: #04121c;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Turtle Trek</h1>
+    <p id="subtitle">Tap to scurry, drag to steer</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <div id="diffButtons">
+      <button id="easyBtn" type="button">Easy</button>
+      <button id="hardBtn" type="button">Hard</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+const TURTLE_R = 16;
+const SCROLL_LINE = H * 0.4;
+const TOTAL_DISTANCE = 1800;
+const BONUS_FRAMES = 90;
+const BEACH_MARGIN = 30;
+
+// --- Same buoyant-feel constants as Fin Dash's flap physics, re-themed:
+// GRAVITY_BACK is the tide gently sliding the turtle back down the beach,
+// a burst (tap) kicks it up toward the sea, DRAG keeps it from feeling
+// twitchy. Reusing already-tuned numbers rather than guessing fresh ones. ---
+const GRAVITY_BACK = 0.16;
+const DRAG = 0.955;
+const BURST = -6.2;
+const SAFETY_CAP = 9;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+const DIFFICULTY_PRESETS = {
+  easy: { gapMin: 175, gapMax: 270, gullSpeed: 0.028, gullAmp: 55 },
+  hard: { gapMin: 115, gapMax: 195, gullSpeed: 0.045, gullAmp: 85 }
+};
+
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let turtle, obstacles, distance, best, state, frame, bonusTimer;
+let footprints = [], bubbles = [];
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('turtleTrekMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playScurry() { tone(480, 0.06, 'sine', 0.08); }
+function playCaught() { tone(170, 0.35, 'sawtooth', 0.15); }
+function playSuccess() { tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.08); tone(1100, 0.18, 'triangle', 0.11, 0.18); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('turtleTrekMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest(diff) { return parseInt(sessionStorage.getItem('turtleTrekBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('turtleTrekBest_' + diff, v); } catch (e) {} }
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+
+function spawnObstacle(y) {
+  const kind = Math.random() < 0.55 ? 'crab' : 'gull';
+  if (kind === 'crab') {
+    obstacles.push({ y, x: randRange(BEACH_MARGIN + 20, W - BEACH_MARGIN - 20), w: 36, h: 26, kind });
+  } else {
+    obstacles.push({
+      y, kind, w: 50, h: 22,
+      baseX: W / 2, amp: preset.gullAmp, speed: preset.gullSpeed, phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function ensureObstaclesAbove() {
+  if (state !== 'playing') return;
+  while (distance < TOTAL_DISTANCE - 90 && (obstacles.length === 0 || obstacles[obstacles.length - 1].y > -60)) {
+    const lastY = obstacles.length ? obstacles[obstacles.length - 1].y : turtle.y - 140;
+    spawnObstacle(lastY - randRange(preset.gapMin, preset.gapMax));
+  }
+}
+
+function obstacleX(o) {
+  return o.kind === 'gull' ? o.baseX + Math.sin(o.phase + frame * o.speed) * o.amp : o.x;
+}
+
+function initDecor() {
+  footprints = [];
+  for (let y = H - 40; y > SCROLL_LINE; y -= 42) {
+    footprints.push({ x: W / 2 + (Math.round(y / 42) % 2 ? 18 : -18), y });
+  }
+  bubbles = [];
+}
+
+function reset() {
+  turtle = { x: W / 2, targetX: W / 2, y: H - 90, vy: 0 };
+  obstacles = [];
+  distance = 0;
+  frame = 0;
+  bonusTimer = 0;
+  state = 'ready';
+  initDecor();
+  title.textContent = 'Turtle Trek';
+  subtitle.textContent = 'Tap to scurry, drag to steer';
+  scoreLine.style.display = 'none';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
+  best = loadBest(difficulty);
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  best = loadBest(difficulty);
+  turtle = { x: W / 2, targetX: W / 2, y: H - 90, vy: 0 };
+  obstacles = [];
+  distance = 0;
+  frame = 0;
+  bonusTimer = 0;
+  initDecor();
+  state = 'playing';
+  ensureObstaclesAbove();
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+function scurry() {
+  if (state === 'playing' || state === 'bonusSwim') {
+    turtle.vy += BURST;
+    playScurry();
+  } else if (state === 'over') {
+    reset();
+  }
+}
+
+function setTarget(clientX) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (clientX - rect.left) * (canvas.width / rect.width);
+  turtle.targetX = clamp(x, BEACH_MARGIN + TURTLE_R, W - BEACH_MARGIN - TURTLE_R);
+}
+canvas.addEventListener('pointerdown', (e) => { canvas.setPointerCapture(e.pointerId); setTarget(e.clientX); scurry(); });
+canvas.addEventListener('pointermove', (e) => { if (e.pressure > 0 || e.buttons > 0) setTarget(e.clientX); });
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); scurry(); }
+  if (e.code === 'ArrowLeft') turtle.targetX = clamp(turtle.targetX - 30, BEACH_MARGIN + TURTLE_R, W - BEACH_MARGIN - TURTLE_R);
+  if (e.code === 'ArrowRight') turtle.targetX = clamp(turtle.targetX + 30, BEACH_MARGIN + TURTLE_R, W - BEACH_MARGIN - TURTLE_R);
+});
+
+function updateBubbles() {
+  if (frame % 10 === 0) bubbles.push({ x: Math.random() * W, y: H, r: 2 + Math.random() * 3, vy: -1 - Math.random() });
+  for (const b of bubbles) b.y += b.vy;
+  bubbles = bubbles.filter(b => b.y > -10);
+}
+
+function update() {
+  if (state !== 'playing' && state !== 'bonusSwim') return;
+  frame++;
+
+  turtle.vy += GRAVITY_BACK;
+  turtle.vy *= DRAG;
+  turtle.vy = clamp(turtle.vy, -SAFETY_CAP, SAFETY_CAP);
+  turtle.y += turtle.vy;
+  turtle.x += (turtle.targetX - turtle.x) * 0.3;
+
+  if (state === 'bonusSwim') {
+    turtle.y -= 3.2;
+  }
+
+  if (turtle.y < SCROLL_LINE) {
+    const shift = SCROLL_LINE - turtle.y;
+    turtle.y = SCROLL_LINE;
+    for (const o of obstacles) o.y += shift;
+    for (const f of footprints) f.y += shift;
+    distance += shift;
+  }
+
+  obstacles = obstacles.filter(o => o.y < H + 40);
+  footprints = footprints.filter(f => f.y < H + 20);
+  updateBubbles();
+  ensureObstaclesAbove();
+
+  if (state === 'playing') {
+    for (const o of obstacles) {
+      const ox = obstacleX(o);
+      const withinY = turtle.y + TURTLE_R > o.y - o.h / 2 && turtle.y - TURTLE_R < o.y + o.h / 2;
+      const withinX = turtle.x + TURTLE_R * 0.75 > ox - o.w / 2 && turtle.x - TURTLE_R * 0.75 < ox + o.w / 2;
+      if (withinY && withinX) { endGame(false); return; }
+    }
+    if (distance >= TOTAL_DISTANCE) {
+      obstacles = [];
+      state = 'bonusSwim';
+      bonusTimer = 0;
+    }
+  } else if (state === 'bonusSwim') {
+    bonusTimer++;
+    if (bonusTimer >= BONUS_FRAMES) endGame(true);
+  }
+}
+
+function endGame(reachedSea) {
+  state = 'over';
+  const distInt = Math.round(distance);
+  if (reachedSea) playSuccess(); else playCaught();
+  if (distInt > best) { best = distInt; saveBest(difficulty, best); }
+  if (reachedSea) {
+    title.textContent = 'Made it to the sea!';
+    subtitle.textContent = 'Choose a mode to trek again';
+  } else {
+    title.textContent = 'Caught!';
+    subtitle.textContent = 'Choose a mode to try again';
+  }
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = distInt + ' m   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best + ' m';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
+
+function drawBg() {
+  const seaFrac = state === 'bonusSwim' ? 1 : clamp(distance / TOTAL_DISTANCE, 0, 1);
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#1e6091');
+  g.addColorStop(Math.max(0.02, 0.3 - seaFrac * 0.22), '#2a9d8f');
+  g.addColorStop(Math.min(0.98, 0.34 - seaFrac * 0.22), '#e8d9a8');
+  g.addColorStop(1, '#d9c98a');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 2;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 20) ctx.lineTo(x, 40 + i * 16 + Math.sin(x * 0.05 + i + frame * 0.02) * 4);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  for (const f of footprints) {
+    ctx.beginPath();
+    ctx.ellipse(f.x, f.y, 6, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  for (const b of bubbles) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawObstacles() {
+  for (const o of obstacles) {
+    const x = obstacleX(o);
+    if (o.kind === 'crab') {
+      ctx.fillStyle = '#e8590c';
+      ctx.beginPath();
+      ctx.ellipse(x, o.y, 16, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#e8590c';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x - 16, o.y - 2); ctx.lineTo(x - 26, o.y - 14);
+      ctx.moveTo(x + 16, o.y - 2); ctx.lineTo(x + 26, o.y - 14);
+      ctx.moveTo(x - 10, o.y + 8); ctx.lineTo(x - 16, o.y + 16);
+      ctx.moveTo(x + 10, o.y + 8); ctx.lineTo(x + 16, o.y + 16);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath();
+      ctx.ellipse(x, o.y, o.w / 2, o.h / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function drawTurtle() {
+  ctx.save();
+  ctx.translate(turtle.x, turtle.y);
+  const squash = clamp(1 - turtle.vy / 30, 0.88, 1.12);
+  ctx.scale(1 / squash, squash);
+
+  const flip = Math.sin(frame * 0.3) * 6;
+  ctx.fillStyle = '#5cb87c';
+  ctx.beginPath(); ctx.ellipse(-13, -13, 7, 5, -0.5 + flip * 0.02, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-13, 13, 7, 5, 0.5 - flip * 0.02, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = '#3a8a5a';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, TURTLE_R, TURTLE_R * 0.82, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#26603c';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-TURTLE_R + 3, 0); ctx.lineTo(TURTLE_R - 3, 0);
+  ctx.moveTo(0, -TURTLE_R * 0.7); ctx.lineTo(0, TURTLE_R * 0.7);
+  ctx.stroke();
+
+  ctx.fillStyle = '#5cb87c';
+  ctx.beginPath();
+  ctx.ellipse(0, -TURTLE_R - 6, 9, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#241608';
+  ctx.beginPath();
+  ctx.arc(-3, -TURTLE_R - 7, 1.6, 0, Math.PI * 2);
+  ctx.arc(3, -TURTLE_R - 7, 1.6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawHud() {
+  const pct = Math.round(clamp(distance / TOTAL_DISTANCE, 0, 1) * 100);
+  ctx.font = 'bold 14px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const label = state === 'bonusSwim' ? 'Swimming out to sea!' : ('Distance to sea: ' + pct + '%');
+  ctx.strokeText(label, 12, 26);
+  ctx.fillText(label, 12, 26);
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 13px Arial';
+  const bestText = 'Best: ' + best + ' m';
+  ctx.strokeText(bestText, W - 12, 24);
+  ctx.fillText(bestText, W - 12, 24);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.fillRect(12, 32, W - 24, 6);
+  ctx.fillStyle = '#ffb703';
+  ctx.fillRect(12, 32, (W - 24) * (state === 'bonusSwim' ? 1 : pct / 100), 6);
+}
+
+function loop() {
+  update();
+  drawBg();
+  drawObstacles();
+  drawTurtle();
+  drawHud();
+  requestAnimationFrame(loop);
+}
+
+reset();
+loop();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
