@@ -19,6 +19,7 @@
   body {
     box-sizing: border-box;
     padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
   }
   #wrap { position: relative; }
   canvas {
@@ -130,7 +131,7 @@ const backToArcade = document.getElementById('backToArcade');
 const W = canvas.width, H = canvas.height;
 
 function fitCanvas() {
-  const reserved = window.kbNavbarHeight || 0;
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
   const availH = window.innerHeight - reserved;
   const scale = Math.min(window.innerWidth / W, availH / H);
   canvas.style.width = (W * scale) + 'px';

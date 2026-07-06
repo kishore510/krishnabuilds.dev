@@ -9,16 +9,18 @@
 //   data-games-url  - where "All games" points (default: ../../index.html)
 //   data-coffee-url - your Buy Me a Coffee (or similar) link
 //
-// The nav bar takes real screen space rather than floating over the game,
-// so games that size a canvas to the viewport need to reserve room for it
-// instead of measuring against the full window height. This script
-// publishes the bar's height two ways so a game can pick whichever's
-// convenient:
-//   - window.kbNavbarHeight        (number, px) - read this in fitCanvas()
-//   - --kb-navbar-h                (CSS var on <html>) - use in padding-top
-// and fires a `kb-navbar-ready` event on window once both are set, so a
-// game can re-fit itself after the bar (which loads after game markup) is
-// actually in the DOM.
+// The nav bar (top) and support link (bottom) take real screen space
+// rather than floating over the game, so games that size a canvas to the
+// viewport need to reserve room for both instead of measuring against the
+// full window height. This script publishes both heights so a game can
+// pick whichever's convenient:
+//   - window.kbNavbarHeight / window.kbBottomReserve   (number, px)
+//     read these in fitCanvas() and subtract both from window.innerHeight
+//   - --kb-navbar-h / --kb-bottom-reserve               (CSS vars on <html>)
+//     use in body { padding-top / padding-bottom }
+// and fires a `kb-navbar-ready` event on window once all of the above are
+// set, so a game can re-fit itself after the chrome (which loads after
+// game markup) is actually in the DOM.
 
 (function () {
   const script = document.currentScript;
@@ -131,12 +133,18 @@
   coffee.textContent = '☕ Support';
   document.body.appendChild(coffee);
 
-  function publishNavbarHeight() {
-    const h = navbar.offsetHeight;
-    window.kbNavbarHeight = h;
-    document.documentElement.style.setProperty('--kb-navbar-h', h + 'px');
+  function publishChromeMetrics() {
+    const navH = navbar.offsetHeight;
+    // Coffee link floats bottom:10px with its own height - reserve that
+    // plus its offset plus a little breathing room, so it gets real space
+    // below the game instead of overlapping whatever renders there.
+    const bottomReserve = coffee.offsetHeight + 24;
+    window.kbNavbarHeight = navH;
+    window.kbBottomReserve = bottomReserve;
+    document.documentElement.style.setProperty('--kb-navbar-h', navH + 'px');
+    document.documentElement.style.setProperty('--kb-bottom-reserve', bottomReserve + 'px');
     window.dispatchEvent(new Event('kb-navbar-ready'));
   }
-  publishNavbarHeight();
-  window.addEventListener('resize', publishNavbarHeight);
+  publishChromeMetrics();
+  window.addEventListener('resize', publishChromeMetrics);
 })();

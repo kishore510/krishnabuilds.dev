@@ -54,23 +54,23 @@ That's the whole process for a new game — no other files need to change.
 
 ## The nav-bar/canvas space contract (important for canvas games)
 
-`game-embed.js`'s nav bar takes real layout space at the top of the
-viewport rather than floating transparently over the game. Any game that
-sizes a canvas against `window.innerHeight` (e.g. a `fitCanvas()`-style
-function) **must** reserve room for the bar or it will encroach on the
-game's top edge on mobile. The embed script publishes its measured height
-three ways, once it's actually in the DOM (it loads after the game's own
-inline script, so the game can't assume the height is known at first
-paint):
+`game-embed.js`'s nav bar (top) and support link (bottom) take real
+layout space rather than floating transparently over the game. Any game
+that sizes a canvas against `window.innerHeight` (e.g. a
+`fitCanvas()`-style function) **must** reserve room for both or they'll
+encroach on the game on mobile. The embed script publishes both measured
+heights once it's actually in the DOM (it loads after the game's own
+inline script, so the game can't assume these are known at first paint):
 
-- `window.kbNavbarHeight` (number, px) — read this inside `fitCanvas()`
-  and subtract it from `window.innerHeight` before computing scale.
-- `--kb-navbar-h` (CSS custom property on `<html>`) — use in
-  `body { padding-top: var(--kb-navbar-h, 0px); box-sizing: border-box; }`
+- `window.kbNavbarHeight` / `window.kbBottomReserve` (number, px) — read
+  these inside `fitCanvas()` and subtract both from `window.innerHeight`.
+- `--kb-navbar-h` / `--kb-bottom-reserve` (CSS custom properties on
+  `<html>`) — use in
+  `body { padding-top: var(--kb-navbar-h, 0px); padding-bottom: var(--kb-bottom-reserve, 0px); box-sizing: border-box; }`
   so the game's own centering reserves the same space.
-- A `kb-navbar-ready` event on `window`, fired once both of the above are
+- A `kb-navbar-ready` event on `window`, fired once all of the above are
   set (and again on resize) — listen for it and re-run your fit function,
-  since the bar's real height isn't known until after your first
+  since the real heights aren't known until after your first
   `fitCanvas()` call.
 
 See `games/fin-dash/index.html` for the reference implementation of all
