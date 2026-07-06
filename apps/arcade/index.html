@@ -92,10 +92,18 @@
     background: var(--surface);
     border: 1px solid rgba(255,255,255,0.08);
     overflow: hidden;
-    transition: transform 0.18s ease, border-color 0.18s ease;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     position: relative;
   }
-  .cartridge:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
+  .cartridge:hover {
+    transform: translateY(-4px);
+    border-color: var(--teal);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(34,184,160,0.25);
+  }
+  .cartridge:hover .play-hint { opacity: 1; transform: translateX(0); }
+  .cartridge:hover .label span { transform: scale(1.08); }
+  .cartridge:active { transform: translateY(-1px); }
 
   .cartridge .label {
     height: 92px;
@@ -105,6 +113,7 @@
     font-size: 40px;
     position: relative;
   }
+  .cartridge .label span { display: inline-block; transition: transform 0.18s ease; }
   .cartridge .notch {
     position: absolute;
     top: 0; left: 50%;
@@ -131,6 +140,22 @@
     gap: 6px;
     flex-wrap: wrap;
   }
+  .cartridge .play-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--teal);
+    opacity: 0.75;
+    transform: translateX(-3px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .cartridge .play-hint svg { flex: none; }
   .tag {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10.5px;
@@ -251,6 +276,10 @@
         <p class="name">${g.name}</p>
         <p class="tagline">${g.tagline}</p>
         <div class="tags">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        <div class="play-hint">
+          <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
+          Play now
+        </div>
       </div>
     `;
     container.appendChild(a);
