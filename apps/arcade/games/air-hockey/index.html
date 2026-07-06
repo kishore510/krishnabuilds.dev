@@ -253,7 +253,7 @@ canvas.addEventListener('pointermove', (e) => {
 canvas.addEventListener('pointerup', () => { dragging = false; });
 canvas.addEventListener('pointercancel', () => { dragging = false; });
 
-function resolveMalletPuckCollision(mallet, vel) {
+function resolveMalletPuckCollision(mallet, vel, malletYMin, malletYMax) {
   const dx = puck.x - mallet.x, dy = puck.y - mallet.y;
   const dist = Math.hypot(dx, dy) || 0.001;
   const minDist = R_MALLET + R_PUCK;
@@ -262,6 +262,18 @@ function resolveMalletPuckCollision(mallet, vel) {
   const overlap = minDist - dist;
   puck.x += nx * overlap;
   puck.y += ny * overlap;
+  // Near a corner, "away from the mallet" and "into the wall" can be the
+  // same direction - if only the puck moves, a stationary mallet and a
+  // cornered puck can end up re-colliding every single frame forever.
+  // Recoiling the mallet too guarantees real separation, not just a
+  // mathematically-exact touch, so the deadlock can't reoccur next frame.
+  const RECOIL = 5;
+  mallet.x = clamp(mallet.x - nx * RECOIL, WALL + R_MALLET, W - WALL - R_MALLET);
+  mallet.y = clamp(mallet.y - ny * RECOIL, malletYMin, malletYMax);
+  // Never let the resolved position push the puck outside the legal play
+  // area, even when the escape normal points straight into a wall/corner.
+  puck.x = clamp(puck.x, WALL + R_PUCK, W - WALL - R_PUCK);
+  puck.y = clamp(puck.y, WALL + R_PUCK, H - WALL - R_PUCK);
 
   const speedAlongNormal = puck.vx * nx + puck.vy * ny;
   if (speedAlongNormal < 0) {
@@ -272,7 +284,7 @@ function resolveMalletPuckCollision(mallet, vel) {
   puck.vy += vel.y * 1.4;
 
   const speed = Math.hypot(puck.vx, puck.vy);
-  const MIN_POKE = 2.6;
+  const MIN_POKE = 3.4;
   if (speed < MIN_POKE) {
     puck.vx = nx * MIN_POKE;
     puck.vy = ny * MIN_POKE;
@@ -358,7 +370,7 @@ function updateAI() {
   aiMallet.y = clamp(aiMallet.y, WALL + R_MALLET, CENTER_Y - R_MALLET - 6);
   aiVel = { x: aiMallet.x - prevX, y: aiMallet.y - prevY };
 
-  resolveMalletPuckCollision(aiMallet, aiVel);
+  resolveMalletPuckCollision(aiMallet, aiVel, WALL + R_MALLET, CENTER_Y - R_MALLET - 6);
 }
 
 function updatePlayer() {
@@ -366,7 +378,7 @@ function updatePlayer() {
   playerMallet.x = playerTarget.x;
   playerMallet.y = playerTarget.y;
   playerVel = { x: playerMallet.x - prevX, y: playerMallet.y - prevY };
-  resolveMalletPuckCollision(playerMallet, playerVel);
+  resolveMalletPuckCollision(playerMallet, playerVel, CENTER_Y + R_MALLET + 6, H - WALL - R_MALLET);
 }
 
 function scoreGoal(who) {

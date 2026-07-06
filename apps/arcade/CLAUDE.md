@@ -37,7 +37,7 @@ games/burrow-bash/index.html  — Burrow Bash (DOM/CSS game, no canvas)
 games/air-hockey/index.html   — Air Hockey (canvas, drag-controlled mallet vs. tunable-difficulty AI)
 games/jungle-runner/index.html — Jungle Runner (canvas, single-tap grounded-jump endless runner)
 games/koala-climb/index.html  — Koala Climb (canvas, drag-steered vertical bounce climber)
-games/turtle-trek/index.html  — Turtle Trek (canvas, tap-burst + drag, fixed-distance goal not endless)
+games/brick-breaker/index.html — Brick Breaker (canvas, drag-steered paddle, classic 3-lives breakout)
 games/safari-rescue/index.html — Safari Rescue (canvas, discrete lane-switch dodge-and-collect vs. a timer)
 games/<slug>/index.html       — next game goes here
 ```

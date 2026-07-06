@@ -321,7 +321,7 @@ function update() {
   jeep.x += (laneX(jeep.lane) - jeep.x) * 0.28;
 
   for (const it of items) it.y += scrollSpeed;
-  items = items.filter(it => it.y < H + 40);
+  items = items.filter(it => it.y < H + 40 && !it.done);
   ensureItemsAbove();
 
   for (const it of items) {
@@ -376,6 +376,7 @@ function drawBg() {
 
 function drawItems() {
   for (const it of items) {
+    if (it.done) continue;
     const x = laneX(it.lane);
     if (it.kind === 'rock') {
       ctx.fillStyle = '#6b6258';

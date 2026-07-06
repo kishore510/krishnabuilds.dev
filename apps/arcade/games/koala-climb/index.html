@@ -104,7 +104,7 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Koala Climb</h1>
-    <p id="subtitle">Choose a mode to start</p>
+    <p id="subtitle">Drag left/right to steer</p>
     <p id="scoreLine" style="display:none;"></p>
     <div id="diffButtons">
       <button id="easyBtn" type="button">Easy</button>
@@ -215,8 +215,18 @@ function spawnBranch(y) {
   const flip = Math.random() < 0.8;
   const side = flip ? -lastSide : lastSide;
   lastSide = side;
-  const x = clamp(W / 2 + side * BRANCH_OFFSET + randRange(-12, 12), 40, W - 40);
-  const branch = { x, y, w: preset.branchWidth, hasAcorn: Math.random() < 0.25, acornCollected: false };
+  // The koala starts dead-center but real branches sit offset to a side -
+  // if a new player doesn't immediately realize this game needs continuous
+  // dragging (unlike the single-tap games elsewhere in the arcade), they
+  // miss the first branch, fall back to the start, and bounce in place
+  // forever, which reads as the game being stuck. Ease the first few
+  // branches in closer to center and wider so there's time to learn the
+  // control before precision steering is required.
+  const easing = branches.length < 5;
+  const offset = easing ? BRANCH_OFFSET * 0.45 : BRANCH_OFFSET;
+  const width = easing ? preset.branchWidth + 24 : preset.branchWidth;
+  const x = clamp(W / 2 + side * offset + randRange(-12, 12), 40, W - 40);
+  const branch = { x, y, w: width, hasAcorn: Math.random() < 0.25, acornCollected: false };
   branches.push(branch);
   if (branch.hasAcorn) {
     acorns.push({ x: branch.x - side * 26, y: branch.y - 30, collected: false, branch });
@@ -251,7 +261,7 @@ function reset() {
   initClouds();
   ensureBranchesAbove();
   title.textContent = 'Koala Climb';
-  subtitle.textContent = 'Choose a mode to start';
+  subtitle.textContent = 'Drag left/right to steer';
   scoreLine.style.display = 'none';
   diffButtons.style.display = 'flex';
   backToArcade.style.display = 'none';
@@ -302,13 +312,13 @@ function update() {
   koala.vy += GRAVITY;
   const prevY = koala.y;
   koala.y += koala.vy;
-  koala.x += (koala.targetX - koala.x) * 0.32;
+  koala.x += (koala.targetX - koala.x) * 0.4;
   if (koala.x < -KOALA_R) { koala.x = W + KOALA_R; koala.targetX = koala.x; }
   if (koala.x > W + KOALA_R) { koala.x = -KOALA_R; koala.targetX = koala.x; }
 
   if (koala.vy > 0) {
     for (const b of branches) {
-      const withinX = koala.x + KOALA_R * 0.7 > b.x - b.w / 2 && koala.x - KOALA_R * 0.7 < b.x + b.w / 2;
+      const withinX = koala.x + KOALA_R * 0.85 > b.x - b.w / 2 && koala.x - KOALA_R * 0.85 < b.x + b.w / 2;
       if (withinX && prevY + KOALA_R <= b.y && koala.y + KOALA_R >= b.y) {
         koala.vy = BOUNCE_VELOCITY;
         koala.y = b.y - KOALA_R;

@@ -130,9 +130,15 @@ const W = canvas.width, H = canvas.height;
 const GROUND_Y = H - 60;
 const MONKEY_X = 110;
 const MONKEY_R = 17;
-const GRAVITY = 0.9;
-const JUMP_VELOCITY = -14.2;
-const OBST_WIDTH = 46;
+// --- Clearance-window math: the time the monkey needs to stay above an
+// obstacle's height must comfortably exceed the time that obstacle's
+// x-range overlaps the monkey (width / scrollSpeed), at the SLOWEST speed
+// (worst case, since crossing takes longest there). The original tuning
+// left only ~2 frames of margin at start speed - effectively unplayable.
+// This tuning leaves ~15+ frames of margin even at speedStart. ---
+const GRAVITY = 0.72;
+const JUMP_VELOCITY = -15.5;
+const OBST_WIDTH = 32;
 
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
@@ -154,7 +160,7 @@ const DIFFICULTY_PRESETS = {
   easy: { speedStart: 3.2, speedMax: 6.6, ramp: 0.0009, gapMin: 300, gapMax: 460 },
   hard: { speedStart: 4.4, speedMax: 9.0, ramp: 0.0014, gapMin: 230, gapMax: 370 }
 };
-const OBST_HEIGHTS = { gap: 6, log: 30, vine: 48 };
+const OBST_HEIGHTS = { gap: 6, log: 24, vine: 36 };
 
 let difficulty = 'easy';
 let preset = DIFFICULTY_PRESETS.easy;
