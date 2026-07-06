@@ -118,7 +118,7 @@
 
   const brand = document.createElement('span');
   brand.className = 'kb-brand';
-  brand.textContent = '🕹️ Krishnabuilds Arcade';
+  brand.textContent = '🕹️ Krishnabuilds Arcade' + (window.KB_VERSION ? ' · v' + window.KB_VERSION : '');
   navbar.appendChild(brand);
 
   document.body.appendChild(navbar);

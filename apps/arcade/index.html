@@ -6,6 +6,7 @@
 <title>Krishnabuilds Arcade — small games, built one weekend at a time</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="assets/version.js"></script>
 <style>
   :root {
     --bg: #0a0f1a;
@@ -295,6 +296,13 @@
     transition: filter 0.15s ease;
   }
   .coffee-btn:hover { filter: brightness(1.08); }
+  .version-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(138,151,171,0.55);
+    text-align: center;
+    padding: 18px 0 0;
+  }
 </style>
 </head>
 <body>
@@ -328,6 +336,7 @@
     <p>Everything here is free to play. If one of these ate an evening you were supposed to spend doing something else, a coffee is always appreciated — no obligation either way.</p>
     <a class="coffee-btn" href="https://buymeacoffee.com/Krishnabuilds" target="_blank" rel="noopener">☕ Buy me a coffee</a>
   </div>
+  <p class="version-tag" id="versionTag"></p>
 </footer>
 
 <script>
@@ -385,6 +394,11 @@
   placeholder.className = 'coming-soon';
   placeholder.textContent = 'next one\u2019s in progress';
   container.appendChild(placeholder);
+
+  if (window.KB_VERSION) {
+    document.getElementById('versionTag').textContent =
+      'v' + window.KB_VERSION + (window.KB_UPDATED ? ' \u00b7 updated ' + window.KB_UPDATED : '');
+  }
 
   // Layout toggle: single column (default) or multi-column grid, remembered per browser
   const LAYOUT_KEY = 'kbArcadeLayout';
