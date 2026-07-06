@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Burrow Bash</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #0f2417;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  #field {
+    position: relative;
+    background: linear-gradient(#5b9a4a, #4a8438 55%, #2f5f28);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+
+  #grid {
+    position: absolute;
+    left: 0; right: 0;
+    top: calc(78px * var(--game-scale, 1));
+    bottom: calc(22px * var(--game-scale, 1));
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: calc(8px * var(--game-scale, 1));
+    padding: 0 calc(16px * var(--game-scale, 1));
+  }
+  .hole {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hole::before {
+    content: '';
+    position: absolute;
+    left: 10%; right: 10%; bottom: 8%;
+    height: 36%;
+    background: radial-gradient(ellipse at center, #241408 0%, #4a2e15 60%, #6b4423 100%);
+    border-radius: 50%;
+    box-shadow: inset 0 4px 8px rgba(0,0,0,0.55);
+  }
+  .mole {
+    position: relative;
+    z-index: 2;
+    width: calc(44px * var(--game-scale, 1));
+    height: calc(44px * var(--game-scale, 1));
+    margin-bottom: calc(-4px * var(--game-scale, 1));
+    transform: translateY(100%);
+    transition: transform 0.12s cubic-bezier(.34,1.4,.64,1);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hole.up .mole { transform: translateY(4%); }
+  .hole.hit .mole { transform: translateY(100%); transition: transform 0.1s ease-in; }
+  .mole-body {
+    width: 100%;
+    height: 100%;
+    border-radius: 50% 50% 46% 46%;
+    background: radial-gradient(circle at 35% 32%, #a9793f, #6b4423 78%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+    position: relative;
+  }
+  .hole.hit .mole-body { animation: kbSquish 0.22s ease-out; }
+  @keyframes kbSquish {
+    0% { transform: scale(1, 1); }
+    35% { transform: scale(1.3, 0.65); }
+    100% { transform: scale(1, 1); }
+  }
+  .hit-pop {
+    position: absolute;
+    left: 50%;
+    top: 32%;
+    transform: translate(-50%, 0);
+    font-weight: 800;
+    color: #fff6d8;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 0 6px rgba(255,183,3,0.85);
+    font-size: calc(17px * var(--game-scale, 1));
+    pointer-events: none;
+    z-index: 3;
+    animation: kbFloatUp 0.6s ease-out forwards;
+  }
+  @keyframes kbFloatUp {
+    0% { opacity: 0; transform: translate(-50%, 0) scale(0.7); }
+    20% { opacity: 1; transform: translate(-50%, -10%) scale(1.15); }
+    100% { opacity: 0; transform: translate(-50%, -95%) scale(1); }
+  }
+  .sparkle {
+    position: absolute;
+    left: 50%; top: 38%;
+    width: calc(6px * var(--game-scale, 1));
+    height: calc(6px * var(--game-scale, 1));
+    background: #fff2b0;
+    border-radius: 50%;
+    box-shadow: 0 0 5px 1px rgba(255,246,208,0.9);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 3;
+    animation: kbSparkle 0.5s ease-out forwards;
+  }
+  @keyframes kbSparkle {
+    from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; }
+  }
+  .mole-eye {
+    position: absolute;
+    width: 15%; height: 15%;
+    background: #1c140d;
+    border-radius: 50%;
+    top: 30%;
+  }
+  .mole-eye.left { left: 22%; }
+  .mole-eye.right { right: 22%; }
+  .mole-nose {
+    position: absolute;
+    width: 13%; height: 10%;
+    background: #e0a488;
+    border-radius: 50%;
+    left: 50%; top: 52%;
+    transform: translateX(-50%);
+  }
+
+  .hud-score, .hud-best {
+    position: absolute;
+    top: calc(10px * var(--game-scale, 1));
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    z-index: 4;
+  }
+  .hud-score { left: calc(12px * var(--game-scale, 1)); }
+  .hud-best { right: calc(12px * var(--game-scale, 1)); }
+
+  #liveTimer {
+    position: absolute;
+    top: calc(46px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 4;
+  }
+
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+    z-index: 6;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
+    background: #ffb703;
+    border-color: #ffb703;
+    color: #04121c;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="field">
+    <span class="hud-score" id="scoreHud">Score: 0</span>
+    <span class="hud-best" id="bestHud">Best: 0</span>
+    <button id="muteBtn" type="button">🔊</button>
+    <span id="liveTimer">0:30</span>
+    <div id="grid"></div>
+    <div id="overlay">
+      <h1 id="title">Burrow Bash</h1>
+      <p id="subtitle">Choose a mode to start</p>
+      <p id="scoreLine" style="display:none;"></p>
+      <div id="diffButtons">
+        <button id="easyBtn" type="button">Easy</button>
+        <button id="hardBtn" type="button">Hard</button>
+      </div>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const field = document.getElementById('field');
+const grid = document.getElementById('grid');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const scoreHud = document.getElementById('scoreHud');
+const bestHud = document.getElementById('bestHud');
+const liveTimer = document.getElementById('liveTimer');
+
+const BASE_W = 360, BASE_H = 480;
+const HOLE_COUNT = 9;
+const ROUND_MS = 30000;
+
+function fitField() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / BASE_W, availH / BASE_H);
+  field.style.width = (BASE_W * scale) + 'px';
+  field.style.height = (BASE_H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitField);
+window.addEventListener('kb-navbar-ready', fitField);
+fitField();
+
+// --- Difficulty ramps the spawn rate down (faster moles) as the round
+// progresses, but clamps at spawnMin so it never gets absurd to react to ---
+const DIFFICULTY_PRESETS = {
+  easy: { spawnStart: 950, spawnMin: 600, moleUp: 1000 },
+  hard: { spawnStart: 700, spawnMin: 360, moleUp: 620 }
+};
+
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let holes = [];
+let score = 0, best = 0, state = 'ready';
+let roundStart = 0;
+let spawnTimeoutId = null;
+let tickIntervalId = null;
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('burrowBashMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playWhack() { tone(660, 0.09, 'square', 0.12); }
+function playPop() { tone(300, 0.05, 'sine', 0.04); }
+function playEnd() { tone(220, 0.4, 'sawtooth', 0.14); tone(160, 0.4, 'sawtooth', 0.1, 0.08); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('burrowBashMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest(diff) { return parseInt(sessionStorage.getItem('burrowBashBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('burrowBashBest_' + diff, v); } catch (e) {} }
+
+function buildGrid() {
+  grid.innerHTML = '';
+  holes = [];
+  for (let i = 0; i < HOLE_COUNT; i++) {
+    const hole = document.createElement('div');
+    hole.className = 'hole';
+    const mole = document.createElement('div');
+    mole.className = 'mole';
+    mole.innerHTML = '<div class="mole-body"><div class="mole-eye left"></div><div class="mole-eye right"></div><div class="mole-nose"></div></div>';
+    hole.appendChild(mole);
+    hole.addEventListener('pointerdown', () => whack(i));
+    grid.appendChild(hole);
+    holes.push({ el: hole, up: false, hideTimeout: null });
+  }
+}
+buildGrid();
+
+function showHitEffect(holeEl) {
+  const pop = document.createElement('div');
+  pop.className = 'hit-pop';
+  pop.textContent = '+1';
+  holeEl.appendChild(pop);
+  pop.addEventListener('animationend', () => pop.remove());
+
+  const sparkleCount = 6;
+  for (let s = 0; s < sparkleCount; s++) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    const angle = (Math.PI * 2 * s) / sparkleCount + (Math.random() * 0.4 - 0.2);
+    const radius = 20 + Math.random() * 10;
+    sparkle.style.setProperty('--dx', (Math.cos(angle) * radius) + 'px');
+    sparkle.style.setProperty('--dy', (Math.sin(angle) * radius - 8) + 'px');
+    holeEl.appendChild(sparkle);
+    sparkle.addEventListener('animationend', () => sparkle.remove());
+  }
+}
+
+function whack(i) {
+  const h = holes[i];
+  if (state !== 'playing' || !h.up) return;
+  h.up = false;
+  clearTimeout(h.hideTimeout);
+  h.el.classList.remove('up');
+  h.el.classList.add('hit');
+  setTimeout(() => h.el.classList.remove('hit'), 220);
+  showHitEffect(h.el);
+  score++;
+  scoreHud.textContent = 'Score: ' + score;
+  playWhack();
+}
+
+function popRandomMole() {
+  const empties = holes.map((h, i) => h.up ? -1 : i).filter(i => i >= 0);
+  if (empties.length === 0) return;
+  const i = empties[Math.floor(Math.random() * empties.length)];
+  const h = holes[i];
+  h.up = true;
+  h.el.classList.add('up');
+  playPop();
+  h.hideTimeout = setTimeout(() => {
+    h.up = false;
+    h.el.classList.remove('up');
+  }, preset.moleUp);
+}
+
+function scheduleSpawn() {
+  if (state !== 'playing') return;
+  const elapsed = Date.now() - roundStart;
+  const t = Math.min(1, elapsed / ROUND_MS);
+  const interval = preset.spawnStart + (preset.spawnMin - preset.spawnStart) * t;
+  spawnTimeoutId = setTimeout(() => {
+    popRandomMole();
+    scheduleSpawn();
+  }, interval);
+}
+
+function formatTime(ms) {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return '0:' + String(s).padStart(2, '0');
+}
+
+function tick() {
+  if (state !== 'playing') return;
+  const remaining = ROUND_MS - (Date.now() - roundStart);
+  if (remaining <= 0) { endGame(); return; }
+  liveTimer.textContent = formatTime(remaining);
+}
+
+function clearHoles() {
+  holes.forEach(h => {
+    clearTimeout(h.hideTimeout);
+    h.up = false;
+    h.el.classList.remove('up', 'hit');
+  });
+}
+
+function reset() {
+  state = 'ready';
+  score = 0;
+  clearTimeout(spawnTimeoutId);
+  clearInterval(tickIntervalId);
+  clearHoles();
+  scoreHud.textContent = 'Score: 0';
+  best = loadBest(difficulty);
+  bestHud.textContent = 'Best: ' + best;
+  liveTimer.style.display = 'none';
+  title.textContent = 'Burrow Bash';
+  subtitle.textContent = 'Choose a mode to start';
+  scoreLine.style.display = 'none';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  best = loadBest(difficulty);
+  bestHud.textContent = 'Best: ' + best;
+  score = 0;
+  scoreHud.textContent = 'Score: 0';
+  state = 'playing';
+  roundStart = Date.now();
+  overlay.style.display = 'none';
+  liveTimer.style.display = 'block';
+  liveTimer.textContent = formatTime(ROUND_MS);
+  ensureAudio();
+  scheduleSpawn();
+  tickIntervalId = setInterval(tick, 200);
+}
+
+function endGame() {
+  state = 'over';
+  clearTimeout(spawnTimeoutId);
+  clearInterval(tickIntervalId);
+  clearHoles();
+  playEnd();
+  if (score > best) { best = score; saveBest(difficulty, best); }
+  title.textContent = 'Time’s up!';
+  subtitle.textContent = 'Choose a mode to play again';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score + '   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best;
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
+  liveTimer.style.display = 'none';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
+
+reset();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>

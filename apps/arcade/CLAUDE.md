@@ -29,11 +29,12 @@ node -e "new Function(require('fs').readFileSync('index.html','utf8').match(/<sc
 ## Structure
 
 ```
-index.html              — landing page; lists every game as a "cartridge" card
-assets/game-embed.js     — shared chrome every game page includes (nav bar, support link)
-assets/version.js        — single source of truth for the displayed version string
-games/fin-dash/index.html — Fin Dash (canvas game)
-games/<slug>/index.html — next game goes here
+index.html                  — landing page; lists every game as a "cartridge" card
+assets/game-embed.js        — shared chrome every game page includes (nav bar, support link)
+assets/version.js           — single source of truth for the displayed version string
+games/fin-dash/index.html   — Fin Dash (canvas game)
+games/burrow-bash/index.html — Burrow Bash (DOM/CSS game, no canvas)
+games/<slug>/index.html     — next game goes here
 ```
 
 ## Adding a new game
@@ -52,29 +53,35 @@ games/<slug>/index.html — next game goes here
 
 That's the whole process for a new game — no other files need to change.
 
-## The nav-bar/canvas space contract (important for canvas games)
+## The nav-bar/game-area space contract (applies to canvas AND DOM games)
 
 `game-embed.js`'s nav bar (top) and support link (bottom) take real
 layout space rather than floating transparently over the game. Any game
-that sizes a canvas against `window.innerHeight` (e.g. a
-`fitCanvas()`-style function) **must** reserve room for both or they'll
+that sizes its play area against `window.innerHeight` — a `<canvas>` via
+`fitCanvas()` (Fin Dash) or a plain sized `<div>` via an equivalent
+`fitField()` (Burrow Bash) — **must** reserve room for both or they'll
 encroach on the game on mobile. The embed script publishes both measured
 heights once it's actually in the DOM (it loads after the game's own
 inline script, so the game can't assume these are known at first paint):
 
 - `window.kbNavbarHeight` / `window.kbBottomReserve` (number, px) — read
-  these inside `fitCanvas()` and subtract both from `window.innerHeight`.
+  these inside your fit function and subtract both from `window.innerHeight`.
 - `--kb-navbar-h` / `--kb-bottom-reserve` (CSS custom properties on
   `<html>`) — use in
   `body { padding-top: var(--kb-navbar-h, 0px); padding-bottom: var(--kb-bottom-reserve, 0px); box-sizing: border-box; }`
   so the game's own centering reserves the same space.
 - A `kb-navbar-ready` event on `window`, fired once all of the above are
   set (and again on resize) — listen for it and re-run your fit function,
-  since the real heights aren't known until after your first
-  `fitCanvas()` call.
+  since the real heights aren't known until after your first fit call.
 
-See `games/fin-dash/index.html` for the reference implementation of all
-three.
+Both `games/fin-dash/index.html` (canvas) and `games/burrow-bash/index.html`
+(DOM) implement this the same way: a fixed logical size (e.g. 360x480),
+a fit function that computes `scale = min(innerWidth/W, availH/H)` and
+sets the play area's pixel width/height from it, and a shared
+`--game-scale` CSS custom property (set on the `#wrap` element) that
+every bit of in-game UI sizes off via `calc(Npx * var(--game-scale, 1))`
+— fonts, buttons, HUD text, everything. Follow this same pattern for new
+games so they resize consistently.
 
 ## Versioning
 
