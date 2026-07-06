@@ -344,8 +344,11 @@ function updateAI() {
 
   const homeY = WALL + R_MALLET + 30;
   let targetY = homeY;
-  if (puck.y < CENTER_Y - 10 && puck.vy < 0) {
-    targetY = Math.min(CENTER_Y - R_MALLET - 6, puck.y + 10);
+  if (sample.y < CENTER_Y - 10) {
+    // Puck is anywhere on the AI's half - go meet it and hit it back into
+    // play, even if it's stopped or drifting rather than actively
+    // approaching. Only retreat home once it's back on the player's side.
+    targetY = Math.min(CENTER_Y - R_MALLET - 6, Math.max(WALL + R_MALLET, sample.y + 10));
   }
 
   const prevX = aiMallet.x, prevY = aiMallet.y;
