@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krishnabuilds Arcade — small games, built one weekend at a time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #121a2a;
+    --surface-2: #17233a;
+    --teal: #22b8a0;
+    --amber: #ffb703;
+    --text: #eef2f5;
+    --muted: #8a97ab;
+    --wood: #7a5c3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    line-height: 1.5;
+  }
+  a { color: inherit; }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero {
+    padding: 72px 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,184,160,0.20), transparent 70%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.08;
+    margin: 0 0 18px;
+    max-width: 14ch;
+  }
+  .lede {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  section.shelf { padding: 8px 0 56px; }
+  .shelf h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .cartridges {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 22px;
+  }
+
+  .cartridge {
+    display: block;
+    text-decoration: none;
+    border-radius: 14px 14px 6px 6px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    transition: transform 0.18s ease, border-color 0.18s ease;
+    position: relative;
+  }
+  .cartridge:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
+
+  .cartridge .label {
+    height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    position: relative;
+  }
+  .cartridge .notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 46px; height: 14px;
+    background: var(--bg);
+    border-radius: 0 0 8px 8px;
+  }
+
+  .cartridge .info { padding: 16px 18px 20px; }
+  .cartridge .name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 0 0 6px;
+  }
+  .cartridge .tagline {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .cartridge .tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+  }
+
+  .shelf-bar {
+    height: 8px;
+    margin-top: 26px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--wood), #5a4229);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+  }
+
+  .coming-soon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px dashed rgba(255,255,255,0.16);
+    border-radius: 14px;
+    color: var(--muted);
+    font-size: 13.5px;
+    min-height: 178px;
+  }
+
+  footer {
+    padding: 40px 0 60px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .support {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .support p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 40ch;
+  }
+  .coffee-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    color: #0a0f1a;
+    background: var(--amber);
+    padding: 11px 22px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: filter 0.15s ease;
+  }
+  .coffee-btn:hover { filter: brightness(1.08); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Krishnabuilds Arcade</p>
+    <h1>Small games, built one weekend at a time.</h1>
+    <p class="lede">No accounts, no downloads, no data collection — just pick one and play in the browser. New ones get added when they're ready, not on a schedule.</p>
+  </header>
+
+  <section class="shelf">
+    <h2>On the shelf</h2>
+    <div class="cartridges" id="cartridges"></div>
+    <div class="shelf-bar"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap support">
+    <p>Everything here is free to play. If one of these ate an evening you were supposed to spend doing something else, a coffee is always appreciated — no obligation either way.</p>
+    <a class="coffee-btn" href="https://buymeacoffee.com/yourname" target="_blank" rel="noopener">☕ Buy me a coffee</a>
+  </div>
+</footer>
+
+<script>
+  // Add a new game here and it appears above automatically — no other
+  // changes needed. `path` should point at that game's index.html.
+  const GAMES = [
+    {
+      name: 'Fin Dash',
+      tagline: 'Swim a fish through coral, rock, and kelp. Easy or Hard.',
+      emoji: '🐟',
+      color: 'linear-gradient(135deg, #0a3d62, #2a9d8f)',
+      tags: ['arcade', 'endless', '1 min'],
+      path: 'games/fin-dash/index.html'
+    }
+    // Next game:
+    // {
+    //   name: 'Game Name',
+    //   tagline: 'One short line about it.',
+    //   emoji: '🎮',
+    //   color: 'linear-gradient(135deg, #hex1, #hex2)',
+    //   tags: ['genre', 'length'],
+    //   path: 'games/game-slug/index.html'
+    // },
+  ];
+
+  const container = document.getElementById('cartridges');
+  for (const g of GAMES) {
+    const a = document.createElement('a');
+    a.className = 'cartridge';
+    a.href = g.path;
+    a.innerHTML = `
+      <div class="label" style="background:${g.color}">
+        <div class="notch"></div>
+        <span>${g.emoji}</span>
+      </div>
+      <div class="info">
+        <p class="name">${g.name}</p>
+        <p class="tagline">${g.tagline}</p>
+        <div class="tags">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+    `;
+    container.appendChild(a);
+  }
+
+  // A quiet placeholder so the shelf doesn't look empty/finished
+  const placeholder = document.createElement('div');
+  placeholder.className = 'coming-soon';
+  placeholder.textContent = 'next one\u2019s in progress';
+  container.appendChild(placeholder);
+</script>
+
+</body>
+</html>
