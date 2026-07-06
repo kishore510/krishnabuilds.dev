@@ -15,6 +15,10 @@
     overflow: hidden;
     touch-action: manipulation;
   }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+  }
   #wrap { position: relative; }
   canvas {
     background: linear-gradient(#0a3d62, #1e6091 60%, #2a9d8f);
@@ -125,12 +129,15 @@ const backToArcade = document.getElementById('backToArcade');
 const W = canvas.width, H = canvas.height;
 
 function fitCanvas() {
-  const scale = Math.min(window.innerWidth / W, window.innerHeight / H);
+  const reserved = window.kbNavbarHeight || 0;
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
   canvas.style.width = (W * scale) + 'px';
   canvas.style.height = (H * scale) + 'px';
   document.getElementById('wrap').style.setProperty('--game-scale', scale);
 }
 window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
 fitCanvas();
 
 // --- Buoyant physics: gravity is weak, water drag brings it to a gentle terminal

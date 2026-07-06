@@ -8,6 +8,17 @@
 // Optional data attributes on the <script> tag:
 //   data-games-url  - where "All games" points (default: ../../index.html)
 //   data-coffee-url - your Buy Me a Coffee (or similar) link
+//
+// The nav bar takes real screen space rather than floating over the game,
+// so games that size a canvas to the viewport need to reserve room for it
+// instead of measuring against the full window height. This script
+// publishes the bar's height two ways so a game can pick whichever's
+// convenient:
+//   - window.kbNavbarHeight        (number, px) - read this in fitCanvas()
+//   - --kb-navbar-h                (CSS var on <html>) - use in padding-top
+// and fires a `kb-navbar-ready` event on window once both are set, so a
+// game can re-fit itself after the bar (which loads after game markup) is
+// actually in the DOM.
 
 (function () {
   const script = document.currentScript;
@@ -119,4 +130,13 @@
   coffee.className = 'kb-coffee';
   coffee.textContent = '☕ Support';
   document.body.appendChild(coffee);
+
+  function publishNavbarHeight() {
+    const h = navbar.offsetHeight;
+    window.kbNavbarHeight = h;
+    document.documentElement.style.setProperty('--kb-navbar-h', h + 'px');
+    window.dispatchEvent(new Event('kb-navbar-ready'));
+  }
+  publishNavbarHeight();
+  window.addEventListener('resize', publishNavbarHeight);
 })();
