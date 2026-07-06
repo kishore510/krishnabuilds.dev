@@ -65,6 +65,18 @@
     border-color: #ffb703;
     color: #04121c;
   }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
   #muteBtn {
     position: absolute;
     top: calc(8px * var(--game-scale, 1));
@@ -93,6 +105,7 @@
       <button id="easyBtn" type="button">Easy</button>
       <button id="hardBtn" type="button">Hard</button>
     </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
 </div>
 
@@ -107,6 +120,7 @@ const easyBtn = document.getElementById('easyBtn');
 const hardBtn = document.getElementById('hardBtn');
 const diffButtons = document.getElementById('diffButtons');
 const muteBtn = document.getElementById('muteBtn');
+const backToArcade = document.getElementById('backToArcade');
 
 const W = canvas.width, H = canvas.height;
 
@@ -246,6 +260,7 @@ function reset() {
   subtitle.textContent = 'Choose a mode to start';
   scoreLine.style.display = 'none';
   diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
   best = loadBest(difficulty);
   updateDiffButtonStyles();
   overlay.style.display = 'flex';
@@ -371,6 +386,7 @@ function endGame() {
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Score: ' + score + '   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best;
   diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
   updateDiffButtonStyles();
   overlay.style.display = 'flex';
 }
