@@ -67,54 +67,122 @@
   }
 
   section.shelf { padding: 8px 0 56px; }
-  .shelf h2 {
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .shelf-head h2 {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 13px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--muted);
     font-weight: 500;
-    margin: 0 0 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin: 0;
   }
+  .layout-toggle {
+    display: flex;
+    gap: 3px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 3px;
+    border-radius: 9px;
+    flex: none;
+  }
+  .layout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .layout-btn:hover { color: var(--text); }
+  .layout-btn.active { background: var(--surface-2); color: var(--teal); }
 
   .cartridges {
     display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .cartridges.layout-grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 22px;
   }
 
   .cartridge {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
     text-decoration: none;
-    border-radius: 14px 14px 6px 6px;
+    border-radius: 14px;
     background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(34,184,160,0.35);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.28);
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     position: relative;
   }
+  .cartridges.layout-grid .cartridge {
+    flex-direction: column;
+    border-radius: 14px 14px 6px 6px;
+  }
   .cartridge:hover {
     transform: translateY(-4px);
     border-color: var(--teal);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(34,184,160,0.25);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(34,184,160,0.3);
   }
-  .cartridge:hover .play-hint { opacity: 1; transform: translateX(0); }
+  .cartridge:hover .play-hint { background: rgba(34,184,160,0.3); transform: translateX(2px); }
   .cartridge:hover .label span { transform: scale(1.08); }
   .cartridge:active { transform: translateY(-1px); }
 
   .cartridge .label {
-    height: 92px;
+    flex: 0 0 118px;
+    width: 118px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 40px;
+    font-size: 38px;
     position: relative;
   }
+  .cartridges.layout-grid .cartridge .label {
+    flex: none;
+    width: auto;
+    height: 92px;
+    font-size: 40px;
+  }
   .cartridge .label span { display: inline-block; transition: transform 0.18s ease; }
+  .cartridge .play-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--teal);
+    color: #04121c;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  }
   .cartridge .notch {
+    display: none;
     position: absolute;
     top: 0; left: 50%;
     transform: translateX(-50%);
@@ -122,8 +190,20 @@
     background: var(--bg);
     border-radius: 0 0 8px 8px;
   }
+  .cartridges.layout-grid .cartridge .notch { display: block; }
 
-  .cartridge .info { padding: 16px 18px 20px; }
+  .cartridge .info {
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cartridges.layout-grid .cartridge .info {
+    padding: 16px 18px 20px;
+    justify-content: flex-start;
+  }
   .cartridge .name {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
@@ -133,7 +213,7 @@
   .cartridge .tagline {
     font-size: 13.5px;
     color: var(--muted);
-    margin: 0 0 14px;
+    margin: 0 0 12px;
   }
   .cartridge .tags {
     display: flex;
@@ -141,19 +221,20 @@
     flex-wrap: wrap;
   }
   .cartridge .play-hint {
-    display: flex;
+    display: inline-flex;
+    align-self: flex-start;
     align-items: center;
     gap: 6px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 12px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: rgba(34,184,160,0.16);
+    border: 1px solid rgba(34,184,160,0.4);
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--teal);
-    opacity: 0.75;
-    transform: translateX(-3px);
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    transition: background 0.18s ease, transform 0.18s ease;
   }
   .cartridge .play-hint svg { flex: none; }
   .tag {
@@ -226,7 +307,17 @@
   </header>
 
   <section class="shelf">
-    <h2>On the shelf</h2>
+    <div class="shelf-head">
+      <h2>On the shelf</h2>
+      <div class="layout-toggle" role="group" aria-label="Layout">
+        <button type="button" class="layout-btn" data-layout="single" aria-label="Single column view" title="Single column">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2.5" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="6.9" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="10.3" width="12" height="3.2" rx="1" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="layout-btn" data-layout="grid" aria-label="Grid view" title="Grid">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
     <div class="cartridges" id="cartridges"></div>
     <div class="shelf-bar"></div>
   </section>
@@ -271,6 +362,10 @@
       <div class="label" style="background:${g.color}">
         <div class="notch"></div>
         <span>${g.emoji}</span>
+        <div class="play-badge">
+          <svg width="8" height="9" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
+          Play
+        </div>
       </div>
       <div class="info">
         <p class="name">${g.name}</p>
@@ -290,6 +385,23 @@
   placeholder.className = 'coming-soon';
   placeholder.textContent = 'next one\u2019s in progress';
   container.appendChild(placeholder);
+
+  // Layout toggle: single column (default) or multi-column grid, remembered per browser
+  const LAYOUT_KEY = 'kbArcadeLayout';
+  const layoutButtons = document.querySelectorAll('.layout-btn');
+  function applyLayout(mode) {
+    container.classList.toggle('layout-grid', mode === 'grid');
+    layoutButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.layout === mode));
+  }
+  let layout = localStorage.getItem(LAYOUT_KEY) || 'single';
+  applyLayout(layout);
+  layoutButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      layout = btn.dataset.layout;
+      localStorage.setItem(LAYOUT_KEY, layout);
+      applyLayout(layout);
+    });
+  });
 </script>
 
 </body>

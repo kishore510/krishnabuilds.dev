@@ -22,11 +22,12 @@
       z-index: 999;
       display: flex;
       align-items: center;
-      height: 52px;
-      padding: 0 10px;
-      background: linear-gradient(180deg, rgba(8,12,18,0.96), rgba(8,12,18,0.88));
-      border-bottom: 1px solid rgba(255,255,255,0.14);
-      box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 12px;
+      background: #0a0f1a;
+      border-bottom: 2px solid rgba(34,184,160,0.6);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.55);
       font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
     }
     .kb-back {
@@ -38,11 +39,26 @@
       font-size: 16px;
       font-weight: 700;
       padding: 9px 16px;
-      border-radius: 10px;
-      transition: background 0.15s ease;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.09);
+      border: 1.5px solid rgba(255,255,255,0.32);
+      transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .kb-back:hover, .kb-back:active { background: rgba(255,255,255,0.12); }
+    .kb-back:hover, .kb-back:active {
+      background: rgba(34,184,160,0.22);
+      border-color: rgba(34,184,160,0.7);
+    }
     .kb-back svg { flex: none; }
+    .kb-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: rgba(238,242,245,0.5);
+      white-space: nowrap;
+    }
     .kb-coffee {
       position: fixed;
       z-index: 999;
@@ -64,8 +80,9 @@
     }
     .kb-coffee:hover { background: rgba(255,183,3,0.32); transform: translateY(-1px); }
     @media (max-width: 480px) {
-      .kb-navbar { height: 56px; }
-      .kb-back { font-size: 17px; padding: 10px 16px; }
+      .kb-navbar { height: 58px; }
+      .kb-back { font-size: 17px; padding: 10px 18px; }
+      .kb-brand { display: none; }
     }
   `;
   document.head.appendChild(style);
@@ -78,6 +95,11 @@
   back.className = 'kb-back';
   back.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L4 8l6 5"/></svg><span>All games</span>';
   navbar.appendChild(back);
+
+  const brand = document.createElement('span');
+  brand.className = 'kb-brand';
+  brand.textContent = '🕹️ Krishnabuilds Arcade';
+  navbar.appendChild(brand);
 
   document.body.appendChild(navbar);
 
