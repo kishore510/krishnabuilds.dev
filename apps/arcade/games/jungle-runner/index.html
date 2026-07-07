@@ -208,8 +208,8 @@ function initBg() {
   bgTrees = [];
   let x = -20;
   while (x < W + 60) {
-    bgTrees.push({ x, r: 34 + Math.random() * 20 });
-    x += 60 + Math.random() * 50;
+    bgTrees.push({ x, r: 28 + Math.random() * 16 });
+    x += 80 + Math.random() * 50;
   }
   canopyVines = [];
   let vx = 40;
@@ -298,7 +298,7 @@ function update() {
   bgTrees = bgTrees.filter(t => t.x > -60);
   if (bgTrees.length === 0 || bgTrees[bgTrees.length - 1].x < W - 40) {
     const lastX = bgTrees.length ? bgTrees[bgTrees.length - 1].x : W;
-    bgTrees.push({ x: lastX + 60 + Math.random() * 50, r: 34 + Math.random() * 20 });
+    bgTrees.push({ x: lastX + 80 + Math.random() * 50, r: 28 + Math.random() * 16 });
   }
 
   for (const v of canopyVines) v.x -= scrollSpeed * 0.6;
@@ -340,7 +340,7 @@ easyBtn.addEventListener('click', () => startGame('easy'));
 hardBtn.addEventListener('click', () => startGame('hard'));
 
 function drawBg() {
-  ctx.fillStyle = 'rgba(0,0,0,0.28)';
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
   for (const t of bgTrees) {
     ctx.beginPath();
     ctx.ellipse(t.x, 130, t.r * 0.55, t.r, 0, 0, Math.PI * 2);
@@ -362,45 +362,67 @@ function drawGround() {
   ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
   ctx.fillStyle = '#3f2a18';
   ctx.fillRect(0, GROUND_Y, W, 8);
-  // gaps: erase the ground strip under them
+  // gaps: erase the ground strip under them, with bright hazard-striped
+  // edges so the hole reads clearly as "avoid this" rather than an
+  // unclear dark patch
   for (const o of obstacles) {
     if (o.kind === 'gap') {
-      ctx.clearRect(o.x, GROUND_Y, OBST_WIDTH, H - GROUND_Y);
       ctx.fillStyle = '#0e1a10';
       ctx.fillRect(o.x, GROUND_Y, OBST_WIDTH, H - GROUND_Y);
+      ctx.fillStyle = '#ffb703';
+      ctx.fillRect(o.x - 2, GROUND_Y, 4, H - GROUND_Y);
+      ctx.fillRect(o.x + OBST_WIDTH - 2, GROUND_Y, 4, H - GROUND_Y);
     }
   }
 }
 
+// --- Colors deliberately break from the green canopy palette (warm
+// browns/oranges + a bright amber accent) so obstacles read as distinct
+// hazards instead of blending into the jungle background - the original
+// muted greens/browns were too close in hue and value to the scenery. ---
 function drawObstacles() {
   for (const o of obstacles) {
     if (o.kind === 'log') {
-      ctx.fillStyle = '#6b4a2f';
+      const cx = o.x + OBST_WIDTH / 2, cy = GROUND_Y - 14;
+      ctx.fillStyle = '#a8703f';
       ctx.beginPath();
-      ctx.ellipse(o.x + OBST_WIDTH / 2, GROUND_Y - 14, OBST_WIDTH / 2 - 4, 15, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, OBST_WIDTH / 2 - 2, 16, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = '#4a3018';
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#ffb703';
+      ctx.lineWidth = 2.5;
       ctx.stroke();
-      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.ellipse(o.x + OBST_WIDTH / 2, GROUND_Y - 14, 6, 9, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, 7, 10, 0, 0, Math.PI * 2);
       ctx.stroke();
     } else if (o.kind === 'vine') {
       const sway = Math.sin(frame * 0.15) * 4;
-      ctx.strokeStyle = '#4a8a4f';
-      ctx.lineWidth = 6;
+      const topX = o.x + OBST_WIDTH / 2 + sway;
+      const botX = o.x + OBST_WIDTH / 2;
+      const botY = GROUND_Y - OBST_HEIGHTS.vine;
+      ctx.strokeStyle = '#3a2410';
+      ctx.lineWidth = 8;
       ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(o.x + OBST_WIDTH / 2 + sway, 0);
-      ctx.lineTo(o.x + OBST_WIDTH / 2, GROUND_Y - OBST_HEIGHTS.vine);
+      ctx.moveTo(topX, 0);
+      ctx.lineTo(botX, botY);
       ctx.stroke();
-      ctx.fillStyle = '#3a6a3f';
+      ctx.strokeStyle = '#c9924a';
+      ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.arc(o.x + OBST_WIDTH / 2, GROUND_Y - OBST_HEIGHTS.vine, 9, 0, Math.PI * 2);
+      ctx.moveTo(topX, 0);
+      ctx.lineTo(botX, botY);
+      ctx.stroke();
+      ctx.fillStyle = '#ffb703';
+      ctx.beginPath();
+      ctx.arc(botX, botY, 10, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
     }
-    // 'gap' obstacles need no extra drawing - the missing ground is the obstacle
+    // 'gap' obstacles need no extra drawing here - the missing ground is the obstacle
   }
 }
 

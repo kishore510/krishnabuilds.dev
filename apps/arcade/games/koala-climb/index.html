@@ -161,6 +161,7 @@ let difficulty = 'easy';
 let preset = DIFFICULTY_PRESETS.easy;
 let koala, branches, acorns, heightScore, bonus, best, state, frame;
 let lastSide = 1;
+let trunkScroll = 0;
 let clouds = [];
 
 // --- Audio: generated on the fly with the Web Audio API, no external files ---
@@ -256,6 +257,7 @@ function reset() {
   branches.push({ x: koala.x, y: koala.y + 34, w: preset.branchWidth + 20, hasAcorn: false, acornCollected: false });
   heightScore = 0;
   bonus = 0;
+  trunkScroll = 0;
   frame = 0;
   state = 'ready';
   initClouds();
@@ -287,6 +289,7 @@ function startGame(diff) {
   ensureBranchesAbove();
   heightScore = 0;
   bonus = 0;
+  trunkScroll = 0;
   frame = 0;
   state = 'playing';
   overlay.style.display = 'none';
@@ -344,6 +347,7 @@ function update() {
     for (const b of branches) b.y += shift;
     for (const a of acorns) a.y += shift;
     heightScore += shift * HEIGHT_SCALE;
+    trunkScroll += shift;
   }
 
   branches = branches.filter(b => b.y < H + 40);
@@ -390,6 +394,21 @@ function drawBg() {
   ctx.fillRect(W / 2 - 14, 0, 28, H);
   ctx.fillStyle = 'rgba(0,0,0,0.15)';
   ctx.fillRect(W / 2 - 14, 0, 6, H);
+  // Bark rings that scroll with the world - without this, the trunk (the
+  // single biggest thing on screen) shows zero motion of its own, and
+  // during the long stretches where the koala is camera-pinned near the
+  // scroll line, nothing on screen visibly moves except a few small
+  // branches. That reads as the game being frozen even when it isn't.
+  ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+  ctx.lineWidth = 3;
+  const barkSpacing = 46;
+  const offset = trunkScroll % barkSpacing;
+  for (let y = -barkSpacing + offset; y < H; y += barkSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 14, y);
+    ctx.quadraticCurveTo(W / 2, y + 8, W / 2 + 14, y);
+    ctx.stroke();
+  }
 }
 
 function drawBranches() {

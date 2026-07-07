@@ -172,6 +172,7 @@ let aiJitter = 0;
 const puck = { x: W / 2, y: H / 2, vx: 0, vy: 0 };
 let puckHistory = [];
 let puckTrail = [];
+let puckHitCooldown = 0;
 const HISTORY_MAX = 30;
 
 const playerMallet = { x: W / 2, y: H - 90 };
@@ -254,10 +255,18 @@ canvas.addEventListener('pointerup', () => { dragging = false; });
 canvas.addEventListener('pointercancel', () => { dragging = false; });
 
 function resolveMalletPuckCollision(mallet, vel, malletYMin, malletYMax) {
+  // A recoil alone only buys ~1 frame of separation - if the AI's approach
+  // speed can close that gap in a single frame (easily true near a wall,
+  // where its target and the puck are both pinned close together), it
+  // re-collides before the puck's escape velocity had any real time to
+  // carry it away, producing an endless micro-oscillation right at the
+  // corner. A short cooldown guarantees genuine travel time instead.
+  if (puckHitCooldown > 0) return;
   const dx = puck.x - mallet.x, dy = puck.y - mallet.y;
   const dist = Math.hypot(dx, dy) || 0.001;
   const minDist = R_MALLET + R_PUCK;
   if (dist >= minDist) return;
+  puckHitCooldown = 8;
   const nx = dx / dist, ny = dy / dist;
   const overlap = minDist - dist;
   puck.x += nx * overlap;
@@ -307,6 +316,7 @@ function getDelayedPuck(delayFrames) {
 }
 
 function updatePuck() {
+  if (puckHitCooldown > 0) puckHitCooldown--;
   puck.x += puck.vx;
   puck.y += puck.vy;
   puck.vx *= FRICTION;
@@ -394,6 +404,7 @@ function scoreGoal(who) {
 function servePuck() {
   puck.x = W / 2; puck.y = H / 2; puck.vx = 0; puck.vy = 0;
   puckTrail = [];
+  puckHitCooldown = 0;
   state = 'serving';
   clearTimeout(serveTimeoutId);
   serveTimeoutId = setTimeout(() => {

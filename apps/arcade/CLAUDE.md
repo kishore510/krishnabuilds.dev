@@ -118,6 +118,23 @@ the game fair:
   prediction) for any future AI opponent rather than just scaling a
   single speed number.
 
+## Two-body collision needs a post-hit cooldown, not just separation
+
+Air Hockey's puck could get permanently wedged in a corner: near a wall,
+"push the puck away from the mallet" and "push it into the wall" point
+the same direction, so a stationary AI mallet and a cornered puck would
+re-collide every single frame forever. Pushing the mallet back on
+collision (not just the puck) looked like a fix but wasn't enough on its
+own - if the AI's approach speed can close that recoil gap in a single
+frame (easy near a wall, where mallet and puck are both pinned close
+together), it re-collides before the puck's escape velocity had any real
+frames to actually carry it away, producing an endless sub-pixel
+oscillation right at the corner. The fix that actually holds: a short
+cooldown (`puckHitCooldown`, ~8 frames) during which the puck is immune
+to *any* mallet collision, guaranteeing genuine travel time. Apply this
+same pattern - recoil alone is not sufficient - to any future game with
+a body that gets repeatedly struck near a boundary.
+
 ## Mobile-first constraints learned the hard way
 
 - Nothing that communicates "this is clickable" or "here's how you go
