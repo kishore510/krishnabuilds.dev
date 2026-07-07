@@ -145,11 +145,14 @@ const SAFE_OIL_FACTOR = 0.55; // brake below this fraction of speedMax to pass o
 const SKID_DURATION = 0.8;    // seconds of locked steering after an unsafe oil hit
 const CRASH_INVULN = 1.2;
 const CRASH_SPEED_PENALTY = 0.7;
+const POTHOLE_SPEED_PENALTY = 0.85;
 const SHAKE_DURATION = 0.35;
+const BUMP_SHAKE_DURATION = 0.18;
 const SHAKE_MAX = 6;
 const FLASH_DURATION = 0.18;
 const BOOSTER_POINTS = 10;
 const TIME_BONUS_PER_SEC = 5;
+const TRAFFIC_LANE_CHANGE_SPEED = 190; // px/s - a car visibly merging, slower than the player's own lane change
 
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
@@ -170,20 +173,26 @@ fitCanvas();
 // pickups over the race, never a trivial full tank nor an impossible one. ---
 const DIFFICULTY_PRESETS = {
   easy: {
-    accel: 55, brakeDecel: 220, speedMax: 260, minSpeed: 110, npcSpeed: 90,
+    accel: 55, brakeDecel: 220, speedMax: 260, minSpeed: 110, npcSpeed: 50,
     fuelDrainBase: 1.3, fuelDrainSpeedMult: 2.6, fuelDrainBrakeExtra: 1.4, fuelBoostAmount: 22,
-    gapMin: 190, gapMax: 300, oilPairChance: 0.35,
+    potholeFuelPenalty: 12,
+    gapMin: 185, gapMax: 280, oilPairChance: 0.3,
     fuelGapMin: 1500, fuelGapMax: 2000,
-    trafficWeight: 0.28, oilWeight: 0.16,
-    raceDistance: 950, timeLimit: 45
+    roadblockGapMin: 2600, roadblockGapMax: 3400,
+    trafficWeight: 0.26, oilWeight: 0.14, potholeWeight: 0.12,
+    trafficLaneChangeChance: 0.3,
+    raceDistance: 950, timeLimit: 42
   },
   hard: {
-    accel: 70, brakeDecel: 260, speedMax: 340, minSpeed: 140, npcSpeed: 100,
+    accel: 70, brakeDecel: 260, speedMax: 340, minSpeed: 140, npcSpeed: 60,
     fuelDrainBase: 1.4, fuelDrainSpeedMult: 2.7, fuelDrainBrakeExtra: 1.6, fuelBoostAmount: 22,
-    gapMin: 150, gapMax: 250, oilPairChance: 0.5,
+    potholeFuelPenalty: 16,
+    gapMin: 150, gapMax: 235, oilPairChance: 0.4,
     fuelGapMin: 2100, fuelGapMax: 2900,
-    trafficWeight: 0.36, oilWeight: 0.20,
-    raceDistance: 1250, timeLimit: 44
+    roadblockGapMin: 2000, roadblockGapMax: 2700,
+    trafficWeight: 0.32, oilWeight: 0.17, potholeWeight: 0.15,
+    trafficLaneChangeChance: 0.4,
+    raceDistance: 1250, timeLimit: 42
   }
 };
 const TRAFFIC_COLORS = ['#4a7fd6', '#e6b800', '#8a5fd6', '#3fb37f'];
@@ -191,7 +200,7 @@ const TRAFFIC_COLORS = ['#4a7fd6', '#e6b800', '#8a5fd6', '#3fb37f'];
 let difficulty = 'easy';
 let preset = DIFFICULTY_PRESETS.easy;
 let player, roadItems, popups, roadside, speedLines;
-let nextSpawnY, nextFuelY, nextRoadsideY;
+let nextSpawnY, nextFuelY, nextRoadblockY, nextRoadsideY;
 let lives, fuel, distanceM, timeLeft, boostersCollected, best, state;
 let speed, braking, wasBraking, skidTimer, invulnTimer, shakeTimer, flashTimer;
 let elapsedTime;
@@ -223,6 +232,7 @@ function tone(freq, duration, type, volume, delay) {
 function playScreech() { tone(200, 0.12, 'sawtooth', 0.08); }
 function playSkid() { tone(150, 0.3, 'sawtooth', 0.12); tone(90, 0.35, 'sawtooth', 0.08, 0.05); }
 function playCrash() { tone(120, 0.4, 'sawtooth', 0.18); tone(70, 0.45, 'square', 0.12, 0.05); }
+function playBump() { tone(160, 0.14, 'square', 0.13); }
 function playFuel() { tone(880, 0.09, 'triangle', 0.12); tone(1180, 0.1, 'triangle', 0.09, 0.05); }
 function playWin() { tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09); tone(1100, 0.18, 'triangle', 0.11, 0.19); }
 function playLose() { tone(180, 0.4, 'sawtooth', 0.15); }
@@ -272,46 +282,109 @@ function moveTowards(cur, target, maxDelta) {
   if (cur < target) return Math.min(target, cur + maxDelta);
   return Math.max(target, cur - maxDelta);
 }
+// Traffic closes on the player slower than static hazards do (that's the
+// "overtaking" mechanic), so two hazards that don't overlap in raw pixels
+// at spawn time can still drift into overlapping by the time they both
+// reach the collide line - a fixed pixel window can't see that. Comparing
+// estimated arrival time at CAR_Y (using each item's own closing speed)
+// catches it regardless of the speed differential.
+function arrivalTime(y, kind, npcSpeed) {
+  const closing = kind === 'traffic' ? Math.max(1, speed - npcSpeed) : speed;
+  return (CAR_Y - y) / closing;
+}
+function laneHasOverlap(lane, y, kind, npcSpeed, exclude) {
+  // Generous on purpose: player speed can change a lot (braking, re-accelerating)
+  // between when an item is spawned and when it actually reaches the collide
+  // line, which shifts real arrival times away from this snapshot estimate.
+  const MARGIN = 2.2;
+  const myTime = arrivalTime(y, kind, npcSpeed);
+  for (const other of roadItems) {
+    if (other === exclude || other.done || other.lane !== lane) continue;
+    if (Math.abs(myTime - arrivalTime(other.y, other.kind, other.npcSpeed)) < MARGIN) return true;
+  }
+  return false;
+}
+// The spawn-time checks above only know player speed as of the moment an
+// item is placed - they can't foresee later braking or the initial 0-to-max
+// accel ramp, both of which shift real arrival times enough that hazards
+// which looked safely staggered at spawn time can still end up converging.
+// This runs every frame against actual current state (no prediction, so
+// nothing to get stale) as the hard backstop: if all 3 lanes ever end up
+// with something genuinely imminent at once, thin out the one with the
+// most lead time so a real escape always exists.
+function ensureOneLaneClear() {
+  const HORIZON = 1.4;
+  const nearest = [null, null, null];
+  for (const it of roadItems) {
+    if (it.done) continue;
+    const t = arrivalTime(it.y, it.kind, it.npcSpeed);
+    if (t < 0 || t > HORIZON) continue;
+    const cur = nearest[it.lane];
+    if (!cur || t < cur.t) nearest[it.lane] = { item: it, t };
+  }
+  if (nearest[0] && nearest[1] && nearest[2]) {
+    let clearLane = 0;
+    for (let l = 1; l < 3; l++) if (nearest[l].t > nearest[clearLane].t) clearLane = l;
+    nearest[clearLane].item.done = true;
+  }
+}
 function formatTime(s) {
   const secs = Math.max(0, Math.ceil(s));
   return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
 }
 
 function spawnTraffic(y, lane) {
+  // A traffic car may merge into an adjacent lane partway down - but only
+  // once it's still comfortably above the player (changeLaneY), so the
+  // visible drift itself is the warning. It never snaps: visualX eases
+  // toward the new lane at its own pace, separate from the collision-
+  // relevant `lane` field, which flips the moment the merge starts.
+  const willChangeLane = Math.random() < preset.trafficLaneChangeChance;
   roadItems.push({
     y, lane, kind: 'traffic', done: false,
     npcSpeed: preset.npcSpeed, color: TRAFFIC_COLORS[Math.floor(Math.random() * TRAFFIC_COLORS.length)],
-    bobPhase: Math.random() * Math.PI * 2
+    bobPhase: Math.random() * Math.PI * 2,
+    visualX: laneX(lane),
+    willChangeLane, changeLaneY: CAR_Y - randRange(170, 260), changed: false
   });
 }
 
-// Fuel is spawned on its own periodic cadence (below), not this weighted
-// row lottery - a per-row coin-flip made total fuel available over a race
-// wildly variable (0 to 10+ pickups by pure chance), so whether you ran dry
-// depended on luck more than driving. A fixed cadence makes the fuel supply
-// for a given race distance predictable, so the tension is about how you
-// drive, not how the dice landed.
+// Fuel and roadblocks spawn on their own cadences (below), independent of
+// this weighted row lottery. A per-row coin-flip made fuel supply wildly
+// variable by pure chance, so a fixed cadence replaced that; and a lane a
+// roadblock left "the safe one" could otherwise get a traffic/oil/pothole
+// placed into it anyway, since neither system knows about the other -
+// laneHasOverlap() is the shared check every spawner uses to keep "at
+// least one lane is always fully clear" true across all of them.
 function spawnRow(y) {
   const r = Math.random();
-  const wTraffic = preset.trafficWeight, wOil = wTraffic + preset.oilWeight;
+  const wTraffic = preset.trafficWeight, wOil = wTraffic + preset.oilWeight, wPothole = wOil + preset.potholeWeight;
   let kind;
   if (r < wTraffic) kind = 'traffic';
   else if (r < wOil) kind = 'oil';
+  else if (r < wPothole) kind = 'pothole';
   else kind = null;
   if (!kind) return;
   const lane = randLane();
+  const otherLanes = [0, 1, 2].filter(l => l !== lane);
+  if (otherLanes.every(l => laneHasOverlap(l, y, kind, preset.npcSpeed, null))) return;
   if (kind === 'traffic') {
     spawnTraffic(y, lane);
-  } else {
+  } else if (kind === 'oil') {
     roadItems.push({ y, lane, kind, done: false, resolved: false });
     // Sometimes pair the oil with a car in another lane, so swerving away
     // isn't always free and braking becomes the better call. A lane is
     // always left fully clear, so there's still always a safe option -
     // it just might have to be "brake in place" instead of a lane change.
     if (Math.random() < preset.oilPairChance) {
-      const otherLane = (lane + 1 + Math.floor(Math.random() * 2)) % LANE_COUNT;
-      spawnTraffic(y + randRange(-14, 14), otherLane);
+      const thirdLane = otherLanes[Math.random() < 0.5 ? 0 : 1];
+      const otherLane = otherLanes.find(l => l !== thirdLane);
+      if (!laneHasOverlap(thirdLane, y, 'traffic', preset.npcSpeed, null)) {
+        spawnTraffic(y + randRange(-14, 14), otherLane);
+      }
     }
+  } else {
+    roadItems.push({ y, lane, kind, done: false, resolved: false });
   }
 }
 
@@ -323,6 +396,20 @@ function ensureItemsAbove() {
   while (nextFuelY > -60) {
     roadItems.push({ y: nextFuelY, lane: randLane(), kind: 'fuel', done: false, resolved: false });
     nextFuelY -= randRange(preset.fuelGapMin, preset.fuelGapMax);
+  }
+  // Roadblocks span 2 of the 3 lanes - a solid barrier, no braking through
+  // it - but the third lane is always left fully clear, same fairness
+  // guarantee as every other hazard in this arcade. If every lane already
+  // has something else nearby, skip this cycle rather than force a block.
+  while (nextRoadblockY > -60) {
+    const order = [0, 1, 2].sort(() => Math.random() - 0.5);
+    const safeLane = order.find(l => !laneHasOverlap(l, nextRoadblockY, 'roadblock', 0, null));
+    if (safeLane !== undefined) {
+      for (let l = 0; l < LANE_COUNT; l++) {
+        if (l !== safeLane) roadItems.push({ y: nextRoadblockY, lane: l, kind: 'roadblock', done: false, resolved: false });
+      }
+    }
+    nextRoadblockY -= randRange(preset.roadblockGapMin, preset.roadblockGapMax);
   }
 }
 
@@ -353,6 +440,7 @@ function resetRunState() {
   popups = [];
   nextSpawnY = -80;
   nextFuelY = -160;
+  nextRoadblockY = -500;
   lives = 3;
   fuel = 100;
   distanceM = 0;
@@ -499,12 +587,32 @@ function update(dt) {
   fuel -= drain * dt;
 
   for (const it of roadItems) {
-    it.y += (it.kind === 'traffic' ? (speed - it.npcSpeed) : speed) * dt;
+    if (it.kind === 'traffic') {
+      it.y += (speed - it.npcSpeed) * dt;
+      if (it.willChangeLane && !it.changed && it.y >= it.changeLaneY) {
+        // Only merge into a lane that's actually clear right now - a car
+        // changing into a lane that already has its own hazard could
+        // otherwise leave all 3 lanes blocked at once, breaking the "always
+        // one safe lane" guarantee every other hazard in this game relies on.
+        const preferredDir = it.lane === 0 ? 1 : it.lane === LANE_COUNT - 1 ? -1 : (Math.random() < 0.5 ? -1 : 1);
+        for (const dir of [preferredDir, -preferredDir]) {
+          const newLane = it.lane + dir;
+          if (newLane < 0 || newLane >= LANE_COUNT) continue;
+          if (!laneHasOverlap(newLane, it.y, 'traffic', it.npcSpeed, it)) { it.lane = newLane; break; }
+        }
+        it.changed = true;
+      }
+      it.visualX = moveTowards(it.visualX, laneX(it.lane), TRAFFIC_LANE_CHANGE_SPEED * dt);
+    } else {
+      it.y += speed * dt;
+    }
   }
   nextSpawnY += speed * dt;
   nextFuelY += speed * dt;
+  nextRoadblockY += speed * dt;
   roadItems = roadItems.filter(it => it.y < H + 40 && !it.done);
   ensureItemsAbove();
+  ensureOneLaneClear();
 
   for (const it of roadItems) {
     if (it.done || Math.abs(it.y - CAR_Y) >= COLLIDE_WINDOW || it.lane !== player.lane) continue;
@@ -525,7 +633,7 @@ function update(dt) {
           addPopup('Nice brake!', laneX(it.lane), CAR_Y - 40, '#8fe388');
         }
       }
-    } else if (it.kind === 'traffic') {
+    } else if (it.kind === 'traffic' || it.kind === 'roadblock') {
       if (invulnTimer <= 0) {
         it.done = true;
         lives--;
@@ -535,6 +643,16 @@ function update(dt) {
         speed = Math.max(preset.minSpeed, speed * CRASH_SPEED_PENALTY);
         playCrash();
         addPopup('Crash!', laneX(it.lane), CAR_Y - 40, '#ff4d4d');
+      }
+    } else if (it.kind === 'pothole') {
+      if (!it.resolved) {
+        it.resolved = true;
+        it.done = true;
+        fuel = Math.max(0, fuel - preset.potholeFuelPenalty);
+        speed = Math.max(preset.minSpeed, speed * POTHOLE_SPEED_PENALTY);
+        shakeTimer = Math.max(shakeTimer, BUMP_SHAKE_DURATION);
+        playBump();
+        addPopup('Pothole!', laneX(it.lane), CAR_Y - 40, '#e6b800');
       }
     }
   }
@@ -635,13 +753,57 @@ function drawVehicle(x, y, halfW, halfH, bodyColor, tilt, bob) {
 
 function drawItems() {
   for (const it of roadItems) {
-    const x = laneX(it.lane);
+    const x = it.kind === 'traffic' ? it.visualX : laneX(it.lane);
     if (it.kind === 'traffic') {
       const bob = Math.sin(elapsedTime * 10 + it.bobPhase) * 1.2;
       drawVehicle(x, it.y, 12, 19, it.color, 0, bob);
       ctx.fillStyle = 'rgba(255,60,60,0.55)';
       ctx.fillRect(x - 8, it.y + 15, 5, 3);
       ctx.fillRect(x + 3, it.y + 15, 5, 3);
+      // Blinking merge indicator while it's actively drifting toward a new lane.
+      if (Math.abs(x - laneX(it.lane)) > 2 && Math.floor(elapsedTime * 6) % 2 === 0) {
+        const dir = laneX(it.lane) > x ? 1 : -1;
+        ctx.fillStyle = '#ffb703';
+        ctx.beginPath();
+        ctx.arc(x + dir * 15, it.y - 10, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (it.kind === 'pothole') {
+      ctx.fillStyle = '#3a3226';
+      ctx.beginPath();
+      const spikes = 8, rBase = 15;
+      for (let i = 0; i < spikes; i++) {
+        const a = (i / spikes) * Math.PI * 2;
+        const r = rBase + (i % 2 === 0 ? 3 : -3);
+        const px = x + Math.cos(a) * r, py = it.y + Math.sin(a) * r * 0.7;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#181410';
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 9, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#e6b800';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 19, 13, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (it.kind === 'roadblock') {
+      const w = LANE_WIDTH * 0.92, h = 24;
+      const left = x - w / 2;
+      ctx.fillStyle = '#e6b800';
+      ctx.fillRect(left, it.y - h / 2, w, h);
+      ctx.fillStyle = '#1a1a1a';
+      const stripeW = 10;
+      for (let sx = 0; sx < w; sx += stripeW * 2) {
+        ctx.fillRect(left + sx, it.y - h / 2, Math.min(stripeW, w - sx), h);
+      }
+      ctx.strokeStyle = '#4a3b00';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(left, it.y - h / 2, w, h);
     } else if (it.kind === 'oil') {
       ctx.fillStyle = '#141414';
       ctx.beginPath();
