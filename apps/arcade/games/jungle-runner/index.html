@@ -340,6 +340,17 @@ easyBtn.addEventListener('click', () => startGame('easy'));
 hardBtn.addEventListener('click', () => startGame('hard'));
 
 function drawBg() {
+  // Full opaque repaint every frame - without this, nothing clears the
+  // canvas between frames, so every previously-drawn tree, vine, log, and
+  // even the monkey's last position stays on the bitmap forever. A log
+  // sliding left then looks like a trail of logs, not one log moving.
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#2d5a3d');
+  g.addColorStop(0.7, '#1a3324');
+  g.addColorStop(1, '#1a3324');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
   ctx.fillStyle = 'rgba(0,0,0,0.2)';
   for (const t of bgTrees) {
     ctx.beginPath();
