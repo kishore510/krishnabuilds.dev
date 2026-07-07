@@ -104,7 +104,7 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Koala Climb</h1>
-    <p id="subtitle">Drag left/right to steer</p>
+    <p id="subtitle">Climbs on its own — tap a side to dodge branches</p>
     <p id="scoreLine" style="display:none;"></p>
     <div id="diffButtons">
       <button id="easyBtn" type="button">Easy</button>
@@ -128,14 +128,16 @@ const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 
 const W = canvas.width, H = canvas.height;
-const KOALA_R = 17;
-const GRAVITY = 0.46;
-const BOUNCE_VELOCITY = -12.6;
-const MAX_JUMP_HEIGHT = (BOUNCE_VELOCITY * BOUNCE_VELOCITY) / (2 * GRAVITY);
-const BRANCH_OFFSET = 55;
-const SCROLL_LINE = H * 0.42;
-const HEIGHT_SCALE = 0.09;
-const ACORN_BONUS = 5;
+const TRUNK_W = 140;
+const TRUNK_LEFT = W / 2 - TRUNK_W / 2, TRUNK_RIGHT = W / 2 + TRUNK_W / 2;
+const LANE_INSET = 10;
+const LANE_COUNT = 2;
+function laneX(i) { return i === 0 ? TRUNK_LEFT + LANE_INSET : TRUNK_RIGHT - LANE_INSET; }
+const KOALA_Y = H - 150;
+const KOALA_R = 21;
+const COLLIDE_WINDOW = 18;
+const HEIGHT_SCALE = 0.05;
+const ACORN_BONUS = 8;
 
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
@@ -149,19 +151,20 @@ window.addEventListener('resize', fitCanvas);
 window.addEventListener('kb-navbar-ready', fitCanvas);
 fitCanvas();
 
-// --- Branch vertical spacing widens with height (sparser the higher you
-// climb) but is always kept under MAX_JUMP_HEIGHT with a safety margin, so
-// a branch is never physically unreachable no matter how far you've gone ---
+// --- Branch gap must give the lane-switch lerp (factor 0.22 below) time to
+// fully cross before a branch reaches the collide window, at the current
+// ramped scroll speed - otherwise a branch could be physically undodgeable.
+// speedMax is capped for the same reason: however long a run goes, reaction
+// time never drops below what a lane switch actually needs. ---
 const DIFFICULTY_PRESETS = {
-  easy: { spacingMul: 0.8, branchWidth: 72 },
-  hard: { spacingMul: 1.05, branchWidth: 50 }
+  easy: { speedStart: 2.4, speedMax: 5.0, ramp: 0.0006, gapMin: 170, gapMax: 280 },
+  hard: { speedStart: 3.4, speedMax: 6.6, ramp: 0.0010, gapMin: 130, gapMax: 215 }
 };
 
 let difficulty = 'easy';
 let preset = DIFFICULTY_PRESETS.easy;
-let koala, branches, acorns, heightScore, bonus, best, state, frame;
-let lastSide = 1;
-let trunkScroll = 0;
+let koala, branches, acorns, heightScore, bonus, best, state, frame, scrollSpeed, climbPhase, trunkScroll;
+let lastLane = 0;
 let clouds = [];
 
 // --- Audio: generated on the fly with the Web Audio API, no external files ---
@@ -187,9 +190,9 @@ function tone(freq, duration, type, volume, delay) {
   gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
   osc.stop(startTime + duration + 0.03);
 }
-function playBounce() { tone(360, 0.09, 'sine', 0.1); }
+function playDodge() { tone(760, 0.07, 'triangle', 0.09); }
 function playAcorn() { tone(920, 0.09, 'triangle', 0.12); tone(1200, 0.1, 'triangle', 0.09, 0.05); }
-function playFall() { tone(200, 0.4, 'sawtooth', 0.15); }
+function playHit() { tone(180, 0.4, 'sawtooth', 0.15); }
 
 function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 updateMuteBtn();
@@ -199,71 +202,57 @@ muteBtn.addEventListener('click', () => {
   updateMuteBtn();
 });
 
-function loadBest(diff) { return parseInt(sessionStorage.getItem('koalaClimbBest_' + diff) || '0', 10); }
-function saveBest(diff, v) { try { sessionStorage.setItem('koalaClimbBest_' + diff, v); } catch (e) {} }
+function loadBest(diff) { return parseInt(sessionStorage.getItem('koalaClimbBest2_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('koalaClimbBest2_' + diff, v); } catch (e) {} }
 
-function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
 
-function currentSpacingRange() {
-  const t = Math.min(1, heightScore / 380);
-  const min = (78 + t * 26) * preset.spacingMul;
-  const max = (120 + t * 30) * preset.spacingMul;
-  return { min: Math.min(min, MAX_JUMP_HEIGHT - 45), max: Math.min(max, MAX_JUMP_HEIGHT - 20) };
-}
-
 function spawnBranch(y) {
-  const flip = Math.random() < 0.8;
-  const side = flip ? -lastSide : lastSide;
-  lastSide = side;
-  // The koala starts dead-center but real branches sit offset to a side -
-  // if a new player doesn't immediately realize this game needs continuous
-  // dragging (unlike the single-tap games elsewhere in the arcade), they
-  // miss the first branch, fall back to the start, and bounce in place
-  // forever, which reads as the game being stuck. Ease the first few
-  // branches in closer to center and wider so there's time to learn the
-  // control before precision steering is required.
-  const easing = branches.length < 5;
-  const offset = easing ? BRANCH_OFFSET * 0.45 : BRANCH_OFFSET;
-  const width = easing ? preset.branchWidth + 24 : preset.branchWidth;
-  const x = clamp(W / 2 + side * offset + randRange(-12, 12), 40, W - 40);
-  const branch = { x, y, w: width, hasAcorn: Math.random() < 0.25, acornCollected: false };
-  branches.push(branch);
-  if (branch.hasAcorn) {
-    acorns.push({ x: branch.x - side * 26, y: branch.y - 30, collected: false, branch });
+  // Mostly flip sides from the last branch so the player has to keep
+  // switching, but occasionally repeat one so it doesn't become a pure
+  // metronome of alternating taps.
+  const lane = Math.random() < 0.78 ? 1 - lastLane : lastLane;
+  lastLane = lane;
+  branches.push({ y, lane, resolved: false });
+  // An acorn sits on the same lane as the branch it precedes, well above
+  // it - so grabbing it means ducking into the lane that's about to become
+  // dangerous, then having to switch back out before the branch itself
+  // arrives. That's the whole "tempting but risky" hook.
+  if (branches.length > 2 && Math.random() < 0.4) {
+    acorns.push({ x: laneX(lane), y: y - randRange(70, 100), lane, collected: false });
   }
 }
 
 function ensureBranchesAbove() {
   while (branches.length === 0 || branches[branches.length - 1].y > -60) {
-    const range = currentSpacingRange();
-    const lastY = branches.length ? branches[branches.length - 1].y : koala.y + 30;
-    spawnBranch(lastY - randRange(range.min, range.max));
+    const lastY = branches.length ? branches[branches.length - 1].y : -40;
+    spawnBranch(lastY - randRange(preset.gapMin, preset.gapMax));
   }
 }
 
 function initClouds() {
   clouds = [];
-  for (let i = 0; i < 5; i++) {
-    clouds.push({ x: Math.random() * W, y: Math.random() * H, r: 20 + Math.random() * 14 });
+  for (let i = 0; i < 4; i++) {
+    const side = Math.random() < 0.5 ? -1 : 1;
+    clouds.push({ x: W / 2 + side * randRange(70, 130), y: Math.random() * H, r: 16 + Math.random() * 12 });
   }
 }
 
 function reset() {
-  koala = { x: W / 2, targetX: W / 2, y: H - 100, vy: 0 };
+  koala = { lane: 0, x: laneX(0) };
   branches = [];
   acorns = [];
-  lastSide = Math.random() < 0.5 ? 1 : -1;
-  branches.push({ x: koala.x, y: koala.y + 34, w: preset.branchWidth + 20, hasAcorn: false, acornCollected: false });
+  lastLane = 0;
   heightScore = 0;
   bonus = 0;
+  scrollSpeed = DIFFICULTY_PRESETS[difficulty].speedStart;
+  climbPhase = 0;
   trunkScroll = 0;
   frame = 0;
   state = 'ready';
   initClouds();
-  ensureBranchesAbove();
   title.textContent = 'Koala Climb';
-  subtitle.textContent = 'Drag left/right to steer';
+  subtitle.textContent = 'Climbs on its own — tap a side to dodge branches';
   scoreLine.style.display = 'none';
   diffButtons.style.display = 'flex';
   backToArcade.style.display = 'none';
@@ -281,95 +270,90 @@ function startGame(diff) {
   difficulty = diff;
   preset = DIFFICULTY_PRESETS[diff];
   best = loadBest(difficulty);
-  koala = { x: W / 2, targetX: W / 2, y: H - 100, vy: BOUNCE_VELOCITY };
+  koala = { lane: 0, x: laneX(0) };
   branches = [];
   acorns = [];
-  lastSide = Math.random() < 0.5 ? 1 : -1;
-  branches.push({ x: koala.x, y: koala.y + 34, w: preset.branchWidth + 20, hasAcorn: false, acornCollected: false });
-  ensureBranchesAbove();
+  lastLane = 0;
   heightScore = 0;
   bonus = 0;
+  scrollSpeed = preset.speedStart;
+  climbPhase = 0;
   trunkScroll = 0;
   frame = 0;
+  ensureBranchesAbove();
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
 }
 
-function setTarget(clientX) {
-  const rect = canvas.getBoundingClientRect();
-  const x = (clientX - rect.left) * (canvas.width / rect.width);
-  koala.targetX = x;
-}
-canvas.addEventListener('pointerdown', (e) => { canvas.setPointerCapture(e.pointerId); setTarget(e.clientX); });
-canvas.addEventListener('pointermove', (e) => { if (e.pressure > 0 || e.buttons > 0) setTarget(e.clientX); });
-document.addEventListener('keydown', (e) => {
+function setLane(lane) {
   if (state !== 'playing') return;
-  if (e.code === 'ArrowLeft') koala.targetX = clamp(koala.targetX - 40, -KOALA_R, W + KOALA_R);
-  if (e.code === 'ArrowRight') koala.targetX = clamp(koala.targetX + 40, -KOALA_R, W + KOALA_R);
+  koala.lane = lane;
+}
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  setLane(x < W / 2 ? 0 : 1);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'ArrowLeft') setLane(0);
+  if (e.code === 'ArrowRight') setLane(1);
 });
 
 function update() {
+  climbPhase += scrollSpeed * 0.15;
   if (state !== 'playing') return;
   frame++;
-  koala.vy += GRAVITY;
-  const prevY = koala.y;
-  koala.y += koala.vy;
-  koala.x += (koala.targetX - koala.x) * 0.4;
-  if (koala.x < -KOALA_R) { koala.x = W + KOALA_R; koala.targetX = koala.x; }
-  if (koala.x > W + KOALA_R) { koala.x = -KOALA_R; koala.targetX = koala.x; }
+  scrollSpeed = Math.min(preset.speedMax, scrollSpeed + preset.ramp);
+  koala.x += (laneX(koala.lane) - koala.x) * 0.22;
+  heightScore += scrollSpeed * HEIGHT_SCALE;
+  trunkScroll += scrollSpeed;
 
-  if (koala.vy > 0) {
-    for (const b of branches) {
-      const withinX = koala.x + KOALA_R * 0.85 > b.x - b.w / 2 && koala.x - KOALA_R * 0.85 < b.x + b.w / 2;
-      if (withinX && prevY + KOALA_R <= b.y && koala.y + KOALA_R >= b.y) {
-        koala.vy = BOUNCE_VELOCITY;
-        koala.y = b.y - KOALA_R;
-        playBounce();
-        break;
-      }
+  for (const b of branches) b.y += scrollSpeed;
+  for (const a of acorns) a.y += scrollSpeed;
+
+  for (const b of branches) {
+    if (b.resolved) continue;
+    if (Math.abs(b.y - KOALA_Y) < COLLIDE_WINDOW) {
+      b.resolved = true;
+      if (b.lane === koala.lane) { endGame(); return; }
+      playDodge();
     }
   }
 
   for (const a of acorns) {
     if (a.collected) continue;
-    const dx = koala.x - a.x, dy = koala.y - a.y;
-    if (dx * dx + dy * dy < (KOALA_R + 8) * (KOALA_R + 8)) {
+    if (a.lane === koala.lane && Math.abs(a.y - KOALA_Y) < COLLIDE_WINDOW) {
       a.collected = true;
       bonus += ACORN_BONUS;
       playAcorn();
     }
   }
 
-  if (koala.y < SCROLL_LINE) {
-    const shift = SCROLL_LINE - koala.y;
-    koala.y = SCROLL_LINE;
-    for (const b of branches) b.y += shift;
-    for (const a of acorns) a.y += shift;
-    heightScore += shift * HEIGHT_SCALE;
-    trunkScroll += shift;
-  }
-
+  // Drop anything that has scrolled past the bottom of the view - without
+  // this the branch list only ever grows, and every earlier branch keeps
+  // getting redrawn every frame even though it's long off-screen.
   branches = branches.filter(b => b.y < H + 40);
   acorns = acorns.filter(a => a.y < H + 40);
   ensureBranchesAbove();
 
   for (const c of clouds) {
-    c.y += 0.3;
-    if (c.y > H + 20) { c.y = -20; c.x = Math.random() * W; }
-  }
-
-  if (koala.y - KOALA_R > H) {
-    endGame();
+    c.y += scrollSpeed * 0.4;
+    if (c.y > H + 20) {
+      c.y = -20;
+      const side = Math.random() < 0.5 ? -1 : 1;
+      c.x = W / 2 + side * randRange(70, 130);
+    }
   }
 }
 
 function endGame() {
   state = 'over';
-  playFall();
+  playHit();
   const total = Math.round(heightScore + bonus);
   if (total > best) { best = total; saveBest(difficulty, best); }
-  title.textContent = 'Down you go!';
+  title.textContent = 'Branch strike!';
   subtitle.textContent = 'Choose a mode to climb again';
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Height: ' + total + ' m   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best + ' m';
@@ -383,46 +367,102 @@ easyBtn.addEventListener('click', () => startGame('easy'));
 hardBtn.addEventListener('click', () => startGame('hard'));
 
 function drawBg() {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#8fd3e8');
+  g.addColorStop(1, '#c9ecd8');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
   for (const c of clouds) {
     ctx.beginPath();
-    ctx.ellipse(c.x, c.y, c.r, c.r * 0.55, 0, 0, Math.PI * 2);
-    ctx.ellipse(c.x + c.r * 0.7, c.y + c.r * 0.15, c.r * 0.65, c.r * 0.4, 0, 0, Math.PI * 2);
+    ctx.ellipse(c.x, c.y, c.r, c.r * 0.6, 0, 0, Math.PI * 2);
+    ctx.ellipse(c.x + c.r * 0.7, c.y + c.r * 0.15, c.r * 0.6, c.r * 0.4, 0, 0, Math.PI * 2);
     ctx.fill();
   }
-  ctx.fillStyle = '#7a5230';
-  ctx.fillRect(W / 2 - 14, 0, 28, H);
-  ctx.fillStyle = 'rgba(0,0,0,0.15)';
-  ctx.fillRect(W / 2 - 14, 0, 6, H);
-  // Bark rings that scroll with the world - without this, the trunk (the
-  // single biggest thing on screen) shows zero motion of its own, and
-  // during the long stretches where the koala is camera-pinned near the
-  // scroll line, nothing on screen visibly moves except a few small
-  // branches. That reads as the game being frozen even when it isn't.
+
+  const tg = ctx.createLinearGradient(TRUNK_LEFT, 0, TRUNK_RIGHT, 0);
+  tg.addColorStop(0, '#5f3f22');
+  tg.addColorStop(0.5, '#7a5230');
+  tg.addColorStop(1, '#5f3f22');
+  ctx.fillStyle = tg;
+  ctx.fillRect(TRUNK_LEFT, 0, TRUNK_W, H);
+
+  // Bark rings scroll with distance climbed so the trunk - the single
+  // biggest thing on screen - always visibly moves, even during long
+  // stretches with no branch nearby.
   ctx.strokeStyle = 'rgba(0,0,0,0.22)';
   ctx.lineWidth = 3;
   const barkSpacing = 46;
   const offset = trunkScroll % barkSpacing;
   for (let y = -barkSpacing + offset; y < H; y += barkSpacing) {
     ctx.beginPath();
-    ctx.moveTo(W / 2 - 14, y);
-    ctx.quadraticCurveTo(W / 2, y + 8, W / 2 + 14, y);
+    ctx.moveTo(TRUNK_LEFT, y);
+    ctx.quadraticCurveTo(W / 2, y + 10, TRUNK_RIGHT, y);
     ctx.stroke();
   }
+
+  // Faint lane guides so it's clear the koala can sit on either side of the trunk.
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 0);
+  ctx.lineTo(W / 2, H);
+  ctx.stroke();
 }
 
 function drawBranches() {
   for (const b of branches) {
-    const side = b.x > W / 2 ? 1 : -1;
+    const onLeft = b.lane === 0;
+    const dir = onLeft ? -1 : 1;
+    const edgeX = onLeft ? TRUNK_LEFT : TRUNK_RIGHT;
+    const baseX = edgeX - dir * 16;
+    const len = 78, baseR = 19, tipR = 8;
+    const tilt = dir * 0.16;
+    const tipX = baseX + dir * len * Math.cos(tilt);
+    const tipY = b.y + dir * len * Math.sin(tilt);
+
+    // A tapered trapezoid (thick at the trunk, thin at the tip) reads as a
+    // real branch at trunk scale, unlike a thin uniform-width stick.
+    ctx.save();
+    ctx.translate(baseX, b.y);
+    ctx.rotate(tilt);
     ctx.fillStyle = '#5a3d22';
     ctx.beginPath();
-    ctx.ellipse(b.x, b.y, b.w / 2, 8, -side * 0.12, 0, Math.PI * 2);
+    ctx.moveTo(0, -baseR);
+    ctx.lineTo(dir * len, -tipR);
+    ctx.lineTo(dir * len, tipR);
+    ctx.lineTo(0, baseR);
+    ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = '#4a8a4f';
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.ellipse(b.x + side * (b.w / 2 - 6), b.y - 9, 18, 13, 0, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(dir * len, 0);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i <= 2; i++) {
+      const px = dir * len * (i / 3);
+      ctx.beginPath();
+      ctx.moveTo(px, -baseR * 0.5);
+      ctx.lineTo(px + dir * 4, baseR * 0.5);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    const leafSpecs = [[-9, -5, 16, 12, '#3f7a45'], [8, -9, 15, 11, '#4a8a4f'], [-2, 7, 17, 12, '#5aa15c']];
+    for (const [dx, dy, rx, ry, color] of leafSpecs) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(tipX + dx, tipY + dy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
+}
+
+function drawAcorns() {
   for (const a of acorns) {
     if (a.collected) continue;
     ctx.fillStyle = '#8a5a2f';
@@ -437,35 +477,80 @@ function drawBranches() {
 }
 
 function drawKoala() {
-  ctx.save();
-  ctx.translate(koala.x, koala.y);
-  const squash = clamp(1 - koala.vy / 40, 0.85, 1.15);
-  ctx.scale(1 / squash, squash);
+  const x = koala.x, y = KOALA_Y;
+  const phase = climbPhase;
+  const bob = Math.sin(phase * 2) * 1.5;
 
+  // Diagonal climbing gait: the near arm and far leg swing together, and
+  // the far arm and near leg together, like a real climb rather than both
+  // sides bobbing in sync.
+  const nearArm = Math.sin(phase) * 9;
+  const farArm = Math.sin(phase + Math.PI) * 7;
+  const nearLeg = Math.sin(phase + Math.PI) * 8;
+  const farLeg = Math.sin(phase) * 6;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  // Canonical art assumes the trunk is on the +x side; mirror for the lane
+  // where the trunk is actually on the -x side, so the koala always grips
+  // toward the bark instead of toward open air.
+  if (koala.lane === 1) ctx.scale(-1, 1);
+
+  ctx.lineCap = 'round';
+  // Far limbs (partly behind the body, muted) drawn first for depth.
+  ctx.strokeStyle = '#7d6355';
+  ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(2, -14); ctx.lineTo(22, -14 + farArm); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 14); ctx.lineTo(20, 20 + farLeg); ctx.stroke();
+  ctx.fillStyle = '#3f2f26';
+  ctx.beginPath(); ctx.ellipse(22, -14 + farArm, 5, 5, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(20, 20 + farLeg, 5, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Body, leaning toward the trunk (+x), with a lighter chest visible on
+  // the side turned toward the viewer (-x).
   ctx.fillStyle = '#9aa3a8';
   ctx.beginPath();
-  ctx.ellipse(0, 0, 17, 16, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(-14, -12, 7, 7, 0, 0, Math.PI * 2);
-  ctx.ellipse(14, -12, 7, 7, 0, 0, Math.PI * 2);
+  ctx.ellipse(5, 2, 15, 21, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#eceff0';
   ctx.beginPath();
-  ctx.ellipse(-14, -12, 4, 4, 0, 0, Math.PI * 2);
-  ctx.ellipse(14, -12, 4, 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(-4, 6, 9, 13, -0.05, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Near limbs (in front of the body), reaching further toward the trunk.
+  ctx.strokeStyle = '#8f7364';
+  ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.moveTo(6, -6); ctx.lineTo(27, -6 + nearArm); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(4, 20); ctx.lineTo(25, 27 + nearLeg); ctx.stroke();
+  ctx.fillStyle = '#241608';
+  ctx.beginPath(); ctx.ellipse(27, -6 + nearArm, 6, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(25, 27 + nearLeg, 6, 6, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Head, turned to face the viewer even though the body clings sideways.
+  ctx.fillStyle = '#9aa3a8';
+  ctx.beginPath();
+  ctx.ellipse(-2, -24, 15, 15, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(-14, -35, 8, 8, 0, 0, Math.PI * 2);
+  ctx.ellipse(9, -36, 8, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e7cfc9';
+  ctx.beginPath();
+  ctx.ellipse(-14, -35, 4, 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(9, -36, 4, 4, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#eceff0';
   ctx.beginPath();
-  ctx.ellipse(0, 4, 12, 10, 0, 0, Math.PI * 2);
+  ctx.ellipse(-2, -18, 12, 10, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#241608';
   ctx.beginPath();
-  ctx.arc(-6, 0, 2, 0, Math.PI * 2);
-  ctx.arc(6, 0, 2, 0, Math.PI * 2);
+  ctx.arc(-8, -26, 2.2, 0, Math.PI * 2);
+  ctx.arc(4, -26, 2.2, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(0, 7, 4, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(-2, -15, 6, 5, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
@@ -490,6 +575,7 @@ function loop() {
   update();
   drawBg();
   drawBranches();
+  drawAcorns();
   drawKoala();
   drawHud();
   requestAnimationFrame(loop);
