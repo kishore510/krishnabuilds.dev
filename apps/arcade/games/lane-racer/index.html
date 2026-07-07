@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lane Racer</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1a2a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: linear-gradient(#3f7a3f, #2c5a2c);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
+    background: #ffb703;
+    border-color: #ffb703;
+    color: #04121c;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Lane Racer</h1>
+    <p id="subtitle">Tap left/right to change lanes, hold bottom to brake</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <div id="diffButtons">
+      <button id="easyBtn" type="button">Easy</button>
+      <button id="hardBtn" type="button">Hard</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+const ROAD_LEFT = 50, ROAD_RIGHT = 310;
+const LANE_COUNT = 3;
+const LANE_WIDTH = (ROAD_RIGHT - ROAD_LEFT) / LANE_COUNT;
+function laneX(i) { return ROAD_LEFT + LANE_WIDTH * (i + 0.5); }
+const CAR_Y = 440;
+const CAR_HALF_W = 13, CAR_HALF_H = 21;
+const COLLIDE_WINDOW = 20;
+const BRAKE_BAR_H = 54;
+const BRAKE_ZONE_Y = H - BRAKE_BAR_H;
+const DISTANCE_SCALE = 0.1;
+const LANE_CHANGE_SPEED = 520; // px/s, constant-speed lane change (frame-rate independent)
+const MAX_TILT = 0.22;
+const TILT_RATE = 14;
+const SAFE_OIL_FACTOR = 0.55; // brake below this fraction of speedMax to pass oil safely
+const SKID_DURATION = 0.8;    // seconds of locked steering after an unsafe oil hit
+const CRASH_INVULN = 1.2;
+const CRASH_SPEED_PENALTY = 0.7;
+const SHAKE_DURATION = 0.35;
+const SHAKE_MAX = 6;
+const FLASH_DURATION = 0.18;
+const BOOSTER_POINTS = 10;
+const TIME_BONUS_PER_SEC = 5;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// --- Row gaps are a pixel distance in road-space, not a time interval, so
+// as speed ramps up the player naturally gets less reaction time without
+// the spacing itself becoming unfair (same pattern as the other scrollers).
+// Fuel drain/boost numbers are tuned so a competent Easy run needs 1-2
+// pickups over the race, never a trivial full tank nor an impossible one. ---
+const DIFFICULTY_PRESETS = {
+  easy: {
+    accel: 55, brakeDecel: 220, speedMax: 260, minSpeed: 110, npcSpeed: 90,
+    fuelDrainBase: 1.3, fuelDrainSpeedMult: 2.6, fuelDrainBrakeExtra: 1.4, fuelBoostAmount: 22,
+    gapMin: 190, gapMax: 300, oilPairChance: 0.35,
+    fuelGapMin: 1500, fuelGapMax: 2000,
+    trafficWeight: 0.28, oilWeight: 0.16,
+    raceDistance: 950, timeLimit: 45
+  },
+  hard: {
+    accel: 70, brakeDecel: 260, speedMax: 340, minSpeed: 140, npcSpeed: 100,
+    fuelDrainBase: 1.4, fuelDrainSpeedMult: 2.7, fuelDrainBrakeExtra: 1.6, fuelBoostAmount: 22,
+    gapMin: 150, gapMax: 250, oilPairChance: 0.5,
+    fuelGapMin: 2100, fuelGapMax: 2900,
+    trafficWeight: 0.36, oilWeight: 0.20,
+    raceDistance: 1250, timeLimit: 44
+  }
+};
+const TRAFFIC_COLORS = ['#4a7fd6', '#e6b800', '#8a5fd6', '#3fb37f'];
+
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let player, roadItems, popups, roadside, speedLines;
+let nextSpawnY, nextFuelY, nextRoadsideY;
+let lives, fuel, distanceM, timeLeft, boostersCollected, best, state;
+let speed, braking, wasBraking, skidTimer, invulnTimer, shakeTimer, flashTimer;
+let elapsedTime;
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('laneRacerMuted') === '1';
+let engineNodes = null;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playScreech() { tone(200, 0.12, 'sawtooth', 0.08); }
+function playSkid() { tone(150, 0.3, 'sawtooth', 0.12); tone(90, 0.35, 'sawtooth', 0.08, 0.05); }
+function playCrash() { tone(120, 0.4, 'sawtooth', 0.18); tone(70, 0.45, 'square', 0.12, 0.05); }
+function playFuel() { tone(880, 0.09, 'triangle', 0.12); tone(1180, 0.1, 'triangle', 0.09, 0.05); }
+function playWin() { tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09); tone(1100, 0.18, 'triangle', 0.11, 0.19); }
+function playLose() { tone(180, 0.4, 'sawtooth', 0.15); }
+
+function startEngine() {
+  if (muted || engineNodes) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.value = 60;
+  gain.gain.value = 0.03;
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start();
+  engineNodes = { osc, gain };
+}
+function stopEngine() {
+  if (engineNodes) {
+    engineNodes.gain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.15);
+    const nodes = engineNodes;
+    setTimeout(() => nodes.osc.stop(), 300);
+    engineNodes = null;
+  }
+}
+function updateEngineHum() {
+  if (!engineNodes) return;
+  const t = speed / preset.speedMax;
+  engineNodes.osc.frequency.setTargetAtTime(60 + t * 150, audioCtx.currentTime, 0.08);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('laneRacerMuted', muted ? '1' : '0');
+  updateMuteBtn();
+  if (muted) stopEngine(); else if (state === 'playing') startEngine();
+});
+
+function loadBest(diff) { return parseInt(sessionStorage.getItem('laneRacerBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('laneRacerBest_' + diff, v); } catch (e) {} }
+
+function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+function randLane() { return Math.floor(Math.random() * LANE_COUNT); }
+function moveTowards(cur, target, maxDelta) {
+  if (cur < target) return Math.min(target, cur + maxDelta);
+  return Math.max(target, cur - maxDelta);
+}
+function formatTime(s) {
+  const secs = Math.max(0, Math.ceil(s));
+  return Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+}
+
+function spawnTraffic(y, lane) {
+  roadItems.push({
+    y, lane, kind: 'traffic', done: false,
+    npcSpeed: preset.npcSpeed, color: TRAFFIC_COLORS[Math.floor(Math.random() * TRAFFIC_COLORS.length)],
+    bobPhase: Math.random() * Math.PI * 2
+  });
+}
+
+// Fuel is spawned on its own periodic cadence (below), not this weighted
+// row lottery - a per-row coin-flip made total fuel available over a race
+// wildly variable (0 to 10+ pickups by pure chance), so whether you ran dry
+// depended on luck more than driving. A fixed cadence makes the fuel supply
+// for a given race distance predictable, so the tension is about how you
+// drive, not how the dice landed.
+function spawnRow(y) {
+  const r = Math.random();
+  const wTraffic = preset.trafficWeight, wOil = wTraffic + preset.oilWeight;
+  let kind;
+  if (r < wTraffic) kind = 'traffic';
+  else if (r < wOil) kind = 'oil';
+  else kind = null;
+  if (!kind) return;
+  const lane = randLane();
+  if (kind === 'traffic') {
+    spawnTraffic(y, lane);
+  } else {
+    roadItems.push({ y, lane, kind, done: false, resolved: false });
+    // Sometimes pair the oil with a car in another lane, so swerving away
+    // isn't always free and braking becomes the better call. A lane is
+    // always left fully clear, so there's still always a safe option -
+    // it just might have to be "brake in place" instead of a lane change.
+    if (Math.random() < preset.oilPairChance) {
+      const otherLane = (lane + 1 + Math.floor(Math.random() * 2)) % LANE_COUNT;
+      spawnTraffic(y + randRange(-14, 14), otherLane);
+    }
+  }
+}
+
+function ensureItemsAbove() {
+  while (nextSpawnY > -60) {
+    spawnRow(nextSpawnY);
+    nextSpawnY -= randRange(preset.gapMin, preset.gapMax);
+  }
+  while (nextFuelY > -60) {
+    roadItems.push({ y: nextFuelY, lane: randLane(), kind: 'fuel', done: false, resolved: false });
+    nextFuelY -= randRange(preset.fuelGapMin, preset.fuelGapMax);
+  }
+}
+
+function initRoadside() {
+  roadside = [];
+  nextRoadsideY = -40;
+  while (nextRoadsideY < H + 60) {
+    roadside.push({ y: nextRoadsideY, side: -1, h: 20 + Math.random() * 16 });
+    roadside.push({ y: nextRoadsideY + 40 + Math.random() * 30, side: 1, h: 20 + Math.random() * 16 });
+    nextRoadsideY += 70 + Math.random() * 50;
+  }
+}
+
+function initSpeedLines() {
+  speedLines = [];
+  for (let i = 0; i < 10; i++) {
+    speedLines.push({ x: randRange(ROAD_LEFT + 10, ROAD_RIGHT - 10), y: Math.random() * H, len: 20 + Math.random() * 30 });
+  }
+}
+
+function addPopup(text, x, y, color) {
+  popups.push({ text, x, y, life: 40, color });
+}
+
+function resetRunState() {
+  player = { lane: 1, x: laneX(1), tilt: 0 };
+  roadItems = [];
+  popups = [];
+  nextSpawnY = -80;
+  nextFuelY = -160;
+  lives = 3;
+  fuel = 100;
+  distanceM = 0;
+  boostersCollected = 0;
+  speed = preset.minSpeed;
+  braking = false;
+  wasBraking = false;
+  skidTimer = 0;
+  invulnTimer = 0;
+  shakeTimer = 0;
+  flashTimer = 0;
+  elapsedTime = 0;
+  timeLeft = preset.timeLimit;
+  initRoadside();
+  initSpeedLines();
+}
+
+function reset() {
+  preset = DIFFICULTY_PRESETS[difficulty];
+  resetRunState();
+  state = 'ready';
+  title.textContent = 'Lane Racer';
+  subtitle.textContent = 'Tap left/right to change lanes, hold bottom to brake';
+  scoreLine.style.display = 'none';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
+  best = loadBest(difficulty);
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  best = loadBest(difficulty);
+  resetRunState();
+  ensureItemsAbove();
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+  startEngine();
+}
+
+function setLane(lane) {
+  if (state !== 'playing' || skidTimer > 0) return;
+  player.lane = clampNum(lane, 0, LANE_COUNT - 1);
+}
+
+let activeBrakePointerId = null;
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  if (y >= BRAKE_ZONE_Y) {
+    braking = true;
+    activeBrakePointerId = e.pointerId;
+    canvas.setPointerCapture(e.pointerId);
+  } else {
+    setLane(player.lane + (x < W / 2 ? -1 : 1));
+  }
+});
+function releaseBrake(e) {
+  if (e.pointerId === activeBrakePointerId) {
+    braking = false;
+    activeBrakePointerId = null;
+  }
+}
+canvas.addEventListener('pointerup', releaseBrake);
+canvas.addEventListener('pointercancel', releaseBrake);
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'ArrowLeft') { e.preventDefault(); setLane(player.lane - 1); }
+  if (e.code === 'ArrowRight') { e.preventDefault(); setLane(player.lane + 1); }
+  if (e.code === 'ArrowDown' || e.code === 'Space') { e.preventDefault(); braking = true; }
+});
+document.addEventListener('keyup', (e) => {
+  if (e.code === 'ArrowDown' || e.code === 'Space') braking = false;
+});
+
+function endGame(reason) {
+  state = 'over';
+  stopEngine();
+  const won = reason === 'win';
+  if (won) playWin(); else playLose();
+  const timeBonus = won ? Math.round(timeLeft) * TIME_BONUS_PER_SEC : 0;
+  const score = Math.round(distanceM) + boostersCollected * BOOSTER_POINTS + timeBonus;
+  if (score > best) { best = score; saveBest(difficulty, best); }
+  if (won) {
+    title.textContent = 'Finish line!';
+    subtitle.textContent = 'Choose a mode to race again';
+  } else {
+    const why = reason === 'fuel' ? 'Out of fuel!' : reason === 'lives' ? 'Wrecked!' : "Time's up!";
+    title.textContent = why;
+    subtitle.textContent = 'Choose a mode to try again';
+  }
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score + '   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best;
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
+
+function update(dt) {
+  if (state !== 'playing') return;
+  elapsedTime += dt;
+
+  if (braking) {
+    if (!wasBraking) playScreech();
+    speed -= preset.brakeDecel * dt;
+  } else {
+    speed += preset.accel * dt;
+  }
+  wasBraking = braking;
+  speed = clampNum(speed, preset.minSpeed, preset.speedMax);
+  updateEngineHum();
+
+  const targetX = laneX(player.lane);
+  const prevX = player.x;
+  player.x = moveTowards(player.x, targetX, LANE_CHANGE_SPEED * dt);
+  const vx = dt > 0 ? (player.x - prevX) / dt : 0;
+  const targetTilt = clampNum(vx / LANE_CHANGE_SPEED * MAX_TILT, -MAX_TILT, MAX_TILT);
+  player.tilt += (targetTilt - player.tilt) * (1 - Math.exp(-TILT_RATE * dt));
+
+  skidTimer = Math.max(0, skidTimer - dt);
+  invulnTimer = Math.max(0, invulnTimer - dt);
+  shakeTimer = Math.max(0, shakeTimer - dt);
+  flashTimer = Math.max(0, flashTimer - dt);
+
+  distanceM += speed * dt * DISTANCE_SCALE;
+  timeLeft -= dt;
+
+  const speedT = speed / preset.speedMax;
+  const drain = preset.fuelDrainBase + preset.fuelDrainSpeedMult * speedT + (braking ? preset.fuelDrainBrakeExtra : 0);
+  fuel -= drain * dt;
+
+  for (const it of roadItems) {
+    it.y += (it.kind === 'traffic' ? (speed - it.npcSpeed) : speed) * dt;
+  }
+  nextSpawnY += speed * dt;
+  nextFuelY += speed * dt;
+  roadItems = roadItems.filter(it => it.y < H + 40 && !it.done);
+  ensureItemsAbove();
+
+  for (const it of roadItems) {
+    if (it.done || Math.abs(it.y - CAR_Y) >= COLLIDE_WINDOW || it.lane !== player.lane) continue;
+    if (it.kind === 'fuel') {
+      it.done = true;
+      fuel = Math.min(100, fuel + preset.fuelBoostAmount);
+      boostersCollected++;
+      playFuel();
+      addPopup('+Fuel', laneX(it.lane), CAR_Y - 40, '#ffd76a');
+    } else if (it.kind === 'oil') {
+      if (!it.resolved) {
+        it.resolved = true;
+        if (speed > preset.speedMax * SAFE_OIL_FACTOR) {
+          skidTimer = SKID_DURATION;
+          playSkid();
+          addPopup('Skid!', laneX(it.lane), CAR_Y - 40, '#ff6b6b');
+        } else {
+          addPopup('Nice brake!', laneX(it.lane), CAR_Y - 40, '#8fe388');
+        }
+      }
+    } else if (it.kind === 'traffic') {
+      if (invulnTimer <= 0) {
+        it.done = true;
+        lives--;
+        invulnTimer = CRASH_INVULN;
+        shakeTimer = SHAKE_DURATION;
+        flashTimer = FLASH_DURATION;
+        speed = Math.max(preset.minSpeed, speed * CRASH_SPEED_PENALTY);
+        playCrash();
+        addPopup('Crash!', laneX(it.lane), CAR_Y - 40, '#ff4d4d');
+      }
+    }
+  }
+
+  for (const r of roadside) r.y += speed * dt;
+  roadside = roadside.filter(r => r.y < H + 40);
+  nextRoadsideY += speed * dt;
+  while (nextRoadsideY > -60) {
+    roadside.push({ y: nextRoadsideY, side: -1, h: 20 + Math.random() * 16 });
+    roadside.push({ y: nextRoadsideY + 40 + Math.random() * 30, side: 1, h: 20 + Math.random() * 16 });
+    nextRoadsideY -= 70 + Math.random() * 50;
+  }
+
+  if (speed > preset.speedMax * 0.65) {
+    for (const s of speedLines) {
+      s.y += speed * 1.6 * dt;
+      if (s.y > H) { s.y = -20; s.x = randRange(ROAD_LEFT + 10, ROAD_RIGHT - 10); s.len = 20 + Math.random() * 30; }
+    }
+  }
+
+  popups = popups.filter(p => { p.life--; p.y -= 0.6; return p.life > 0; });
+
+  if (fuel <= 0) { fuel = 0; endGame('fuel'); return; }
+  if (lives <= 0) { endGame('lives'); return; }
+  if (timeLeft <= 0) { timeLeft = 0; endGame('time'); return; }
+  if (distanceM >= preset.raceDistance) { endGame('win'); return; }
+}
+
+// --- Colors deliberately give oil a bright hazard-striped ring (not just a
+// dark blob) - a dark puddle on dark asphalt is exactly the low-contrast
+// mistake that made Koala Climb's acorns invisible against bark. ---
+function drawBg() {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#3f7a3f');
+  g.addColorStop(1, '#2c5a2c');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  for (const r of roadside) {
+    ctx.beginPath();
+    const x = r.side < 0 ? ROAD_LEFT - 20 : ROAD_RIGHT + 20;
+    ctx.ellipse(x, r.y, 12, r.h, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = '#33383f';
+  ctx.fillRect(ROAD_LEFT, 0, ROAD_RIGHT - ROAD_LEFT, H);
+  ctx.fillStyle = '#e8d878';
+  ctx.fillRect(ROAD_LEFT - 4, 0, 4, H);
+  ctx.fillRect(ROAD_RIGHT, 0, 4, H);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([18, 18]);
+  ctx.lineDashOffset = -(elapsedTime * speed) % 36;
+  for (let i = 1; i < LANE_COUNT; i++) {
+    const x = ROAD_LEFT + LANE_WIDTH * i;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  if (speed > preset.speedMax * 0.65) {
+    const t = clampNum((speed / preset.speedMax - 0.65) / 0.35, 0, 1);
+    ctx.strokeStyle = 'rgba(255,255,255,' + (0.15 + t * 0.25).toFixed(2) + ')';
+    ctx.lineWidth = 2;
+    for (const s of speedLines) {
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x, s.y - s.len);
+      ctx.stroke();
+    }
+  }
+}
+
+function drawVehicle(x, y, halfW, halfH, bodyColor, tilt, bob) {
+  ctx.save();
+  ctx.translate(x, y + bob);
+  ctx.rotate(tilt);
+  ctx.fillStyle = '#161616';
+  ctx.fillRect(-halfW - 2, -halfH + 3, 4, 9);
+  ctx.fillRect(halfW - 2, -halfH + 3, 4, 9);
+  ctx.fillRect(-halfW - 2, halfH - 12, 4, 9);
+  ctx.fillRect(halfW - 2, halfH - 12, 4, 9);
+  ctx.fillStyle = bodyColor;
+  ctx.beginPath();
+  ctx.roundRect(-halfW, -halfH, halfW * 2, halfH * 2, 6);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(20,30,40,0.75)';
+  ctx.beginPath();
+  ctx.roundRect(-halfW + 4, -halfH + 6, halfW * 2 - 8, 10, 3);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawItems() {
+  for (const it of roadItems) {
+    const x = laneX(it.lane);
+    if (it.kind === 'traffic') {
+      const bob = Math.sin(elapsedTime * 10 + it.bobPhase) * 1.2;
+      drawVehicle(x, it.y, 12, 19, it.color, 0, bob);
+      ctx.fillStyle = 'rgba(255,60,60,0.55)';
+      ctx.fillRect(x - 8, it.y + 15, 5, 3);
+      ctx.fillRect(x + 3, it.y + 15, 5, 3);
+    } else if (it.kind === 'oil') {
+      ctx.fillStyle = '#141414';
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 20, 13, 0, 0, Math.PI * 2);
+      ctx.ellipse(x - 8, it.y + 4, 10, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+      const shine = 0.3 + 0.2 * Math.sin(elapsedTime * 3);
+      ctx.strokeStyle = 'rgba(150,200,255,' + shine.toFixed(2) + ')';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(x + 3, it.y - 3, 9, 4, 0.4, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = '#ffb703';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.ellipse(x, it.y, 23, 16, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else if (it.kind === 'fuel') {
+      const glow = 0.4 + 0.3 * Math.sin(elapsedTime * 4);
+      ctx.fillStyle = 'rgba(255,214,0,' + glow.toFixed(2) + ')';
+      ctx.beginPath();
+      ctx.arc(x, it.y, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f2c200';
+      ctx.strokeStyle = '#7a5a00';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(x - 9, it.y - 11, 18, 22, 3);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#7a5a00';
+      ctx.fillRect(x - 3, it.y - 16, 6, 6);
+      ctx.fillStyle = '#fff4c2';
+      ctx.font = 'bold 11px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('F', x, it.y + 4);
+    }
+  }
+}
+
+function drawPlayer() {
+  const blink = invulnTimer > 0 && Math.floor(elapsedTime * 10) % 2 === 0;
+  ctx.globalAlpha = blink ? 0.4 : 1;
+  const skidWobble = skidTimer > 0 ? Math.sin(elapsedTime * 40) * 0.12 : 0;
+  drawVehicle(player.x, CAR_Y, CAR_HALF_W, CAR_HALF_H, '#e63946', player.tilt + skidWobble, 0);
+  ctx.fillStyle = braking ? '#ff4d4d' : 'rgba(255,60,60,0.5)';
+  ctx.save();
+  ctx.translate(player.x, CAR_Y);
+  ctx.rotate(player.tilt + skidWobble);
+  ctx.fillRect(-9, 16, 5, 3);
+  ctx.fillRect(4, 16, 5, 3);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+function drawBrakeBar() {
+  ctx.fillStyle = braking ? 'rgba(220,60,60,0.55)' : 'rgba(120,30,30,0.28)';
+  ctx.fillRect(0, BRAKE_ZONE_Y, W, BRAKE_BAR_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('HOLD TO BRAKE', W / 2, BRAKE_ZONE_Y + BRAKE_BAR_H / 2 + 4);
+}
+
+function drawPopups() {
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  for (const p of popups) {
+    ctx.globalAlpha = clampNum(p.life / 40, 0, 1);
+    ctx.fillStyle = p.color;
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.strokeText(p.text, p.x, p.y);
+    ctx.fillText(p.text, p.x, p.y);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawFlash() {
+  if (flashTimer <= 0) return;
+  const a = (flashTimer / FLASH_DURATION) * 0.4;
+  ctx.fillStyle = 'rgba(255,40,40,' + a.toFixed(2) + ')';
+  ctx.fillRect(0, 0, W, H);
+}
+
+function drawProgress() {
+  const barH = 5;
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(0, 0, W, barH);
+  const t = clampNum(distanceM / preset.raceDistance, 0, 1);
+  ctx.fillStyle = '#ffb703';
+  ctx.fillRect(0, 0, W * t, barH);
+}
+
+function drawHud() {
+  ctx.font = 'bold 18px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const distText = Math.round(distanceM) + ' / ' + preset.raceDistance + ' m';
+  ctx.strokeText(distText, 12, 26);
+  ctx.fillText(distText, 12, 26);
+
+  ctx.font = 'bold 14px Arial';
+  ctx.textAlign = 'center';
+  const timeText = formatTime(timeLeft);
+  ctx.strokeText(timeText, W / 2, 26);
+  ctx.fillText(timeText, W / 2, 26);
+
+  ctx.font = 'bold 12px Arial';
+  ctx.textAlign = 'right';
+  const bestText = 'Best: ' + best;
+  ctx.strokeText(bestText, W - 12, 24);
+  ctx.fillText(bestText, W - 12, 24);
+
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = i < lives ? '#e63946' : 'rgba(255,255,255,0.25)';
+    ctx.beginPath();
+    ctx.roundRect(12 + i * 20, 34, 14, 9, 3);
+    ctx.fill();
+  }
+
+  const barX = W / 2 - 70, barY = 34, barW = 140, barH = 10;
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(barX, barY, barW, barH);
+  const fuelT = fuel / 100;
+  const fuelColor = fuelT > 0.5 ? '#4caf50' : fuelT > 0.22 ? '#e6b800' : '#e63946';
+  ctx.fillStyle = fuelColor;
+  ctx.fillRect(barX, barY, barW * clampNum(fuelT, 0, 1), barH);
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(barX, barY, barW, barH);
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+
+  update(dt);
+
+  ctx.save();
+  const shakeMag = shakeTimer > 0 ? (shakeTimer / SHAKE_DURATION) * SHAKE_MAX : 0;
+  if (shakeMag > 0) ctx.translate((Math.random() * 2 - 1) * shakeMag, (Math.random() * 2 - 1) * shakeMag);
+  drawBg();
+  drawItems();
+  drawPlayer();
+  ctx.restore();
+
+  drawFlash();
+  if (state === 'playing') drawBrakeBar();
+  drawPopups();
+  drawProgress();
+  drawHud();
+
+  requestAnimationFrame(loop);
+}
+
+reset();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
