@@ -39,6 +39,8 @@ games/jungle-runner/index.html — Jungle Runner (canvas, single-tap grounded-ju
 games/koala-climb/index.html  — Koala Climb (canvas, drag-steered vertical bounce climber)
 games/brick-breaker/index.html — Brick Breaker (canvas, drag-steered paddle, classic 3-lives breakout)
 games/safari-rescue/index.html — Safari Rescue (canvas, discrete lane-switch dodge-and-collect vs. a timer)
+games/lane-racer/index.html   — Lane Racer (canvas, lane-changing traffic/potholes/roadblocks dodge with fuel management)
+games/globe-quiz/index.html   — Globe Quiz (DOM, timed multiple-choice trivia: capitals/flags, no Easy/Hard — see note below)
 games/<slug>/index.html       — next game goes here
 ```
 
@@ -98,7 +100,14 @@ stale cached copy.
 
 ## Difficulty design pattern used across all games
 
-Every game exposes Easy/Hard, and in every one "harder" means retuning
+Every *reflex/arcade* game exposes Easy/Hard. Globe Quiz is the deliberate
+exception — it's untimed-per-round trivia (15 questions, fixed 10s per
+question) rather than a ramping reaction test, so there's no speed/spawn
+axis to make "harder." If it ever needs difficulty tiers, prefer varying
+the question pool (obscure vs. well-known countries) or the per-question
+time limit over anything else, to stay consistent with the spirit below.
+
+In every reflex/arcade game, "harder" means retuning
 spawn/reaction parameters, never removing the safety margin that keeps
 the game fair:
 

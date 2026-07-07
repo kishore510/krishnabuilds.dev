@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Globe Quiz</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #0a0f1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  #card {
+    position: relative;
+    background: linear-gradient(160deg, #16213e, #0f3460 60%, #0a2342);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: calc(22px * var(--game-scale, 1));
+    box-sizing: border-box;
+    color: #eef2f5;
+  }
+
+  .screen { display: flex; flex-direction: column; height: 100%; }
+
+  h1 {
+    font-size: calc(26px * var(--game-scale, 1));
+    margin: 0 0 calc(4px * var(--game-scale, 1));
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: rgba(238,242,245,0.65);
+    font-size: calc(14px * var(--game-scale, 1));
+    margin: 0 0 calc(24px * var(--game-scale, 1));
+  }
+
+  .cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(14px * var(--game-scale, 1));
+    flex: 1;
+    justify-content: center;
+  }
+  .cat-btn {
+    font-family: inherit;
+    text-align: left;
+    background: rgba(255,255,255,0.06);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(34,184,160,0.4);
+    border-radius: calc(14px * var(--game-scale, 1));
+    color: #eef2f5;
+    padding: calc(16px * var(--game-scale, 1));
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: calc(14px * var(--game-scale, 1));
+  }
+  .cat-btn:active { background: rgba(34,184,160,0.22); border-color: #22b8a0; }
+  .cat-emoji { font-size: calc(32px * var(--game-scale, 1)); flex: none; }
+  .cat-text { flex: 1; min-width: 0; }
+  .cat-name { font-weight: 700; font-size: calc(17px * var(--game-scale, 1)); margin: 0 0 calc(3px * var(--game-scale, 1)); }
+  .cat-desc { font-size: calc(12.5px * var(--game-scale, 1)); color: rgba(238,242,245,0.6); margin: 0 0 calc(4px * var(--game-scale, 1)); }
+  .cat-best { font-size: calc(11.5px * var(--game-scale, 1)); color: #ffd166; font-weight: 700; margin: 0; }
+
+  /* --- Play screen --- */
+  .play-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: calc(13.5px * var(--game-scale, 1));
+    font-weight: 700;
+    margin-bottom: calc(10px * var(--game-scale, 1));
+  }
+  #muteBtn {
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(3px * var(--game-scale, 1)) calc(9px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    cursor: pointer;
+  }
+  .timer-outer {
+    height: calc(8px * var(--game-scale, 1));
+    border-radius: 999px;
+    background: rgba(255,255,255,0.12);
+    overflow: hidden;
+    margin-bottom: calc(20px * var(--game-scale, 1));
+  }
+  .timer-inner {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #22b8a0, #ffd166);
+    transform-origin: left;
+  }
+  .timer-inner.urgent { background: linear-gradient(90deg, #e63946, #ff8fa3); }
+
+  .question-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: calc(18px * var(--game-scale, 1));
+  }
+  .question-text {
+    font-size: calc(19px * var(--game-scale, 1));
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .flag-display {
+    font-size: calc(72px * var(--game-scale, 1));
+    line-height: 1;
+    margin-bottom: calc(14px * var(--game-scale, 1));
+  }
+
+  .answers { display: flex; flex-direction: column; gap: calc(10px * var(--game-scale, 1)); }
+  .answer-btn {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: 600;
+    padding: calc(13px * var(--game-scale, 1));
+    border-radius: calc(12px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.07);
+    color: #eef2f5;
+    cursor: pointer;
+    text-align: center;
+  }
+  .answer-btn:active { background: rgba(255,255,255,0.16); }
+  .answer-btn.correct { background: #22b8a0; border-color: #22b8a0; color: #04121c; }
+  .answer-btn.wrong { background: #e63946; border-color: #e63946; color: #fff; }
+  .answer-btn.disabled { pointer-events: none; opacity: 0.75; }
+  .answer-btn.disabled.correct, .answer-btn.disabled.wrong { opacity: 1; }
+
+  /* --- Results screen --- */
+  .results-screen { align-items: center; justify-content: center; text-align: center; }
+  .results-emoji { font-size: calc(46px * var(--game-scale, 1)); margin-bottom: calc(6px * var(--game-scale, 1)); }
+  .results-score { font-size: calc(24px * var(--game-scale, 1)); font-weight: 700; margin: 0 0 calc(4px * var(--game-scale, 1)); }
+  .results-msg { color: rgba(238,242,245,0.75); font-size: calc(14.5px * var(--game-scale, 1)); margin: 0 0 calc(4px * var(--game-scale, 1)); }
+  .results-best { color: #ffd166; font-size: calc(13px * var(--game-scale, 1)); font-weight: 700; margin: 0 0 calc(22px * var(--game-scale, 1)); }
+  .results-buttons { display: flex; flex-direction: column; gap: calc(10px * var(--game-scale, 1)); width: 100%; }
+  .results-buttons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(12px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+  }
+  .results-buttons button.primary { background: #ffb703; border-color: #ffb703; color: #04121c; }
+  .results-buttons button:active { filter: brightness(1.15); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="card">
+
+    <div class="screen" id="screenCategory">
+      <h1>🌍 Globe Quiz</h1>
+      <p class="subtitle">Pick a category — 15 questions, 10 seconds each</p>
+      <div class="cat-list">
+        <button class="cat-btn" type="button" data-category="capitals">
+          <span class="cat-emoji">🌐</span>
+          <span class="cat-text">
+            <p class="cat-name">Capitals</p>
+            <p class="cat-desc">Name the capital of each country</p>
+            <p class="cat-best" id="bestCapitals"></p>
+          </span>
+        </button>
+        <button class="cat-btn" type="button" data-category="flags">
+          <span class="cat-emoji">🚩</span>
+          <span class="cat-text">
+            <p class="cat-name">Flags</p>
+            <p class="cat-desc">Name the country from its flag</p>
+            <p class="cat-best" id="bestFlags"></p>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="screen" id="screenPlay" style="display:none;">
+      <div class="play-head">
+        <span id="qProgress">Q 1/15</span>
+        <button id="muteBtn" type="button">🔊</button>
+        <span id="qScore">Score: 0</span>
+      </div>
+      <div class="timer-outer"><div class="timer-inner" id="timerInner"></div></div>
+      <div class="question-box" id="questionBox">
+        <p class="question-text" id="questionText"></p>
+      </div>
+      <div class="answers" id="answers"></div>
+    </div>
+
+    <div class="screen results-screen" id="screenResults" style="display:none;">
+      <div class="results-emoji" id="resultsEmoji"></div>
+      <p class="results-score" id="resultsScore"></p>
+      <p class="results-msg" id="resultsMsg"></p>
+      <p class="results-best" id="resultsBest"></p>
+      <div class="results-buttons">
+        <button class="primary" id="playAgainBtn" type="button">Play Again</button>
+        <button id="changeCategoryBtn" type="button">Change Category</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const wrap = document.getElementById('wrap');
+const card = document.getElementById('card');
+const screenCategory = document.getElementById('screenCategory');
+const screenPlay = document.getElementById('screenPlay');
+const screenResults = document.getElementById('screenResults');
+const qProgress = document.getElementById('qProgress');
+const qScore = document.getElementById('qScore');
+const timerInner = document.getElementById('timerInner');
+const questionText = document.getElementById('questionText');
+const answersEl = document.getElementById('answers');
+const muteBtn = document.getElementById('muteBtn');
+const bestCapitals = document.getElementById('bestCapitals');
+const bestFlags = document.getElementById('bestFlags');
+const resultsEmoji = document.getElementById('resultsEmoji');
+const resultsScore = document.getElementById('resultsScore');
+const resultsMsg = document.getElementById('resultsMsg');
+const resultsBest = document.getElementById('resultsBest');
+const playAgainBtn = document.getElementById('playAgainBtn');
+const changeCategoryBtn = document.getElementById('changeCategoryBtn');
+
+const BASE_W = 360, BASE_H = 600;
+
+function fitCard() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / BASE_W, availH / BASE_H);
+  card.style.width = (BASE_W * scale) + 'px';
+  card.style.height = (BASE_H * scale) + 'px';
+  wrap.style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCard);
+window.addEventListener('kb-navbar-ready', fitCard);
+fitCard();
+
+// --- Data: country / capital / flag pool, shared by both categories ---
+const COUNTRIES = [
+  { country: 'France', capital: 'Paris', flag: '🇫🇷' },
+  { country: 'Japan', capital: 'Tokyo', flag: '🇯🇵' },
+  { country: 'Germany', capital: 'Berlin', flag: '🇩🇪' },
+  { country: 'Italy', capital: 'Rome', flag: '🇮🇹' },
+  { country: 'Spain', capital: 'Madrid', flag: '🇪🇸' },
+  { country: 'Canada', capital: 'Ottawa', flag: '🇨🇦' },
+  { country: 'Australia', capital: 'Canberra', flag: '🇦🇺' },
+  { country: 'Brazil', capital: 'Brasília', flag: '🇧🇷' },
+  { country: 'Egypt', capital: 'Cairo', flag: '🇪🇬' },
+  { country: 'India', capital: 'New Delhi', flag: '🇮🇳' },
+  { country: 'China', capital: 'Beijing', flag: '🇨🇳' },
+  { country: 'Russia', capital: 'Moscow', flag: '🇷🇺' },
+  { country: 'Mexico', capital: 'Mexico City', flag: '🇲🇽' },
+  { country: 'South Korea', capital: 'Seoul', flag: '🇰🇷' },
+  { country: 'United Kingdom', capital: 'London', flag: '🇬🇧' },
+  { country: 'United States', capital: 'Washington, D.C.', flag: '🇺🇸' },
+  { country: 'Argentina', capital: 'Buenos Aires', flag: '🇦🇷' },
+  { country: 'South Africa', capital: 'Pretoria', flag: '🇿🇦' },
+  { country: 'Turkey', capital: 'Ankara', flag: '🇹🇷' },
+  { country: 'Greece', capital: 'Athens', flag: '🇬🇷' },
+  { country: 'Norway', capital: 'Oslo', flag: '🇳🇴' },
+  { country: 'Sweden', capital: 'Stockholm', flag: '🇸🇪' },
+  { country: 'Netherlands', capital: 'Amsterdam', flag: '🇳🇱' },
+  { country: 'Switzerland', capital: 'Bern', flag: '🇨🇭' },
+  { country: 'Portugal', capital: 'Lisbon', flag: '🇵🇹' },
+  { country: 'Poland', capital: 'Warsaw', flag: '🇵🇱' },
+  { country: 'Thailand', capital: 'Bangkok', flag: '🇹🇭' },
+  { country: 'Vietnam', capital: 'Hanoi', flag: '🇻🇳' },
+  { country: 'Indonesia', capital: 'Jakarta', flag: '🇮🇩' },
+  { country: 'Kenya', capital: 'Nairobi', flag: '🇰🇪' },
+  { country: 'Nigeria', capital: 'Abuja', flag: '🇳🇬' },
+  { country: 'Peru', capital: 'Lima', flag: '🇵🇪' },
+  { country: 'Chile', capital: 'Santiago', flag: '🇨🇱' },
+  { country: 'New Zealand', capital: 'Wellington', flag: '🇳🇿' },
+  { country: 'Ireland', capital: 'Dublin', flag: '🇮🇪' },
+  { country: 'Austria', capital: 'Vienna', flag: '🇦🇹' },
+  { country: 'Finland', capital: 'Helsinki', flag: '🇫🇮' },
+  { country: 'Denmark', capital: 'Copenhagen', flag: '🇩🇰' },
+  { country: 'Iceland', capital: 'Reykjavik', flag: '🇮🇸' },
+  { country: 'Saudi Arabia', capital: 'Riyadh', flag: '🇸🇦' },
+  { country: 'Morocco', capital: 'Rabat', flag: '🇲🇦' },
+  { country: 'Colombia', capital: 'Bogotá', flag: '🇨🇴' },
+
+  { country: 'Ghana', capital: 'Accra', flag: '🇬🇭' },
+  { country: 'Ethiopia', capital: 'Addis Ababa', flag: '🇪🇹' },
+  { country: 'Tanzania', capital: 'Dodoma', flag: '🇹🇿' },
+  { country: 'Algeria', capital: 'Algiers', flag: '🇩🇿' },
+  { country: 'Tunisia', capital: 'Tunis', flag: '🇹🇳' },
+  { country: 'Senegal', capital: 'Dakar', flag: '🇸🇳' },
+  { country: 'Uganda', capital: 'Kampala', flag: '🇺🇬' },
+  { country: 'Zimbabwe', capital: 'Harare', flag: '🇿🇼' },
+  { country: 'Zambia', capital: 'Lusaka', flag: '🇿🇲' },
+  { country: 'Botswana', capital: 'Gaborone', flag: '🇧🇼' },
+  { country: 'Namibia', capital: 'Windhoek', flag: '🇳🇦' },
+  { country: 'Rwanda', capital: 'Kigali', flag: '🇷🇼' },
+  { country: 'Cameroon', capital: 'Yaoundé', flag: '🇨🇲' },
+  { country: 'Ivory Coast', capital: 'Yamoussoukro', flag: '🇨🇮' },
+  { country: 'Mali', capital: 'Bamako', flag: '🇲🇱' },
+  { country: 'Mozambique', capital: 'Maputo', flag: '🇲🇿' },
+  { country: 'Angola', capital: 'Luanda', flag: '🇦🇴' },
+  { country: 'Libya', capital: 'Tripoli', flag: '🇱🇾' },
+  { country: 'Sudan', capital: 'Khartoum', flag: '🇸🇩' },
+
+  { country: 'Malaysia', capital: 'Kuala Lumpur', flag: '🇲🇾' },
+  { country: 'Philippines', capital: 'Manila', flag: '🇵🇭' },
+  { country: 'Singapore', capital: 'Singapore', flag: '🇸🇬' },
+  { country: 'Pakistan', capital: 'Islamabad', flag: '🇵🇰' },
+  { country: 'Bangladesh', capital: 'Dhaka', flag: '🇧🇩' },
+  { country: 'Nepal', capital: 'Kathmandu', flag: '🇳🇵' },
+  { country: 'Myanmar', capital: 'Naypyidaw', flag: '🇲🇲' },
+  { country: 'Cambodia', capital: 'Phnom Penh', flag: '🇰🇭' },
+  { country: 'Laos', capital: 'Vientiane', flag: '🇱🇦' },
+  { country: 'Mongolia', capital: 'Ulaanbaatar', flag: '🇲🇳' },
+  { country: 'Jordan', capital: 'Amman', flag: '🇯🇴' },
+  { country: 'Lebanon', capital: 'Beirut', flag: '🇱🇧' },
+  { country: 'Iraq', capital: 'Baghdad', flag: '🇮🇶' },
+  { country: 'Iran', capital: 'Tehran', flag: '🇮🇷' },
+  { country: 'United Arab Emirates', capital: 'Abu Dhabi', flag: '🇦🇪' },
+  { country: 'Qatar', capital: 'Doha', flag: '🇶🇦' },
+  { country: 'Kuwait', capital: 'Kuwait City', flag: '🇰🇼' },
+  { country: 'Kazakhstan', capital: 'Astana', flag: '🇰🇿' },
+  { country: 'Uzbekistan', capital: 'Tashkent', flag: '🇺🇿' },
+  { country: 'Afghanistan', capital: 'Kabul', flag: '🇦🇫' },
+  { country: 'North Korea', capital: 'Pyongyang', flag: '🇰🇵' },
+
+  { country: 'Belgium', capital: 'Brussels', flag: '🇧🇪' },
+  { country: 'Czech Republic', capital: 'Prague', flag: '🇨🇿' },
+  { country: 'Hungary', capital: 'Budapest', flag: '🇭🇺' },
+  { country: 'Romania', capital: 'Bucharest', flag: '🇷🇴' },
+  { country: 'Ukraine', capital: 'Kyiv', flag: '🇺🇦' },
+  { country: 'Croatia', capital: 'Zagreb', flag: '🇭🇷' },
+  { country: 'Serbia', capital: 'Belgrade', flag: '🇷🇸' },
+  { country: 'Bulgaria', capital: 'Sofia', flag: '🇧🇬' },
+  { country: 'Slovakia', capital: 'Bratislava', flag: '🇸🇰' },
+  { country: 'Slovenia', capital: 'Ljubljana', flag: '🇸🇮' },
+  { country: 'Estonia', capital: 'Tallinn', flag: '🇪🇪' },
+  { country: 'Latvia', capital: 'Riga', flag: '🇱🇻' },
+  { country: 'Lithuania', capital: 'Vilnius', flag: '🇱🇹' },
+  { country: 'Luxembourg', capital: 'Luxembourg', flag: '🇱🇺' },
+  { country: 'Malta', capital: 'Valletta', flag: '🇲🇹' },
+  { country: 'Cyprus', capital: 'Nicosia', flag: '🇨🇾' },
+  { country: 'Belarus', capital: 'Minsk', flag: '🇧🇾' },
+
+  { country: 'Venezuela', capital: 'Caracas', flag: '🇻🇪' },
+  { country: 'Ecuador', capital: 'Quito', flag: '🇪🇨' },
+  { country: 'Bolivia', capital: 'Sucre', flag: '🇧🇴' },
+  { country: 'Paraguay', capital: 'Asunción', flag: '🇵🇾' },
+  { country: 'Uruguay', capital: 'Montevideo', flag: '🇺🇾' },
+  { country: 'Cuba', capital: 'Havana', flag: '🇨🇺' },
+  { country: 'Jamaica', capital: 'Kingston', flag: '🇯🇲' },
+  { country: 'Costa Rica', capital: 'San José', flag: '🇨🇷' },
+  { country: 'Panama', capital: 'Panama City', flag: '🇵🇦' },
+  { country: 'Guatemala', capital: 'Guatemala City', flag: '🇬🇹' },
+
+  { country: 'Fiji', capital: 'Suva', flag: '🇫🇯' },
+  { country: 'Papua New Guinea', capital: 'Port Moresby', flag: '🇵🇬' }
+];
+
+const QUESTIONS_PER_ROUND = 15;
+const TIME_PER_Q = 10000;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildQuestions(category) {
+  const pool = shuffle(COUNTRIES).slice(0, QUESTIONS_PER_ROUND);
+  return pool.map(entry => {
+    const distractorPool = COUNTRIES.filter(c => c.country !== entry.country);
+    const distractors = shuffle(distractorPool).slice(0, 2);
+    if (category === 'capitals') {
+      const options = shuffle([entry.capital, distractors[0].capital, distractors[1].capital]);
+      return {
+        prompt: 'What is the capital of ' + entry.country + '?',
+        flag: null,
+        options,
+        correct: entry.capital
+      };
+    }
+    const options = shuffle([entry.country, distractors[0].country, distractors[1].country]);
+    return {
+      prompt: 'Which country is this?',
+      flag: entry.flag,
+      options,
+      correct: entry.country
+    };
+  });
+}
+
+// --- Audio: generated on the fly, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('globeQuizMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playCorrect() { tone(880, 0.12, 'sine', 0.12); }
+function playWrong() { tone(180, 0.25, 'square', 0.1); }
+function playComplete() { tone(660, 0.3, 'sawtooth', 0.12); tone(880, 0.35, 'sawtooth', 0.1, 0.1); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('globeQuizMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest(cat) { return parseInt(sessionStorage.getItem('globeQuizBest_' + cat) || '0', 10); }
+function saveBest(cat, v) { try { sessionStorage.setItem('globeQuizBest_' + cat, v); } catch (e) {} }
+
+function refreshBestLabels() {
+  const bc = loadBest('capitals');
+  const bf = loadBest('flags');
+  bestCapitals.textContent = bc > 0 ? ('Best: ' + bc + '/' + QUESTIONS_PER_ROUND) : '';
+  bestFlags.textContent = bf > 0 ? ('Best: ' + bf + '/' + QUESTIONS_PER_ROUND) : '';
+}
+refreshBestLabels();
+
+function showScreen(el) {
+  [screenCategory, screenPlay, screenResults].forEach(s => s.style.display = 'none');
+  el.style.display = 'flex';
+}
+
+let category = null;
+let questions = [];
+let qIndex = 0;
+let score = 0;
+let questionTimeout = null;
+let answered = false;
+
+function startRound(cat) {
+  category = cat;
+  questions = buildQuestions(cat);
+  qIndex = 0;
+  score = 0;
+  showScreen(screenPlay);
+  ensureAudio();
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (qIndex >= questions.length) { finishRound(); return; }
+  answered = false;
+  const q = questions[qIndex];
+  qProgress.textContent = 'Q ' + (qIndex + 1) + '/' + questions.length;
+  qScore.textContent = 'Score: ' + score;
+
+  questionText.innerHTML = q.flag
+    ? '<div class="flag-display">' + q.flag + '</div>' + q.prompt
+    : q.prompt;
+
+  answersEl.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.type = 'button';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(opt, btn));
+    answersEl.appendChild(btn);
+  });
+
+  timerInner.style.transition = 'none';
+  timerInner.style.width = '100%';
+  timerInner.classList.remove('urgent');
+  // Force reflow so the transition below actually animates from 100%.
+  void timerInner.offsetWidth;
+  timerInner.style.transition = 'width ' + (TIME_PER_Q / 1000) + 's linear';
+  timerInner.style.width = '0%';
+
+  clearTimeout(questionTimeout);
+  questionTimeout = setTimeout(() => selectAnswer(null, null), TIME_PER_Q);
+  setTimeout(() => { if (!answered) timerInner.classList.add('urgent'); }, TIME_PER_Q - 3000);
+}
+
+function selectAnswer(chosen, btnEl) {
+  if (answered) return;
+  answered = true;
+  clearTimeout(questionTimeout);
+  timerInner.style.transition = 'none';
+  timerInner.style.width = '0%';
+
+  const q = questions[qIndex];
+  const correct = chosen === q.correct;
+  if (correct) { score++; playCorrect(); } else { playWrong(); }
+
+  Array.from(answersEl.children).forEach(btn => {
+    btn.classList.add('disabled');
+    if (btn.textContent === q.correct) btn.classList.add('correct');
+    else if (btn === btnEl) btn.classList.add('wrong');
+  });
+
+  setTimeout(() => { qIndex++; loadQuestion(); }, 900);
+}
+
+function finishRound() {
+  const best = loadBest(category);
+  if (score > best) saveBest(category, score);
+  playComplete();
+
+  const pct = score / questions.length;
+  let emoji, msg;
+  if (pct >= 0.9) { emoji = '🏆'; msg = 'Trivia master!'; }
+  else if (pct >= 0.65) { emoji = '👍'; msg = 'Solid run!'; }
+  else if (pct >= 0.4) { emoji = '🙂'; msg = 'Not bad — try again!'; }
+  else { emoji = '📚'; msg = 'Keep practicing!'; }
+
+  resultsEmoji.textContent = emoji;
+  resultsScore.textContent = 'Score: ' + score + ' / ' + questions.length;
+  resultsMsg.textContent = msg;
+  resultsBest.textContent = 'Best (' + (category === 'capitals' ? 'Capitals' : 'Flags') + '): ' + loadBest(category) + '/' + questions.length;
+  showScreen(screenResults);
+}
+
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => startRound(btn.dataset.category));
+});
+playAgainBtn.addEventListener('click', () => startRound(category));
+changeCategoryBtn.addEventListener('click', () => {
+  refreshBestLabels();
+  showScreen(screenCategory);
+});
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>

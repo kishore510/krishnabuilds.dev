@@ -121,6 +121,37 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 22px;
   }
+  @media (max-width: 480px) {
+    .cartridges.layout-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .cartridges.layout-grid .cartridge .label {
+      height: 64px;
+      font-size: 26px;
+    }
+    .cartridges.layout-grid .cartridge .info {
+      padding: 10px 12px 14px;
+    }
+    .cartridges.layout-grid .cartridge .name {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .cartridges.layout-grid .cartridge .tagline {
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .cartridges.layout-grid .cartridge .play-hint {
+      font-size: 10.5px;
+      padding: 5px 10px;
+      margin-top: 8px;
+      gap: 4px;
+    }
+    .cartridges.layout-grid .tag {
+      font-size: 9px;
+      padding: 2px 6px;
+    }
+  }
 
   .cartridge {
     display: flex;
@@ -406,6 +437,14 @@
       color: 'linear-gradient(135deg, #33383f, #e63946)',
       tags: ['lanes', 'racing', '40 sec'],
       path: 'games/lane-racer/index.html'
+    },
+    {
+      name: 'Globe Quiz',
+      tagline: 'Capitals or flags — 15 quick questions, 10 seconds each.',
+      emoji: '🌍',
+      color: 'linear-gradient(135deg, #16213e, #22b8a0)',
+      tags: ['trivia', 'quiz', '3 min'],
+      path: 'games/globe-quiz/index.html'
     }
     // Next game:
     // {
