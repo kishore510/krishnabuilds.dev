@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veg Merge</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #2b1e12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #4a3420;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(28px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: #7cb342;
+    border-color: #7cb342;
+    color: #12200a;
+    cursor: pointer;
+  }
+  #diffButtons button:active { filter: brightness(0.9); }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Veg Merge</h1>
+    <p id="subtitle">Swipe or arrow keys/WASD to slide. Match veg to grow bigger ones.</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <div id="diffButtons">
+      <button id="playBtn" type="button">Play</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const playBtn = document.getElementById('playBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+const SIZE = 4;
+const GAP = 8;
+const BOARD = 320;
+const TILE = (BOARD - GAP * (SIZE + 1)) / SIZE;
+const HUD_H = 60;
+const BOARD_LEFT = (W - BOARD) / 2;
+const BOARD_TOP = HUD_H + (H - HUD_H - BOARD) / 2;
+const ANIM_DURATION = 0.12;
+const SPAWN_DURATION = 0.16;
+const POP_DURATION = 0.2;
+const MAX_TIER = 11;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// --- 11 allotment-veg tiers standing in for 2048's numbers. Points awarded
+// on a merge follow the same doubling curve as classic 2048 (2^tier), just
+// re-skinned; tierName/tierColor drive the on-tile icon + label so the
+// board stays readable without relying on any particular emoji font. ---
+const TIERS = [
+  null, // index 0 unused, tiers are 1-based
+  { name: 'Seed',      base: '#8a6d3b', accent: '#5c4626' },
+  { name: 'Sprout',    base: '#7cb342', accent: '#4d7a24' },
+  { name: 'Radish',    base: '#e0607a', accent: '#c23b57' },
+  { name: 'Carrot',    base: '#ff8f3c', accent: '#d96c1f' },
+  { name: 'Chilli',    base: '#d1342f', accent: '#a3221e' },
+  { name: 'Tomato',    base: '#e6432f', accent: '#b8291a' },
+  { name: 'Aubergine', base: '#6a4a8a', accent: '#4a3164' },
+  { name: 'Marrow',    base: '#4a7a2e', accent: '#345c1d' },
+  { name: 'Pumpkin',   base: '#e8891a', accent: '#b4650e' },
+  { name: 'Big Pumpkin', base: '#f2a83a', accent: '#c9811e' },
+  { name: 'Golden!',   base: '#ffd54a', accent: '#e0a915' }
+];
+function tierPoints(tier) { return Math.pow(2, tier); }
+
+let board, tiles, ghosts, nextId;
+let score, best, state, animating, animT, wonShown;
+let toastText, toastTimer;
+
+function emptyBoard() {
+  const b = [];
+  for (let y = 0; y < SIZE; y++) b.push(new Array(SIZE).fill(null));
+  return b;
+}
+
+function makeTile(value, gx, gy, isSpawn) {
+  return {
+    id: nextId++, value, gx, gy, prevGx: gx, prevGy: gy,
+    pendingMergeValue: null, spawnT: isSpawn ? 0 : SPAWN_DURATION, mergePulse: 0
+  };
+}
+
+function emptyCells() {
+  const cells = [];
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (!board[y][x]) cells.push({ x, y });
+  return cells;
+}
+
+function spawnRandomTile() {
+  const cells = emptyCells();
+  if (cells.length === 0) return;
+  const c = cells[Math.floor(Math.random() * cells.length)];
+  const value = Math.random() < 0.9 ? 1 : 2;
+  const t = makeTile(value, c.x, c.y, true);
+  board[c.y][c.x] = t;
+  tiles.push(t);
+}
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('vegMergeMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+// Pitch rises with tier so a late-game merge audibly feels bigger than an early one.
+function playMerge(tier) {
+  const freq = 300 + Math.min(tier, MAX_TIER) * 55;
+  tone(freq, 0.11, 'triangle', 0.13);
+  tone(freq * 1.5, 0.12, 'triangle', 0.08, 0.03);
+}
+function playSpawn() { tone(700, 0.05, 'sine', 0.05); }
+function playGameOver() { tone(220, 0.18, 'sawtooth', 0.14); tone(160, 0.22, 'sawtooth', 0.12, 0.1); tone(110, 0.3, 'sawtooth', 0.1, 0.22); }
+function playWin() { tone(660, 0.1, 'triangle', 0.13); tone(880, 0.12, 'triangle', 0.12, 0.08); tone(1100, 0.16, 'triangle', 0.11, 0.17); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('vegMergeMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest() { return parseInt(sessionStorage.getItem('vegMergeBest') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('vegMergeBest', v); } catch (e) {} }
+
+function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function easeOutQuad(t) { return 1 - (1 - t) * (1 - t); }
+
+function reset() {
+  board = emptyBoard();
+  tiles = [];
+  ghosts = [];
+  nextId = 1;
+  score = 0;
+  animating = false;
+  animT = 0;
+  wonShown = false;
+  toastText = null;
+  toastTimer = 0;
+  spawnRandomTile();
+  spawnRandomTile();
+  state = 'ready';
+  title.textContent = 'Veg Merge';
+  subtitle.textContent = 'Swipe or arrow keys/WASD to slide. Match veg to grow bigger ones.';
+  scoreLine.style.display = 'none';
+  playBtn.textContent = 'Play';
+  backToArcade.style.display = 'none';
+  best = loadBest();
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+playBtn.addEventListener('click', () => {
+  if (state === 'over') reset();
+  startGame();
+});
+
+function endGame() {
+  state = 'over';
+  playGameOver();
+  if (score > best) { best = score; saveBest(best); }
+  title.textContent = 'Bed is full!';
+  subtitle.textContent = 'No more moves left';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score + '   Best: ' + best;
+  playBtn.textContent = 'Play Again';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+function boardFullAndStuck() {
+  for (let y = 0; y < SIZE; y++) {
+    for (let x = 0; x < SIZE; x++) {
+      if (!board[y][x]) return false;
+      const v = board[y][x].value;
+      if (x + 1 < SIZE && board[y][x + 1] && board[y][x + 1].value === v) return false;
+      if (y + 1 < SIZE && board[y + 1][x] && board[y + 1][x].value === v) return false;
+    }
+  }
+  return true;
+}
+
+// Returns the 4 grid cells of line `li` in the given direction, ordered
+// near-edge (the side tiles compact toward) to far-edge.
+function getLineCells(dir, li) {
+  const cells = [];
+  for (let k = 0; k < SIZE; k++) {
+    if (dir === 'left') cells.push({ gx: k, gy: li });
+    else if (dir === 'right') cells.push({ gx: SIZE - 1 - k, gy: li });
+    else if (dir === 'up') cells.push({ gx: li, gy: k });
+    else cells.push({ gx: li, gy: SIZE - 1 - k });
+  }
+  return cells;
+}
+
+function move(dir) {
+  if (state !== 'playing' || animating) return;
+  let moved = false;
+  let scoreGained = 0;
+  ghosts = [];
+
+  for (let li = 0; li < SIZE; li++) {
+    const cells = getLineCells(dir, li);
+    const lineTiles = cells.map(c => board[c.gy][c.gx]).filter(t => t !== null);
+    const resultTiles = [];
+    let i = 0;
+    while (i < lineTiles.length) {
+      const cur = lineTiles[i];
+      const nxt = lineTiles[i + 1];
+      const dest = cells[resultTiles.length];
+      if (nxt && nxt.value === cur.value && cur.value < MAX_TIER) {
+        ghosts.push({ value: nxt.value, prevGx: nxt.gx, prevGy: nxt.gy, gx: dest.gx, gy: dest.gy });
+        if (cur.gx !== dest.gx || cur.gy !== dest.gy) moved = true;
+        cur.prevGx = cur.gx; cur.prevGy = cur.gy;
+        cur.gx = dest.gx; cur.gy = dest.gy;
+        cur.pendingMergeValue = cur.value + 1;
+        scoreGained += tierPoints(cur.value + 1);
+        moved = true;
+        resultTiles.push(cur);
+        i += 2;
+      } else {
+        if (cur.gx !== dest.gx || cur.gy !== dest.gy) moved = true;
+        cur.prevGx = cur.gx; cur.prevGy = cur.gy;
+        cur.gx = dest.gx; cur.gy = dest.gy;
+        resultTiles.push(cur);
+        i += 1;
+      }
+    }
+    for (const c of cells) board[c.gy][c.gx] = null;
+    for (let k = 0; k < resultTiles.length; k++) {
+      const c = cells[k];
+      board[c.gy][c.gx] = resultTiles[k];
+    }
+  }
+
+  if (!moved) return;
+  score += scoreGained;
+  animating = true;
+  animT = 0;
+}
+
+function finishMove() {
+  animating = false;
+  ghosts = [];
+  let mergedAny = false;
+  for (const t of tiles) {
+    if (t.pendingMergeValue !== null) {
+      t.value = t.pendingMergeValue;
+      t.pendingMergeValue = null;
+      t.mergePulse = POP_DURATION;
+      mergedAny = true;
+      playMerge(t.value);
+      if (t.value >= MAX_TIER && !wonShown) {
+        wonShown = true;
+        playWin();
+        toastText = '🎉 Grew a Golden Pumpkin!';
+        toastTimer = 2.2;
+      }
+    }
+  }
+  tiles = tiles.filter(t => board[t.gy][t.gx] === t);
+  spawnRandomTile();
+  if (!mergedAny) playSpawn();
+  if (boardFullAndStuck()) endGame();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'ArrowUp' || e.code === 'KeyW') { e.preventDefault(); move('up'); }
+  else if (e.code === 'ArrowDown' || e.code === 'KeyS') { e.preventDefault(); move('down'); }
+  else if (e.code === 'ArrowLeft' || e.code === 'KeyA') { e.preventDefault(); move('left'); }
+  else if (e.code === 'ArrowRight' || e.code === 'KeyD') { e.preventDefault(); move('right'); }
+});
+
+let touchStart = null;
+canvas.addEventListener('pointerdown', (e) => { touchStart = { x: e.clientX, y: e.clientY }; });
+canvas.addEventListener('pointerup', (e) => {
+  if (!touchStart) return;
+  const dx = e.clientX - touchStart.x, dy = e.clientY - touchStart.y;
+  touchStart = null;
+  const SWIPE_THRESHOLD = 18;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_THRESHOLD) return;
+  if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
+  else move(dy > 0 ? 'down' : 'up');
+});
+
+function update(dt) {
+  if (toastTimer > 0) toastTimer = Math.max(0, toastTimer - dt);
+  for (const t of tiles) {
+    if (t.spawnT < SPAWN_DURATION) t.spawnT = Math.min(SPAWN_DURATION, t.spawnT + dt);
+    if (t.mergePulse > 0) t.mergePulse = Math.max(0, t.mergePulse - dt);
+  }
+  if (animating) {
+    animT += dt;
+    if (animT >= ANIM_DURATION) finishMove();
+  }
+}
+
+function cellPixelX(gx) { return BOARD_LEFT + GAP + gx * (TILE + GAP); }
+function cellPixelY(gy) { return BOARD_TOP + GAP + gy * (TILE + GAP); }
+
+function drawBg() {
+  const g = ctx.createLinearGradient(0, HUD_H, 0, H);
+  g.addColorStop(0, '#5a4028');
+  g.addColorStop(1, '#3d2b18');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, HUD_H, W, H - HUD_H);
+
+  ctx.fillStyle = '#3a2814';
+  ctx.beginPath();
+  ctx.roundRect(BOARD_LEFT, BOARD_TOP, BOARD, BOARD, 10);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(0,0,0,0.28)';
+  for (let y = 0; y < SIZE; y++) {
+    for (let x = 0; x < SIZE; x++) {
+      ctx.beginPath();
+      ctx.roundRect(cellPixelX(x), cellPixelY(y), TILE, TILE, 8);
+      ctx.fill();
+    }
+  }
+}
+
+function drawVeg(cx, cy, size, tier) {
+  const t = TIERS[tier];
+  const r = size * 0.30;
+  ctx.save();
+  ctx.translate(cx, cy - size * 0.06);
+  ctx.fillStyle = t.base;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, r * 1.05, r, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = t.accent;
+  ctx.lineWidth = Math.max(1.5, size * 0.02);
+  ctx.stroke();
+  // Simple stem/leaf accent common to every tier - keeps the flat, readable
+  // style consistent instead of trying to hand-draw 11 distinct vegetables.
+  ctx.fillStyle = '#4d7a24';
+  ctx.beginPath();
+  ctx.ellipse(0, -r * 0.95, r * 0.32, r * 0.5, -0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(r * 0.28, -r * 1.0, r * 0.28, r * 0.42, 0.5, 0, Math.PI * 2);
+  ctx.fill();
+  if (tier >= MAX_TIER - 1) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, r * 1.25, r * 1.2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawTile(px, py, value, scale, pulse) {
+  const t = TIERS[value];
+  const cx = px + TILE / 2, cy = py + TILE / 2;
+  const s = scale * (1 + (pulse > 0 ? Math.sin((pulse / POP_DURATION) * Math.PI) * 0.14 : 0));
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s, s);
+  ctx.translate(-cx, -cy);
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.beginPath();
+  ctx.roundRect(px, py, TILE, TILE, 8);
+  ctx.fill();
+  drawVeg(cx, cy - TILE * 0.06, TILE * 0.9, value);
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.font = 'bold ' + Math.max(8, Math.round(TILE * 0.135)) + 'px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(t.name, cx, py + TILE - 8);
+  ctx.restore();
+}
+
+function drawTiles() {
+  const t = clampNum(animT / ANIM_DURATION, 0, 1);
+  const e = easeOutQuad(t);
+  for (const g of ghosts) {
+    const gx = lerp(cellPixelX(g.prevGx), cellPixelX(g.gx), e);
+    const gy = lerp(cellPixelY(g.prevGy), cellPixelY(g.gy), e);
+    drawTile(gx, gy, g.value, 1, 0);
+  }
+  for (const tl of tiles) {
+    const px = lerp(cellPixelX(tl.prevGx), cellPixelX(tl.gx), e);
+    const py = lerp(cellPixelY(tl.prevGy), cellPixelY(tl.gy), e);
+    const spawnScale = tl.spawnT >= SPAWN_DURATION ? 1 : easeOutQuad(tl.spawnT / SPAWN_DURATION);
+    drawTile(px, py, tl.value, spawnScale, tl.mergePulse);
+  }
+}
+
+function drawToast() {
+  if (toastTimer <= 0 || !toastText) return;
+  const a = clampNum(toastTimer / 0.5, 0, 1);
+  ctx.globalAlpha = a;
+  ctx.font = 'bold 15px Arial';
+  ctx.textAlign = 'center';
+  const tw = ctx.measureText(toastText).width;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.beginPath();
+  ctx.roundRect(W / 2 - tw / 2 - 14, BOARD_TOP + 14, tw + 28, 30, 15);
+  ctx.fill();
+  ctx.fillStyle = '#ffd54a';
+  ctx.fillText(toastText, W / 2, BOARD_TOP + 35);
+  ctx.globalAlpha = 1;
+}
+
+function drawHud() {
+  ctx.fillStyle = '#233a12';
+  ctx.fillRect(0, 0, W, HUD_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  ctx.fillRect(0, HUD_H - 3, W, 3);
+
+  ctx.font = 'bold 18px Arial';
+  ctx.fillStyle = '#eaf5d8';
+  ctx.textAlign = 'left';
+  ctx.fillText('Score: ' + score, 12, 26);
+
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(234,245,216,0.75)';
+  ctx.fillText('Best: ' + best, W - 12, 25);
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+
+  update(dt);
+
+  drawBg();
+  drawTiles();
+  drawToast();
+  drawHud();
+
+  requestAnimationFrame(loop);
+}
+
+reset();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
