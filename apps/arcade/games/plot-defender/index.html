@@ -142,7 +142,8 @@ const START_LIVES = 5;
 const PEST_BASE_SPEED = 58;
 const PEST_MAX_HP = 3;
 const COMPOST_START = 100;
-const KILL_REWARD = 15;
+const KILL_REWARD = 10;
+const DEFENCE_COST_RAMP = 0.09; // +9% to every defence's cost per wave already reached
 const DEFENCE_RADIUS = 13;
 const MIN_BUILD_DIST_FROM_PATH = PATH_WIDTH / 2 + DEFENCE_RADIUS + 6;
 const MAX_BUILD_DIST_FROM_PATH = 80;
@@ -188,8 +189,8 @@ for (let i = 0; i < WAVE_COUNT; i++) {
   WAVES.push({
     count: 5 + i,
     interval: clampNum(1.6 - i * 0.065, 0.95, 1.6),
-    hpMult: 1 + i * 0.11,
-    speedMult: 1 + i * 0.03,
+    hpMult: 1 + i * 0.17,
+    speedMult: 1 + i * 0.045,
     mix: WAVE_MIXES[i]
   });
 }
@@ -294,6 +295,7 @@ function pointAtDistance(d) {
 
 let pests, lives, state, elapsedTime, best, pestId;
 let compost, defences, projectiles, popups, fx, kills;
+let goalHitFlash = 0;
 let selectedType, pointerField, denialMarker;
 let waveIndex, waveState, countdownTimer, pestsToSpawn, spawnTimer, wavesCleared;
 
@@ -347,6 +349,7 @@ function loadBest() { return parseInt(sessionStorage.getItem('plotDefenderBest')
 function saveBest(v) { try { sessionStorage.setItem('plotDefenderBest', v); } catch (e) {} }
 
 function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
 function currentScore() { return kills * SCORE_PER_KILL + wavesCleared * SCORE_PER_WAVE + lives * SCORE_PER_LIFE; }
 
 function spawnPest(wave) {
@@ -382,6 +385,13 @@ function distanceToPath(x, y) {
   }
   return min;
 }
+// Every defence gets steadily costlier as waves pass (not just per-purchase)
+// so expanding your defences late-game takes real economic planning instead
+// of freely spamming whatever cleared the early waves.
+function defenceCost(key) {
+  return Math.round(DEFENCE_TYPES[key].cost * (1 + waveIndex * DEFENCE_COST_RAMP));
+}
+
 function isValidPlacement(x, y) {
   if (x < 14 || x > W - 14 || y < HUD_H + 14 || y > FIELD_BOTTOM - 14) return false;
   const dPath = distanceToPath(x, y);
@@ -418,7 +428,8 @@ canvas.addEventListener('pointerdown', (e) => {
   }
   if (!selectedType) return;
   const def = DEFENCE_TYPES[selectedType];
-  if (compost < def.cost || !isValidPlacement(pt.x, pt.y)) {
+  const cost = defenceCost(selectedType);
+  if (compost < cost || !isValidPlacement(pt.x, pt.y)) {
     playDenied();
     denialMarker = { x: pt.x, y: pt.y, timer: 0.35 };
     return;
@@ -429,7 +440,7 @@ canvas.addEventListener('pointerdown', (e) => {
     mechanic: def.mechanic, splashRadius: def.splashRadius, effectiveness: def.effectiveness,
     cooldown: 0.15
   });
-  compost -= def.cost;
+  compost -= cost;
   playPlace();
 });
 canvas.addEventListener('pointermove', (e) => {
@@ -452,6 +463,7 @@ function resetRunState() {
   selectedType = null;
   pointerField = null;
   denialMarker = null;
+  goalHitFlash = 0;
   beginWaveCountdown(0);
 }
 
@@ -520,6 +532,8 @@ function update(dt) {
     pests = pests.filter(p => p.dist < PATH_TOTAL_LENGTH);
     lives -= reached.length;
     playLifeLost();
+    goalHitFlash = 0.4;
+    addPopup('-' + reached.length + ' life', GOAL.x, GOAL.y - 34, '#e6543b');
     if (lives <= 0) { lives = 0; finishRun(false); return; }
   }
 
@@ -531,6 +545,7 @@ function update(dt) {
     denialMarker.timer -= dt;
     if (denialMarker.timer <= 0) denialMarker = null;
   }
+  goalHitFlash = Math.max(0, goalHitFlash - dt);
   popups = popups.filter(p => { p.life--; p.y -= 0.5; return p.life > 0; });
 }
 
@@ -715,8 +730,42 @@ function drawEntry() {
   ctx.stroke();
 }
 
+// A little painted signpost so the goal reads as "somewhere", not just a
+// generic patch of soil - purely decorative, no gameplay effect.
+function drawAllotmentSign(cx, bottomY) {
+  const w = 108, h = 22;
+  const x = cx - w / 2, y = bottomY - h - 16;
+  ctx.fillStyle = '#6b4c2c';
+  ctx.fillRect(cx - 3, y + h - 2, 6, 18);
+  ctx.fillStyle = '#2f8f7a';
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 5);
+  ctx.fill();
+  ctx.strokeStyle = '#1f5c4f';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  const flowerColors = ['#ffd76a', '#e0607a', '#8a4fae', '#ff8f3c'];
+  for (let i = 0; i < 4; i++) {
+    ctx.fillStyle = flowerColors[i];
+    ctx.beginPath();
+    ctx.arc(x + 10 + i * ((w - 20) / 3), y - 2, 2.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#fff8e0';
+  ctx.font = 'bold 10px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText("Krish's Allotment", cx, y + h / 2 + 4);
+}
+
+// The veg patch visibly wilts as lives run out - browner leaves, fewer of
+// them, cracked soil bed - so damage reads at a glance instead of only
+// living in the HUD counter. healthT is 1 at full lives, 0 at zero.
 function drawGoal() {
   const gx = GOAL.x, gy = GOAL.y;
+  const healthT = clampNum(lives / START_LIVES, 0, 1);
+
+  drawAllotmentSign(gx, gy - 26);
+
   ctx.fillStyle = '#7a5a34';
   ctx.beginPath();
   ctx.roundRect(gx - 44, gy - 26, 88, 40, 6);
@@ -729,18 +778,59 @@ function drawGoal() {
   ctx.roundRect(gx - 38, gy - 20, 76, 30, 4);
   ctx.fill();
 
+  if (healthT < 0.85) {
+    const crackSeeds = [[-28, -14, -14, 4], [10, -18, 22, 2], [-6, -4, 4, 16], [28, -10, 18, 10]];
+    const crackCount = Math.ceil((1 - healthT) * crackSeeds.length);
+    ctx.strokeStyle = 'rgba(15,10,4,0.65)';
+    ctx.lineWidth = 1.4;
+    for (let i = 0; i < crackCount; i++) {
+      const c = crackSeeds[i];
+      ctx.beginPath();
+      ctx.moveTo(gx + c[0], gy + c[1]);
+      ctx.lineTo(gx + c[2], gy + c[3]);
+      ctx.stroke();
+    }
+  }
+
+  const leafColor = 'rgb(' + Math.round(lerp(138, 111, healthT)) + ',' + Math.round(lerp(106, 168, healthT)) + ',' + Math.round(lerp(58, 62, healthT)) + ')';
+  const leafStroke = healthT > 0.4 ? '#4d7a24' : '#5c4526';
   const leaves = [
     { x: gx - 22, y: gy - 12 }, { x: gx, y: gy - 16 }, { x: gx + 22, y: gy - 12 },
     { x: gx - 10, y: gy - 2 }, { x: gx + 12, y: gy - 2 }
   ];
-  for (const l of leaves) {
-    ctx.fillStyle = '#6fa83e';
+  const visibleLeaves = Math.max(1, Math.round(leaves.length * clampNum(0.25 + healthT * 0.75, 0, 1)));
+  const droop = (1 - healthT) * 4;
+  for (let i = 0; i < visibleLeaves; i++) {
+    const l = leaves[i];
+    ctx.fillStyle = leafColor;
     ctx.beginPath();
-    ctx.ellipse(l.x, l.y, 9, 12, -0.3, 0, Math.PI * 2);
+    ctx.ellipse(l.x, l.y + droop, 9, 12, -0.3 + droop * 0.03, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = '#4d7a24';
+    ctx.strokeStyle = leafStroke;
     ctx.lineWidth = 1.2;
     ctx.stroke();
+  }
+
+  // A splash of ripe colour poking through the leaves - purely for fun
+  // factor, fades out as the patch takes damage.
+  if (healthT > 0.15) {
+    ctx.globalAlpha = clampNum(healthT * 1.3, 0, 1);
+    ctx.fillStyle = '#d94b3a';
+    ctx.beginPath(); ctx.arc(gx - 14, gy - 6, 4.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e89a2c';
+    ctx.beginPath(); ctx.arc(gx + 16, gy - 4, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#8a4fae';
+    ctx.beginPath(); ctx.arc(gx + 2, gy - 9, 3.6, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  if (goalHitFlash > 0) {
+    ctx.globalAlpha = (goalHitFlash / 0.4) * 0.5;
+    ctx.fillStyle = '#e6543b';
+    ctx.beginPath();
+    ctx.roundRect(gx - 44, gy - 26, 88, 40, 6);
+    ctx.fill();
+    ctx.globalAlpha = 1;
   }
 }
 
@@ -960,7 +1050,7 @@ function drawFx() {
 function drawPlacementPreview() {
   if (!selectedType || !pointerField) return;
   const def = DEFENCE_TYPES[selectedType];
-  const valid = compost >= def.cost && isValidPlacement(pointerField.x, pointerField.y);
+  const valid = compost >= defenceCost(selectedType) && isValidPlacement(pointerField.x, pointerField.y);
   ctx.fillStyle = valid ? 'rgba(124,179,66,0.18)' : 'rgba(230,84,59,0.16)';
   ctx.beginPath();
   ctx.arc(pointerField.x, pointerField.y, def.range, 0, Math.PI * 2);
@@ -1014,7 +1104,8 @@ function drawTray() {
   for (const key of DEFENCE_ORDER) {
     const def = DEFENCE_TYPES[key];
     const r = TRAY_BUTTONS[key];
-    const affordable = compost >= def.cost;
+    const cost = defenceCost(key);
+    const affordable = compost >= cost;
     const selected = selectedType === key;
 
     ctx.fillStyle = selected ? 'rgba(124,179,66,0.35)' : 'rgba(255,255,255,0.08)';
@@ -1033,7 +1124,7 @@ function drawTray() {
     ctx.fillText(def.name, r.x + r.w / 2, r.y + 30);
     ctx.font = 'bold 9px Arial';
     ctx.fillStyle = affordable ? '#ffd76a' : 'rgba(255,215,106,0.4)';
-    ctx.fillText(def.cost + ' 🌾', r.x + r.w / 2, r.y + 41);
+    ctx.fillText(cost + ' 🌾', r.x + r.w / 2, r.y + 41);
   }
 }
 
