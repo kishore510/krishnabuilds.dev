@@ -72,7 +72,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px 16px;
     margin: 0 0 20px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -86,7 +87,13 @@
     font-weight: 500;
     margin: 0;
   }
-  .layout-toggle {
+  .shelf-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .layout-toggle, .sort-toggle {
     display: flex;
     gap: 3px;
     background: rgba(255,255,255,0.05);
@@ -95,12 +102,10 @@
     border-radius: 9px;
     flex: none;
   }
-  .layout-btn {
+  .layout-btn, .sort-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 26px;
     padding: 0;
     border: none;
     border-radius: 6px;
@@ -109,8 +114,17 @@
     cursor: pointer;
     transition: background 0.15s ease, color 0.15s ease;
   }
-  .layout-btn:hover { color: var(--text); }
-  .layout-btn.active { background: var(--surface-2); color: var(--teal); }
+  .layout-btn { width: 30px; height: 26px; }
+  .sort-btn {
+    height: 26px;
+    padding: 0 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .layout-btn:hover, .sort-btn:hover { color: var(--text); }
+  .layout-btn.active, .sort-btn.active { background: var(--surface-2); color: var(--teal); }
 
   .cartridges {
     display: grid;
@@ -150,6 +164,9 @@
     .cartridges.layout-grid .tag {
       font-size: 9px;
       padding: 2px 6px;
+    }
+    .cartridges.layout-grid .cartridge .meta {
+      font-size: 9.5px;
     }
   }
 
@@ -213,6 +230,20 @@
     border-radius: 999px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.35);
   }
+  .cartridge .new-badge {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: var(--amber);
+    color: #2a1a00;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  }
   .cartridge .notch {
     display: none;
     position: absolute;
@@ -252,14 +283,12 @@
     gap: 6px;
     flex-wrap: wrap;
   }
-  .cartridge .play-count {
-    display: none;
+  .cartridge .meta {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10.5px;
     color: var(--muted);
     margin: 6px 0 0;
   }
-  .cartridge .play-count.visible { display: block; }
   .cartridge .play-hint {
     display: inline-flex;
     align-self: flex-start;
@@ -356,13 +385,19 @@
   <section class="shelf">
     <div class="shelf-head">
       <h2>On the shelf</h2>
-      <div class="layout-toggle" role="group" aria-label="Layout">
-        <button type="button" class="layout-btn" data-layout="single" aria-label="Single column view" title="Single column">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2.5" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="6.9" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="10.3" width="12" height="3.2" rx="1" fill="currentColor"/></svg>
-        </button>
-        <button type="button" class="layout-btn" data-layout="grid" aria-label="Grid view" title="Grid">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor"/></svg>
-        </button>
+      <div class="shelf-controls">
+        <div class="sort-toggle" role="group" aria-label="Sort">
+          <button type="button" class="sort-btn" data-sort="newest">Newest</button>
+          <button type="button" class="sort-btn" data-sort="popular">Popular</button>
+        </div>
+        <div class="layout-toggle" role="group" aria-label="Layout">
+          <button type="button" class="layout-btn" data-layout="single" aria-label="Single column view" title="Single column">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2.5" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="6.9" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="10.3" width="12" height="3.2" rx="1" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="layout-btn" data-layout="grid" aria-label="Grid view" title="Grid">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor"/></svg>
+          </button>
+        </div>
       </div>
     </div>
     <div class="cartridges" id="cartridges"></div>
@@ -388,7 +423,8 @@
       emoji: '🐟',
       color: 'linear-gradient(135deg, #0a3d62, #2a9d8f)',
       tags: ['arcade', 'endless', '1 min'],
-      path: 'games/fin-dash/index.html'
+      path: 'games/fin-dash/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Burrow Bash',
@@ -396,7 +432,8 @@
       emoji: '🐹',
       color: 'linear-gradient(135deg, #2f5f28, #5b9a4a)',
       tags: ['arcade', 'reflex', '30 sec'],
-      path: 'games/burrow-bash/index.html'
+      path: 'games/burrow-bash/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Air Hockey',
@@ -404,7 +441,8 @@
       emoji: '🏒',
       color: 'linear-gradient(135deg, #0d3450, #2aa9c9)',
       tags: ['sports', 'vs CPU', '2 min'],
-      path: 'games/air-hockey/index.html'
+      path: 'games/air-hockey/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Jungle Runner',
@@ -412,7 +450,8 @@
       emoji: '🐒',
       color: 'linear-gradient(135deg, #1a3324, #2d5a3d)',
       tags: ['endless', 'reflex', '1 min'],
-      path: 'games/jungle-runner/index.html'
+      path: 'games/jungle-runner/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Koala Climb',
@@ -420,7 +459,8 @@
       emoji: '🐨',
       color: 'linear-gradient(135deg, #8fd3e8, #c9ecd8)',
       tags: ['endless', 'reflex', '1 min'],
-      path: 'games/koala-climb/index.html'
+      path: 'games/koala-climb/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Brick Breaker',
@@ -428,7 +468,8 @@
       emoji: '🧱',
       color: 'linear-gradient(135deg, #10152a, #5a8ce8)',
       tags: ['arcade', 'classic', '2 min'],
-      path: 'games/brick-breaker/index.html'
+      path: 'games/brick-breaker/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Safari Rescue',
@@ -436,7 +477,8 @@
       emoji: '🚙',
       color: 'linear-gradient(135deg, #c9853a, #e8b96b)',
       tags: ['lanes', 'reflex', '45 sec'],
-      path: 'games/safari-rescue/index.html'
+      path: 'games/safari-rescue/index.html',
+      published: '2026-07-06'
     },
     {
       name: 'Lane Racer',
@@ -444,7 +486,8 @@
       emoji: '🏎️',
       color: 'linear-gradient(135deg, #33383f, #e63946)',
       tags: ['lanes', 'racing', '40 sec'],
-      path: 'games/lane-racer/index.html'
+      path: 'games/lane-racer/index.html',
+      published: '2026-07-07'
     },
     {
       name: 'Globe Quiz',
@@ -452,7 +495,8 @@
       emoji: '🌍',
       color: 'linear-gradient(135deg, #16213e, #22b8a0)',
       tags: ['trivia', 'quiz', '3 min'],
-      path: 'games/globe-quiz/index.html'
+      path: 'games/globe-quiz/index.html',
+      published: '2026-07-07'
     },
     {
       name: 'Garden Snake',
@@ -460,7 +504,8 @@
       emoji: '🐛',
       color: 'linear-gradient(135deg, #2b1e12, #7cb342)',
       tags: ['classic', 'reflex', '1 min'],
-      path: 'games/garden-snake/index.html'
+      path: 'games/garden-snake/index.html',
+      published: '2026-07-08'
     },
     {
       name: 'Veg Merge',
@@ -468,7 +513,8 @@
       emoji: '🎃',
       color: 'linear-gradient(135deg, #2b1e12, #e8891a)',
       tags: ['puzzle', 'merge', '5 min'],
-      path: 'games/veg-merge/index.html'
+      path: 'games/veg-merge/index.html',
+      published: '2026-07-08'
     },
     {
       name: 'Crate Stack',
@@ -476,7 +522,8 @@
       emoji: '📦',
       color: 'linear-gradient(135deg, #1c2a1f, #c9853a)',
       tags: ['timing', 'arcade', '1 min'],
-      path: 'games/crate-stack/index.html'
+      path: 'games/crate-stack/index.html',
+      published: '2026-07-08'
     },
     {
       name: 'Plot Defender',
@@ -484,7 +531,8 @@
       emoji: '🛡️',
       color: 'linear-gradient(135deg, #1c2a1f, #4a7a2e)',
       tags: ['strategy', 'tower defense', '8 min'],
-      path: 'games/plot-defender/index.html'
+      path: 'games/plot-defender/index.html',
+      published: '2026-07-09'
     }
     // Next game:
     // {
@@ -493,57 +541,102 @@
     //   emoji: '🎮',
     //   color: 'linear-gradient(135deg, #hex1, #hex2)',
     //   tags: ['genre', 'length'],
-    //   path: 'games/game-slug/index.html'
+    //   path: 'games/game-slug/index.html',
+    //   published: 'YYYY-MM-DD'
     // },
   ];
 
   const container = document.getElementById('cartridges');
-  for (const g of GAMES) {
-    const slug = g.path.split('/')[1]; // 'games/<slug>/index.html' -> '<slug>'
-    const a = document.createElement('a');
-    a.className = 'cartridge';
-    a.href = g.path;
-    a.innerHTML = `
-      <div class="label" style="background:${g.color}">
-        <div class="notch"></div>
-        <span>${g.emoji}</span>
-        <div class="play-badge">
-          <svg width="8" height="9" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
-          Play
-        </div>
-      </div>
-      <div class="info">
-        <p class="name">${g.name}</p>
-        <p class="tagline">${g.tagline}</p>
-        <div class="tags">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
-        <p class="play-count" data-slug="${slug}"></p>
-        <div class="play-hint">
-          <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
-          Play now
-        </div>
-      </div>
-    `;
-    container.appendChild(a);
+  const slugOf = g => g.path.split('/')[1]; // 'games/<slug>/index.html' -> '<slug>'
+  let playCounts = {};
+
+  function formatPublished(iso) {
+    const d = new Date(iso + 'T00:00:00Z');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
   }
+  // "For a day" = still showing on the calendar day it went live, checked
+  // against the visitor's local clock - simple rather than perfectly
+  // timezone-exact, which doesn't matter for a fun badge.
+  function isNew(iso) {
+    const days = (Date.now() - new Date(iso + 'T00:00:00Z').getTime()) / 86400000;
+    return days >= 0 && days < 1;
+  }
+
+  function cardHtml(g) {
+    const slug = slugOf(g);
+    const n = playCounts[slug];
+    const metaText = 'Published ' + formatPublished(g.published)
+      + (n ? ' \u00b7 Played ' + n.toLocaleString() + (n === 1 ? ' time' : ' times') : '');
+    return `
+      <a class="cartridge" href="${g.path}">
+        <div class="label" style="background:${g.color}">
+          <div class="notch"></div>
+          <span>${g.emoji}</span>
+          ${isNew(g.published) ? '<div class="new-badge">New</div>' : ''}
+          <div class="play-badge">
+            <svg width="8" height="9" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
+            Play
+          </div>
+        </div>
+        <div class="info">
+          <p class="name">${g.name}</p>
+          <p class="tagline">${g.tagline}</p>
+          <div class="tags">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          <p class="meta">${metaText}</p>
+          <div class="play-hint">
+            <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
+            Play now
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  // Sort toggle: newest-first (by published date) or most-played,
+  // remembered per browser. Re-renders (rather than reordering DOM nodes
+  // in place) since it's simplest and this list is tiny.
+  const SORT_KEY = 'kbArcadeSort';
+  const sortButtons = document.querySelectorAll('.sort-btn');
+  let sortMode = localStorage.getItem(SORT_KEY) || 'newest';
+
+  function sortedGames() {
+    const list = GAMES.slice();
+    if (sortMode === 'popular') {
+      list.sort((a, b) => (playCounts[slugOf(b)] || 0) - (playCounts[slugOf(a)] || 0));
+    } else {
+      list.sort((a, b) => b.published.localeCompare(a.published));
+    }
+    return list;
+  }
+
+  function renderCards() {
+    container.innerHTML = sortedGames().map(cardHtml).join('')
+      // A quiet placeholder so the shelf doesn't look empty/finished
+      + '<div class="coming-soon">next one\u2019s in progress</div>';
+  }
+
+  function updateSortButtonStyles() {
+    sortButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.sort === sortMode));
+  }
+  sortButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sortMode = btn.dataset.sort;
+      localStorage.setItem(SORT_KEY, sortMode);
+      updateSortButtonStyles();
+      renderCards();
+    });
+  });
+  updateSortButtonStyles();
+  renderCards();
 
   // Best-effort play counts - the API only exists once the KV-backed
   // worker route is deployed, so a fetch failure (404/network) just
-  // means every counter silently stays hidden rather than the page
-  // breaking.
+  // means counts/popular-sort silently stay unavailable rather than the
+  // page breaking.
   fetch('/api/plays').then(r => r.ok ? r.json() : {}).then(counts => {
-    document.querySelectorAll('.play-count').forEach(el => {
-      const n = counts[el.dataset.slug];
-      if (!n) return;
-      el.textContent = '🕹️ Played ' + n.toLocaleString() + (n === 1 ? ' time' : ' times');
-      el.classList.add('visible');
-    });
+    playCounts = counts;
+    renderCards();
   }).catch(() => {});
-
-  // A quiet placeholder so the shelf doesn't look empty/finished
-  const placeholder = document.createElement('div');
-  placeholder.className = 'coming-soon';
-  placeholder.textContent = 'next one\u2019s in progress';
-  container.appendChild(placeholder);
 
   if (window.KB_VERSION) {
     document.getElementById('versionTag').textContent =

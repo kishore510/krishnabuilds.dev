@@ -54,6 +54,11 @@ Last updated: 2026-07-09, Plot Defender built end-to-end (phases 1-5, onboarding
   `PLAY_COUNTS` KV namespace and pasted the real id into
   `wrangler.jsonc` (the one step needing real Cloudflare auth, which
   this sandbox doesn't have) — live as of the next Workers Build
+- Added `published` dates (backfilled from git history) to every game,
+  a Newest/Popular sort toggle on the landing page (Popular reads the
+  same `/api/plays` counts, falls back to original order until counts
+  exist), a formatted "Published <date>" line on every card, and a
+  same-day "NEW" badge
 - Everything above is committed and pushed to `master`
 
 ## Recent history (last 6 sessions, newest first)
