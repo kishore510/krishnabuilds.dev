@@ -112,7 +112,7 @@
   <div id="overlay">
     <div id="overlayPanel">
       <h1 id="title">Plot Defender</h1>
-      <p id="subtitle">Tap Scarecrow, then tap near the path to place it</p>
+      <p id="subtitle">Match each defence to the pest it's strong against</p>
       <p id="scoreLine" style="display:none;"></p>
       <div id="diffButtons">
         <button id="playBtn" type="button">Play</button>
@@ -153,12 +153,35 @@ const WAVE_CLEARED_PAUSE = 1.4;
 const SCORE_PER_KILL = 10;
 const SCORE_PER_WAVE = 50;
 const SCORE_PER_LIFE = 20;
+const SPLASH_FALLOFF = 0.55;
+
+// --- Three pest traits (spec: slow/tough, fast/weak, medium) layered on
+// top of the base hp/speed - wave hpMult/speedMult still apply on top of
+// these, so a late-wave slug is tougher than an early-wave slug too. ---
+const PEST_TYPES = {
+  rabbit: { key: 'rabbit', name: 'Rabbit', hpMult: 1.0, speedMult: 1.0 },
+  bird: { key: 'bird', name: 'Bird', hpMult: 0.55, speedMult: 1.7 },
+  slug: { key: 'slug', name: 'Slug', hpMult: 2.2, speedMult: 0.55 }
+};
 
 // --- Waves replace continuous spawning: each is a scripted count/pace of
 // pests rather than an open tap. Count ramps up and the gap between
 // spawns tightens each wave; hp/speed multipliers make later pests
-// tougher without touching the walking or targeting logic. Phase 4 will
-// extend each wave entry with a mix of pest types. ---
+// tougher. `mix` is the weighted odds of each pest type for that wave -
+// early waves are all rabbit (the easy baseline), later ones fold in
+// birds and slugs so no single defence type is enough on its own. ---
+const WAVE_MIXES = [
+  { rabbit: 1 },
+  { rabbit: 0.8, bird: 0.2 },
+  { rabbit: 0.6, bird: 0.25, slug: 0.15 },
+  { rabbit: 0.5, bird: 0.25, slug: 0.25 },
+  { rabbit: 0.4, bird: 0.3, slug: 0.3 },
+  { rabbit: 0.35, bird: 0.3, slug: 0.35 },
+  { rabbit: 0.3, bird: 0.35, slug: 0.35 },
+  { rabbit: 0.25, bird: 0.35, slug: 0.4 },
+  { rabbit: 0.2, bird: 0.4, slug: 0.4 },
+  { rabbit: 0.2, bird: 0.4, slug: 0.4 }
+];
 const WAVE_COUNT = 10;
 const WAVES = [];
 for (let i = 0; i < WAVE_COUNT; i++) {
@@ -166,16 +189,60 @@ for (let i = 0; i < WAVE_COUNT; i++) {
     count: 5 + i,
     interval: clampNum(1.6 - i * 0.065, 0.95, 1.6),
     hpMult: 1 + i * 0.11,
-    speedMult: 1 + i * 0.03
+    speedMult: 1 + i * 0.03,
+    mix: WAVE_MIXES[i]
   });
 }
+function pickPestType(mix) {
+  const total = Object.values(mix).reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (const key in mix) {
+    r -= mix[key];
+    if (r <= 0) return key;
+  }
+  return Object.keys(mix)[0];
+}
 
-// --- One defence type for now (phase 4 adds more) - keyed by name so the
-// tray, placement, and firing logic all read from one place. ---
+// --- Four defence types, each keyed the same way so the tray, placement,
+// and firing logic all read from one place. `mechanic` picks how it
+// fires: 'single' homes on the nearest target, 'splash' does that plus
+// falloff damage to nearby pests on impact, 'area' periodically pulses
+// everything already in range instead of targeting one pest. `effectiveness`
+// is a damage multiplier per pest type - the reason matching defence to
+// pest matters instead of one type dominating every wave. ---
 const DEFENCE_TYPES = {
-  scarecrow: { key: 'scarecrow', name: 'Scarecrow', cost: 40, range: 88, damage: 1, fireInterval: 0.55, projectileSpeed: 260 }
+  scarecrow: {
+    key: 'scarecrow', name: 'Scarecrow', cost: 40, range: 88, damage: 1, fireInterval: 0.55,
+    projectileSpeed: 260, mechanic: 'single', splashRadius: 0,
+    effectiveness: { rabbit: 1, bird: 1, slug: 1 }
+  },
+  beerTrap: {
+    key: 'beerTrap', name: 'Beer Trap', cost: 55, range: 68, damage: 2, fireInterval: 0.9,
+    projectileSpeed: 220, mechanic: 'single', splashRadius: 0,
+    effectiveness: { rabbit: 1, bird: 0.6, slug: 2.2 }
+  },
+  netting: {
+    key: 'netting', name: 'Netting', cost: 65, range: 76, damage: 1, fireInterval: 1.1,
+    projectileSpeed: 0, mechanic: 'area', splashRadius: 0,
+    effectiveness: { rabbit: 1, bird: 1.8, slug: 0.5 }
+  },
+  spray: {
+    key: 'spray', name: 'Spray', cost: 60, range: 82, damage: 1, fireInterval: 0.7,
+    projectileSpeed: 240, mechanic: 'splash', splashRadius: 34,
+    effectiveness: { rabbit: 1.4, bird: 1, slug: 1 }
+  }
 };
-const TRAY_BTN = { x: W / 2 - 70, y: H - TRAY_H + 8, w: 140, h: TRAY_H - 16 };
+const DEFENCE_ORDER = ['scarecrow', 'beerTrap', 'netting', 'spray'];
+const TRAY_BTN_W = 82, TRAY_BTN_GAP = 4, TRAY_BTN_H = TRAY_H - 16;
+const TRAY_ROW_W = DEFENCE_ORDER.length * TRAY_BTN_W + (DEFENCE_ORDER.length - 1) * TRAY_BTN_GAP;
+const TRAY_ROW_X = (W - TRAY_ROW_W) / 2;
+const TRAY_BUTTONS = {};
+DEFENCE_ORDER.forEach((key, i) => {
+  TRAY_BUTTONS[key] = {
+    x: TRAY_ROW_X + i * (TRAY_BTN_W + TRAY_BTN_GAP), y: H - TRAY_H + 8,
+    w: TRAY_BTN_W, h: TRAY_BTN_H
+  };
+});
 
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
@@ -226,7 +293,7 @@ function pointAtDistance(d) {
 }
 
 let pests, lives, state, elapsedTime, best, pestId;
-let compost, defences, projectiles, popups, kills;
+let compost, defences, projectiles, popups, fx, kills;
 let selectedType, pointerField, denialMarker;
 let waveIndex, waveState, countdownTimer, pestsToSpawn, spawnTimer, wavesCleared;
 
@@ -257,6 +324,8 @@ function playSpawn() { tone(340, 0.06, 'triangle', 0.06); }
 function playLifeLost() { tone(220, 0.14, 'sawtooth', 0.13); tone(150, 0.18, 'sawtooth', 0.1, 0.06); }
 function playGameOver() { tone(200, 0.2, 'sawtooth', 0.14); tone(140, 0.26, 'sawtooth', 0.11, 0.1); tone(95, 0.34, 'sawtooth', 0.1, 0.22); }
 function playShoot() { tone(900, 0.04, 'square', 0.05); }
+function playPulse() { tone(500, 0.1, 'sine', 0.07); tone(650, 0.12, 'sine', 0.05, 0.04); }
+function playSplash() { tone(380, 0.08, 'sawtooth', 0.06); }
 function playKill() { tone(700, 0.07, 'triangle', 0.1); tone(1000, 0.08, 'triangle', 0.08, 0.04); }
 function playPlace() { tone(300, 0.05, 'square', 0.09); tone(450, 0.06, 'square', 0.07, 0.04); }
 function playDenied() { tone(160, 0.1, 'square', 0.08); }
@@ -281,10 +350,13 @@ function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function currentScore() { return kills * SCORE_PER_KILL + wavesCleared * SCORE_PER_WAVE + lives * SCORE_PER_LIFE; }
 
 function spawnPest(wave) {
+  const type = pickPestType(wave.mix);
+  const t = PEST_TYPES[type];
+  const hp = Math.max(1, Math.round(PEST_MAX_HP * wave.hpMult * t.hpMult));
   pests.push({
-    id: pestId++, dist: 0,
-    speed: PEST_BASE_SPEED * wave.speedMult * (0.9 + Math.random() * 0.25),
-    hp: Math.round(PEST_MAX_HP * wave.hpMult), maxHp: Math.round(PEST_MAX_HP * wave.hpMult),
+    id: pestId++, dist: 0, type,
+    speed: PEST_BASE_SPEED * wave.speedMult * t.speedMult * (0.9 + Math.random() * 0.25),
+    hp, maxHp: hp,
     bobPhase: Math.random() * Math.PI * 2
   });
   playSpawn();
@@ -329,11 +401,19 @@ function canvasPointFromEvent(e) {
   };
 }
 
+function trayButtonAt(x, y) {
+  for (const key of DEFENCE_ORDER) {
+    if (pointInRect(x, y, TRAY_BUTTONS[key])) return key;
+  }
+  return null;
+}
+
 canvas.addEventListener('pointerdown', (e) => {
   if (state !== 'playing') return;
   const pt = canvasPointFromEvent(e);
-  if (pointInRect(pt.x, pt.y, TRAY_BTN)) {
-    selectedType = selectedType === 'scarecrow' ? null : 'scarecrow';
+  const tapped = trayButtonAt(pt.x, pt.y);
+  if (tapped) {
+    selectedType = selectedType === tapped ? null : tapped;
     return;
   }
   if (!selectedType) return;
@@ -346,6 +426,7 @@ canvas.addEventListener('pointerdown', (e) => {
   defences.push({
     x: pt.x, y: pt.y, type: selectedType,
     range: def.range, damage: def.damage, fireInterval: def.fireInterval, projectileSpeed: def.projectileSpeed,
+    mechanic: def.mechanic, splashRadius: def.splashRadius, effectiveness: def.effectiveness,
     cooldown: 0.15
   });
   compost -= def.cost;
@@ -365,6 +446,7 @@ function resetRunState() {
   defences = [];
   projectiles = [];
   popups = [];
+  fx = [];
   kills = 0;
   wavesCleared = 0;
   selectedType = null;
@@ -383,7 +465,7 @@ function reset() {
   resetRunState();
   state = 'ready';
   title.textContent = 'Plot Defender';
-  subtitle.textContent = '10 waves stand between the pests and the veg patch';
+  subtitle.textContent = 'Match each defence to the pest it’s strong against';
   scoreLine.style.display = 'none';
   playBtn.textContent = 'Play';
   backToArcade.style.display = 'none';
@@ -443,6 +525,7 @@ function update(dt) {
 
   updateDefences(dt);
   updateProjectiles(dt);
+  updateFx(dt);
 
   if (denialMarker) {
     denialMarker.timer -= dt;
@@ -501,13 +584,46 @@ function findNearestPestInRange(x, y, range) {
   return best;
 }
 
+// Shared by every mechanic (single-target hit, area pulse, splash) so kill
+// rewards/removal only happen in one place. Guards against a pest that was
+// already removed earlier the same frame by another hit.
+function hitPest(pest, damage, hitPos) {
+  if (!pests.includes(pest)) return;
+  pest.hp -= damage;
+  if (pest.hp <= 0) {
+    pests.splice(pests.indexOf(pest), 1);
+    compost += KILL_REWARD;
+    kills++;
+    playKill();
+    addPopup('+' + KILL_REWARD, hitPos.x, hitPos.y - 10, '#ffd76a');
+  }
+}
+
+function spawnFx(x, y, maxRadius, color, life) {
+  fx.push({ x, y, maxRadius, color, life, age: 0 });
+}
+
 function updateDefences(dt) {
   for (const d of defences) {
     d.cooldown -= dt;
     if (d.cooldown > 0) continue;
+
+    if (d.mechanic === 'area') {
+      const inRange = pests.filter(p => Math.hypot(pointAtDistance(p.dist).x - d.x, pointAtDistance(p.dist).y - d.y) <= d.range);
+      if (inRange.length === 0) { d.cooldown = 0.1; continue; }
+      for (const p of inRange) hitPest(p, d.damage * (d.effectiveness[p.type] || 1), pointAtDistance(p.dist));
+      spawnFx(d.x, d.y, d.range, 'rgba(143,211,232,0.5)', 0.35);
+      d.cooldown = d.fireInterval;
+      playPulse();
+      continue;
+    }
+
     const target = findNearestPestInRange(d.x, d.y, d.range);
     if (target) {
-      projectiles.push({ x: d.x, y: d.y, targetId: target.id, speed: d.projectileSpeed, damage: d.damage });
+      projectiles.push({
+        x: d.x, y: d.y, targetId: target.id, speed: d.projectileSpeed, damage: d.damage,
+        mechanic: d.mechanic, splashRadius: d.splashRadius, effectiveness: d.effectiveness
+      });
       d.cooldown = d.fireInterval;
       playShoot();
     } else {
@@ -525,22 +641,26 @@ function updateProjectiles(dt) {
     const dx = pos.x - pr.x, dy = pos.y - pr.y;
     const dist = Math.hypot(dx, dy);
     if (dist < HIT_RADIUS) {
-      target.hp -= pr.damage;
-      projectiles.splice(i, 1);
-      if (target.hp <= 0) {
-        const idx = pests.indexOf(target);
-        if (idx !== -1) pests.splice(idx, 1);
-        compost += KILL_REWARD;
-        kills++;
-        playKill();
-        addPopup('+' + KILL_REWARD, pos.x, pos.y - 10, '#ffd76a');
+      const splashTargets = (pr.mechanic === 'splash' && pr.splashRadius > 0)
+        ? pests.filter(p => p !== target && Math.hypot(pointAtDistance(p.dist).x - pos.x, pointAtDistance(p.dist).y - pos.y) <= pr.splashRadius)
+        : [];
+      hitPest(target, pr.damage * (pr.effectiveness[target.type] || 1), pos);
+      for (const other of splashTargets) {
+        hitPest(other, pr.damage * (pr.effectiveness[other.type] || 1) * SPLASH_FALLOFF, pos);
       }
+      if (pr.mechanic === 'splash') { spawnFx(pos.x, pos.y, pr.splashRadius, 'rgba(224,138,74,0.55)', 0.3); playSplash(); }
+      projectiles.splice(i, 1);
       continue;
     }
     const step = pr.speed * dt;
     pr.x += (dx / dist) * step;
     pr.y += (dy / dist) * step;
   }
+}
+
+function updateFx(dt) {
+  for (const f of fx) f.age += dt;
+  fx = fx.filter(f => f.age < f.life);
 }
 
 function drawBg() {
@@ -624,39 +744,93 @@ function drawGoal() {
   }
 }
 
+function drawRabbit(bob) {
+  ctx.fillStyle = '#a67c52';
+  ctx.beginPath();
+  ctx.ellipse(0, bob, 9, 6.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#6e4f30';
+  ctx.lineWidth = 1.3;
+  ctx.stroke();
+  ctx.fillStyle = '#a67c52';
+  for (const s of [-1, 1]) {
+    ctx.beginPath();
+    ctx.ellipse(-4, bob - 8, 2.2, 7, 0.15 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#e8c9a8';
+  for (const s of [-1, 1]) {
+    ctx.beginPath();
+    ctx.ellipse(-4 + s * 2, bob - 8, 1, 5, 0.15 * s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.fillStyle = '#f2e6d8';
+  ctx.beginPath();
+  ctx.ellipse(9, bob + 1, 2.4, 2.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawBird(bob) {
+  ctx.fillStyle = '#6a8fae';
+  ctx.beginPath();
+  ctx.ellipse(0, bob, 7.5, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#3f5c73';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  const wingFlap = Math.sin(elapsedTime * 18) * 4;
+  ctx.fillStyle = '#4f7392';
+  ctx.beginPath();
+  ctx.moveTo(-2, bob - 2);
+  ctx.lineTo(-10, bob - 6 - wingFlap);
+  ctx.lineTo(-4, bob + 3);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-2, bob + 2);
+  ctx.lineTo(-10, bob + 6 + wingFlap);
+  ctx.lineTo(-4, bob - 3);
+  ctx.fill();
+  ctx.fillStyle = '#e8a23c';
+  ctx.beginPath();
+  ctx.moveTo(7, bob - 1); ctx.lineTo(13, bob); ctx.lineTo(7, bob + 1.5);
+  ctx.fill();
+}
+
+function drawSlug(bob) {
+  ctx.fillStyle = '#a85c3c';
+  ctx.beginPath();
+  ctx.ellipse(0, bob + 2, 11, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#6e3620';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(-1, bob, 6, 1.6, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#6e3620';
+  ctx.lineWidth = 1.3;
+  for (const s of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(8, bob + s * 1);
+    ctx.lineTo(12, bob - 5 + s * 1);
+    ctx.stroke();
+    ctx.fillStyle = '#6e3620';
+    ctx.beginPath();
+    ctx.arc(12, bob - 5 + s * 1, 1.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
 function drawPest(p) {
   const pos = pointAtDistance(p.dist);
   const bob = Math.sin(elapsedTime * 8 + p.bobPhase) * 1.4;
   ctx.save();
-  ctx.translate(pos.x, pos.y + bob);
+  ctx.translate(pos.x, pos.y);
   ctx.rotate(pos.angle);
-  // Simple flat beetle-style pest - later phases will add distinct types.
-  ctx.fillStyle = '#3a6b2a';
-  ctx.beginPath();
-  ctx.ellipse(0, 0, 10, 7, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = '#264a1a';
-  ctx.lineWidth = 1.4;
-  ctx.stroke();
-  ctx.strokeStyle = '#264a1a';
-  ctx.lineWidth = 1.4;
-  for (const s of [-1, 1]) {
-    ctx.beginPath();
-    ctx.moveTo(-2, s * 6);
-    ctx.lineTo(-6, s * 10);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(2, s * 6);
-    ctx.lineTo(6, s * 10);
-    ctx.stroke();
-  }
-  ctx.fillStyle = '#264a1a';
-  ctx.beginPath();
-  ctx.moveTo(8, -2); ctx.lineTo(14, -5); ctx.lineTo(9, -1);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(8, 2); ctx.lineTo(14, 5); ctx.lineTo(9, 1);
-  ctx.fill();
+  if (p.type === 'bird') drawBird(bob);
+  else if (p.type === 'slug') drawSlug(bob * 0.4);
+  else drawRabbit(bob);
   ctx.restore();
 
   if (p.hp < p.maxHp) {
@@ -668,12 +842,7 @@ function drawPest(p) {
   }
 }
 
-// --- Every defence draws a permanently faint range ring (so coverage is
-// readable at a glance without tapping anything), plus a stronger one for
-// whichever ring is currently under the placement cursor/finger. ---
-function drawScarecrowIcon(cx, cy, size) {
-  ctx.save();
-  ctx.translate(cx, cy);
+function drawScarecrowIcon(size) {
   ctx.strokeStyle = '#5a3a1e';
   ctx.lineWidth = size * 0.16;
   ctx.beginPath();
@@ -688,16 +857,81 @@ function drawScarecrowIcon(cx, cy, size) {
   ctx.beginPath();
   ctx.ellipse(0, -size * 1.35, size * 0.55, size * 0.2, 0, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function drawBeerTrapIcon(size) {
+  ctx.fillStyle = '#c9853a';
+  ctx.beginPath();
+  ctx.roundRect(-size * 0.5, -size * 0.9, size, size * 1.5, size * 0.15);
+  ctx.fill();
+  ctx.strokeStyle = '#7a5a1e';
+  ctx.lineWidth = size * 0.1;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,224,140,0.8)';
+  ctx.beginPath();
+  ctx.roundRect(-size * 0.5, -size * 0.55, size, size * 0.5, 0);
+  ctx.fill();
+  ctx.strokeStyle = '#7a5a1e';
+  ctx.beginPath();
+  ctx.moveTo(size * 0.5, -size * 0.4); ctx.lineTo(size * 0.85, -size * 0.4);
+  ctx.lineTo(size * 0.85, size * 0.1); ctx.lineTo(size * 0.5, size * 0.1);
+  ctx.stroke();
+}
+
+function drawNettingIcon(size) {
+  ctx.strokeStyle = '#3f5c73';
+  ctx.lineWidth = size * 0.1;
+  ctx.strokeRect(-size * 0.7, -size * 1.2, size * 1.4, size * 1.4);
+  for (let i = 1; i < 4; i++) {
+    const gx = -size * 0.7 + (size * 1.4 / 4) * i;
+    ctx.beginPath(); ctx.moveTo(gx, -size * 1.2); ctx.lineTo(gx, size * 0.2); ctx.stroke();
+    const gy = -size * 1.2 + (size * 1.4 / 4) * i;
+    ctx.beginPath(); ctx.moveTo(-size * 0.7, gy); ctx.lineTo(size * 0.7, gy); ctx.stroke();
+  }
+}
+
+function drawSprayIcon(size) {
+  ctx.fillStyle = '#4a8a5a';
+  ctx.beginPath();
+  ctx.roundRect(-size * 0.35, -size * 0.5, size * 0.7, size * 1.1, size * 0.12);
+  ctx.fill();
+  ctx.fillStyle = '#2f5c3a';
+  ctx.fillRect(-size * 0.18, -size * 0.9, size * 0.36, size * 0.45);
+  ctx.strokeStyle = '#1f3d26';
+  ctx.lineWidth = size * 0.08;
+  ctx.beginPath();
+  ctx.moveTo(size * 0.18, -size * 0.75); ctx.lineTo(size * 0.55, -size * 0.95);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(143,211,232,0.85)';
+  ctx.lineWidth = size * 0.06;
+  for (const a of [-0.5, 0, 0.5]) {
+    ctx.beginPath();
+    ctx.moveTo(size * 0.6, -size * 1.0);
+    ctx.lineTo(size * 0.6 + Math.cos(a) * size * 0.4, -size * 1.0 + Math.sin(a) * size * 0.4 - size * 0.15);
+    ctx.stroke();
+  }
+}
+
+function drawDefenceIcon(type, cx, cy, size) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  if (type === 'beerTrap') drawBeerTrapIcon(size);
+  else if (type === 'netting') drawNettingIcon(size);
+  else if (type === 'spray') drawSprayIcon(size);
+  else drawScarecrowIcon(size);
   ctx.restore();
 }
 
+// --- Every defence draws a permanently faint range ring (so coverage is
+// readable at a glance without tapping anything), plus a stronger one for
+// whichever ring is currently under the placement cursor/finger. ---
 function drawDefences() {
   for (const d of defences) {
     ctx.fillStyle = 'rgba(255,255,255,0.055)';
     ctx.beginPath();
     ctx.arc(d.x, d.y, d.range, 0, Math.PI * 2);
     ctx.fill();
-    drawScarecrowIcon(d.x, d.y + DEFENCE_RADIUS * 0.6, DEFENCE_RADIUS);
+    drawDefenceIcon(d.type, d.x, d.y + DEFENCE_RADIUS * 0.6, DEFENCE_RADIUS);
   }
 }
 
@@ -708,6 +942,19 @@ function drawProjectiles() {
     ctx.arc(pr.x, pr.y, 3, 0, Math.PI * 2);
     ctx.fill();
   }
+}
+
+function drawFx() {
+  for (const f of fx) {
+    const t = f.age / f.life;
+    ctx.globalAlpha = 1 - t;
+    ctx.strokeStyle = f.color;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(f.x, f.y, f.maxRadius * t, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
 }
 
 function drawPlacementPreview() {
@@ -764,27 +1011,30 @@ function drawTray() {
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.fillRect(0, trayY, W, 3);
 
-  const def = DEFENCE_TYPES.scarecrow;
-  const affordable = compost >= def.cost;
-  const r = TRAY_BTN;
-  const selected = selectedType === 'scarecrow';
-  ctx.fillStyle = selected ? 'rgba(124,179,66,0.35)' : 'rgba(255,255,255,0.08)';
-  ctx.beginPath();
-  ctx.roundRect(r.x, r.y, r.w, r.h, 10);
-  ctx.fill();
-  ctx.strokeStyle = selected ? '#a8d86a' : 'rgba(255,255,255,0.35)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  for (const key of DEFENCE_ORDER) {
+    const def = DEFENCE_TYPES[key];
+    const r = TRAY_BUTTONS[key];
+    const affordable = compost >= def.cost;
+    const selected = selectedType === key;
 
-  drawScarecrowIcon(r.x + 26, r.y + r.h / 2 + 4, 12);
+    ctx.fillStyle = selected ? 'rgba(124,179,66,0.35)' : 'rgba(255,255,255,0.08)';
+    ctx.beginPath();
+    ctx.roundRect(r.x, r.y, r.w, r.h, 9);
+    ctx.fill();
+    ctx.strokeStyle = selected ? '#a8d86a' : 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-  ctx.textAlign = 'left';
-  ctx.font = 'bold 13px Arial';
-  ctx.fillStyle = affordable ? '#eaf5d8' : 'rgba(234,245,216,0.4)';
-  ctx.fillText('Scarecrow', r.x + 48, r.y + r.h / 2 - 2);
-  ctx.font = 'bold 11px Arial';
-  ctx.fillStyle = affordable ? '#ffd76a' : 'rgba(255,215,106,0.4)';
-  ctx.fillText(def.cost + ' compost', r.x + 48, r.y + r.h / 2 + 13);
+    drawDefenceIcon(key, r.x + r.w / 2, r.y + 15, 9);
+
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 9.5px Arial';
+    ctx.fillStyle = affordable ? '#eaf5d8' : 'rgba(234,245,216,0.4)';
+    ctx.fillText(def.name, r.x + r.w / 2, r.y + 30);
+    ctx.font = 'bold 9px Arial';
+    ctx.fillStyle = affordable ? '#ffd76a' : 'rgba(255,215,106,0.4)';
+    ctx.fillText(def.cost + ' 🌾', r.x + r.w / 2, r.y + 41);
+  }
 }
 
 function drawHud() {
@@ -849,6 +1099,7 @@ function loop(now) {
   drawDefences();
   for (const p of pests) drawPest(p);
   drawProjectiles();
+  drawFx();
   drawPlacementPreview();
   drawDenialMarker();
   drawPopups();
