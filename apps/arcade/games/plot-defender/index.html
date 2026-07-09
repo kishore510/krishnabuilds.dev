@@ -141,8 +141,6 @@ const PATH_WIDTH = 34;
 const START_LIVES = 5;
 const PEST_BASE_SPEED = 58;
 const PEST_MAX_HP = 3;
-const SPAWN_INTERVAL_MIN = 1.3;
-const SPAWN_INTERVAL_MAX = 1.9;
 const COMPOST_START = 100;
 const KILL_REWARD = 15;
 const DEFENCE_RADIUS = 13;
@@ -150,6 +148,27 @@ const MIN_BUILD_DIST_FROM_PATH = PATH_WIDTH / 2 + DEFENCE_RADIUS + 6;
 const MAX_BUILD_DIST_FROM_PATH = 80;
 const MIN_DEFENCE_SPACING = 32;
 const HIT_RADIUS = 9;
+const COUNTDOWN_DURATION = 3;
+const WAVE_CLEARED_PAUSE = 1.4;
+const SCORE_PER_KILL = 10;
+const SCORE_PER_WAVE = 50;
+const SCORE_PER_LIFE = 20;
+
+// --- Waves replace continuous spawning: each is a scripted count/pace of
+// pests rather than an open tap. Count ramps up and the gap between
+// spawns tightens each wave; hp/speed multipliers make later pests
+// tougher without touching the walking or targeting logic. Phase 4 will
+// extend each wave entry with a mix of pest types. ---
+const WAVE_COUNT = 10;
+const WAVES = [];
+for (let i = 0; i < WAVE_COUNT; i++) {
+  WAVES.push({
+    count: 5 + i,
+    interval: clampNum(1.6 - i * 0.065, 0.95, 1.6),
+    hpMult: 1 + i * 0.11,
+    speedMult: 1 + i * 0.03
+  });
+}
 
 // --- One defence type for now (phase 4 adds more) - keyed by name so the
 // tray, placement, and firing logic all read from one place. ---
@@ -206,9 +225,10 @@ function pointAtDistance(d) {
   return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, angle: Math.atan2(b.y - a.y, b.x - a.x) };
 }
 
-let pests, lives, state, elapsedTime, best, nextSpawnIn, pestId;
+let pests, lives, state, elapsedTime, best, pestId;
 let compost, defences, projectiles, popups, kills;
 let selectedType, pointerField, denialMarker;
+let waveIndex, waveState, countdownTimer, pestsToSpawn, spawnTimer, wavesCleared;
 
 // --- Audio: generated on the fly with the Web Audio API, no external files ---
 let audioCtx = null;
@@ -240,6 +260,9 @@ function playShoot() { tone(900, 0.04, 'square', 0.05); }
 function playKill() { tone(700, 0.07, 'triangle', 0.1); tone(1000, 0.08, 'triangle', 0.08, 0.04); }
 function playPlace() { tone(300, 0.05, 'square', 0.09); tone(450, 0.06, 'square', 0.07, 0.04); }
 function playDenied() { tone(160, 0.1, 'square', 0.08); }
+function playWaveStart() { tone(520, 0.08, 'triangle', 0.1); tone(700, 0.09, 'triangle', 0.09, 0.06); }
+function playWaveCleared() { tone(660, 0.09, 'triangle', 0.12); tone(880, 0.1, 'triangle', 0.11, 0.07); tone(1100, 0.14, 'triangle', 0.1, 0.16); }
+function playWin() { tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09); tone(1100, 0.16, 'triangle', 0.11, 0.19); tone(1320, 0.22, 'triangle', 0.1, 0.32); }
 
 function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 updateMuteBtn();
@@ -249,17 +272,19 @@ muteBtn.addEventListener('click', () => {
   updateMuteBtn();
 });
 
+// "Best" now tracks best score (kills + waves + lives bonus) rather than
+// survival time, now that phase 3 has a real scoring formula.
 function loadBest() { return parseInt(sessionStorage.getItem('plotDefenderBest') || '0', 10); }
 function saveBest(v) { try { sessionStorage.setItem('plotDefenderBest', v); } catch (e) {} }
 
 function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-function formatTime(s) { return Math.floor(s) + 's'; }
+function currentScore() { return kills * SCORE_PER_KILL + wavesCleared * SCORE_PER_WAVE + lives * SCORE_PER_LIFE; }
 
-function spawnPest() {
+function spawnPest(wave) {
   pests.push({
     id: pestId++, dist: 0,
-    speed: PEST_BASE_SPEED * (0.9 + Math.random() * 0.25),
-    hp: PEST_MAX_HP, maxHp: PEST_MAX_HP,
+    speed: PEST_BASE_SPEED * wave.speedMult * (0.9 + Math.random() * 0.25),
+    hp: Math.round(PEST_MAX_HP * wave.hpMult), maxHp: Math.round(PEST_MAX_HP * wave.hpMult),
     bobPhase: Math.random() * Math.PI * 2
   });
   playSpawn();
@@ -335,23 +360,30 @@ function resetRunState() {
   pests = [];
   lives = START_LIVES;
   elapsedTime = 0;
-  nextSpawnIn = 1.0;
   pestId = 1;
   compost = COMPOST_START;
   defences = [];
   projectiles = [];
   popups = [];
   kills = 0;
+  wavesCleared = 0;
   selectedType = null;
   pointerField = null;
   denialMarker = null;
+  beginWaveCountdown(0);
+}
+
+function beginWaveCountdown(index) {
+  waveIndex = index;
+  waveState = 'countdown';
+  countdownTimer = COUNTDOWN_DURATION;
 }
 
 function reset() {
   resetRunState();
   state = 'ready';
   title.textContent = 'Plot Defender';
-  subtitle.textContent = "Tap Scarecrow, then tap near the path to place it";
+  subtitle.textContent = '10 waves stand between the pests and the veg patch';
   scoreLine.style.display = 'none';
   playBtn.textContent = 'Play';
   backToArcade.style.display = 'none';
@@ -370,15 +402,21 @@ playBtn.addEventListener('click', () => {
   startGame();
 });
 
-function endGame() {
+function finishRun(won) {
   state = 'over';
-  playGameOver();
-  const survived = Math.floor(elapsedTime);
-  if (survived > best) { best = survived; saveBest(best); }
-  title.textContent = 'Plot overrun!';
-  subtitle.textContent = 'The pests got through';
+  const score = currentScore();
+  if (score > best) { best = score; saveBest(best); }
+  if (won) {
+    playWin();
+    title.textContent = 'Season complete!';
+    subtitle.textContent = 'Every wave repelled - the veg patch is safe';
+  } else {
+    playGameOver();
+    title.textContent = 'Plot overrun!';
+    subtitle.textContent = 'Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT + ' got through';
+  }
   scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Survived: ' + survived + 's   Kills: ' + kills + '   Best: ' + best + 's';
+  scoreLine.textContent = 'Score: ' + score + '   Waves: ' + wavesCleared + '/' + WAVE_COUNT + '   Kills: ' + kills + '   Best: ' + best;
   playBtn.textContent = 'Play Again';
   backToArcade.style.display = 'inline-block';
   overlay.style.display = 'flex';
@@ -388,11 +426,8 @@ function update(dt) {
   if (state !== 'playing') return;
   elapsedTime += dt;
 
-  nextSpawnIn -= dt;
-  if (nextSpawnIn <= 0) {
-    spawnPest();
-    nextSpawnIn = SPAWN_INTERVAL_MIN + Math.random() * (SPAWN_INTERVAL_MAX - SPAWN_INTERVAL_MIN);
-  }
+  updateWaves(dt);
+  if (state !== 'playing') return; // a win can end the run inside updateWaves()
 
   for (const p of pests) {
     p.dist += p.speed * dt;
@@ -403,7 +438,7 @@ function update(dt) {
     pests = pests.filter(p => p.dist < PATH_TOTAL_LENGTH);
     lives -= reached.length;
     playLifeLost();
-    if (lives <= 0) { lives = 0; endGame(); return; }
+    if (lives <= 0) { lives = 0; finishRun(false); return; }
   }
 
   updateDefences(dt);
@@ -414,6 +449,44 @@ function update(dt) {
     if (denialMarker.timer <= 0) denialMarker = null;
   }
   popups = popups.filter(p => { p.life--; p.y -= 0.5; return p.life > 0; });
+}
+
+// --- Wave state machine: countdown (prep time to place defences) ->
+// spawning (scripted count/pace of pests) -> cleared (brief pause) ->
+// next countdown, or a win once wave 10 clears. ---
+function updateWaves(dt) {
+  if (waveState === 'countdown') {
+    countdownTimer -= dt;
+    if (countdownTimer <= 0) {
+      waveState = 'spawning';
+      pestsToSpawn = WAVES[waveIndex].count;
+      spawnTimer = 0;
+      playWaveStart();
+    }
+    return;
+  }
+  if (waveState === 'spawning') {
+    spawnTimer -= dt;
+    if (spawnTimer <= 0 && pestsToSpawn > 0) {
+      spawnPest(WAVES[waveIndex]);
+      pestsToSpawn--;
+      spawnTimer = WAVES[waveIndex].interval;
+    }
+    if (pestsToSpawn <= 0 && pests.length === 0) {
+      waveState = 'cleared';
+      wavesCleared++;
+      countdownTimer = WAVE_CLEARED_PAUSE;
+      playWaveCleared();
+    }
+    return;
+  }
+  if (waveState === 'cleared') {
+    countdownTimer -= dt;
+    if (countdownTimer <= 0) {
+      if (waveIndex + 1 >= WAVE_COUNT) finishRun(true);
+      else beginWaveCountdown(waveIndex + 1);
+    }
+  }
 }
 
 function findPestById(id) { return pests.find(p => p.id === id); }
@@ -734,7 +807,30 @@ function drawHud() {
   ctx.fillText(compost + ' 🌾', W - 14, 24);
   ctx.font = 'bold 11px Arial';
   ctx.fillStyle = 'rgba(234,245,216,0.75)';
-  ctx.fillText('Survived: ' + formatTime(elapsedTime), W - 14, 44);
+  ctx.fillText('Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT, W - 14, 44);
+}
+
+// A non-blocking banner (place/adjust defences underneath it are still
+// tappable) for the countdown before a wave and the pause after clearing
+// one - pill-backed for the same reason every other in-play text here is.
+function drawWaveBanner() {
+  let text = null;
+  if (waveState === 'countdown') {
+    text = 'Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT + ' - starting in ' + Math.ceil(countdownTimer) + 's';
+  } else if (waveState === 'cleared') {
+    text = 'Wave ' + (waveIndex + 1) + ' cleared!';
+  }
+  if (!text) return;
+  ctx.font = 'bold 15px Arial';
+  ctx.textAlign = 'center';
+  const w = ctx.measureText(text).width;
+  const cx = W / 2, cy = HUD_H + 30;
+  ctx.fillStyle = 'rgba(20,14,8,0.72)';
+  ctx.beginPath();
+  ctx.roundRect(cx - w / 2 - 14, cy - 15, w + 28, 28, 14);
+  ctx.fill();
+  ctx.fillStyle = waveState === 'cleared' ? '#a8d86a' : '#eaf5d8';
+  ctx.fillText(text, cx, cy + 5);
 }
 
 let lastFrameTime = null;
@@ -756,6 +852,7 @@ function loop(now) {
   drawPlacementPreview();
   drawDenialMarker();
   drawPopups();
+  drawWaveBanner();
   drawTray();
   drawHud();
 
