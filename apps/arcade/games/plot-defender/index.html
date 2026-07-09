@@ -81,6 +81,38 @@
     border-color: #7cb342;
     color: #12200a;
   }
+  #mapLabel {
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(11px * var(--game-scale, 1));
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.6);
+  }
+  #mapButtons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: calc(8px * var(--game-scale, 1));
+    margin-top: calc(6px * var(--game-scale, 1));
+    pointer-events: auto;
+    width: 100%;
+  }
+  #mapButtons button {
+    font-family: inherit;
+    font-size: calc(11.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(7px * var(--game-scale, 1)) calc(8px * var(--game-scale, 1));
+    border-radius: calc(12px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    cursor: pointer;
+  }
+  #mapButtons button:active { background: rgba(255,255,255,0.22); }
+  #mapButtons button.selected {
+    background: rgba(124,179,66,0.35);
+    border-color: #a8d86a;
+    color: #eaf5d8;
+  }
   #backToArcade {
     display: none;
     margin-top: calc(18px * var(--game-scale, 1));
@@ -206,6 +238,13 @@
       <h1 id="title">Plot Defender</h1>
       <p id="subtitle">Match each defence to the pest it's strong against</p>
       <p id="scoreLine" style="display:none;"></p>
+      <p id="mapLabel">Choose a map</p>
+      <div id="mapButtons">
+        <button type="button" data-map="allotment">🌱 The Allotment</button>
+        <button type="button" data-map="marshlands">💧 Marshlands</button>
+        <button type="button" data-map="orchard">🌳 Orchard Grove</button>
+        <button type="button" data-map="twinPaths">🔀 Twin Paths</button>
+      </div>
       <div id="diffButtons">
         <button id="easyBtn" type="button">Easy</button>
         <button id="hardBtn" type="button">Hard</button>
@@ -253,6 +292,7 @@ const scoreLine = document.getElementById('scoreLine');
 const easyBtn = document.getElementById('easyBtn');
 const hardBtn = document.getElementById('hardBtn');
 const diffButtons = document.getElementById('diffButtons');
+const mapButtonEls = Array.from(document.getElementById('mapButtons').querySelectorAll('button'));
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 const helpBtn = document.getElementById('helpBtn');
@@ -409,39 +449,90 @@ window.addEventListener('resize', fitCanvas);
 window.addEventListener('kb-navbar-ready', fitCanvas);
 fitCanvas();
 
-// --- The path pests walk: an off-screen entry, a winding S-curve through
-// the plot, ending at the veg patch (the goal). Everything downstream
-// (pest movement, drawing) works purely off this waypoint list, so later
-// phases can reshape the route without touching the walking logic. ---
-const WAYPOINTS = [
-  { x: -20, y: 110 },
-  { x: 95, y: 110 },
-  { x: 95, y: 230 },
-  { x: 275, y: 230 },
-  { x: 275, y: 350 },
-  { x: 65, y: 350 },
-  { x: 65, y: 450 },
-  { x: 255, y: 450 }
-];
-const segLengths = [];
-const cumLengths = [0];
-for (let i = 0; i < WAYPOINTS.length - 1; i++) {
-  const dx = WAYPOINTS[i + 1].x - WAYPOINTS[i].x, dy = WAYPOINTS[i + 1].y - WAYPOINTS[i].y;
-  const len = Math.hypot(dx, dy);
-  segLengths.push(len);
-  cumLengths.push(cumLengths[i] + len);
-}
-const PATH_TOTAL_LENGTH = cumLengths[cumLengths.length - 1];
-const GOAL = WAYPOINTS[WAYPOINTS.length - 1];
-const ENTRY = WAYPOINTS[0];
+// --- Every map ends at the same veg-patch position but takes a different
+// route to get there - that route geometry alone (long straight runs vs.
+// tight parallel rows vs. two simultaneous lanes) is what makes different
+// defence types shine on different maps, with no per-map special rules
+// needed. `waypointSets` is an array of paths (length 1 for a single
+// route, 2 for Twin Paths); pests are assigned one at spawn. exampleSpot
+// is a hand-verified valid placement spot the onboarding hint points at. ---
+const GOAL = { x: 255, y: 450 };
 
-function pointAtDistance(d) {
-  if (d >= PATH_TOTAL_LENGTH) return { x: GOAL.x, y: GOAL.y, angle: 0 };
+function buildPathData(waypoints) {
+  const segLengths = [], cumLengths = [0];
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    const dx = waypoints[i + 1].x - waypoints[i].x, dy = waypoints[i + 1].y - waypoints[i].y;
+    const len = Math.hypot(dx, dy);
+    segLengths.push(len);
+    cumLengths.push(cumLengths[i] + len);
+  }
+  return { waypoints, segLengths, cumLengths, totalLength: cumLengths[cumLengths.length - 1] };
+}
+
+const MAPS = {
+  allotment: {
+    name: 'The Allotment', theme: 'soil',
+    exampleSpot: { x: 185, y: 185 },
+    waypointSets: [[
+      { x: -20, y: 110 }, { x: 95, y: 110 }, { x: 95, y: 230 }, { x: 275, y: 230 },
+      { x: 275, y: 350 }, { x: 65, y: 350 }, { x: 65, y: 450 }, { x: 255, y: 450 }
+    ]]
+  },
+  marshlands: {
+    // Rows run only 80px apart, close enough that one area/splash defence
+    // parked between two of them hits both - single-target towers only
+    // ever reach one row at a time here.
+    name: 'Marshlands', theme: 'water',
+    exampleSpot: { x: 180, y: 210 },
+    waypointSets: [[
+      { x: -20, y: 90 }, { x: 70, y: 90 }, { x: 70, y: 170 }, { x: 290, y: 170 },
+      { x: 290, y: 250 }, { x: 70, y: 250 }, { x: 70, y: 330 }, { x: 290, y: 330 },
+      { x: 290, y: 410 }, { x: 150, y: 410 }, { x: 150, y: 450 }, { x: 255, y: 450 }
+    ]]
+  },
+  orchard: {
+    // Two long straight rows instead of tight turns - a pest stays in one
+    // defence's range far longer here, rewarding raised single-target
+    // damage/range over area coverage.
+    name: 'Orchard Grove', theme: 'orchard',
+    exampleSpot: { x: 150, y: 165 },
+    waypointSets: [[
+      { x: -20, y: 120 }, { x: 330, y: 120 }, { x: 330, y: 280 }, { x: 30, y: 280 },
+      { x: 30, y: 450 }, { x: 255, y: 450 }
+    ]]
+  },
+  twinPaths: {
+    // Two independent lanes from separate entries, merging only for the
+    // final stretch - compost has to cover two chokepoints at once, so
+    // spreading cheaper defences wide beats concentrating upgrades on one.
+    name: 'Twin Paths', theme: 'soil',
+    exampleSpot: { x: 100, y: 165 },
+    waypointSets: [
+      [{ x: -20, y: 120 }, { x: 255, y: 120 }, { x: 255, y: 450 }],
+      [{ x: -20, y: 400 }, { x: 130, y: 400 }, { x: 130, y: 280 }, { x: 255, y: 280 }, { x: 255, y: 450 }]
+    ]
+  }
+};
+
+let currentMapKey = 'allotment';
+let currentMap = MAPS[currentMapKey];
+let mapPaths = currentMap.waypointSets.map(buildPathData);
+let ENTRIES = mapPaths.map(p => p.waypoints[0]);
+
+function loadMap(key) {
+  currentMapKey = key;
+  currentMap = MAPS[key];
+  mapPaths = currentMap.waypointSets.map(buildPathData);
+  ENTRIES = mapPaths.map(p => p.waypoints[0]);
+}
+
+function pointAtDistance(path, d) {
+  if (d >= path.totalLength) return { x: GOAL.x, y: GOAL.y, angle: 0 };
   let i = 0;
-  while (i < segLengths.length - 1 && cumLengths[i + 1] <= d) i++;
-  const segLen = segLengths[i] || 1;
-  const t = (d - cumLengths[i]) / segLen;
-  const a = WAYPOINTS[i], b = WAYPOINTS[i + 1];
+  while (i < path.segLengths.length - 1 && path.cumLengths[i + 1] <= d) i++;
+  const segLen = path.segLengths[i] || 1;
+  const t = (d - path.cumLengths[i]) / segLen;
+  const a = path.waypoints[i], b = path.waypoints[i + 1];
   return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, angle: Math.atan2(b.y - a.y, b.x - a.x) };
 }
 
@@ -465,7 +556,6 @@ let hintFirstDefence = null;
 let hintUpgradeTimer = 0;
 let compostPulseFired = false;
 let compostPulseTimer = 0;
-const HINT_EXAMPLE_SPOT = { x: 185, y: 185 }; // a known-valid placement spot next to the top path segment
 
 // --- Audio: generated on the fly with the Web Audio API, no external files ---
 let audioCtx = null;
@@ -526,8 +616,9 @@ function spawnPest(wave) {
   const type = pickPestType(wave.mix);
   const t = PEST_TYPES[type];
   const hp = Math.max(1, Math.round(PEST_MAX_HP * wave.hpMult * t.hpMult));
+  const path = mapPaths[Math.floor(Math.random() * mapPaths.length)];
   pests.push({
-    id: pestId++, dist: 0, type,
+    id: pestId++, dist: 0, type, path,
     speed: PEST_BASE_SPEED * wave.speedMult * t.speedMult * (0.9 + Math.random() * 0.25),
     hp, maxHp: hp,
     bobPhase: Math.random() * Math.PI * 2
@@ -549,9 +640,11 @@ function distToSegment(px, py, ax, ay, bx, by) {
 }
 function distanceToPath(x, y) {
   let min = Infinity;
-  for (let i = 0; i < WAYPOINTS.length - 1; i++) {
-    const a = WAYPOINTS[i], b = WAYPOINTS[i + 1];
-    min = Math.min(min, distToSegment(x, y, a.x, a.y, b.x, b.y));
+  for (const path of mapPaths) {
+    for (let i = 0; i < path.waypoints.length - 1; i++) {
+      const a = path.waypoints[i], b = path.waypoints[i + 1];
+      min = Math.min(min, distToSegment(x, y, a.x, a.y, b.x, b.y));
+    }
   }
   return min;
 }
@@ -721,6 +814,19 @@ function updateDiffButtonStyles() {
   hardBtn.classList.toggle('selected', difficulty === 'hard');
 }
 
+function updateMapButtonStyles() {
+  for (const btn of mapButtonEls) btn.classList.toggle('selected', btn.dataset.map === currentMapKey);
+}
+// Switching maps on the ready screen re-loads it immediately, so the
+// background/path preview updates live behind the still-open overlay.
+mapButtonEls.forEach(btn => {
+  btn.addEventListener('click', () => {
+    loadMap(btn.dataset.map);
+    updateMapButtonStyles();
+  });
+});
+updateMapButtonStyles();
+
 function reset() {
   preset = DIFFICULTY_PRESETS[difficulty];
   WAVES = buildWaves(preset);
@@ -826,9 +932,9 @@ function update(dt) {
     p.dist += p.speed * dt;
   }
 
-  const reached = pests.filter(p => p.dist >= PATH_TOTAL_LENGTH);
+  const reached = pests.filter(p => p.dist >= p.path.totalLength);
   if (reached.length > 0) {
-    pests = pests.filter(p => p.dist < PATH_TOTAL_LENGTH);
+    pests = pests.filter(p => p.dist < p.path.totalLength);
     lives -= reached.length;
     playLifeLost();
     goalHitFlash = 0.4;
@@ -952,7 +1058,7 @@ function findPestById(id) { return pests.find(p => p.id === id); }
 function findNearestPestInRange(x, y, range) {
   let best = null, bestDist = range;
   for (const p of pests) {
-    const pos = pointAtDistance(p.dist);
+    const pos = pointAtDistance(p.path, p.dist);
     const d = Math.hypot(pos.x - x, pos.y - y);
     if (d <= bestDist) { bestDist = d; best = p; }
   }
@@ -1002,9 +1108,9 @@ function updateDefences(dt) {
     if (d.cooldown > 0) continue;
 
     if (d.mechanic === 'area') {
-      const inRange = pests.filter(p => Math.hypot(pointAtDistance(p.dist).x - d.x, pointAtDistance(p.dist).y - d.y) <= d.range);
+      const inRange = pests.filter(p => Math.hypot(pointAtDistance(p.path, p.dist).x - d.x, pointAtDistance(p.path, p.dist).y - d.y) <= d.range);
       if (inRange.length === 0) { d.cooldown = 0.1; continue; }
-      for (const p of inRange) hitPest(p, d.damage * (d.effectiveness[p.type] || 1), pointAtDistance(p.dist));
+      for (const p of inRange) hitPest(p, d.damage * (d.effectiveness[p.type] || 1), pointAtDistance(p.path, p.dist));
       spawnFx(d.x, d.y, d.range, 'rgba(143,211,232,0.5)', 0.35);
       d.cooldown = d.fireInterval;
       playPulse();
@@ -1030,12 +1136,12 @@ function updateProjectiles(dt) {
     const pr = projectiles[i];
     const target = findPestById(pr.targetId);
     if (!target) { projectiles.splice(i, 1); continue; }
-    const pos = pointAtDistance(target.dist);
+    const pos = pointAtDistance(target.path, target.dist);
     const dx = pos.x - pr.x, dy = pos.y - pr.y;
     const dist = Math.hypot(dx, dy);
     if (dist < HIT_RADIUS) {
       const splashTargets = (pr.mechanic === 'splash' && pr.splashRadius > 0)
-        ? pests.filter(p => p !== target && Math.hypot(pointAtDistance(p.dist).x - pos.x, pointAtDistance(p.dist).y - pos.y) <= pr.splashRadius)
+        ? pests.filter(p => p !== target && Math.hypot(pointAtDistance(p.path, p.dist).x - pos.x, pointAtDistance(p.path, p.dist).y - pos.y) <= pr.splashRadius)
         : [];
       hitPest(target, pr.damage * (pr.effectiveness[target.type] || 1), pos);
       for (const other of splashTargets) {
@@ -1056,12 +1162,71 @@ function updateFx(dt) {
   fx = fx.filter(f => f.age < f.life);
 }
 
+const BG_THEME_GRADIENTS = {
+  soil: ['#5a6f45', '#3d4c2c'],
+  water: ['#4a6f5a', '#2c4a3d'],
+  orchard: ['#6f7a45', '#4c5a2c']
+};
+
+// Purely decorative per-theme flavour, hand-placed in the gaps of each
+// map's specific path layout so nothing overlaps the route itself.
+const THEME_DECOR = {
+  water: [
+    { x: 180, y: 130, rx: 50, ry: 18 }, { x: 180, y: 290, rx: 50, ry: 18 },
+    { x: 325, y: 210, rx: 20, ry: 14 }, { x: 35, y: 210, rx: 20, ry: 14 },
+    { x: 325, y: 370, rx: 20, ry: 14 }
+  ],
+  orchard: [
+    { x: 100, y: 200 }, { x: 250, y: 200 }, { x: 150, y: 360 }, { x: 300, y: 400 }, { x: 300, y: 95 }
+  ]
+};
+
+function drawWaterPool(p) {
+  ctx.fillStyle = 'rgba(74,138,168,0.55)';
+  ctx.beginPath();
+  ctx.ellipse(p.x, p.y, p.rx, p.ry, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(200,230,240,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(90,120,60,0.6)';
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < 3; i++) {
+    const rx = p.x - p.rx * 0.6 + i * p.rx * 0.6;
+    ctx.beginPath();
+    ctx.moveTo(rx, p.y + p.ry * 0.6);
+    ctx.quadraticCurveTo(rx + 3, p.y - 6, rx - 2, p.y - 14);
+    ctx.stroke();
+  }
+}
+
+function drawTree(t) {
+  ctx.fillStyle = 'rgba(60,40,20,0.5)';
+  ctx.fillRect(t.x - 2, t.y - 4, 4, 14);
+  ctx.fillStyle = 'rgba(90,130,50,0.55)';
+  ctx.beginPath();
+  ctx.arc(t.x, t.y - 10, 13, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawThemeDecor() {
+  const decor = THEME_DECOR[currentMap.theme];
+  if (!decor) return;
+  for (const d of decor) {
+    if (currentMap.theme === 'water') drawWaterPool(d);
+    else if (currentMap.theme === 'orchard') drawTree(d);
+  }
+}
+
 function drawBg() {
+  const colors = BG_THEME_GRADIENTS[currentMap.theme] || BG_THEME_GRADIENTS.soil;
   const g = ctx.createLinearGradient(0, HUD_H, 0, H);
-  g.addColorStop(0, '#5a6f45');
-  g.addColorStop(1, '#3d4c2c');
+  g.addColorStop(0, colors[0]);
+  g.addColorStop(1, colors[1]);
   ctx.fillStyle = g;
   ctx.fillRect(0, HUD_H, W, H - HUD_H);
+
+  drawThemeDecor();
 
   // Furrowed soil rows, same texture language as the other allotment games.
   ctx.strokeStyle = 'rgba(0,0,0,0.10)';
@@ -1074,38 +1239,51 @@ function drawBg() {
   }
 }
 
+const PATH_THEME_COLORS = {
+  soil: { outer: '#6b4c2c', inner: '#8a6438' },
+  water: { outer: '#5c4a35', inner: '#7a6248' }, // weathered boardwalk over the marsh
+  orchard: { outer: '#8a6f4a', inner: '#a8845a' } // drier, dustier track
+};
+
+function strokeWaypoints(waypoints) {
+  ctx.beginPath();
+  ctx.moveTo(waypoints[0].x, waypoints[0].y);
+  for (let i = 1; i < waypoints.length; i++) ctx.lineTo(waypoints[i].x, waypoints[i].y);
+  ctx.stroke();
+}
+
 function drawPath() {
+  const colors = PATH_THEME_COLORS[currentMap.theme] || PATH_THEME_COLORS.soil;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-  ctx.strokeStyle = '#6b4c2c';
-  ctx.lineWidth = PATH_WIDTH;
-  ctx.beginPath();
-  ctx.moveTo(WAYPOINTS[0].x, WAYPOINTS[0].y);
-  for (let i = 1; i < WAYPOINTS.length; i++) ctx.lineTo(WAYPOINTS[i].x, WAYPOINTS[i].y);
-  ctx.stroke();
 
-  ctx.strokeStyle = '#8a6438';
-  ctx.lineWidth = PATH_WIDTH - 8;
-  ctx.stroke();
-
-  ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([6, 10]);
-  ctx.beginPath();
-  ctx.moveTo(WAYPOINTS[0].x, WAYPOINTS[0].y);
-  for (let i = 1; i < WAYPOINTS.length; i++) ctx.lineTo(WAYPOINTS[i].x, WAYPOINTS[i].y);
-  ctx.stroke();
-  ctx.setLineDash([]);
+  for (const path of mapPaths) {
+    ctx.strokeStyle = colors.outer;
+    ctx.lineWidth = PATH_WIDTH;
+    strokeWaypoints(path.waypoints);
+    ctx.strokeStyle = colors.inner;
+    ctx.lineWidth = PATH_WIDTH - 8;
+    strokeWaypoints(path.waypoints);
+  }
+  for (const path of mapPaths) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 10]);
+    strokeWaypoints(path.waypoints);
+    ctx.setLineDash([]);
+  }
 }
 
 function drawEntry() {
   ctx.fillStyle = '#241a10';
-  ctx.beginPath();
-  ctx.ellipse(ENTRY.x + 18, ENTRY.y, 14, PATH_WIDTH / 2 - 4, 0, 0, Math.PI * 2);
-  ctx.fill();
   ctx.strokeStyle = '#4a3320';
   ctx.lineWidth = 3;
-  ctx.stroke();
+  for (const entry of ENTRIES) {
+    ctx.beginPath();
+    ctx.ellipse(entry.x + 18, entry.y, 14, PATH_WIDTH / 2 - 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
 }
 
 // A little painted signpost so the goal reads as "somewhere", not just a
@@ -1291,7 +1469,7 @@ function drawSlug(bob) {
 }
 
 function drawPest(p) {
-  const pos = pointAtDistance(p.dist);
+  const pos = pointAtDistance(p.path, p.dist);
   const bob = Math.sin(elapsedTime * 8 + p.bobPhase) * 1.4;
   ctx.save();
   ctx.translate(pos.x, pos.y);
@@ -1668,8 +1846,8 @@ function drawOnboardingHints() {
     ctx.stroke();
     drawHintPill('Tap a defence to select it', W / 2, trayTop - 18);
   } else if (hintStep === 'placeDefence') {
-    drawHintRing(HINT_EXAMPLE_SPOT.x, HINT_EXAMPLE_SPOT.y, DEFENCE_RADIUS + 8 + glow * 4, glow);
-    drawHintPill('Now tap the grass beside the path to place it', W / 2, HINT_EXAMPLE_SPOT.y - 34);
+    drawHintRing(currentMap.exampleSpot.x, currentMap.exampleSpot.y, DEFENCE_RADIUS + 8 + glow * 4, glow);
+    drawHintPill('Now tap the grass beside the path to place it', W / 2, currentMap.exampleSpot.y - 34);
   } else if (hintStep === 'upgradeDefence') {
     if (hintUpgradeTimer < 2 || !hintFirstDefence || !defences.includes(hintFirstDefence)) return;
     const d = hintFirstDefence;
