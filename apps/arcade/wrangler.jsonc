@@ -2,13 +2,26 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "krishnabuilds-arcade",
   "compatibility_date": "2026-07-07",
+  "main": "src/worker.js",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  // Create this namespace once with:
+  //   npx wrangler kv namespace create PLAY_COUNTS
+  // then paste the returned id below (and see README.md for the
+  // one-time dashboard step, since this repo auto-deploys via
+  // Cloudflare Workers Builds rather than local `wrangler deploy`).
+  "kv_namespaces": [
+    {
+      "binding": "PLAY_COUNTS",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
+    }
   ]
 }

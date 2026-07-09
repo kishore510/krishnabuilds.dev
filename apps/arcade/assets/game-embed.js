@@ -148,3 +148,13 @@
   publishChromeMetrics();
   window.addEventListener('resize', publishChromeMetrics);
 })();
+
+// Fire-and-forget play-count ping, once per page load. Silently does
+// nothing if the slug can't be determined or the API isn't reachable
+// (e.g. the KV-backed worker endpoint isn't deployed yet) - a game must
+// never fail to load because of this.
+(function () {
+  const match = location.pathname.match(/\/games\/([a-z0-9-]+)\//);
+  if (!match) return;
+  fetch('/api/play/' + match[1], { method: 'POST' }).catch(() => {});
+})();

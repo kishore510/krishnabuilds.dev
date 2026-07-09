@@ -252,6 +252,14 @@
     gap: 6px;
     flex-wrap: wrap;
   }
+  .cartridge .play-count {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .cartridge .play-count.visible { display: block; }
   .cartridge .play-hint {
     display: inline-flex;
     align-self: flex-start;
@@ -491,6 +499,7 @@
 
   const container = document.getElementById('cartridges');
   for (const g of GAMES) {
+    const slug = g.path.split('/')[1]; // 'games/<slug>/index.html' -> '<slug>'
     const a = document.createElement('a');
     a.className = 'cartridge';
     a.href = g.path;
@@ -507,6 +516,7 @@
         <p class="name">${g.name}</p>
         <p class="tagline">${g.tagline}</p>
         <div class="tags">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        <p class="play-count" data-slug="${slug}"></p>
         <div class="play-hint">
           <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
           Play now
@@ -515,6 +525,19 @@
     `;
     container.appendChild(a);
   }
+
+  // Best-effort play counts - the API only exists once the KV-backed
+  // worker route is deployed, so a fetch failure (404/network) just
+  // means every counter silently stays hidden rather than the page
+  // breaking.
+  fetch('/api/plays').then(r => r.ok ? r.json() : {}).then(counts => {
+    document.querySelectorAll('.play-count').forEach(el => {
+      const n = counts[el.dataset.slug];
+      if (!n) return;
+      el.textContent = '🕹️ Played ' + n.toLocaleString() + (n === 1 ? ' time' : ' times');
+      el.classList.add('visible');
+    });
+  }).catch(() => {});
 
   // A quiet placeholder so the shelf doesn't look empty/finished
   const placeholder = document.createElement('div');
