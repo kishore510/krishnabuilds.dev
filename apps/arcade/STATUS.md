@@ -49,11 +49,11 @@ Last updated: 2026-07-09, Plot Defender built end-to-end (phases 1-5, onboarding
   route-falls-through-to-assets) since `wrangler dev` isn't usable in
   this sandbox (no network to install it), and verified the site still
   loads with zero console errors and no visible counts when the API
-  route 404s (plain static serving, i.e. today, before the KV namespace
-  exists) — graceful no-op is the deliberate fallback. **Blocked on one
-  manual step**: the actual KV namespace still needs creating (real
-  Cloudflare auth required, which this sandbox doesn't have) — see
-  BACKLOG.md
+  route 404s (plain static serving, before the KV namespace existed) —
+  graceful no-op is the deliberate fallback. Krishna created the
+  `PLAY_COUNTS` KV namespace and pasted the real id into
+  `wrangler.jsonc` (the one step needing real Cloudflare auth, which
+  this sandbox doesn't have) — live as of the next Workers Build
 - Everything above is committed and pushed to `master`
 
 ## Recent history (last 6 sessions, newest first)
@@ -79,10 +79,6 @@ Last updated: 2026-07-09, Plot Defender built end-to-end (phases 1-5, onboarding
 None currently open.
 
 ## Next up (top of backlog)
-- Finish wiring the play-count counter: create the `PLAY_COUNTS` KV
-  namespace (`npx wrangler kv namespace create PLAY_COUNTS`) and paste
-  its id into `wrangler.jsonc` — everything else is already built and
-  pushed (see README.md's "Play-count counter" section)
 - Plot Defender tuning pass: play it for real (ideally across each of
   the 4 maps) and adjust wave/economy numbers based on how it actually
   feels, now that maps + upgrades + the rebalance are all in
