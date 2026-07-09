@@ -45,6 +45,19 @@
     pointer-events: none;
     text-align: center;
   }
+  /* Crate Stack's background is a pale sky gradient (unlike the other
+     games' consistently dark scenes), so white text alone can wash out.
+     A solid panel behind the overlay copy guarantees contrast no matter
+     what's rendering on the canvas underneath. */
+  #overlayPanel {
+    background: rgba(10, 12, 8, 0.62);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: calc(18px * var(--game-scale, 1));
+    padding: calc(22px * var(--game-scale, 1)) calc(26px * var(--game-scale, 1));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
   #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
   #diffButtons {
@@ -103,14 +116,16 @@
   <canvas id="game" width="360" height="540"></canvas>
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
-    <h1 id="title">Crate Stack</h1>
-    <p id="subtitle">Tap, click, or press space to drop the crate</p>
-    <p id="scoreLine" style="display:none;"></p>
-    <div id="diffButtons">
-      <button id="easyBtn" type="button">Easy</button>
-      <button id="hardBtn" type="button">Hard</button>
+    <div id="overlayPanel">
+      <h1 id="title">Crate Stack</h1>
+      <p id="subtitle">Tap, click, or press space to drop the crate</p>
+      <p id="scoreLine" style="display:none;"></p>
+      <div id="diffButtons">
+        <button id="easyBtn" type="button">Easy</button>
+        <button id="hardBtn" type="button">Hard</button>
+      </div>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
     </div>
-    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
 </div>
 
@@ -133,6 +148,7 @@ const BASE_WIDTH = 210;
 const EDGE_MARGIN = 14;
 const STACK_BASE_Y = H - 90;
 const ACTIVE_SCREEN_Y = 150;
+const HUD_H = 54;
 const CAMERA_SMOOTH = 8;
 const GRAVITY = 900;
 const PERFECT_STREAK_CELEBRATE = 3;
@@ -464,49 +480,53 @@ function drawDebris() {
   }
 }
 
-function drawPopups() {
-  ctx.font = 'bold 14px Arial';
+// The sky-gradient background swings from pale blue to brown as the camera
+// scrolls, so plain fill+stroke text can wash out against the light end of
+// it (this is what made the HUD score hard to read). A solid pill behind
+// any in-play text guarantees contrast no matter what's scrolling underneath.
+function drawTextPill(text, cx, cy, font, textColor, alpha) {
+  ctx.font = font;
   ctx.textAlign = 'center';
-  for (const p of popups) {
-    ctx.globalAlpha = clampNum(p.life / 40, 0, 1);
-    ctx.fillStyle = p.color;
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2.5;
-    ctx.strokeText(p.text, p.x, p.y);
-    ctx.fillText(p.text, p.x, p.y);
-  }
+  const w = ctx.measureText(text).width;
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = 'rgba(20,14,8,0.72)';
+  ctx.beginPath();
+  ctx.roundRect(cx - w / 2 - 10, cy - 15, w + 20, 22, 11);
+  ctx.fill();
+  ctx.fillStyle = textColor;
+  ctx.fillText(text, cx, cy + 2);
   ctx.globalAlpha = 1;
+}
+
+function drawPopups() {
+  for (const p of popups) {
+    drawTextPill(p.text, p.x, p.y, 'bold 14px Arial', p.color, clampNum(p.life / 40, 0, 1));
+  }
 }
 
 function drawCelebrate() {
   if (celebrateTimer <= 0) return;
-  ctx.font = 'bold 16px Arial';
-  ctx.textAlign = 'center';
-  ctx.globalAlpha = clampNum(celebrateTimer / 0.6, 0, 1);
-  ctx.fillStyle = '#ffd76a';
-  ctx.strokeStyle = 'black';
-  ctx.lineWidth = 3;
-  ctx.strokeText('🔥 Streak x' + streak, W / 2, 96);
-  ctx.fillText('🔥 Streak x' + streak, W / 2, 96);
-  ctx.globalAlpha = 1;
+  drawTextPill('🔥 Streak x' + streak, W / 2, 96, 'bold 16px Arial', '#ffd76a', clampNum(celebrateTimer / 0.6, 0, 1));
 }
 
 function drawHud() {
-  ctx.font = 'bold 22px Arial';
+  ctx.fillStyle = '#2a1608';
+  ctx.fillRect(0, 0, W, HUD_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(0, HUD_H - 3, W, 3);
+
+  // Left/right-aligned (not centered) so the score never sits directly
+  // under the top-center mute button.
+  ctx.font = 'bold 20px Arial';
   ctx.fillStyle = 'white';
-  ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-  ctx.lineWidth = 3;
-  ctx.textAlign = 'center';
-  ctx.strokeText(String(score), W / 2, 46);
-  ctx.fillText(String(score), W / 2, 46);
+  ctx.textAlign = 'left';
+  ctx.fillText(String(score), 14, 33);
 
   ctx.font = 'bold 12px Arial';
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.strokeStyle = 'rgba(0,0,0,0.4)';
-  ctx.lineWidth = 2;
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.textAlign = 'right';
   const bestText = 'Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best;
-  ctx.strokeText(bestText, W / 2, 64);
-  ctx.fillText(bestText, W / 2, 64);
+  ctx.fillText(bestText, W - 14, 33);
 }
 
 let lastFrameTime = null;
