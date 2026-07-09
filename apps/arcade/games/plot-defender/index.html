@@ -68,15 +68,19 @@
     font-family: inherit;
     font-size: calc(15px * var(--game-scale, 1));
     font-weight: bold;
-    padding: calc(10px * var(--game-scale, 1)) calc(28px * var(--game-scale, 1));
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
     border-radius: calc(24px * var(--game-scale, 1));
     border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
     background: #7cb342;
     border-color: #7cb342;
     color: #12200a;
-    cursor: pointer;
   }
-  #diffButtons button:active { filter: brightness(0.9); }
   #backToArcade {
     display: none;
     margin-top: calc(18px * var(--game-scale, 1));
@@ -115,7 +119,8 @@
       <p id="subtitle">Match each defence to the pest it's strong against</p>
       <p id="scoreLine" style="display:none;"></p>
       <div id="diffButtons">
-        <button id="playBtn" type="button">Play</button>
+        <button id="easyBtn" type="button">Easy</button>
+        <button id="hardBtn" type="button">Hard</button>
       </div>
       <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
     </div>
@@ -129,7 +134,9 @@ const overlay = document.getElementById('overlay');
 const title = document.getElementById('title');
 const subtitle = document.getElementById('subtitle');
 const scoreLine = document.getElementById('scoreLine');
-const playBtn = document.getElementById('playBtn');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 
@@ -138,12 +145,8 @@ const HUD_H = 58;
 const TRAY_H = 60;
 const FIELD_BOTTOM = H - TRAY_H;
 const PATH_WIDTH = 34;
-const START_LIVES = 5;
 const PEST_BASE_SPEED = 58;
 const PEST_MAX_HP = 3;
-const COMPOST_START = 100;
-const KILL_REWARD = 10;
-const DEFENCE_COST_RAMP = 0.09; // +9% to every defence's cost per wave already reached
 const DEFENCE_RADIUS = 13;
 const MIN_BUILD_DIST_FROM_PATH = PATH_WIDTH / 2 + DEFENCE_RADIUS + 6;
 const MAX_BUILD_DIST_FROM_PATH = 80;
@@ -155,14 +158,31 @@ const SCORE_PER_KILL = 10;
 const SCORE_PER_WAVE = 50;
 const SCORE_PER_LIFE = 20;
 const SPLASH_FALLOFF = 0.55;
+const MAX_LEVEL = 3;
+const UPGRADE_COST_MULT = [0.75, 1.35]; // level 1->2, level 2->3
+
+// --- Hard isn't just "faster" - it starts with a smaller cushion (fewer
+// lives, less compost), pays out less per kill, taxes new/upgraded
+// defences harder as waves pass, and ramps pest hp/speed/pace more
+// steeply, so the whole economy stays tighter start to finish. ---
+const DIFFICULTY_PRESETS = {
+  easy: {
+    startLives: 5, startCompost: 90, killReward: 9, costRamp: 0.1,
+    hpStep: 0.22, speedStep: 0.06, intervalBase: 1.5, intervalStep: 0.075, intervalMin: 0.8
+  },
+  hard: {
+    startLives: 4, startCompost: 75, killReward: 6, costRamp: 0.14,
+    hpStep: 0.3, speedStep: 0.09, intervalBase: 1.25, intervalStep: 0.07, intervalMin: 0.65
+  }
+};
 
 // --- Three pest traits (spec: slow/tough, fast/weak, medium) layered on
 // top of the base hp/speed - wave hpMult/speedMult still apply on top of
 // these, so a late-wave slug is tougher than an early-wave slug too. ---
 const PEST_TYPES = {
-  rabbit: { key: 'rabbit', name: 'Rabbit', hpMult: 1.0, speedMult: 1.0 },
-  bird: { key: 'bird', name: 'Bird', hpMult: 0.55, speedMult: 1.7 },
-  slug: { key: 'slug', name: 'Slug', hpMult: 2.2, speedMult: 0.55 }
+  rabbit: { key: 'rabbit', name: 'Rabbit', hpMult: 1.0, speedMult: 1.0, color: '#a67c52' },
+  bird: { key: 'bird', name: 'Bird', hpMult: 0.55, speedMult: 1.7, color: '#6a8fae' },
+  slug: { key: 'slug', name: 'Slug', hpMult: 2.2, speedMult: 0.55, color: '#a85c3c' }
 };
 
 // --- Waves replace continuous spawning: each is a scripted count/pace of
@@ -184,16 +204,22 @@ const WAVE_MIXES = [
   { rabbit: 0.2, bird: 0.4, slug: 0.4 }
 ];
 const WAVE_COUNT = 10;
-const WAVES = [];
-for (let i = 0; i < WAVE_COUNT; i++) {
-  WAVES.push({
-    count: 5 + i,
-    interval: clampNum(1.6 - i * 0.065, 0.95, 1.6),
-    hpMult: 1 + i * 0.17,
-    speedMult: 1 + i * 0.045,
-    mix: WAVE_MIXES[i]
-  });
+function buildWaves(preset) {
+  const waves = [];
+  for (let i = 0; i < WAVE_COUNT; i++) {
+    waves.push({
+      count: 6 + Math.round(i * 1.4),
+      interval: clampNum(preset.intervalBase - i * preset.intervalStep, preset.intervalMin, preset.intervalBase),
+      hpMult: 1 + i * preset.hpStep,
+      speedMult: 1 + i * preset.speedStep,
+      mix: WAVE_MIXES[i]
+    });
+  }
+  return waves;
 }
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let WAVES = buildWaves(preset);
 function pickPestType(mix) {
   const total = Object.values(mix).reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
@@ -209,28 +235,31 @@ function pickPestType(mix) {
 // fires: 'single' homes on the nearest target, 'splash' does that plus
 // falloff damage to nearby pests on impact, 'area' periodically pulses
 // everything already in range instead of targeting one pest. `effectiveness`
-// is a damage multiplier per pest type - the reason matching defence to
-// pest matters instead of one type dominating every wave. ---
+// is a damage multiplier per pest type, and every type now has a real
+// weakness (not just a neutral 1x floor) - scarecrow used to be a safe
+// do-everything default, so it's the cheapest/weakest generalist here and
+// actively bad against slugs, which is what forces diversifying instead of
+// spamming one type. ---
 const DEFENCE_TYPES = {
   scarecrow: {
-    key: 'scarecrow', name: 'Scarecrow', cost: 40, range: 88, damage: 1, fireInterval: 0.55,
+    key: 'scarecrow', name: 'Scarecrow', cost: 35, range: 78, damage: 1, fireInterval: 0.62,
     projectileSpeed: 260, mechanic: 'single', splashRadius: 0,
-    effectiveness: { rabbit: 1, bird: 1, slug: 1 }
+    effectiveness: { rabbit: 0.9, bird: 1.3, slug: 0.45 }
   },
   beerTrap: {
-    key: 'beerTrap', name: 'Beer Trap', cost: 55, range: 68, damage: 2, fireInterval: 0.9,
+    key: 'beerTrap', name: 'Beer Trap', cost: 55, range: 64, damage: 2, fireInterval: 0.9,
     projectileSpeed: 220, mechanic: 'single', splashRadius: 0,
-    effectiveness: { rabbit: 1, bird: 0.6, slug: 2.2 }
+    effectiveness: { rabbit: 0.8, bird: 0.4, slug: 2.4 }
   },
   netting: {
-    key: 'netting', name: 'Netting', cost: 65, range: 76, damage: 1, fireInterval: 1.1,
+    key: 'netting', name: 'Netting', cost: 65, range: 72, damage: 1, fireInterval: 1.1,
     projectileSpeed: 0, mechanic: 'area', splashRadius: 0,
-    effectiveness: { rabbit: 1, bird: 1.8, slug: 0.5 }
+    effectiveness: { rabbit: 0.8, bird: 2.0, slug: 0.35 }
   },
   spray: {
-    key: 'spray', name: 'Spray', cost: 60, range: 82, damage: 1, fireInterval: 0.7,
+    key: 'spray', name: 'Spray', cost: 60, range: 78, damage: 1, fireInterval: 0.7,
     projectileSpeed: 240, mechanic: 'splash', splashRadius: 34,
-    effectiveness: { rabbit: 1.4, bird: 1, slug: 1 }
+    effectiveness: { rabbit: 1.6, bird: 0.7, slug: 0.8 }
   }
 };
 const DEFENCE_ORDER = ['scarecrow', 'beerTrap', 'netting', 'spray'];
@@ -294,9 +323,9 @@ function pointAtDistance(d) {
 }
 
 let pests, lives, state, elapsedTime, best, pestId;
-let compost, defences, projectiles, popups, fx, kills;
+let compost, defences, projectiles, popups, fx, particles, kills;
 let goalHitFlash = 0;
-let selectedType, pointerField, denialMarker;
+let selectedType, pointerField, denialMarker, selectedDefence;
 let waveIndex, waveState, countdownTimer, pestsToSpawn, spawnTimer, wavesCleared;
 
 // --- Audio: generated on the fly with the Web Audio API, no external files ---
@@ -329,6 +358,8 @@ function playShoot() { tone(900, 0.04, 'square', 0.05); }
 function playPulse() { tone(500, 0.1, 'sine', 0.07); tone(650, 0.12, 'sine', 0.05, 0.04); }
 function playSplash() { tone(380, 0.08, 'sawtooth', 0.06); }
 function playKill() { tone(700, 0.07, 'triangle', 0.1); tone(1000, 0.08, 'triangle', 0.08, 0.04); }
+function playHit() { tone(1200, 0.03, 'square', 0.035); }
+function playUpgrade() { tone(500, 0.07, 'triangle', 0.1); tone(750, 0.08, 'triangle', 0.09, 0.05); tone(1000, 0.1, 'triangle', 0.08, 0.11); }
 function playPlace() { tone(300, 0.05, 'square', 0.09); tone(450, 0.06, 'square', 0.07, 0.04); }
 function playDenied() { tone(160, 0.1, 'square', 0.08); }
 function playWaveStart() { tone(520, 0.08, 'triangle', 0.1); tone(700, 0.09, 'triangle', 0.09, 0.06); }
@@ -345,8 +376,8 @@ muteBtn.addEventListener('click', () => {
 
 // "Best" now tracks best score (kills + waves + lives bonus) rather than
 // survival time, now that phase 3 has a real scoring formula.
-function loadBest() { return parseInt(sessionStorage.getItem('plotDefenderBest') || '0', 10); }
-function saveBest(v) { try { sessionStorage.setItem('plotDefenderBest', v); } catch (e) {} }
+function loadBest(diff) { return parseInt(sessionStorage.getItem('plotDefenderBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('plotDefenderBest_' + diff, v); } catch (e) {} }
 
 function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function lerp(a, b, t) { return a + (b - a) * t; }
@@ -389,7 +420,7 @@ function distanceToPath(x, y) {
 // so expanding your defences late-game takes real economic planning instead
 // of freely spamming whatever cleared the early waves.
 function defenceCost(key) {
-  return Math.round(DEFENCE_TYPES[key].cost * (1 + waveIndex * DEFENCE_COST_RAMP));
+  return Math.round(DEFENCE_TYPES[key].cost * (1 + waveIndex * preset.costRamp));
 }
 
 function isValidPlacement(x, y) {
@@ -418,28 +449,99 @@ function trayButtonAt(x, y) {
   return null;
 }
 
+function defenceAt(x, y) {
+  let best = null, bestDist = DEFENCE_RADIUS + 12;
+  for (const d of defences) {
+    const dist = Math.hypot(d.x - x, d.y - y);
+    if (dist <= bestDist) { bestDist = dist; best = d; }
+  }
+  return best;
+}
+
+// Stats recomputed fresh from the base type + level each time (rather than
+// compounded in place) so repeated upgrades can't drift from the intended
+// curve. fireInterval has a hard floor so a maxed defence can never fire
+// unreactably fast.
+function statsForLevel(type, level) {
+  const base = DEFENCE_TYPES[type];
+  const dmgMult = 1 + 0.5 * (level - 1);
+  const rangeMult = 1 + 0.12 * (level - 1);
+  const fireMult = 1 - 0.12 * (level - 1);
+  return {
+    damage: base.damage * dmgMult,
+    range: base.range * rangeMult,
+    fireInterval: Math.max(0.28, base.fireInterval * fireMult),
+    projectileSpeed: base.projectileSpeed,
+    splashRadius: base.splashRadius,
+    mechanic: base.mechanic,
+    effectiveness: base.effectiveness
+  };
+}
+
+function upgradeCost(d) {
+  return Math.round(defenceCost(d.type) * UPGRADE_COST_MULT[d.level - 1]);
+}
+
+function applyUpgrade(d) {
+  if (d.level >= MAX_LEVEL) return;
+  const cost = upgradeCost(d);
+  if (compost < cost) { playDenied(); return; }
+  compost -= cost;
+  d.level++;
+  Object.assign(d, statsForLevel(d.type, d.level));
+  spawnFx(d.x, d.y, 26, 'rgba(255,215,106,0.6)', 0.3);
+  playUpgrade();
+}
+
+const UPGRADE_PANEL_W = 132, UPGRADE_PANEL_H = 70;
+function upgradePanelRect(d) {
+  const px = clampNum(d.x - UPGRADE_PANEL_W / 2, 6, W - UPGRADE_PANEL_W - 6);
+  let py = d.y - DEFENCE_RADIUS - 10 - UPGRADE_PANEL_H;
+  if (py < HUD_H + 4) py = d.y + DEFENCE_RADIUS + 10;
+  return { x: px, y: py, w: UPGRADE_PANEL_W, h: UPGRADE_PANEL_H };
+}
+function upgradeButtonRect(d) {
+  const p = upgradePanelRect(d);
+  return { x: p.x + 8, y: p.y + p.h - 26, w: p.w - 16, h: 20 };
+}
+
 canvas.addEventListener('pointerdown', (e) => {
   if (state !== 'playing') return;
   const pt = canvasPointFromEvent(e);
+
   const tapped = trayButtonAt(pt.x, pt.y);
   if (tapped) {
     selectedType = selectedType === tapped ? null : tapped;
+    selectedDefence = null;
     return;
   }
+
+  if (selectedDefence) {
+    if (pointInRect(pt.x, pt.y, upgradeButtonRect(selectedDefence))) {
+      applyUpgrade(selectedDefence);
+      return;
+    }
+    const onPanel = pointInRect(pt.x, pt.y, upgradePanelRect(selectedDefence));
+    const onDefence = Math.hypot(selectedDefence.x - pt.x, selectedDefence.y - pt.y) <= DEFENCE_RADIUS + 12;
+    if (onPanel || onDefence) return;
+    selectedDefence = null; // tapped elsewhere - dismiss, then fall through below
+  }
+
+  const tappedDefence = defenceAt(pt.x, pt.y);
+  if (tappedDefence) {
+    selectedType = null;
+    selectedDefence = tappedDefence;
+    return;
+  }
+
   if (!selectedType) return;
-  const def = DEFENCE_TYPES[selectedType];
   const cost = defenceCost(selectedType);
   if (compost < cost || !isValidPlacement(pt.x, pt.y)) {
     playDenied();
     denialMarker = { x: pt.x, y: pt.y, timer: 0.35 };
     return;
   }
-  defences.push({
-    x: pt.x, y: pt.y, type: selectedType,
-    range: def.range, damage: def.damage, fireInterval: def.fireInterval, projectileSpeed: def.projectileSpeed,
-    mechanic: def.mechanic, splashRadius: def.splashRadius, effectiveness: def.effectiveness,
-    cooldown: 0.15
-  });
+  defences.push({ x: pt.x, y: pt.y, type: selectedType, level: 1, cooldown: 0.15, ...statsForLevel(selectedType, 1) });
   compost -= cost;
   playPlace();
 });
@@ -450,10 +552,10 @@ canvas.addEventListener('pointerleave', () => { pointerField = null; });
 
 function resetRunState() {
   pests = [];
-  lives = START_LIVES;
+  lives = preset.startLives;
   elapsedTime = 0;
   pestId = 1;
-  compost = COMPOST_START;
+  compost = preset.startCompost;
   defences = [];
   projectiles = [];
   popups = [];
@@ -463,7 +565,9 @@ function resetRunState() {
   selectedType = null;
   pointerField = null;
   denialMarker = null;
+  selectedDefence = null;
   goalHitFlash = 0;
+  particles = [];
   beginWaveCountdown(0);
 }
 
@@ -473,33 +577,44 @@ function beginWaveCountdown(index) {
   countdownTimer = COUNTDOWN_DURATION;
 }
 
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
 function reset() {
+  preset = DIFFICULTY_PRESETS[difficulty];
+  WAVES = buildWaves(preset);
   resetRunState();
   state = 'ready';
   title.textContent = 'Plot Defender';
   subtitle.textContent = 'Match each defence to the pest it’s strong against';
   scoreLine.style.display = 'none';
-  playBtn.textContent = 'Play';
+  diffButtons.style.display = 'flex';
   backToArcade.style.display = 'none';
-  best = loadBest();
+  best = loadBest(difficulty);
+  updateDiffButtonStyles();
   overlay.style.display = 'flex';
 }
 
-function startGame() {
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  WAVES = buildWaves(preset);
+  best = loadBest(difficulty);
+  resetRunState();
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
 }
 
-playBtn.addEventListener('click', () => {
-  if (state === 'over') reset();
-  startGame();
-});
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
 
 function finishRun(won) {
   state = 'over';
   const score = currentScore();
-  if (score > best) { best = score; saveBest(best); }
+  if (score > best) { best = score; saveBest(difficulty, best); }
   if (won) {
     playWin();
     title.textContent = 'Season complete!';
@@ -510,9 +625,10 @@ function finishRun(won) {
     subtitle.textContent = 'Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT + ' got through';
   }
   scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Score: ' + score + '   Waves: ' + wavesCleared + '/' + WAVE_COUNT + '   Kills: ' + kills + '   Best: ' + best;
-  playBtn.textContent = 'Play Again';
+  scoreLine.textContent = 'Score: ' + score + '   Waves: ' + wavesCleared + '/' + WAVE_COUNT + '   Kills: ' + kills + '   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best;
+  diffButtons.style.display = 'flex';
   backToArcade.style.display = 'inline-block';
+  updateDiffButtonStyles();
   overlay.style.display = 'flex';
 }
 
@@ -540,6 +656,7 @@ function update(dt) {
   updateDefences(dt);
   updateProjectiles(dt);
   updateFx(dt);
+  updateParticles(dt);
 
   if (denialMarker) {
     denialMarker.timer -= dt;
@@ -575,6 +692,15 @@ function updateWaves(dt) {
       wavesCleared++;
       countdownTimer = WAVE_CLEARED_PAUSE;
       playWaveCleared();
+      const flourishColors = ['#ffd76a', '#e0607a', '#8a4fae', '#7cb342', '#ff8f3c'];
+      for (let i = 0; i < 10; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const speed = 50 + Math.random() * 70;
+        particles.push({
+          x: GOAL.x, y: GOAL.y - 20, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed - 40,
+          life: 0.7, age: 0, color: flourishColors[i % flourishColors.length]
+        });
+      }
     }
     return;
   }
@@ -602,16 +728,34 @@ function findNearestPestInRange(x, y, range) {
 // Shared by every mechanic (single-target hit, area pulse, splash) so kill
 // rewards/removal only happen in one place. Guards against a pest that was
 // already removed earlier the same frame by another hit.
+function spawnDeathBurst(x, y, color) {
+  const count = 6;
+  for (let i = 0; i < count; i++) {
+    const a = (i / count) * Math.PI * 2 + Math.random() * 0.6;
+    const speed = 60 + Math.random() * 50;
+    particles.push({ x, y, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, life: 0.4, age: 0, color });
+  }
+}
+
 function hitPest(pest, damage, hitPos) {
   if (!pests.includes(pest)) return;
   pest.hp -= damage;
   if (pest.hp <= 0) {
     pests.splice(pests.indexOf(pest), 1);
-    compost += KILL_REWARD;
+    compost += preset.killReward;
     kills++;
     playKill();
-    addPopup('+' + KILL_REWARD, hitPos.x, hitPos.y - 10, '#ffd76a');
+    addPopup('+' + preset.killReward, hitPos.x, hitPos.y - 10, '#ffd76a');
+    spawnDeathBurst(hitPos.x, hitPos.y, PEST_TYPES[pest.type].color);
+  } else {
+    playHit();
+    spawnFx(hitPos.x, hitPos.y, 12, 'rgba(255,255,255,0.55)', 0.12);
   }
+}
+
+function updateParticles(dt) {
+  for (const p of particles) { p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; }
+  particles = particles.filter(p => p.age < p.life);
 }
 
 function spawnFx(x, y, maxRadius, color, life) {
@@ -762,7 +906,7 @@ function drawAllotmentSign(cx, bottomY) {
 // living in the HUD counter. healthT is 1 at full lives, 0 at zero.
 function drawGoal() {
   const gx = GOAL.x, gy = GOAL.y;
-  const healthT = clampNum(lives / START_LIVES, 0, 1);
+  const healthT = clampNum(lives / preset.startLives, 0, 1);
 
   drawAllotmentSign(gx, gy - 26);
 
@@ -1017,11 +1161,29 @@ function drawDefenceIcon(type, cx, cy, size) {
 // whichever ring is currently under the placement cursor/finger. ---
 function drawDefences() {
   for (const d of defences) {
-    ctx.fillStyle = 'rgba(255,255,255,0.055)';
+    const selected = d === selectedDefence;
+    ctx.fillStyle = selected ? 'rgba(255,215,106,0.12)' : 'rgba(255,255,255,0.055)';
     ctx.beginPath();
     ctx.arc(d.x, d.y, d.range, 0, Math.PI * 2);
     ctx.fill();
+    if (selected) {
+      ctx.strokeStyle = 'rgba(255,215,106,0.8)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, DEFENCE_RADIUS + 6, 0, Math.PI * 2);
+      ctx.stroke();
+    }
     drawDefenceIcon(d.type, d.x, d.y + DEFENCE_RADIUS * 0.6, DEFENCE_RADIUS);
+    if (d.level > 1) {
+      ctx.fillStyle = '#ffd76a';
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'center';
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+      ctx.lineWidth = 2;
+      const label = 'Lv' + d.level;
+      ctx.strokeText(label, d.x, d.y - DEFENCE_RADIUS - 4);
+      ctx.fillText(label, d.x, d.y - DEFENCE_RADIUS - 4);
+    }
   }
 }
 
@@ -1045,6 +1207,57 @@ function drawFx() {
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    const t = p.age / p.life;
+    ctx.globalAlpha = 1 - t;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2.6 * (1 - t * 0.5), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawUpgradePanel() {
+  if (!selectedDefence || !defences.includes(selectedDefence)) { selectedDefence = null; return; }
+  const d = selectedDefence;
+  const def = DEFENCE_TYPES[d.type];
+  const p = upgradePanelRect(d);
+  const maxed = d.level >= MAX_LEVEL;
+  const cost = maxed ? 0 : upgradeCost(d);
+  const affordable = compost >= cost;
+
+  ctx.fillStyle = 'rgba(20,14,8,0.85)';
+  ctx.beginPath();
+  ctx.roundRect(p.x, p.y, p.w, p.h, 10);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  ctx.fillStyle = '#eaf5d8';
+  ctx.fillText(def.name + ' Lv.' + d.level, p.x + p.w / 2, p.y + 18);
+
+  ctx.font = '10px Arial';
+  ctx.fillStyle = 'rgba(234,245,216,0.75)';
+  ctx.fillText('DMG ' + d.damage.toFixed(1) + '  •  RNG ' + Math.round(d.range), p.x + p.w / 2, p.y + 33);
+
+  const btn = upgradeButtonRect(d);
+  ctx.fillStyle = maxed ? 'rgba(255,255,255,0.08)' : (affordable ? 'rgba(124,179,66,0.4)' : 'rgba(255,255,255,0.08)');
+  ctx.beginPath();
+  ctx.roundRect(btn.x, btn.y, btn.w, btn.h, 8);
+  ctx.fill();
+  ctx.strokeStyle = maxed ? 'rgba(255,255,255,0.25)' : (affordable ? '#a8d86a' : 'rgba(255,255,255,0.3)');
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.font = 'bold 10.5px Arial';
+  ctx.fillStyle = maxed ? 'rgba(234,245,216,0.5)' : '#eaf5d8';
+  ctx.fillText(maxed ? 'MAX LEVEL' : 'Upgrade — ' + cost + ' 🌾', btn.x + btn.w / 2, btn.y + btn.h / 2 + 4);
 }
 
 function drawPlacementPreview() {
@@ -1191,11 +1404,13 @@ function loop(now) {
   for (const p of pests) drawPest(p);
   drawProjectiles();
   drawFx();
+  drawParticles();
   drawPlacementPreview();
   drawDenialMarker();
   drawPopups();
   drawWaveBanner();
   drawTray();
+  drawUpgradePanel();
   drawHud();
 
   requestAnimationFrame(loop);
