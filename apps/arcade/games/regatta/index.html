@@ -293,24 +293,46 @@ function formatTime(ms) {
 }
 
 // --- Courses (world space, y decreases "forward") ---
+// Wildlife is purely decorative atmosphere - it never touches the boat's
+// physics or the race rules, just gives the open water something alive to
+// look at. period/window define a repeating cycle in seconds; window is the
+// fraction of that cycle the animal spends leaping/surfacing.
 const COURSES = [
   {
     name: 'Harbor Loop',
     buoys: [{ x: 250, y: -300 }, { x: 250, y: -750 }, { x: -250, y: -750 }, { x: -250, y: -300 }],
     waves: [],
-    laps: 2
+    laps: 2,
+    wildlife: [
+      { type: 'dolphin', home: { x: -120, y: -520 }, radius: 90, period: 7, phase: 0.1 },
+      { type: 'dolphin', home: { x: -60, y: -560 }, radius: 70, period: 7, phase: 0.4 },
+      { type: 'whale', home: { x: 60, y: -900 }, radius: 60, period: 16, phase: 0.2 }
+    ]
   },
   {
     name: 'Coastal Run',
     buoys: [{ x: 200, y: -280 }, { x: 340, y: -620 }, { x: 80, y: -880 }, { x: -220, y: -680 }, { x: -260, y: -320 }],
     waves: [{ x: 260, y: -460, r: 85 }],
-    laps: 2
+    laps: 2,
+    wildlife: [
+      { type: 'dolphin', home: { x: -60, y: -420 }, radius: 100, period: 6.5, phase: 0 },
+      { type: 'dolphin', home: { x: -10, y: -460 }, radius: 80, period: 6.5, phase: 0.35 },
+      { type: 'shark', home: { x: 120, y: -760 }, radius: 130, period: 20, phase: 0 },
+      { type: 'whale', home: { x: -180, y: -900 }, radius: 70, period: 15, phase: 0.5 }
+    ]
   },
   {
     name: 'Storm Reach',
     buoys: [{ x: 160, y: -260 }, { x: 300, y: -520 }, { x: 180, y: -820 }, { x: -120, y: -950 }, { x: -320, y: -680 }, { x: -260, y: -320 }],
     waves: [{ x: 240, y: -420, r: 90 }, { x: -160, y: -760, r: 100 }, { x: 0, y: -600, r: 80 }],
-    laps: 2
+    laps: 2,
+    wildlife: [
+      { type: 'dolphin', home: { x: -20, y: -500 }, radius: 110, period: 6, phase: 0.15 },
+      { type: 'dolphin', home: { x: 40, y: -540 }, radius: 90, period: 6, phase: 0.5 },
+      { type: 'shark', home: { x: -220, y: -450 }, radius: 140, period: 18, phase: 0 },
+      { type: 'shark', home: { x: 60, y: -880 }, radius: 120, period: 18, phase: 0.6 },
+      { type: 'whale', home: { x: -260, y: -900 }, radius: 80, period: 15, phase: 0.35 }
+    ]
   }
 ];
 const START = { x: 0, y: 0 };
@@ -338,6 +360,155 @@ let wakeTrail = [];
 let state = 'menu'; // menu | playing | finished
 let cutFlashUntil = 0, cutFlashText = '';
 let buoyFlashes = []; // {x,y,t}
+let wildlife = [];
+let splashes = []; // {x,y,vx,vy,life,maxLife,size}
+
+function hash2(ix, iy) {
+  const s = Math.sin(ix * 127.1 + iy * 311.7) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+function spawnSplash(x, y, count, spread) {
+  for (let i = 0; i < count; i++) {
+    splashes.push({
+      x, y,
+      vx: (Math.random() * 2 - 1) * spread,
+      vy: -Math.random() * spread - 15,
+      life: 0,
+      maxLife: 400 + Math.random() * 300,
+      size: 2 + Math.random() * 2.5
+    });
+  }
+  if (splashes.length > 150) splashes.splice(0, splashes.length - 150);
+}
+
+function initWildlife() {
+  wildlife = course.wildlife.map((w) => ({
+    ...w,
+    cyclePos: w.phase,
+    wasActive: false,
+    x: w.home.x + w.radius,
+    y: w.home.y,
+    heading: 0
+  }));
+}
+
+function updateWildlife(dt) {
+  for (const w of wildlife) {
+    w.cyclePos = (w.cyclePos + dt / w.period) % 1;
+    const angle = w.cyclePos * Math.PI * 2;
+    w.x = w.home.x + Math.cos(angle) * w.radius;
+    w.y = w.home.y + Math.sin(angle) * w.radius * 0.55;
+    w.heading = angle + Math.PI / 2;
+
+    if (w.type === 'dolphin') {
+      const windowFrac = 0.12;
+      const active = w.cyclePos < windowFrac;
+      w.activeT = active ? w.cyclePos / windowFrac : 0;
+      if (active && !w.wasActive) spawnSplash(w.x, w.y, 5, 32);
+      if (!active && w.wasActive) spawnSplash(w.x, w.y, 5, 32);
+      w.wasActive = active;
+    } else if (w.type === 'whale') {
+      const windowFrac = 0.22;
+      const active = w.cyclePos < windowFrac;
+      w.activeT = active ? w.cyclePos / windowFrac : 0;
+      if (active && !w.wasActive) spawnSplash(w.x, w.y, 4, 18);
+      if (active && Math.random() < dt * 2.5) spawnSplash(w.x, w.y - 6, 1, 8);
+      w.wasActive = active;
+    }
+  }
+}
+
+function drawDolphin(w, s) {
+  const leap = w.activeT > 0 ? Math.sin(w.activeT * Math.PI) : 0;
+  ctx.save();
+  ctx.translate(s.x, s.y - leap * 16);
+  ctx.rotate(w.heading);
+  if (leap > 0.05) {
+    ctx.fillStyle = '#7a95a3';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 13, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e8f2f5';
+    ctx.beginPath();
+    ctx.ellipse(0, 3, 8, 2.4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#7a95a3';
+    ctx.beginPath();
+    ctx.moveTo(-11, 0); ctx.lineTo(-17, -4); ctx.lineTo(-17, 4); ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(1, -4); ctx.lineTo(4, -11); ctx.lineTo(6, -3); ctx.closePath();
+    ctx.fill();
+  } else {
+    ctx.fillStyle = 'rgba(90,120,135,0.4)';
+    ctx.beginPath(); ctx.ellipse(0, 0, 11, 4, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(70,100,115,0.6)';
+    ctx.beginPath();
+    ctx.moveTo(1, -1); ctx.lineTo(3, -6); ctx.lineTo(5, -1); ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawWhale(w, s) {
+  ctx.save();
+  ctx.translate(s.x, s.y);
+  ctx.rotate(w.heading);
+  if (w.activeT > 0) {
+    const rise = Math.sin(w.activeT * Math.PI);
+    ctx.fillStyle = '#3a4a52';
+    ctx.beginPath();
+    ctx.ellipse(0, -rise * 3, 26, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath();
+    ctx.ellipse(0, -rise * 3 - 6, 16, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = 'rgba(50,65,72,0.32)';
+    ctx.beginPath(); ctx.ellipse(0, 0, 24, 9, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawShark(w, s) {
+  const bob = Math.sin(performance.now() / 480 + w.home.x) * 1.4;
+  ctx.save();
+  ctx.translate(s.x, s.y + bob);
+  ctx.rotate(w.heading);
+  ctx.fillStyle = 'rgba(50,60,65,0.3)';
+  ctx.beginPath(); ctx.ellipse(0, 1, 20, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3d4a4f';
+  ctx.beginPath();
+  ctx.moveTo(0, -1); ctx.lineTo(5, -13); ctx.lineTo(-3, -2); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(-14, 3); ctx.lineTo(-22, 6); ctx.stroke();
+  ctx.restore();
+}
+
+function drawWildlife() {
+  for (const w of wildlife) {
+    const s = worldToScreen(w.x, w.y);
+    if (s.x < -40 || s.x > W + 40 || s.y < -40 || s.y > H + 40) continue;
+    if (w.type === 'dolphin') drawDolphin(w, s);
+    else if (w.type === 'whale') drawWhale(w, s);
+    else if (w.type === 'shark') drawShark(w, s);
+  }
+}
+
+function drawSplashes() {
+  for (const p of splashes) {
+    const t = p.life / p.maxLife;
+    const s = worldToScreen(p.x, p.y);
+    ctx.fillStyle = 'rgba(230,245,250,' + (0.55 * (1 - t)) + ')';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, p.size * (1 - t * 0.4), 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
 
 function updateCourseButtonStyles() { [...courseButtons.children].forEach(b => b.classList.toggle('selected', parseInt(b.dataset.c, 10) === courseIdx)); }
 function updateDiffButtonStyles() { [...diffButtons.children].forEach(b => b.classList.toggle('selected', b.dataset.d === difficulty)); }
@@ -397,7 +568,9 @@ function startRace() {
   raceStartTime = performance.now();
   wakeTrail = [];
   buoyFlashes = [];
+  splashes = [];
   cutFlashUntil = 0;
+  initWildlife();
   resetTargetTracking();
   state = 'playing';
   overlay.style.display = 'none';
@@ -535,8 +708,13 @@ function updateBoat(dt) {
 function worldToScreen(x, y) { return { x: x - boat.x + W / 2, y: y - boat.y + H / 2 }; }
 
 function drawWater() {
-  ctx.fillStyle = '#0a3550';
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#0f5273');
+  grad.addColorStop(0.45, '#0a3550');
+  grad.addColorStop(1, '#072840');
+  ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
+
   ctx.strokeStyle = 'rgba(255,255,255,0.05)';
   ctx.lineWidth = 1;
   const offset = (boat.y * 0.3) % 40;
@@ -544,6 +722,43 @@ function drawWater() {
     const ly = ((y - offset) % (H + 80)) - 40;
     ctx.beginPath(); ctx.moveTo(0, ly); ctx.lineTo(W, ly); ctx.stroke();
   }
+
+  // Foam flecks scattered across the water, anchored to world position (via
+  // a deterministic hash) so they scroll naturally with the camera instead
+  // of swimming in place - the cheapest way to kill the "flat empty blue"
+  // look without any per-frame state.
+  const cell = 46;
+  const worldLeft = boat.x - W / 2 - cell, worldRight = boat.x + W / 2 + cell;
+  const worldTop = boat.y - H / 2 - cell, worldBottom = boat.y + H / 2 + cell;
+  const now = performance.now() / 1000;
+  for (let gx = Math.floor(worldLeft / cell); gx * cell < worldRight; gx++) {
+    for (let gy = Math.floor(worldTop / cell); gy * cell < worldBottom; gy++) {
+      const h = hash2(gx, gy);
+      if (h > 0.22) continue;
+      const wx = gx * cell + (h * cell), wy = gy * cell + (hash2(gy, gx) * cell);
+      const s = worldToScreen(wx, wy);
+      const bob = Math.sin(now * 1.4 + h * 20) * 2;
+      ctx.strokeStyle = 'rgba(220,240,248,' + (0.12 + h * 0.5) + ')';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(s.x - 4, s.y + bob);
+      ctx.quadraticCurveTo(s.x, s.y + bob - 2, s.x + 4, s.y + bob);
+      ctx.stroke();
+    }
+  }
+
+  // A couple of slow, soft sun-glint patches drifting across the surface.
+  ctx.save();
+  for (let i = 0; i < 3; i++) {
+    const gx = (W * 0.2 + i * W * 0.35 + Math.sin(now * 0.15 + i * 2) * 40);
+    const gy = H * 0.25 + i * H * 0.22 + Math.cos(now * 0.12 + i) * 30;
+    const glintGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, 70);
+    glintGrad.addColorStop(0, 'rgba(255,255,255,' + (0.10 + 0.04 * Math.sin(now * 0.6 + i)) + ')');
+    glintGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = glintGrad;
+    ctx.beginPath(); ctx.arc(gx, gy, 70, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
 }
 
 function drawWaves() {
@@ -704,15 +919,25 @@ function drawHud() {
 function update(dt) {
   if (state !== 'playing') return;
   updateBoat(dt);
+  updateWildlife(dt);
+  splashes.forEach((p) => {
+    p.life += dt * 1000;
+    p.vy += 70 * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+  });
+  splashes = splashes.filter((p) => p.life < p.maxLife);
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
   if (state === 'menu') return;
   drawWater();
+  drawWildlife();
   drawWaves();
   drawFinishLine();
   drawWake();
+  drawSplashes();
   drawBuoys();
   drawBuoyFlashes();
   drawBoat();
