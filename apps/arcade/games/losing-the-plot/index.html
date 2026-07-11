@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Losing the Plot</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #12200f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #3a2a18;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
+  #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
+  #bestLine { opacity: 0.8; }
+  #startBtn {
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #4a7a2e;
+    color: #f4fbe8;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #startBtn:active { background: #5f9a3c; }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Losing the Plot</h1>
+    <p id="subtitle">Tend every bed before the season gets away from you</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <p id="bestLine"></p>
+    <button id="startBtn" type="button">Start</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+
+// --- Audio ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('losingThePlotMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playStartTend() { tone(380, 0.05, 'square', 0.07); }
+function playWater() { tone(560, 0.09, 'sine', 0.1); tone(760, 0.08, 'sine', 0.07, 0.05); }
+function playFeed() { tone(660, 0.1, 'triangle', 0.1); tone(880, 0.1, 'triangle', 0.08, 0.06); }
+function playWeed() { tone(300, 0.06, 'square', 0.09); }
+function playHarvest() { tone(660, 0.1, 'triangle', 0.12); tone(880, 0.12, 'triangle', 0.11, 0.08); tone(1100, 0.16, 'triangle', 0.1, 0.16); }
+function playBad() { tone(160, 0.28, 'sawtooth', 0.13); }
+function playSpread() { tone(220, 0.12, 'square', 0.1); tone(180, 0.14, 'square', 0.09, 0.07); }
+function playSeasonEnd() {
+  tone(523, 0.14, 'triangle', 0.13);
+  tone(659, 0.14, 'triangle', 0.12, 0.13);
+  tone(784, 0.18, 'triangle', 0.12, 0.26);
+  tone(988, 0.26, 'triangle', 0.13, 0.4);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('losingThePlotMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest() { return parseInt(sessionStorage.getItem('losingThePlotBest') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('losingThePlotBest', v); } catch (e) {} }
+
+// --- Tuning ---
+const SEASON_LENGTH = 120000;
+const CALM_DURATION = 20000;
+const GROW_DURATION = 15000;
+const HARVEST_POINTS = 20;
+const TEND_DURATION = 550;
+
+const WATER_INTERVAL = [9000, 4200];
+const FEED_INTERVAL = [12000, 5500];
+const WEED_INTERVAL = [11000, 5000];
+const WATER_GRACE = [7500, 3800];
+const WEED_GRACE = [7000, 3500];
+const FEED_GRACE = [6500, 3200];
+const HARVEST_GRACE = [9000, 4500];
+
+const BED_SLOTS = [
+  { x: 22, y: 96, unlockAt: 0 },
+  { x: 132, y: 96, unlockAt: 0 },
+  { x: 242, y: 96, unlockAt: 0 },
+  { x: 77, y: 246, unlockAt: 40000 },
+  { x: 187, y: 246, unlockAt: 80000 }
+];
+const BED_W = 96, BED_H = 92;
+
+const NEED_ICON = { water: '💧', feed: '⭐', weed: '🌿', harvest: '🧺' };
+
+function rampT(elapsed) { return clamp((elapsed - CALM_DURATION) / (SEASON_LENGTH - CALM_DURATION), 0, 1); }
+function intervalFor(range, elapsed) { const v = lerp(range[0], range[1], rampT(elapsed)); return randRange(v * 0.85, v * 1.15); }
+function graceFor(range, elapsed) { return lerp(range[0], range[1], rampT(elapsed)); }
+
+let beds = [];
+let score = 0, elapsed = 0;
+let popups = [];
+let state = 'menu'; // menu | playing | over
+let hintVisible = false, hintAlpha = 1;
+
+function makeBed(slot, index) {
+  return {
+    slot, index,
+    active: false,
+    stage: 'growing',
+    growStart: 0,
+    quality: 1,
+    needs: { water: false, feed: false, weed: false },
+    activeSince: { water: 0, feed: 0, weed: 0, harvest: 0 },
+    nextDue: { water: Infinity, feed: Infinity, weed: Infinity },
+    weedSpread: false,
+    tending: null
+  };
+}
+
+function initBed(bed, atTime, firstStagger) {
+  bed.active = true;
+  bed.stage = 'growing';
+  bed.growStart = atTime;
+  bed.quality = 1;
+  bed.needs.water = false; bed.needs.feed = false; bed.needs.weed = false;
+  bed.weedSpread = false;
+  bed.tending = null;
+  if (firstStagger !== undefined) {
+    bed.nextDue.water = firstStagger + randRange(-1500, 1500);
+    bed.nextDue.feed = firstStagger + randRange(2500, 5000);
+    bed.nextDue.weed = firstStagger + randRange(1000, 4000);
+  } else {
+    bed.nextDue.water = atTime + intervalFor(WATER_INTERVAL, atTime);
+    bed.nextDue.feed = atTime + intervalFor(FEED_INTERVAL, atTime);
+    bed.nextDue.weed = atTime + intervalFor(WEED_INTERVAL, atTime);
+  }
+}
+
+function reset() {
+  beds = BED_SLOTS.map((slot, i) => makeBed(slot, i));
+  score = 0;
+  elapsed = 0;
+  popups = [];
+  hintVisible = sessionStorage.getItem('losingThePlotSeenHint') !== '1';
+  hintAlpha = 1;
+  beds.forEach((bed, i) => {
+    if (bed.slot.unlockAt === 0) initBed(bed, 0, CALM_DURATION - 4000 + i * 3000);
+  });
+}
+
+function showMenu() {
+  state = 'menu';
+  title.textContent = 'Losing the Plot';
+  subtitle.textContent = 'Tend every bed before the season gets away from you';
+  scoreLine.style.display = 'none';
+  bestLine.textContent = 'Best score: ' + loadBest();
+  startBtn.textContent = 'Start';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'none';
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  reset();
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+
+function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
+
+function scheduleNext(bed, key) {
+  bed.nextDue[key] = elapsed + intervalFor(key === 'water' ? WATER_INTERVAL : key === 'feed' ? FEED_INTERVAL : WEED_INTERVAL, elapsed);
+}
+
+function wiltBed(bed) {
+  score = Math.max(0, score - 5);
+  addPopup(bed.slot.x + BED_W / 2, bed.slot.y, 'Wilted! -5', '#ff6b5e');
+  playBad();
+  initBed(bed, elapsed);
+}
+
+function rotBed(bed) {
+  score = Math.max(0, score - 8);
+  addPopup(bed.slot.x + BED_W / 2, bed.slot.y, 'Rotted! -8', '#ff6b5e');
+  playBad();
+  initBed(bed, elapsed);
+}
+
+function spreadWeed(bed) {
+  const neighborIdx = [bed.index - 1, bed.index + 1].filter(i => i >= 0 && i < beds.length && beds[i].active);
+  if (!neighborIdx.length) return;
+  const target = beds[neighborIdx[Math.floor(Math.random() * neighborIdx.length)]];
+  if (!target.needs.weed) {
+    target.needs.weed = true;
+    target.activeSince.weed = elapsed;
+    target.weedSpread = false;
+    addPopup(target.slot.x + BED_W / 2, target.slot.y, 'Weeds spread!', '#e8891a');
+  }
+  playSpread();
+}
+
+function topNeed(bed) {
+  if (bed.stage === 'ripe') return 'harvest';
+  if (bed.needs.water) return 'water';
+  if (bed.needs.weed) return 'weed';
+  if (bed.needs.feed) return 'feed';
+  return null;
+}
+
+function resolveTend(bed) {
+  const need = bed.tending.need;
+  bed.tending = null;
+  if (need === 'harvest') {
+    const points = Math.round(HARVEST_POINTS * bed.quality);
+    score += points;
+    addPopup(bed.slot.x + BED_W / 2, bed.slot.y, '+' + points, '#ffe28a');
+    playHarvest();
+    initBed(bed, elapsed);
+  } else if (need === 'water') {
+    bed.needs.water = false;
+    scheduleNext(bed, 'water');
+    playWater();
+  } else if (need === 'weed') {
+    bed.needs.weed = false;
+    bed.weedSpread = false;
+    scheduleNext(bed, 'weed');
+    playWeed();
+  } else if (need === 'feed') {
+    bed.needs.feed = false;
+    bed.quality = Math.min(1, bed.quality + 0.15);
+    scheduleNext(bed, 'feed');
+    playFeed();
+  }
+}
+
+function tapBed(bed) {
+  if (!bed.active || bed.tending) return;
+  const need = topNeed(bed);
+  if (!need) return;
+  bed.tending = { need, progress: 0, duration: TEND_DURATION };
+  playStartTend();
+  if (hintVisible) {
+    hintVisible = false;
+    try { sessionStorage.setItem('losingThePlotSeenHint', '1'); } catch (e) {}
+  }
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  for (const bed of beds) {
+    if (!bed.active) continue;
+    if (x >= bed.slot.x && x <= bed.slot.x + BED_W && y >= bed.slot.y - 28 && y <= bed.slot.y + BED_H) {
+      tapBed(bed);
+      break;
+    }
+  }
+});
+
+function endSeason() {
+  state = 'over';
+  playSeasonEnd();
+  const best = loadBest();
+  const isNewBest = score > best;
+  if (isNewBest) saveBest(score);
+  title.textContent = 'Season Over';
+  subtitle.textContent = 'Tend every bed before the season gets away from you';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score;
+  bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
+  startBtn.textContent = 'Play Again';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+function updateBed(bed, dt) {
+  if (!bed.active) return;
+
+  if (bed.tending) {
+    bed.tending.progress += dt * 1000;
+    if (bed.tending.progress >= bed.tending.duration) resolveTend(bed);
+  }
+
+  if (bed.stage === 'growing' && elapsed >= bed.growStart + GROW_DURATION) {
+    bed.stage = 'ripe';
+    bed.activeSince.harvest = elapsed;
+  }
+
+  if (bed.stage === 'growing') {
+    ['water', 'feed', 'weed'].forEach((k) => {
+      if (!bed.needs[k] && elapsed >= bed.nextDue[k]) {
+        bed.needs[k] = true;
+        bed.activeSince[k] = elapsed;
+        if (k === 'weed') bed.weedSpread = false;
+      }
+    });
+  }
+
+  if (bed.needs.water && elapsed - bed.activeSince.water > graceFor(WATER_GRACE, elapsed)) wiltBed(bed);
+  else if (bed.needs.weed && !bed.weedSpread && elapsed - bed.activeSince.weed > graceFor(WEED_GRACE, elapsed)) {
+    spreadWeed(bed);
+    bed.weedSpread = true;
+  } else if (bed.needs.feed && elapsed - bed.activeSince.feed > graceFor(FEED_GRACE, elapsed)) {
+    bed.quality = Math.max(0.4, bed.quality - 0.3);
+    bed.needs.feed = false;
+    scheduleNext(bed, 'feed');
+  } else if (bed.stage === 'ripe' && elapsed - bed.activeSince.harvest > graceFor(HARVEST_GRACE, elapsed)) rotBed(bed);
+}
+
+function update(dt) {
+  if (state !== 'playing') return;
+  elapsed += dt * 1000;
+  if (elapsed >= SEASON_LENGTH) { endSeason(); return; }
+
+  beds.forEach((bed) => {
+    if (!bed.active && elapsed >= bed.slot.unlockAt) initBed(bed, elapsed, elapsed + randRange(1500, 4000));
+  });
+  beds.forEach((bed) => updateBed(bed, dt));
+
+  if (hintVisible && elapsed > CALM_DURATION + 6000) hintVisible = false;
+  hintAlpha += ((hintVisible ? 1 : 0) - hintAlpha) * Math.min(1, dt * 5);
+
+  popups.forEach((p) => { p.t += dt * 1000; });
+  popups = popups.filter((p) => p.t < 900);
+}
+
+function drawSoil(bed) {
+  ctx.fillStyle = '#5b3d22';
+  ctx.beginPath();
+  ctx.roundRect(bed.slot.x, bed.slot.y, BED_W, BED_H, 8);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const y = bed.slot.y + (BED_H / 4) * i;
+    ctx.beginPath(); ctx.moveTo(bed.slot.x + 4, y); ctx.lineTo(bed.slot.x + BED_W - 4, y); ctx.stroke();
+  }
+}
+
+function drawCrop(bed) {
+  const cx = bed.slot.x + BED_W / 2, cy = bed.slot.y + BED_H / 2 + 6;
+  if (bed.stage === 'growing') {
+    const growthFrac = clamp((elapsed - bed.growStart) / GROW_DURATION, 0, 1);
+    const size = lerp(6, 22, growthFrac);
+    ctx.fillStyle = '#4a7a2e';
+    ctx.beginPath(); ctx.ellipse(cx, cy - size * 0.6, size * 0.55, size, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#7cb342';
+    ctx.beginPath(); ctx.ellipse(cx - size * 0.4, cy - size * 0.3, size * 0.35, size * 0.55, -0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + size * 0.4, cy - size * 0.3, size * 0.35, size * 0.55, 0.4, 0, Math.PI * 2); ctx.fill();
+  } else {
+    const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
+    ctx.fillStyle = '#e8891a';
+    ctx.beginPath(); ctx.arc(cx, cy - 8, 15 * pulse, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#4a7a2e';
+    ctx.beginPath(); ctx.ellipse(cx, cy - 20, 4, 8, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  if (bed.needs.weed) {
+    ctx.strokeStyle = '#8a6d3a';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 3; i++) {
+      const wx = bed.slot.x + 10 + i * 12, wy = bed.slot.y + BED_H - 8;
+      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx - 3, wy - 12); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx + 4, wy - 10); ctx.stroke();
+    }
+  }
+}
+
+function drawNeedIcons(bed) {
+  const active = [];
+  if (bed.stage === 'ripe') active.push('harvest');
+  if (bed.needs.water) active.push('water');
+  if (bed.needs.weed) active.push('weed');
+  if (bed.needs.feed) active.push('feed');
+  if (!active.length) return;
+  const top = topNeed(bed);
+  const iconY = bed.slot.y - 16;
+  const totalW = active.length * 22;
+  let x = bed.slot.x + BED_W / 2 - totalW / 2 + 11;
+  for (const need of active) {
+    const isTop = need === top;
+    const bob = isTop ? Math.sin(performance.now() / 180) * 2 : 0;
+    ctx.save();
+    ctx.font = (isTop ? 'bold 18px' : '14px') + ' Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (isTop) {
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.beginPath(); ctx.arc(x, iconY + bob, 13, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillText(NEED_ICON[need], x, iconY + bob + 1);
+    ctx.restore();
+    x += 22;
+  }
+}
+
+function drawTendingRing(bed) {
+  if (!bed.tending) return;
+  const frac = bed.tending.progress / bed.tending.duration;
+  const cx = bed.slot.x + BED_W / 2, cy = bed.slot.y + BED_H / 2;
+  ctx.strokeStyle = '#ffe28a';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.arc(cx, cy, Math.max(BED_W, BED_H) / 2 + 4, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);
+  ctx.stroke();
+}
+
+function drawBeds() {
+  beds.forEach((bed) => {
+    if (!bed.active) return;
+    drawSoil(bed);
+    drawCrop(bed);
+    drawTendingRing(bed);
+    drawNeedIcons(bed);
+  });
+}
+
+function drawPopups() {
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 13px Arial';
+  for (const p of popups) {
+    const t = p.t / 900;
+    ctx.globalAlpha = 1 - t;
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y - t * 26);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawHud() {
+  ctx.font = 'bold 16px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const scoreText = 'Score: ' + score;
+  ctx.strokeText(scoreText, 16, 34);
+  ctx.fillText(scoreText, 16, 34);
+  ctx.textAlign = 'right';
+  const remaining = Math.max(0, Math.ceil((SEASON_LENGTH - elapsed) / 1000));
+  const timeText = remaining + 's';
+  ctx.strokeText(timeText, W - 16, 34);
+  ctx.fillText(timeText, W - 16, 34);
+}
+
+function drawHint() {
+  if (hintAlpha <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha = hintAlpha;
+  const text = 'Tap a bed to tend whatever it needs';
+  ctx.font = 'bold 13px Arial';
+  const tw = ctx.measureText(text).width;
+  const pillW = tw + 28, pillH = 30, px = W / 2 - pillW / 2, py = 46;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.beginPath();
+  ctx.roundRect(px, py, pillW, pillH, 15);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, W / 2, py + pillH / 2 + 1);
+  ctx.restore();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#3a2a18';
+  ctx.fillRect(0, 0, W, H);
+  if (state === 'menu') return;
+  drawBeds();
+  drawPopups();
+  drawHud();
+  drawHint();
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+showMenu();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
