@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hoops</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1a1410;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #2a3a52;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
+  #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
+  #bestLine { opacity: 0.8; }
+  #startBtn {
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #e8891a;
+    color: #2a1a00;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #startBtn:active { background: #ffb703; }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Hoops</h1>
+    <p id="subtitle">Swipe up to shoot — chain swishes for combo points</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <p id="bestLine"></p>
+    <button id="startBtn" type="button">Start</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// --- Audio ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('hoopsMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playSwish() { tone(700, 0.07, 'sine', 0.09); tone(1000, 0.1, 'sine', 0.08, 0.05); tone(1300, 0.12, 'triangle', 0.07, 0.1); }
+function playMake() { tone(600, 0.08, 'sine', 0.1); tone(880, 0.1, 'sine', 0.09, 0.06); }
+function playClank() { tone(280, 0.09, 'square', 0.12); tone(200, 0.12, 'square', 0.09, 0.04); }
+function playBoard() { tone(150, 0.1, 'sine', 0.11); }
+function playMiss() { tone(180, 0.14, 'sawtooth', 0.08); }
+function playCombo(n) { tone(500 + Math.min(n, 6) * 90, 0.09, 'triangle', 0.1); }
+function playGameOver() {
+  tone(523, 0.14, 'triangle', 0.13);
+  tone(659, 0.14, 'triangle', 0.12, 0.13);
+  tone(784, 0.2, 'triangle', 0.13, 0.26);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('hoopsMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest() { return parseInt(sessionStorage.getItem('hoopsBest') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('hoopsBest', v); } catch (e) {} }
+
+// --- World ---
+const GRAVITY = 780;
+const BALL_R = 11;
+const START_POS = { x: 92, y: 452 };
+const TIME_LIMIT = 60000;
+const RIM_R = 4.5;
+const RIM_RESTITUTION = 0.5;
+const BOARD_RESTITUTION = 0.45;
+const SWIPE_SENSITIVITY = 2.4;
+const MAX_SHOT_SPEED = 780;
+const MIN_SWIPE_DIST = 14;
+
+let hoopX = 300;
+const BOARD_TOP = 88, BOARD_BOTTOM = 194;
+const RIM_Y = 168, RIM_WIDTH = 56;
+
+function rimLeft() { return { x: hoopX - RIM_WIDTH, y: RIM_Y }; }
+function rimRight() { return { x: hoopX - 6, y: RIM_Y }; }
+
+let ball = null;
+let dragStart = null, dragCurrent = null, dragPointerId = null;
+let score = 0, combo = 0, timeLeft = TIME_LIMIT;
+let popups = [];
+let netFlash = 0;
+let state = 'menu'; // menu | playing | over
+
+function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
+
+function resetBall() {
+  ball = null;
+}
+
+function maybeMoveHoop() {
+  if (Math.random() < clamp(score / 40, 0, 0.6)) {
+    hoopX = clamp(hoopX + (Math.random() * 2 - 1) * 60, 250, 340);
+  }
+}
+
+function showMenu() {
+  state = 'menu';
+  title.textContent = 'Hoops';
+  subtitle.textContent = 'Swipe up to shoot — chain swishes for combo points';
+  scoreLine.style.display = 'none';
+  bestLine.textContent = 'Best score: ' + loadBest();
+  startBtn.textContent = 'Start';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'none';
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  hoopX = 300;
+  ball = null;
+  score = 0;
+  combo = 0;
+  timeLeft = TIME_LIMIT;
+  popups = [];
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+
+function pointerToCanvas(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing' || ball) return;
+  dragStart = pointerToCanvas(e);
+  dragCurrent = dragStart;
+  dragPointerId = e.pointerId;
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!dragStart || e.pointerId !== dragPointerId) return;
+  dragCurrent = pointerToCanvas(e);
+});
+canvas.addEventListener('pointerup', (e) => {
+  if (!dragStart || e.pointerId !== dragPointerId) return;
+  const end = pointerToCanvas(e);
+  const dx = end.x - dragStart.x, dy = end.y - dragStart.y;
+  const dist = Math.hypot(dx, dy);
+  dragStart = null;
+  dragCurrent = null;
+  if (dist < MIN_SWIPE_DIST || dy >= -2) return;
+  const speed = clamp(dist * SWIPE_SENSITIVITY, 0, MAX_SHOT_SPEED);
+  const ang = Math.atan2(dy, dx);
+  ball = {
+    x: START_POS.x, y: START_POS.y,
+    vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed,
+    spin: 0, touchedRim: false, touchedBoard: false, scored: false, prevY: START_POS.y
+  };
+});
+
+function circlePointCollide(pt, restitution, isBoard) {
+  const dx = ball.x - pt.x, dy = ball.y - pt.y;
+  const minDist = BALL_R + RIM_R;
+  const dist = Math.hypot(dx, dy);
+  if (dist >= minDist || dist < 0.0001) return false;
+  const nx = dx / dist, ny = dy / dist;
+  const overlap = minDist - dist;
+  ball.x += nx * overlap; ball.y += ny * overlap;
+  const vDotN = ball.vx * nx + ball.vy * ny;
+  if (vDotN < 0) {
+    ball.vx -= (1 + restitution) * vDotN * nx;
+    ball.vy -= (1 + restitution) * vDotN * ny;
+  }
+  if (!isBoard) ball.touchedRim = true;
+  return true;
+}
+
+function endShot(made) {
+  if (made) {
+    const swish = !ball.touchedRim && !ball.touchedBoard;
+    if (swish) {
+      combo++;
+      const pts = 2 * Math.min(combo, 5);
+      score += pts;
+      addPopup(hoopX - RIM_WIDTH / 2, RIM_Y, 'SWISH +' + pts, '#ffe28a');
+      playSwish();
+      if (combo > 1) playCombo(combo);
+      netFlash = 0.25;
+    } else {
+      combo = 0;
+      score += 1;
+      addPopup(hoopX - RIM_WIDTH / 2, RIM_Y, '+1', '#a8e8c8');
+      playMake();
+      netFlash = 0.2;
+    }
+    maybeMoveHoop();
+  } else {
+    combo = 0;
+  }
+  ball = null;
+}
+
+function updateBall(dt) {
+  if (!ball) return;
+  ball.prevY = ball.y;
+  ball.vy += GRAVITY * dt;
+  ball.x += ball.vx * dt;
+  ball.y += ball.vy * dt;
+  ball.spin += ball.vx * dt * 0.05;
+
+  if (circlePointCollide(rimLeft(), RIM_RESTITUTION, false)) playClank();
+  if (circlePointCollide(rimRight(), RIM_RESTITUTION, false)) playClank();
+
+  const boardX = hoopX;
+  if (!ball.scored && ball.y > BOARD_TOP && ball.y < BOARD_BOTTOM && ball.x + BALL_R > boardX && ball.vx > 0) {
+    ball.x = boardX - BALL_R;
+    ball.vx = -ball.vx * BOARD_RESTITUTION;
+    ball.touchedBoard = true;
+    playBoard();
+  }
+
+  if (!ball.scored && ball.prevY < RIM_Y && ball.y >= RIM_Y && ball.vy > 0) {
+    const gapLeft = hoopX - RIM_WIDTH + BALL_R + 2;
+    const gapRight = hoopX - 6 - BALL_R - 2;
+    if (ball.x > gapLeft && ball.x < gapRight) {
+      ball.scored = true;
+      endShot(true);
+      return;
+    }
+  }
+
+  if (ball.y > H + 30 || ball.x < -30 || ball.x > W + 30) {
+    playMiss();
+    endShot(false);
+  }
+}
+
+function update(dt) {
+  if (state !== 'playing') return;
+  timeLeft -= dt * 1000;
+  if (timeLeft <= 0) { timeLeft = 0; endGame(); return; }
+  updateBall(dt);
+  if (netFlash > 0) netFlash -= dt;
+  popups.forEach((p) => { p.t += dt * 1000; });
+  popups = popups.filter((p) => p.t < 800);
+}
+
+function endGame() {
+  state = 'over';
+  playGameOver();
+  const best = loadBest();
+  const isNewBest = score > best;
+  if (isNewBest) saveBest(score);
+  title.textContent = "Time's Up!";
+  subtitle.textContent = 'Swipe up to shoot — chain swishes for combo points';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score;
+  bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
+  startBtn.textContent = 'Play Again';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+function drawCourt() {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#2a3a52');
+  g.addColorStop(1, '#1c2838');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let y = 40; y < H; y += 46) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  ctx.fillStyle = '#3a2a1a';
+  ctx.fillRect(0, 470, W, H - 470);
+  ctx.strokeStyle = '#5b3d22'; ctx.lineWidth = 2;
+  for (let x = 0; x < W; x += 24) { ctx.beginPath(); ctx.moveTo(x, 470); ctx.lineTo(x, H); ctx.stroke(); }
+}
+
+function drawHoop() {
+  ctx.fillStyle = '#e8e0d0';
+  ctx.fillRect(hoopX, BOARD_TOP, 10, BOARD_BOTTOM - BOARD_TOP);
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 2;
+  ctx.strokeRect(hoopX, BOARD_TOP, 10, BOARD_BOTTOM - BOARD_TOP);
+  ctx.strokeStyle = '#e63946'; ctx.lineWidth = 2;
+  ctx.strokeRect(hoopX + 1, BOARD_TOP + 8, 8, 26);
+
+  const rl = rimLeft(), rr = rimRight();
+  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 1.5;
+  const netBottom = RIM_Y + 34;
+  for (let i = 0; i <= 5; i++) {
+    const t = i / 5;
+    const x = rl.x + (rr.x - rl.x) * t;
+    ctx.beginPath();
+    ctx.moveTo(x, RIM_Y + 2);
+    ctx.lineTo(hoopX - RIM_WIDTH / 2 + (x - (hoopX - RIM_WIDTH / 2)) * 0.35, netBottom);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.moveTo(rl.x, RIM_Y + 10); ctx.lineTo(rr.x, RIM_Y + 10); ctx.stroke();
+
+  ctx.fillStyle = '#e8891a';
+  ctx.beginPath(); ctx.arc(rl.x, rl.y, RIM_R, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(rr.x, rr.y, RIM_R, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#c9853a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(rl.x, rl.y); ctx.lineTo(rr.x, rr.y); ctx.stroke();
+}
+
+function drawBall() {
+  if (!ball) return;
+  ctx.save();
+  ctx.translate(ball.x, ball.y);
+  ctx.rotate(ball.spin);
+  ctx.fillStyle = '#e07a1a';
+  ctx.beginPath(); ctx.arc(0, 0, BALL_R, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#3a2410'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(-BALL_R, 0); ctx.lineTo(BALL_R, 0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, -BALL_R); ctx.lineTo(0, BALL_R); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, 0, BALL_R, -0.6, 0.6); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, 0, BALL_R, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
+  ctx.restore();
+}
+
+function drawAimHint() {
+  if (ball || !dragStart || !dragCurrent) return;
+  const dx = dragCurrent.x - dragStart.x, dy = dragCurrent.y - dragStart.y;
+  const dist = Math.hypot(dx, dy);
+  if (dist < MIN_SWIPE_DIST || dy >= -2) return;
+  const speed = clamp(dist * SWIPE_SENSITIVITY, 0, MAX_SHOT_SPEED);
+  const ang = Math.atan2(dy, dx);
+  const vx = Math.cos(ang) * speed, vy = Math.sin(ang) * speed;
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  for (let i = 1; i <= 12; i++) {
+    const t = i * 0.045;
+    const px = START_POS.x + vx * t;
+    const py = START_POS.y + vy * t + 0.5 * GRAVITY * t * t;
+    if (py > H) break;
+    ctx.beginPath(); ctx.arc(px, py, 2.4, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+function drawPopups() {
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 14px Arial';
+  for (const p of popups) {
+    const t = p.t / 800;
+    ctx.globalAlpha = 1 - t;
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y - 20 - t * 30);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawHud() {
+  ctx.font = 'bold 16px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const scoreText = 'Score: ' + score;
+  ctx.strokeText(scoreText, 14, 26);
+  ctx.fillText(scoreText, 14, 26);
+  ctx.textAlign = 'right';
+  const timeText = Math.ceil(timeLeft / 1000) + 's';
+  ctx.strokeText(timeText, W - 14, 26);
+  ctx.fillText(timeText, W - 14, 26);
+  if (combo > 1) {
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 13px Arial';
+    ctx.fillStyle = '#ffe28a';
+    const comboText = combo + '× combo!';
+    ctx.strokeText(comboText, W / 2, 26);
+    ctx.fillText(comboText, W / 2, 26);
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  drawCourt();
+  if (state === 'menu') return;
+  drawHoop();
+  drawBall();
+  drawAimHint();
+  drawPopups();
+  drawHud();
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+showMenu();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
