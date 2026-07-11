@@ -126,6 +126,39 @@
   .layout-btn:hover, .sort-btn:hover { color: var(--text); }
   .layout-btn.active, .sort-btn.active { background: var(--surface-2); color: var(--teal); }
 
+  .category-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 20px;
+  }
+  .cat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .cat-btn .cat-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    opacity: 0.7;
+  }
+  .cat-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+  .cat-btn.active {
+    background: rgba(34,184,160,0.16);
+    border-color: rgba(34,184,160,0.55);
+    color: var(--teal);
+  }
+
   .cartridges {
     display: grid;
     grid-template-columns: 1fr;
@@ -383,6 +416,7 @@
   </header>
 
   <section class="shelf">
+    <div class="category-filter" role="group" aria-label="Filter by category" id="categoryFilter"></div>
     <div class="shelf-head">
       <h2>On the shelf</h2>
       <div class="shelf-controls">
@@ -422,6 +456,7 @@
       tagline: 'Swim a fish through coral, rock, and kelp. Easy or Hard.',
       emoji: '🐟',
       color: 'linear-gradient(135deg, #0a3d62, #2a9d8f)',
+      category: 'arcade',
       tags: ['arcade', 'endless', '1 min'],
       path: 'games/fin-dash/index.html',
       published: '2026-07-06'
@@ -431,6 +466,7 @@
       tagline: 'Whack the moles before they duck back down. Easy or Hard.',
       emoji: '🐹',
       color: 'linear-gradient(135deg, #2f5f28, #5b9a4a)',
+      category: 'arcade',
       tags: ['arcade', 'reflex', '30 sec'],
       path: 'games/burrow-bash/index.html',
       published: '2026-07-06'
@@ -440,6 +476,7 @@
       tagline: 'Best of 7 against the CPU. Easy or Hard.',
       emoji: '🏒',
       color: 'linear-gradient(135deg, #0d3450, #2aa9c9)',
+      category: 'sports',
       tags: ['sports', 'vs CPU', '2 min'],
       path: 'games/air-hockey/index.html',
       published: '2026-07-06'
@@ -449,6 +486,7 @@
       tagline: 'Jump logs, gaps, and vines as the pace ramps up. Easy or Hard.',
       emoji: '🐒',
       color: 'linear-gradient(135deg, #1a3324, #2d5a3d)',
+      category: 'arcade',
       tags: ['endless', 'reflex', '1 min'],
       path: 'games/jungle-runner/index.html',
       published: '2026-07-06'
@@ -458,6 +496,7 @@
       tagline: 'Auto-climbing koala — dodge branches, grab acorns for bonus points. Easy or Hard.',
       emoji: '🐨',
       color: 'linear-gradient(135deg, #8fd3e8, #c9ecd8)',
+      category: 'arcade',
       tags: ['endless', 'reflex', '1 min'],
       path: 'games/koala-climb/index.html',
       published: '2026-07-06'
@@ -467,6 +506,7 @@
       tagline: 'Clear every brick with a paddle and ball. 3 lives. Easy or Hard.',
       emoji: '🧱',
       color: 'linear-gradient(135deg, #10152a, #5a8ce8)',
+      category: 'arcade',
       tags: ['arcade', 'classic', '2 min'],
       path: 'games/brick-breaker/index.html',
       published: '2026-07-06'
@@ -476,6 +516,7 @@
       tagline: 'Switch lanes to dodge rocks and rescue 10 stranded animals in time. Easy or Hard.',
       emoji: '🚙',
       color: 'linear-gradient(135deg, #c9853a, #e8b96b)',
+      category: 'arcade',
       tags: ['lanes', 'reflex', '45 sec'],
       path: 'games/safari-rescue/index.html',
       published: '2026-07-06'
@@ -485,6 +526,7 @@
       tagline: 'Race the clock, manage your fuel, brake before the oil. Easy or Hard.',
       emoji: '🏎️',
       color: 'linear-gradient(135deg, #33383f, #e63946)',
+      category: 'racing',
       tags: ['lanes', 'racing', '40 sec'],
       path: 'games/lane-racer/index.html',
       published: '2026-07-07'
@@ -494,6 +536,7 @@
       tagline: 'Capitals or flags — 15 quick questions, 10 seconds each.',
       emoji: '🌍',
       color: 'linear-gradient(135deg, #16213e, #22b8a0)',
+      category: 'trivia',
       tags: ['trivia', 'quiz', '3 min'],
       path: 'games/globe-quiz/index.html',
       published: '2026-07-07'
@@ -503,6 +546,7 @@
       tagline: 'Glide a caterpillar around the allotment, munching leaves. Easy or Hard.',
       emoji: '🐛',
       color: 'linear-gradient(135deg, #2b1e12, #7cb342)',
+      category: 'arcade',
       tags: ['classic', 'reflex', '1 min'],
       path: 'games/garden-snake/index.html',
       published: '2026-07-08'
@@ -512,6 +556,7 @@
       tagline: 'Slide and merge veg from seed to giant pumpkin, 2048-style.',
       emoji: '🎃',
       color: 'linear-gradient(135deg, #2b1e12, #e8891a)',
+      category: 'puzzle',
       tags: ['puzzle', 'merge', '5 min'],
       path: 'games/veg-merge/index.html',
       published: '2026-07-08'
@@ -521,6 +566,7 @@
       tagline: 'Time each drop to keep the tower aligned as it climbs. Easy or Hard.',
       emoji: '📦',
       color: 'linear-gradient(135deg, #1c2a1f, #c9853a)',
+      category: 'arcade',
       tags: ['timing', 'arcade', '1 min'],
       path: 'games/crate-stack/index.html',
       published: '2026-07-08'
@@ -530,6 +576,7 @@
       tagline: 'Place, match, and upgrade defences to hold the veg patch through 10 waves. Easy or Hard.',
       emoji: '🛡️',
       color: 'linear-gradient(135deg, #1c2a1f, #4a7a2e)',
+      category: 'strategy',
       tags: ['strategy', 'tower defense', '8 min'],
       path: 'games/plot-defender/index.html',
       published: '2026-07-09'
@@ -539,6 +586,7 @@
       tagline: 'Classic sliding tile puzzle — numbers or a picture. 3×3 to 5×5.',
       emoji: '🧩',
       color: 'linear-gradient(135deg, #0a0e1c, #3fc6d1)',
+      category: 'puzzle',
       tags: ['puzzle', 'classic', '5 min'],
       path: 'games/slide/index.html',
       published: '2026-07-11'
@@ -548,6 +596,7 @@
       tagline: 'Ride the drift through a buoy course. Easy or Hard, 3 courses.',
       emoji: '⛵',
       color: 'linear-gradient(135deg, #041420, #2aa9c9)',
+      category: 'racing',
       tags: ['racing', 'sailing', '3 min'],
       path: 'games/regatta/index.html',
       published: '2026-07-11'
@@ -557,6 +606,7 @@
       tagline: 'Balance the throttle over endless bumpy hills without flipping.',
       emoji: '🏍️',
       color: 'linear-gradient(135deg, #10141f, #f2a65a)',
+      category: 'racing',
       tags: ['racing', 'physics', '2 min'],
       path: 'games/hill-climber/index.html',
       published: '2026-07-11'
@@ -567,10 +617,22 @@
     //   tagline: 'One short line about it.',
     //   emoji: '🎮',
     //   color: 'linear-gradient(135deg, #hex1, #hex2)',
+    //   category: 'arcade', // one of CATEGORIES below - drives the filter tiles
     //   tags: ['genre', 'length'],
     //   path: 'games/game-slug/index.html',
     //   published: 'YYYY-MM-DD'
     // },
+  ];
+
+  // Every game's `category` above must be one of these ids - the filter
+  // tiles are generated from this list, not hand-written per category.
+  const CATEGORIES = [
+    { id: 'arcade', label: 'Arcade', emoji: '🕹️' },
+    { id: 'racing', label: 'Racing', emoji: '🏁' },
+    { id: 'puzzle', label: 'Puzzle', emoji: '🧩' },
+    { id: 'strategy', label: 'Strategy', emoji: '🛡️' },
+    { id: 'sports', label: 'Sports', emoji: '🏒' },
+    { id: 'trivia', label: 'Trivia', emoji: '🌍' }
   ];
 
   const container = document.getElementById('cartridges');
@@ -619,6 +681,33 @@
     `;
   }
 
+  // Category filter: one tile per genre plus "All", remembered per browser.
+  // Tiles are generated (with live counts) rather than hand-written so a
+  // new game's `category` just needs to match an id in CATEGORIES above.
+  const CATEGORY_KEY = 'kbArcadeCategory';
+  const categoryFilterEl = document.getElementById('categoryFilter');
+  let categoryFilter = localStorage.getItem(CATEGORY_KEY) || 'all';
+
+  function renderCategoryFilter() {
+    const counts = {};
+    GAMES.forEach(g => { counts[g.category] = (counts[g.category] || 0) + 1; });
+    const tiles = [{ id: 'all', label: 'All', emoji: '\ud83c\udfae' }, ...CATEGORIES.filter(c => counts[c.id])];
+    categoryFilterEl.innerHTML = tiles.map(c => `
+      <button type="button" class="cat-btn${c.id === categoryFilter ? ' active' : ''}" data-cat="${c.id}">
+        <span>${c.emoji}</span>${c.label}
+        <span class="cat-count">${c.id === 'all' ? GAMES.length : counts[c.id]}</span>
+      </button>
+    `).join('');
+    categoryFilterEl.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        categoryFilter = btn.dataset.cat;
+        localStorage.setItem(CATEGORY_KEY, categoryFilter);
+        renderCategoryFilter();
+        renderCards();
+      });
+    });
+  }
+
   // Sort toggle: newest-first (by published date) or most-played,
   // remembered per browser. Re-renders (rather than reordering DOM nodes
   // in place) since it's simplest and this list is tiny.
@@ -627,7 +716,7 @@
   let sortMode = localStorage.getItem(SORT_KEY) || 'newest';
 
   function sortedGames() {
-    const list = GAMES.slice();
+    const list = GAMES.filter(g => categoryFilter === 'all' || g.category === categoryFilter);
     if (sortMode === 'popular') {
       list.sort((a, b) => (playCounts[slugOf(b)] || 0) - (playCounts[slugOf(a)] || 0));
     } else {
@@ -637,10 +726,15 @@
   }
 
   function renderCards() {
-    container.innerHTML = sortedGames().map(cardHtml).join('')
-      // A quiet placeholder so the shelf doesn't look empty/finished
-      + '<div class="coming-soon">next one\u2019s in progress</div>';
+    const games = sortedGames();
+    container.innerHTML = games.map(cardHtml).join('')
+      // A quiet placeholder so the shelf doesn't look empty/finished -
+      // skipped when a filter narrows things down to a genuinely short list,
+      // since it'd read as "more Trivia coming" rather than "more games coming".
+      + (games.length >= 4 ? '<div class="coming-soon">next one\u2019s in progress</div>' : '');
   }
+
+  renderCategoryFilter();
 
   function updateSortButtonStyles() {
     sortButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.sort === sortMode));

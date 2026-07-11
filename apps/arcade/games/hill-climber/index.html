@@ -271,12 +271,35 @@ const FUEL_DRAIN_IDLE = 1.1;
 const FUEL_DRAIN_THROTTLE = 3.4;
 const PICKUP_R = 26;
 
+// Independent wheel suspension: each wheel is a damped spring hanging off
+// its mount on the chassis, rather than the chassis snapping flush to the
+// ground every frame. That's what makes one wheel touching down before the
+// other (cresting a bump, landing nose-first) look and feel real instead of
+// the whole bike teleporting flat.
+const SUSP_REST_LEN = 15;
+const SUSP_MIN_LEN = 4;
+const SUSP_MAX_LEN = 27;
+const SUSP_SPRING_K = 480;
+const SUSP_DAMPING = 32;
+const SUSP_RELAX_RATE = 15;
+const SUSP_ANGULAR_GAIN = 0.00035;
+const PHYSICS_SUBSTEP = 0.02;
+// Bump-stop caps: a wheel snapping from a big-air droop to fully compressed
+// in a single substep produces a huge one-off damping spike that isn't a
+// real velocity - without a hard ceiling here, a single hard landing could
+// fling the chassis into an "unfair" flip the player had no way to see coming.
+const SUSP_MAX_FORCE = 4200;
+const SUSP_MAX_VY_IMPULSE = 320;
+const SUSP_MAX_ANGVEL_IMPULSE = 2.2;
+
 let bike, fuel, distance, cans, camX, camY;
+let wheels; // { rear: {len, grounded}, front: {len, grounded} }
 let throttleHeld = false, brakeHeld = false;
-let grounded = false, airTime = 0, whoomphPlayed = false;
-let shakeTimer = 0, shakeMag = 0;
+let grounded = false, airTime = 0;
+let shakeTimer = 0, shakeMag = 0, shakeDuration = 0.35;
 let wheelSpin = 0;
 let milestoneCount = 0;
+let dust = [];
 let state = 'menu'; // menu | playing | over
 
 bestLine.textContent = 'Best distance: ' + loadBest().toFixed(0) + 'm';
@@ -291,18 +314,33 @@ function makeCans() {
 }
 
 function reset() {
-  bike = { x: 60, y: terrainY(60) - WHEEL_R, vy: 0, angle: 0, angVel: 0, speed: 0 };
+  bike = { x: 60, y: terrainY(60) - WHEEL_R - SUSP_REST_LEN, vy: 0, angle: 0, angVel: 0, speed: 0 };
+  wheels = { rear: { len: SUSP_REST_LEN, grounded: true }, front: { len: SUSP_REST_LEN, grounded: true } };
   fuel = FUEL_MAX;
   distance = 0;
   grounded = true;
   airTime = 0;
-  whoomphPlayed = false;
   shakeTimer = 0;
   wheelSpin = 0;
   milestoneCount = 0;
+  dust = [];
   camX = bike.x;
   camY = bike.y;
   makeCans();
+}
+
+function spawnDust(x, y, count, spread) {
+  for (let i = 0; i < count; i++) {
+    dust.push({
+      x, y,
+      vx: (Math.random() * 2 - 1) * spread,
+      vy: -Math.random() * spread * 0.6 - 20,
+      life: 0,
+      maxLife: 350 + Math.random() * 250,
+      size: 2.5 + Math.random() * 2.5
+    });
+  }
+  if (dust.length > 120) dust.splice(0, dust.length - 120);
 }
 
 function showMenu() {
@@ -354,7 +392,7 @@ document.addEventListener('keyup', (e) => {
 function endRun(reason) {
   state = 'over';
   stopEngineSound();
-  if (reason === 'crash') { playCrash(); shakeTimer = 0.35; shakeMag = 14; }
+  if (reason === 'crash') { playCrash(); shakeTimer = 0.35; shakeDuration = 0.35; shakeMag = 14; }
   const dist = Math.floor(distance);
   const best = loadBest();
   const isNewBest = dist > best;
@@ -374,13 +412,14 @@ function endRun(reason) {
 
 function updatePhysics(dt) {
   const canThrottle = throttleHeld && fuel > 0;
+  let torqueInput = 0;
   if (canThrottle) {
     bike.speed += ENGINE_ACCEL * dt;
-    bike.angVel -= THROTTLE_TORQUE * dt;
+    torqueInput -= THROTTLE_TORQUE;
     fuel -= FUEL_DRAIN_THROTTLE * dt;
   } else if (brakeHeld) {
     bike.speed -= BRAKE_DECEL * dt;
-    bike.angVel += BRAKE_TORQUE * dt;
+    torqueInput += BRAKE_TORQUE;
     fuel -= FUEL_DRAIN_IDLE * dt;
   } else {
     bike.speed *= Math.max(0, 1 - ROLL_DRAG * dt);
@@ -398,35 +437,78 @@ function updatePhysics(dt) {
   bike.x += bike.speed * dt;
   wheelSpin += (bike.speed / WHEEL_R) * dt;
 
-  bike.angVel += (0 - bike.angle) * LEVEL_RESTORE * dt;
-  bike.angVel *= Math.max(0, 1 - ANGULAR_DAMPING * dt);
-  bike.angle += bike.angVel * dt;
+  const wasGrounded = grounded;
+  const fallSpeedBefore = bike.vy;
+  const steps = Math.max(1, Math.ceil(dt / PHYSICS_SUBSTEP));
+  const subDt = dt / steps;
+  let anyGrounded = false;
+  let hardestImpact = 0;
+  const wheelDefs = [{ w: wheels.rear, localX: -WHEEL_OFFSET }, { w: wheels.front, localX: WHEEL_OFFSET }];
 
-  bike.vy += GRAVITY * dt;
-  bike.y += bike.vy * dt;
+  for (let s = 0; s < steps; s++) {
+    bike.angVel += torqueInput * subDt;
+    bike.angVel += (0 - bike.angle) * LEVEL_RESTORE * subDt;
+    bike.angVel *= Math.max(0, 1 - ANGULAR_DAMPING * subDt);
+    bike.vy += GRAVITY * subDt;
 
-  const rearGroundY = terrainY(bike.x - WHEEL_OFFSET) - WHEEL_R;
-  const frontGroundY = terrainY(bike.x + WHEEL_OFFSET) - WHEEL_R;
-  const flushY = (rearGroundY + frontGroundY) / 2;
-  const flushAngle = Math.atan2(frontGroundY - rearGroundY, WHEEL_OFFSET * 2);
+    const cosA = Math.cos(bike.angle), sinA = Math.sin(bike.angle);
+    const downX = -sinA, downY = cosA;
 
-  if (bike.y >= flushY) {
-    const impactSpeed = bike.vy;
-    if (!grounded) {
-      if (airTime > 550 && whoomphPlayed === false) { playWhoomph(); whoomphPlayed = true; }
-      if (impactSpeed > 60) playBounce(impactSpeed / 900);
+    for (const { w: wheel, localX } of wheelDefs) {
+      const mountX = bike.x + localX * cosA;
+      const mountY = bike.y + localX * sinA;
+      const sampleX = mountX + downX * wheel.len;
+      const groundY = terrainY(sampleX) - WHEEL_R;
+      let neededLen = downY > 0.15 ? (groundY - mountY) / downY : wheel.len;
+      neededLen = clamp(neededLen, SUSP_MIN_LEN, SUSP_MAX_LEN);
+
+      if (neededLen < wheel.len - 0.001) {
+        const compression = SUSP_REST_LEN - neededLen;
+        const lenVel = (neededLen - wheel.len) / subDt;
+        const springForce = clamp(SUSP_SPRING_K * compression - SUSP_DAMPING * lenVel, -SUSP_MAX_FORCE, SUSP_MAX_FORCE);
+        const forceX = -downX * springForce, forceY = -downY * springForce;
+        bike.vy += clamp(forceY * subDt, -SUSP_MAX_VY_IMPULSE, SUSP_MAX_VY_IMPULSE);
+        const rX = mountX - bike.x, rY = mountY - bike.y;
+        const torque = rX * forceY - rY * forceX;
+        bike.angVel += clamp(torque * SUSP_ANGULAR_GAIN * subDt, -SUSP_MAX_ANGVEL_IMPULSE, SUSP_MAX_ANGVEL_IMPULSE);
+        wheel.len = neededLen;
+        wheel.grounded = true;
+        anyGrounded = true;
+      } else {
+        wheel.len += (SUSP_MAX_LEN - wheel.len) * SUSP_RELAX_RATE * subDt;
+        wheel.grounded = false;
+      }
     }
-    bike.y = flushY;
-    bike.vy = impactSpeed > 40 ? -impactSpeed * 0.18 : 0;
-    bike.angle += (flushAngle - bike.angle) * 0.4;
-    bike.angVel *= 0.5;
-    grounded = true;
-    airTime = 0;
-    whoomphPlayed = false;
-  } else {
-    grounded = false;
-    airTime += dt * 1000;
+
+    bike.angle += bike.angVel * subDt;
+    bike.y += bike.vy * subDt;
   }
+
+  grounded = anyGrounded;
+  if (grounded && !wasGrounded) {
+    hardestImpact = Math.abs(fallSpeedBefore);
+    if (airTime > 550) playWhoomph();
+    if (hardestImpact > 60) {
+      playBounce(hardestImpact / 900);
+      const cosA = Math.cos(bike.angle);
+      spawnDust(bike.x - WHEEL_OFFSET * cosA, terrainY(bike.x - WHEEL_OFFSET), 8, clamp(hardestImpact / 12, 10, 60));
+      spawnDust(bike.x + WHEEL_OFFSET * cosA, terrainY(bike.x + WHEEL_OFFSET), 8, clamp(hardestImpact / 12, 10, 60));
+      if (hardestImpact > 260) { shakeTimer = 0.18; shakeDuration = 0.18; shakeMag = clamp(hardestImpact / 40, 4, 10); }
+    }
+    airTime = 0;
+  } else if (!grounded) {
+    airTime += dt * 1000;
+  } else if (grounded && Math.random() < dt * 6 && Math.abs(bike.speed) > 60) {
+    spawnDust(bike.x, terrainY(bike.x), 1, 12);
+  }
+
+  dust.forEach((p) => {
+    p.life += dt * 1000;
+    p.vy += 260 * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+  });
+  dust = dust.filter((p) => p.life < p.maxLife);
 
   if (Math.abs(bike.angle) > CRASH_ANGLE) { endRun('crash'); return; }
 
@@ -461,6 +543,39 @@ function drawSky() {
   g.addColorStop(1, '#eaf6e8');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
+
+  // Soft drifting clouds - fixed world positions, parallax at a slow rate
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  for (let i = 0; i < 6; i++) {
+    const wx = i * 900 + 300;
+    const cx = ((wx - camX * 0.15) % 5400 + 5400) % 5400 - 400;
+    const cy = 60 + (i % 3) * 34;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 34, 13, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx + 22, cy + 4, 24, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx - 20, cy + 5, 22, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Distant parallax hill silhouette (scrolls slower than the foreground
+  // terrain) for depth, plus a nearer mid-layer for a bit more richness.
+  ctx.fillStyle = 'rgba(60,90,60,0.35)';
+  drawParallaxRidge(camX * 0.35, 340, 46, 0.0016);
+  ctx.fillStyle = 'rgba(45,70,45,0.45)';
+  drawParallaxRidge(camX * 0.55, 372, 34, 0.0027);
+}
+
+function drawParallaxRidge(offsetX, baseScreenY, amp, freq) {
+  ctx.beginPath();
+  ctx.moveTo(-20, H + 10);
+  for (let sx = -20; sx <= W + 20; sx += 20) {
+    const wx = sx + offsetX;
+    const y = baseScreenY - amp - Math.sin(wx * freq) * amp - Math.sin(wx * freq * 2.3 + 1.4) * amp * 0.4;
+    ctx.lineTo(sx, y);
+  }
+  ctx.lineTo(W + 20, H + 10);
+  ctx.closePath();
+  ctx.fill();
 }
 
 function drawTerrain() {
@@ -489,6 +604,31 @@ function drawTerrain() {
     if (x === startX) ctx.moveTo(s.x, s.y); else ctx.lineTo(s.x, s.y);
   }
   ctx.stroke();
+
+  // Grass tufts and the odd pebble along the surface, positioned
+  // deterministically from x so they don't jitter between frames.
+  for (let x = Math.floor(startX / 18) * 18; x <= endX; x += 18) {
+    const h = hash(x * 0.37 + 91.7);
+    const groundS = worldToScreen(x, terrainY(x));
+    if (h > 0.35) {
+      const tuftH = 5 + (h + 1) * 4;
+      ctx.strokeStyle = '#8fbf4a';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(groundS.x - 3, groundS.y);
+      ctx.lineTo(groundS.x - 4, groundS.y - tuftH);
+      ctx.moveTo(groundS.x, groundS.y);
+      ctx.lineTo(groundS.x + 0.5, groundS.y - tuftH * 1.15);
+      ctx.moveTo(groundS.x + 3, groundS.y);
+      ctx.lineTo(groundS.x + 4, groundS.y - tuftH * 0.85);
+      ctx.stroke();
+    } else if (h < -0.6) {
+      ctx.fillStyle = '#7a7a7a';
+      ctx.beginPath();
+      ctx.ellipse(groundS.x, groundS.y + 3, 4, 2.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 }
 
 function drawCans() {
@@ -507,9 +647,18 @@ function drawCans() {
   }
 }
 
-function drawWheel(cx, cy) {
+function drawWheel(cx, cy, grounded) {
+  if (grounded) {
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + WHEEL_R * 0.7, WHEEL_R * 0.9, WHEEL_R * 0.35, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.fillStyle = '#1a1a1a';
   ctx.beginPath(); ctx.arc(cx, cy, WHEEL_R, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = grounded ? '#6ba83a' : '#333';
+  ctx.lineWidth = 1.4;
+  ctx.stroke();
   ctx.fillStyle = '#555';
   ctx.beginPath(); ctx.arc(cx, cy, WHEEL_R * 0.45, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = '#888'; ctx.lineWidth = 1.5;
@@ -524,28 +673,94 @@ function drawWheel(cx, cy) {
 
 function drawBike() {
   const s = worldToScreen(bike.x, bike.y);
+  const rearLen = wheels.rear.len, frontLen = wheels.front.len;
+  const avgLen = (rearLen + frontLen) / 2;
+  const pivotY = avgLen - 30;
+  const rearAttachX = -9, frontAttachX = 11;
+
   ctx.save();
   ctx.translate(s.x, s.y);
   ctx.rotate(bike.angle);
-  drawWheel(-WHEEL_OFFSET, 0);
-  drawWheel(WHEEL_OFFSET, 0);
-  ctx.strokeStyle = '#2a2a2a';
-  ctx.lineWidth = 3;
+
+  // Swingarm + telescoping fork - each strut's length is driven directly by
+  // that wheel's own suspension travel, so a wheel dropping into a dip or
+  // absorbing a landing visibly stretches/compresses independently of the
+  // other side instead of the whole chassis snapping flat.
+  ctx.strokeStyle = '#22222a';
+  ctx.lineWidth = 3.2;
   ctx.beginPath();
-  ctx.moveTo(-WHEEL_OFFSET, 0); ctx.lineTo(-6, -22); ctx.lineTo(WHEEL_OFFSET, 0);
+  ctx.moveTo(-WHEEL_OFFSET, rearLen); ctx.lineTo(rearAttachX, pivotY);
   ctx.stroke();
-  const grad = ctx.createLinearGradient(-14, -30, 14, -8);
-  grad.addColorStop(0, '#c9853a');
-  grad.addColorStop(1, '#e8b96b');
-  ctx.fillStyle = grad;
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.roundRect(-16, -28, 32, 16, 5);
+  ctx.moveTo(WHEEL_OFFSET, frontLen); ctx.lineTo(frontAttachX, pivotY);
+  ctx.stroke();
+  ctx.strokeStyle = '#767c86'; ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(WHEEL_OFFSET, frontLen - 5); ctx.lineTo(frontAttachX, pivotY + 5);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#8a2f2f';
+  ctx.lineWidth = 3.6;
+  ctx.beginPath(); ctx.arc(-WHEEL_OFFSET, rearLen, WHEEL_R + 3.5, Math.PI * 1.05, Math.PI * 1.9); ctx.stroke();
+  ctx.beginPath(); ctx.arc(WHEEL_OFFSET, frontLen, WHEEL_R + 3.5, Math.PI * 1.1, Math.PI * 1.95); ctx.stroke();
+
+  drawWheel(-WHEEL_OFFSET, rearLen, wheels.rear.grounded);
+  drawWheel(WHEEL_OFFSET, frontLen, wheels.front.grounded);
+
+  // chassis body - vertical position tracks avgLen, so it visibly settles
+  // when both wheels compress and floats up when they droop in the air
+  const bodyGrad = ctx.createLinearGradient(rearAttachX - 8, pivotY - 14, frontAttachX + 8, pivotY + 6);
+  bodyGrad.addColorStop(0, '#c9853a');
+  bodyGrad.addColorStop(1, '#e8b96b');
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.roundRect(rearAttachX - 9, pivotY - 12, (frontAttachX - rearAttachX) + 18, 16, 5);
   ctx.fill();
-  ctx.fillStyle = '#3a2a1a';
-  ctx.beginPath(); ctx.arc(-6, -38, 8, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#2f5f28';
-  ctx.beginPath(); ctx.roundRect(-14, -34, 16, 10, 3); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.28)'; ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.fillStyle = '#232323';
+  ctx.beginPath();
+  ctx.roundRect(rearAttachX - 4, pivotY - 17, 20, 6, 3);
+  ctx.fill();
+
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(frontAttachX + 2, pivotY - 10); ctx.lineTo(frontAttachX + 11, pivotY - 21);
+  ctx.stroke();
+
+  // Rider: leaning torso, arm to the bar, leg to the peg, helmeted head
+  const hipX = rearAttachX + 6, hipY = pivotY - 15;
+  const shoulderX = frontAttachX - 5, shoulderY = pivotY - 35;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#2f5f28';
+  ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(shoulderX, shoulderY); ctx.stroke();
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(frontAttachX + 9, pivotY - 17); ctx.stroke();
+  ctx.strokeStyle = '#22303a';
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(rearAttachX - 3, pivotY + 3); ctx.stroke();
+  ctx.lineCap = 'butt';
+
+  ctx.fillStyle = '#e8b96b';
+  ctx.beginPath(); ctx.arc(shoulderX + 2, shoulderY - 10, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#c0392b';
+  ctx.beginPath(); ctx.arc(shoulderX + 2, shoulderY - 11, 7.6, Math.PI, 0); ctx.fill();
+
   ctx.restore();
+}
+
+function drawDust() {
+  for (const p of dust) {
+    const t = p.life / p.maxLife;
+    const s = worldToScreen(p.x, p.y);
+    ctx.fillStyle = 'rgba(140,110,70,' + (0.4 * (1 - t)) + ')';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, p.size * (1 + t * 1.4), 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 function drawHud() {
@@ -583,10 +798,11 @@ function draw() {
   drawSky();
   if (state === 'menu') return;
   ctx.save();
-  const mag = shakeTimer > 0 ? (shakeTimer / 0.35) * shakeMag : 0;
+  const mag = shakeTimer > 0 ? (shakeTimer / shakeDuration) * shakeMag : 0;
   if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
   drawTerrain();
   drawCans();
+  drawDust();
   drawBike();
   ctx.restore();
   drawHud();
