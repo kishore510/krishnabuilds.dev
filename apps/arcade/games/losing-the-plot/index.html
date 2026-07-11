@@ -90,19 +90,158 @@
     cursor: pointer;
     z-index: 5;
   }
+  .rowLabel {
+    font-size: calc(10.5px * var(--game-scale, 1));
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-top: calc(8px * var(--game-scale, 1));
+  }
+  .btnRow {
+    display: flex;
+    gap: calc(8px * var(--game-scale, 1));
+    margin-top: calc(5px * var(--game-scale, 1));
+    pointer-events: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btnRow button {
+    font-family: inherit;
+    font-size: calc(12.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(7px * var(--game-scale, 1)) calc(15px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  .btnRow button:active { background: rgba(255,255,255,0.3); }
+  .btnRow button.selected { background: #ffb703; border-color: #ffb703; color: #04121c; }
+  #shopBtn {
+    margin-top: calc(10px * var(--game-scale, 1));
+    font-size: calc(13.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(8px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #ffb703;
+    background: rgba(255,183,3,0.15);
+    color: #ffe28a;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #shopBtn:active { background: rgba(255,183,3,0.35); }
+  #moneyLine { color: #ffe28a; font-weight: bold; }
+  .panelOverlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6,10,4,0.78);
+    z-index: 6;
+    padding: calc(14px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  .panelBox {
+    background: #1c2a1f;
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,183,3,0.5);
+    border-radius: calc(14px * var(--game-scale, 1));
+    padding: calc(16px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    max-width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    color: white;
+    text-align: center;
+    font-size: calc(13px * var(--game-scale, 1));
+  }
+  .panelBox h2 { margin: 0 0 4px; font-size: calc(20px * var(--game-scale, 1)); }
+  .panelBox p { margin: 2px 0 10px; opacity: 0.85; }
+  .upgradeRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(10px * var(--game-scale, 1));
+    background: rgba(255,255,255,0.06);
+    border-radius: calc(10px * var(--game-scale, 1));
+    padding: calc(8px * var(--game-scale, 1)) calc(12px * var(--game-scale, 1));
+    margin-bottom: calc(8px * var(--game-scale, 1));
+    text-align: left;
+  }
+  .upgradeRow .info { flex: 1; min-width: 0; }
+  .upgradeRow .info strong { display: block; font-size: calc(13.5px * var(--game-scale, 1)); }
+  .upgradeRow .info span { display: block; font-size: calc(11px * var(--game-scale, 1)); opacity: 0.7; margin-top: 2px; }
+  .upgradeRow .level { font-size: calc(10.5px * var(--game-scale, 1)); opacity: 0.6; margin-top: 3px; }
+  .upgradeRow button {
+    font-family: inherit;
+    font-weight: bold;
+    font-size: calc(12px * var(--game-scale, 1));
+    padding: calc(7px * var(--game-scale, 1)) calc(12px * var(--game-scale, 1));
+    border-radius: calc(16px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid #4a7a2e;
+    background: #4a7a2e;
+    color: #f4fbe8;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .upgradeRow button:disabled { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.4); cursor: default; }
+  #shopCloseBtn {
+    margin-top: calc(6px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(8px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+  }
+  #weatherBanner {
+    position: absolute;
+    top: calc(50px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(5px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    background: rgba(0,0,0,0.55);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.4);
+    color: white;
+    display: none;
+    z-index: 3;
+    white-space: nowrap;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
 <div id="wrap">
   <canvas id="game" width="360" height="540"></canvas>
   <button id="muteBtn" type="button">🔊</button>
+  <div id="weatherBanner"></div>
   <div id="overlay">
     <h1 id="title">Losing the Plot</h1>
     <p id="subtitle">Tend every bed before the season gets away from you</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
+    <p id="moneyLine"></p>
+    <div class="rowLabel">Difficulty</div>
+    <div class="btnRow" id="diffButtons">
+      <button data-d="easy" type="button">Easy</button>
+      <button data-d="hard" type="button">Hard</button>
+    </div>
     <button id="startBtn" type="button">Start</button>
+    <button id="shopBtn" type="button">🛒 Shop</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+  <div class="panelOverlay" id="shopOverlay">
+    <div class="panelBox">
+      <h2>Shop</h2>
+      <p id="shopMoney"></p>
+      <div id="shopList"></div>
+      <button id="shopCloseBtn" type="button">Close</button>
+    </div>
   </div>
 </div>
 
@@ -117,6 +256,14 @@ const bestLine = document.getElementById('bestLine');
 const startBtn = document.getElementById('startBtn');
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
+const moneyLine = document.getElementById('moneyLine');
+const diffButtons = document.getElementById('diffButtons');
+const shopBtn = document.getElementById('shopBtn');
+const shopOverlay = document.getElementById('shopOverlay');
+const shopMoney = document.getElementById('shopMoney');
+const shopList = document.getElementById('shopList');
+const shopCloseBtn = document.getElementById('shopCloseBtn');
+const weatherBanner = document.getElementById('weatherBanner');
 
 const W = canvas.width, H = canvas.height;
 
@@ -184,11 +331,54 @@ muteBtn.addEventListener('click', () => {
 function loadBest() { return parseInt(sessionStorage.getItem('losingThePlotBest') || '0', 10); }
 function saveBest(v) { try { sessionStorage.setItem('losingThePlotBest', v); } catch (e) {} }
 
+// --- Economy: money and upgrades persist across runs within the session,
+// same storage mechanism as every other game's "best" score. ---
+function loadMoney() { return parseInt(sessionStorage.getItem('losingThePlotMoney') || '0', 10); }
+function saveMoney(v) { try { sessionStorage.setItem('losingThePlotMoney', v); } catch (e) {} }
+function loadUpgrades() {
+  try {
+    const raw = sessionStorage.getItem('losingThePlotUpgrades');
+    return raw ? JSON.parse(raw) : { water: 0, plot: 0, tools: 0, seeds: 0 };
+  } catch (e) { return { water: 0, plot: 0, tools: 0, seeds: 0 }; }
+}
+function saveUpgrades(u) { try { sessionStorage.setItem('losingThePlotUpgrades', JSON.stringify(u)); } catch (e) {} }
+function loadDifficulty() { return sessionStorage.getItem('losingThePlotDifficulty') || 'easy'; }
+function saveDifficulty(d) { try { sessionStorage.setItem('losingThePlotDifficulty', d); } catch (e) {} }
+
+const UPGRADES = {
+  water: { name: 'Water Butts', desc: 'Water lasts longer before wilting', maxLevel: 3, baseCost: 40, costMul: 1.8 },
+  plot: { name: 'Bigger Plot', desc: 'Unlocks extra beds sooner', maxLevel: 3, baseCost: 60, costMul: 2.0 },
+  tools: { name: 'Better Tools', desc: 'Tend every bed faster', maxLevel: 3, baseCost: 35, costMul: 1.8 },
+  seeds: { name: 'Better Seeds', desc: 'Harvests are worth more', maxLevel: 4, baseCost: 30, costMul: 1.7 }
+};
+
+let money = loadMoney();
+let upgradeLevels = loadUpgrades();
+let difficulty = loadDifficulty();
+
+function upgradeCost(key) {
+  const u = UPGRADES[key];
+  const lvl = upgradeLevels[key];
+  if (lvl >= u.maxLevel) return null;
+  return Math.round(u.baseCost * Math.pow(u.costMul, lvl));
+}
+function waterUpgradeMul() { return 1 + upgradeLevels.water * 0.2; }
+function harvestPointsMul() { return 1 + upgradeLevels.seeds * 0.2; }
+function effectiveTendDuration() { return Math.max(200, TEND_DURATION - upgradeLevels.tools * 100); }
+function effectiveUnlockAt(index) {
+  const base = BED_SLOTS[index].unlockAt;
+  const lvl = upgradeLevels.plot;
+  if (index === 5) {
+    if (lvl < 2) return Infinity;
+    return lvl >= 3 ? 45000 : 90000;
+  }
+  if (base === 0) return 0;
+  return Math.max(0, base - lvl * 12000);
+}
+
 // --- Tuning ---
 const SEASON_LENGTH = 120000;
 const CALM_DURATION = 20000;
-const GROW_DURATION = 15000;
-const HARVEST_POINTS = 20;
 const TEND_DURATION = 550;
 
 const WATER_INTERVAL = [9000, 4200];
@@ -199,12 +389,43 @@ const WEED_GRACE = [7000, 3500];
 const FEED_GRACE = [6500, 3200];
 const HARVEST_GRACE = [9000, 4500];
 
+const DIFFICULTY_PRESETS = {
+  easy: { intervalMul: 1.15, graceMul: 1.2 },
+  hard: { intervalMul: 0.85, graceMul: 0.82 }
+};
+
+// --- Crops: different growth times, values, and need profiles. Picked at
+// random (weighted) each time a bed starts a fresh growing cycle. ---
+const CROPS = [
+  { id: 'lettuce', name: 'Lettuce', growDuration: 10000, value: 14, waterMul: 1.3, feedMul: 1, weedMul: 1, color1: '#4a7a2e', color2: '#7cb342', weight: 35 },
+  { id: 'tomato', name: 'Tomato', growDuration: 15000, value: 20, waterMul: 1, feedMul: 1, weedMul: 1, color1: '#7a3d1a', color2: '#e8891a', weight: 35 },
+  { id: 'pumpkin', name: 'Pumpkin', growDuration: 24000, value: 34, waterMul: 0.85, feedMul: 1.3, weedMul: 1, color1: '#7a4a10', color2: '#e07a1a', weight: 20 },
+  { id: 'garlic', name: 'Garlic', growDuration: 34000, value: 55, waterMul: 0.6, feedMul: 0.7, weedMul: 0.7, color1: '#5b3d22', color2: '#e8e0d0', weight: 10 }
+];
+const CROP_WEIGHT_TOTAL = CROPS.reduce((s, c) => s + c.weight, 0);
+function pickCrop() {
+  let r = Math.random() * CROP_WEIGHT_TOTAL;
+  for (const c of CROPS) { if (r < c.weight) return c; r -= c.weight; }
+  return CROPS[0];
+}
+
+// --- Seasons (cosmetic labels + a HUD readout) and weather events (heatwave
+// speeds up water need; rain waters beds for you) layered on top. ---
+const SEASON_LABELS = [
+  { until: 30000, name: 'Spring', icon: '🌱' },
+  { until: 70000, name: 'Summer', icon: '☀️' },
+  { until: 100000, name: 'Autumn', icon: '🍂' },
+  { until: Infinity, name: 'Winter', icon: '❄️' }
+];
+function seasonLabel(elapsedMs) { return SEASON_LABELS.find((s) => elapsedMs < s.until); }
+
 const BED_SLOTS = [
   { x: 22, y: 96, unlockAt: 0 },
   { x: 132, y: 96, unlockAt: 0 },
   { x: 242, y: 96, unlockAt: 0 },
-  { x: 77, y: 246, unlockAt: 40000 },
-  { x: 187, y: 246, unlockAt: 80000 }
+  { x: 22, y: 246, unlockAt: 40000 },
+  { x: 132, y: 246, unlockAt: 80000 },
+  { x: 242, y: 246, unlockAt: Infinity }
 ];
 const BED_W = 96, BED_H = 92;
 
@@ -214,8 +435,59 @@ function rampT(elapsed) { return clamp((elapsed - CALM_DURATION) / (SEASON_LENGT
 function intervalFor(range, elapsed) { const v = lerp(range[0], range[1], rampT(elapsed)); return randRange(v * 0.85, v * 1.15); }
 function graceFor(range, elapsed) { return lerp(range[0], range[1], rampT(elapsed)); }
 
+let diffPreset = DIFFICULTY_PRESETS[difficulty];
+
+// Weather: a periodic random event layered on top of the base timers.
+// Heatwave halves water interval/grace (needs water constantly and wilts
+// fast); rain suspends water needs entirely (it's doing the watering).
+let weather = null; // null | 'heatwave' | 'rain'
+let weatherUntil = 0;
+let nextWeatherAt = 0;
+
+function scheduleNextWeather(fromTime) { nextWeatherAt = fromTime + randRange(22000, 34000); }
+
+function updateWeather(dt) {
+  if (weather && elapsed >= weatherUntil) {
+    weather = null;
+    scheduleNextWeather(elapsed);
+  } else if (!weather && elapsed >= nextWeatherAt && elapsed > CALM_DURATION) {
+    weather = Math.random() < 0.5 ? 'heatwave' : 'rain';
+    weatherUntil = elapsed + randRange(11000, 16000);
+  }
+  if (weather === 'rain') {
+    beds.forEach((bed) => {
+      if (bed.active && bed.needs.water) {
+        bed.rainClearAt = bed.rainClearAt || elapsed + 1000;
+        if (elapsed >= bed.rainClearAt) { bed.needs.water = false; bed.rainClearAt = 0; scheduleNext(bed, 'water'); }
+      } else {
+        bed.rainClearAt = 0;
+      }
+    });
+  }
+  weatherBanner.style.display = weather ? 'block' : 'none';
+  if (weather === 'heatwave') weatherBanner.textContent = '☀️ Heatwave — water needed fast!';
+  else if (weather === 'rain') weatherBanner.textContent = '🌧️ Rain — watering itself!';
+}
+
+function waterInterval(bed) {
+  let v = intervalFor(WATER_INTERVAL, elapsed) * waterUpgradeMul() * diffPreset.intervalMul * bed.crop.waterMul;
+  if (weather === 'heatwave') v *= 0.5;
+  return v;
+}
+function waterGrace(bed) {
+  if (weather === 'rain') return Infinity;
+  let v = graceFor(WATER_GRACE, elapsed) * waterUpgradeMul() * diffPreset.graceMul * bed.crop.waterMul;
+  if (weather === 'heatwave') v *= 0.5;
+  return v;
+}
+function feedInterval(bed) { return intervalFor(FEED_INTERVAL, elapsed) * diffPreset.intervalMul * bed.crop.feedMul; }
+function feedGrace(bed) { return graceFor(FEED_GRACE, elapsed) * diffPreset.graceMul * bed.crop.feedMul; }
+function weedInterval(bed) { return intervalFor(WEED_INTERVAL, elapsed) * diffPreset.intervalMul * bed.crop.weedMul; }
+function weedGrace(bed) { return graceFor(WEED_GRACE, elapsed) * diffPreset.graceMul * bed.crop.weedMul; }
+function harvestGrace() { return graceFor(HARVEST_GRACE, elapsed) * diffPreset.graceMul; }
+
 let beds = [];
-let score = 0, elapsed = 0;
+let score = 0, elapsed = 0, moneyEarnedThisRun = 0;
 let popups = [];
 let state = 'menu'; // menu | playing | over
 let hintVisible = false, hintAlpha = 1;
@@ -227,6 +499,8 @@ function makeBed(slot, index) {
     stage: 'growing',
     growStart: 0,
     quality: 1,
+    crop: CROPS[0],
+    rainClearAt: 0,
     needs: { water: false, feed: false, weed: false },
     activeSince: { water: 0, feed: 0, weed: 0, harvest: 0 },
     nextDue: { water: Infinity, feed: Infinity, weed: Infinity },
@@ -240,6 +514,8 @@ function initBed(bed, atTime, firstStagger) {
   bed.stage = 'growing';
   bed.growStart = atTime;
   bed.quality = 1;
+  bed.crop = pickCrop();
+  bed.rainClearAt = 0;
   bed.needs.water = false; bed.needs.feed = false; bed.needs.weed = false;
   bed.weedSpread = false;
   bed.tending = null;
@@ -248,23 +524,37 @@ function initBed(bed, atTime, firstStagger) {
     bed.nextDue.feed = firstStagger + randRange(2500, 5000);
     bed.nextDue.weed = firstStagger + randRange(1000, 4000);
   } else {
-    bed.nextDue.water = atTime + intervalFor(WATER_INTERVAL, atTime);
-    bed.nextDue.feed = atTime + intervalFor(FEED_INTERVAL, atTime);
-    bed.nextDue.weed = atTime + intervalFor(WEED_INTERVAL, atTime);
+    bed.nextDue.water = atTime + waterInterval(bed);
+    bed.nextDue.feed = atTime + feedInterval(bed);
+    bed.nextDue.weed = atTime + weedInterval(bed);
   }
 }
 
 function reset() {
+  diffPreset = DIFFICULTY_PRESETS[difficulty];
   beds = BED_SLOTS.map((slot, i) => makeBed(slot, i));
   score = 0;
   elapsed = 0;
+  moneyEarnedThisRun = 0;
   popups = [];
+  weather = null;
+  scheduleNextWeather(0);
   hintVisible = sessionStorage.getItem('losingThePlotSeenHint') !== '1';
   hintAlpha = 1;
   beds.forEach((bed, i) => {
-    if (bed.slot.unlockAt === 0) initBed(bed, 0, CALM_DURATION - 4000 + i * 3000);
+    if (effectiveUnlockAt(i) === 0) initBed(bed, 0, CALM_DURATION - 4000 + i * 3000);
   });
 }
+
+function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
+diffButtons.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  difficulty = b.dataset.d;
+  saveDifficulty(difficulty);
+  updateDiffButtonStyles();
+});
+updateDiffButtonStyles();
 
 function showMenu() {
   state = 'menu';
@@ -272,9 +562,12 @@ function showMenu() {
   subtitle.textContent = 'Tend every bed before the season gets away from you';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest();
+  moneyLine.textContent = '💰 ' + money;
   startBtn.textContent = 'Start';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'none';
+  weatherBanner.style.display = 'none';
+  updateDiffButtonStyles();
   overlay.style.display = 'flex';
 }
 
@@ -287,10 +580,53 @@ function startGame() {
 
 startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
 
+// --- Shop: spend money on permanent upgrades between runs ---
+function renderShop() {
+  shopMoney.textContent = '💰 ' + money;
+  shopList.innerHTML = Object.keys(UPGRADES).map((key) => {
+    const u = UPGRADES[key];
+    const lvl = upgradeLevels[key];
+    const cost = upgradeCost(key);
+    const maxed = cost === null;
+    const affordable = !maxed && money >= cost;
+    return `
+      <div class="upgradeRow">
+        <div class="info">
+          <strong>${u.name}</strong>
+          <span>${u.desc}</span>
+          <div class="level">Level ${lvl}/${u.maxLevel}</div>
+        </div>
+        <button type="button" data-key="${key}" ${maxed || !affordable ? 'disabled' : ''}>${maxed ? 'MAX' : cost + '💰'}</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function openShop() {
+  renderShop();
+  shopOverlay.style.display = 'flex';
+}
+shopBtn.addEventListener('click', openShop);
+shopCloseBtn.addEventListener('click', () => { shopOverlay.style.display = 'none'; });
+shopList.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn || btn.disabled) return;
+  const key = btn.dataset.key;
+  const cost = upgradeCost(key);
+  if (cost === null || money < cost) return;
+  money -= cost;
+  upgradeLevels[key]++;
+  saveMoney(money);
+  saveUpgrades(upgradeLevels);
+  renderShop();
+  moneyLine.textContent = '💰 ' + money;
+});
+
 function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
 
 function scheduleNext(bed, key) {
-  bed.nextDue[key] = elapsed + intervalFor(key === 'water' ? WATER_INTERVAL : key === 'feed' ? FEED_INTERVAL : WEED_INTERVAL, elapsed);
+  const fn = key === 'water' ? waterInterval : key === 'feed' ? feedInterval : weedInterval;
+  bed.nextDue[key] = elapsed + fn(bed);
 }
 
 function wiltBed(bed) {
@@ -332,8 +668,11 @@ function resolveTend(bed) {
   const need = bed.tending.need;
   bed.tending = null;
   if (need === 'harvest') {
-    const points = Math.round(HARVEST_POINTS * bed.quality);
+    const points = Math.round(bed.crop.value * bed.quality * harvestPointsMul());
     score += points;
+    money += points;
+    moneyEarnedThisRun += points;
+    saveMoney(money);
     addPopup(bed.slot.x + BED_W / 2, bed.slot.y, '+' + points, '#ffe28a');
     playHarvest();
     initBed(bed, elapsed);
@@ -358,7 +697,7 @@ function tapBed(bed) {
   if (!bed.active || bed.tending) return;
   const need = topNeed(bed);
   if (!need) return;
-  bed.tending = { need, progress: 0, duration: TEND_DURATION };
+  bed.tending = { need, progress: 0, duration: effectiveTendDuration() };
   playStartTend();
   if (hintVisible) {
     hintVisible = false;
@@ -387,10 +726,13 @@ function endSeason() {
   const isNewBest = score > best;
   if (isNewBest) saveBest(score);
   title.textContent = 'Season Over';
-  subtitle.textContent = 'Tend every bed before the season gets away from you';
+  subtitle.textContent = 'Earned 💰 ' + moneyEarnedThisRun + ' this season';
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Score: ' + score;
   bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
+  moneyLine.textContent = '💰 ' + money + ' total — spend it in the shop';
+  weatherBanner.style.display = 'none';
+  updateDiffButtonStyles();
   startBtn.textContent = 'Play Again';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'inline-block';
@@ -405,7 +747,7 @@ function updateBed(bed, dt) {
     if (bed.tending.progress >= bed.tending.duration) resolveTend(bed);
   }
 
-  if (bed.stage === 'growing' && elapsed >= bed.growStart + GROW_DURATION) {
+  if (bed.stage === 'growing' && elapsed >= bed.growStart + bed.crop.growDuration) {
     bed.stage = 'ripe';
     bed.activeSince.harvest = elapsed;
   }
@@ -420,15 +762,15 @@ function updateBed(bed, dt) {
     });
   }
 
-  if (bed.needs.water && elapsed - bed.activeSince.water > graceFor(WATER_GRACE, elapsed)) wiltBed(bed);
-  else if (bed.needs.weed && !bed.weedSpread && elapsed - bed.activeSince.weed > graceFor(WEED_GRACE, elapsed)) {
+  if (bed.needs.water && elapsed - bed.activeSince.water > waterGrace(bed)) wiltBed(bed);
+  else if (bed.needs.weed && !bed.weedSpread && elapsed - bed.activeSince.weed > weedGrace(bed)) {
     spreadWeed(bed);
     bed.weedSpread = true;
-  } else if (bed.needs.feed && elapsed - bed.activeSince.feed > graceFor(FEED_GRACE, elapsed)) {
+  } else if (bed.needs.feed && elapsed - bed.activeSince.feed > feedGrace(bed)) {
     bed.quality = Math.max(0.4, bed.quality - 0.3);
     bed.needs.feed = false;
     scheduleNext(bed, 'feed');
-  } else if (bed.stage === 'ripe' && elapsed - bed.activeSince.harvest > graceFor(HARVEST_GRACE, elapsed)) rotBed(bed);
+  } else if (bed.stage === 'ripe' && elapsed - bed.activeSince.harvest > harvestGrace()) rotBed(bed);
 }
 
 function update(dt) {
@@ -437,9 +779,10 @@ function update(dt) {
   if (elapsed >= SEASON_LENGTH) { endSeason(); return; }
 
   beds.forEach((bed) => {
-    if (!bed.active && elapsed >= bed.slot.unlockAt) initBed(bed, elapsed, elapsed + randRange(1500, 4000));
+    if (!bed.active && elapsed >= effectiveUnlockAt(bed.index)) initBed(bed, elapsed, elapsed + randRange(1500, 4000));
   });
   beds.forEach((bed) => updateBed(bed, dt));
+  updateWeather(dt);
 
   if (hintVisible && elapsed > CALM_DURATION + 6000) hintVisible = false;
   hintAlpha += ((hintVisible ? 1 : 0) - hintAlpha) * Math.min(1, dt * 5);
@@ -466,19 +809,31 @@ function drawSoil(bed) {
 
 function drawCrop(bed) {
   const cx = bed.slot.x + BED_W / 2, cy = bed.slot.y + BED_H / 2 + 6;
+  const crop = bed.crop;
   if (bed.stage === 'growing') {
-    const growthFrac = clamp((elapsed - bed.growStart) / GROW_DURATION, 0, 1);
+    const growthFrac = clamp((elapsed - bed.growStart) / crop.growDuration, 0, 1);
     const size = lerp(6, 22, growthFrac);
-    ctx.fillStyle = '#4a7a2e';
+    ctx.fillStyle = crop.color1;
     ctx.beginPath(); ctx.ellipse(cx, cy - size * 0.6, size * 0.55, size, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#7cb342';
+    ctx.fillStyle = crop.color2;
     ctx.beginPath(); ctx.ellipse(cx - size * 0.4, cy - size * 0.3, size * 0.35, size * 0.55, -0.4, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.ellipse(cx + size * 0.4, cy - size * 0.3, size * 0.35, size * 0.55, 0.4, 0, Math.PI * 2); ctx.fill();
+  } else if (crop.id === 'garlic') {
+    const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
+    ctx.fillStyle = crop.color2;
+    for (const [ox, oy] of [[-6, -2], [6, -2], [0, -10]]) {
+      ctx.beginPath(); ctx.ellipse(cx + ox, cy + oy * pulse, 6, 8, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.strokeStyle = crop.color1;
+    ctx.lineWidth = 1.5;
+    for (const [ox, oy] of [[-6, -2], [6, -2], [0, -10]]) {
+      ctx.beginPath(); ctx.moveTo(cx + ox, cy + oy - 6); ctx.lineTo(cx + ox, cy + oy - 12); ctx.stroke();
+    }
   } else {
     const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
-    ctx.fillStyle = '#e8891a';
+    ctx.fillStyle = crop.color2;
     ctx.beginPath(); ctx.arc(cx, cy - 8, 15 * pulse, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#4a7a2e';
+    ctx.fillStyle = crop.color1;
     ctx.beginPath(); ctx.ellipse(cx, cy - 20, 4, 8, 0, 0, Math.PI * 2); ctx.fill();
   }
   if (bed.needs.weed) {
@@ -567,6 +922,13 @@ function drawHud() {
   const timeText = remaining + 's';
   ctx.strokeText(timeText, W - 16, 34);
   ctx.fillText(timeText, W - 16, 34);
+
+  const season = seasonLabel(elapsed);
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  const seasonText = season.icon + ' ' + season.name;
+  ctx.strokeText(seasonText, W / 2, 20);
+  ctx.fillText(seasonText, W / 2, 20);
 }
 
 function drawHint() {
@@ -616,5 +978,7 @@ function loop(now) {
 showMenu();
 requestAnimationFrame(loop);
 </script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
 </body>
 </html>
