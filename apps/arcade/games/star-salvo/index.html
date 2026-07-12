@@ -441,7 +441,8 @@ function reenterFormation(enemy) {
 }
 
 function spawnPowerUp(x, y) {
-  if (Math.random() > 0.12 * diffPreset.powerUpChanceMul) return;
+  if (powerUps.length >= 2) return;
+  if (Math.random() > 0.055 * diffPreset.powerUpChanceMul) return;
   let r = Math.random(), acc = 0, type = POWERUP_TYPES[0];
   for (let i = 0; i < POWERUP_TYPES.length; i++) { acc += POWERUP_WEIGHTS[i]; if (r < acc) { type = POWERUP_TYPES[i]; break; } }
   powerUps.push({ x, y, type, vy: 60 });
@@ -594,7 +595,7 @@ function updateEnemies(dt) {
 function updatePowerUps(dt) {
   powerUps.forEach((p) => { p.y += p.vy * dt; });
   powerUps = powerUps.filter((p) => {
-    if (Math.hypot(p.x - player.x, p.y - player.y) < PLAYER_R + 10) { applyPowerUp(p.type); return false; }
+    if (Math.hypot(p.x - player.x, p.y - player.y) < PLAYER_R + 15) { applyPowerUp(p.type); return false; }
     return p.y < H + 20;
   });
 }
@@ -645,18 +646,22 @@ function update(dt) {
 
   if (state !== 'playing') return;
 
-  if (waveState === 'clear') {
+  // Bullets/powerups keep animating through the clear pause instead of
+  // freezing mid-air for its duration - only enemy spawning/diving and the
+  // player's own firing pause here, everything already in flight settles
+  // naturally so the transition doesn't look like the game locked up.
+  const clearing = waveState === 'clear';
+  if (clearing) {
     waveClearTimer -= dt * 1000;
     if (waveClearTimer <= 0) { wave++; beginWaveEntry(wave); }
-    return;
+  } else {
+    updatePlayer(dt);
+    updateEnemies(dt);
   }
-
-  updatePlayer(dt);
   updateBullets(dt);
-  updateEnemies(dt);
   updatePowerUps(dt);
   checkBulletCollisions();
-  checkWaveClear();
+  if (!clearing) checkWaveClear();
 }
 
 function drawStars() {
@@ -721,13 +726,18 @@ function drawBullets() {
 }
 
 const POWERUP_ICON = { spread: '➾', rapid: '⚡', shield: '🛡', life: '❤' };
+const POWERUP_RING = { spread: '#ffe28a', rapid: '#ffb703', shield: '#8fd3e8', life: '#a8e8c8' };
 function drawPowerUps() {
-  ctx.font = 'bold 14px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   for (const p of powerUps) {
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.beginPath(); ctx.arc(p.x, p.y, 11, 0, Math.PI * 2); ctx.fill();
+    const pulse = 1 + 0.08 * Math.sin(gameTime / 140 + p.x);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.beginPath(); ctx.arc(p.x, p.y, 17 * pulse, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = POWERUP_RING[p.type];
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.font = 'bold 20px Arial';
     ctx.fillStyle = 'white';
     ctx.fillText(POWERUP_ICON[p.type], p.x, p.y + 1);
   }

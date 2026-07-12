@@ -23,7 +23,7 @@
   }
   #wrap { position: relative; }
   canvas {
-    background: #2a3a52;
+    background: #3a2416;
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     display: block;
@@ -98,7 +98,7 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Hoops</h1>
-    <p id="subtitle">Swipe up to shoot — chain swishes for combo points</p>
+    <p id="subtitle">Swipe up to shoot — the hoop won't stay still for long</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <button id="startBtn" type="button">Start</button>
@@ -133,6 +133,7 @@ window.addEventListener('kb-navbar-ready', fitCanvas);
 fitCanvas();
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
 
 // --- Audio ---
 let audioCtx = null;
@@ -163,6 +164,8 @@ function playClank() { tone(280, 0.09, 'square', 0.12); tone(200, 0.12, 'square'
 function playBoard() { tone(150, 0.1, 'sine', 0.11); }
 function playMiss() { tone(180, 0.14, 'sawtooth', 0.08); }
 function playCombo(n) { tone(500 + Math.min(n, 6) * 90, 0.09, 'triangle', 0.1); }
+function playBonus() { tone(600, 0.1, 'triangle', 0.13); tone(900, 0.12, 'triangle', 0.12, 0.08); tone(1200, 0.16, 'triangle', 0.11, 0.16); }
+function playStageChange() { tone(440, 0.1, 'sine', 0.1); tone(330, 0.14, 'sine', 0.09, 0.08); }
 function playGameOver() {
   tone(523, 0.14, 'triangle', 0.13);
   tone(659, 0.14, 'triangle', 0.12, 0.13);
@@ -180,11 +183,15 @@ muteBtn.addEventListener('click', () => {
 function loadBest() { return parseInt(sessionStorage.getItem('hoopsBest') || '0', 10); }
 function saveBest(v) { try { sessionStorage.setItem('hoopsBest', v); } catch (e) {} }
 
-// --- World ---
+// --- World: front-on view - the hoop faces the player instead of sitting
+// off to one side, so the rim is drawn as a squashed ellipse (a circle seen
+// from below) and the ball's job is lining up BOTH the arc and the left-right
+// aim on a target that starts still and gets progressively less cooperative. ---
 const GRAVITY = 780;
 const BALL_R = 11;
-const START_POS = { x: 92, y: 452 };
+const START_POS = { x: 180, y: 458 };
 const TIME_LIMIT = 60000;
+const BONUS_TIME = 5000;
 const RIM_R = 4.5;
 const RIM_RESTITUTION = 0.5;
 const BOARD_RESTITUTION = 0.45;
@@ -192,12 +199,48 @@ const SWIPE_SENSITIVITY = 2.4;
 const MAX_SHOT_SPEED = 780;
 const MIN_SWIPE_DIST = 14;
 
-let hoopX = 300;
-const BOARD_TOP = 88, BOARD_BOTTOM = 194;
-const RIM_Y = 168, RIM_WIDTH = 56;
+const RIM_Y = 168;
+const RIM_RX = 40;
+const BOARD_TOP = 92, BOARD_BOTTOM = 150, BOARD_HALF_W = 46;
 
-function rimLeft() { return { x: hoopX - RIM_WIDTH, y: RIM_Y }; }
-function rimRight() { return { x: hoopX - 6, y: RIM_Y }; }
+// --- Hoop movement ramps in three stages: dead still to learn the arc, then
+// jumping between fixed spots between shots, then genuinely sliding while
+// you're mid-aim - each stage is a hard threshold on shots taken, not luck,
+// so it's always the same for every player at the same point in a run. ---
+const STAGE2_AT = 5;   // shots taken before the hoop starts relocating between shots
+const STAGE3_AT = 14;  // shots taken before it moves continuously
+const HOOP_POSITIONS = [110, 145, 180, 215, 250];
+
+let hoopX = 180, hoopBaseX = 180, moveTime = 0;
+let shotsTaken = 0, announcedStage = 1;
+
+function pickNewHoopPosition() {
+  const pool = HOOP_POSITIONS.filter((x) => Math.abs(x - hoopX) > 25);
+  hoopBaseX = pool.length ? pool[Math.floor(Math.random() * pool.length)] : HOOP_POSITIONS[0];
+  hoopX = hoopBaseX;
+}
+
+function stageFor(shots) { return shots >= STAGE3_AT ? 3 : shots >= STAGE2_AT ? 2 : 1; }
+
+function updateHoop(dt) {
+  const stage = stageFor(shotsTaken);
+  if (stage === 3) {
+    moveTime += dt;
+    const ramp = clamp(shotsTaken - STAGE3_AT, 0, 20);
+    const amplitude = clamp(38 + ramp * 2.2, 38, 85);
+    const speed = clamp(0.55 + ramp * 0.03, 0.55, 1.5);
+    hoopX = 180 + Math.sin(moveTime * speed) * amplitude;
+  }
+  if (stage !== announcedStage) {
+    announcedStage = stage;
+    playStageChange();
+    if (stage === 2) addPopup(W / 2, 60, 'Hoop’s on the move!', '#ffe28a');
+    else if (stage === 3) addPopup(W / 2, 60, 'It won’t hold still now!', '#ff8a4a');
+  }
+}
+
+function rimLeft() { return { x: hoopX - RIM_RX, y: RIM_Y }; }
+function rimRight() { return { x: hoopX + RIM_RX, y: RIM_Y }; }
 
 let ball = null;
 let dragStart = null, dragCurrent = null, dragPointerId = null;
@@ -211,7 +254,7 @@ function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 });
 function showMenu() {
   state = 'menu';
   title.textContent = 'Hoops';
-  subtitle.textContent = 'Swipe up to shoot — chain swishes for combo points';
+  subtitle.textContent = 'Swipe up to shoot — the hoop won’t stay still for long';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest();
   startBtn.textContent = 'Start';
@@ -221,7 +264,8 @@ function showMenu() {
 }
 
 function startGame() {
-  hoopX = 300;
+  hoopX = 180; hoopBaseX = 180; moveTime = 0;
+  shotsTaken = 0; announcedStage = 1;
   ball = null;
   score = 0;
   combo = 0;
@@ -270,7 +314,7 @@ canvas.addEventListener('pointerup', (e) => {
   };
 });
 
-function circlePointCollide(pt, restitution, isBoard) {
+function circlePointCollide(pt, restitution) {
   const dx = ball.x - pt.x, dy = ball.y - pt.y;
   const minDist = BALL_R + RIM_R;
   const dist = Math.hypot(dx, dy);
@@ -283,32 +327,43 @@ function circlePointCollide(pt, restitution, isBoard) {
     ball.vx -= (1 + restitution) * vDotN * nx;
     ball.vy -= (1 + restitution) * vDotN * ny;
   }
-  if (!isBoard) ball.touchedRim = true;
+  ball.touchedRim = true;
   return true;
+}
+
+function afterShotResolved() {
+  shotsTaken++;
+  if (stageFor(shotsTaken) === 2) pickNewHoopPosition();
 }
 
 function endShot(made) {
   if (made) {
+    combo++;
     const swish = !ball.touchedRim && !ball.touchedBoard;
+    let pts;
     if (swish) {
-      combo++;
-      const pts = 2 * Math.min(combo, 5);
-      score += pts;
-      addPopup(hoopX - RIM_WIDTH / 2, RIM_Y, 'SWISH +' + pts, '#ffe28a');
+      pts = 3 * Math.min(combo, 5);
+      addPopup(hoopX, RIM_Y, 'SWISH +' + pts, '#ffe28a');
       playSwish();
-      if (combo > 1) playCombo(combo);
       netFlash = 0.25;
     } else {
-      combo = 0;
-      score += 1;
-      addPopup(hoopX - RIM_WIDTH / 2, RIM_Y, '+1', '#a8e8c8');
+      pts = 1;
+      addPopup(hoopX, RIM_Y, '+1', '#a8e8c8');
       playMake();
       netFlash = 0.2;
+    }
+    score += pts;
+    if (combo > 1) playCombo(combo);
+    if (combo % 4 === 0) {
+      timeLeft += BONUS_TIME;
+      addPopup(hoopX, RIM_Y - 30, '🔥 +' + (BONUS_TIME / 1000) + 's', '#ff8a4a');
+      playBonus();
     }
   } else {
     combo = 0;
   }
   ball = null;
+  afterShotResolved();
 }
 
 function updateBall(dt) {
@@ -319,20 +374,19 @@ function updateBall(dt) {
   ball.y += ball.vy * dt;
   ball.spin += ball.vx * dt * 0.05;
 
-  if (circlePointCollide(rimLeft(), RIM_RESTITUTION, false)) playClank();
-  if (circlePointCollide(rimRight(), RIM_RESTITUTION, false)) playClank();
+  if (circlePointCollide(rimLeft(), RIM_RESTITUTION)) playClank();
+  if (circlePointCollide(rimRight(), RIM_RESTITUTION)) playClank();
 
-  const boardX = hoopX;
-  if (!ball.scored && ball.y > BOARD_TOP && ball.y < BOARD_BOTTOM && ball.x + BALL_R > boardX && ball.vx > 0) {
-    ball.x = boardX - BALL_R;
-    ball.vx = -ball.vx * BOARD_RESTITUTION;
+  if (!ball.touchedBoard && ball.y > BOARD_TOP && ball.y < BOARD_BOTTOM && Math.abs(ball.x - hoopX) < BOARD_HALF_W) {
+    ball.y = BOARD_BOTTOM;
+    ball.vy = Math.abs(ball.vy) * BOARD_RESTITUTION;
     ball.touchedBoard = true;
     playBoard();
   }
 
   if (!ball.scored && ball.prevY < RIM_Y && ball.y >= RIM_Y && ball.vy > 0) {
-    const gapLeft = hoopX - RIM_WIDTH + BALL_R + 2;
-    const gapRight = hoopX - 6 - BALL_R - 2;
+    const gapLeft = hoopX - RIM_RX + BALL_R + 2;
+    const gapRight = hoopX + RIM_RX - BALL_R - 2;
     if (ball.x > gapLeft && ball.x < gapRight) {
       ball.scored = true;
       endShot(true);
@@ -350,10 +404,11 @@ function update(dt) {
   if (state !== 'playing') return;
   timeLeft -= dt * 1000;
   if (timeLeft <= 0) { timeLeft = 0; endGame(); return; }
+  updateHoop(dt);
   updateBall(dt);
   if (netFlash > 0) netFlash -= dt;
   popups.forEach((p) => { p.t += dt * 1000; });
-  popups = popups.filter((p) => p.t < 800);
+  popups = popups.filter((p) => p.t < 900);
 }
 
 function endGame() {
@@ -363,7 +418,7 @@ function endGame() {
   const isNewBest = score > best;
   if (isNewBest) saveBest(score);
   title.textContent = "Time's Up!";
-  subtitle.textContent = 'Swipe up to shoot — chain swishes for combo points';
+  subtitle.textContent = 'Swipe up to shoot — the hoop won’t stay still for long';
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Score: ' + score;
   bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
@@ -374,58 +429,104 @@ function endGame() {
 }
 
 function drawCourt() {
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#2a3a52');
-  g.addColorStop(1, '#1c2838');
+  // Arena backdrop behind the hoop
+  const g = ctx.createLinearGradient(0, 0, 0, 340);
+  g.addColorStop(0, '#2a1c30');
+  g.addColorStop(1, '#3a2416');
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
-  for (let y = 40; y < H; y += 46) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-  ctx.fillStyle = '#3a2a1a';
-  ctx.fillRect(0, 470, W, H - 470);
-  ctx.strokeStyle = '#5b3d22'; ctx.lineWidth = 2;
-  for (let x = 0; x < W; x += 24) { ctx.beginPath(); ctx.moveTo(x, 470); ctx.lineTo(x, H); ctx.stroke(); }
+  ctx.fillRect(0, 0, W, 340);
+  const spot = ctx.createRadialGradient(180, 150, 20, 180, 150, 220);
+  spot.addColorStop(0, 'rgba(255,220,160,0.14)');
+  spot.addColorStop(1, 'rgba(255,220,160,0)');
+  ctx.fillStyle = spot;
+  ctx.fillRect(0, 0, W, 340);
+
+  // Perspective hardwood floor, planks converging toward the hoop base
+  const floorTop = 330, vanishX = 180, vanishY = 250;
+  const floorGrad = ctx.createLinearGradient(0, floorTop, 0, H);
+  floorGrad.addColorStop(0, '#8a5a30');
+  floorGrad.addColorStop(1, '#5b3a1c');
+  ctx.fillStyle = floorGrad;
+  ctx.fillRect(0, floorTop, W, H - floorTop);
+  ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+  ctx.lineWidth = 1.5;
+  for (let i = -6; i <= 6; i++) {
+    const bx = W / 2 + i * 34;
+    ctx.beginPath();
+    ctx.moveTo(vanishX + (bx - vanishX) * 0.06, floorTop);
+    ctx.lineTo(bx, H);
+    ctx.stroke();
+  }
+  for (let y = floorTop + 14; y < H; y += 22) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(20, H - 20); ctx.lineTo(W - 20, H - 20); ctx.stroke();
 }
 
 function drawHoop() {
-  ctx.fillStyle = '#e8e0d0';
-  ctx.fillRect(hoopX, BOARD_TOP, 10, BOARD_BOTTOM - BOARD_TOP);
-  ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 2;
-  ctx.strokeRect(hoopX, BOARD_TOP, 10, BOARD_BOTTOM - BOARD_TOP);
-  ctx.strokeStyle = '#e63946'; ctx.lineWidth = 2;
-  ctx.strokeRect(hoopX + 1, BOARD_TOP + 8, 8, 26);
+  // Backboard - white with the standard red inner box, viewed face-on
+  const bw = BOARD_HALF_W * 2 + 8, bx = hoopX - bw / 2, by = BOARD_TOP - 4, bh = BOARD_BOTTOM - BOARD_TOP + 12;
+  ctx.fillStyle = '#f0ece0';
+  ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 3); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.strokeStyle = '#e63946'; ctx.lineWidth = 2.5;
+  ctx.strokeRect(hoopX - 20, by + bh - 34, 40, 24);
 
-  const rl = rimLeft(), rr = rimRight();
-  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)';
-  ctx.lineWidth = 1.5;
-  const netBottom = RIM_Y + 34;
-  for (let i = 0; i <= 5; i++) {
-    const t = i / 5;
-    const x = rl.x + (rr.x - rl.x) * t;
-    ctx.beginPath();
-    ctx.moveTo(x, RIM_Y + 2);
-    ctx.lineTo(hoopX - RIM_WIDTH / 2 + (x - (hoopX - RIM_WIDTH / 2)) * 0.35, netBottom);
-    ctx.stroke();
+  // Rim: an ellipse (a circle seen from below-front) with the pole/arm behind it
+  ctx.strokeStyle = '#8a4a10'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(hoopX, by + bh); ctx.lineTo(hoopX, RIM_Y); ctx.stroke();
+
+  const netBottom = RIM_Y + 40;
+  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.3;
+  for (let i = 0; i <= 7; i++) {
+    const t = i / 7;
+    const x = hoopX - RIM_RX + RIM_RX * 2 * t;
+    const nx = hoopX + (x - hoopX) * 0.3;
+    ctx.beginPath(); ctx.moveTo(x, RIM_Y + 1); ctx.lineTo(nx, netBottom); ctx.stroke();
   }
-  ctx.beginPath();
-  ctx.moveTo(rl.x, RIM_Y + 10); ctx.lineTo(rr.x, RIM_Y + 10); ctx.stroke();
+  for (let i = 1; i <= 2; i++) {
+    const ny = RIM_Y + (netBottom - RIM_Y) * (i / 3);
+    const rx = RIM_RX * (1 - i / 3.6) * 0.85;
+    ctx.beginPath(); ctx.ellipse(hoopX, ny, rx, rx * 0.28, 0, 0, Math.PI * 2); ctx.stroke();
+  }
 
-  ctx.fillStyle = '#e8891a';
-  ctx.beginPath(); ctx.arc(rl.x, rl.y, RIM_R, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(rr.x, rr.y, RIM_R, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#c9853a'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(rl.x, rl.y); ctx.lineTo(rr.x, rr.y); ctx.stroke();
+  const rimGrad = ctx.createLinearGradient(hoopX - RIM_RX, RIM_Y - 6, hoopX + RIM_RX, RIM_Y + 6);
+  rimGrad.addColorStop(0, '#ff8a3c');
+  rimGrad.addColorStop(0.5, '#e8891a');
+  rimGrad.addColorStop(1, '#c9660c');
+  ctx.strokeStyle = rimGrad;
+  ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.ellipse(hoopX, RIM_Y, RIM_RX, 13, 0, 0, Math.PI * 2); ctx.stroke();
+  // Front lip drawn brighter/thicker to sell the "ring facing you" perspective
+  ctx.strokeStyle = '#ffb703';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.ellipse(hoopX, RIM_Y, RIM_RX, 13, 0, 0.15, Math.PI - 0.15); ctx.stroke();
+}
+
+function ballScale() {
+  if (!ball) return 1;
+  return clamp(lerp(0.68, 1.15, (ball.y - RIM_Y) / (START_POS.y - RIM_Y)), 0.62, 1.2);
 }
 
 function drawBall() {
   if (!ball) return;
+  const s = ballScale();
   ctx.save();
   ctx.translate(ball.x, ball.y);
+  ctx.scale(s, s);
   ctx.rotate(ball.spin);
-  ctx.fillStyle = '#e07a1a';
+  const grad = ctx.createRadialGradient(-BALL_R * 0.35, -BALL_R * 0.4, 1, 0, 0, BALL_R * 1.3);
+  grad.addColorStop(0, '#ff6b52');
+  grad.addColorStop(0.55, '#e6342a');
+  grad.addColorStop(1, '#a41f18');
+  ctx.fillStyle = grad;
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#3a2410'; ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(20,5,5,0.75)'; ctx.lineWidth = 1.2;
   ctx.beginPath(); ctx.moveTo(-BALL_R, 0); ctx.lineTo(BALL_R, 0); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(0, -BALL_R); ctx.lineTo(0, BALL_R); ctx.stroke();
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, -0.6, 0.6); ctx.stroke();
@@ -455,7 +556,7 @@ function drawPopups() {
   ctx.textAlign = 'center';
   ctx.font = 'bold 14px Arial';
   for (const p of popups) {
-    const t = p.t / 800;
+    const t = p.t / 900;
     ctx.globalAlpha = 1 - t;
     ctx.fillStyle = p.color;
     ctx.fillText(p.text, p.x, p.y - 20 - t * 30);

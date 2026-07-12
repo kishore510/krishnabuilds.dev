@@ -222,7 +222,7 @@
   <div id="weatherBanner"></div>
   <div id="overlay">
     <h1 id="title">Losing the Plot</h1>
-    <p id="subtitle">One gardener, one job at a time — plan your route</p>
+    <p id="subtitle">Grow it, sell it, restock — run the whole farm</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <p id="moneyLine"></p>
@@ -306,13 +306,15 @@ function tone(freq, duration, type, volume, delay) {
   gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
   osc.stop(startTime + duration + 0.03);
 }
-function playStartTend() { tone(380, 0.05, 'square', 0.07); }
 function playWater() { tone(560, 0.09, 'sine', 0.1); tone(760, 0.08, 'sine', 0.07, 0.05); }
 function playFeed() { tone(660, 0.1, 'triangle', 0.1); tone(880, 0.1, 'triangle', 0.08, 0.06); }
 function playWeed() { tone(300, 0.06, 'square', 0.09); }
 function playHarvest() { tone(660, 0.1, 'triangle', 0.12); tone(880, 0.12, 'triangle', 0.11, 0.08); tone(1100, 0.16, 'triangle', 0.1, 0.16); }
 function playBad() { tone(160, 0.28, 'sawtooth', 0.13); }
 function playSpread() { tone(220, 0.12, 'square', 0.1); tone(180, 0.14, 'square', 0.09, 0.07); }
+function playBuy() { tone(420, 0.06, 'square', 0.09); tone(600, 0.07, 'square', 0.07, 0.04); }
+function playDenied() { tone(160, 0.09, 'square', 0.08); }
+function playPlant() { tone(500, 0.05, 'triangle', 0.08); }
 function playSeasonEnd() {
   tone(523, 0.14, 'triangle', 0.13);
   tone(659, 0.14, 'triangle', 0.12, 0.13);
@@ -331,27 +333,30 @@ muteBtn.addEventListener('click', () => {
 function loadBest() { return parseInt(sessionStorage.getItem('losingThePlotBest') || '0', 10); }
 function saveBest(v) { try { sessionStorage.setItem('losingThePlotBest', v); } catch (e) {} }
 
-// --- Economy: money and upgrades persist across runs within the session,
-// same storage mechanism as every other game's "best" score. ---
+// --- Economy: a single persistent money pool. It's your in-run spending
+// cash (seeds, water/fertilizer refills) AND your between-run upgrade
+// currency - whatever you don't spend on a season carries over, so saving
+// vs. reinvesting immediately is a real decision. Selling a harvest is the
+// only way money enters the loop; buying inputs is the only way it leaves. ---
 function loadMoney() { return parseInt(sessionStorage.getItem('losingThePlotMoney') || '0', 10); }
 function saveMoney(v) { try { sessionStorage.setItem('losingThePlotMoney', v); } catch (e) {} }
 function loadUpgrades() {
-  const fallback = { water: 0, plot: 0, tools: 0, seeds: 0, boots: 0 };
+  const fallback = { water: 0, fert: 0, plot: 0, seeds: 0, bulk: 0 };
   try {
-    const raw = sessionStorage.getItem('losingThePlotUpgrades');
+    const raw = sessionStorage.getItem('losingThePlotUpgrades2');
     return raw ? Object.assign(fallback, JSON.parse(raw)) : fallback;
   } catch (e) { return fallback; }
 }
-function saveUpgrades(u) { try { sessionStorage.setItem('losingThePlotUpgrades', JSON.stringify(u)); } catch (e) {} }
+function saveUpgrades(u) { try { sessionStorage.setItem('losingThePlotUpgrades2', JSON.stringify(u)); } catch (e) {} }
 function loadDifficulty() { return sessionStorage.getItem('losingThePlotDifficulty') || 'easy'; }
 function saveDifficulty(d) { try { sessionStorage.setItem('losingThePlotDifficulty', d); } catch (e) {} }
 
 const UPGRADES = {
-  water: { name: 'Water Butts', desc: 'Water lasts longer before wilting', maxLevel: 3, baseCost: 40, costMul: 1.8 },
-  plot: { name: 'Bigger Plot', desc: 'Unlocks extra beds sooner', maxLevel: 3, baseCost: 60, costMul: 2.0 },
-  tools: { name: 'Better Tools', desc: 'Tend every bed faster', maxLevel: 3, baseCost: 35, costMul: 1.8 },
-  seeds: { name: 'Better Seeds', desc: 'Harvests are worth more', maxLevel: 4, baseCost: 30, costMul: 1.7 },
-  boots: { name: 'Sturdy Boots', desc: 'Your gardener moves faster between beds', maxLevel: 3, baseCost: 45, costMul: 1.8 }
+  water: { name: 'Water Reserves', desc: 'More water in the tank each season', maxLevel: 3, baseCost: 25, costMul: 1.8 },
+  fert: { name: 'Fertilizer Reserves', desc: 'More fertilizer each season', maxLevel: 3, baseCost: 30, costMul: 1.8 },
+  plot: { name: 'Bigger Plot', desc: 'Unlocks the third row of beds', maxLevel: 1, baseCost: 90, costMul: 1 },
+  seeds: { name: 'Better Seeds', desc: 'Harvests sell for more', maxLevel: 4, baseCost: 30, costMul: 1.7 },
+  bulk: { name: 'Bulk Buying', desc: 'Seeds and refills cost less', maxLevel: 3, baseCost: 35, costMul: 1.8 }
 };
 
 let money = loadMoney();
@@ -364,59 +369,41 @@ function upgradeCost(key) {
   if (lvl >= u.maxLevel) return null;
   return Math.round(u.baseCost * Math.pow(u.costMul, lvl));
 }
-function waterUpgradeMul() { return 1 + upgradeLevels.water * 0.2; }
-function harvestPointsMul() { return 1 + upgradeLevels.seeds * 0.2; }
-function effectiveTendDuration() { return Math.max(200, TEND_DURATION - upgradeLevels.tools * 100); }
-function gardenerSpeedMul() { return 1 + upgradeLevels.boots * 0.25; }
-function effectiveUnlockAt(index) {
-  const base = BED_SLOTS[index].unlockAt;
-  const lvl = upgradeLevels.plot;
-  if (index === 5) {
-    if (lvl < 2) return Infinity;
-    return lvl >= 3 ? 45000 : 90000;
-  }
-  if (base === 0) return 0;
-  return Math.max(0, base - lvl * 12000);
-}
+function startingWater() { return 15 + upgradeLevels.water * 10; }
+function startingFert() { return 6 + upgradeLevels.fert * 5; }
+function unlockedRows() { return upgradeLevels.plot >= 1 ? 3 : 2; }
+function harvestValueMul() { return 1 + upgradeLevels.seeds * 0.15; }
+function priceMul() { return Math.max(0.6, 1 - upgradeLevels.bulk * 0.1); }
 
 // --- Tuning ---
 const SEASON_LENGTH = 120000;
-const CALM_DURATION = 20000;
-const TEND_DURATION = 550;
+const CALM_DURATION = 15000;
 
-const WATER_INTERVAL = [9000, 4200];
-const FEED_INTERVAL = [12000, 5500];
-const WEED_INTERVAL = [11000, 5000];
-// Grace floors are a bit more generous than a pure reflex-tap version would
-// need, since the gardener now has to physically walk to a bed before
-// tending starts - that travel time already eats into the response window.
-const WATER_GRACE = [7500, 4200];
-const WEED_GRACE = [7000, 3900];
-const FEED_GRACE = [6500, 3600];
-const HARVEST_GRACE = [9000, 5000];
+const WATER_INTERVAL = [7000, 3600];
+const FEED_INTERVAL = [10000, 5000];
+const WEED_INTERVAL = [9000, 4200];
+const WATER_GRACE = [5200, 2900];
+const WEED_GRACE = [5000, 2700];
+const FEED_GRACE = [4600, 2600];
+const HARVEST_GRACE = [7500, 4200];
 
 const DIFFICULTY_PRESETS = {
   easy: { intervalMul: 1.15, graceMul: 1.2 },
   hard: { intervalMul: 0.85, graceMul: 0.82 }
 };
 
-// --- Crops: different growth times, values, and need profiles. Picked at
-// random (weighted) each time a bed starts a fresh growing cycle. ---
+// --- Crops: cost to buy the seed, time to grow, and payout on sale. Cheap
+// crops cycle fast for steady cashflow; expensive ones tie up a cell far
+// longer for a much bigger payout - the core planting decision. ---
 const CROPS = [
-  { id: 'lettuce', name: 'Lettuce', growDuration: 10000, value: 14, waterMul: 1.3, feedMul: 1, weedMul: 1, color1: '#4a7a2e', color2: '#7cb342', weight: 35 },
-  { id: 'tomato', name: 'Tomato', growDuration: 15000, value: 20, waterMul: 1, feedMul: 1, weedMul: 1, color1: '#7a3d1a', color2: '#e8891a', weight: 35 },
-  { id: 'pumpkin', name: 'Pumpkin', growDuration: 24000, value: 34, waterMul: 0.85, feedMul: 1.3, weedMul: 1, color1: '#7a4a10', color2: '#e07a1a', weight: 20 },
-  { id: 'garlic', name: 'Garlic', growDuration: 34000, value: 55, waterMul: 0.6, feedMul: 0.7, weedMul: 0.7, color1: '#5b3d22', color2: '#e8e0d0', weight: 10 }
+  { id: 'lettuce', name: 'Lettuce', icon: 'lettuce', seedCost: 3, growDuration: 8000, value: 9, waterMul: 1.3, feedMul: 1, weedMul: 1, color1: '#4a7a2e', color2: '#7cb342' },
+  { id: 'tomato', name: 'Tomato', icon: 'tomato', seedCost: 5, growDuration: 13000, value: 16, waterMul: 1, feedMul: 1, weedMul: 1, color1: '#7a3d1a', color2: '#e8891a' },
+  { id: 'pumpkin', name: 'Pumpkin', icon: 'pumpkin', seedCost: 8, growDuration: 20000, value: 30, waterMul: 0.85, feedMul: 1.3, weedMul: 1, color1: '#7a4a10', color2: '#e07a1a' },
+  { id: 'garlic', name: 'Garlic', icon: 'garlic', seedCost: 12, growDuration: 30000, value: 52, waterMul: 0.6, feedMul: 0.7, weedMul: 0.7, color1: '#5b3d22', color2: '#e8e0d0' }
 ];
-const CROP_WEIGHT_TOTAL = CROPS.reduce((s, c) => s + c.weight, 0);
-function pickCrop() {
-  let r = Math.random() * CROP_WEIGHT_TOTAL;
-  for (const c of CROPS) { if (r < c.weight) return c; r -= c.weight; }
-  return CROPS[0];
-}
+const CROPS_BY_ID = {};
+CROPS.forEach((c) => { CROPS_BY_ID[c.id] = c; });
 
-// --- Seasons (cosmetic labels + a HUD readout) and weather events (heatwave
-// speeds up water need; rain waters beds for you) layered on top. ---
 const SEASON_LABELS = [
   { until: 30000, name: 'Spring', icon: '🌱' },
   { until: 70000, name: 'Summer', icon: '☀️' },
@@ -425,25 +412,17 @@ const SEASON_LABELS = [
 ];
 function seasonLabel(elapsedMs) { return SEASON_LABELS.find((s) => elapsedMs < s.until); }
 
-const BED_SLOTS = [
-  { x: 22, y: 96, unlockAt: 0 },
-  { x: 132, y: 96, unlockAt: 0 },
-  { x: 242, y: 96, unlockAt: 0 },
-  { x: 22, y: 246, unlockAt: 40000 },
-  { x: 132, y: 246, unlockAt: 80000 },
-  { x: 242, y: 246, unlockAt: Infinity }
-];
-const BED_W = 96, BED_H = 92;
+// --- The garden: one grid of individual plant cells (rows x columns) rather
+// than a handful of beds each holding a single crop icon. Every cell grows,
+// needs, and sells independently, so "how many cells can I actually keep
+// resourced" is the real strategic question. ---
+const GRID_COLS = 4;
+const GRID_ROWS_MAX = 3;
+const CELL_W = 84, CELL_H = 118;
+const GRID_X = (W - GRID_COLS * CELL_W) / 2;
+const GRID_Y = 46;
 
 const NEED_ICON = { water: '💧', feed: '⭐', weed: '🌿', harvest: '🧺' };
-
-// The gardener: a single actor who must physically walk to a bed before
-// tending it. This is what actually enforces "only one thing at a time" -
-// tapping a second urgent bed abandons whatever's in progress and sends the
-// gardener there instead, so which bed to run to next (given where the
-// gardener already is) is the real decision, not just "tap the reddest icon".
-const GARDENER_SPEED = 150;
-const SHED = { x: 180, y: 400 };
 
 function rampT(elapsed) { return clamp((elapsed - CALM_DURATION) / (SEASON_LENGTH - CALM_DURATION), 0, 1); }
 function intervalFor(range, elapsed) { const v = lerp(range[0], range[1], rampT(elapsed)); return randRange(v * 0.85, v * 1.15); }
@@ -451,15 +430,10 @@ function graceFor(range, elapsed) { return lerp(range[0], range[1], rampT(elapse
 
 let diffPreset = DIFFICULTY_PRESETS[difficulty];
 
-// Weather: a periodic random event layered on top of the base timers.
-// Heatwave halves water interval/grace (needs water constantly and wilts
-// fast); rain suspends water needs entirely (it's doing the watering).
 let weather = null; // null | 'heatwave' | 'rain'
 let weatherUntil = 0;
 let nextWeatherAt = 0;
-
 function scheduleNextWeather(fromTime) { nextWeatherAt = fromTime + randRange(22000, 34000); }
-
 function updateWeather(dt) {
   if (weather && elapsed >= weatherUntil) {
     weather = null;
@@ -469,12 +443,12 @@ function updateWeather(dt) {
     weatherUntil = elapsed + randRange(11000, 16000);
   }
   if (weather === 'rain') {
-    beds.forEach((bed) => {
-      if (bed.active && bed.needs.water) {
-        bed.rainClearAt = bed.rainClearAt || elapsed + 1000;
-        if (elapsed >= bed.rainClearAt) { bed.needs.water = false; bed.rainClearAt = 0; scheduleNext(bed, 'water'); }
+    cells.forEach((cell) => {
+      if (cell.active && cell.needs.water) {
+        cell.rainClearAt = cell.rainClearAt || elapsed + 1000;
+        if (elapsed >= cell.rainClearAt) { cell.needs.water = false; cell.rainClearAt = 0; scheduleNext(cell, 'water'); }
       } else {
-        bed.rainClearAt = 0;
+        cell.rainClearAt = 0;
       }
     });
   }
@@ -483,39 +457,41 @@ function updateWeather(dt) {
   else if (weather === 'rain') weatherBanner.textContent = '🌧️ Rain — watering itself!';
 }
 
-function waterInterval(bed) {
-  let v = intervalFor(WATER_INTERVAL, elapsed) * waterUpgradeMul() * diffPreset.intervalMul * bed.crop.waterMul;
+function waterInterval(cell) {
+  let v = intervalFor(WATER_INTERVAL, elapsed) * diffPreset.intervalMul * cell.crop.waterMul;
   if (weather === 'heatwave') v *= 0.5;
   return v;
 }
-function waterGrace(bed) {
+function waterGrace(cell) {
   if (weather === 'rain') return Infinity;
-  let v = graceFor(WATER_GRACE, elapsed) * waterUpgradeMul() * diffPreset.graceMul * bed.crop.waterMul;
+  let v = graceFor(WATER_GRACE, elapsed) * diffPreset.graceMul * cell.crop.waterMul;
   if (weather === 'heatwave') v *= 0.5;
   return v;
 }
-function feedInterval(bed) { return intervalFor(FEED_INTERVAL, elapsed) * diffPreset.intervalMul * bed.crop.feedMul; }
-function feedGrace(bed) { return graceFor(FEED_GRACE, elapsed) * diffPreset.graceMul * bed.crop.feedMul; }
-function weedInterval(bed) { return intervalFor(WEED_INTERVAL, elapsed) * diffPreset.intervalMul * bed.crop.weedMul; }
-function weedGrace(bed) { return graceFor(WEED_GRACE, elapsed) * diffPreset.graceMul * bed.crop.weedMul; }
+function feedInterval(cell) { return intervalFor(FEED_INTERVAL, elapsed) * diffPreset.intervalMul * cell.crop.feedMul; }
+function feedGrace(cell) { return graceFor(FEED_GRACE, elapsed) * diffPreset.graceMul * cell.crop.feedMul; }
+function weedInterval(cell) { return intervalFor(WEED_INTERVAL, elapsed) * diffPreset.intervalMul * cell.crop.weedMul; }
+function weedGrace(cell) { return graceFor(WEED_GRACE, elapsed) * diffPreset.graceMul * cell.crop.weedMul; }
 function harvestGrace() { return graceFor(HARVEST_GRACE, elapsed) * diffPreset.graceMul; }
 
-let beds = [];
-let score = 0, elapsed = 0, moneyEarnedThisRun = 0;
+let cells = [];
+let waterStock = 0, fertStock = 0;
+let seedInventory = { lettuce: 0, tomato: 0, pumpkin: 0, garlic: 0 };
+let selectedCrop = 'lettuce';
+let score = 0, elapsed = 0;
 let popups = [];
 let state = 'menu'; // menu | playing | over
 let hintVisible = false, hintAlpha = 1;
-let gardener = { x: SHED.x, y: SHED.y, targetIndex: null, state: 'idle', tendingNeed: null, tendProgress: 0, tendDuration: 0 };
 
-function makeBed(slot, index) {
+function makeCell() {
   return {
-    slot, index,
     active: false,
-    stage: 'growing',
+    stage: 'empty', // empty | growing | ripe
     growStart: 0,
     quality: 1,
-    crop: CROPS[0],
+    crop: null,
     rainClearAt: 0,
+    tendFlash: 0,
     needs: { water: false, feed: false, weed: false },
     activeSince: { water: 0, feed: 0, weed: 0, harvest: 0 },
     nextDue: { water: Infinity, feed: Infinity, weed: Infinity },
@@ -523,42 +499,45 @@ function makeBed(slot, index) {
   };
 }
 
-function initBed(bed, atTime, firstStagger) {
-  bed.active = true;
-  bed.stage = 'growing';
-  bed.growStart = atTime;
-  bed.quality = 1;
-  bed.crop = pickCrop();
-  bed.rainClearAt = 0;
-  bed.needs.water = false; bed.needs.feed = false; bed.needs.weed = false;
-  bed.weedSpread = false;
-  if (gardener.targetIndex === bed.index) { gardener.targetIndex = null; gardener.state = 'idle'; }
-  if (firstStagger !== undefined) {
-    bed.nextDue.water = firstStagger + randRange(-1500, 1500);
-    bed.nextDue.feed = firstStagger + randRange(2500, 5000);
-    bed.nextDue.weed = firstStagger + randRange(1000, 4000);
-  } else {
-    bed.nextDue.water = atTime + waterInterval(bed);
-    bed.nextDue.feed = atTime + feedInterval(bed);
-    bed.nextDue.weed = atTime + weedInterval(bed);
-  }
+function resetCell(cell) {
+  cell.active = false;
+  cell.stage = 'empty';
+  cell.crop = null;
+  cell.quality = 1;
+  cell.needs.water = false; cell.needs.feed = false; cell.needs.weed = false;
+  cell.weedSpread = false;
+  cell.rainClearAt = 0;
+}
+
+function plantCell(cell, cropId) {
+  if (seedInventory[cropId] <= 0) { playDenied(); return; }
+  seedInventory[cropId]--;
+  cell.active = true;
+  cell.stage = 'growing';
+  cell.growStart = elapsed;
+  cell.quality = 1;
+  cell.crop = CROPS_BY_ID[cropId];
+  cell.nextDue.water = elapsed + waterInterval(cell);
+  cell.nextDue.feed = elapsed + feedInterval(cell);
+  cell.nextDue.weed = elapsed + weedInterval(cell);
+  playPlant();
+  if (hintVisible) { hintVisible = false; try { sessionStorage.setItem('losingThePlotSeenHint', '1'); } catch (e) {} }
 }
 
 function reset() {
   diffPreset = DIFFICULTY_PRESETS[difficulty];
-  beds = BED_SLOTS.map((slot, i) => makeBed(slot, i));
+  cells = Array.from({ length: GRID_COLS * GRID_ROWS_MAX }, makeCell);
+  waterStock = startingWater();
+  fertStock = startingFert();
+  seedInventory = { lettuce: 3, tomato: 0, pumpkin: 0, garlic: 0 };
+  selectedCrop = 'lettuce';
   score = 0;
   elapsed = 0;
-  moneyEarnedThisRun = 0;
   popups = [];
   weather = null;
   scheduleNextWeather(0);
-  gardener = { x: SHED.x, y: SHED.y, targetIndex: null, state: 'idle', tendingNeed: null, tendProgress: 0, tendDuration: 0 };
   hintVisible = sessionStorage.getItem('losingThePlotSeenHint') !== '1';
   hintAlpha = 1;
-  beds.forEach((bed, i) => {
-    if (effectiveUnlockAt(i) === 0) initBed(bed, 0, CALM_DURATION - 4000 + i * 3000);
-  });
 }
 
 function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
@@ -574,7 +553,7 @@ updateDiffButtonStyles();
 function showMenu() {
   state = 'menu';
   title.textContent = 'Losing the Plot';
-  subtitle.textContent = 'One gardener, one job at a time — plan your route';
+  subtitle.textContent = 'Grow it, sell it, restock — run the whole farm';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest();
   moneyLine.textContent = '💰 ' + money;
@@ -592,10 +571,9 @@ function startGame() {
   overlay.style.display = 'none';
   ensureAudio();
 }
-
 startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
 
-// --- Shop: spend money on permanent upgrades between runs ---
+// --- Shop: permanent upgrades, spent between runs (or before starting one) ---
 function renderShop() {
   shopMoney.textContent = '💰 ' + money;
   shopList.innerHTML = Object.keys(UPGRADES).map((key) => {
@@ -616,11 +594,7 @@ function renderShop() {
     `;
   }).join('');
 }
-
-function openShop() {
-  renderShop();
-  shopOverlay.style.display = 'flex';
-}
+function openShop() { renderShop(); shopOverlay.style.display = 'flex'; }
 shopBtn.addEventListener('click', openShop);
 shopCloseBtn.addEventListener('click', () => { shopOverlay.style.display = 'none'; });
 shopList.addEventListener('click', (e) => {
@@ -639,127 +613,161 @@ shopList.addEventListener('click', (e) => {
 
 function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
 
-function scheduleNext(bed, key) {
+function scheduleNext(cell, key) {
   const fn = key === 'water' ? waterInterval : key === 'feed' ? feedInterval : weedInterval;
-  bed.nextDue[key] = elapsed + fn(bed);
+  cell.nextDue[key] = elapsed + fn(cell);
 }
 
-function wiltBed(bed) {
+function wiltCell(cell) {
+  score = Math.max(0, score - 3);
+  addPopup(cellCenterX(cells.indexOf(cell)), cellCenterY(cells.indexOf(cell)), 'Wilted!', '#ff6b5e');
+  playBad();
+  resetCell(cell);
+}
+function rotCell(cell) {
   score = Math.max(0, score - 5);
-  addPopup(bed.slot.x + BED_W / 2, bed.slot.y, 'Wilted! -5', '#ff6b5e');
+  addPopup(cellCenterX(cells.indexOf(cell)), cellCenterY(cells.indexOf(cell)), 'Rotted!', '#ff6b5e');
   playBad();
-  initBed(bed, elapsed);
+  resetCell(cell);
 }
-
-function rotBed(bed) {
-  score = Math.max(0, score - 8);
-  addPopup(bed.slot.x + BED_W / 2, bed.slot.y, 'Rotted! -8', '#ff6b5e');
-  playBad();
-  initBed(bed, elapsed);
-}
-
-function spreadWeed(bed) {
-  const candidates = beds.filter((b) => b.index !== bed.index && b.active);
+function spreadWeed(cell) {
+  const idx = cells.indexOf(cell);
+  const candidates = cells.filter((c, i) => i !== idx && c.active && i < unlockedRows() * GRID_COLS);
   if (!candidates.length) return;
-  candidates.sort((a, b) => {
-    const da = Math.hypot(a.slot.x - bed.slot.x, a.slot.y - bed.slot.y);
-    const db = Math.hypot(b.slot.x - bed.slot.x, b.slot.y - bed.slot.y);
-    return da - db;
-  });
-  const target = candidates.find((b) => !b.needs.weed) || candidates[0];
+  const target = candidates.find((c) => !c.needs.weed) || candidates[0];
   if (!target.needs.weed) {
     target.needs.weed = true;
     target.activeSince.weed = elapsed;
     target.weedSpread = false;
-    addPopup(target.slot.x + BED_W / 2, target.slot.y, 'Weeds spread!', '#e8891a');
+    addPopup(cellCenterX(cells.indexOf(target)), cellCenterY(cells.indexOf(target)), 'Weeds spread!', '#e8891a');
   }
   playSpread();
 }
 
-function topNeed(bed) {
-  if (bed.stage === 'ripe') return 'harvest';
-  if (bed.needs.water) return 'water';
-  if (bed.needs.weed) return 'weed';
-  if (bed.needs.feed) return 'feed';
+function topNeed(cell) {
+  if (cell.stage === 'ripe') return 'harvest';
+  if (cell.needs.water) return 'water';
+  if (cell.needs.weed) return 'weed';
+  if (cell.needs.feed) return 'feed';
   return null;
 }
 
-function resolveTend(bed, need) {
+function resolveTend(cell, need) {
+  const idx = cells.indexOf(cell);
+  const cx = cellCenterX(idx), cy = cellCenterY(idx);
   if (need === 'harvest') {
-    const points = Math.round(bed.crop.value * bed.quality * harvestPointsMul());
+    const points = Math.round(cell.crop.value * cell.quality * harvestValueMul());
     score += points;
     money += points;
-    moneyEarnedThisRun += points;
     saveMoney(money);
-    addPopup(bed.slot.x + BED_W / 2, bed.slot.y, '+' + points, '#ffe28a');
+    addPopup(cx, cy, '+$' + points, '#ffe28a');
     playHarvest();
-    initBed(bed, elapsed);
+    resetCell(cell);
   } else if (need === 'water') {
-    bed.needs.water = false;
-    scheduleNext(bed, 'water');
+    if (waterStock <= 0) { playDenied(); addPopup(cx, cy, 'No water!', '#ff6b5e'); return; }
+    waterStock--;
+    cell.needs.water = false;
+    cell.tendFlash = 0.3;
+    scheduleNext(cell, 'water');
     playWater();
   } else if (need === 'weed') {
-    bed.needs.weed = false;
-    bed.weedSpread = false;
-    scheduleNext(bed, 'weed');
+    cell.needs.weed = false;
+    cell.weedSpread = false;
+    cell.tendFlash = 0.3;
+    scheduleNext(cell, 'weed');
     playWeed();
   } else if (need === 'feed') {
-    bed.needs.feed = false;
-    bed.quality = Math.min(1, bed.quality + 0.15);
-    scheduleNext(bed, 'feed');
+    if (fertStock <= 0) { playDenied(); addPopup(cx, cy, 'No fertilizer!', '#ff6b5e'); return; }
+    fertStock--;
+    cell.needs.feed = false;
+    cell.quality = Math.min(1, cell.quality + 0.15);
+    cell.tendFlash = 0.3;
+    scheduleNext(cell, 'feed');
     playFeed();
   }
 }
 
-function tapBed(bed) {
-  if (!bed.active) return;
-  const need = topNeed(bed);
-  if (!need) return;
-  // Re-tapping the bed the gardener is already heading to/working on is a
-  // no-op rather than a reset, so an accidental double-tap doesn't throw
-  // away progress that was already under way.
-  if (gardener.targetIndex === bed.index && gardener.state !== 'idle') return;
-  gardener.targetIndex = bed.index;
-  gardener.state = 'walking';
-  gardener.tendingNeed = null;
-  gardener.tendProgress = 0;
-  playStartTend();
-  if (hintVisible) {
-    hintVisible = false;
-    try { sessionStorage.setItem('losingThePlotSeenHint', '1'); } catch (e) {}
+function tapCell(index) {
+  const row = Math.floor(index / GRID_COLS);
+  if (row >= unlockedRows()) return;
+  const cell = cells[index];
+  if (!cell.active) {
+    plantCell(cell, selectedCrop);
+    return;
   }
+  const need = topNeed(cell);
+  if (!need) return;
+  resolveTend(cell, need);
 }
 
-function updateGardener(dt) {
-  if (gardener.targetIndex === null) return;
-  const bed = beds[gardener.targetIndex];
-  if (!bed || !bed.active) { gardener.targetIndex = null; gardener.state = 'idle'; return; }
-  const targetX = bed.slot.x + BED_W / 2, targetY = bed.slot.y + BED_H / 2;
-  if (gardener.state === 'walking') {
-    const dx = targetX - gardener.x, dy = targetY - gardener.y;
-    const dist = Math.hypot(dx, dy);
-    const step = GARDENER_SPEED * gardenerSpeedMul() * dt;
-    if (dist <= step) {
-      gardener.x = targetX; gardener.y = targetY;
-      const need = topNeed(bed);
-      if (!need) { gardener.targetIndex = null; gardener.state = 'idle'; return; }
-      gardener.state = 'tending';
-      gardener.tendingNeed = need;
-      gardener.tendProgress = 0;
-      gardener.tendDuration = effectiveTendDuration();
-    } else {
-      gardener.x += (dx / dist) * step;
-      gardener.y += (dy / dist) * step;
-    }
-  } else if (gardener.state === 'tending') {
-    gardener.tendProgress += dt * 1000;
-    if (gardener.tendProgress >= gardener.tendDuration) {
-      resolveTend(bed, gardener.tendingNeed);
-      gardener.targetIndex = null;
-      gardener.state = 'idle';
-      gardener.tendingNeed = null;
-    }
+// Need-icon badges live INSIDE the top of each cell rather than floating
+// above it - rows are contiguous (no gap between them like the old bed
+// layout had), so anything drawn above row N's cell would land on top of
+// row N-1's soil. Reserve the cell's own top band for icons instead.
+function cellTopY(index) { return GRID_Y + Math.floor(index / GRID_COLS) * CELL_H + 4; }
+function cellCenterX(index) { return GRID_X + (index % GRID_COLS) * CELL_W + CELL_W / 2; }
+function cellCenterY(index) { return cellTopY(index) + 58; }
+function cellCropCenterY(index) { return cellTopY(index) + 74; }
+function cellNeedIconY(index) { return cellTopY(index) + 15; }
+
+// --- Buying: tapping a seed in the tray buys one more of that type (if
+// affordable) and selects it for planting - one tap does both jobs. The
+// water/fertilizer readouts in the HUD are tap targets too. ---
+function seedCost(cropId) { return Math.max(1, Math.round(CROPS_BY_ID[cropId].seedCost * priceMul())); }
+function waterRefillCost() { return Math.round(8 * priceMul()); }
+function fertRefillCost() { return Math.round(14 * priceMul()); }
+
+function tapTraySeed(cropId) {
+  selectedCrop = cropId;
+  const cost = seedCost(cropId);
+  if (money >= cost) {
+    money -= cost;
+    seedInventory[cropId]++;
+    saveMoney(money);
+    playBuy();
+  } else {
+    playDenied();
   }
+}
+function buyWater() {
+  const cost = waterRefillCost();
+  if (money < cost) { playDenied(); return; }
+  money -= cost; waterStock += 12;
+  saveMoney(money);
+  playBuy();
+}
+function buyFert() {
+  const cost = fertRefillCost();
+  if (money < cost) { playDenied(); return; }
+  money -= cost; fertStock += 6;
+  saveMoney(money);
+  playBuy();
+}
+
+// --- Layout: HUD tap targets + tray buttons ---
+const WATER_HUD_RECT = { x: 8, y: 28, w: 92, h: 15 };
+const FERT_HUD_RECT = { x: W - 100, y: 28, w: 92, h: 15 };
+const TRAY_H = 62;
+const TRAY_Y = H - TRAY_H;
+const TRAY_BTN_W = 82, TRAY_BTN_GAP = 6, TRAY_BTN_H = TRAY_H - 12;
+const TRAY_ROW_W = CROPS.length * TRAY_BTN_W + (CROPS.length - 1) * TRAY_BTN_GAP;
+const TRAY_ROW_X = (W - TRAY_ROW_W) / 2;
+const TRAY_BUTTONS = {};
+CROPS.forEach((c, i) => {
+  TRAY_BUTTONS[c.id] = { x: TRAY_ROW_X + i * (TRAY_BTN_W + TRAY_BTN_GAP), y: TRAY_Y + 6, w: TRAY_BTN_W, h: TRAY_BTN_H };
+});
+function pointInRect(x, y, r) { return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h; }
+function trayButtonAt(x, y) {
+  for (const c of CROPS) if (pointInRect(x, y, TRAY_BUTTONS[c.id])) return c.id;
+  return null;
+}
+function cellIndexAt(x, y) {
+  if (x < GRID_X || x >= GRID_X + GRID_COLS * CELL_W) return null;
+  if (y < GRID_Y || y >= GRID_Y + GRID_ROWS_MAX * CELL_H) return null;
+  const col = Math.floor((x - GRID_X) / CELL_W);
+  const row = Math.floor((y - GRID_Y) / CELL_H);
+  if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS_MAX) return null;
+  return row * GRID_COLS + col;
 }
 
 canvas.addEventListener('pointerdown', (e) => {
@@ -767,13 +775,12 @@ canvas.addEventListener('pointerdown', (e) => {
   const rect = canvas.getBoundingClientRect();
   const x = (e.clientX - rect.left) * (canvas.width / rect.width);
   const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-  for (const bed of beds) {
-    if (!bed.active) continue;
-    if (x >= bed.slot.x && x <= bed.slot.x + BED_W && y >= bed.slot.y - 28 && y <= bed.slot.y + BED_H) {
-      tapBed(bed);
-      break;
-    }
-  }
+  if (pointInRect(x, y, WATER_HUD_RECT)) { buyWater(); return; }
+  if (pointInRect(x, y, FERT_HUD_RECT)) { buyFert(); return; }
+  const trayCrop = trayButtonAt(x, y);
+  if (trayCrop) { tapTraySeed(trayCrop); return; }
+  const idx = cellIndexAt(x, y);
+  if (idx !== null) tapCell(idx);
 });
 
 function endSeason() {
@@ -783,11 +790,11 @@ function endSeason() {
   const isNewBest = score > best;
   if (isNewBest) saveBest(score);
   title.textContent = 'Season Over';
-  subtitle.textContent = 'Earned 💰 ' + moneyEarnedThisRun + ' this season';
+  subtitle.textContent = '💰 ' + money + ' banked — spend it before next season';
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Score: ' + score;
   bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
-  moneyLine.textContent = '💰 ' + money + ' total — spend it in the shop';
+  moneyLine.textContent = '💰 ' + money;
   weatherBanner.style.display = 'none';
   updateDiffButtonStyles();
   startBtn.textContent = 'Play Again';
@@ -796,33 +803,34 @@ function endSeason() {
   overlay.style.display = 'flex';
 }
 
-function updateBed(bed, dt) {
-  if (!bed.active) return;
+function updateCell(cell, dt) {
+  if (!cell.active) return;
+  if (cell.tendFlash > 0) cell.tendFlash -= dt;
 
-  if (bed.stage === 'growing' && elapsed >= bed.growStart + bed.crop.growDuration) {
-    bed.stage = 'ripe';
-    bed.activeSince.harvest = elapsed;
+  if (cell.stage === 'growing' && elapsed >= cell.growStart + cell.crop.growDuration) {
+    cell.stage = 'ripe';
+    cell.activeSince.harvest = elapsed;
   }
 
-  if (bed.stage === 'growing') {
+  if (cell.stage === 'growing') {
     ['water', 'feed', 'weed'].forEach((k) => {
-      if (!bed.needs[k] && elapsed >= bed.nextDue[k]) {
-        bed.needs[k] = true;
-        bed.activeSince[k] = elapsed;
-        if (k === 'weed') bed.weedSpread = false;
+      if (!cell.needs[k] && elapsed >= cell.nextDue[k]) {
+        cell.needs[k] = true;
+        cell.activeSince[k] = elapsed;
+        if (k === 'weed') cell.weedSpread = false;
       }
     });
   }
 
-  if (bed.needs.water && elapsed - bed.activeSince.water > waterGrace(bed)) wiltBed(bed);
-  else if (bed.needs.weed && !bed.weedSpread && elapsed - bed.activeSince.weed > weedGrace(bed)) {
-    spreadWeed(bed);
-    bed.weedSpread = true;
-  } else if (bed.needs.feed && elapsed - bed.activeSince.feed > feedGrace(bed)) {
-    bed.quality = Math.max(0.4, bed.quality - 0.3);
-    bed.needs.feed = false;
-    scheduleNext(bed, 'feed');
-  } else if (bed.stage === 'ripe' && elapsed - bed.activeSince.harvest > harvestGrace()) rotBed(bed);
+  if (cell.needs.water && elapsed - cell.activeSince.water > waterGrace(cell)) wiltCell(cell);
+  else if (cell.needs.weed && !cell.weedSpread && elapsed - cell.activeSince.weed > weedGrace(cell)) {
+    spreadWeed(cell);
+    cell.weedSpread = true;
+  } else if (cell.needs.feed && elapsed - cell.activeSince.feed > feedGrace(cell)) {
+    cell.quality = Math.max(0.4, cell.quality - 0.3);
+    cell.needs.feed = false;
+    scheduleNext(cell, 'feed');
+  } else if (cell.stage === 'ripe' && elapsed - cell.activeSince.harvest > harvestGrace()) rotCell(cell);
 }
 
 function update(dt) {
@@ -830,11 +838,7 @@ function update(dt) {
   elapsed += dt * 1000;
   if (elapsed >= SEASON_LENGTH) { endSeason(); return; }
 
-  beds.forEach((bed) => {
-    if (!bed.active && elapsed >= effectiveUnlockAt(bed.index)) initBed(bed, elapsed, elapsed + randRange(1500, 4000));
-  });
-  beds.forEach((bed) => updateBed(bed, dt));
-  updateGardener(dt);
+  cells.forEach((cell) => updateCell(cell, dt));
   updateWeather(dt);
 
   if (hintVisible && elapsed > CALM_DURATION + 6000) hintVisible = false;
@@ -844,28 +848,34 @@ function update(dt) {
   popups = popups.filter((p) => p.t < 900);
 }
 
-function drawSoil(bed) {
-  ctx.fillStyle = '#5b3d22';
+function drawCellSoil(index, locked) {
+  const col = index % GRID_COLS, row = Math.floor(index / GRID_COLS);
+  const x = GRID_X + col * CELL_W, y = GRID_Y + row * CELL_H;
+  const pad = 4;
+  ctx.fillStyle = locked ? '#2a2018' : '#5b3d22';
   ctx.beginPath();
-  ctx.roundRect(bed.slot.x, bed.slot.y, BED_W, BED_H, 8);
+  ctx.roundRect(x + pad, y + pad, CELL_W - pad * 2, CELL_H - pad * 2, 7);
   ctx.fill();
   ctx.strokeStyle = 'rgba(0,0,0,0.25)';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1.5;
   ctx.stroke();
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
-  for (let i = 1; i < 4; i++) {
-    const y = bed.slot.y + (BED_H / 4) * i;
-    ctx.beginPath(); ctx.moveTo(bed.slot.x + 4, y); ctx.lineTo(bed.slot.x + BED_W - 4, y); ctx.stroke();
+  if (!locked) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 3; i++) {
+      const ly = y + pad + ((CELL_H - pad * 2) / 3) * i;
+      ctx.beginPath(); ctx.moveTo(x + pad + 3, ly); ctx.lineTo(x + CELL_W - pad - 3, ly); ctx.stroke();
+    }
   }
 }
 
-function drawCrop(bed) {
-  const cx = bed.slot.x + BED_W / 2, cy = bed.slot.y + BED_H / 2 + 6;
-  const crop = bed.crop;
-  if (bed.stage === 'growing') {
-    const growthFrac = clamp((elapsed - bed.growStart) / crop.growDuration, 0, 1);
-    const size = lerp(6, 22, growthFrac);
+function drawCellCrop(index) {
+  const cell = cells[index];
+  const cx = cellCenterX(index), cy = cellCropCenterY(index);
+  const crop = cell.crop;
+  if (cell.stage === 'growing') {
+    const growthFrac = clamp((elapsed - cell.growStart) / crop.growDuration, 0, 1);
+    const size = lerp(5, 18, growthFrac);
     ctx.fillStyle = crop.color1;
     ctx.beginPath(); ctx.ellipse(cx, cy - size * 0.6, size * 0.55, size, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = crop.color2;
@@ -874,122 +884,132 @@ function drawCrop(bed) {
   } else if (crop.id === 'garlic') {
     const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
     ctx.fillStyle = crop.color2;
-    for (const [ox, oy] of [[-6, -2], [6, -2], [0, -10]]) {
-      ctx.beginPath(); ctx.ellipse(cx + ox, cy + oy * pulse, 6, 8, 0, 0, Math.PI * 2); ctx.fill();
-    }
-    ctx.strokeStyle = crop.color1;
-    ctx.lineWidth = 1.5;
-    for (const [ox, oy] of [[-6, -2], [6, -2], [0, -10]]) {
-      ctx.beginPath(); ctx.moveTo(cx + ox, cy + oy - 6); ctx.lineTo(cx + ox, cy + oy - 12); ctx.stroke();
+    for (const [ox, oy] of [[-5, -2], [5, -2], [0, -9]]) {
+      ctx.beginPath(); ctx.ellipse(cx + ox, cy + oy * pulse, 5, 7, 0, 0, Math.PI * 2); ctx.fill();
     }
   } else {
     const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
     ctx.fillStyle = crop.color2;
-    ctx.beginPath(); ctx.arc(cx, cy - 8, 15 * pulse, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy - 6, 13 * pulse, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = crop.color1;
-    ctx.beginPath(); ctx.ellipse(cx, cy - 20, 4, 8, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, cy - 17, 3.5, 7, 0, 0, Math.PI * 2); ctx.fill();
   }
-  if (bed.needs.weed) {
+  if (cell.needs.weed) {
     ctx.strokeStyle = '#8a6d3a';
-    ctx.lineWidth = 2;
-    for (let i = 0; i < 3; i++) {
-      const wx = bed.slot.x + 10 + i * 12, wy = bed.slot.y + BED_H - 8;
-      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx - 3, wy - 12); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx + 4, wy - 10); ctx.stroke();
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 2; i++) {
+      const wx = cx - 14 + i * 22, wy = cy + 24;
+      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx - 3, wy - 10); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx + 3, wy - 8); ctx.stroke();
     }
   }
 }
 
-function drawNeedIcons(bed) {
+function drawCellNeedIcons(index) {
+  const cell = cells[index];
   const active = [];
-  if (bed.stage === 'ripe') active.push('harvest');
-  if (bed.needs.water) active.push('water');
-  if (bed.needs.weed) active.push('weed');
-  if (bed.needs.feed) active.push('feed');
+  if (cell.stage === 'ripe') active.push('harvest');
+  if (cell.needs.water) active.push('water');
+  if (cell.needs.weed) active.push('weed');
+  if (cell.needs.feed) active.push('feed');
   if (!active.length) return;
-  const top = topNeed(bed);
-  const iconY = bed.slot.y - 16;
-  const totalW = active.length * 22;
-  let x = bed.slot.x + BED_W / 2 - totalW / 2 + 11;
+  const top = topNeed(cell);
+  const iconY = cellNeedIconY(index);
+  const totalW = active.length * 19;
+  let x = cellCenterX(index) - totalW / 2 + 9.5;
   for (const need of active) {
     const isTop = need === top;
     const bob = isTop ? Math.sin(performance.now() / 180) * 2 : 0;
     ctx.save();
-    ctx.font = (isTop ? 'bold 18px' : '14px') + ' Arial';
+    ctx.font = (isTop ? 'bold 15px' : '12px') + ' Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     if (isTop) {
       ctx.fillStyle = 'rgba(255,255,255,0.9)';
-      ctx.beginPath(); ctx.arc(x, iconY + bob, 13, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x, iconY + bob, 11, 0, Math.PI * 2); ctx.fill();
     }
     ctx.fillText(NEED_ICON[need], x, iconY + bob + 1);
     ctx.restore();
-    x += 22;
+    x += 19;
   }
 }
 
-function drawTendingRing(bed) {
-  if (gardener.state !== 'tending' || gardener.targetIndex !== bed.index) return;
-  const frac = gardener.tendProgress / gardener.tendDuration;
-  const cx = bed.slot.x + BED_W / 2, cy = bed.slot.y + BED_H / 2;
-  ctx.strokeStyle = '#ffe28a';
-  ctx.lineWidth = 4;
+function drawCellTendFlash(index) {
+  const cell = cells[index];
+  if (cell.tendFlash <= 0) return;
+  const col = index % GRID_COLS, row = Math.floor(index / GRID_COLS);
+  const x = GRID_X + col * CELL_W + 4, y = GRID_Y + row * CELL_H + 4;
+  ctx.strokeStyle = 'rgba(255,226,138,' + (cell.tendFlash / 0.3) + ')';
+  ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(cx, cy, Math.max(BED_W, BED_H) / 2 + 4, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);
+  ctx.roundRect(x, y, CELL_W - 8, CELL_H - 8, 7);
   ctx.stroke();
 }
 
-function drawBeds() {
-  beds.forEach((bed) => {
-    if (!bed.active) return;
-    drawSoil(bed);
-    drawCrop(bed);
-    drawTendingRing(bed);
-    drawNeedIcons(bed);
-  });
-}
-
-function drawShed() {
-  ctx.fillStyle = '#5b3d22';
-  ctx.beginPath();
-  ctx.roundRect(SHED.x - 26, SHED.y - 18, 52, 36, 4);
-  ctx.fill();
-  ctx.fillStyle = '#7a3d1a';
-  ctx.beginPath();
-  ctx.moveTo(SHED.x - 30, SHED.y - 18); ctx.lineTo(SHED.x, SHED.y - 34); ctx.lineTo(SHED.x + 30, SHED.y - 18);
-  ctx.closePath();
-  ctx.fill();
-  ctx.fillStyle = '#3a2a1a';
-  ctx.fillRect(SHED.x - 7, SHED.y - 4, 14, 20);
-}
-
-function drawGardener() {
-  const cx = gardener.x, cy = gardener.y;
-  const bob = gardener.state === 'walking' ? Math.sin(performance.now() / 90) * 2 : 0;
+function drawLockedCell(index) {
+  drawCellSoil(index, true);
+  const cx = cellCenterX(index), cy = cellCenterY(index);
   ctx.save();
-  ctx.translate(cx, cy + bob);
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
-  ctx.beginPath(); ctx.ellipse(0, 20, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#3a6b8a';
-  ctx.beginPath(); ctx.roundRect(-9, -2, 18, 20, 4); ctx.fill();
-  ctx.fillStyle = '#e8b96b';
-  ctx.beginPath(); ctx.arc(0, -12, 9, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#c9853a';
-  ctx.beginPath(); ctx.arc(0, -16, 9.5, Math.PI, 0); ctx.fill();
-  if (gardener.state === 'tending' && gardener.tendingNeed) {
-    ctx.font = 'bold 14px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'white';
-    ctx.beginPath(); ctx.arc(14, -14, 11, 0, Math.PI * 2); ctx.fill();
-    ctx.fillText(NEED_ICON[gardener.tendingNeed], 14, -13);
-  }
+  ctx.globalAlpha = 0.75;
+  ctx.font = '20px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🔒', cx, cy - 8);
+  ctx.font = 'bold 9.5px Arial';
+  ctx.fillStyle = '#ffe28a';
+  ctx.fillText('Bigger Plot', cx, cy + 14);
+  ctx.fillText('upgrade', cx, cy + 26);
   ctx.restore();
+}
+
+function drawGrid() {
+  const rows = unlockedRows();
+  for (let i = 0; i < GRID_COLS * GRID_ROWS_MAX; i++) {
+    const row = Math.floor(i / GRID_COLS);
+    if (row >= rows) { drawLockedCell(i); continue; }
+    drawCellSoil(i, false);
+    if (cells[i].active) {
+      drawCellCrop(i);
+      drawCellTendFlash(i);
+      drawCellNeedIcons(i);
+    }
+  }
+}
+
+function drawTray() {
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(0, TRAY_Y, W, TRAY_H);
+  for (const c of CROPS) {
+    const r = TRAY_BUTTONS[c.id];
+    const selected = selectedCrop === c.id;
+    const cost = seedCost(c.id);
+    const affordable = money >= cost;
+    ctx.fillStyle = selected ? 'rgba(255,183,3,0.22)' : 'rgba(255,255,255,0.08)';
+    ctx.strokeStyle = selected ? '#ffb703' : 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = selected ? 2 : 1.5;
+    ctx.beginPath(); ctx.roundRect(r.x, r.y, r.w, r.h, 8); ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = c.color2;
+    ctx.beginPath(); ctx.arc(r.x + 15, r.y + r.h / 2, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = c.color1;
+    ctx.beginPath(); ctx.arc(r.x + 15, r.y + r.h / 2 - 6, 3, 0, Math.PI * 2); ctx.fill();
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 10.5px Arial';
+    ctx.fillText(c.name, r.x + 28, r.y + 14);
+    ctx.font = '10px Arial';
+    ctx.fillStyle = affordable ? '#ffe28a' : 'rgba(255,255,255,0.5)';
+    ctx.fillText('$' + cost + ' buy', r.x + 28, r.y + 27);
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.font = 'bold 10px Arial';
+    ctx.fillText('x' + seedInventory[c.id], r.x + 28, r.y + 40);
+  }
 }
 
 function drawPopups() {
   ctx.textAlign = 'center';
-  ctx.font = 'bold 13px Arial';
+  ctx.font = 'bold 12px Arial';
   for (const p of popups) {
     const t = p.t / 900;
     ctx.globalAlpha = 1 - t;
@@ -1006,33 +1026,53 @@ function drawHud() {
   ctx.lineWidth = 3;
   ctx.textAlign = 'left';
   const scoreText = 'Score: ' + score;
-  ctx.strokeText(scoreText, 16, 34);
-  ctx.fillText(scoreText, 16, 34);
+  ctx.strokeText(scoreText, 10, 18);
+  ctx.fillText(scoreText, 10, 18);
   ctx.textAlign = 'right';
   const remaining = Math.max(0, Math.ceil((SEASON_LENGTH - elapsed) / 1000));
   const timeText = remaining + 's';
-  ctx.strokeText(timeText, W - 16, 34);
-  ctx.fillText(timeText, W - 16, 34);
-
+  ctx.strokeText(timeText, W - 10, 18);
+  ctx.fillText(timeText, W - 10, 18);
   const season = seasonLabel(elapsed);
   ctx.textAlign = 'center';
   ctx.font = 'bold 12px Arial';
   const seasonText = season.icon + ' ' + season.name;
-  ctx.strokeText(seasonText, W / 2, 20);
-  ctx.fillText(seasonText, W / 2, 20);
+  ctx.strokeText(seasonText, W / 2, 18);
+  ctx.fillText(seasonText, W / 2, 18);
+
+  // Water/fertilizer readouts double as buy buttons - a dashed border marks
+  // them as tappable rather than just informational.
+  drawTapReadout(WATER_HUD_RECT, '💧 ' + waterStock, '+12 for $' + waterRefillCost(), waterStock < 5);
+  drawTapReadout(FERT_HUD_RECT, '🌾 ' + fertStock, '+6 for $' + fertRefillCost(), fertStock < 3);
+}
+
+function drawTapReadout(rect, mainText, subText, urgent) {
+  ctx.save();
+  ctx.setLineDash([3, 2]);
+  ctx.strokeStyle = urgent ? 'rgba(255,107,94,0.85)' : 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+  ctx.setLineDash([]);
+  ctx.restore();
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = urgent ? '#ff9a8f' : 'white';
+  ctx.strokeStyle = 'black'; ctx.lineWidth = 2.5;
+  ctx.strokeText(mainText, rect.x + 4, rect.y + 11);
+  ctx.fillText(mainText, rect.x + 4, rect.y + 11);
 }
 
 function drawHint() {
   if (hintAlpha <= 0.01) return;
   ctx.save();
   ctx.globalAlpha = hintAlpha;
-  const text = 'Tap a bed to send your gardener over';
-  ctx.font = 'bold 13px Arial';
+  const text = 'Buy a seed below, then tap an empty bed';
+  ctx.font = 'bold 12.5px Arial';
   const tw = ctx.measureText(text).width;
-  const pillW = tw + 28, pillH = 30, px = W / 2 - pillW / 2, py = 46;
+  const pillW = tw + 26, pillH = 28, px = W / 2 - pillW / 2, py = 44;
   ctx.fillStyle = 'rgba(0,0,0,0.55)';
   ctx.beginPath();
-  ctx.roundRect(px, py, pillW, pillH, 15);
+  ctx.roundRect(px, py, pillW, pillH, 14);
   ctx.fill();
   ctx.strokeStyle = 'rgba(255,255,255,0.5)';
   ctx.lineWidth = 1.5;
@@ -1049,9 +1089,8 @@ function draw() {
   ctx.fillStyle = '#3a2a18';
   ctx.fillRect(0, 0, W, H);
   if (state === 'menu') return;
-  drawShed();
-  drawBeds();
-  drawGardener();
+  drawGrid();
+  drawTray();
   drawPopups();
   drawHud();
   drawHint();

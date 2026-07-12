@@ -51,6 +51,34 @@
   #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
   #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
   #bestLine { opacity: 0.8; }
+  .rowLabel {
+    font-size: calc(10.5px * var(--game-scale, 1));
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-top: calc(8px * var(--game-scale, 1));
+  }
+  .btnRow {
+    display: flex;
+    gap: calc(8px * var(--game-scale, 1));
+    margin-top: calc(5px * var(--game-scale, 1));
+    pointer-events: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btnRow button {
+    font-family: inherit;
+    font-size: calc(12.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(7px * var(--game-scale, 1)) calc(15px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  .btnRow button:active { background: rgba(255,255,255,0.3); }
+  .btnRow button.selected { background: #ffb703; border-color: #ffb703; color: #04121c; }
   #startBtn {
     margin-top: calc(16px * var(--game-scale, 1));
     font-size: calc(17px * var(--game-scale, 1));
@@ -98,9 +126,14 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Trebuchet</h1>
-    <p id="subtitle">Pull back and let fly — topple every target</p>
+    <p id="subtitle">Defend the castle — pull back, let fly, break every wave</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
+    <div class="rowLabel">Difficulty</div>
+    <div class="btnRow" id="diffButtons">
+      <button data-d="easy" type="button">Easy</button>
+      <button data-d="hard" type="button">Hard</button>
+    </div>
     <button id="startBtn" type="button">Start</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
@@ -117,6 +150,7 @@ const bestLine = document.getElementById('bestLine');
 const startBtn = document.getElementById('startBtn');
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
+const diffButtons = document.getElementById('diffButtons');
 
 const W = canvas.width, H = canvas.height;
 
@@ -133,6 +167,7 @@ window.addEventListener('kb-navbar-ready', fitCanvas);
 fitCanvas();
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
 
 // --- Audio ---
 let audioCtx = null;
@@ -172,18 +207,21 @@ function playWhoosh() {
   osc.connect(gain); gain.connect(audioCtx.destination);
   osc.start(now); osc.stop(now + 0.55);
 }
-function playClatter(mag) {
-  const v = clamp(mag, 0.05, 0.16);
-  tone(200 + Math.random() * 60, 0.1, 'square', v);
-  tone(120 + Math.random() * 40, 0.14, 'sawtooth', v * 0.8, 0.04);
-  tone(80, 0.16, 'sine', v * 0.7, 0.08);
-}
-function playTargetHit() { tone(700, 0.1, 'sine', 0.13); tone(1000, 0.12, 'sine', 0.11, 0.07); tone(1300, 0.14, 'triangle', 0.1, 0.14); }
-function playLevelClear() {
+function playImpact() { tone(150, 0.1, 'square', 0.13); tone(90, 0.16, 'sawtooth', 0.11, 0.04); }
+function playKill() { tone(700, 0.08, 'triangle', 0.1); tone(1000, 0.1, 'triangle', 0.08, 0.05); }
+function playCastleHit() { tone(180, 0.16, 'sawtooth', 0.15); tone(110, 0.22, 'square', 0.13, 0.06); }
+function playUpgrade() { tone(500, 0.07, 'triangle', 0.1); tone(750, 0.08, 'triangle', 0.09, 0.05); tone(1000, 0.1, 'triangle', 0.08, 0.11); }
+function playDenied() { tone(160, 0.09, 'square', 0.08); }
+function playWaveStart() { tone(520, 0.08, 'triangle', 0.1); tone(700, 0.09, 'triangle', 0.09, 0.06); }
+function playWaveClear() {
   tone(523, 0.14, 'triangle', 0.14);
   tone(659, 0.14, 'triangle', 0.13, 0.13);
   tone(784, 0.16, 'triangle', 0.13, 0.26);
   tone(1047, 0.26, 'triangle', 0.14, 0.4);
+}
+function playVictory() {
+  tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09);
+  tone(1100, 0.16, 'triangle', 0.11, 0.19); tone(1320, 0.22, 'triangle', 0.1, 0.32);
 }
 function playFail() { tone(200, 0.2, 'sawtooth', 0.12); tone(140, 0.3, 'sawtooth', 0.1, 0.1); }
 
@@ -195,165 +233,193 @@ muteBtn.addEventListener('click', () => {
   updateMuteBtn();
 });
 
-function loadBest() { return parseInt(sessionStorage.getItem('trebuchetBest') || '0', 10); }
-function saveBest(v) { try { sessionStorage.setItem('trebuchetBest', v); } catch (e) {} }
+function loadBest(diff) { return parseInt(sessionStorage.getItem('trebuchetBest_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('trebuchetBest_' + diff, v); } catch (e) {} }
 
-// --- World constants ---
+// --- World / layout ---
+// The old version's physics bugs all lived in the block-resting/collision
+// system (stones toppling stacked blocks that had to come to rest without
+// jittering forever). Redesigning this as a castle defense game removes that
+// whole subsystem: a shot is now pure ballistic flight that explodes once on
+// impact - there is nothing left that ever needs to "settle."
 const GRAVITY = 640;
-const GROUND_Y = 480;
-const LAUNCHER = { x: 54, y: 452 };
+const HUD_H = 34;
+const TRAY_H = 56;
+const GROUND_Y = H - TRAY_H - 6;
+const CASTLE_X = 6, CASTLE_W = 76;
+const GATE_X = CASTLE_X + CASTLE_W + 4;
+const LAUNCHER = { x: 142, y: GROUND_Y - 26 };
 const MAX_PULL = 70;
 const MAX_LAUNCH_SPEED = 480;
-const MIN_ANGLE = -1.5, MAX_ANGLE = -0.12; // radians, always up-and-right
+const MIN_ANGLE = -1.5, MAX_ANGLE = -0.12; // radians, always up-and-right toward the enemy side
 const PROJECTILE_R = 9;
-const AMMO_PER_LEVEL = 3;
 
-function block(x, y, w, h) { return { x, y, w, h, vx: 0, vy: 0, angle: 0, angVel: 0, hitFlash: 0 }; }
-function target(blockIndex, offsetX, offsetY) { return { blockIndex, offsetX, offsetY, x: 0, y: 0, r: 11, attached: true, vx: 0, vy: 0, angle: 0, angVel: 0, cleared: false }; }
+const ENEMY_TYPES = {
+  raider:    { hp: 1, speed: 60, dmg: 6,  size: 11, color: '#e6543b', darkColor: '#7a1f16' },
+  brute:     { hp: 3, speed: 40, dmg: 12, size: 14, color: '#c9853a', darkColor: '#6b4a1e' },
+  siegeCart: { hp: 6, speed: 25, dmg: 26, size: 18, color: '#7a7a86', darkColor: '#33333c' }
+};
 
-const LEVELS = [
-  {
-    blocks: [block(260, 465, 44, 30)],
-    targets: [target(0, 0, 0)]
-  },
-  {
-    blocks: [block(220, 465, 40, 30), block(300, 465, 40, 30)],
-    targets: [target(0, 0, 0), target(1, 0, 0)]
-  },
-  {
-    blocks: [block(230, 466, 40, 28), block(290, 466, 40, 28), block(260, 438, 76, 28)],
-    targets: [target(2, 0, 0), target(0, 26, 14)]
-  },
-  {
-    blocks: [
-      block(230, 466, 40, 28), block(290, 466, 40, 28),
-      block(260, 438, 76, 28),
-      block(260, 408, 40, 28)
-    ],
-    targets: [target(3, 0, 0), target(0, -28, 14)]
-  }
+const WAVE_MIXES = [
+  { raider: 1 },
+  { raider: 0.8, brute: 0.2 },
+  { raider: 0.6, brute: 0.4 },
+  { raider: 0.5, brute: 0.35, siegeCart: 0.15 },
+  { raider: 0.4, brute: 0.35, siegeCart: 0.25 },
+  { raider: 0.3, brute: 0.4, siegeCart: 0.3 },
+  { raider: 0.25, brute: 0.35, siegeCart: 0.4 },
+  { raider: 0.2, brute: 0.3, siegeCart: 0.5 }
 ];
+const WAVE_COUNT = 8;
 
-let levelIdx = 0, blocks = [], targets = [], ammo = AMMO_PER_LEVEL, score = 0;
-let projectile = null, projectileRestTimer = 0;
-let aiming = false, aimAngle = -0.6, aimPower = 0, aimPointerId = null;
-let shakeTimer = 0, shakeMag = 0, shakeDuration = 0.3;
-let state = 'menu'; // menu | playing | levelClear | levelFailed | campaignDone
+const DIFFICULTY_PRESETS = {
+  easy: { startHp: 120, killReward: 9, hpStep: 0.2, speedStep: 0.05, intervalBase: 1.5, intervalStep: 0.07, intervalMin: 0.75 },
+  hard: { startHp: 90, killReward: 6, hpStep: 0.3, speedStep: 0.08, intervalBase: 1.2, intervalStep: 0.06, intervalMin: 0.6 }
+};
 
-function loadLevel(idx) {
-  const def = LEVELS[idx % LEVELS.length];
-  blocks = def.blocks.map((b) => block(b.x, b.y, b.w, b.h));
-  targets = def.targets.map((t) => target(t.blockIndex, t.offsetX, t.offsetY));
-  ammo = AMMO_PER_LEVEL;
-  projectile = null;
-  updateTargetPositions();
-}
-
-function updateTargetPositions() {
-  for (const t of targets) {
-    if (!t.attached) continue;
-    const b = blocks[t.blockIndex];
-    const cos = Math.cos(b.angle), sin = Math.sin(b.angle);
-    const lx = t.offsetX, ly = -b.h / 2 - t.r + t.offsetY;
-    t.x = b.x + lx * cos - ly * sin;
-    t.y = b.y + lx * sin + ly * cos;
+function buildWaves(preset) {
+  const waves = [];
+  for (let i = 0; i < WAVE_COUNT; i++) {
+    waves.push({
+      count: 5 + Math.round(i * 1.6),
+      interval: clamp(preset.intervalBase - i * preset.intervalStep, preset.intervalMin, preset.intervalBase),
+      hpMult: 1 + i * preset.hpStep,
+      speedMult: 1 + i * preset.speedStep,
+      mix: WAVE_MIXES[i]
+    });
   }
+  return waves;
 }
+
+function pickType(mix) {
+  const total = Object.values(mix).reduce((a, b) => a + b, 0);
+  let r = Math.random() * total;
+  for (const key in mix) { r -= mix[key]; if (r <= 0) return key; }
+  return Object.keys(mix)[0];
+}
+
+// --- Upgrades: bought with gold earned from kills, any time mid-run ---
+const UPGRADES = {
+  reload: { name: 'Reload', maxLevel: 3, baseCost: 30, costMul: 1.9 },
+  blast: { name: 'Blast', maxLevel: 3, baseCost: 35, costMul: 1.9 },
+  power: { name: 'Power', maxLevel: 3, baseCost: 40, costMul: 1.9 }
+};
+const UPGRADE_ORDER = ['reload', 'blast', 'power'];
+let upgradeLevels = { reload: 0, blast: 0, power: 0 };
+function reloadDuration() { return Math.max(0.55, 1.5 - upgradeLevels.reload * 0.3); }
+function currentSplashRadius() { return 32 + upgradeLevels.blast * 11; }
+function shotDamage() { return 1 + upgradeLevels.power; }
+function upgradeCost(key) {
+  const u = UPGRADES[key];
+  const lvl = upgradeLevels[key];
+  if (lvl >= u.maxLevel) return null;
+  return Math.round(u.baseCost * Math.pow(u.costMul, lvl));
+}
+
+const TRAY_BTN_W = 104, TRAY_BTN_GAP = 6, TRAY_BTN_H = TRAY_H - 14;
+const TRAY_ROW_W = UPGRADE_ORDER.length * TRAY_BTN_W + (UPGRADE_ORDER.length - 1) * TRAY_BTN_GAP;
+const TRAY_ROW_X = (W - TRAY_ROW_W) / 2;
+const TRAY_BUTTONS = {};
+UPGRADE_ORDER.forEach((key, i) => {
+  TRAY_BUTTONS[key] = { x: TRAY_ROW_X + i * (TRAY_BTN_W + TRAY_BTN_GAP), y: H - TRAY_H + 7, w: TRAY_BTN_W, h: TRAY_BTN_H };
+});
+function pointInRect(x, y, r) { return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h; }
+function trayButtonAt(x, y) {
+  for (const key of UPGRADE_ORDER) if (pointInRect(x, y, TRAY_BUTTONS[key])) return key;
+  return null;
+}
+function buyUpgrade(key) {
+  const cost = upgradeCost(key);
+  if (cost === null || gold < cost) { playDenied(); return; }
+  gold -= cost;
+  upgradeLevels[key]++;
+  playUpgrade();
+}
+
+// --- Run state ---
+let difficulty = 'easy', preset = DIFFICULTY_PRESETS.easy, WAVES = buildWaves(preset);
+let enemies = [], projectile = null, particles = [], popups = [], fx = [];
+let gold = 0, kills = 0, wavesCleared = 0, castleHp = 100, castleFlash = 0;
+let waveIndex = 0, waveState = 'countdown', countdownTimer = 0, enemiesToSpawn = 0, spawnTimer = 0;
+const COUNTDOWN_DURATION = 3, WAVE_CLEARED_PAUSE = 1.4;
+const SCORE_PER_KILL = 10, SCORE_PER_WAVE = 60;
+let aiming = false, aimAngle = -0.6, aimPower = 0, aimPointerId = null;
+let reloadTimer = 0;
+let shakeTimer = 0, shakeMag = 0, shakeDuration = 0.3;
+let state = 'menu'; // menu | playing | over
+
+function currentScore() { return kills * SCORE_PER_KILL + wavesCleared * SCORE_PER_WAVE + Math.round(castleHp); }
+
+function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
+diffButtons.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  difficulty = b.dataset.d;
+  updateDiffButtonStyles();
+});
+updateDiffButtonStyles();
 
 function showMenu() {
   state = 'menu';
   title.textContent = 'Trebuchet';
-  subtitle.textContent = 'Pull back and let fly — topple every target';
+  subtitle.textContent = 'Defend the castle — pull back, let fly, break every wave';
   scoreLine.style.display = 'none';
-  bestLine.textContent = 'Best score: ' + loadBest();
+  bestLine.textContent = 'Best score: ' + loadBest(difficulty);
+  diffButtons.style.display = 'flex';
   startBtn.textContent = 'Start';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'none';
+  updateDiffButtonStyles();
   overlay.style.display = 'flex';
 }
 
+function beginWaveCountdown(index) {
+  waveIndex = index;
+  waveState = 'countdown';
+  countdownTimer = COUNTDOWN_DURATION;
+}
+
 function startGame() {
-  levelIdx = 0;
-  score = 0;
-  loadLevel(levelIdx);
+  preset = DIFFICULTY_PRESETS[difficulty];
+  WAVES = buildWaves(preset);
+  enemies = []; projectile = null; particles = []; popups = []; fx = [];
+  gold = 0; kills = 0; wavesCleared = 0; castleHp = preset.startHp; castleFlash = 0;
+  upgradeLevels = { reload: 0, blast: 0, power: 0 };
+  aiming = false; aimPower = 0; reloadTimer = 0;
+  beginWaveCountdown(0);
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
 }
+startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
 
-function nextLevel() {
-  levelIdx++;
-  if (levelIdx >= LEVELS.length) {
-    finishCampaign();
-    return;
+function finishRun(won) {
+  state = 'over';
+  const finalScore = currentScore();
+  const best = loadBest(difficulty);
+  const isNewBest = finalScore > best;
+  if (isNewBest) saveBest(difficulty, finalScore);
+  if (won) {
+    playVictory();
+    title.textContent = 'Castle Held!';
+    subtitle.textContent = 'Every wave broke against your walls';
+  } else {
+    playFail();
+    title.textContent = 'The Castle Has Fallen';
+    subtitle.textContent = 'Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT + ' overran you';
   }
-  loadLevel(levelIdx);
-  state = 'playing';
-  overlay.style.display = 'none';
-}
-
-function retryLevel() {
-  loadLevel(levelIdx);
-  state = 'playing';
-  overlay.style.display = 'none';
-}
-
-function finishCampaign() {
-  state = 'campaignDone';
-  const best = loadBest();
-  const isNewBest = score > best;
-  if (isNewBest) saveBest(score);
-  playLevelClear();
-  title.textContent = 'Campaign Clear!';
-  subtitle.textContent = 'Every stronghold has fallen';
   scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Final score: ' + score;
+  scoreLine.textContent = 'Score: ' + finalScore + '  ·  Waves: ' + wavesCleared + '/' + WAVE_COUNT + '  ·  Kills: ' + kills;
   bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
+  diffButtons.style.display = 'flex';
+  updateDiffButtonStyles();
   startBtn.textContent = 'Play Again';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'inline-block';
   overlay.style.display = 'flex';
 }
 
-startBtn.addEventListener('click', () => {
-  if (state === 'menu' || state === 'campaignDone') startGame();
-});
-
-function allTargetsCleared() { return targets.every((t) => t.cleared); }
-
-function onLevelClearScreen() {
-  state = 'levelClear';
-  const bonus = ammo * 50;
-  score += bonus;
-  playLevelClear();
-  title.textContent = 'Level Clear!';
-  subtitle.textContent = 'Stones saved: ' + ammo + ' (+' + bonus + ')';
-  scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Score: ' + score;
-  bestLine.textContent = '';
-  startBtn.textContent = levelIdx + 1 >= LEVELS.length ? 'Finish' : 'Next Level';
-  startBtn.style.display = 'inline-block';
-  backToArcade.style.display = 'inline-block';
-  overlay.style.display = 'flex';
-}
-function onLevelFailedScreen() {
-  state = 'levelFailed';
-  playFail();
-  title.textContent = 'Out of Stones!';
-  subtitle.textContent = 'Give this stronghold another go';
-  scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Score so far: ' + score;
-  bestLine.textContent = '';
-  startBtn.textContent = 'Retry Level';
-  startBtn.style.display = 'inline-block';
-  backToArcade.style.display = 'inline-block';
-  overlay.style.display = 'flex';
-}
-startBtn.addEventListener('click', () => {
-  if (state === 'levelClear') nextLevel();
-  else if (state === 'levelFailed') retryLevel();
-});
-
+// --- Input ---
 function pointerToCanvas(e) {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -361,11 +427,13 @@ function pointerToCanvas(e) {
     y: (e.clientY - rect.top) * (canvas.height / rect.height)
   };
 }
-
 canvas.addEventListener('pointerdown', (e) => {
-  if (state !== 'playing' || projectile || ammo <= 0) return;
+  if (state !== 'playing') return;
   const p = pointerToCanvas(e);
-  if (Math.hypot(p.x - LAUNCHER.x, p.y - LAUNCHER.y) > 140) return;
+  const trayKey = trayButtonAt(p.x, p.y);
+  if (trayKey) { buyUpgrade(trayKey); return; }
+  if (projectile || reloadTimer > 0) return;
+  if (Math.hypot(p.x - LAUNCHER.x, p.y - LAUNCHER.y) > 150) return;
   aiming = true;
   aimPointerId = e.pointerId;
   canvas.setPointerCapture(e.pointerId);
@@ -387,8 +455,6 @@ function updateAim(p) {
   const dx = LAUNCHER.x - p.x, dy = LAUNCHER.y - p.y;
   const pull = Math.min(Math.hypot(dx, dy), MAX_PULL);
   aimPower = pull / MAX_PULL;
-  // dx/dy already point from the drag position back to the pivot, which is
-  // the launch direction (pull down-left of the pivot to fire up-right).
   aimAngle = clamp(Math.atan2(dy, dx), MIN_ANGLE, MAX_ANGLE);
 }
 
@@ -400,92 +466,66 @@ function fireProjectile() {
     vy: Math.sin(aimAngle) * speed,
     spin: 0, age: 0
   };
-  ammo--;
+  reloadTimer = reloadDuration();
   playThwack();
   playWhoosh();
   aimPower = 0;
 }
 
-function detachTarget(t, fromBlock) {
-  if (t.cleared) return;
-  t.cleared = true;
-  t.attached = false;
-  if (fromBlock) { t.vx = fromBlock.vx * 0.6; t.vy = -90; }
-  else { t.vx = (Math.random() * 2 - 1) * 60; t.vy = -140; }
-  t.angVel = (Math.random() * 2 - 1) * 6;
-  playTargetHit();
+// --- Enemies ---
+function spawnEnemy(wave) {
+  const type = pickType(wave.mix);
+  const t = ENEMY_TYPES[type];
+  const hp = Math.max(1, Math.round(t.hp * wave.hpMult));
+  enemies.push({
+    type, hp, maxHp: hp,
+    x: W + 20 + Math.random() * 24,
+    y: GROUND_Y - t.size * 0.55,
+    speed: t.speed * wave.speedMult * (0.9 + Math.random() * 0.2),
+    size: t.size, dead: false, bobPhase: Math.random() * Math.PI * 2
+  });
 }
 
-function resolveBlockCollisions() {
-  for (let i = 0; i < blocks.length; i++) {
-    for (let j = i + 1; j < blocks.length; j++) {
-      const a = blocks[i], b = blocks[j];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const overlapX = (a.w + b.w) / 2 - Math.abs(dx);
-      const overlapY = (a.h + b.h) / 2 - Math.abs(dy);
-      if (overlapX > 0 && overlapY > 0) {
-        if (overlapX < overlapY) {
-          const push = overlapX / 2 * Math.sign(dx || 1);
-          a.x -= push; b.x += push;
-          const rel = (b.vx - a.vx) * 0.5;
-          a.vx -= rel * 0.4; b.vx += rel * 0.4;
-        } else {
-          const push = overlapY / 2 * Math.sign(dy || 1);
-          a.y -= push; b.y += push;
-          // Symmetric relative-velocity split, mirroring the X branch above -
-          // clamping only one side's vy (the original approach) left the
-          // other side free to keep accelerating under gravity forever while
-          // its position was repeatedly yanked back by the push-apart, an
-          // unbounded energy injection that eventually went chaotic enough
-          // to keep re-colliding with the projectile and never let it settle.
-          const relVY = (b.vy - a.vy) * 0.5;
-          a.vy -= relVY * 0.4; b.vy += relVY * 0.4;
-        }
-      }
-    }
+function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
+function addBurst(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = 40 + Math.random() * 90;
+    particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0, maxLife: 300 + Math.random() * 200, color, size: 2 + Math.random() * 2.5 });
   }
 }
-
-function updateBlock(b, dt) {
-  b.vy += GRAVITY * dt;
-  b.x += b.vx * dt;
-  b.y += b.vy * dt;
-  b.angle += b.angVel * dt;
-  b.vx *= Math.max(0, 1 - 1.4 * dt);
-  b.angVel *= Math.max(0, 1 - 1.6 * dt);
-  if (b.hitFlash > 0) b.hitFlash -= dt;
-
-  const halfH = b.h / 2;
-  if (b.y + halfH > GROUND_Y) {
-    const impact = b.vy;
-    b.y = GROUND_Y - halfH;
-    b.vy = impact > 60 ? -impact * 0.12 : 0;
-    b.vx *= 0.82;
-    b.angVel *= 0.6;
-    if (impact > 200) { playClatter(impact / 700); triggerShake(impact / 26); }
-  }
-  b.x = clamp(b.x, b.w / 2 + 4, W - b.w / 2 - 4);
-
-  // Snap tiny residual motion to zero rather than letting it decay forever -
-  // without this, resting blocks can jitter indefinitely from the pairwise
-  // overlap resolution in resolveBlockCollisions, which never looks "settled".
-  if (Math.abs(b.vx) < 3) b.vx = 0;
-  if (Math.abs(b.vy) < 3) b.vy = 0;
-  if (Math.abs(b.angVel) < 0.03) b.angVel = 0;
-}
-
+function spawnFx(x, y, maxRadius, color, life) { fx.push({ x, y, maxRadius, color, life, age: 0 }); }
 function triggerShake(mag) {
   const m = clamp(mag, 2, 12);
   if (m > shakeMag) { shakeMag = m; shakeTimer = 0.25; shakeDuration = 0.25; }
 }
 
-function circleRectCollide(cx, cy, r, b) {
-  const halfW = b.w / 2, halfH = b.h / 2;
-  const closestX = clamp(cx, b.x - halfW, b.x + halfW);
-  const closestY = clamp(cy, b.y - halfH, b.y + halfH);
-  const dx = cx - closestX, dy = cy - closestY;
-  if (dx * dx + dy * dy >= r * r) return null;
-  return { dx, dy, closestX, closestY };
+function hitEnemy(e, dmg, hx, hy) {
+  if (e.dead) return;
+  e.hp -= dmg;
+  if (e.hp <= 0) {
+    e.dead = true;
+    kills++;
+    gold += preset.killReward;
+    addPopup(e.x, e.y - e.size, '+' + preset.killReward, '#ffd76a');
+    addBurst(e.x, e.y, ENEMY_TYPES[e.type].color, 12);
+    playKill();
+  } else {
+    spawnFx(hx, hy, 10, 'rgba(255,255,255,0.5)', 0.12);
+  }
+}
+
+function explodeProjectile(x, y) {
+  const r = currentSplashRadius();
+  for (const e of enemies) {
+    if (e.dead) continue;
+    if (Math.hypot(e.x - x, e.y - y) <= r + e.size * 0.5) hitEnemy(e, shotDamage(), x, y);
+  }
+  addBurst(x, y, '#ffb703', 16);
+  spawnFx(x, y, r, 'rgba(255,183,3,0.45)', 0.32);
+  playImpact();
+  triggerShake(5);
+  projectile = null;
 }
 
 function updateProjectile(dt) {
@@ -497,123 +537,88 @@ function updateProjectile(dt) {
   p.y += p.vy * dt;
   p.spin += dt * 14;
 
-  for (const t of targets) {
-    if (t.cleared) continue;
-    if (Math.hypot(p.x - t.x, p.y - t.y) < t.r + PROJECTILE_R) {
-      detachTarget(t, null);
-      p.vx *= 0.4; p.vy *= 0.4;
-    }
+  for (const e of enemies) {
+    if (e.dead) continue;
+    if (Math.hypot(p.x - e.x, p.y - e.y) < e.size * 0.75 + PROJECTILE_R) { explodeProjectile(p.x, p.y); return; }
   }
-
-  for (const b of blocks) {
-    const hit = circleRectCollide(p.x, p.y, PROJECTILE_R, b);
-    if (hit) {
-      const speed = Math.hypot(p.vx, p.vy);
-      b.vx += p.vx * 0.55;
-      b.vy += p.vy * 0.25 - 40;
-      const hitOffsetY = clamp((hit.closestY - b.y) / (b.h / 2), -1, 1);
-      b.angVel += (hitOffsetY * -1) * Math.sign(p.vx) * (speed / 90);
-      b.hitFlash = 0.15;
-      playClatter(speed / 900);
-      if (speed > 260) triggerShake(speed / 60);
-
-      // Reflect the velocity component along the collision normal (with
-      // heavy restitution loss) and only friction-damp the tangential
-      // component - uniformly scaling total velocity without ever
-      // reversing the inward component let a ball resting on a block's
-      // flat top re-collide every frame forever (gravity pulls it back in
-      // just as far as the push-out moved it), which is what caused shots
-      // to permanently "stick" instead of settling.
-      const dist = Math.hypot(hit.dx, hit.dy);
-      if (dist > 0.0001) {
-        const nx = hit.dx / dist, ny = hit.dy / dist;
-        const vDotN = p.vx * nx + p.vy * ny;
-        if (vDotN < 0) {
-          const restitution = 0.3;
-          p.vx -= (1 + restitution) * vDotN * nx;
-          p.vy -= (1 + restitution) * vDotN * ny;
-        }
-        p.vx *= 0.75; p.vy *= 0.92;
-        const pushDist = (PROJECTILE_R + 2) - dist;
-        if (pushDist > 0) { p.x += nx * pushDist; p.y += ny * pushDist; }
-      } else {
-        p.vx *= 0.32; p.vy *= 0.32;
-      }
-    }
-  }
-
-  if (p.y + PROJECTILE_R > GROUND_Y) {
-    p.y = GROUND_Y - PROJECTILE_R;
-    p.vy = Math.abs(p.vy) > 50 ? -p.vy * 0.15 : 0;
-    p.vx *= 0.85;
-  }
-
-  // Settle detection is speed-based, not surface-based - a shot can come to
-  // rest sitting on top of a block just as easily as on the ground, and a
-  // check that only fired on ground contact left the projectile (and the
-  // player's next shot) stuck forever whenever a ball settled on a block.
-  const speedNow = Math.hypot(p.vx, p.vy);
-  if (speedNow < 55) {
-    projectileRestTimer += dt;
-    if (projectileRestTimer > 0.4) { projectile = null; projectileRestTimer = 0; }
-  } else {
-    projectileRestTimer = 0;
-  }
-  if (p.x > W + 30 || p.x < -30) projectile = null;
-  // Hard safety net: a ball wedged in a rare corner case (e.g. against a
-  // wall and a block at once) could in principle keep re-triggering just
-  // enough velocity each frame to dodge the speed check indefinitely - no
-  // shot should ever be able to permanently block the next one, so force
-  // it clear after a few seconds no matter what state it's in.
-  if (projectile && projectile.age > 5) projectile = null;
+  if (p.y + PROJECTILE_R > GROUND_Y) { explodeProjectile(p.x, GROUND_Y); return; }
+  if (p.x > W + 40 || p.x < -40 || p.age > 5) { projectile = null; return; }
 }
 
-function updateTargetsFree(dt) {
-  for (const t of targets) {
-    if (t.attached || !t.cleared) continue;
-    t.vy += GRAVITY * dt;
-    t.x += t.vx * dt;
-    t.y += t.vy * dt;
-    t.angle += t.angVel * dt;
-    if (t.y + t.r > GROUND_Y) { t.y = GROUND_Y - t.r; t.vy *= -0.2; t.vx *= 0.7; }
+// --- Waves ---
+function updateWaves(dt) {
+  if (waveState === 'countdown') {
+    countdownTimer -= dt;
+    if (countdownTimer <= 0) {
+      waveState = 'spawning';
+      enemiesToSpawn = WAVES[waveIndex].count;
+      spawnTimer = 0;
+      playWaveStart();
+    }
+    return;
+  }
+  if (waveState === 'spawning') {
+    spawnTimer -= dt;
+    if (spawnTimer <= 0 && enemiesToSpawn > 0) {
+      spawnEnemy(WAVES[waveIndex]);
+      enemiesToSpawn--;
+      spawnTimer = WAVES[waveIndex].interval;
+    }
+    if (enemiesToSpawn <= 0 && enemies.length === 0) {
+      waveState = 'cleared';
+      wavesCleared++;
+      countdownTimer = WAVE_CLEARED_PAUSE;
+      const bonus = 50 + waveIndex * 10;
+      addPopup(GATE_X + 50, GROUND_Y - 70, 'Wave ' + (waveIndex + 1) + ' repelled! +' + bonus, '#ffe28a');
+      gold += bonus;
+      playWaveClear();
+    }
+    return;
+  }
+  if (waveState === 'cleared') {
+    countdownTimer -= dt;
+    if (countdownTimer <= 0) {
+      if (waveIndex + 1 >= WAVE_COUNT) finishRun(true);
+      else beginWaveCountdown(waveIndex + 1);
+    }
   }
 }
 
 function update(dt) {
+  particles.forEach((p) => { p.life += dt * 1000; p.vy += 200 * dt; p.x += p.vx * dt; p.y += p.vy * dt; });
+  particles = particles.filter((p) => p.life < p.maxLife);
+  popups.forEach((p) => { p.t += dt * 1000; });
+  popups = popups.filter((p) => p.t < 900);
+  fx.forEach((f) => { f.age += dt; });
+  fx = fx.filter((f) => f.age < f.life);
+  if (shakeTimer > 0) shakeTimer -= dt;
+  if (castleFlash > 0) castleFlash -= dt;
+  if (reloadTimer > 0) reloadTimer -= dt;
+
   if (state !== 'playing') return;
 
-  for (const b of blocks) updateBlock(b, dt);
-  resolveBlockCollisions();
-  updateTargetPositions();
+  updateWaves(dt);
+  if (state !== 'playing') return; // a win can end the run inside updateWaves()
 
-  for (const t of targets) {
-    if (t.attached) {
-      const b = blocks[t.blockIndex];
-      if (Math.abs(b.angle) > 0.85) detachTarget(t, b);
-    }
+  for (const e of enemies) e.x -= e.speed * dt;
+
+  for (const e of enemies) {
+    if (e.dead || e.x - e.size > GATE_X) continue;
+    const dmg = ENEMY_TYPES[e.type].dmg;
+    e.dead = true;
+    castleHp = Math.max(0, castleHp - dmg);
+    castleFlash = 0.35;
+    addPopup(GATE_X + 14, GROUND_Y - 46, '-' + dmg, '#e6543b');
+    playCastleHit();
+    triggerShake(7);
   }
-  updateTargetsFree(dt);
+  enemies = enemies.filter((e) => !e.dead);
+  if (castleHp <= 0) { finishRun(false); return; }
 
   updateProjectile(dt);
-
-  if (shakeTimer > 0) shakeTimer -= dt;
-
-  if (allTargetsCleared()) { onLevelClearScreen(); return; }
-  if (ammo <= 0 && !projectile) { onLevelFailedScreen(); return; }
 }
 
-function drawGround() {
-  const g = ctx.createLinearGradient(0, GROUND_Y, 0, H);
-  g.addColorStop(0, '#7cb342');
-  g.addColorStop(0.15, '#5b3d22');
-  g.addColorStop(1, '#3a2814');
-  ctx.fillStyle = g;
-  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
-  ctx.strokeStyle = '#4a7a2e';
-  ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
-}
-
+// --- Drawing ---
 function drawSky() {
   const g = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
   g.addColorStop(0, '#8fd3e8');
@@ -622,24 +627,46 @@ function drawSky() {
   ctx.fillRect(0, 0, W, GROUND_Y);
   ctx.fillStyle = 'rgba(255,255,255,0.7)';
   for (let i = 0; i < 3; i++) {
-    const cx = 70 + i * 110, cy = 60 + (i % 2) * 30;
+    const cx = 90 + i * 110, cy = 56 + (i % 2) * 26;
     ctx.beginPath();
-    ctx.ellipse(cx, cy, 26, 11, 0, 0, Math.PI * 2);
-    ctx.ellipse(cx + 18, cy + 3, 18, 9, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, 24, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx + 16, cy + 3, 16, 8, 0, 0, Math.PI * 2);
     ctx.fill();
   }
 }
+function drawGround() {
+  const g = ctx.createLinearGradient(0, GROUND_Y, 0, H - TRAY_H);
+  g.addColorStop(0, '#7cb342');
+  g.addColorStop(0.3, '#5b3d22');
+  g.addColorStop(1, '#3a2814');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, GROUND_Y, W, H - TRAY_H - GROUND_Y);
+  ctx.strokeStyle = '#4a7a2e';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
+}
 
 function drawCastle() {
-  const bx = W - 76, by = GROUND_Y;
-  ctx.fillStyle = 'rgba(110,110,120,0.4)';
-  ctx.fillRect(bx, by - 86, 66, 86);
-  for (let i = 0; i < 4; i++) ctx.fillRect(bx + i * 18, by - 100, 11, 14);
-  ctx.fillStyle = 'rgba(80,80,92,0.4)';
-  ctx.fillRect(bx + 22, by - 50, 22, 50);
+  const bx = CASTLE_X, by = GROUND_Y;
+  const flash = castleFlash > 0;
+  ctx.fillStyle = flash ? 'rgba(230,84,59,0.55)' : 'rgba(110,110,120,0.55)';
+  ctx.fillRect(bx, by - 92, CASTLE_W, 92);
+  for (let i = 0; i < 4; i++) ctx.fillRect(bx + 4 + i * 18, by - 106, 11, 14);
+  ctx.fillStyle = flash ? 'rgba(200,60,40,0.6)' : 'rgba(80,80,92,0.55)';
+  ctx.fillRect(bx + CASTLE_W - 30, by - 56, 22, 56);
   ctx.beginPath();
-  ctx.moveTo(bx + 22, by - 50); ctx.lineTo(bx + 33, by - 66); ctx.lineTo(bx + 44, by - 50);
+  ctx.moveTo(bx + CASTLE_W - 30, by - 56); ctx.lineTo(bx + CASTLE_W - 19, by - 72); ctx.lineTo(bx + CASTLE_W - 8, by - 56);
   ctx.fill();
+
+  // Health bar above the ramparts - the clearest "how close am I to losing" readout
+  const hpFrac = clamp(castleHp / preset.startHp, 0, 1);
+  const barW = CASTLE_W, barX = bx, barY = by - 116;
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(barX, barY, barW, 6);
+  ctx.fillStyle = hpFrac > 0.4 ? '#7cb342' : '#e6543b';
+  ctx.fillRect(barX, barY, barW * hpFrac, 6);
+  ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1;
+  ctx.strokeRect(barX, barY, barW, 6);
 }
 
 function drawLauncher() {
@@ -696,7 +723,7 @@ function drawLauncher() {
   ctx.fillStyle = '#2a2a2a';
   ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
 
-  if (!projectile && ammo > 0) {
+  if (!projectile && reloadTimer <= 0) {
     ctx.strokeStyle = '#3a2814';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -706,6 +733,13 @@ function drawLauncher() {
     grad.addColorStop(0, '#6a6a6a'); grad.addColorStop(1, '#3a3a3a');
     ctx.fillStyle = grad;
     ctx.beginPath(); ctx.arc(tipX, tipY + 9, 7, 0, Math.PI * 2); ctx.fill();
+  } else if (reloadTimer > 0) {
+    const frac = 1 - reloadTimer / reloadDuration();
+    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(px, py, 20, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);
+    ctx.stroke();
   }
 
   ctx.restore();
@@ -732,40 +766,23 @@ function drawAimGuide() {
   ctx.stroke();
 }
 
-function drawBlocks() {
-  for (const b of blocks) {
+function drawEnemies() {
+  for (const e of enemies) {
+    const def = ENEMY_TYPES[e.type];
+    const bob = Math.sin(performance.now() / 140 + e.bobPhase) * 2;
     ctx.save();
-    ctx.translate(b.x, b.y);
-    ctx.rotate(b.angle);
-    const grad = ctx.createLinearGradient(-b.w / 2, -b.h / 2, b.w / 2, b.h / 2);
-    const flash = b.hitFlash > 0;
-    grad.addColorStop(0, flash ? '#ffe28a' : '#c9853a');
-    grad.addColorStop(1, flash ? '#ffb703' : '#8a5a28');
+    ctx.translate(e.x, e.y + bob);
+    const grad = ctx.createLinearGradient(-def.size, -def.size, def.size, def.size);
+    grad.addColorStop(0, def.color); grad.addColorStop(1, def.darkColor);
     ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.roundRect(-b.w / 2, -b.h / 2, b.w, b.h, 4);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(-b.w / 2 + 4, 0); ctx.lineTo(b.w / 2 - 4, 0); ctx.stroke();
-    ctx.restore();
-  }
-}
-
-function drawTargets() {
-  for (const t of targets) {
-    if (t.cleared && !t.attached && t.y > GROUND_Y - t.r - 2 && Math.abs(t.vx) < 4) continue;
-    ctx.save();
-    ctx.translate(t.x, t.y);
-    ctx.rotate(t.angle);
-    ctx.fillStyle = t.cleared ? '#8a8a8a' : '#e63946';
-    ctx.beginPath(); ctx.arc(0, 0, t.r, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = t.cleared ? '#6a6a6a' : '#c0392b';
-    ctx.beginPath(); ctx.arc(0, -3, t.r * 0.5, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, def.size, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+    if (e.maxHp > 1) {
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(-def.size, -def.size - 9, def.size * 2, 3);
+      ctx.fillStyle = '#4caf50';
+      ctx.fillRect(-def.size, -def.size - 9, def.size * 2 * (e.hp / e.maxHp), 3);
+    }
     ctx.restore();
   }
 }
@@ -782,42 +799,103 @@ function drawProjectile() {
   ctx.restore();
 }
 
+function drawParticles() {
+  for (const p of particles) {
+    const t = p.life / p.maxLife;
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = 1 - t;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+function drawFx() {
+  for (const f of fx) {
+    const t = f.age / f.life;
+    ctx.strokeStyle = f.color;
+    ctx.lineWidth = 2.5;
+    ctx.globalAlpha = 1 - t;
+    ctx.beginPath(); ctx.arc(f.x, f.y, f.maxRadius * t, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+}
+function drawPopups() {
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 13px Arial';
+  for (const p of popups) {
+    const t = p.t / 900;
+    ctx.globalAlpha = 1 - t;
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y - t * 26);
+    ctx.globalAlpha = 1;
+  }
+}
+
 function drawHud() {
-  ctx.font = 'bold 15px Arial';
+  ctx.font = 'bold 14px Arial';
   ctx.fillStyle = 'white';
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 3;
   ctx.textAlign = 'left';
-  const ammoText = 'Stones: ' + '●'.repeat(Math.max(0, ammo)) + '○'.repeat(Math.max(0, AMMO_PER_LEVEL - ammo));
-  ctx.strokeText(ammoText, 14, 26);
-  ctx.fillText(ammoText, 14, 26);
+  const goldText = '💰 ' + gold;
+  ctx.strokeText(goldText, 14, 24);
+  ctx.fillText(goldText, 14, 24);
   ctx.textAlign = 'right';
-  const scoreText = 'Score: ' + score;
-  ctx.strokeText(scoreText, W - 14, 26);
-  ctx.fillText(scoreText, W - 14, 26);
+  const scoreText = 'Score: ' + currentScore();
+  ctx.strokeText(scoreText, W - 14, 24);
+  ctx.fillText(scoreText, W - 14, 24);
   ctx.textAlign = 'center';
   ctx.font = 'bold 12px Arial';
-  const lvlText = 'Level ' + (levelIdx + 1) + '/' + LEVELS.length;
-  ctx.strokeText(lvlText, W / 2, 26);
-  ctx.fillText(lvlText, W / 2, 26);
+  const waveText = waveState === 'countdown'
+    ? 'Wave ' + (waveIndex + 1) + '/' + WAVE_COUNT + ' in ' + Math.ceil(countdownTimer) + 's'
+    : 'Wave ' + (waveIndex + 1) + '/' + WAVE_COUNT;
+  ctx.strokeText(waveText, W / 2, 24);
+  ctx.fillText(waveText, W / 2, 24);
+}
+
+function drawUpgradeTray() {
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(0, H - TRAY_H, W, TRAY_H);
+  for (const key of UPGRADE_ORDER) {
+    const r = TRAY_BUTTONS[key];
+    const u = UPGRADES[key];
+    const lvl = upgradeLevels[key];
+    const cost = upgradeCost(key);
+    const maxed = cost === null;
+    const affordable = !maxed && gold >= cost;
+    ctx.fillStyle = maxed ? 'rgba(255,255,255,0.06)' : affordable ? 'rgba(255,183,3,0.22)' : 'rgba(255,255,255,0.1)';
+    ctx.strokeStyle = maxed ? 'rgba(255,255,255,0.2)' : affordable ? '#ffb703' : 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(r.x, r.y, r.w, r.h, 8); ctx.fill(); ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 11px Arial';
+    ctx.fillText(u.name + ' Lv' + lvl, r.x + r.w / 2, r.y + 14);
+    ctx.font = 'bold 11px Arial';
+    ctx.fillStyle = maxed ? 'rgba(255,255,255,0.5)' : '#ffe28a';
+    ctx.fillText(maxed ? 'MAX' : '💰' + cost, r.x + r.w / 2, r.y + 30);
+  }
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
   drawSky();
-  if (state === 'menu') return;
+  if (state === 'menu') { ctx.fillStyle = '#3a2814'; ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y); return; }
   ctx.save();
   const mag = shakeTimer > 0 ? (shakeTimer / shakeDuration) * shakeMag : 0;
   if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
   drawGround();
   drawCastle();
   drawLauncher();
-  drawBlocks();
-  drawTargets();
+  drawEnemies();
   drawProjectile();
   drawAimGuide();
+  drawFx();
+  drawParticles();
+  drawPopups();
   ctx.restore();
   drawHud();
+  drawUpgradeTray();
 }
 
 let lastFrameTime = null;

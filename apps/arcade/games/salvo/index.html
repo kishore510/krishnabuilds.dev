@@ -165,7 +165,7 @@
 </head>
 <body>
 <div id="wrap">
-  <canvas id="game" width="360" height="540"></canvas>
+  <canvas id="game" width="380" height="600"></canvas>
   <button id="muteBtn" type="button">🔊</button>
   <div id="setupBar">
     <span class="shipName" id="shipNameText"></span>
@@ -279,19 +279,26 @@ function loadBest() { const v = sessionStorage.getItem('salvoBest'); return v ? 
 function saveBest(v) { try { sessionStorage.setItem('salvoBest', v); } catch (e) {} }
 
 // --- Board setup ---
-const GRID_N = 10;
-const CELL = 22;
+// 12x12 (up from the original 10x10): same five-ship fleet spread over more
+// water lowers ship density symmetrically for both sides, so games run
+// longer and feel less like an instant coin-flip without actually tuning
+// either side's aim to be worse - "bigger, not easier."
+const GRID_N = 12;
+const CELL = 19;
 const BOARD_PX = GRID_N * CELL;
-const GRID_X = (W - BOARD_PX) / 2;
-const ENEMY_GRID_Y = 50;
-const PLAYER_GRID_Y = 296;
+const SIDEBAR_W = 66;
+const SIDEBAR_GAP = 8;
+const GRID_X = 38 + SIDEBAR_W + SIDEBAR_GAP;
+const SIDEBAR_X = 38;
+const ENEMY_GRID_Y = 46;
+const PLAYER_GRID_Y = ENEMY_GRID_Y + BOARD_PX + 40;
 
 const SHIP_DEFS = [
-  { name: 'Carrier', length: 5 },
-  { name: 'Battleship', length: 4 },
-  { name: 'Cruiser', length: 3 },
-  { name: 'Submarine', length: 3 },
-  { name: 'Destroyer', length: 2 }
+  { name: 'Carrier', short: 'Carrier', length: 5 },
+  { name: 'Battleship', short: 'B\'ship', length: 4 },
+  { name: 'Cruiser', short: 'Cruiser', length: 3 },
+  { name: 'Submarine', short: 'Sub', length: 3 },
+  { name: 'Destroyer', short: 'D\'stroy', length: 2 }
 ];
 
 function makeGrid(fill) { return Array.from({ length: GRID_N }, () => Array(GRID_N).fill(fill)); }
@@ -313,7 +320,7 @@ function placeOn(grid, ships, id, length, x, y, dir) {
     grid[cy][cx] = id;
     cells.push({ x: cx, y: cy });
   }
-  ships.push({ id, name: SHIP_DEFS[id].name, length, cells, hits: 0, sunk: false });
+  ships.push({ id, name: SHIP_DEFS[id].name, short: SHIP_DEFS[id].short, length, cells, hits: 0, sunk: false });
 }
 
 function randomFleet() {
@@ -337,7 +344,7 @@ function shipAt(ships, x, y) { return ships.find((s) => s.cells.some((c) => c.x 
 let difficulty = 'hard';
 let playerGrid, playerShips, cpuGrid, cpuShips;
 let playerShots, cpuShots; // what each side has learned about the OTHER's board
-const SETUP_GRID_Y = 108;
+const SETUP_GRID_Y = Math.round((H - BOARD_PX) / 2);
 let placingShipIndex = 0, placingDir = 'h';
 let previewAnchor = null;
 let turn = 'player'; // player | cpu | over
@@ -703,7 +710,37 @@ function update(dt) {
   if (cpuThinkTimer <= 0) cpuFire();
 }
 
-function drawGrid(gx, gy, label, shots, shipsGrid, revealShips) {
+function drawFleetTracker(x, y, height, ships) {
+  const rowH = height / ships.length;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ships.forEach((ship, i) => {
+    const ry = y + i * rowH + rowH / 2;
+    const sunk = ship.sunk;
+    ctx.globalAlpha = sunk ? 0.4 : 1;
+    ctx.font = (sunk ? '10.5px' : 'bold 10.5px') + ' Arial';
+    ctx.fillStyle = sunk ? 'rgba(255,255,255,0.55)' : 'white';
+    ctx.fillText(ship.short, x, ry - 7);
+    const pipSize = 8, pipGap = 2;
+    let px = x;
+    for (let p = 0; p < ship.length; p++) {
+      ctx.fillStyle = sunk ? '#e63946' : 'rgba(255,255,255,0.2)';
+      ctx.strokeStyle = sunk ? '#7a1a1a' : 'rgba(255,255,255,0.45)';
+      ctx.lineWidth = 1;
+      ctx.fillRect(px, ry + 2, pipSize, pipSize);
+      ctx.strokeRect(px, ry + 2, pipSize, pipSize);
+      px += pipSize + pipGap;
+    }
+    if (sunk) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x - 2, ry - 3); ctx.lineTo(Math.max(px - pipGap, x + 30), ry - 3); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  });
+}
+
+function drawGrid(gx, gy, label, shots, shipsGrid, revealShips, ships) {
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(gx, gy, BOARD_PX, BOARD_PX);
   if (revealShips) {
@@ -738,6 +775,21 @@ function drawGrid(gx, gy, label, shots, shipsGrid, revealShips) {
       }
     }
   }
+  // Outline sunk ships' footprints on the board itself - once a ship is
+  // down, its cells are known information either way, so tracing its exact
+  // shape answers "what did I just hit" at a glance instead of just a
+  // cluster of red X's.
+  if (ships) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 2;
+    for (const ship of ships) {
+      if (!ship.sunk) continue;
+      const xs = ship.cells.map((c) => c.x), ys = ship.cells.map((c) => c.y);
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      ctx.strokeRect(gx + minX * CELL + 1, gy + minY * CELL + 1, (maxX - minX + 1) * CELL - 2, (maxY - minY + 1) * CELL - 2);
+    }
+  }
+
   ctx.font = 'bold 11px Arial';
   ctx.fillStyle = 'rgba(255,255,255,0.75)';
   ctx.textAlign = 'left';
@@ -828,8 +880,12 @@ function draw() {
   if (state === 'setup') {
     drawSetupGrid();
   } else {
-    drawGrid(GRID_X, ENEMY_GRID_Y, 'Enemy Waters', playerShots, cpuGrid, false);
-    drawGrid(GRID_X, PLAYER_GRID_Y, 'Your Fleet', cpuShots, playerGrid, true);
+    // Enemy board only reveals ship positions once the battle is over -
+    // that's the "where did I miss" review the player can't get mid-game.
+    drawGrid(GRID_X, ENEMY_GRID_Y, 'Enemy Waters', playerShots, cpuGrid, state === 'over', cpuShips);
+    drawFleetTracker(SIDEBAR_X, ENEMY_GRID_Y, BOARD_PX, cpuShips);
+    drawGrid(GRID_X, PLAYER_GRID_Y, 'Your Fleet', cpuShots, playerGrid, true, playerShips);
+    drawFleetTracker(SIDEBAR_X, PLAYER_GRID_Y, BOARD_PX, playerShips);
     drawTurnHud();
   }
   drawParticles();
