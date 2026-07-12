@@ -41,11 +41,22 @@
     align-items: center;
     justify-content: center;
     color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     pointer-events: none;
     text-align: center;
     padding: calc(10px * var(--game-scale, 1));
     box-sizing: border-box;
+  }
+  /* A soft text-shadow alone isn't enough contrast against Trebuchet's
+     bright sky-blue background - a solid panel behind the copy guarantees
+     legibility no matter what's rendered on the canvas underneath. */
+  #overlayPanel {
+    background: rgba(10, 10, 8, 0.68);
+    border: 1.5px solid rgba(255,255,255,0.16);
+    border-radius: calc(18px * var(--game-scale, 1));
+    padding: calc(20px * var(--game-scale, 1)) calc(26px * var(--game-scale, 1));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
   #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
@@ -125,17 +136,19 @@
   <canvas id="game" width="360" height="540"></canvas>
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
-    <h1 id="title">Trebuchet</h1>
-    <p id="subtitle">Defend the castle — pull back, let fly, break every wave</p>
-    <p id="scoreLine" style="display:none;"></p>
-    <p id="bestLine"></p>
-    <div class="rowLabel">Difficulty</div>
-    <div class="btnRow" id="diffButtons">
-      <button data-d="easy" type="button">Easy</button>
-      <button data-d="hard" type="button">Hard</button>
+    <div id="overlayPanel">
+      <h1 id="title">Trebuchet</h1>
+      <p id="subtitle">Defend the castle — drag back anywhere, let fly, break every wave</p>
+      <p id="scoreLine" style="display:none;"></p>
+      <p id="bestLine"></p>
+      <div class="rowLabel">Difficulty</div>
+      <div class="btnRow" id="diffButtons">
+        <button data-d="easy" type="button">Easy</button>
+        <button data-d="hard" type="button">Hard</button>
+      </div>
+      <button id="startBtn" type="button">Start</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
     </div>
-    <button id="startBtn" type="button">Start</button>
-    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
 </div>
 
@@ -254,21 +267,26 @@ const MAX_LAUNCH_SPEED = 480;
 const MIN_ANGLE = -1.5, MAX_ANGLE = -0.12; // radians, always up-and-right toward the enemy side
 const PROJECTILE_R = 9;
 
+// bounceAmp sets how pronounced each type's vertical bob is - raider/brute/
+// siegeCart just idle-bob a couple pixels while walking, but the bouncer
+// (introduced wave 4+) hops in earnest, giving the waves real silhouette
+// variety instead of every enemy just being a differently-sized circle.
 const ENEMY_TYPES = {
-  raider:    { hp: 1, speed: 60, dmg: 6,  size: 11, color: '#e6543b', darkColor: '#7a1f16' },
-  brute:     { hp: 3, speed: 40, dmg: 12, size: 14, color: '#c9853a', darkColor: '#6b4a1e' },
-  siegeCart: { hp: 6, speed: 25, dmg: 26, size: 18, color: '#7a7a86', darkColor: '#33333c' }
+  raider:    { hp: 1, speed: 60, dmg: 6,  size: 11, color: '#e6543b', darkColor: '#7a1f16', bounceAmp: 2 },
+  brute:     { hp: 3, speed: 40, dmg: 12, size: 14, color: '#c9853a', darkColor: '#6b4a1e', bounceAmp: 2 },
+  siegeCart: { hp: 6, speed: 25, dmg: 26, size: 18, color: '#7a7a86', darkColor: '#33333c', bounceAmp: 2 },
+  bouncer:   { hp: 2, speed: 52, dmg: 10, size: 12, color: '#7cb342', darkColor: '#3d5a1e', bounceAmp: 13 }
 };
 
 const WAVE_MIXES = [
   { raider: 1 },
   { raider: 0.8, brute: 0.2 },
   { raider: 0.6, brute: 0.4 },
-  { raider: 0.5, brute: 0.35, siegeCart: 0.15 },
-  { raider: 0.4, brute: 0.35, siegeCart: 0.25 },
-  { raider: 0.3, brute: 0.4, siegeCart: 0.3 },
-  { raider: 0.25, brute: 0.35, siegeCart: 0.4 },
-  { raider: 0.2, brute: 0.3, siegeCart: 0.5 }
+  { raider: 0.45, brute: 0.3, bouncer: 0.25 },
+  { raider: 0.35, brute: 0.3, siegeCart: 0.15, bouncer: 0.2 },
+  { raider: 0.25, brute: 0.3, siegeCart: 0.2, bouncer: 0.25 },
+  { raider: 0.2, brute: 0.25, siegeCart: 0.3, bouncer: 0.25 },
+  { raider: 0.15, brute: 0.2, siegeCart: 0.4, bouncer: 0.25 }
 ];
 const WAVE_COUNT = 8;
 
@@ -362,7 +380,7 @@ updateDiffButtonStyles();
 function showMenu() {
   state = 'menu';
   title.textContent = 'Trebuchet';
-  subtitle.textContent = 'Defend the castle — pull back, let fly, break every wave';
+  subtitle.textContent = 'Defend the castle — drag back anywhere, let fly, break every wave';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest(difficulty);
   diffButtons.style.display = 'flex';
@@ -420,6 +438,11 @@ function finishRun(won) {
 }
 
 // --- Input ---
+// Slingshot-style: drag from wherever you touch down (not a fixed reach
+// radius around the pivot) - pull back-and-down, release to fling. Requiring
+// the very first touch to land within a tight radius of a pivot 140px from
+// the screen edge was the "clunky loading" complaint - anywhere-drag reads
+// the pull direction/power off the finger's own motion instead.
 function pointerToCanvas(e) {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -427,14 +450,16 @@ function pointerToCanvas(e) {
     y: (e.clientY - rect.top) * (canvas.height / rect.height)
   };
 }
+let dragOrigin = null;
 canvas.addEventListener('pointerdown', (e) => {
   if (state !== 'playing') return;
   const p = pointerToCanvas(e);
   const trayKey = trayButtonAt(p.x, p.y);
   if (trayKey) { buyUpgrade(trayKey); return; }
   if (projectile || reloadTimer > 0) return;
-  if (Math.hypot(p.x - LAUNCHER.x, p.y - LAUNCHER.y) > 150) return;
+  if (p.y > GROUND_Y) return;
   aiming = true;
+  dragOrigin = p;
   aimPointerId = e.pointerId;
   canvas.setPointerCapture(e.pointerId);
   updateAim(p);
@@ -446,13 +471,14 @@ canvas.addEventListener('pointermove', (e) => {
 function releaseAim() {
   if (!aiming) return;
   aiming = false;
+  dragOrigin = null;
   if (aimPower > 0.08) fireProjectile();
 }
 canvas.addEventListener('pointerup', releaseAim);
 canvas.addEventListener('pointercancel', releaseAim);
 
 function updateAim(p) {
-  const dx = LAUNCHER.x - p.x, dy = LAUNCHER.y - p.y;
+  const dx = dragOrigin.x - p.x, dy = dragOrigin.y - p.y;
   const pull = Math.min(Math.hypot(dx, dy), MAX_PULL);
   aimPower = pull / MAX_PULL;
   aimAngle = clamp(Math.atan2(dy, dx), MIN_ANGLE, MAX_ANGLE);
@@ -769,7 +795,7 @@ function drawAimGuide() {
 function drawEnemies() {
   for (const e of enemies) {
     const def = ENEMY_TYPES[e.type];
-    const bob = Math.sin(performance.now() / 140 + e.bobPhase) * 2;
+    const bob = Math.sin(performance.now() / 140 + e.bobPhase) * def.bounceAmp;
     ctx.save();
     ctx.translate(e.x, e.y + bob);
     const grad = ctx.createLinearGradient(-def.size, -def.size, def.size, def.size);
@@ -848,8 +874,8 @@ function drawHud() {
   const waveText = waveState === 'countdown'
     ? 'Wave ' + (waveIndex + 1) + '/' + WAVE_COUNT + ' in ' + Math.ceil(countdownTimer) + 's'
     : 'Wave ' + (waveIndex + 1) + '/' + WAVE_COUNT;
-  ctx.strokeText(waveText, W / 2, 24);
-  ctx.fillText(waveText, W / 2, 24);
+  ctx.strokeText(waveText, W / 2, 44);
+  ctx.fillText(waveText, W / 2, 44);
 }
 
 function drawUpgradeTray() {

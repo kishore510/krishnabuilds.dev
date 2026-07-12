@@ -290,7 +290,7 @@ const SIDEBAR_W = 66;
 const SIDEBAR_GAP = 8;
 const GRID_X = 38 + SIDEBAR_W + SIDEBAR_GAP;
 const SIDEBAR_X = 38;
-const ENEMY_GRID_Y = 46;
+const ENEMY_GRID_Y = 54;
 const PLAYER_GRID_Y = ENEMY_GRID_Y + BOARD_PX + 40;
 
 const SHIP_DEFS = [
@@ -710,6 +710,41 @@ function update(dt) {
   if (cpuThinkTimer <= 0) cpuFire();
 }
 
+// A small hull silhouette per ship reads as "a fleet roster" at a glance -
+// a row of identical squares looked too much like a generic pegboard and
+// didn't give each ship its own visual identity.
+function drawShipIcon(cx, cy, length, sunk) {
+  const w = 12 + length * 4.2, h = 8;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.fillStyle = sunk ? 'rgba(230,57,70,0.9)' : 'rgba(150,205,225,0.9)';
+  ctx.strokeStyle = sunk ? '#7a1a1a' : 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-w / 2, -h / 2);
+  ctx.lineTo(w / 2 - h * 0.7, -h / 2);
+  ctx.lineTo(w / 2, 0);
+  ctx.lineTo(w / 2 - h * 0.7, h / 2);
+  ctx.lineTo(-w / 2, h / 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-w / 2 + 3, 0); ctx.lineTo(w / 2 - h * 0.9, 0);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawPanelCard(x, y, w, h) {
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 12);
+  ctx.fill();
+  ctx.stroke();
+}
+
 function drawFleetTracker(x, y, height, ships) {
   const rowH = height / ships.length;
   ctx.textAlign = 'left';
@@ -717,24 +752,16 @@ function drawFleetTracker(x, y, height, ships) {
   ships.forEach((ship, i) => {
     const ry = y + i * rowH + rowH / 2;
     const sunk = ship.sunk;
-    ctx.globalAlpha = sunk ? 0.4 : 1;
-    ctx.font = (sunk ? '10.5px' : 'bold 10.5px') + ' Arial';
+    ctx.globalAlpha = sunk ? 0.45 : 1;
+    ctx.font = (sunk ? '10px' : 'bold 10px') + ' Arial';
     ctx.fillStyle = sunk ? 'rgba(255,255,255,0.55)' : 'white';
-    ctx.fillText(ship.short, x, ry - 7);
-    const pipSize = 8, pipGap = 2;
-    let px = x;
-    for (let p = 0; p < ship.length; p++) {
-      ctx.fillStyle = sunk ? '#e63946' : 'rgba(255,255,255,0.2)';
-      ctx.strokeStyle = sunk ? '#7a1a1a' : 'rgba(255,255,255,0.45)';
-      ctx.lineWidth = 1;
-      ctx.fillRect(px, ry + 2, pipSize, pipSize);
-      ctx.strokeRect(px, ry + 2, pipSize, pipSize);
-      px += pipSize + pipGap;
-    }
+    ctx.fillText(ship.short, x, ry - 9);
+    const iconW = 12 + ship.length * 4.2;
+    drawShipIcon(x + iconW / 2, ry + 6, ship.length, sunk);
     if (sunk) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
       ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(x - 2, ry - 3); ctx.lineTo(Math.max(px - pipGap, x + 30), ry - 3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x - 1, ry + 6); ctx.lineTo(x + iconW + 1, ry + 6); ctx.stroke();
     }
     ctx.globalAlpha = 1;
   });
@@ -764,8 +791,13 @@ function drawGrid(gx, gy, label, shots, shipsGrid, revealShips, ships) {
       const s = shots[y][x];
       const cx = gx + x * CELL + CELL / 2, cy = gy + y * CELL + CELL / 2;
       if (s === 'miss') {
-        ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI * 2); ctx.fill();
+        // A splash ripple instead of a plain dot - reads as "water", not a
+        // peg-board marker.
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.beginPath(); ctx.arc(cx, cy, 1.6, 0, Math.PI * 2); ctx.fill();
       } else if (s === 'hit') {
         ctx.fillStyle = '#e63946';
         ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
@@ -861,8 +893,8 @@ function drawTurnHud() {
   ctx.lineWidth = 3;
   ctx.textAlign = 'center';
   const text = turn === 'player' ? 'Your shot — tap enemy waters' : turn === 'cpu' ? 'Enemy is firing…' : '';
-  ctx.strokeText(text, W / 2, 24);
-  ctx.fillText(text, W / 2, 24);
+  ctx.strokeText(text, W / 2, 44);
+  ctx.fillText(text, W / 2, 44);
   ctx.textAlign = 'left';
   ctx.font = 'bold 12px Arial';
   ctx.strokeText('Shots: ' + shotsTaken, 14, 24);
@@ -880,6 +912,11 @@ function draw() {
   if (state === 'setup') {
     drawSetupGrid();
   } else {
+    // Grouping each grid + its fleet sidebar inside its own rounded card
+    // reads as two distinct panels instead of loose canvas elements
+    // floating in open water - a cleaner, more app-like layout.
+    drawPanelCard(SIDEBAR_X - 10, ENEMY_GRID_Y - 10, BOARD_PX + SIDEBAR_GAP + SIDEBAR_W + 20, BOARD_PX + 20);
+    drawPanelCard(SIDEBAR_X - 10, PLAYER_GRID_Y - 10, BOARD_PX + SIDEBAR_GAP + SIDEBAR_W + 20, BOARD_PX + 20);
     // Enemy board only reveals ship positions once the battle is over -
     // that's the "where did I miss" review the player can't get mid-game.
     drawGrid(GRID_X, ENEMY_GRID_Y, 'Enemy Waters', playerShots, cpuGrid, state === 'over', cpuShips);

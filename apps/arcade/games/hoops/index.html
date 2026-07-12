@@ -188,7 +188,7 @@ function saveBest(v) { try { sessionStorage.setItem('hoopsBest', v); } catch (e)
 // from below) and the ball's job is lining up BOTH the arc and the left-right
 // aim on a target that starts still and gets progressively less cooperative. ---
 const GRAVITY = 780;
-const BALL_R = 11;
+const BALL_R = 16;
 const START_POS = { x: 180, y: 458 };
 const TIME_LIMIT = 60000;
 const BONUS_TIME = 5000;
@@ -513,13 +513,11 @@ function ballScale() {
   return clamp(lerp(0.68, 1.15, (ball.y - RIM_Y) / (START_POS.y - RIM_Y)), 0.62, 1.2);
 }
 
-function drawBall() {
-  if (!ball) return;
-  const s = ballScale();
+function drawBasketball(x, y, scale, spin) {
   ctx.save();
-  ctx.translate(ball.x, ball.y);
-  ctx.scale(s, s);
-  ctx.rotate(ball.spin);
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.rotate(spin);
   const grad = ctx.createRadialGradient(-BALL_R * 0.35, -BALL_R * 0.4, 1, 0, 0, BALL_R * 1.3);
   grad.addColorStop(0, '#ff6b52');
   grad.addColorStop(0.55, '#e6342a');
@@ -532,6 +530,14 @@ function drawBall() {
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, -0.6, 0.6); ctx.stroke();
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
   ctx.restore();
+}
+
+function drawBall() {
+  // Rest the ball at the launch spot when there's nothing in flight, rather
+  // than having it only appear the instant a shot is released - it should
+  // always be visibly "in your hands" and ready.
+  if (!ball) { drawBasketball(START_POS.x, START_POS.y, 1, 0); return; }
+  drawBasketball(ball.x, ball.y, ballScale(), ball.spin);
 }
 
 function drawAimHint() {
@@ -582,8 +588,8 @@ function drawHud() {
     ctx.font = 'bold 13px Arial';
     ctx.fillStyle = '#ffe28a';
     const comboText = combo + '× combo!';
-    ctx.strokeText(comboText, W / 2, 26);
-    ctx.fillText(comboText, W / 2, 26);
+    ctx.strokeText(comboText, W / 2, 46);
+    ctx.fillText(comboText, W / 2, 46);
   }
 }
 

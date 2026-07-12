@@ -41,11 +41,23 @@
     align-items: center;
     justify-content: center;
     color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     pointer-events: none;
     text-align: center;
     padding: calc(10px * var(--game-scale, 1));
     box-sizing: border-box;
+  }
+  #overlayPanel {
+    background: rgba(8, 10, 6, 0.68);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: calc(18px * var(--game-scale, 1));
+    padding: calc(18px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    max-width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
   #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
@@ -221,19 +233,21 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="weatherBanner"></div>
   <div id="overlay">
-    <h1 id="title">Losing the Plot</h1>
-    <p id="subtitle">Grow it, sell it, restock — run the whole farm</p>
-    <p id="scoreLine" style="display:none;"></p>
-    <p id="bestLine"></p>
-    <p id="moneyLine"></p>
-    <div class="rowLabel">Difficulty</div>
-    <div class="btnRow" id="diffButtons">
-      <button data-d="easy" type="button">Easy</button>
-      <button data-d="hard" type="button">Hard</button>
+    <div id="overlayPanel">
+      <h1 id="title">Losing the Plot</h1>
+      <p id="subtitle">Grow it, sell it, restock — run the whole farm</p>
+      <p id="scoreLine" style="display:none;"></p>
+      <p id="bestLine"></p>
+      <p id="moneyLine"></p>
+      <div class="rowLabel">Difficulty</div>
+      <div class="btnRow" id="diffButtons">
+        <button data-d="easy" type="button">Easy</button>
+        <button data-d="hard" type="button">Hard</button>
+      </div>
+      <button id="startBtn" type="button">Start</button>
+      <button id="shopBtn" type="button">🛒 Shop</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
     </div>
-    <button id="startBtn" type="button">Start</button>
-    <button id="shopBtn" type="button">🛒 Shop</button>
-    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
   <div class="panelOverlay" id="shopOverlay">
     <div class="panelBox">
@@ -420,7 +434,7 @@ const GRID_COLS = 4;
 const GRID_ROWS_MAX = 3;
 const CELL_W = 84, CELL_H = 118;
 const GRID_X = (W - GRID_COLS * CELL_W) / 2;
-const GRID_Y = 46;
+const GRID_Y = 60;
 
 const NEED_ICON = { water: '💧', feed: '⭐', weed: '🌿', harvest: '🧺' };
 
@@ -481,7 +495,6 @@ let selectedCrop = 'lettuce';
 let score = 0, elapsed = 0;
 let popups = [];
 let state = 'menu'; // menu | playing | over
-let hintVisible = false, hintAlpha = 1;
 
 function makeCell() {
   return {
@@ -521,7 +534,6 @@ function plantCell(cell, cropId) {
   cell.nextDue.feed = elapsed + feedInterval(cell);
   cell.nextDue.weed = elapsed + weedInterval(cell);
   playPlant();
-  if (hintVisible) { hintVisible = false; try { sessionStorage.setItem('losingThePlotSeenHint', '1'); } catch (e) {} }
 }
 
 function reset() {
@@ -536,8 +548,6 @@ function reset() {
   popups = [];
   weather = null;
   scheduleNextWeather(0);
-  hintVisible = sessionStorage.getItem('losingThePlotSeenHint') !== '1';
-  hintAlpha = 1;
 }
 
 function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
@@ -745,8 +755,8 @@ function buyFert() {
 }
 
 // --- Layout: HUD tap targets + tray buttons ---
-const WATER_HUD_RECT = { x: 8, y: 28, w: 92, h: 15 };
-const FERT_HUD_RECT = { x: W - 100, y: 28, w: 92, h: 15 };
+const WATER_HUD_RECT = { x: 8, y: 27, w: 92, h: 27 };
+const FERT_HUD_RECT = { x: W - 100, y: 27, w: 92, h: 27 };
 const TRAY_H = 62;
 const TRAY_Y = H - TRAY_H;
 const TRAY_BTN_W = 82, TRAY_BTN_GAP = 6, TRAY_BTN_H = TRAY_H - 12;
@@ -840,9 +850,6 @@ function update(dt) {
 
   cells.forEach((cell) => updateCell(cell, dt));
   updateWeather(dt);
-
-  if (hintVisible && elapsed > CALM_DURATION + 6000) hintVisible = false;
-  hintAlpha += ((hintVisible ? 1 : 0) - hintAlpha) * Math.min(1, dt * 5);
 
   popups.forEach((p) => { p.t += dt * 1000; });
   popups = popups.filter((p) => p.t < 900);
@@ -979,6 +986,10 @@ function drawGrid() {
 function drawTray() {
   ctx.fillStyle = 'rgba(0,0,0,0.4)';
   ctx.fillRect(0, TRAY_Y, W, TRAY_H);
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 9.5px Arial';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillText('🛒 TAP TO BUY A SEED, THEN TAP A BED TO PLANT', TRAY_ROW_X, TRAY_Y - 4);
   for (const c of CROPS) {
     const r = TRAY_BUTTONS[c.id];
     const selected = selectedCrop === c.id;
@@ -1037,8 +1048,8 @@ function drawHud() {
   ctx.textAlign = 'center';
   ctx.font = 'bold 12px Arial';
   const seasonText = season.icon + ' ' + season.name;
-  ctx.strokeText(seasonText, W / 2, 18);
-  ctx.fillText(seasonText, W / 2, 18);
+  ctx.strokeText(seasonText, W / 2, 40);
+  ctx.fillText(seasonText, W / 2, 40);
 
   // Water/fertilizer readouts double as buy buttons - a dashed border marks
   // them as tappable rather than just informational.
@@ -1060,28 +1071,13 @@ function drawTapReadout(rect, mainText, subText, urgent) {
   ctx.strokeStyle = 'black'; ctx.lineWidth = 2.5;
   ctx.strokeText(mainText, rect.x + 4, rect.y + 11);
   ctx.fillText(mainText, rect.x + 4, rect.y + 11);
-}
-
-function drawHint() {
-  if (hintAlpha <= 0.01) return;
-  ctx.save();
-  ctx.globalAlpha = hintAlpha;
-  const text = 'Buy a seed below, then tap an empty bed';
-  ctx.font = 'bold 12.5px Arial';
-  const tw = ctx.measureText(text).width;
-  const pillW = tw + 26, pillH = 28, px = W / 2 - pillW / 2, py = 44;
-  ctx.fillStyle = 'rgba(0,0,0,0.55)';
-  ctx.beginPath();
-  ctx.roundRect(px, py, pillW, pillH, 14);
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.fillStyle = 'white';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, W / 2, py + pillH / 2 + 1);
-  ctx.restore();
+  // This is the part that was silently missing before - the refill cost
+  // is the whole point of the tap target being a "buy" button, not just a
+  // readout of the current stock.
+  ctx.font = '9.5px Arial';
+  ctx.fillStyle = 'rgba(255,230,138,0.9)';
+  ctx.strokeText(subText, rect.x + 4, rect.y + 22);
+  ctx.fillText(subText, rect.x + 4, rect.y + 22);
 }
 
 function draw() {
@@ -1093,7 +1089,6 @@ function draw() {
   drawTray();
   drawPopups();
   drawHud();
-  drawHint();
 }
 
 let lastFrameTime = null;

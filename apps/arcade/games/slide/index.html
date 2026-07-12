@@ -41,11 +41,26 @@
     align-items: center;
     justify-content: center;
     color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     pointer-events: none;
     text-align: center;
     padding: calc(10px * var(--game-scale, 1));
     box-sizing: border-box;
+  }
+  /* Picture mode leaves the completed (often bright) photo showing behind
+     this overlay - a soft text-shadow alone isn't reliable contrast against
+     an arbitrary image, so back the copy with a solid panel instead. */
+  #overlayPanel {
+    background: rgba(8, 10, 20, 0.72);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: calc(18px * var(--game-scale, 1));
+    padding: calc(20px * var(--game-scale, 1)) calc(24px * var(--game-scale, 1));
+    max-width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   #overlay h1 { margin: 0 0 6px; font-size: calc(28px * var(--game-scale, 1)); }
   #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
@@ -172,24 +187,26 @@
     <button id="menuBtn" type="button">☰ Menu</button>
   </div>
   <div id="overlay">
-    <h1 id="title">Slide</h1>
-    <p id="subtitle">Classic sliding tile puzzle</p>
-    <p id="scoreLine" style="display:none;"></p>
-    <p id="bestLine" style="display:none;"></p>
-    <div class="rowLabel">Grid size</div>
-    <div class="btnRow" id="sizeButtons">
-      <button data-n="3" type="button">3×3 Easy</button>
-      <button data-n="4" type="button">4×4 Classic</button>
-      <button data-n="5" type="button">5×5 Hard</button>
+    <div id="overlayPanel">
+      <h1 id="title">Slide</h1>
+      <p id="subtitle">Classic sliding tile puzzle</p>
+      <p id="scoreLine" style="display:none;"></p>
+      <p id="bestLine" style="display:none;"></p>
+      <div class="rowLabel">Grid size</div>
+      <div class="btnRow" id="sizeButtons">
+        <button data-n="3" type="button">3×3 Easy</button>
+        <button data-n="4" type="button">4×4 Classic</button>
+        <button data-n="5" type="button">5×5 Hard</button>
+      </div>
+      <div class="rowLabel">Mode</div>
+      <div class="btnRow" id="modeButtons">
+        <button data-mode="numbers" type="button">🔢 Numbers</button>
+        <button data-mode="picture" type="button">🖼 Picture</button>
+      </div>
+      <div class="btnRow" id="imageButtons"></div>
+      <button id="startBtn" type="button">Start</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
     </div>
-    <div class="rowLabel">Mode</div>
-    <div class="btnRow" id="modeButtons">
-      <button data-mode="numbers" type="button">🔢 Numbers</button>
-      <button data-mode="picture" type="button">🖼 Picture</button>
-    </div>
-    <div class="btnRow" id="imageButtons"></div>
-    <button id="startBtn" type="button">Start</button>
-    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
 </div>
 

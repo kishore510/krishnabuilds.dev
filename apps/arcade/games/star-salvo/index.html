@@ -778,9 +778,12 @@ function drawHud() {
   ctx.strokeText(waveText, W - 14, 24);
   ctx.fillText(waveText, W - 14, 24);
   ctx.textAlign = 'center';
+  // Drawn below the score/wave row (not on it) - the centered mute button
+  // sits right on top of anything drawn at the row's usual y, which is what
+  // was hiding the lives readout behind it.
   const livesText = '❤'.repeat(Math.max(0, lives));
-  ctx.strokeText(livesText, W / 2, 24);
-  ctx.fillText(livesText, W / 2, 24);
+  ctx.strokeText(livesText, W / 2, 44);
+  ctx.fillText(livesText, W / 2, 44);
 }
 
 function draw() {
