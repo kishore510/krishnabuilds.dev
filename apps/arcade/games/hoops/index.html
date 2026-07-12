@@ -202,7 +202,7 @@ const RIM_RESTITUTION = 0.5;
 const BOARD_RESTITUTION = 0.45;
 const BOARD_HALF_W = 55, BOARD_H = 64, RIM_BOARD_GAP = 10;
 
-const HOOP_X_BASE = 180, HOOP_Y_BASE = 128;
+const HOOP_X_BASE = 180, HOOP_Y_BASE = 220;
 
 const MIN_SWIPE_DIST = 18;     // shorter than this doesn't register as a flick at all
 
@@ -243,8 +243,22 @@ const SPEED_X_BASE = 0.5, SPEED_X_GROWTH = 0.045, SPEED_X_MAX = 1.7;
 const AMP_Y_BASE = 18, AMP_Y_GROWTH = 3, AMP_Y_MAX = 46;
 const SPEED_Y_BASE = 0.65, SPEED_Y_GROWTH = 0.05, SPEED_Y_MAX = 1.9;
 
-let hoopX = HOOP_X_BASE, hoopY = HOOP_Y_BASE, moveTime = 0;
+let hoopX = HOOP_X_BASE, hoopY = HOOP_Y_BASE;
 let makes = 0, announcedStage = 1;
+// Each axis's oscillation phase is integrated incrementally (phase += speed
+// * dt) using whatever speed is CURRENT this frame, rather than recomputed
+// as elapsedTime * speed. The latter is what caused the teleport-on-score
+// bug: amp/speed are re-derived from `makes` every frame, so the instant a
+// score bumped `makes` across a threshold, speed/amp snapped to new values
+// that got multiplied against however much time had already piled up (even
+// from back when the axis wasn't moving yet) - producing a sine value with
+// no relation to where the hoop just was. Incremental integration carries
+// the phase forward continuously through both speed ramps and the initial
+// activation of an axis, so the hoop only ever eases from its current
+// position, never jumps. Each axis's phase starts at 0 (sin(0) = 0) exactly
+// when that axis first activates, which is also exactly the fixed base
+// position it was already sitting at - so activation itself is seamless too.
+let phaseX = 0, phaseY = 0, xActive = false, yActive = false;
 
 function boardBottom() { return hoopY - RIM_BOARD_GAP; }
 function boardTop() { return boardBottom() - BOARD_H; }
@@ -253,20 +267,23 @@ function stageFor(m) { return m >= STAGE3_MAKES ? 3 : m >= STAGE2_MAKES ? 2 : 1;
 
 function updateHoop(dt) {
   const stage = stageFor(makes);
-  moveTime += dt;
   if (stage >= 2) {
+    if (!xActive) { xActive = true; phaseX = 0; }
     const rampX = clamp(makes - STAGE2_MAKES, 0, 40);
     const ampX = clamp(AMP_X_BASE + rampX * AMP_X_GROWTH, AMP_X_BASE, AMP_X_MAX);
     const speedX = clamp(SPEED_X_BASE + rampX * SPEED_X_GROWTH, SPEED_X_BASE, SPEED_X_MAX);
-    hoopX = HOOP_X_BASE + Math.sin(moveTime * speedX) * ampX;
+    phaseX += speedX * dt;
+    hoopX = HOOP_X_BASE + Math.sin(phaseX) * ampX;
   } else {
     hoopX = HOOP_X_BASE;
   }
   if (stage >= 3) {
+    if (!yActive) { yActive = true; phaseY = 0; }
     const rampY = clamp(makes - STAGE3_MAKES, 0, 40);
     const ampY = clamp(AMP_Y_BASE + rampY * AMP_Y_GROWTH, AMP_Y_BASE, AMP_Y_MAX);
     const speedY = clamp(SPEED_Y_BASE + rampY * SPEED_Y_GROWTH, SPEED_Y_BASE, SPEED_Y_MAX);
-    hoopY = HOOP_Y_BASE + Math.sin(moveTime * speedY + 1.4) * ampY;
+    phaseY += speedY * dt;
+    hoopY = HOOP_Y_BASE + Math.sin(phaseY) * ampY;
   } else {
     hoopY = HOOP_Y_BASE;
   }
@@ -308,7 +325,8 @@ function showMenu() {
 }
 
 function startGame() {
-  hoopX = HOOP_X_BASE; hoopY = HOOP_Y_BASE; moveTime = 0;
+  hoopX = HOOP_X_BASE; hoopY = HOOP_Y_BASE;
+  phaseX = 0; phaseY = 0; xActive = false; yActive = false;
   makes = 0; announcedStage = 1;
   ball = null;
   score = 0;
