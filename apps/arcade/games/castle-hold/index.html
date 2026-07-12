@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Castle Hold</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1c1408;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #cfe3f2;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(320px * var(--game-scale, 1)); }
+  #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
+  #bestLine { opacity: 0.8; }
+  #startBtn {
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #ffd76a;
+    color: #3a2400;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #startBtn:active { background: #ffe28a; }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #rotateHint {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #1c1408;
+    color: white;
+    z-index: 50;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  #rotateHint .icon { font-size: 48px; margin-bottom: 12px; animation: rotateWiggle 1.6s ease-in-out infinite; }
+  #rotateHint p { font-size: 16px; font-weight: bold; max-width: 260px; }
+  @keyframes rotateWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div id="rotateHint">
+  <div class="icon">📱</div>
+  <p>Rotate your device to landscape to play Castle Hold</p>
+</div>
+<div id="wrap">
+  <canvas id="game" width="640" height="360"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Castle Hold</h1>
+    <p id="subtitle">Hold the line. Tap the battlements to place archers - stop every enemy before they reach your gate.</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <p id="bestLine"></p>
+    <button id="startBtn" type="button">Start</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const rotateHint = document.getElementById('rotateHint');
+
+const W = canvas.width, H = canvas.height;
+const GROUND_Y = H - 70;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+function checkOrientation() {
+  const portrait = window.innerWidth < window.innerHeight;
+  rotateHint.style.display = portrait ? 'flex' : 'none';
+}
+function handleResize() { fitCanvas(); checkOrientation(); }
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleResize);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+handleResize();
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// --- Audio ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('castleHoldMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playBowFire() { tone(700, 0.05, 'triangle', 0.07); }
+function playArrowHit() { tone(240, 0.07, 'square', 0.09); }
+function playEnemyDie() { tone(180, 0.12, 'sawtooth', 0.1); }
+function playWallThud() { tone(90, 0.18, 'square', 0.16); tone(60, 0.22, 'sine', 0.14, 0.05); }
+function playGold() { tone(880, 0.06, 'triangle', 0.07); }
+function playInvalid() { tone(160, 0.08, 'square', 0.08); }
+function playWin() {
+  tone(523, 0.14, 'triangle', 0.14);
+  tone(659, 0.14, 'triangle', 0.13, 0.13);
+  tone(784, 0.18, 'triangle', 0.13, 0.26);
+  tone(1047, 0.28, 'triangle', 0.14, 0.4);
+}
+function playLose() { tone(200, 0.3, 'sawtooth', 0.14); tone(140, 0.4, 'sawtooth', 0.12, 0.15); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('castleHoldMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest() { return parseInt(sessionStorage.getItem('castleHoldBest') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('castleHoldBest', v); } catch (e) {} }
+
+// --- Castle geometry (matches the concept art) ---
+const WALL_X = 0, WALL_W = 165, WALL_TOP = 40;
+const TOWER_X = WALL_W - 46, TOWER_W = 54, TOWER_TOP = 8;
+const MID_Y = WALL_TOP + 70;
+const WALL_FRONT_X = WALL_W; // enemies are "at the wall" once they reach this x
+
+// PHASE 1: only the tier-3 battlement slots are functional (archers). Tiers 2
+// and the gate are drawn for visual completeness (matching the concept) but
+// are inert until later phases add gunman/cannon/melee.
+const TIER3_SLOTS = [
+  { x: 22, y: 30, unit: null, cooldown: 0 },
+  { x: 58, y: 30, unit: null, cooldown: 0 },
+  { x: 132, y: 22, unit: null, cooldown: 0 }
+];
+
+const ARCHER_COST = 40;
+const ARCHER_RANGE = 430;
+const ARCHER_FIRE_INTERVAL = 0.9;
+const ARCHER_DAMAGE = 14;
+const ARROW_SPEED = 620; // px/s
+
+const FOOTMAN_HP = 30;
+const FOOTMAN_SPEED = 44;
+const FOOTMAN_DAMAGE = 9;
+const FOOTMAN_GOLD = 8;
+const WAVE_FOOTMEN = 10;
+const SPAWN_INTERVAL = 1.7;
+const CASTLE_MAX_HP = 100;
+const START_GOLD = 90;
+
+let castleHP = CASTLE_MAX_HP;
+let gold = START_GOLD;
+let enemies = [];
+let projectiles = [];
+let particles = [];
+let popups = [];
+let killCount = 0;
+let spawned = 0;
+let spawnTimer = 0;
+let shake = 0;
+let state = 'menu'; // menu | playing | over
+
+function showMenu() {
+  state = 'menu';
+  title.textContent = 'Castle Hold';
+  subtitle.textContent = 'Hold the line. Tap the battlements to place archers - stop every enemy before they reach your gate.';
+  scoreLine.style.display = 'none';
+  const best = loadBest();
+  bestLine.textContent = best > 0 ? 'Best: ' + best + ' kills' : '';
+  startBtn.textContent = 'Start';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'none';
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  castleHP = CASTLE_MAX_HP;
+  gold = START_GOLD;
+  enemies = [];
+  projectiles = [];
+  particles = [];
+  popups = [];
+  killCount = 0;
+  spawned = 0;
+  spawnTimer = 1;
+  shake = 0;
+  TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+
+function pointerToCanvas(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const p = pointerToCanvas(e);
+  for (const slot of TIER3_SLOTS) {
+    const dx = p.x - slot.x, dy = p.y - slot.y;
+    if (Math.hypot(dx, dy) < 16) {
+      if (slot.unit) return; // occupied - selling/upgrading comes later
+      if (gold < ARCHER_COST) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + ARCHER_COST + 'g', '#ff8a4a'); return; }
+      gold -= ARCHER_COST;
+      slot.unit = { type: 'archer' };
+      slot.cooldown = 0.2;
+      playGold();
+      return;
+    }
+  }
+});
+
+function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
+function addBurst(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = 30 + Math.random() * 70;
+    particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0, maxLife: 300 + Math.random() * 200, color, size: 2 + Math.random() * 2 });
+  }
+}
+
+function spawnFootman() {
+  enemies.push({ type: 'footman', x: W + 20, y: GROUND_Y, hp: FOOTMAN_HP, maxHp: FOOTMAN_HP, speed: FOOTMAN_SPEED, dead: false, bob: Math.random() * 10 });
+}
+
+function updateArchers(dt) {
+  for (const slot of TIER3_SLOTS) {
+    if (!slot.unit) continue;
+    slot.cooldown -= dt;
+    if (slot.cooldown > 0) continue;
+    let target = null, bestDist = ARCHER_RANGE;
+    for (const en of enemies) {
+      if (en.dead) continue;
+      const d = en.x - slot.x;
+      if (d >= 0 && d <= bestDist) { bestDist = d; target = en; }
+    }
+    if (target) {
+      slot.cooldown = ARCHER_FIRE_INTERVAL;
+      playBowFire();
+      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, damage: ARCHER_DAMAGE, spawnX: slot.x, spawnY: slot.y });
+    }
+  }
+}
+
+function updateProjectiles(dt) {
+  for (const p of projectiles) {
+    if (p.done) continue;
+    const en = p.targetRef;
+    if (!en || en.dead) { p.done = true; continue; }
+    const dx = en.x - p.x, dy = (en.y - 14) - p.y;
+    const dist = Math.hypot(dx, dy);
+    const step = ARROW_SPEED * dt;
+    if (dist <= step) {
+      p.done = true;
+      en.hp -= p.damage;
+      addBurst(en.x, en.y - 14, '#e8834a', 6);
+      playArrowHit();
+      if (en.hp <= 0 && !en.dead) killEnemy(en);
+    } else {
+      p.x += (dx / dist) * step;
+      p.y += (dy / dist) * step;
+    }
+  }
+  projectiles = projectiles.filter((p) => !p.done);
+}
+
+function killEnemy(en) {
+  en.dead = true;
+  killCount++;
+  gold += FOOTMAN_GOLD;
+  addBurst(en.x, en.y - 10, '#8a3a3a', 12);
+  addPopup(en.x, en.y - 24, '+' + FOOTMAN_GOLD + 'g', '#ffd76a');
+  playEnemyDie();
+}
+
+function updateEnemies(dt) {
+  for (const en of enemies) {
+    if (en.dead) continue;
+    en.x -= en.speed * dt;
+    if (en.x <= WALL_FRONT_X + 14) {
+      castleHP -= FOOTMAN_DAMAGE;
+      en.dead = true;
+      shake = 0.25;
+      playWallThud();
+      addBurst(WALL_FRONT_X + 10, en.y - 10, '#c0392b', 10);
+      if (castleHP <= 0) { castleHP = 0; endGame(false); return; }
+    }
+  }
+  enemies = enemies.filter((en) => !en.dead);
+}
+
+function checkWaveComplete() {
+  if (spawned >= WAVE_FOOTMEN && enemies.length === 0 && state === 'playing') {
+    endGame(true);
+  }
+}
+
+function endGame(won) {
+  state = 'over';
+  if (won) {
+    playWin();
+    const best = loadBest();
+    const isNewBest = killCount > best;
+    if (isNewBest) saveBest(killCount);
+    title.textContent = 'The line held!';
+    subtitle.textContent = 'Every enemy stopped before the gate.';
+    scoreLine.style.display = 'block';
+    scoreLine.textContent = 'Kills: ' + killCount + ' · Castle HP left: ' + Math.round(castleHP) + '%';
+    bestLine.textContent = isNewBest ? '🏆 New best!' : 'Best: ' + best + ' kills';
+  } else {
+    playLose();
+    title.textContent = 'The castle has fallen';
+    subtitle.textContent = 'Enemies broke through the gate.';
+    scoreLine.style.display = 'block';
+    scoreLine.textContent = 'Kills: ' + killCount;
+    const best = loadBest();
+    bestLine.textContent = best > 0 ? 'Best: ' + best + ' kills' : '';
+  }
+  startBtn.textContent = 'Play Again';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+function update(dt) {
+  particles.forEach((p) => { p.life += dt * 1000; p.vy += 160 * dt; p.x += p.vx * dt; p.y += p.vy * dt; });
+  particles = particles.filter((p) => p.life < p.maxLife);
+  popups.forEach((p) => { p.t += dt * 1000; });
+  popups = popups.filter((p) => p.t < 900);
+  if (shake > 0) shake -= dt;
+
+  if (state !== 'playing') return;
+
+  if (spawned < WAVE_FOOTMEN) {
+    spawnTimer -= dt;
+    if (spawnTimer <= 0) { spawnFootman(); spawned++; spawnTimer = SPAWN_INTERVAL; }
+  }
+  updateArchers(dt);
+  updateEnemies(dt);
+  updateProjectiles(dt);
+  checkWaveComplete();
+}
+
+// --- Rendering (matches the concept art's palette/silhouette) ---
+let skyGrad = null, groundGrad = null;
+function buildGradients() {
+  skyGrad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  skyGrad.addColorStop(0, '#cfe3f2'); skyGrad.addColorStop(1, '#e8d9b0');
+  groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H);
+  groundGrad.addColorStop(0, '#c9a86a'); groundGrad.addColorStop(1, '#a8824a');
+}
+buildGradients();
+
+function drawBackdrop() {
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+  ctx.fillStyle = 'rgba(180,160,110,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y);
+  ctx.quadraticCurveTo(200, GROUND_Y - 50, 400, GROUND_Y);
+  ctx.quadraticCurveTo(520, GROUND_Y - 40, W, GROUND_Y);
+  ctx.fill();
+}
+
+function drawCastle() {
+  let stone = ctx.createLinearGradient(0, WALL_TOP, 0, GROUND_Y);
+  stone.addColorStop(0, '#9aa0a8'); stone.addColorStop(1, '#767b84');
+  ctx.fillStyle = stone;
+  ctx.fillRect(WALL_X, WALL_TOP, WALL_W, GROUND_Y - WALL_TOP);
+  ctx.strokeStyle = 'rgba(0,0,0,0.10)'; ctx.lineWidth = 1;
+  for (let y = WALL_TOP + 22; y < GROUND_Y; y += 22) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WALL_W, y); ctx.stroke(); }
+  for (let y = WALL_TOP; y < GROUND_Y; y += 22) {
+    const off = ((y - WALL_TOP) / 22) % 2 === 0 ? 0 : 20;
+    for (let x = off; x < WALL_W; x += 40) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 22); ctx.stroke(); }
+  }
+
+  ctx.fillStyle = '#767b84'; ctx.fillRect(0, WALL_TOP, WALL_W, 8);
+  ctx.fillStyle = '#8a9098';
+  for (let x = 4; x < WALL_W; x += 24) ctx.fillRect(x, WALL_TOP - 14, 15, 16);
+
+  ctx.fillStyle = '#6b7078'; ctx.fillRect(0, MID_Y, WALL_W + 16, 12);
+  ctx.fillStyle = '#8a9098';
+  for (let x = 6; x < WALL_W + 16; x += 24) ctx.fillRect(x, MID_Y - 12, 14, 12);
+  ctx.fillStyle = '#2a2f36';
+  for (let x = 24; x < WALL_W; x += 42) ctx.fillRect(x, MID_Y + 26, 6, 16);
+
+  const towerTop = TOWER_TOP;
+  let tstone = ctx.createLinearGradient(0, towerTop, 0, GROUND_Y);
+  tstone.addColorStop(0, '#9aa0a8'); tstone.addColorStop(1, '#6b7078');
+  ctx.fillStyle = tstone; ctx.fillRect(TOWER_X, towerTop, TOWER_W, GROUND_Y - towerTop);
+  ctx.fillStyle = '#767b84'; ctx.fillRect(TOWER_X, towerTop, TOWER_W, 8);
+  ctx.fillStyle = '#8a9098';
+  for (let x = TOWER_X + 4; x < TOWER_X + TOWER_W; x += 18) ctx.fillRect(x, towerTop - 13, 12, 15);
+  ctx.fillStyle = '#2a2f36';
+  ctx.fillRect(TOWER_X + 16, towerTop + 26, 7, 18);
+  ctx.fillRect(TOWER_X + 16, towerTop + 60, 7, 18);
+  ctx.fillStyle = '#b0403a';
+  ctx.beginPath();
+  ctx.moveTo(TOWER_X - 4, towerTop - 12); ctx.lineTo(TOWER_X + TOWER_W + 4, towerTop - 12);
+  ctx.lineTo(TOWER_X + TOWER_W / 2, towerTop - 40); ctx.fill();
+  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(TOWER_X + TOWER_W / 2, towerTop - 40); ctx.lineTo(TOWER_X + TOWER_W / 2, towerTop - 58); ctx.stroke();
+  ctx.fillStyle = '#c0392b';
+  ctx.beginPath();
+  ctx.moveTo(TOWER_X + TOWER_W / 2, towerTop - 58);
+  ctx.lineTo(TOWER_X + TOWER_W / 2 + 24, towerTop - 51);
+  ctx.lineTo(TOWER_X + TOWER_W / 2, towerTop - 44);
+  ctx.fill();
+
+  ctx.fillStyle = '#3a2818';
+  ctx.beginPath();
+  ctx.moveTo(46, GROUND_Y); ctx.lineTo(46, GROUND_Y - 58);
+  ctx.arc(78, GROUND_Y - 58, 32, Math.PI, 0); ctx.lineTo(110, GROUND_Y); ctx.fill();
+  ctx.strokeStyle = '#6b5030'; ctx.lineWidth = 3;
+  for (let x = 54; x <= 102; x += 12) { ctx.beginPath(); ctx.moveTo(x, GROUND_Y); ctx.lineTo(x, GROUND_Y - 70); ctx.stroke(); }
+  ctx.beginPath(); ctx.moveTo(46, GROUND_Y - 52); ctx.lineTo(110, GROUND_Y - 52); ctx.stroke();
+}
+
+function drawArcherFigure(x, y) {
+  ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(x + 5, y, 7, -1, 1); ctx.stroke();
+}
+
+function drawTier3Slots() {
+  for (const slot of TIER3_SLOTS) {
+    if (slot.unit) {
+      drawArcherFigure(slot.x, slot.y);
+    } else {
+      ctx.strokeStyle = 'rgba(255,215,106,0.85)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(slot.x, slot.y, 10, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,215,106,0.25)';
+      ctx.beginPath(); ctx.arc(slot.x, slot.y, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,215,106,0.95)';
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('+', slot.x, slot.y + 3);
+    }
+  }
+}
+
+function drawFootman(en) {
+  const y = en.y + Math.sin((en.bob + performance.now() / 140)) * 1.4;
+  ctx.fillStyle = '#8a3a3a';
+  ctx.beginPath(); ctx.arc(en.x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(en.x - 3, y - 6, 6, 14);
+  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(en.x - 6, y - 12); ctx.lineTo(en.x - 12, y - 18); ctx.stroke();
+  if (en.hp < en.maxHp) {
+    const w = 22;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(en.x - w / 2, y - 30, w, 4);
+    ctx.fillStyle = '#5cc85c'; ctx.fillRect(en.x - w / 2, y - 30, w * clamp(en.hp / en.maxHp, 0, 1), 4);
+  }
+}
+
+function drawProjectiles() {
+  ctx.strokeStyle = '#4a3a20'; ctx.lineWidth = 2;
+  for (const p of projectiles) {
+    const en = p.targetRef;
+    const tx = en && !en.dead ? en.x : p.x, ty = en && !en.dead ? en.y - 14 : p.y;
+    const dx = tx - p.spawnX, dy = ty - p.spawnY;
+    const dist = Math.hypot(dx, dy) || 1;
+    const ux = dx / dist, uy = dy / dist;
+    ctx.beginPath();
+    ctx.moveTo(p.x - ux * 12, p.y - uy * 12);
+    ctx.lineTo(p.x + ux * 4, p.y + uy * 4);
+    ctx.stroke();
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    const t = p.life / p.maxLife;
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = 1 - t;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+function drawPopups() {
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+  ctx.lineWidth = 3;
+  for (const p of popups) {
+    const t = p.t / 900;
+    ctx.globalAlpha = 1 - t;
+    ctx.strokeText(p.text, p.x, p.y - t * 24);
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y - t * 24);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawHud() {
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(10, 10, 150, 20);
+  ctx.fillStyle = castleHP > 40 ? '#5cc85c' : '#e05a4a';
+  ctx.fillRect(12, 12, 146 * clamp(castleHP / CASTLE_MAX_HP, 0, 1), 16);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'left';
+  ctx.fillText('CASTLE  ' + Math.round(castleHP) + '%', 16, 24);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(W - 170, 10, 160, 44);
+  ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'left';
+  ctx.fillText('Gold: ' + gold, W - 160, 28);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Arial';
+  ctx.fillText('Kills: ' + killCount + ' / ' + WAVE_FOOTMEN, W - 160, 46);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+  ctx.fillText('Tap a glowing wall slot to place an Archer (' + ARCHER_COST + 'g)', W / 2, H - 10);
+}
+
+function draw() {
+  ctx.save();
+  const mag = shake > 0 ? shake * 8 : 0;
+  if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
+  drawBackdrop();
+  if (state !== 'menu') {
+    drawCastle();
+    drawTier3Slots();
+    for (const en of enemies) drawFootman(en);
+    drawProjectiles();
+    drawParticles();
+    drawPopups();
+    drawHud();
+  } else {
+    drawCastle();
+    drawTier3Slots();
+  }
+  ctx.restore();
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+showMenu();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
