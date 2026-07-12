@@ -8,7 +8,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #1a1710;
+    background: #2b2115;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +23,7 @@
   }
   #wrap { position: relative; }
   canvas {
-    background: #8fd3e8;
+    background: #5a6f45;
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     display: block;
@@ -43,22 +43,21 @@
     color: white;
     pointer-events: none;
     text-align: center;
-    padding: calc(10px * var(--game-scale, 1));
-    box-sizing: border-box;
   }
-  /* A soft text-shadow alone isn't enough contrast against Trebuchet's
-     bright sky-blue background - a solid panel behind the copy guarantees
-     legibility no matter what's rendered on the canvas underneath. */
   #overlayPanel {
-    background: rgba(10, 10, 8, 0.68);
-    border: 1.5px solid rgba(255,255,255,0.16);
+    background: rgba(10, 8, 4, 0.68);
+    border: 1.5px solid rgba(255,255,255,0.14);
     border-radius: calc(18px * var(--game-scale, 1));
-    padding: calc(20px * var(--game-scale, 1)) calc(26px * var(--game-scale, 1));
+    padding: calc(20px * var(--game-scale, 1)) calc(24px * var(--game-scale, 1));
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 92%;
+    max-height: 92%;
+    overflow-y: auto;
+    box-sizing: border-box;
   }
-  #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(28px * var(--game-scale, 1)); }
   #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
   #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
   #bestLine { opacity: 0.8; }
@@ -129,16 +128,78 @@
     cursor: pointer;
     z-index: 5;
   }
+  #helpBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    right: calc(8px * var(--game-scale, 1));
+    width: calc(26px * var(--game-scale, 1));
+    height: calc(26px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    line-height: 1;
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  .modalOverlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(6, 4, 2, 0.75);
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    z-index: 20;
+    padding: calc(14px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  .modalPanel {
+    background: #241a10;
+    border: 1.5px solid rgba(255,255,255,0.16);
+    border-radius: calc(16px * var(--game-scale, 1));
+    padding: calc(18px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    max-height: 100%;
+    overflow-y: auto;
+    color: #f4e8d0;
+    font-size: calc(13px * var(--game-scale, 1));
+    line-height: 1.4;
+    box-sizing: border-box;
+    position: relative;
+    width: min(320px, 100%);
+  }
+  .modalPanel h2 { margin: 0 0 calc(10px * var(--game-scale, 1)); font-size: calc(18px * var(--game-scale, 1)); color: #ffb703; }
+  .modalPanel p { margin: 0 0 calc(10px * var(--game-scale, 1)); text-align: left; }
+  .helpClose {
+    position: absolute;
+    top: calc(10px * var(--game-scale, 1));
+    right: calc(12px * var(--game-scale, 1));
+    background: none;
+    border: none;
+    color: #f4e8d0;
+    font-size: calc(20px * var(--game-scale, 1));
+    cursor: pointer;
+    line-height: 1;
+  }
+  .effTable { width: 100%; border-collapse: collapse; margin: calc(6px * var(--game-scale, 1)) 0 calc(14px * var(--game-scale, 1)); font-size: calc(11px * var(--game-scale, 1)); }
+  .effTable th, .effTable td { padding: calc(4px * var(--game-scale, 1)) calc(5px * var(--game-scale, 1)); text-align: center; border: 1px solid rgba(255,255,255,0.12); }
+  .effTable th { color: #ffb703; font-weight: bold; }
+  .effTable td.eff-strong { color: #a8d86a; font-weight: bold; }
+  .effTable td.eff-weak { color: #e6543b; }
+  .effTable td.eff-normal { color: rgba(244,232,208,0.75); }
 </style>
 </head>
 <body>
 <div id="wrap">
   <canvas id="game" width="360" height="540"></canvas>
   <button id="muteBtn" type="button">🔊</button>
+  <button id="helpBtn" type="button">?</button>
   <div id="overlay">
     <div id="overlayPanel">
       <h1 id="title">Trebuchet</h1>
-      <p id="subtitle">Defend the castle — drag back anywhere, let fly, break every wave</p>
+      <p id="subtitle">Place archers, cannons, catapults and trebuchets to break the siege</p>
       <p id="scoreLine" style="display:none;"></p>
       <p id="bestLine"></p>
       <div class="rowLabel">Difficulty</div>
@@ -148,6 +209,17 @@
       </div>
       <button id="startBtn" type="button">Start</button>
       <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    </div>
+  </div>
+  <div id="helpOverlay" class="modalOverlay">
+    <div class="modalPanel">
+      <button id="helpCloseBtn" type="button" class="helpClose">&times;</button>
+      <h2>How to play</h2>
+      <p><strong>Defences:</strong> tap one in the tray, then tap the grass near the path to build it. Tap a built defence to open its upgrade panel and spend gold on damage/range.</p>
+      <p><strong>Gold:</strong> earn it by killing invaders. Spend it on new defences and upgrades.</p>
+      <p><strong>Matchups</strong> (damage multiplier - every defence has a real weakness, so mix it up):</p>
+      <div id="effTableHolder"></div>
+      <p><strong>Win / lose:</strong> survive all 8 waves. Let too much damage through and the castle falls.</p>
     </div>
   </div>
 </div>
@@ -164,8 +236,30 @@ const startBtn = document.getElementById('startBtn');
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 const diffButtons = document.getElementById('diffButtons');
+const helpBtn = document.getElementById('helpBtn');
+const helpOverlay = document.getElementById('helpOverlay');
+const helpCloseBtn = document.getElementById('helpCloseBtn');
+const effTableHolder = document.getElementById('effTableHolder');
 
 const W = canvas.width, H = canvas.height;
+const HUD_H = 58;
+const TRAY_H = 60;
+const FIELD_BOTTOM = H - TRAY_H;
+const PATH_WIDTH = 34;
+const UNIT_BASE_SPEED = 54;
+const UNIT_BASE_HP = 3;
+const DEFENCE_RADIUS = 13;
+const MIN_BUILD_DIST_FROM_PATH = PATH_WIDTH / 2 + DEFENCE_RADIUS + 6;
+const MAX_BUILD_DIST_FROM_PATH = 82;
+const MIN_DEFENCE_SPACING = 32;
+const HIT_RADIUS = 9;
+const COUNTDOWN_DURATION = 3;
+const WAVE_CLEARED_PAUSE = 1.4;
+const SCORE_PER_KILL = 10;
+const SCORE_PER_WAVE = 50;
+const SPLASH_FALLOFF = 0.55;
+const MAX_LEVEL = 3;
+const UPGRADE_COST_MULT = [0.75, 1.35];
 
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
@@ -185,7 +279,6 @@ function lerp(a, b, t) { return a + (b - a) * t; }
 // --- Audio ---
 let audioCtx = null;
 let muted = sessionStorage.getItem('trebuchetMuted') === '1';
-
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -205,38 +298,20 @@ function tone(freq, duration, type, volume, delay) {
   gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
   osc.stop(startTime + duration + 0.03);
 }
-function playThwack() { tone(160, 0.09, 'square', 0.15); tone(90, 0.14, 'sine', 0.12, 0.02); }
-function playWhoosh() {
-  if (muted) return;
-  ensureAudio();
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'sawtooth';
-  const now = audioCtx.currentTime;
-  osc.frequency.setValueAtTime(700, now);
-  osc.frequency.exponentialRampToValueAtTime(140, now + 0.5);
-  gain.gain.setValueAtTime(0.06, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.start(now); osc.stop(now + 0.55);
-}
-function playImpact() { tone(150, 0.1, 'square', 0.13); tone(90, 0.16, 'sawtooth', 0.11, 0.04); }
-function playKill() { tone(700, 0.08, 'triangle', 0.1); tone(1000, 0.1, 'triangle', 0.08, 0.05); }
-function playCastleHit() { tone(180, 0.16, 'sawtooth', 0.15); tone(110, 0.22, 'square', 0.13, 0.06); }
+function playSpawn() { tone(340, 0.06, 'triangle', 0.06); }
+function playLifeLost() { tone(220, 0.14, 'sawtooth', 0.13); tone(150, 0.18, 'sawtooth', 0.1, 0.06); }
+function playGameOver() { tone(200, 0.2, 'sawtooth', 0.14); tone(140, 0.26, 'sawtooth', 0.11, 0.1); tone(95, 0.34, 'sawtooth', 0.1, 0.22); }
+function playShoot() { tone(900, 0.04, 'square', 0.05); }
+function playCannon() { tone(140, 0.12, 'sawtooth', 0.12); tone(90, 0.16, 'square', 0.1, 0.04); }
+function playSplash() { tone(380, 0.08, 'sawtooth', 0.06); }
+function playKill() { tone(700, 0.07, 'triangle', 0.1); tone(1000, 0.08, 'triangle', 0.08, 0.04); }
+function playHit() { tone(1200, 0.03, 'square', 0.035); }
 function playUpgrade() { tone(500, 0.07, 'triangle', 0.1); tone(750, 0.08, 'triangle', 0.09, 0.05); tone(1000, 0.1, 'triangle', 0.08, 0.11); }
-function playDenied() { tone(160, 0.09, 'square', 0.08); }
+function playPlace() { tone(300, 0.05, 'square', 0.09); tone(450, 0.06, 'square', 0.07, 0.04); }
+function playDenied() { tone(160, 0.1, 'square', 0.08); }
 function playWaveStart() { tone(520, 0.08, 'triangle', 0.1); tone(700, 0.09, 'triangle', 0.09, 0.06); }
-function playWaveClear() {
-  tone(523, 0.14, 'triangle', 0.14);
-  tone(659, 0.14, 'triangle', 0.13, 0.13);
-  tone(784, 0.16, 'triangle', 0.13, 0.26);
-  tone(1047, 0.26, 'triangle', 0.14, 0.4);
-}
-function playVictory() {
-  tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09);
-  tone(1100, 0.16, 'triangle', 0.11, 0.19); tone(1320, 0.22, 'triangle', 0.1, 0.32);
-}
-function playFail() { tone(200, 0.2, 'sawtooth', 0.12); tone(140, 0.3, 'sawtooth', 0.1, 0.1); }
+function playWaveCleared() { tone(660, 0.09, 'triangle', 0.12); tone(880, 0.1, 'triangle', 0.11, 0.07); tone(1100, 0.14, 'triangle', 0.1, 0.16); }
+function playWin() { tone(660, 0.12, 'triangle', 0.13); tone(880, 0.14, 'triangle', 0.12, 0.09); tone(1100, 0.16, 'triangle', 0.11, 0.19); tone(1320, 0.22, 'triangle', 0.1, 0.32); }
 
 function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 updateMuteBtn();
@@ -246,61 +321,46 @@ muteBtn.addEventListener('click', () => {
   updateMuteBtn();
 });
 
-function loadBest(diff) { return parseInt(sessionStorage.getItem('trebuchetBest_' + diff) || '0', 10); }
-function saveBest(diff, v) { try { sessionStorage.setItem('trebuchetBest_' + diff, v); } catch (e) {} }
+function loadBest(diff) { return parseInt(sessionStorage.getItem('trebuchetBest2_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('trebuchetBest2_' + diff, v); } catch (e) {} }
+function clampNum(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-// --- World / layout ---
-// The old version's physics bugs all lived in the block-resting/collision
-// system (stones toppling stacked blocks that had to come to rest without
-// jittering forever). Redesigning this as a castle defense game removes that
-// whole subsystem: a shot is now pure ballistic flight that explodes once on
-// impact - there is nothing left that ever needs to "settle."
-const GRAVITY = 640;
-const HUD_H = 34;
-const TRAY_H = 56;
-const GROUND_Y = H - TRAY_H - 6;
-const CASTLE_X = 6, CASTLE_W = 76;
-const GATE_X = CASTLE_X + CASTLE_W + 4;
-const LAUNCHER = { x: 142, y: GROUND_Y - 26 };
-const MAX_PULL = 70;
-const MAX_LAUNCH_SPEED = 480;
-const MIN_ANGLE = -1.5, MAX_ANGLE = -0.12; // radians, always up-and-right toward the enemy side
-const PROJECTILE_R = 9;
+// --- Difficulty: hard starts with a smaller cushion, pays less per kill,
+// taxes new/upgraded defences harder as waves pass, and ramps unit hp/speed/
+// pace more steeply - the whole economy stays tighter start to finish. ---
+const DIFFICULTY_PRESETS = {
+  easy: { startHp: 100, startGold: 90, killReward: 9, costRamp: 0.1, hpStep: 0.22, speedStep: 0.06, intervalBase: 1.5, intervalStep: 0.075, intervalMin: 0.8 },
+  hard: { startHp: 80, startGold: 75, killReward: 6, costRamp: 0.14, hpStep: 0.3, speedStep: 0.09, intervalBase: 1.25, intervalStep: 0.07, intervalMin: 0.65 }
+};
 
-// bounceAmp sets how pronounced each type's vertical bob is - raider/brute/
-// siegeCart just idle-bob a couple pixels while walking, but the bouncer
-// (introduced wave 4+) hops in earnest, giving the waves real silhouette
-// variety instead of every enemy just being a differently-sized circle.
-const ENEMY_TYPES = {
-  raider:    { hp: 1, speed: 60, dmg: 6,  size: 11, color: '#e6543b', darkColor: '#7a1f16', bounceAmp: 2 },
-  brute:     { hp: 3, speed: 40, dmg: 12, size: 14, color: '#c9853a', darkColor: '#6b4a1e', bounceAmp: 2 },
-  siegeCart: { hp: 6, speed: 25, dmg: 26, size: 18, color: '#7a7a86', darkColor: '#33333c', bounceAmp: 2 },
-  bouncer:   { hp: 2, speed: 52, dmg: 10, size: 12, color: '#7cb342', darkColor: '#3d5a1e', bounceAmp: 13 }
+// --- Four invading unit types, each with a real profile - not just a
+// bigger number. Scouts are fast and flimsy, soldiers are the baseline,
+// shieldmen are slow tanks, siege towers are the boss-tier threat that
+// does real damage if it reaches the gate. ---
+const UNIT_TYPES = {
+  scout: { key: 'scout', name: 'Scout', hpMult: 0.6, speedMult: 1.6, dmg: 5, color: '#c9a15a', darkColor: '#7a5a24' },
+  soldier: { key: 'soldier', name: 'Soldier', hpMult: 1.0, speedMult: 1.0, dmg: 8, color: '#8a3a2a', darkColor: '#4a1a12' },
+  shieldman: { key: 'shieldman', name: 'Shieldman', hpMult: 1.9, speedMult: 0.65, dmg: 12, color: '#5a6a7a', darkColor: '#2a343c' },
+  siegeTower: { key: 'siegeTower', name: 'Siege Tower', hpMult: 3.4, speedMult: 0.4, dmg: 24, color: '#6b4a2b', darkColor: '#3a281a' }
 };
 
 const WAVE_MIXES = [
-  { raider: 1 },
-  { raider: 0.8, brute: 0.2 },
-  { raider: 0.6, brute: 0.4 },
-  { raider: 0.45, brute: 0.3, bouncer: 0.25 },
-  { raider: 0.35, brute: 0.3, siegeCart: 0.15, bouncer: 0.2 },
-  { raider: 0.25, brute: 0.3, siegeCart: 0.2, bouncer: 0.25 },
-  { raider: 0.2, brute: 0.25, siegeCart: 0.3, bouncer: 0.25 },
-  { raider: 0.15, brute: 0.2, siegeCart: 0.4, bouncer: 0.25 }
+  { scout: 1 },
+  { scout: 0.7, soldier: 0.3 },
+  { scout: 0.5, soldier: 0.5 },
+  { scout: 0.4, soldier: 0.35, shieldman: 0.25 },
+  { scout: 0.3, soldier: 0.3, shieldman: 0.3, siegeTower: 0.1 },
+  { scout: 0.25, soldier: 0.3, shieldman: 0.25, siegeTower: 0.2 },
+  { scout: 0.2, soldier: 0.25, shieldman: 0.3, siegeTower: 0.25 },
+  { scout: 0.15, soldier: 0.2, shieldman: 0.3, siegeTower: 0.35 }
 ];
 const WAVE_COUNT = 8;
-
-const DIFFICULTY_PRESETS = {
-  easy: { startHp: 120, killReward: 9, hpStep: 0.2, speedStep: 0.05, intervalBase: 1.5, intervalStep: 0.07, intervalMin: 0.75 },
-  hard: { startHp: 90, killReward: 6, hpStep: 0.3, speedStep: 0.08, intervalBase: 1.2, intervalStep: 0.06, intervalMin: 0.6 }
-};
-
 function buildWaves(preset) {
   const waves = [];
   for (let i = 0; i < WAVE_COUNT; i++) {
     waves.push({
-      count: 5 + Math.round(i * 1.6),
-      interval: clamp(preset.intervalBase - i * preset.intervalStep, preset.intervalMin, preset.intervalBase),
+      count: 6 + Math.round(i * 1.4),
+      interval: clampNum(preset.intervalBase - i * preset.intervalStep, preset.intervalMin, preset.intervalBase),
       hpMult: 1 + i * preset.hpStep,
       speedMult: 1 + i * preset.speedStep,
       mix: WAVE_MIXES[i]
@@ -308,65 +368,259 @@ function buildWaves(preset) {
   }
   return waves;
 }
-
-function pickType(mix) {
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let WAVES = buildWaves(preset);
+function pickUnitType(mix) {
   const total = Object.values(mix).reduce((a, b) => a + b, 0);
   let r = Math.random() * total;
   for (const key in mix) { r -= mix[key]; if (r <= 0) return key; }
   return Object.keys(mix)[0];
 }
 
-// --- Upgrades: bought with gold earned from kills, any time mid-run ---
-const UPGRADES = {
-  reload: { name: 'Reload', maxLevel: 3, baseCost: 30, costMul: 1.9 },
-  blast: { name: 'Blast', maxLevel: 3, baseCost: 35, costMul: 1.9 },
-  power: { name: 'Power', maxLevel: 3, baseCost: 40, costMul: 1.9 }
+// --- Four defences, each a real answer to a different threat. `mechanic`
+// picks how it fires: 'single' homes on the nearest target, 'splash' also
+// damages nearby units on impact with falloff. `effectiveness` is a per-unit
+// damage multiplier and every defence has a genuine weakness - archers
+// shred scouts but bounce off armour; cannons and catapults answer the
+// tanky mid-game; the trebuchet is the only real counter to a siege tower
+// but is far too slow to track scouts. ---
+const DEFENCE_TYPES = {
+  archer: {
+    key: 'archer', name: 'Archer Tower', cost: 35, range: 82, damage: 1, fireInterval: 0.5,
+    projectileSpeed: 300, mechanic: 'single', splashRadius: 0,
+    effectiveness: { scout: 1.6, soldier: 1.0, shieldman: 0.4, siegeTower: 0.3 }
+  },
+  cannon: {
+    key: 'cannon', name: 'Cannon', cost: 60, range: 76, damage: 2, fireInterval: 1.1,
+    projectileSpeed: 220, mechanic: 'splash', splashRadius: 30,
+    effectiveness: { scout: 0.6, soldier: 1.3, shieldman: 1.4, siegeTower: 0.9 }
+  },
+  catapult: {
+    key: 'catapult', name: 'Catapult', cost: 65, range: 90, damage: 2, fireInterval: 1.3,
+    projectileSpeed: 200, mechanic: 'splash', splashRadius: 38,
+    effectiveness: { scout: 0.5, soldier: 1.1, shieldman: 1.5, siegeTower: 1.1 }
+  },
+  trebuchet: {
+    key: 'trebuchet', name: 'Trebuchet', cost: 90, range: 105, damage: 4, fireInterval: 1.8,
+    projectileSpeed: 180, mechanic: 'single', splashRadius: 0,
+    effectiveness: { scout: 0.35, soldier: 0.9, shieldman: 1.2, siegeTower: 1.8 }
+  }
 };
-const UPGRADE_ORDER = ['reload', 'blast', 'power'];
-let upgradeLevels = { reload: 0, blast: 0, power: 0 };
-function reloadDuration() { return Math.max(0.55, 1.5 - upgradeLevels.reload * 0.3); }
-function currentSplashRadius() { return 32 + upgradeLevels.blast * 11; }
-function shotDamage() { return 1 + upgradeLevels.power; }
-function upgradeCost(key) {
-  const u = UPGRADES[key];
-  const lvl = upgradeLevels[key];
-  if (lvl >= u.maxLevel) return null;
-  return Math.round(u.baseCost * Math.pow(u.costMul, lvl));
-}
-
-const TRAY_BTN_W = 104, TRAY_BTN_GAP = 6, TRAY_BTN_H = TRAY_H - 14;
-const TRAY_ROW_W = UPGRADE_ORDER.length * TRAY_BTN_W + (UPGRADE_ORDER.length - 1) * TRAY_BTN_GAP;
+const DEFENCE_ORDER = ['archer', 'cannon', 'catapult', 'trebuchet'];
+const TRAY_BTN_W = 82, TRAY_BTN_GAP = 4, TRAY_BTN_H = TRAY_H - 16;
+const TRAY_ROW_W = DEFENCE_ORDER.length * TRAY_BTN_W + (DEFENCE_ORDER.length - 1) * TRAY_BTN_GAP;
 const TRAY_ROW_X = (W - TRAY_ROW_W) / 2;
 const TRAY_BUTTONS = {};
-UPGRADE_ORDER.forEach((key, i) => {
-  TRAY_BUTTONS[key] = { x: TRAY_ROW_X + i * (TRAY_BTN_W + TRAY_BTN_GAP), y: H - TRAY_H + 7, w: TRAY_BTN_W, h: TRAY_BTN_H };
+DEFENCE_ORDER.forEach((key, i) => {
+  TRAY_BUTTONS[key] = { x: TRAY_ROW_X + i * (TRAY_BTN_W + TRAY_BTN_GAP), y: H - TRAY_H + 8, w: TRAY_BTN_W, h: TRAY_BTN_H };
 });
+
+// --- Single winding path, invaders enter from the right and the castle
+// gate sits on the left - same "defend from the right" read as the old
+// aiming-based version, just with proper path geometry now. ---
+const WAYPOINTS = [
+  { x: W + 20, y: 110 }, { x: 265, y: 110 }, { x: 265, y: 230 }, { x: 85, y: 230 },
+  { x: 85, y: 350 }, { x: 295, y: 350 }, { x: 295, y: 450 }, { x: 105, y: 450 }
+];
+const GOAL = WAYPOINTS[WAYPOINTS.length - 1];
+const ENTRY = WAYPOINTS[0];
+
+function buildPathData(waypoints) {
+  const segLengths = [], cumLengths = [0];
+  for (let i = 0; i < waypoints.length - 1; i++) {
+    const dx = waypoints[i + 1].x - waypoints[i].x, dy = waypoints[i + 1].y - waypoints[i].y;
+    const len = Math.hypot(dx, dy);
+    segLengths.push(len);
+    cumLengths.push(cumLengths[i] + len);
+  }
+  return { waypoints, segLengths, cumLengths, totalLength: cumLengths[cumLengths.length - 1] };
+}
+const PATH = buildPathData(WAYPOINTS);
+
+function pointAtDistance(path, d) {
+  if (d >= path.totalLength) return { x: GOAL.x, y: GOAL.y, angle: 0 };
+  let i = 0;
+  while (i < path.segLengths.length - 1 && path.cumLengths[i + 1] <= d) i++;
+  const segLen = path.segLengths[i] || 1;
+  const t = (d - path.cumLengths[i]) / segLen;
+  const a = path.waypoints[i], b = path.waypoints[i + 1];
+  return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, angle: Math.atan2(b.y - a.y, b.x - a.x) };
+}
+
+let units, castleHp, state, elapsedTime, best, unitId;
+let gold, defences, projectiles, popups, fx, particles, kills;
+let goalHitFlash = 0;
+let selectedType, pointerField, denialMarker, selectedDefence;
+let waveIndex, waveState, countdownTimer, unitsToSpawn, spawnTimer, wavesCleared;
+let paused = false;
+
+function currentScore() { return kills * SCORE_PER_KILL + wavesCleared * SCORE_PER_WAVE + Math.round(castleHp); }
+
+function spawnUnit(wave) {
+  const type = pickUnitType(wave.mix);
+  const t = UNIT_TYPES[type];
+  const hp = Math.max(1, Math.round(UNIT_BASE_HP * wave.hpMult * t.hpMult));
+  units.push({
+    id: unitId++, dist: 0, type, path: PATH,
+    speed: UNIT_BASE_SPEED * wave.speedMult * t.speedMult * (0.9 + Math.random() * 0.25),
+    hp, maxHp: hp,
+    bobPhase: Math.random() * Math.PI * 2
+  });
+  playSpawn();
+}
+
+function addPopup(text, x, y, color) { popups.push({ text, x, y, life: 36, color }); }
+
+function distToSegment(px, py, ax, ay, bx, by) {
+  const abx = bx - ax, aby = by - ay;
+  const t = clampNum(((px - ax) * abx + (py - ay) * aby) / ((abx * abx + aby * aby) || 1), 0, 1);
+  const cx = ax + abx * t, cy = ay + aby * t;
+  return Math.hypot(px - cx, py - cy);
+}
+function distanceToPath(x, y) {
+  let min = Infinity;
+  for (let i = 0; i < WAYPOINTS.length - 1; i++) {
+    const a = WAYPOINTS[i], b = WAYPOINTS[i + 1];
+    min = Math.min(min, distToSegment(x, y, a.x, a.y, b.x, b.y));
+  }
+  return min;
+}
+function defenceCost(key) { return Math.round(DEFENCE_TYPES[key].cost * (1 + waveIndex * preset.costRamp)); }
+
+function isValidPlacement(x, y) {
+  if (x < 14 || x > W - 14 || y < HUD_H + 14 || y > FIELD_BOTTOM - 14) return false;
+  const dPath = distanceToPath(x, y);
+  if (dPath < MIN_BUILD_DIST_FROM_PATH || dPath > MAX_BUILD_DIST_FROM_PATH) return false;
+  for (const d of defences) {
+    if (Math.hypot(d.x - x, d.y - y) < MIN_DEFENCE_SPACING) return false;
+  }
+  return true;
+}
+
 function pointInRect(x, y, r) { return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h; }
+function canvasPointFromEvent(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
 function trayButtonAt(x, y) {
-  for (const key of UPGRADE_ORDER) if (pointInRect(x, y, TRAY_BUTTONS[key])) return key;
+  for (const key of DEFENCE_ORDER) if (pointInRect(x, y, TRAY_BUTTONS[key])) return key;
   return null;
 }
-function buyUpgrade(key) {
-  const cost = upgradeCost(key);
-  if (cost === null || gold < cost) { playDenied(); return; }
+function defenceAt(x, y) {
+  let best = null, bestDist = DEFENCE_RADIUS + 12;
+  for (const d of defences) {
+    const dist = Math.hypot(d.x - x, d.y - y);
+    if (dist <= bestDist) { bestDist = dist; best = d; }
+  }
+  return best;
+}
+
+function statsForLevel(type, level) {
+  const base = DEFENCE_TYPES[type];
+  const dmgMult = 1 + 0.5 * (level - 1);
+  const rangeMult = 1 + 0.12 * (level - 1);
+  const fireMult = 1 - 0.12 * (level - 1);
+  return {
+    damage: base.damage * dmgMult,
+    range: base.range * rangeMult,
+    fireInterval: Math.max(0.28, base.fireInterval * fireMult),
+    projectileSpeed: base.projectileSpeed,
+    splashRadius: base.splashRadius,
+    mechanic: base.mechanic,
+    effectiveness: base.effectiveness
+  };
+}
+function upgradeCost(d) { return Math.round(defenceCost(d.type) * UPGRADE_COST_MULT[d.level - 1]); }
+function applyUpgrade(d) {
+  if (d.level >= MAX_LEVEL) return;
+  const cost = upgradeCost(d);
+  if (gold < cost) { playDenied(); return; }
   gold -= cost;
-  upgradeLevels[key]++;
+  d.level++;
+  Object.assign(d, statsForLevel(d.type, d.level));
+  spawnFx(d.x, d.y, 26, 'rgba(255,183,3,0.6)', 0.3);
   playUpgrade();
 }
 
-// --- Run state ---
-let difficulty = 'easy', preset = DIFFICULTY_PRESETS.easy, WAVES = buildWaves(preset);
-let enemies = [], projectile = null, particles = [], popups = [], fx = [];
-let gold = 0, kills = 0, wavesCleared = 0, castleHp = 100, castleFlash = 0;
-let waveIndex = 0, waveState = 'countdown', countdownTimer = 0, enemiesToSpawn = 0, spawnTimer = 0;
-const COUNTDOWN_DURATION = 3, WAVE_CLEARED_PAUSE = 1.4;
-const SCORE_PER_KILL = 10, SCORE_PER_WAVE = 60;
-let aiming = false, aimAngle = -0.6, aimPower = 0, aimPointerId = null;
-let reloadTimer = 0;
-let shakeTimer = 0, shakeMag = 0, shakeDuration = 0.3;
-let state = 'menu'; // menu | playing | over
+const UPGRADE_PANEL_W = 132, UPGRADE_PANEL_H = 70;
+function upgradePanelRect(d) {
+  const px = clampNum(d.x - UPGRADE_PANEL_W / 2, 6, W - UPGRADE_PANEL_W - 6);
+  let py = d.y - DEFENCE_RADIUS - 10 - UPGRADE_PANEL_H;
+  if (py < HUD_H + 4) py = d.y + DEFENCE_RADIUS + 10;
+  return { x: px, y: py, w: UPGRADE_PANEL_W, h: UPGRADE_PANEL_H };
+}
+function upgradeButtonRect(d) {
+  const p = upgradePanelRect(d);
+  return { x: p.x + 8, y: p.y + p.h - 26, w: p.w - 16, h: 20 };
+}
 
-function currentScore() { return kills * SCORE_PER_KILL + wavesCleared * SCORE_PER_WAVE + Math.round(castleHp); }
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing' || paused) return;
+  const pt = canvasPointFromEvent(e);
+
+  const tapped = trayButtonAt(pt.x, pt.y);
+  if (tapped) {
+    selectedType = selectedType === tapped ? null : tapped;
+    selectedDefence = null;
+    return;
+  }
+
+  if (selectedDefence) {
+    if (pointInRect(pt.x, pt.y, upgradeButtonRect(selectedDefence))) { applyUpgrade(selectedDefence); return; }
+    const onPanel = pointInRect(pt.x, pt.y, upgradePanelRect(selectedDefence));
+    const onDefence = Math.hypot(selectedDefence.x - pt.x, selectedDefence.y - pt.y) <= DEFENCE_RADIUS + 12;
+    if (onPanel || onDefence) return;
+    selectedDefence = null;
+  }
+
+  const tappedDefence = defenceAt(pt.x, pt.y);
+  if (tappedDefence) { selectedType = null; selectedDefence = tappedDefence; return; }
+
+  if (!selectedType) return;
+  const cost = defenceCost(selectedType);
+  if (gold < cost || !isValidPlacement(pt.x, pt.y)) {
+    playDenied();
+    denialMarker = { x: pt.x, y: pt.y, timer: 0.35 };
+    return;
+  }
+  defences.push({ x: pt.x, y: pt.y, type: selectedType, level: 1, cooldown: 0.15, ...statsForLevel(selectedType, 1) });
+  gold -= cost;
+  playPlace();
+});
+canvas.addEventListener('pointermove', (e) => {
+  pointerField = (state === 'playing' && selectedType) ? canvasPointFromEvent(e) : null;
+});
+canvas.addEventListener('pointerleave', () => { pointerField = null; });
+
+function resetRunState() {
+  units = [];
+  castleHp = preset.startHp;
+  elapsedTime = 0;
+  unitId = 1;
+  gold = preset.startGold;
+  defences = [];
+  projectiles = [];
+  popups = [];
+  fx = [];
+  kills = 0;
+  wavesCleared = 0;
+  selectedType = null;
+  pointerField = null;
+  denialMarker = null;
+  selectedDefence = null;
+  goalHitFlash = 0;
+  particles = [];
+  beginWaveCountdown(0);
+}
+function beginWaveCountdown(index) {
+  waveIndex = index;
+  waveState = 'countdown';
+  countdownTimer = COUNTDOWN_DURATION;
+}
 
 function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
 diffButtons.addEventListener('click', (e) => {
@@ -378,206 +632,98 @@ diffButtons.addEventListener('click', (e) => {
 updateDiffButtonStyles();
 
 function showMenu() {
+  preset = DIFFICULTY_PRESETS[difficulty];
+  WAVES = buildWaves(preset);
+  resetRunState();
   state = 'menu';
   title.textContent = 'Trebuchet';
-  subtitle.textContent = 'Defend the castle — drag back anywhere, let fly, break every wave';
+  subtitle.textContent = 'Place archers, cannons, catapults and trebuchets to break the siege';
   scoreLine.style.display = 'none';
-  bestLine.textContent = 'Best score: ' + loadBest(difficulty);
   diffButtons.style.display = 'flex';
-  startBtn.textContent = 'Start';
-  startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'none';
+  best = loadBest(difficulty);
+  bestLine.textContent = 'Best score: ' + best;
   updateDiffButtonStyles();
   overlay.style.display = 'flex';
 }
 
-function beginWaveCountdown(index) {
-  waveIndex = index;
-  waveState = 'countdown';
-  countdownTimer = COUNTDOWN_DURATION;
-}
-
-function startGame() {
-  preset = DIFFICULTY_PRESETS[difficulty];
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
   WAVES = buildWaves(preset);
-  enemies = []; projectile = null; particles = []; popups = []; fx = [];
-  gold = 0; kills = 0; wavesCleared = 0; castleHp = preset.startHp; castleFlash = 0;
-  upgradeLevels = { reload: 0, blast: 0, power: 0 };
-  aiming = false; aimPower = 0; reloadTimer = 0;
-  beginWaveCountdown(0);
+  best = loadBest(difficulty);
+  resetRunState();
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
 }
-startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+
+startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(difficulty); });
+
+helpBtn.addEventListener('click', () => { paused = true; helpOverlay.style.display = 'flex'; });
+helpCloseBtn.addEventListener('click', () => { helpOverlay.style.display = 'none'; paused = false; lastFrameTime = null; });
 
 function finishRun(won) {
   state = 'over';
-  const finalScore = currentScore();
-  const best = loadBest(difficulty);
-  const isNewBest = finalScore > best;
-  if (isNewBest) saveBest(difficulty, finalScore);
+  const score = currentScore();
+  if (score > best) { best = score; saveBest(difficulty, best); }
   if (won) {
-    playVictory();
-    title.textContent = 'Castle Held!';
-    subtitle.textContent = 'Every wave broke against your walls';
+    playWin();
+    title.textContent = 'Siege Broken!';
+    subtitle.textContent = 'Every wave repelled - the castle stands';
   } else {
-    playFail();
+    playGameOver();
     title.textContent = 'The Castle Has Fallen';
     subtitle.textContent = 'Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT + ' overran you';
   }
   scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Score: ' + finalScore + '  ·  Waves: ' + wavesCleared + '/' + WAVE_COUNT + '  ·  Kills: ' + kills;
-  bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
+  scoreLine.textContent = 'Score: ' + score + '   Waves: ' + wavesCleared + '/' + WAVE_COUNT + '   Kills: ' + kills + '   Best: ' + best;
   diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
   updateDiffButtonStyles();
   startBtn.textContent = 'Play Again';
-  startBtn.style.display = 'inline-block';
-  backToArcade.style.display = 'inline-block';
   overlay.style.display = 'flex';
 }
 
-// --- Input ---
-// Slingshot-style: drag from wherever you touch down (not a fixed reach
-// radius around the pivot) - pull back-and-down, release to fling. Requiring
-// the very first touch to land within a tight radius of a pivot 140px from
-// the screen edge was the "clunky loading" complaint - anywhere-drag reads
-// the pull direction/power off the finger's own motion instead.
-function pointerToCanvas(e) {
-  const rect = canvas.getBoundingClientRect();
-  return {
-    x: (e.clientX - rect.left) * (canvas.width / rect.width),
-    y: (e.clientY - rect.top) * (canvas.height / rect.height)
-  };
-}
-let dragOrigin = null;
-canvas.addEventListener('pointerdown', (e) => {
-  if (state !== 'playing') return;
-  const p = pointerToCanvas(e);
-  const trayKey = trayButtonAt(p.x, p.y);
-  if (trayKey) { buyUpgrade(trayKey); return; }
-  if (projectile || reloadTimer > 0) return;
-  if (p.y > GROUND_Y) return;
-  aiming = true;
-  dragOrigin = p;
-  aimPointerId = e.pointerId;
-  canvas.setPointerCapture(e.pointerId);
-  updateAim(p);
-});
-canvas.addEventListener('pointermove', (e) => {
-  if (!aiming || e.pointerId !== aimPointerId) return;
-  updateAim(pointerToCanvas(e));
-});
-function releaseAim() {
-  if (!aiming) return;
-  aiming = false;
-  dragOrigin = null;
-  if (aimPower > 0.08) fireProjectile();
-}
-canvas.addEventListener('pointerup', releaseAim);
-canvas.addEventListener('pointercancel', releaseAim);
+function update(dt) {
+  if (state !== 'playing' || paused) return;
+  elapsedTime += dt;
 
-function updateAim(p) {
-  const dx = dragOrigin.x - p.x, dy = dragOrigin.y - p.y;
-  const pull = Math.min(Math.hypot(dx, dy), MAX_PULL);
-  aimPower = pull / MAX_PULL;
-  aimAngle = clamp(Math.atan2(dy, dx), MIN_ANGLE, MAX_ANGLE);
-}
+  updateWaves(dt);
+  if (state !== 'playing') return; // a win can end the run inside updateWaves()
 
-function fireProjectile() {
-  const speed = aimPower * MAX_LAUNCH_SPEED;
-  projectile = {
-    x: LAUNCHER.x, y: LAUNCHER.y,
-    vx: Math.cos(aimAngle) * speed,
-    vy: Math.sin(aimAngle) * speed,
-    spin: 0, age: 0
-  };
-  reloadTimer = reloadDuration();
-  playThwack();
-  playWhoosh();
-  aimPower = 0;
-}
+  for (const u of units) u.dist += u.speed * dt;
 
-// --- Enemies ---
-function spawnEnemy(wave) {
-  const type = pickType(wave.mix);
-  const t = ENEMY_TYPES[type];
-  const hp = Math.max(1, Math.round(t.hp * wave.hpMult));
-  enemies.push({
-    type, hp, maxHp: hp,
-    x: W + 20 + Math.random() * 24,
-    y: GROUND_Y - t.size * 0.55,
-    speed: t.speed * wave.speedMult * (0.9 + Math.random() * 0.2),
-    size: t.size, dead: false, bobPhase: Math.random() * Math.PI * 2
-  });
-}
-
-function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
-function addBurst(x, y, color, count) {
-  for (let i = 0; i < count; i++) {
-    const a = Math.random() * Math.PI * 2;
-    const s = 40 + Math.random() * 90;
-    particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0, maxLife: 300 + Math.random() * 200, color, size: 2 + Math.random() * 2.5 });
+  const reached = units.filter((u) => u.dist >= u.path.totalLength);
+  if (reached.length > 0) {
+    units = units.filter((u) => u.dist < u.path.totalLength);
+    const dmg = reached.reduce((sum, u) => sum + UNIT_TYPES[u.type].dmg, 0);
+    castleHp = Math.max(0, castleHp - dmg);
+    playLifeLost();
+    goalHitFlash = 0.4;
+    addPopup('-' + dmg, GOAL.x, GOAL.y - 34, '#e6543b');
+    if (castleHp <= 0) { castleHp = 0; finishRun(false); return; }
   }
-}
-function spawnFx(x, y, maxRadius, color, life) { fx.push({ x, y, maxRadius, color, life, age: 0 }); }
-function triggerShake(mag) {
-  const m = clamp(mag, 2, 12);
-  if (m > shakeMag) { shakeMag = m; shakeTimer = 0.25; shakeDuration = 0.25; }
-}
 
-function hitEnemy(e, dmg, hx, hy) {
-  if (e.dead) return;
-  e.hp -= dmg;
-  if (e.hp <= 0) {
-    e.dead = true;
-    kills++;
-    gold += preset.killReward;
-    addPopup(e.x, e.y - e.size, '+' + preset.killReward, '#ffd76a');
-    addBurst(e.x, e.y, ENEMY_TYPES[e.type].color, 12);
-    playKill();
-  } else {
-    spawnFx(hx, hy, 10, 'rgba(255,255,255,0.5)', 0.12);
+  updateDefences(dt);
+  updateProjectiles(dt);
+  updateFx(dt);
+  updateParticles(dt);
+
+  if (denialMarker) {
+    denialMarker.timer -= dt;
+    if (denialMarker.timer <= 0) denialMarker = null;
   }
+  goalHitFlash = Math.max(0, goalHitFlash - dt);
+  popups = popups.filter((p) => { p.life--; p.y -= 0.5; return p.life > 0; });
 }
 
-function explodeProjectile(x, y) {
-  const r = currentSplashRadius();
-  for (const e of enemies) {
-    if (e.dead) continue;
-    if (Math.hypot(e.x - x, e.y - y) <= r + e.size * 0.5) hitEnemy(e, shotDamage(), x, y);
-  }
-  addBurst(x, y, '#ffb703', 16);
-  spawnFx(x, y, r, 'rgba(255,183,3,0.45)', 0.32);
-  playImpact();
-  triggerShake(5);
-  projectile = null;
-}
-
-function updateProjectile(dt) {
-  if (!projectile) return;
-  const p = projectile;
-  p.age += dt;
-  p.vy += GRAVITY * dt;
-  p.x += p.vx * dt;
-  p.y += p.vy * dt;
-  p.spin += dt * 14;
-
-  for (const e of enemies) {
-    if (e.dead) continue;
-    if (Math.hypot(p.x - e.x, p.y - e.y) < e.size * 0.75 + PROJECTILE_R) { explodeProjectile(p.x, p.y); return; }
-  }
-  if (p.y + PROJECTILE_R > GROUND_Y) { explodeProjectile(p.x, GROUND_Y); return; }
-  if (p.x > W + 40 || p.x < -40 || p.age > 5) { projectile = null; return; }
-}
-
-// --- Waves ---
 function updateWaves(dt) {
   if (waveState === 'countdown') {
     countdownTimer -= dt;
     if (countdownTimer <= 0) {
       waveState = 'spawning';
-      enemiesToSpawn = WAVES[waveIndex].count;
+      unitsToSpawn = WAVES[waveIndex].count;
       spawnTimer = 0;
       playWaveStart();
     }
@@ -585,19 +731,22 @@ function updateWaves(dt) {
   }
   if (waveState === 'spawning') {
     spawnTimer -= dt;
-    if (spawnTimer <= 0 && enemiesToSpawn > 0) {
-      spawnEnemy(WAVES[waveIndex]);
-      enemiesToSpawn--;
+    if (spawnTimer <= 0 && unitsToSpawn > 0) {
+      spawnUnit(WAVES[waveIndex]);
+      unitsToSpawn--;
       spawnTimer = WAVES[waveIndex].interval;
     }
-    if (enemiesToSpawn <= 0 && enemies.length === 0) {
+    if (unitsToSpawn <= 0 && units.length === 0) {
       waveState = 'cleared';
       wavesCleared++;
       countdownTimer = WAVE_CLEARED_PAUSE;
-      const bonus = 50 + waveIndex * 10;
-      addPopup(GATE_X + 50, GROUND_Y - 70, 'Wave ' + (waveIndex + 1) + ' repelled! +' + bonus, '#ffe28a');
-      gold += bonus;
-      playWaveClear();
+      playWaveCleared();
+      const flourishColors = ['#ffd76a', '#e0607a', '#8a4fae', '#7cb342', '#ff8f3c'];
+      for (let i = 0; i < 10; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const speed = 50 + Math.random() * 70;
+        particles.push({ x: GOAL.x, y: GOAL.y - 20, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed - 40, life: 0.7, age: 0, color: flourishColors[i % flourishColors.length] });
+      }
     }
     return;
   }
@@ -610,318 +759,471 @@ function updateWaves(dt) {
   }
 }
 
-function update(dt) {
-  particles.forEach((p) => { p.life += dt * 1000; p.vy += 200 * dt; p.x += p.vx * dt; p.y += p.vy * dt; });
-  particles = particles.filter((p) => p.life < p.maxLife);
-  popups.forEach((p) => { p.t += dt * 1000; });
-  popups = popups.filter((p) => p.t < 900);
-  fx.forEach((f) => { f.age += dt; });
+function findUnitById(id) { return units.find((u) => u.id === id); }
+function findNearestUnitInRange(x, y, range) {
+  let best = null, bestDist = range;
+  for (const u of units) {
+    const pos = pointAtDistance(u.path, u.dist);
+    const d = Math.hypot(pos.x - x, pos.y - y);
+    if (d <= bestDist) { bestDist = d; best = u; }
+  }
+  return best;
+}
+
+function spawnDeathBurst(x, y, color) {
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + Math.random() * 0.6;
+    const speed = 60 + Math.random() * 50;
+    particles.push({ x, y, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, life: 0.4, age: 0, color });
+  }
+}
+function hitUnit(u, damage, hitPos) {
+  if (!units.includes(u)) return;
+  u.hp -= damage;
+  if (u.hp <= 0) {
+    units.splice(units.indexOf(u), 1);
+    gold += preset.killReward;
+    kills++;
+    playKill();
+    addPopup('+' + preset.killReward, hitPos.x, hitPos.y - 10, '#ffd76a');
+    spawnDeathBurst(hitPos.x, hitPos.y, UNIT_TYPES[u.type].color);
+  } else {
+    playHit();
+    spawnFx(hitPos.x, hitPos.y, 12, 'rgba(255,255,255,0.55)', 0.12);
+  }
+}
+
+function updateParticles(dt) {
+  for (const p of particles) { p.age += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; }
+  particles = particles.filter((p) => p.age < p.life);
+}
+function spawnFx(x, y, maxRadius, color, life) { fx.push({ x, y, maxRadius, color, life, age: 0 }); }
+
+function updateDefences(dt) {
+  for (const d of defences) {
+    d.cooldown -= dt;
+    if (d.cooldown > 0) continue;
+
+    const target = findNearestUnitInRange(d.x, d.y, d.range);
+    if (target) {
+      projectiles.push({
+        x: d.x, y: d.y, targetId: target.id, speed: d.projectileSpeed, damage: d.damage,
+        mechanic: d.mechanic, splashRadius: d.splashRadius, effectiveness: d.effectiveness, defType: d.type
+      });
+      d.cooldown = d.fireInterval;
+      if (d.type === 'archer') playShoot(); else playCannon();
+    } else {
+      d.cooldown = 0.1;
+    }
+  }
+}
+
+function updateProjectiles(dt) {
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const pr = projectiles[i];
+    const target = findUnitById(pr.targetId);
+    if (!target) { projectiles.splice(i, 1); continue; }
+    const pos = pointAtDistance(target.path, target.dist);
+    const dx = pos.x - pr.x, dy = pos.y - pr.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < HIT_RADIUS) {
+      const splashTargets = (pr.mechanic === 'splash' && pr.splashRadius > 0)
+        ? units.filter((u) => u !== target && Math.hypot(pointAtDistance(u.path, u.dist).x - pos.x, pointAtDistance(u.path, u.dist).y - pos.y) <= pr.splashRadius)
+        : [];
+      hitUnit(target, pr.damage * (pr.effectiveness[target.type] || 1), pos);
+      for (const other of splashTargets) hitUnit(other, pr.damage * (pr.effectiveness[other.type] || 1) * SPLASH_FALLOFF, pos);
+      if (pr.mechanic === 'splash') { spawnFx(pos.x, pos.y, pr.splashRadius, 'rgba(224,138,74,0.55)', 0.3); playSplash(); }
+      projectiles.splice(i, 1);
+      continue;
+    }
+    const step = pr.speed * dt;
+    pr.x += (dx / dist) * step;
+    pr.y += (dy / dist) * step;
+  }
+}
+
+function updateFx(dt) {
+  for (const f of fx) f.age += dt;
   fx = fx.filter((f) => f.age < f.life);
-  if (shakeTimer > 0) shakeTimer -= dt;
-  if (castleFlash > 0) castleFlash -= dt;
-  if (reloadTimer > 0) reloadTimer -= dt;
-
-  if (state !== 'playing') return;
-
-  updateWaves(dt);
-  if (state !== 'playing') return; // a win can end the run inside updateWaves()
-
-  for (const e of enemies) e.x -= e.speed * dt;
-
-  for (const e of enemies) {
-    if (e.dead || e.x - e.size > GATE_X) continue;
-    const dmg = ENEMY_TYPES[e.type].dmg;
-    e.dead = true;
-    castleHp = Math.max(0, castleHp - dmg);
-    castleFlash = 0.35;
-    addPopup(GATE_X + 14, GROUND_Y - 46, '-' + dmg, '#e6543b');
-    playCastleHit();
-    triggerShake(7);
-  }
-  enemies = enemies.filter((e) => !e.dead);
-  if (castleHp <= 0) { finishRun(false); return; }
-
-  updateProjectile(dt);
 }
 
-// --- Drawing ---
-function drawSky() {
-  const g = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
-  g.addColorStop(0, '#8fd3e8');
-  g.addColorStop(1, '#c9ecd8');
+// ============================= DRAWING =============================
+
+function drawBg() {
+  const g = ctx.createLinearGradient(0, HUD_H, 0, H);
+  g.addColorStop(0, '#5a6f45');
+  g.addColorStop(1, '#3d4c2c');
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, GROUND_Y);
-  ctx.fillStyle = 'rgba(255,255,255,0.7)';
-  for (let i = 0; i < 3; i++) {
-    const cx = 90 + i * 110, cy = 56 + (i % 2) * 26;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, 24, 10, 0, 0, Math.PI * 2);
-    ctx.ellipse(cx + 16, cy + 3, 16, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
+  ctx.fillRect(0, HUD_H, W, H - HUD_H);
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 1;
+  for (let y = HUD_H + 14; y < H; y += 20) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
   }
 }
-function drawGround() {
-  const g = ctx.createLinearGradient(0, GROUND_Y, 0, H - TRAY_H);
-  g.addColorStop(0, '#7cb342');
-  g.addColorStop(0.3, '#5b3d22');
-  g.addColorStop(1, '#3a2814');
-  ctx.fillStyle = g;
-  ctx.fillRect(0, GROUND_Y, W, H - TRAY_H - GROUND_Y);
-  ctx.strokeStyle = '#4a7a2e';
-  ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(0, GROUND_Y); ctx.lineTo(W, GROUND_Y); ctx.stroke();
-}
 
-function drawCastle() {
-  const bx = CASTLE_X, by = GROUND_Y;
-  const flash = castleFlash > 0;
-  ctx.fillStyle = flash ? 'rgba(230,84,59,0.55)' : 'rgba(110,110,120,0.55)';
-  ctx.fillRect(bx, by - 92, CASTLE_W, 92);
-  for (let i = 0; i < 4; i++) ctx.fillRect(bx + 4 + i * 18, by - 106, 11, 14);
-  ctx.fillStyle = flash ? 'rgba(200,60,40,0.6)' : 'rgba(80,80,92,0.55)';
-  ctx.fillRect(bx + CASTLE_W - 30, by - 56, 22, 56);
+function strokeWaypoints(waypoints) {
   ctx.beginPath();
-  ctx.moveTo(bx + CASTLE_W - 30, by - 56); ctx.lineTo(bx + CASTLE_W - 19, by - 72); ctx.lineTo(bx + CASTLE_W - 8, by - 56);
+  ctx.moveTo(waypoints[0].x, waypoints[0].y);
+  for (let i = 1; i < waypoints.length; i++) ctx.lineTo(waypoints[i].x, waypoints[i].y);
+  ctx.stroke();
+}
+function drawPath() {
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.strokeStyle = '#6b4c2c'; ctx.lineWidth = PATH_WIDTH;
+  strokeWaypoints(WAYPOINTS);
+  ctx.strokeStyle = '#8a6438'; ctx.lineWidth = PATH_WIDTH - 8;
+  strokeWaypoints(WAYPOINTS);
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.lineWidth = 2;
+  ctx.setLineDash([6, 10]);
+  strokeWaypoints(WAYPOINTS);
+  ctx.setLineDash([]);
+}
+function drawEntry() {
+  ctx.fillStyle = '#241a10';
+  ctx.strokeStyle = '#4a3320';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.ellipse(ENTRY.x - 18, ENTRY.y, 14, PATH_WIDTH / 2 - 4, 0, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+}
+
+// Castle gate visibly crumbles as HP drops - cracks spread and the banner
+// droops - so damage reads at a glance, not just from the HUD number.
+function drawGoal() {
+  const gx = GOAL.x, gy = GOAL.y;
+  const healthT = clampNum(castleHp / preset.startHp, 0, 1);
+
+  ctx.fillStyle = 'rgba(90,90,100,0.9)';
+  ctx.beginPath(); ctx.roundRect(gx - 44, gy - 80, 26, 80, 3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(gx + 18, gy - 80, 26, 80, 3); ctx.fill();
+  for (const tx of [gx - 44, gx + 18]) {
+    for (let i = 0; i < 3; i++) ctx.fillRect(tx + i * 9, gy - 92, 6, 12);
+  }
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2;
+  ctx.strokeRect(gx - 44, gy - 80, 26, 80);
+  ctx.strokeRect(gx + 18, gy - 80, 26, 80);
+
+  const doorColor = lerp2Color([120, 84, 48], [58, 40, 26], 1 - healthT);
+  ctx.fillStyle = doorColor;
+  ctx.beginPath(); ctx.roundRect(gx - 18, gy - 58, 36, 58, [10, 10, 0, 0]); ctx.fill();
+  ctx.strokeStyle = '#241a10'; ctx.lineWidth = 2;
+  ctx.stroke();
+
+  if (healthT < 0.85) {
+    const crackSeeds = [[-30, -20, -18, 6], [12, -24, 24, 0], [-4, -6, 6, 20], [30, -14, 20, 12]];
+    const crackCount = Math.ceil((1 - healthT) * crackSeeds.length);
+    ctx.strokeStyle = 'rgba(10,6,2,0.65)';
+    ctx.lineWidth = 1.4;
+    for (let i = 0; i < crackCount; i++) {
+      const c = crackSeeds[i];
+      ctx.beginPath(); ctx.moveTo(gx + c[0], gy + c[1]); ctx.lineTo(gx + c[2], gy + c[3]); ctx.stroke();
+    }
+  }
+
+  const droop = (1 - healthT) * 0.9;
+  ctx.strokeStyle = '#4a3320'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(gx, gy - 92); ctx.lineTo(gx, gy - 112); ctx.stroke();
+  ctx.fillStyle = healthT > 0.35 ? '#c9853a' : '#6b4a1e';
+  ctx.beginPath();
+  ctx.moveTo(gx, gy - 112);
+  ctx.lineTo(gx + 20, gy - 112 + droop * 8);
+  ctx.lineTo(gx, gy - 100 + droop * 4);
+  ctx.closePath();
   ctx.fill();
 
-  // Health bar above the ramparts - the clearest "how close am I to losing" readout
-  const hpFrac = clamp(castleHp / preset.startHp, 0, 1);
-  const barW = CASTLE_W, barX = bx, barY = by - 116;
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-  ctx.fillRect(barX, barY, barW, 6);
-  ctx.fillStyle = hpFrac > 0.4 ? '#7cb342' : '#e6543b';
-  ctx.fillRect(barX, barY, barW * hpFrac, 6);
-  ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1;
-  ctx.strokeRect(barX, barY, barW, 6);
-}
-
-function drawLauncher() {
-  const px = LAUNCHER.x, py = LAUNCHER.y - 14;
-  ctx.save();
-
-  ctx.fillStyle = '#4a3320';
-  ctx.fillRect(LAUNCHER.x - 34, GROUND_Y - 6, 20, 6);
-  ctx.fillRect(LAUNCHER.x + 10, GROUND_Y - 6, 20, 6);
-
-  ctx.strokeStyle = '#6b4a2b';
-  ctx.lineWidth = 7;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(LAUNCHER.x - 28, GROUND_Y - 4);
-  ctx.lineTo(px, py);
-  ctx.lineTo(LAUNCHER.x + 24, GROUND_Y - 4);
-  ctx.stroke();
-  ctx.lineCap = 'butt';
-
-  ctx.strokeStyle = '#5b3d22';
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(LAUNCHER.x - 18, GROUND_Y - 26);
-  ctx.lineTo(LAUNCHER.x + 15, GROUND_Y - 26);
-  ctx.stroke();
-
-  let longDir;
-  if (aiming) {
-    longDir = { x: -Math.cos(aimAngle), y: -Math.sin(aimAngle) };
-  } else {
-    const m = Math.hypot(0.85, 0.45);
-    longDir = { x: -0.85 / m, y: 0.45 / m };
-  }
-  const LONG_ARM = 34, SHORT_ARM = 15;
-  const tipX = px + longDir.x * LONG_ARM, tipY = py + longDir.y * LONG_ARM;
-  const cwX = px - longDir.x * SHORT_ARM, cwY = py - longDir.y * SHORT_ARM;
-
-  ctx.strokeStyle = '#3a2814';
-  ctx.lineWidth = 4.5;
-  ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(cwX, cwY); ctx.lineTo(tipX, tipY); ctx.stroke();
-  ctx.lineCap = 'butt';
-
-  ctx.save();
-  ctx.translate(cwX, cwY);
-  ctx.rotate(Math.atan2(longDir.y, longDir.x));
-  ctx.fillStyle = '#5a5a5a';
-  ctx.fillRect(-7, -7, 14, 14);
-  ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 1;
-  ctx.strokeRect(-7, -7, 14, 14);
-  ctx.restore();
-
-  ctx.fillStyle = '#2a2a2a';
-  ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
-
-  if (!projectile && reloadTimer <= 0) {
-    ctx.strokeStyle = '#3a2814';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(tipX - 4, tipY); ctx.lineTo(tipX, tipY + 9); ctx.lineTo(tipX + 4, tipY);
-    ctx.stroke();
-    const grad = ctx.createLinearGradient(tipX - 7, tipY, tipX + 7, tipY + 16);
-    grad.addColorStop(0, '#6a6a6a'); grad.addColorStop(1, '#3a3a3a');
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(tipX, tipY + 9, 7, 0, Math.PI * 2); ctx.fill();
-  } else if (reloadTimer > 0) {
-    const frac = 1 - reloadTimer / reloadDuration();
-    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(px, py, 20, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2);
-    ctx.stroke();
-  }
-
-  ctx.restore();
-}
-
-function drawAimGuide() {
-  if (!aiming || aimPower <= 0.02) return;
-  const speed = aimPower * MAX_LAUNCH_SPEED;
-  let x = LAUNCHER.x, y = LAUNCHER.y;
-  let vx = Math.cos(aimAngle) * speed, vy = Math.sin(aimAngle) * speed;
-  ctx.fillStyle = 'rgba(255,255,255,0.75)';
-  for (let i = 0; i < 14; i++) {
-    const t = i * 0.045;
-    const px = x + vx * t;
-    const py = y + vy * t + 0.5 * GRAVITY * t * t;
-    if (py > GROUND_Y) break;
-    ctx.beginPath(); ctx.arc(px, py, 2.6, 0, Math.PI * 2); ctx.fill();
-  }
-  ctx.strokeStyle = 'rgba(230,57,70,0.8)';
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(LAUNCHER.x, LAUNCHER.y);
-  ctx.lineTo(LAUNCHER.x - Math.cos(aimAngle) * aimPower * MAX_PULL, LAUNCHER.y - Math.sin(aimAngle) * aimPower * MAX_PULL);
-  ctx.stroke();
-}
-
-function drawEnemies() {
-  for (const e of enemies) {
-    const def = ENEMY_TYPES[e.type];
-    const bob = Math.sin(performance.now() / 140 + e.bobPhase) * def.bounceAmp;
-    ctx.save();
-    ctx.translate(e.x, e.y + bob);
-    const grad = ctx.createLinearGradient(-def.size, -def.size, def.size, def.size);
-    grad.addColorStop(0, def.color); grad.addColorStop(1, def.darkColor);
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(0, 0, def.size, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
-    if (e.maxHp > 1) {
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fillRect(-def.size, -def.size - 9, def.size * 2, 3);
-      ctx.fillStyle = '#4caf50';
-      ctx.fillRect(-def.size, -def.size - 9, def.size * 2 * (e.hp / e.maxHp), 3);
-    }
-    ctx.restore();
-  }
-}
-
-function drawProjectile() {
-  if (!projectile) return;
-  ctx.save();
-  ctx.translate(projectile.x, projectile.y);
-  ctx.rotate(projectile.spin);
-  ctx.fillStyle = '#4a4a4a';
-  ctx.beginPath(); ctx.arc(0, 0, PROJECTILE_R, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(-4, -4); ctx.lineTo(4, 4); ctx.stroke();
-  ctx.restore();
-}
-
-function drawParticles() {
-  for (const p of particles) {
-    const t = p.life / p.maxLife;
-    ctx.fillStyle = p.color;
-    ctx.globalAlpha = 1 - t;
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+  if (goalHitFlash > 0) {
+    ctx.globalAlpha = (goalHitFlash / 0.4) * 0.5;
+    ctx.fillStyle = '#e6543b';
+    ctx.beginPath(); ctx.roundRect(gx - 44, gy - 92, 88, 92, 6); ctx.fill();
     ctx.globalAlpha = 1;
   }
 }
+function lerp2Color(a, b, t) {
+  return 'rgb(' + Math.round(lerp(a[0], b[0], t)) + ',' + Math.round(lerp(a[1], b[1], t)) + ',' + Math.round(lerp(a[2], b[2], t)) + ')';
+}
+
+function drawScout(bob) {
+  ctx.fillStyle = '#c9a15a';
+  ctx.beginPath(); ctx.ellipse(0, bob, 6, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#7a5a24'; ctx.lineWidth = 1.2; ctx.stroke();
+  ctx.fillStyle = '#e8c9a8';
+  ctx.beginPath(); ctx.arc(0, bob - 8, 3.4, 0, Math.PI * 2); ctx.fill();
+}
+function drawSoldier(bob) {
+  ctx.fillStyle = '#8a3a2a';
+  ctx.beginPath(); ctx.roundRect(-6, bob - 6, 12, 13, 3); ctx.fill();
+  ctx.strokeStyle = '#4a1a12'; ctx.lineWidth = 1.3; ctx.stroke();
+  ctx.fillStyle = '#e8c9a8';
+  ctx.beginPath(); ctx.arc(0, bob - 10, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#c0c0c8'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.moveTo(7, bob - 4); ctx.lineTo(12, bob - 12); ctx.stroke();
+}
+function drawShieldman(bob) {
+  ctx.fillStyle = '#5a6a7a';
+  ctx.beginPath(); ctx.roundRect(-7, bob - 7, 14, 15, 3); ctx.fill();
+  ctx.strokeStyle = '#2a343c'; ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.fillStyle = '#e8c9a8';
+  ctx.beginPath(); ctx.arc(0, bob - 12, 4.2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#7a4a1e';
+  ctx.beginPath(); ctx.ellipse(-9, bob - 2, 4, 8, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#3a2410'; ctx.lineWidth = 1; ctx.stroke();
+}
+function drawSiegeTower(bob) {
+  ctx.fillStyle = '#6b4a2b';
+  ctx.beginPath(); ctx.roundRect(-13, bob - 20, 26, 26, 2); ctx.fill();
+  ctx.strokeStyle = '#3a281a'; ctx.lineWidth = 1.6; ctx.stroke();
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)'; ctx.lineWidth = 1;
+  for (let i = 1; i < 3; i++) { ctx.beginPath(); ctx.moveTo(-13, bob - 20 + i * 8.6); ctx.lineTo(13, bob - 20 + i * 8.6); ctx.stroke(); }
+  ctx.fillStyle = '#2a2018';
+  ctx.beginPath(); ctx.arc(-8, bob + 8, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(8, bob + 8, 4, 0, Math.PI * 2); ctx.fill();
+}
+function drawUnit(u) {
+  const pos = pointAtDistance(u.path, u.dist);
+  const bob = Math.sin(elapsedTime * 8 + u.bobPhase) * 1.4;
+  ctx.save();
+  ctx.translate(pos.x, pos.y);
+  ctx.rotate(pos.angle);
+  if (u.type === 'scout') drawScout(bob);
+  else if (u.type === 'soldier') drawSoldier(bob);
+  else if (u.type === 'shieldman') drawShieldman(bob);
+  else drawSiegeTower(bob);
+  ctx.restore();
+
+  if (u.hp < u.maxHp) {
+    const barW = 18;
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(pos.x - barW / 2, pos.y - 18, barW, 3);
+    ctx.fillStyle = '#e6543b';
+    ctx.fillRect(pos.x - barW / 2, pos.y - 18, barW * clampNum(u.hp / u.maxHp, 0, 1), 3);
+  }
+}
+
+function drawArcherIcon(size) {
+  ctx.fillStyle = '#7a5a34';
+  ctx.beginPath(); ctx.roundRect(-size * 0.35, -size * 0.2, size * 0.7, size * 1.1, size * 0.1); ctx.fill();
+  ctx.strokeStyle = '#4a3320'; ctx.lineWidth = size * 0.1; ctx.stroke();
+  ctx.strokeStyle = '#c9853a'; ctx.lineWidth = size * 0.14;
+  ctx.beginPath(); ctx.arc(0, -size * 0.55, size * 0.42, -0.9, 0.9); ctx.stroke();
+}
+function drawCannonIcon(size) {
+  ctx.fillStyle = '#4a4a52';
+  ctx.beginPath(); ctx.roundRect(-size * 0.15, -size * 1.05, size * 0.9, size * 0.45, size * 0.15); ctx.fill();
+  ctx.fillStyle = '#2a2a30';
+  ctx.beginPath(); ctx.arc(0, -size * 0.3, size * 0.42, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#1a1a1e'; ctx.lineWidth = size * 0.08; ctx.stroke();
+}
+function drawCatapultIcon(size) {
+  ctx.strokeStyle = '#5a3a1e'; ctx.lineWidth = size * 0.16;
+  ctx.beginPath(); ctx.moveTo(-size * 0.5, size * 0.3); ctx.lineTo(size * 0.15, -size * 0.9); ctx.stroke();
+  ctx.fillStyle = '#c9853a';
+  ctx.beginPath(); ctx.arc(size * 0.15, -size * 0.9, size * 0.22, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#3a2814'; ctx.lineWidth = size * 0.1;
+  ctx.beginPath(); ctx.moveTo(-size * 0.55, size * 0.3); ctx.lineTo(size * 0.55, size * 0.3); ctx.stroke();
+}
+function drawTrebuchetIcon(size) {
+  ctx.strokeStyle = '#5a3a1e'; ctx.lineWidth = size * 0.18;
+  ctx.beginPath(); ctx.moveTo(0, size * 0.4); ctx.lineTo(0, -size * 0.6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-size * 0.7, -size * 0.15); ctx.lineTo(size * 0.6, -size * 0.9); ctx.stroke();
+  ctx.fillStyle = '#5a5a5a';
+  ctx.beginPath(); ctx.arc(-size * 0.7, -size * 0.15, size * 0.2, 0, Math.PI * 2); ctx.fill();
+}
+function drawDefenceIcon(type, cx, cy, size) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  if (type === 'cannon') drawCannonIcon(size);
+  else if (type === 'catapult') drawCatapultIcon(size);
+  else if (type === 'trebuchet') drawTrebuchetIcon(size);
+  else drawArcherIcon(size);
+  ctx.restore();
+}
+
+function drawDefences() {
+  for (const d of defences) {
+    const selected = d === selectedDefence;
+    ctx.fillStyle = selected ? 'rgba(255,183,3,0.12)' : 'rgba(255,255,255,0.055)';
+    ctx.beginPath(); ctx.arc(d.x, d.y, d.range, 0, Math.PI * 2); ctx.fill();
+    if (selected) {
+      ctx.strokeStyle = 'rgba(255,183,3,0.8)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(d.x, d.y, DEFENCE_RADIUS + 6, 0, Math.PI * 2); ctx.stroke();
+    }
+    drawDefenceIcon(d.type, d.x, d.y + DEFENCE_RADIUS * 0.6, DEFENCE_RADIUS);
+    if (d.level > 1) {
+      ctx.fillStyle = '#ffb703';
+      ctx.font = 'bold 9px Arial';
+      ctx.textAlign = 'center';
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 2;
+      const label = 'Lv' + d.level;
+      ctx.strokeText(label, d.x, d.y - DEFENCE_RADIUS - 4);
+      ctx.fillText(label, d.x, d.y - DEFENCE_RADIUS - 4);
+    }
+  }
+}
+
+function drawProjectiles() {
+  for (const pr of projectiles) {
+    if (pr.defType === 'archer') {
+      ctx.strokeStyle = '#f2e6c8'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(pr.x - 4, pr.y); ctx.lineTo(pr.x + 4, pr.y); ctx.stroke();
+    } else {
+      ctx.fillStyle = pr.defType === 'trebuchet' ? '#4a4a4a' : '#e0a24a';
+      ctx.beginPath(); ctx.arc(pr.x, pr.y, pr.defType === 'trebuchet' ? 4.5 : 3.5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+}
+
 function drawFx() {
   for (const f of fx) {
     const t = f.age / f.life;
-    ctx.strokeStyle = f.color;
-    ctx.lineWidth = 2.5;
     ctx.globalAlpha = 1 - t;
+    ctx.strokeStyle = f.color; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.arc(f.x, f.y, f.maxRadius * t, 0, Math.PI * 2); ctx.stroke();
-    ctx.globalAlpha = 1;
   }
+  ctx.globalAlpha = 1;
 }
-function drawPopups() {
-  ctx.textAlign = 'center';
-  ctx.font = 'bold 13px Arial';
-  for (const p of popups) {
-    const t = p.t / 900;
+function drawParticles() {
+  for (const p of particles) {
+    const t = p.age / p.life;
     ctx.globalAlpha = 1 - t;
     ctx.fillStyle = p.color;
-    ctx.fillText(p.text, p.x, p.y - t * 26);
-    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2.6 * (1 - t * 0.5), 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawUpgradePanel() {
+  if (!selectedDefence || !defences.includes(selectedDefence)) { selectedDefence = null; return; }
+  const d = selectedDefence;
+  const def = DEFENCE_TYPES[d.type];
+  const p = upgradePanelRect(d);
+  const maxed = d.level >= MAX_LEVEL;
+  const cost = maxed ? 0 : upgradeCost(d);
+  const affordable = gold >= cost;
+
+  ctx.fillStyle = 'rgba(16,10,4,0.88)';
+  ctx.beginPath(); ctx.roundRect(p.x, p.y, p.w, p.h, 10); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  ctx.fillStyle = '#f4e8d0';
+  ctx.fillText(def.name + ' Lv.' + d.level, p.x + p.w / 2, p.y + 18);
+
+  ctx.font = '10px Arial';
+  ctx.fillStyle = 'rgba(244,232,208,0.75)';
+  ctx.fillText('DMG ' + d.damage.toFixed(1) + '  •  RNG ' + Math.round(d.range), p.x + p.w / 2, p.y + 33);
+
+  const btn = upgradeButtonRect(d);
+  ctx.fillStyle = maxed ? 'rgba(255,255,255,0.08)' : (affordable ? 'rgba(201,133,58,0.45)' : 'rgba(255,255,255,0.08)');
+  ctx.beginPath(); ctx.roundRect(btn.x, btn.y, btn.w, btn.h, 8); ctx.fill();
+  ctx.strokeStyle = maxed ? 'rgba(255,255,255,0.25)' : (affordable ? '#ffb703' : 'rgba(255,255,255,0.3)');
+  ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.font = 'bold 10.5px Arial';
+  ctx.fillStyle = maxed ? 'rgba(244,232,208,0.5)' : '#f4e8d0';
+  ctx.fillText(maxed ? 'MAX LEVEL' : 'Upgrade — ' + cost + ' 🪙', btn.x + btn.w / 2, btn.y + btn.h / 2 + 4);
+}
+
+function drawPlacementPreview() {
+  if (!selectedType || !pointerField) return;
+  const def = DEFENCE_TYPES[selectedType];
+  const valid = gold >= defenceCost(selectedType) && isValidPlacement(pointerField.x, pointerField.y);
+  ctx.fillStyle = valid ? 'rgba(201,133,58,0.18)' : 'rgba(230,84,59,0.16)';
+  ctx.beginPath(); ctx.arc(pointerField.x, pointerField.y, def.range, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = valid ? 'rgba(255,183,3,0.7)' : 'rgba(230,84,59,0.7)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(pointerField.x, pointerField.y, DEFENCE_RADIUS, 0, Math.PI * 2); ctx.stroke();
+}
+function drawDenialMarker() {
+  if (!denialMarker) return;
+  const a = clampNum(denialMarker.timer / 0.35, 0, 1);
+  ctx.strokeStyle = 'rgba(230,84,59,' + (a * 0.9).toFixed(2) + ')';
+  ctx.lineWidth = 3;
+  const r = 14 + (1 - a) * 8;
+  ctx.beginPath(); ctx.moveTo(denialMarker.x - r, denialMarker.y - r); ctx.lineTo(denialMarker.x + r, denialMarker.y + r);
+  ctx.moveTo(denialMarker.x + r, denialMarker.y - r); ctx.lineTo(denialMarker.x - r, denialMarker.y + r); ctx.stroke();
+}
+function drawPopups() {
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  for (const p of popups) {
+    const w = ctx.measureText(p.text).width;
+    ctx.globalAlpha = clampNum(p.life / 36, 0, 1);
+    ctx.fillStyle = 'rgba(16,10,4,0.7)';
+    ctx.beginPath(); ctx.roundRect(p.x - w / 2 - 8, p.y - 13, w + 16, 19, 9); ctx.fill();
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y + 1);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawTray() {
+  const trayY = H - TRAY_H;
+  ctx.fillStyle = '#2a1f14';
+  ctx.fillRect(0, trayY, W, TRAY_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(0, trayY, W, 3);
+
+  for (const key of DEFENCE_ORDER) {
+    const def = DEFENCE_TYPES[key];
+    const r = TRAY_BUTTONS[key];
+    const cost = defenceCost(key);
+    const affordable = gold >= cost;
+    const selected = selectedType === key;
+
+    ctx.fillStyle = selected ? 'rgba(201,133,58,0.35)' : 'rgba(255,255,255,0.08)';
+    ctx.beginPath(); ctx.roundRect(r.x, r.y, r.w, r.h, 9); ctx.fill();
+    ctx.strokeStyle = selected ? '#ffb703' : 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2; ctx.stroke();
+
+    drawDefenceIcon(key, r.x + r.w / 2, r.y + 15, 9);
+
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 9px Arial';
+    ctx.fillStyle = affordable ? '#f4e8d0' : 'rgba(244,232,208,0.4)';
+    ctx.fillText(def.name.split(' ')[0], r.x + r.w / 2, r.y + 30);
+    ctx.font = 'bold 9px Arial';
+    ctx.fillStyle = affordable ? '#ffb703' : 'rgba(255,183,3,0.4)';
+    ctx.fillText(cost + ' 🪙', r.x + r.w / 2, r.y + 41);
   }
 }
 
 function drawHud() {
-  ctx.font = 'bold 14px Arial';
-  ctx.fillStyle = 'white';
-  ctx.strokeStyle = 'black';
-  ctx.lineWidth = 3;
+  ctx.fillStyle = '#241a10';
+  ctx.fillRect(0, 0, W, HUD_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(0, HUD_H - 3, W, 3);
+
+  ctx.font = 'bold 15px Arial';
+  ctx.fillStyle = '#f4e8d0';
   ctx.textAlign = 'left';
-  const goldText = '💰 ' + gold;
-  ctx.strokeText(goldText, 14, 24);
-  ctx.fillText(goldText, 14, 24);
+  ctx.fillText('🏰 ' + Math.round(castleHp) + '/' + preset.startHp, 14, 24);
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = 'rgba(244,232,208,0.75)';
+  ctx.fillText('Kills: ' + kills, 14, 44);
+
+  ctx.font = 'bold 15px Arial';
+  ctx.fillStyle = '#ffb703';
   ctx.textAlign = 'right';
-  const scoreText = 'Score: ' + currentScore();
-  ctx.strokeText(scoreText, W - 14, 24);
-  ctx.fillText(scoreText, W - 14, 24);
+  ctx.fillText(gold + ' 🪙', W - 14, 24);
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = 'rgba(244,232,208,0.75)';
+  ctx.fillText('Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT, W - 14, 44);
+}
+
+function drawWaveBanner() {
+  let text = null;
+  if (waveState === 'countdown') text = 'Wave ' + (waveIndex + 1) + ' / ' + WAVE_COUNT + ' - starting in ' + Math.ceil(countdownTimer) + 's';
+  else if (waveState === 'cleared') text = 'Wave ' + (waveIndex + 1) + ' cleared!';
+  if (!text) return;
+  ctx.font = 'bold 15px Arial';
   ctx.textAlign = 'center';
-  ctx.font = 'bold 12px Arial';
-  const waveText = waveState === 'countdown'
-    ? 'Wave ' + (waveIndex + 1) + '/' + WAVE_COUNT + ' in ' + Math.ceil(countdownTimer) + 's'
-    : 'Wave ' + (waveIndex + 1) + '/' + WAVE_COUNT;
-  ctx.strokeText(waveText, W / 2, 44);
-  ctx.fillText(waveText, W / 2, 44);
-}
-
-function drawUpgradeTray() {
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-  ctx.fillRect(0, H - TRAY_H, W, TRAY_H);
-  for (const key of UPGRADE_ORDER) {
-    const r = TRAY_BUTTONS[key];
-    const u = UPGRADES[key];
-    const lvl = upgradeLevels[key];
-    const cost = upgradeCost(key);
-    const maxed = cost === null;
-    const affordable = !maxed && gold >= cost;
-    ctx.fillStyle = maxed ? 'rgba(255,255,255,0.06)' : affordable ? 'rgba(255,183,3,0.22)' : 'rgba(255,255,255,0.1)';
-    ctx.strokeStyle = maxed ? 'rgba(255,255,255,0.2)' : affordable ? '#ffb703' : 'rgba(255,255,255,0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.roundRect(r.x, r.y, r.w, r.h, 8); ctx.fill(); ctx.stroke();
-
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 11px Arial';
-    ctx.fillText(u.name + ' Lv' + lvl, r.x + r.w / 2, r.y + 14);
-    ctx.font = 'bold 11px Arial';
-    ctx.fillStyle = maxed ? 'rgba(255,255,255,0.5)' : '#ffe28a';
-    ctx.fillText(maxed ? 'MAX' : '💰' + cost, r.x + r.w / 2, r.y + 30);
-  }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-  drawSky();
-  if (state === 'menu') { ctx.fillStyle = '#3a2814'; ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y); return; }
-  ctx.save();
-  const mag = shakeTimer > 0 ? (shakeTimer / shakeDuration) * shakeMag : 0;
-  if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
-  drawGround();
-  drawCastle();
-  drawLauncher();
-  drawEnemies();
-  drawProjectile();
-  drawAimGuide();
-  drawFx();
-  drawParticles();
-  drawPopups();
-  ctx.restore();
-  drawHud();
-  drawUpgradeTray();
+  const w = ctx.measureText(text).width;
+  const cx = W / 2, cy = HUD_H + 30;
+  ctx.fillStyle = 'rgba(16,10,4,0.72)';
+  ctx.beginPath(); ctx.roundRect(cx - w / 2 - 14, cy - 15, w + 28, 28, 14); ctx.fill();
+  ctx.fillStyle = waveState === 'cleared' ? '#a8d86a' : '#f4e8d0';
+  ctx.fillText(text, cx, cy + 5);
 }
 
 let lastFrameTime = null;
@@ -930,10 +1232,49 @@ function loop(now) {
   let dt = (now - lastFrameTime) / 1000;
   lastFrameTime = now;
   dt = Math.min(dt, 0.05);
+
   update(dt);
-  draw();
+
+  ctx.clearRect(0, 0, W, H);
+  drawBg();
+  drawPath();
+  drawEntry();
+  drawGoal();
+  drawDefences();
+  for (const u of units) drawUnit(u);
+  drawProjectiles();
+  drawFx();
+  drawParticles();
+  drawPlacementPreview();
+  drawDenialMarker();
+  drawPopups();
+  drawWaveBanner();
+  drawTray();
+  drawUpgradePanel();
+  drawHud();
+
   requestAnimationFrame(loop);
 }
+
+function buildEffectivenessTable() {
+  const unitKeys = ['scout', 'soldier', 'shieldman', 'siegeTower'];
+  let html = '<table class="effTable"><thead><tr><th></th>'
+    + unitKeys.map((k) => '<th>' + UNIT_TYPES[k].name + '</th>').join('')
+    + '</tr></thead><tbody>';
+  for (const dKey of DEFENCE_ORDER) {
+    const def = DEFENCE_TYPES[dKey];
+    html += '<tr><th>' + def.name.split(' ')[0] + '</th>';
+    for (const uKey of unitKeys) {
+      const mult = def.effectiveness[uKey];
+      const cls = mult >= 1.3 ? 'eff-strong' : mult <= 0.6 ? 'eff-weak' : 'eff-normal';
+      html += '<td class="' + cls + '">' + mult.toFixed(2) + 'x</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  effTableHolder.innerHTML = html;
+}
+buildEffectivenessTable();
 
 showMenu();
 requestAnimationFrame(loop);
