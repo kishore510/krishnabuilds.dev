@@ -98,7 +98,7 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Hoops</h1>
-    <p id="subtitle">Swipe up to shoot — the hoop won't stay still for long</p>
+    <p id="subtitle">Swipe up to shoot — get the power AND the aim right</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <button id="startBtn" type="button">Start</button>
@@ -186,18 +186,43 @@ function saveBest(v) { try { sessionStorage.setItem('hoopsBest', v); } catch (e)
 // --- World: front-on view - the hoop faces the player instead of sitting
 // off to one side, so the rim is drawn as a squashed ellipse (a circle seen
 // from below) and the ball's job is lining up BOTH the arc and the left-right
-// aim on a target that starts still and gets progressively less cooperative. ---
+// aim on a target that starts still and gets progressively less cooperative.
+//
+// Ball/rim proportions are the real ones: a regulation ball is ~24cm across
+// a ~45.7cm rim, roughly 52-53% of the rim's width - not the ~30-40% it was
+// before, which read as a golf ball.
+//
+// The flight itself uses a two-component model instead of one 2D parabola:
+// `depthT` (0->1, how far along the shot is toward the hoop's distance)
+// advances at a fixed rate independent of shot power, while `archHeight`
+// (a real gravity arc, vy0 set by swipe strength) is a SEPARATE vertical
+// offset layered on top and scaled down with depth. Conflating "distance
+// covered" and "arc height" into a single Y-axis parabola (the old model)
+// is what produced the "doesn't look like it's going in, last-second drop"
+// complaint - a shot's height and how far it's traveled toward the hoop
+// are different physical quantities, and real perspective-shooter games
+// (the "front-on" basketball genre this is drawing from) keep them
+// separate for exactly this reason. This also means shot POWER now has to
+// be right, not just direction - too weak comes up short, too strong
+// sails past/hits the board, matching how the real shot works. ---
 const GRAVITY = 780;
-const BALL_R = 19;
+const BALL_R = 21;
 const START_POS = { x: 180, y: 458 };
 const TIME_LIMIT = 60000;
 const BONUS_TIME = 5000;
 const RIM_R = 4.5;
 const RIM_RESTITUTION = 0.5;
 const BOARD_RESTITUTION = 0.45;
-const SWIPE_SENSITIVITY = 2.4;
-const MAX_SHOT_SPEED = 780;
 const MIN_SWIPE_DIST = 14;
+
+const DEPTH_DURATION = 0.82;        // seconds for a shot to reach the hoop's distance
+const ARC_GRAVITY = 820;
+const REFERENCE_SWIPE_DIST = 110;   // swipe length that produces "perfect" arc power
+const PERFECT_VY0 = 0.5 * ARC_GRAVITY * DEPTH_DURATION; // returns archHeight to 0 exactly at DEPTH_DURATION
+const HORIZONTAL_SENSITIVITY = 2.3;
+const MAX_VX = 480;
+const HOOP_SCALE = 0.56;            // how small the ball renders once it reaches the hoop's depth
+const HEIGHT_TOLERANCE = 16;        // how close the arc's height has to be to the rim when the ball arrives
 
 // hoopY is now a variable, not a constant - the hoop moves on both axes, and
 // the backboard/net are positioned relative to it so they track wherever the
@@ -275,7 +300,7 @@ function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 });
 function showMenu() {
   state = 'menu';
   title.textContent = 'Hoops';
-  subtitle.textContent = 'Swipe up to shoot — the hoop won’t stay still for long';
+  subtitle.textContent = 'Swipe up to shoot — get the power AND the aim right';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest();
   startBtn.textContent = 'Start';
@@ -326,14 +351,25 @@ canvas.addEventListener('pointerup', (e) => {
   dragStart = null;
   dragCurrent = null;
   if (dist < MIN_SWIPE_DIST || dy >= -2) return;
-  const speed = clamp(dist * SWIPE_SENSITIVITY, 0, MAX_SHOT_SPEED);
-  const ang = Math.atan2(dy, dx);
+  launchBall(dx, dy, dist);
+});
+
+// The target Y is captured once, at launch - the ball flies toward where
+// the hoop WAS when you released, not where it currently is. If the hoop
+// has moved by the time the ball arrives (stage 2/3), that's the shot
+// missing because you didn't lead it, not a bug.
+function launchBall(dx, dy, dist) {
+  const powerRatio = clamp(dist / REFERENCE_SWIPE_DIST, 0.55, 1.6);
+  const vx = clamp(dx * HORIZONTAL_SENSITIVITY, -MAX_VX, MAX_VX);
   ball = {
     x: START_POS.x, y: START_POS.y,
-    vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed,
+    vx, vy: 0,
+    mode: 'flight', depthT: 0, flightTime: 0,
+    vy0: PERFECT_VY0 * powerRatio, targetY: hoopY,
+    currentScale: 1, age: 0,
     spin: 0, touchedRim: false, touchedBoard: false, scored: false, sinkTimer: 0, prevY: START_POS.y
   };
-});
+}
 
 function circlePointCollide(pt, restitution) {
   const dx = ball.x - pt.x, dy = ball.y - pt.y;
@@ -409,38 +445,82 @@ function updateBall(dt) {
   }
 
   ball.prevY = ball.y;
-  ball.vy += GRAVITY * dt;
-  ball.x += ball.vx * dt;
-  ball.y += ball.vy * dt;
-  ball.spin += ball.vx * dt * 0.05;
+  ball.age += dt;
 
-  const speed = Math.hypot(ball.vx, ball.vy);
+  if (ball.mode === 'flight') {
+    // On rails until something interrupts it: depthT is distance-to-hoop
+    // progress (constant rate - power doesn't change how LONG the shot
+    // takes, only how high it arcs), archHeight is a real gravity arc
+    // layered on top and scaled down with depth so it reads as genuine
+    // perspective rather than a flat 2D bounce.
+    ball.flightTime += dt;
+    ball.depthT = ball.flightTime / DEPTH_DURATION;
+    const baseY = lerp(START_POS.y, ball.targetY, ball.depthT);
+    const scale = clamp(lerp(1, HOOP_SCALE, ball.depthT), 0.35, 1.3);
+    const archHeight = ball.vy0 * ball.flightTime - 0.5 * ARC_GRAVITY * ball.flightTime * ball.flightTime;
+    ball.x += ball.vx * dt;
+    ball.y = baseY - archHeight * scale;
+    ball.currentScale = scale;
+    ball.spin += ball.vx * dt * 0.05;
+  } else {
+    // Free physics once something's been hit - the smooth flight curve no
+    // longer applies once the ball's course has been knocked off it.
+    ball.vy += GRAVITY * dt;
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
+    ball.spin += ball.vx * dt * 0.05;
+  }
+
+  const frameVy = ball.mode === 'free' ? ball.vy : (ball.y - ball.prevY) / dt;
+  const speed = Math.hypot(ball.vx, frameVy);
   // Slower ball = less energy to bounce with = more likely to catch on the
   // rim and wobble/roll instead of cleanly deflecting - real physics, and
   // exactly what makes borderline shots feel alive instead of binary.
   const rimRestitution = clamp(RIM_RESTITUTION * (0.4 + speed / 600), 0.18, RIM_RESTITUTION);
+  // circlePointCollide reads/writes ball.vy directly - keep it holding the
+  // real current vertical speed even while in 'flight' mode (where it's
+  // otherwise unused) so a collision this frame has a correct velocity to
+  // bounce from and hand off to 'free' mode with.
+  ball.vy = frameVy;
   for (const pt of rimCollisionPoints()) {
-    if (circlePointCollide(pt, rimRestitution)) { playClank(); break; }
+    if (circlePointCollide(pt, rimRestitution)) {
+      playClank();
+      ball.mode = 'free';
+      break;
+    }
   }
 
   if (!ball.touchedBoard && ball.y > boardTop() && ball.y < boardBottom() && Math.abs(ball.x - hoopX) < BOARD_HALF_W) {
+    ball.mode = 'free';
     ball.y = boardBottom();
     ball.vy = Math.abs(ball.vy) * BOARD_RESTITUTION;
     ball.touchedBoard = true;
     playBoard();
   }
 
-  if (ball.prevY < hoopY && ball.y >= hoopY && ball.vy > 0) {
-    const gapLeft = hoopX - RIM_RX + BALL_R + 2;
-    const gapRight = hoopX + RIM_RX - BALL_R - 2;
-    if (ball.x > gapLeft && ball.x < gapRight) {
+  // Scoring: flight mode is a scripted curve where depth and height are
+  // separate quantities, so "the ball arrived at the rim" isn't a simple Y
+  // line crossing any more (baseY sweeps straight through hoopY regardless
+  // of arc height, so a directional crossing check can never fire
+  // correctly here) - it's "did it get close to the rim's exact height
+  // around the time it reached the rim's distance." Free mode (after a
+  // bounce) is real integrated physics again, so the traditional crossing
+  // check is correct there.
+  const gapLeft = hoopX - RIM_RX + BALL_R + 2;
+  const gapRight = hoopX + RIM_RX - BALL_R - 2;
+  if (ball.mode === 'flight') {
+    if (ball.depthT > 0.93 && ball.depthT < 1.07 && Math.abs(ball.y - hoopY) < HEIGHT_TOLERANCE && ball.x > gapLeft && ball.x < gapRight) {
       ball.scored = true;
       ball.sinkTimer = 0;
       return;
     }
+  } else if (ball.prevY < hoopY && ball.y >= hoopY && ball.x > gapLeft && ball.x < gapRight) {
+    ball.scored = true;
+    ball.sinkTimer = 0;
+    return;
   }
 
-  if (ball.y > H + 30 || ball.x < -30 || ball.x > W + 30) {
+  if (ball.y > H + 30 || ball.x < -30 || ball.x > W + 30 || ball.age > 4) {
     playMiss();
     endShot(false);
   }
@@ -464,7 +544,7 @@ function endGame() {
   const isNewBest = score > best;
   if (isNewBest) saveBest(score);
   title.textContent = "Time's Up!";
-  subtitle.textContent = 'Swipe up to shoot — the hoop won’t stay still for long';
+  subtitle.textContent = 'Swipe up to shoot — get the power AND the aim right';
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Score: ' + score;
   bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
@@ -557,7 +637,11 @@ function drawHoop() {
 
 function ballScale() {
   if (!ball) return 1;
-  return clamp(lerp(0.68, 1.15, (ball.y - hoopY) / (START_POS.y - hoopY)), 0.62, 1.2);
+  // Flight mode already computed the correct depth-based scale each frame;
+  // free mode (post-bounce) has no depthT anymore, so fall back to reading
+  // scale off the ball's screen position instead.
+  if (ball.mode === 'flight') return ball.currentScale;
+  return clamp(lerp(HOOP_SCALE, 1, (ball.y - hoopY) / (START_POS.y - hoopY)), HOOP_SCALE * 0.85, 1.25);
 }
 
 function drawBasketball(x, y, scale, spin) {
@@ -592,16 +676,22 @@ function drawAimHint() {
   const dx = dragCurrent.x - dragStart.x, dy = dragCurrent.y - dragStart.y;
   const dist = Math.hypot(dx, dy);
   if (dist < MIN_SWIPE_DIST || dy >= -2) return;
-  const speed = clamp(dist * SWIPE_SENSITIVITY, 0, MAX_SHOT_SPEED);
-  const ang = Math.atan2(dy, dx);
-  const vx = Math.cos(ang) * speed, vy = Math.sin(ang) * speed;
+  // Traces the same depth+arc formula updateBall() actually flies on, so
+  // the preview is a true prediction rather than an approximation of it.
+  const powerRatio = clamp(dist / REFERENCE_SWIPE_DIST, 0.55, 1.6);
+  const vx = clamp(dx * HORIZONTAL_SENSITIVITY, -MAX_VX, MAX_VX);
+  const vy0 = PERFECT_VY0 * powerRatio;
   ctx.fillStyle = 'rgba(255,255,255,0.7)';
-  for (let i = 1; i <= 12; i++) {
-    const t = i * 0.045;
-    const px = START_POS.x + vx * t;
-    const py = START_POS.y + vy * t + 0.5 * GRAVITY * t * t;
-    if (py > H) break;
-    ctx.beginPath(); ctx.arc(px, py, 2.4, 0, Math.PI * 2); ctx.fill();
+  for (let i = 1; i <= 14; i++) {
+    const depthT = i * 0.07;
+    const flightTime = depthT * DEPTH_DURATION;
+    const baseY = lerp(START_POS.y, hoopY, depthT);
+    const scale = clamp(lerp(1, HOOP_SCALE, depthT), 0.35, 1.3);
+    const archHeight = vy0 * flightTime - 0.5 * ARC_GRAVITY * flightTime * flightTime;
+    const px = START_POS.x + vx * flightTime;
+    const py = baseY - archHeight * scale;
+    if (py > H || depthT > 1.3) break;
+    ctx.beginPath(); ctx.arc(px, py, 2.4 * scale, 0, Math.PI * 2); ctx.fill();
   }
 }
 
