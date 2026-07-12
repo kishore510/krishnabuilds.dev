@@ -8,7 +8,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #d9622c;
+    background: #3a7d8a;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +23,7 @@
   }
   #wrap { position: relative; }
   canvas {
-    background: #ffb96b;
+    background: #8ecdd6;
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     display: block;
@@ -365,6 +365,21 @@ function circlePointCollide(pt, restitution) {
 }
 
 function boardCollide() {
+  // The board is behind the rim, not in front of its opening - a shot rising
+  // straight up through the gap between the rim ends must never touch it, no
+  // matter how high it arcs, or every well-arced shot clangs into the board
+  // before it ever has a chance to fall back through (this was the bug: a
+  // full-width board rect sitting directly above the rim blocked the exact
+  // path a made shot has to travel). Only the "wings" outside the rim's own
+  // opening are solid, so shots that drift wide still bank realistically.
+  // Margin beyond the raw rim half-width because an angled shot's x hasn't
+  // fully "caught up" to its final resting position mid-arc (it's still
+  // linearly interpolating toward the target) - without slack, an on-target
+  // angled shot reads as still outside the corridor at apex and falsely
+  // clangs into the board even though it lands cleanly in the gap moments
+  // later.
+  const BOARD_CORRIDOR = RIM_HALF_W + 22;
+  if (Math.abs(ball.x - hoopX) < BOARD_CORRIDOR) return;
   const bLeft = hoopX - BOARD_HALF_W, bRight = hoopX + BOARD_HALF_W;
   const bTop = boardTop(), bBottom = boardBottom();
   const closestX = clamp(ball.x, bLeft, bRight);
@@ -488,20 +503,16 @@ function endGame() {
   overlay.style.display = 'flex';
 }
 
-// --- Rendering: warm flat-design look. Depth comes from one soft diagonal
-// drop shadow behind the backboard/rim assembly, not a 3D floor or grid. ---
+// --- Rendering: warm, friendly flat-design look. Depth comes from ONE soft
+// diagonal drop shadow sweeping from behind the board, not a 3D floor/grid. ---
 function drawBackdrop() {
-  const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#ffc27a');
-  g.addColorStop(0.6, '#ff9a4d');
-  g.addColorStop(1, '#f2793a');
-  ctx.fillStyle = g;
+  ctx.fillStyle = '#8ecdd6';
   ctx.fillRect(0, 0, W, H);
-  // flat warm floor band (no perspective) just to ground the scene
-  ctx.fillStyle = '#c9622f';
-  ctx.fillRect(0, H - 46, W, 46);
-  ctx.fillStyle = 'rgba(255,255,255,0.12)';
-  ctx.fillRect(0, H - 46, W, 4);
+  // flat floor band (no perspective) just to ground the scene
+  ctx.fillStyle = '#7bbcc6';
+  ctx.fillRect(0, H - 60, W, 60);
+  ctx.fillStyle = '#e8834a';
+  ctx.fillRect(0, H - 60, W, 4);
 }
 
 function roundRectPath(x, y, w, h, r) {
@@ -509,15 +520,18 @@ function roundRectPath(x, y, w, h, r) {
   ctx.roundRect(x, y, w, h, r);
 }
 
-function drawHoopShadow() {
-  const bTop = boardTop(), bBottom = boardBottom();
-  const bw = BOARD_HALF_W * 2 + 10, bx = hoopX - bw / 2, bh = bBottom - bTop + 14;
+function drawDiagonalShadow() {
+  const bTop = boardTop();
+  const bx = hoopX - BOARD_HALF_W, bw = BOARD_HALF_W * 2;
   ctx.save();
-  ctx.fillStyle = 'rgba(60,25,10,0.22)';
-  roundRectPath(bx + 9, bTop + 12, bw, bh, 10);
-  ctx.fill();
+  ctx.fillStyle = 'rgba(40,90,100,0.18)';
   ctx.beginPath();
-  ctx.ellipse(hoopX + 10, hoopY + 12, RIM_HALF_W + 10, 14, 0, 0, Math.PI * 2);
+  ctx.moveTo(bx + bw * 0.25, bTop);
+  ctx.lineTo(bx + bw * 0.9, bTop);
+  ctx.lineTo(W, H * 0.55);
+  ctx.lineTo(W, H);
+  ctx.lineTo(bx - 30, H);
+  ctx.closePath();
   ctx.fill();
   ctx.restore();
 }
@@ -525,92 +539,117 @@ function drawHoopShadow() {
 function drawBackboard() {
   const bTop = boardTop(), bBottom = boardBottom();
   const bw = BOARD_HALF_W * 2, bx = hoopX - BOARD_HALF_W, by = bTop, bh = bBottom - bTop;
-  ctx.fillStyle = '#fff8ef';
+  // drop shadow of the board itself
+  ctx.fillStyle = 'rgba(40,80,90,0.25)';
+  roundRectPath(bx + 6, by + 8, bw, bh, 12);
+  ctx.fill();
+  // board face - soft teal, darker than the backdrop
+  ctx.fillStyle = '#2e7d8a';
   roundRectPath(bx, by, bw, bh, 12);
   ctx.fill();
-  ctx.strokeStyle = '#3d2a1e';
-  ctx.lineWidth = 5;
+  // thick friendly orange frame
+  ctx.strokeStyle = '#e8834a';
+  ctx.lineWidth = 8;
   ctx.lineJoin = 'round';
   roundRectPath(bx, by, bw, bh, 12);
   ctx.stroke();
-  ctx.strokeStyle = '#e8483a';
+  // gold inner target square
+  ctx.strokeStyle = '#f2b04a';
   ctx.lineWidth = 5;
-  roundRectPath(hoopX - 22, by + bh - 30, 44, 22, 5);
+  roundRectPath(hoopX - 26, by + bh - 34, 52, 24, 6);
   ctx.stroke();
+  // soft highlight sheen top-left
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  roundRectPath(bx + 8, by + 8, bw * 0.5, bh * 0.4, 8);
+  ctx.fill();
 
   // short post connecting board to rim, chunky and rounded
-  ctx.strokeStyle = '#c9622f';
+  ctx.strokeStyle = '#e8834a';
   ctx.lineWidth = 7;
   ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(hoopX, bBottom); ctx.lineTo(hoopX, hoopY); ctx.stroke();
 }
 
-const RIM_RX = RIM_HALF_W + 5, RIM_RY = 13;
+const RIM_RX = RIM_HALF_W + 5, RIM_RY = 17;
 
 function drawRimBack() {
-  ctx.strokeStyle = '#c9430f';
-  ctx.lineWidth = 8;
+  const netBottom = hoopY + 46;
+  // net - curved strands tapering inward, drawn behind the ball
+  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  const segs = 8;
+  for (let i = 0; i <= segs; i++) {
+    const t = i / segs;
+    const x = hoopX - RIM_HALF_W + RIM_HALF_W * 2 * t;
+    const bx = hoopX + (x - hoopX) * 0.4;
+    ctx.beginPath();
+    ctx.moveTo(x, hoopY);
+    ctx.quadraticCurveTo((x + bx) / 2, hoopY + (netBottom - hoopY) * 0.6, bx, netBottom);
+    ctx.stroke();
+  }
+  for (let ring = 1; ring <= 3; ring++) {
+    const t = ring / 4;
+    const ry = hoopY + (netBottom - hoopY) * t;
+    const rx = RIM_HALF_W * (1 - 0.55 * t);
+    ctx.beginPath();
+    ctx.ellipse(hoopX, ry, rx, RIM_RY * (1 - 0.4 * t), 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = '#d95f2a';
+  ctx.lineWidth = 9;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.ellipse(hoopX, hoopY, RIM_RX, RIM_RY, 0, Math.PI, Math.PI * 2);
   ctx.stroke();
-
-  // net, drawn mostly behind the ball
-  const netBottom = hoopY + 42;
-  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.85)';
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  for (let i = 0; i <= 6; i++) {
-    const t = i / 6;
-    const x = hoopX - RIM_HALF_W + RIM_HALF_W * 2 * t;
-    const nx = hoopX + (x - hoopX) * 0.32;
-    ctx.beginPath(); ctx.moveTo(x, hoopY); ctx.lineTo(nx, netBottom); ctx.stroke();
-  }
-  for (let i = 1; i <= 2; i++) {
-    const ny = hoopY + (netBottom - hoopY) * (i / 3);
-    const rx = RIM_HALF_W * (1 - i / 3.6) * 0.85;
-    ctx.beginPath(); ctx.ellipse(hoopX, ny, rx, rx * 0.26, 0, 0, Math.PI * 2); ctx.stroke();
-  }
 }
 
 function drawRimFront() {
-  ctx.strokeStyle = '#ff8c1a';
-  ctx.lineWidth = 8;
+  ctx.strokeStyle = '#ff8c42';
+  ctx.lineWidth = 9;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.ellipse(hoopX, hoopY, RIM_RX, RIM_RY, 0, 0, Math.PI);
   ctx.stroke();
-  // bright highlight lip to sell the chunky glossy look
-  ctx.strokeStyle = '#ffc670';
+  // gloss highlight
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.ellipse(hoopX, hoopY, RIM_RX, RIM_RY, 0, 0.25, Math.PI - 0.25);
+  ctx.ellipse(hoopX - 10, hoopY + 2, RIM_RX * 0.5, RIM_RY * 0.55, 0, Math.PI * 0.9, Math.PI * 1.4);
   ctx.stroke();
   // the two collision points, drawn as small solid caps at the rim ends
-  ctx.fillStyle = '#e86a12';
+  ctx.fillStyle = '#e8683a';
   for (const pt of rimPoints()) {
     ctx.beginPath(); ctx.arc(pt.x, pt.y, 6, 0, Math.PI * 2); ctx.fill();
   }
 }
 
-function drawBasketball(x, y, spin, squash) {
+function drawBasketball(x, y, spin, squash, floorShadow) {
+  if (floorShadow) {
+    ctx.fillStyle = 'rgba(40,80,90,0.22)';
+    ctx.beginPath();
+    ctx.ellipse(x, H - 32, BALL_R * 0.9, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(spin);
   ctx.scale(1 / squash, squash);
   const grad = ctx.createRadialGradient(-BALL_R * 0.35, -BALL_R * 0.4, 2, 0, 0, BALL_R * 1.4);
-  grad.addColorStop(0, '#ffa869');
-  grad.addColorStop(0.45, '#f47a2e');
-  grad.addColorStop(1, '#c9500f');
+  grad.addColorStop(0, '#ff9d4d');
+  grad.addColorStop(0.7, '#f07a2e');
+  grad.addColorStop(1, '#d95f1f');
   ctx.fillStyle = grad;
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(90,35,5,0.8)';
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(-BALL_R, 0); ctx.lineTo(BALL_R, 0); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, -BALL_R); ctx.lineTo(0, BALL_R); ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, 0, BALL_R, -0.6, 0.6); ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, 0, BALL_R, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
+  // curved seam lines
+  ctx.strokeStyle = 'rgba(90,40,10,0.7)';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.arc(0, 0, BALL_R, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-BALL_R, 0); ctx.quadraticCurveTo(0, -8, BALL_R, 0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-BALL_R, 0); ctx.quadraticCurveTo(0, 8, BALL_R, 0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, -BALL_R); ctx.quadraticCurveTo(8, 0, 0, BALL_R); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, -BALL_R); ctx.quadraticCurveTo(-8, 0, 0, BALL_R); ctx.stroke();
   // glossy highlight
   ctx.fillStyle = 'rgba(255,255,255,0.35)';
   ctx.beginPath(); ctx.ellipse(-BALL_R * 0.32, -BALL_R * 0.38, BALL_R * 0.28, BALL_R * 0.18, -0.5, 0, Math.PI * 2); ctx.fill();
@@ -620,13 +659,13 @@ function drawBasketball(x, y, spin, squash) {
 function drawBall() {
   if (!ball) {
     const bob = Math.sin(idleT * 2.4) * 2.5;
-    drawBasketball(START_POS.x, START_POS.y + bob, 0, 1);
+    drawBasketball(START_POS.x, START_POS.y + bob, 0, 1, true);
     return;
   }
   // slight squash along the velocity direction for a bit of weight/juice
   const speed = Math.hypot(ball.vx, ball.vy);
   const squash = ball.scored ? 1 : clamp(1 - speed / 4000, 0.9, 1.05);
-  drawBasketball(ball.x, ball.y, ball.spin, squash);
+  drawBasketball(ball.x, ball.y, ball.spin, squash, false);
 }
 
 function drawAimArrow() {
@@ -654,9 +693,12 @@ function drawAimArrow() {
 function drawPopups() {
   ctx.textAlign = 'center';
   ctx.font = 'bold 14px Arial';
+  ctx.strokeStyle = 'rgba(30,60,70,0.6)';
+  ctx.lineWidth = 3;
   for (const p of popups) {
     const t = p.t / 900;
     ctx.globalAlpha = 1 - t;
+    ctx.strokeText(p.text, p.x, p.y - 20 - t * 30);
     ctx.fillStyle = p.color;
     ctx.fillText(p.text, p.x, p.y - 20 - t * 30);
     ctx.globalAlpha = 1;
@@ -664,25 +706,17 @@ function drawPopups() {
 }
 
 function drawHud() {
-  ctx.font = 'bold 16px Arial';
-  ctx.fillStyle = 'white';
-  ctx.strokeStyle = 'rgba(90,35,5,0.9)';
-  ctx.lineWidth = 3;
+  ctx.font = 'bold 22px Arial';
+  ctx.fillStyle = '#1c4a5e';
   ctx.textAlign = 'left';
-  const scoreText = 'Score: ' + score;
-  ctx.strokeText(scoreText, 14, 26);
-  ctx.fillText(scoreText, 14, 26);
+  ctx.fillText('Score  ' + score, 18, 36);
   ctx.textAlign = 'right';
-  const timeText = Math.ceil(timeLeft / 1000) + 's';
-  ctx.strokeText(timeText, W - 14, 26);
-  ctx.fillText(timeText, W - 14, 26);
+  ctx.fillText(Math.ceil(timeLeft / 1000) + 's', W - 18, 36);
   if (combo > 1) {
     ctx.textAlign = 'center';
-    ctx.font = 'bold 13px Arial';
-    ctx.fillStyle = '#ffe28a';
-    const comboText = combo + '× combo!';
-    ctx.strokeText(comboText, W / 2, 46);
-    ctx.fillText(comboText, W / 2, 46);
+    ctx.font = 'bold 14px Arial';
+    ctx.fillStyle = '#e8683a';
+    ctx.fillText(combo + '× combo!', W / 2, 56);
   }
 }
 
@@ -690,7 +724,7 @@ function draw() {
   ctx.clearRect(0, 0, W, H);
   drawBackdrop();
   if (state === 'menu') return;
-  drawHoopShadow();
+  drawDiagonalShadow();
   drawBackboard();
   drawRimBack();
   drawBall();
