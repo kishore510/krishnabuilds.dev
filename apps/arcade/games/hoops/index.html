@@ -202,16 +202,40 @@ const RIM_RESTITUTION = 0.5;
 const BOARD_RESTITUTION = 0.45;
 const BOARD_HALF_W = 55, BOARD_H = 64, RIM_BOARD_GAP = 10;
 
-const MIN_SWIPE_DIST = 18;
-const MAX_SWIPE_DIST = 260;
-const FLICK_SENS_Y = 6.8;      // swipe length -> shot power (vertical)
+const HOOP_X_BASE = 180, HOOP_Y_BASE = 128;
+
+const MIN_SWIPE_DIST = 18;     // shorter than this doesn't register as a flick at all
+
+// Power mapping: a flick's upward length maps to a POWER RATIO, clamped to a
+// forgiving range - even a very short flick still gets MIN_POWER_RATIO (a
+// real, reaches-most-of-the-way shot, not "barely moves"), and even a wild
+// full-arm swipe is capped at MAX_POWER_RATIO ("flies off screen" can't
+// happen). REFERENCE_SWIPE_DY is the swipe length that gives ratio 1.0 (a
+// well-arced shot into the hoop at its default distance).
+//
+// Critically, the ratio is applied via a SQUARE ROOT before becoming launch
+// speed (vy0 = sqrt(ratio) * PERFECT_VY0), not a direct multiply. A shot's
+// rise/apex height depends on vy0^2, so multiplying vy0 directly by the ratio
+// makes the apex scale with ratio^2 - a modest-looking 20% stronger flick
+// then produces a wildly higher/longer shot (this was the actual bug behind
+// "either far too weak or far too strong, no usable middle"). Taking the
+// square root first makes the RISE itself scale linearly with the ratio, so
+// the shot's over/undershoot is proportional to how far off the flick was,
+// not a quadratic blowup.
+const REFERENCE_SWIPE_DY = 140;
+const MIN_POWER_RATIO = 0.65;
+const MAX_POWER_RATIO = 1.5;
+const APEX_CLEARANCE = 55;     // px the "perfect" shot's apex sits above the rim
+const BASE_RISE = (START_POS.y - HOOP_Y_BASE) + APEX_CLEARANCE;
+const PERFECT_VY0 = Math.sqrt(2 * GRAVITY * BASE_RISE);
+
 const FLICK_SENS_X = 1.6;      // swipe horizontal component -> steering
+const MAX_VX = 420;
 
 // hoopX/hoopY drift smoothly (delta-time sine waves), never teleport. The two
 // axes of difficulty are introduced one at a time: side-to-side first (aim),
 // then up/down (power/distance) once the player has had a chance to learn
 // the flick feel on a hoop that isn't fighting them on both axes at once.
-const HOOP_X_BASE = 180, HOOP_Y_BASE = 128;
 const STAGE2_MAKES = 4;   // side-to-side movement begins
 const STAGE3_MAKES = 10;  // up/down movement also begins
 const AMP_X_BASE = 45, AMP_X_GROWTH = 4, AMP_X_MAX = 95;
@@ -325,17 +349,20 @@ canvas.addEventListener('pointerup', (e) => {
   dragStart = null;
   dragCurrent = null;
   if (dist < MIN_SWIPE_DIST || dy >= -6) return;
-  launchBall(dx, dy, dist);
+  launchBall(dx, dy);
 });
 
-function launchVelocity(dx, dy, dist) {
-  const clamped = clamp(dist, MIN_SWIPE_DIST, MAX_SWIPE_DIST);
-  const scale = clamped / dist;
-  return { vx: dx * scale * FLICK_SENS_X, vy: dy * scale * FLICK_SENS_Y };
+function launchVelocity(dx, dy) {
+  const upDy = Math.max(-dy, 0);
+  const ratio = clamp(upDy / REFERENCE_SWIPE_DY, MIN_POWER_RATIO, MAX_POWER_RATIO);
+  // sqrt here, not a direct multiply - see the comment above BASE_RISE.
+  const vy = -Math.sqrt(ratio) * PERFECT_VY0;
+  const vx = clamp(dx * FLICK_SENS_X, -MAX_VX, MAX_VX);
+  return { vx, vy };
 }
 
-function launchBall(dx, dy, dist) {
-  const v = launchVelocity(dx, dy, dist);
+function launchBall(dx, dy) {
+  const v = launchVelocity(dx, dy);
   ball = {
     x: START_POS.x, y: START_POS.y,
     vx: v.vx, vy: v.vy,
@@ -625,7 +652,7 @@ function drawRimFront() {
   }
 }
 
-function drawBasketball(x, y, spin, squash, floorShadow) {
+function drawBasketball(x, y, spin, floorShadow) {
   if (floorShadow) {
     ctx.fillStyle = 'rgba(40,80,90,0.22)';
     ctx.beginPath();
@@ -635,7 +662,8 @@ function drawBasketball(x, y, spin, squash, floorShadow) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(spin);
-  ctx.scale(1 / squash, squash);
+  // Always a perfect circle - single radius, no velocity-based squash/stretch.
+  // A basketball stays round in flight; only spin (rotation) changes.
   const grad = ctx.createRadialGradient(-BALL_R * 0.35, -BALL_R * 0.4, 2, 0, 0, BALL_R * 1.4);
   grad.addColorStop(0, '#ff9d4d');
   grad.addColorStop(0.7, '#f07a2e');
@@ -659,13 +687,10 @@ function drawBasketball(x, y, spin, squash, floorShadow) {
 function drawBall() {
   if (!ball) {
     const bob = Math.sin(idleT * 2.4) * 2.5;
-    drawBasketball(START_POS.x, START_POS.y + bob, 0, 1, true);
+    drawBasketball(START_POS.x, START_POS.y + bob, 0, true);
     return;
   }
-  // slight squash along the velocity direction for a bit of weight/juice
-  const speed = Math.hypot(ball.vx, ball.vy);
-  const squash = ball.scored ? 1 : clamp(1 - speed / 4000, 0.9, 1.05);
-  drawBasketball(ball.x, ball.y, ball.spin, squash, false);
+  drawBasketball(ball.x, ball.y, ball.spin, false);
 }
 
 function drawAimArrow() {
