@@ -8,7 +8,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #1a1410;
+    background: #d9622c;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,9 +23,9 @@
   }
   #wrap { position: relative; }
   canvas {
-    background: #3a2416;
+    background: #ffb96b;
     border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     display: block;
     max-width: 100vw;
     max-height: 100vh;
@@ -58,8 +58,8 @@
     padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
     border-radius: calc(24px * var(--game-scale, 1));
     border: none;
-    background: #e8891a;
-    color: #2a1a00;
+    background: #ff8c1a;
+    color: #3a1c00;
     cursor: pointer;
     pointer-events: auto;
   }
@@ -85,7 +85,7 @@
     padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
     border-radius: calc(14px * var(--game-scale, 1));
     border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
-    background: rgba(0,0,0,0.35);
+    background: rgba(0,0,0,0.3);
     color: white;
     cursor: pointer;
     z-index: 5;
@@ -98,7 +98,7 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Hoops</h1>
-    <p id="subtitle">Swipe up to shoot — get the power AND the aim right</p>
+    <p id="subtitle">Flick the ball — swipe direction aims, swipe length is power</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <button id="startBtn" type="button">Start</button>
@@ -183,108 +183,81 @@ muteBtn.addEventListener('click', () => {
 function loadBest() { return parseInt(sessionStorage.getItem('hoopsBest') || '0', 10); }
 function saveBest(v) { try { sessionStorage.setItem('hoopsBest', v); } catch (e) {} }
 
-// --- World: front-on view - the hoop faces the player instead of sitting
-// off to one side, so the rim is drawn as a squashed ellipse (a circle seen
-// from below) and the ball's job is lining up BOTH the arc and the left-right
-// aim on a target that starts still and gets progressively less cooperative.
-//
-// Ball/rim proportions are the real ones: a regulation ball is ~24cm across
-// a ~45.7cm rim, roughly 52-53% of the rim's width - not the ~30-40% it was
-// before, which read as a golf ball.
-//
-// The flight itself uses a two-component model instead of one 2D parabola:
-// `depthT` (0->1, how far along the shot is toward the hoop's distance)
-// advances at a fixed rate independent of shot power, while `archHeight`
-// (a real gravity arc, vy0 set by swipe strength) is a SEPARATE vertical
-// offset layered on top and scaled down with depth. Conflating "distance
-// covered" and "arc height" into a single Y-axis parabola (the old model)
-// is what produced the "doesn't look like it's going in, last-second drop"
-// complaint - a shot's height and how far it's traveled toward the hoop
-// are different physical quantities, and real perspective-shooter games
-// (the "front-on" basketball genre this is drawing from) keep them
-// separate for exactly this reason. This also means shot POWER now has to
-// be right, not just direction - too weak comes up short, too strong
-// sails past/hits the board, matching how the real shot works. ---
-const GRAVITY = 780;
-const BALL_R = 21;
-const START_POS = { x: 180, y: 458 };
+// --- World: flat, front-on view. The ball is a real 2D projectile (gravity +
+// initial velocity from the flick) - no perspective depth, no scripted path.
+// The rim is modelled as just TWO small circular collision points (its left
+// and right ends); the gap between them is open air, so an angled shot that's
+// on target drops straight through instead of clanging off an invisible
+// front bar. A basket is a downward crossing of the line between those two
+// points while inside the gap - not merely touching the rim. ---
+const GRAVITY = 1500;
+const START_POS = { x: 180, y: 472 };
 const TIME_LIMIT = 60000;
 const BONUS_TIME = 5000;
-const RIM_R = 4.5;
+
+const RIM_HALF_W = 38;         // half the rim's inner opening
+const BALL_R = 23;             // ~60% of the rim's inner width (2*RIM_HALF_W)
+const RIM_POINT_R = 6;
 const RIM_RESTITUTION = 0.5;
 const BOARD_RESTITUTION = 0.45;
-const MIN_SWIPE_DIST = 14;
+const BOARD_HALF_W = 55, BOARD_H = 64, RIM_BOARD_GAP = 10;
 
-const DEPTH_DURATION = 0.82;        // seconds for a shot to reach the hoop's distance
-const ARC_GRAVITY = 820;
-const REFERENCE_SWIPE_DIST = 110;   // swipe length that produces "perfect" arc power
-const PERFECT_VY0 = 0.5 * ARC_GRAVITY * DEPTH_DURATION; // returns archHeight to 0 exactly at DEPTH_DURATION
-const HORIZONTAL_SENSITIVITY = 2.3;
-const MAX_VX = 480;
-const HOOP_SCALE = 0.56;            // how small the ball renders once it reaches the hoop's depth
-const HEIGHT_TOLERANCE = 16;        // how close the arc's height has to be to the rim when the ball arrives
+const MIN_SWIPE_DIST = 18;
+const MAX_SWIPE_DIST = 260;
+const FLICK_SENS_Y = 6.8;      // swipe length -> shot power (vertical)
+const FLICK_SENS_X = 1.6;      // swipe horizontal component -> steering
 
-// hoopY is now a variable, not a constant - the hoop moves on both axes, and
-// the backboard/net are positioned relative to it so they track wherever the
-// rim currently is.
-const HOOP_Y_BASE = 168;
-const RIM_RX = 40;
-const BOARD_H = 58, BOARD_GAP = 18, BOARD_HALF_W = 46;
-function boardBottom() { return hoopY - BOARD_GAP; }
+// hoopX/hoopY drift smoothly (delta-time sine waves), never teleport. The two
+// axes of difficulty are introduced one at a time: side-to-side first (aim),
+// then up/down (power/distance) once the player has had a chance to learn
+// the flick feel on a hoop that isn't fighting them on both axes at once.
+const HOOP_X_BASE = 180, HOOP_Y_BASE = 128;
+const STAGE2_MAKES = 4;   // side-to-side movement begins
+const STAGE3_MAKES = 10;  // up/down movement also begins
+const AMP_X_BASE = 45, AMP_X_GROWTH = 4, AMP_X_MAX = 95;
+const SPEED_X_BASE = 0.5, SPEED_X_GROWTH = 0.045, SPEED_X_MAX = 1.7;
+const AMP_Y_BASE = 18, AMP_Y_GROWTH = 3, AMP_Y_MAX = 46;
+const SPEED_Y_BASE = 0.65, SPEED_Y_GROWTH = 0.05, SPEED_Y_MAX = 1.9;
+
+let hoopX = HOOP_X_BASE, hoopY = HOOP_Y_BASE, moveTime = 0;
+let makes = 0, announcedStage = 1;
+
+function boardBottom() { return hoopY - RIM_BOARD_GAP; }
 function boardTop() { return boardBottom() - BOARD_H; }
 
-// --- Hoop movement ramps in three stages: dead still to learn the arc, then
-// jumping between fixed spots between shots, then genuinely sliding while
-// you're mid-aim - each stage is a hard threshold on shots taken, not luck,
-// so it's always the same for every player at the same point in a run.
-// Spots and the moving-stage path now cover both axes, not just left-right. ---
-const STAGE2_AT = 5;   // shots taken before the hoop starts relocating between shots
-const STAGE3_AT = 14;  // shots taken before it moves continuously
-const HOOP_SPOTS = [
-  { x: 110, y: 155 }, { x: 145, y: 182 }, { x: 180, y: 158 },
-  { x: 215, y: 182 }, { x: 250, y: 155 }, { x: 180, y: 195 }
-];
-
-let hoopX = 180, hoopY = HOOP_Y_BASE, moveTime = 0;
-let shotsTaken = 0, announcedStage = 1;
-
-function pickNewHoopPosition() {
-  const pool = HOOP_SPOTS.filter((s) => Math.hypot(s.x - hoopX, s.y - hoopY) > 30);
-  const pick = pool.length ? pool[Math.floor(Math.random() * pool.length)] : HOOP_SPOTS[0];
-  hoopX = pick.x; hoopY = pick.y;
-}
-
-function stageFor(shots) { return shots >= STAGE3_AT ? 3 : shots >= STAGE2_AT ? 2 : 1; }
+function stageFor(m) { return m >= STAGE3_MAKES ? 3 : m >= STAGE2_MAKES ? 2 : 1; }
 
 function updateHoop(dt) {
-  const stage = stageFor(shotsTaken);
-  if (stage === 3) {
-    moveTime += dt;
-    const ramp = clamp(shotsTaken - STAGE3_AT, 0, 20);
-    const ampX = clamp(38 + ramp * 2.2, 38, 85);
-    const ampY = clamp(14 + ramp * 1.1, 14, 32);
-    const speed = clamp(0.55 + ramp * 0.03, 0.55, 1.5);
-    hoopX = 180 + Math.sin(moveTime * speed) * ampX;
-    hoopY = HOOP_Y_BASE + Math.sin(moveTime * speed * 1.3 + 1.4) * ampY;
+  const stage = stageFor(makes);
+  moveTime += dt;
+  if (stage >= 2) {
+    const rampX = clamp(makes - STAGE2_MAKES, 0, 40);
+    const ampX = clamp(AMP_X_BASE + rampX * AMP_X_GROWTH, AMP_X_BASE, AMP_X_MAX);
+    const speedX = clamp(SPEED_X_BASE + rampX * SPEED_X_GROWTH, SPEED_X_BASE, SPEED_X_MAX);
+    hoopX = HOOP_X_BASE + Math.sin(moveTime * speedX) * ampX;
+  } else {
+    hoopX = HOOP_X_BASE;
+  }
+  if (stage >= 3) {
+    const rampY = clamp(makes - STAGE3_MAKES, 0, 40);
+    const ampY = clamp(AMP_Y_BASE + rampY * AMP_Y_GROWTH, AMP_Y_BASE, AMP_Y_MAX);
+    const speedY = clamp(SPEED_Y_BASE + rampY * SPEED_Y_GROWTH, SPEED_Y_BASE, SPEED_Y_MAX);
+    hoopY = HOOP_Y_BASE + Math.sin(moveTime * speedY + 1.4) * ampY;
+  } else {
+    hoopY = HOOP_Y_BASE;
   }
   if (stage !== announcedStage) {
     announcedStage = stage;
     playStageChange();
     if (stage === 2) addPopup(W / 2, 60, 'Hoop’s on the move!', '#ffe28a');
-    else if (stage === 3) addPopup(W / 2, 60, 'It won’t hold still now!', '#ff8a4a');
+    else if (stage === 3) addPopup(W / 2, 60, 'Now it shifts height too!', '#ff8a4a');
   }
 }
 
-// Four collision points instead of two - the true left/right rim edges plus
-// two lower/inward points tracing the front curve - so a ball can graze the
-// rim at an angle and catch/roll instead of only ever bouncing off a single
-// fixed edge point.
-function rimCollisionPoints() {
+function rimPoints() {
   return [
-    { x: hoopX - RIM_RX, y: hoopY },
-    { x: hoopX + RIM_RX, y: hoopY },
-    { x: hoopX - RIM_RX * 0.72, y: hoopY + 9 },
-    { x: hoopX + RIM_RX * 0.72, y: hoopY + 9 }
+    { x: hoopX - RIM_HALF_W, y: hoopY },
+    { x: hoopX + RIM_HALF_W, y: hoopY }
   ];
 }
 
@@ -293,6 +266,7 @@ let dragStart = null, dragCurrent = null, dragPointerId = null;
 let score = 0, combo = 0, timeLeft = TIME_LIMIT;
 let popups = [];
 let netFlash = 0;
+let idleT = 0;
 let state = 'menu'; // menu | playing | over
 
 function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
@@ -300,7 +274,7 @@ function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 });
 function showMenu() {
   state = 'menu';
   title.textContent = 'Hoops';
-  subtitle.textContent = 'Swipe up to shoot — get the power AND the aim right';
+  subtitle.textContent = 'Flick the ball — swipe direction aims, swipe length is power';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest();
   startBtn.textContent = 'Start';
@@ -310,8 +284,8 @@ function showMenu() {
 }
 
 function startGame() {
-  hoopX = 180; hoopY = HOOP_Y_BASE; moveTime = 0;
-  shotsTaken = 0; announcedStage = 1;
+  hoopX = HOOP_X_BASE; hoopY = HOOP_Y_BASE; moveTime = 0;
+  makes = 0; announcedStage = 1;
   ball = null;
   score = 0;
   combo = 0;
@@ -350,30 +324,29 @@ canvas.addEventListener('pointerup', (e) => {
   const dist = Math.hypot(dx, dy);
   dragStart = null;
   dragCurrent = null;
-  if (dist < MIN_SWIPE_DIST || dy >= -2) return;
+  if (dist < MIN_SWIPE_DIST || dy >= -6) return;
   launchBall(dx, dy, dist);
 });
 
-// The target Y is captured once, at launch - the ball flies toward where
-// the hoop WAS when you released, not where it currently is. If the hoop
-// has moved by the time the ball arrives (stage 2/3), that's the shot
-// missing because you didn't lead it, not a bug.
+function launchVelocity(dx, dy, dist) {
+  const clamped = clamp(dist, MIN_SWIPE_DIST, MAX_SWIPE_DIST);
+  const scale = clamped / dist;
+  return { vx: dx * scale * FLICK_SENS_X, vy: dy * scale * FLICK_SENS_Y };
+}
+
 function launchBall(dx, dy, dist) {
-  const powerRatio = clamp(dist / REFERENCE_SWIPE_DIST, 0.55, 1.6);
-  const vx = clamp(dx * HORIZONTAL_SENSITIVITY, -MAX_VX, MAX_VX);
+  const v = launchVelocity(dx, dy, dist);
   ball = {
     x: START_POS.x, y: START_POS.y,
-    vx, vy: 0,
-    mode: 'flight', depthT: 0, flightTime: 0,
-    vy0: PERFECT_VY0 * powerRatio, targetY: hoopY,
-    currentScale: 1, age: 0,
-    spin: 0, touchedRim: false, touchedBoard: false, scored: false, sinkTimer: 0, prevY: START_POS.y
+    vx: v.vx, vy: v.vy,
+    prevY: START_POS.y, age: 0, spin: 0,
+    touchedRim: false, touchedBoard: false, scored: false, sinkTimer: 0
   };
 }
 
 function circlePointCollide(pt, restitution) {
   const dx = ball.x - pt.x, dy = ball.y - pt.y;
-  const minDist = BALL_R + RIM_R;
+  const minDist = BALL_R + RIM_POINT_R;
   const dist = Math.hypot(dx, dy);
   if (dist >= minDist || dist < 0.0001) return false;
   const nx = dx / dist, ny = dy / dist;
@@ -384,21 +357,36 @@ function circlePointCollide(pt, restitution) {
     ball.vx -= (1 + restitution) * vDotN * nx;
     ball.vy -= (1 + restitution) * vDotN * ny;
   }
-  // A bit of speed bleeds off on every rim touch (friction) - that's what
-  // lets a grazing shot slow down enough to catch, wobble along the rim,
-  // and either drop in or roll off, instead of one clean carom every time.
+  // A little energy bleeds off every rim touch so a grazing shot can catch,
+  // wobble, and either drop in or roll off - not one clean carom every time.
   ball.vx *= 0.94; ball.vy *= 0.985;
   ball.touchedRim = true;
   return true;
 }
 
-function afterShotResolved() {
-  shotsTaken++;
-  if (stageFor(shotsTaken) === 2) pickNewHoopPosition();
+function boardCollide() {
+  const bLeft = hoopX - BOARD_HALF_W, bRight = hoopX + BOARD_HALF_W;
+  const bTop = boardTop(), bBottom = boardBottom();
+  const closestX = clamp(ball.x, bLeft, bRight);
+  const closestY = clamp(ball.y, bTop, bBottom);
+  const dx = ball.x - closestX, dy = ball.y - closestY;
+  const dist = Math.hypot(dx, dy);
+  if (dist >= BALL_R || dist < 0.0001) return;
+  const nx = dx / dist, ny = dy / dist;
+  const overlap = BALL_R - dist;
+  ball.x += nx * overlap; ball.y += ny * overlap;
+  const vDotN = ball.vx * nx + ball.vy * ny;
+  if (vDotN < 0) {
+    ball.vx -= (1 + BOARD_RESTITUTION) * vDotN * nx;
+    ball.vy -= (1 + BOARD_RESTITUTION) * vDotN * ny;
+  }
+  ball.touchedBoard = true;
+  playBoard();
 }
 
 function endShot(made) {
   if (made) {
+    makes++;
     combo++;
     const swish = !ball.touchedRim && !ball.touchedBoard;
     let pts;
@@ -424,103 +412,48 @@ function endShot(made) {
     combo = 0;
   }
   ball = null;
-  afterShotResolved();
 }
 
 function updateBall(dt) {
   if (!ball) return;
 
-  // Once a shot is confirmed through the gap, switch to a slow, controlled
-  // straight drop through the net for a beat instead of resolving instantly -
-  // an immediate vanish the moment it crossed the rim line read as a glitch
-  // ("sudden drop"), and continuing full gravity/momentum here could send it
-  // rocketing off past the net looking uncontrolled. A fixed gentle fall
-  // always looks the same, clean "swish" regardless of the shot's speed.
   if (ball.scored) {
     ball.sinkTimer += dt;
-    ball.y += 95 * dt;
+    ball.y += 100 * dt;
     ball.spin += 3 * dt;
-    if (ball.sinkTimer > 0.22) endShot(true);
+    if (ball.sinkTimer > 0.2) endShot(true);
     return;
   }
 
   ball.prevY = ball.y;
   ball.age += dt;
 
-  if (ball.mode === 'flight') {
-    // On rails until something interrupts it: depthT is distance-to-hoop
-    // progress (constant rate - power doesn't change how LONG the shot
-    // takes, only how high it arcs), archHeight is a real gravity arc
-    // layered on top and scaled down with depth so it reads as genuine
-    // perspective rather than a flat 2D bounce.
-    ball.flightTime += dt;
-    ball.depthT = ball.flightTime / DEPTH_DURATION;
-    const baseY = lerp(START_POS.y, ball.targetY, ball.depthT);
-    const scale = clamp(lerp(1, HOOP_SCALE, ball.depthT), 0.35, 1.3);
-    const archHeight = ball.vy0 * ball.flightTime - 0.5 * ARC_GRAVITY * ball.flightTime * ball.flightTime;
-    ball.x += ball.vx * dt;
-    ball.y = baseY - archHeight * scale;
-    ball.currentScale = scale;
-    ball.spin += ball.vx * dt * 0.05;
-  } else {
-    // Free physics once something's been hit - the smooth flight curve no
-    // longer applies once the ball's course has been knocked off it.
-    ball.vy += GRAVITY * dt;
-    ball.x += ball.vx * dt;
-    ball.y += ball.vy * dt;
-    ball.spin += ball.vx * dt * 0.05;
-  }
+  // Real projectile motion: gravity + the velocity set at launch. No scripted
+  // curve - collisions below just change vx/vy and the same integrator keeps
+  // going, so a rim rattle or a backboard bank is a genuine physical bounce.
+  ball.vy += GRAVITY * dt;
+  ball.x += ball.vx * dt;
+  ball.y += ball.vy * dt;
+  ball.spin += ball.vx * dt * 0.05;
 
-  const frameVy = ball.mode === 'free' ? ball.vy : (ball.y - ball.prevY) / dt;
-  const speed = Math.hypot(ball.vx, frameVy);
-  // Slower ball = less energy to bounce with = more likely to catch on the
-  // rim and wobble/roll instead of cleanly deflecting - real physics, and
-  // exactly what makes borderline shots feel alive instead of binary.
+  const speed = Math.hypot(ball.vx, ball.vy);
   const rimRestitution = clamp(RIM_RESTITUTION * (0.4 + speed / 600), 0.18, RIM_RESTITUTION);
-  // circlePointCollide reads/writes ball.vy directly - keep it holding the
-  // real current vertical speed even while in 'flight' mode (where it's
-  // otherwise unused) so a collision this frame has a correct velocity to
-  // bounce from and hand off to 'free' mode with.
-  ball.vy = frameVy;
-  for (const pt of rimCollisionPoints()) {
-    if (circlePointCollide(pt, rimRestitution)) {
-      playClank();
-      ball.mode = 'free';
-      break;
-    }
+  for (const pt of rimPoints()) {
+    if (circlePointCollide(pt, rimRestitution)) { playClank(); break; }
   }
+  boardCollide();
 
-  if (!ball.touchedBoard && ball.y > boardTop() && ball.y < boardBottom() && Math.abs(ball.x - hoopX) < BOARD_HALF_W) {
-    ball.mode = 'free';
-    ball.y = boardBottom();
-    ball.vy = Math.abs(ball.vy) * BOARD_RESTITUTION;
-    ball.touchedBoard = true;
-    playBoard();
-  }
-
-  // Scoring: flight mode is a scripted curve where depth and height are
-  // separate quantities, so "the ball arrived at the rim" isn't a simple Y
-  // line crossing any more (baseY sweeps straight through hoopY regardless
-  // of arc height, so a directional crossing check can never fire
-  // correctly here) - it's "did it get close to the rim's exact height
-  // around the time it reached the rim's distance." Free mode (after a
-  // bounce) is real integrated physics again, so the traditional crossing
-  // check is correct there.
-  const gapLeft = hoopX - RIM_RX + BALL_R + 2;
-  const gapRight = hoopX + RIM_RX - BALL_R - 2;
-  if (ball.mode === 'flight') {
-    if (ball.depthT > 0.93 && ball.depthT < 1.07 && Math.abs(ball.y - hoopY) < HEIGHT_TOLERANCE && ball.x > gapLeft && ball.x < gapRight) {
-      ball.scored = true;
-      ball.sinkTimer = 0;
-      return;
-    }
-  } else if (ball.prevY < hoopY && ball.y >= hoopY && ball.x > gapLeft && ball.x < gapRight) {
+  // Scored = a downward crossing of the rim-to-rim line, fully inside the
+  // open gap (ball edges clear of both rim points), not merely touching.
+  const gapLeft = hoopX - RIM_HALF_W + BALL_R;
+  const gapRight = hoopX + RIM_HALF_W - BALL_R;
+  if (!ball.scored && ball.prevY < hoopY && ball.y >= hoopY && ball.x > gapLeft && ball.x < gapRight) {
     ball.scored = true;
     ball.sinkTimer = 0;
     return;
   }
 
-  if (ball.y > H + 30 || ball.x < -30 || ball.x > W + 30 || ball.age > 4) {
+  if (ball.y > H + 40 || ball.x < -40 || ball.x > W + 40 || ball.age > 4) {
     playMiss();
     endShot(false);
   }
@@ -532,6 +465,7 @@ function update(dt) {
   if (timeLeft <= 0) { timeLeft = 0; endGame(); return; }
   updateHoop(dt);
   updateBall(dt);
+  idleT += dt;
   if (netFlash > 0) netFlash -= dt;
   popups.forEach((p) => { p.t += dt * 1000; });
   popups = popups.filter((p) => p.t < 900);
@@ -544,7 +478,7 @@ function endGame() {
   const isNewBest = score > best;
   if (isNewBest) saveBest(score);
   title.textContent = "Time's Up!";
-  subtitle.textContent = 'Swipe up to shoot — get the power AND the aim right';
+  subtitle.textContent = 'Flick the ball — swipe direction aims, swipe length is power';
   scoreLine.style.display = 'block';
   scoreLine.textContent = 'Score: ' + score;
   bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
@@ -554,145 +488,167 @@ function endGame() {
   overlay.style.display = 'flex';
 }
 
-function drawCourt() {
-  // Arena backdrop behind the hoop
-  const g = ctx.createLinearGradient(0, 0, 0, 340);
-  g.addColorStop(0, '#2a1c30');
-  g.addColorStop(1, '#3a2416');
+// --- Rendering: warm flat-design look. Depth comes from one soft diagonal
+// drop shadow behind the backboard/rim assembly, not a 3D floor or grid. ---
+function drawBackdrop() {
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#ffc27a');
+  g.addColorStop(0.6, '#ff9a4d');
+  g.addColorStop(1, '#f2793a');
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, 340);
-  const spot = ctx.createRadialGradient(hoopX, hoopY - 15, 20, hoopX, hoopY - 15, 220);
-  spot.addColorStop(0, 'rgba(255,220,160,0.14)');
-  spot.addColorStop(1, 'rgba(255,220,160,0)');
-  ctx.fillStyle = spot;
-  ctx.fillRect(0, 0, W, 340);
-
-  // Perspective hardwood floor, planks converging toward the hoop base
-  const floorTop = 330, vanishX = 180, vanishY = 250;
-  const floorGrad = ctx.createLinearGradient(0, floorTop, 0, H);
-  floorGrad.addColorStop(0, '#8a5a30');
-  floorGrad.addColorStop(1, '#5b3a1c');
-  ctx.fillStyle = floorGrad;
-  ctx.fillRect(0, floorTop, W, H - floorTop);
-  ctx.strokeStyle = 'rgba(0,0,0,0.22)';
-  ctx.lineWidth = 1.5;
-  for (let i = -6; i <= 6; i++) {
-    const bx = W / 2 + i * 34;
-    ctx.beginPath();
-    ctx.moveTo(vanishX + (bx - vanishX) * 0.06, floorTop);
-    ctx.lineTo(bx, H);
-    ctx.stroke();
-  }
-  for (let y = floorTop + 14; y < H; y += 22) {
-    ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-  }
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(20, H - 20); ctx.lineTo(W - 20, H - 20); ctx.stroke();
+  ctx.fillRect(0, 0, W, H);
+  // flat warm floor band (no perspective) just to ground the scene
+  ctx.fillStyle = '#c9622f';
+  ctx.fillRect(0, H - 46, W, 46);
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillRect(0, H - 46, W, 4);
 }
 
-function drawHoop() {
-  // Backboard - white with the standard red inner box, viewed face-on
+function roundRectPath(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+}
+
+function drawHoopShadow() {
   const bTop = boardTop(), bBottom = boardBottom();
-  const bw = BOARD_HALF_W * 2 + 8, bx = hoopX - bw / 2, by = bTop - 4, bh = bBottom - bTop + 12;
-  ctx.fillStyle = '#f0ece0';
-  ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 3); ctx.fill();
-  ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 2;
+  const bw = BOARD_HALF_W * 2 + 10, bx = hoopX - bw / 2, bh = bBottom - bTop + 14;
+  ctx.save();
+  ctx.fillStyle = 'rgba(60,25,10,0.22)';
+  roundRectPath(bx + 9, bTop + 12, bw, bh, 10);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(hoopX + 10, hoopY + 12, RIM_HALF_W + 10, 14, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawBackboard() {
+  const bTop = boardTop(), bBottom = boardBottom();
+  const bw = BOARD_HALF_W * 2, bx = hoopX - BOARD_HALF_W, by = bTop, bh = bBottom - bTop;
+  ctx.fillStyle = '#fff8ef';
+  roundRectPath(bx, by, bw, bh, 12);
+  ctx.fill();
+  ctx.strokeStyle = '#3d2a1e';
+  ctx.lineWidth = 5;
+  ctx.lineJoin = 'round';
+  roundRectPath(bx, by, bw, bh, 12);
   ctx.stroke();
-  ctx.strokeStyle = '#e63946'; ctx.lineWidth = 2.5;
-  ctx.strokeRect(hoopX - 20, by + bh - 34, 40, 24);
+  ctx.strokeStyle = '#e8483a';
+  ctx.lineWidth = 5;
+  roundRectPath(hoopX - 22, by + bh - 30, 44, 22, 5);
+  ctx.stroke();
 
-  // Rim: an ellipse (a circle seen from below-front) with the pole/arm behind it
-  ctx.strokeStyle = '#8a4a10'; ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(hoopX, by + bh); ctx.lineTo(hoopX, hoopY); ctx.stroke();
+  // short post connecting board to rim, chunky and rounded
+  ctx.strokeStyle = '#c9622f';
+  ctx.lineWidth = 7;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(hoopX, bBottom); ctx.lineTo(hoopX, hoopY); ctx.stroke();
+}
 
-  const netBottom = hoopY + 40;
-  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)';
-  ctx.lineWidth = 1.3;
-  for (let i = 0; i <= 7; i++) {
-    const t = i / 7;
-    const x = hoopX - RIM_RX + RIM_RX * 2 * t;
-    const nx = hoopX + (x - hoopX) * 0.3;
-    ctx.beginPath(); ctx.moveTo(x, hoopY + 1); ctx.lineTo(nx, netBottom); ctx.stroke();
+const RIM_RX = RIM_HALF_W + 5, RIM_RY = 13;
+
+function drawRimBack() {
+  ctx.strokeStyle = '#c9430f';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.ellipse(hoopX, hoopY, RIM_RX, RIM_RY, 0, Math.PI, Math.PI * 2);
+  ctx.stroke();
+
+  // net, drawn mostly behind the ball
+  const netBottom = hoopY + 42;
+  ctx.strokeStyle = netFlash > 0 ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  for (let i = 0; i <= 6; i++) {
+    const t = i / 6;
+    const x = hoopX - RIM_HALF_W + RIM_HALF_W * 2 * t;
+    const nx = hoopX + (x - hoopX) * 0.32;
+    ctx.beginPath(); ctx.moveTo(x, hoopY); ctx.lineTo(nx, netBottom); ctx.stroke();
   }
   for (let i = 1; i <= 2; i++) {
     const ny = hoopY + (netBottom - hoopY) * (i / 3);
-    const rx = RIM_RX * (1 - i / 3.6) * 0.85;
-    ctx.beginPath(); ctx.ellipse(hoopX, ny, rx, rx * 0.28, 0, 0, Math.PI * 2); ctx.stroke();
+    const rx = RIM_HALF_W * (1 - i / 3.6) * 0.85;
+    ctx.beginPath(); ctx.ellipse(hoopX, ny, rx, rx * 0.26, 0, 0, Math.PI * 2); ctx.stroke();
   }
+}
 
-  const rimGrad = ctx.createLinearGradient(hoopX - RIM_RX, hoopY - 6, hoopX + RIM_RX, hoopY + 6);
-  rimGrad.addColorStop(0, '#ff8a3c');
-  rimGrad.addColorStop(0.5, '#e8891a');
-  rimGrad.addColorStop(1, '#c9660c');
-  ctx.strokeStyle = rimGrad;
-  ctx.lineWidth = 5;
-  ctx.beginPath(); ctx.ellipse(hoopX, hoopY, RIM_RX, 13, 0, 0, Math.PI * 2); ctx.stroke();
-  // Front lip drawn brighter/thicker to sell the "ring facing you" perspective
-  ctx.strokeStyle = '#ffb703';
+function drawRimFront() {
+  ctx.strokeStyle = '#ff8c1a';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.ellipse(hoopX, hoopY, RIM_RX, RIM_RY, 0, 0, Math.PI);
+  ctx.stroke();
+  // bright highlight lip to sell the chunky glossy look
+  ctx.strokeStyle = '#ffc670';
   ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.ellipse(hoopX, hoopY, RIM_RX, 13, 0, 0.15, Math.PI - 0.15); ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(hoopX, hoopY, RIM_RX, RIM_RY, 0, 0.25, Math.PI - 0.25);
+  ctx.stroke();
+  // the two collision points, drawn as small solid caps at the rim ends
+  ctx.fillStyle = '#e86a12';
+  for (const pt of rimPoints()) {
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, 6, 0, Math.PI * 2); ctx.fill();
+  }
 }
 
-function ballScale() {
-  if (!ball) return 1;
-  // Flight mode already computed the correct depth-based scale each frame;
-  // free mode (post-bounce) has no depthT anymore, so fall back to reading
-  // scale off the ball's screen position instead.
-  if (ball.mode === 'flight') return ball.currentScale;
-  return clamp(lerp(HOOP_SCALE, 1, (ball.y - hoopY) / (START_POS.y - hoopY)), HOOP_SCALE * 0.85, 1.25);
-}
-
-function drawBasketball(x, y, scale, spin) {
+function drawBasketball(x, y, spin, squash) {
   ctx.save();
   ctx.translate(x, y);
-  ctx.scale(scale, scale);
   ctx.rotate(spin);
-  const grad = ctx.createRadialGradient(-BALL_R * 0.35, -BALL_R * 0.4, 1, 0, 0, BALL_R * 1.3);
-  grad.addColorStop(0, '#ff6b52');
-  grad.addColorStop(0.55, '#e6342a');
-  grad.addColorStop(1, '#a41f18');
+  ctx.scale(1 / squash, squash);
+  const grad = ctx.createRadialGradient(-BALL_R * 0.35, -BALL_R * 0.4, 2, 0, 0, BALL_R * 1.4);
+  grad.addColorStop(0, '#ffa869');
+  grad.addColorStop(0.45, '#f47a2e');
+  grad.addColorStop(1, '#c9500f');
   ctx.fillStyle = grad;
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = 'rgba(20,5,5,0.75)'; ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(90,35,5,0.8)';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(-BALL_R, 0); ctx.lineTo(BALL_R, 0); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(0, -BALL_R); ctx.lineTo(0, BALL_R); ctx.stroke();
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, -0.6, 0.6); ctx.stroke();
   ctx.beginPath(); ctx.arc(0, 0, BALL_R, Math.PI - 0.6, Math.PI + 0.6); ctx.stroke();
+  // glossy highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath(); ctx.ellipse(-BALL_R * 0.32, -BALL_R * 0.38, BALL_R * 0.28, BALL_R * 0.18, -0.5, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
 
 function drawBall() {
-  // Rest the ball at the launch spot when there's nothing in flight, rather
-  // than having it only appear the instant a shot is released - it should
-  // always be visibly "in your hands" and ready.
-  if (!ball) { drawBasketball(START_POS.x, START_POS.y, 1, 0); return; }
-  drawBasketball(ball.x, ball.y, ballScale(), ball.spin);
+  if (!ball) {
+    const bob = Math.sin(idleT * 2.4) * 2.5;
+    drawBasketball(START_POS.x, START_POS.y + bob, 0, 1);
+    return;
+  }
+  // slight squash along the velocity direction for a bit of weight/juice
+  const speed = Math.hypot(ball.vx, ball.vy);
+  const squash = ball.scored ? 1 : clamp(1 - speed / 4000, 0.9, 1.05);
+  drawBasketball(ball.x, ball.y, ball.spin, squash);
 }
 
-function drawAimHint() {
+function drawAimArrow() {
   if (ball || !dragStart || !dragCurrent) return;
   const dx = dragCurrent.x - dragStart.x, dy = dragCurrent.y - dragStart.y;
   const dist = Math.hypot(dx, dy);
-  if (dist < MIN_SWIPE_DIST || dy >= -2) return;
-  // Traces the same depth+arc formula updateBall() actually flies on, so
-  // the preview is a true prediction rather than an approximation of it.
-  const powerRatio = clamp(dist / REFERENCE_SWIPE_DIST, 0.55, 1.6);
-  const vx = clamp(dx * HORIZONTAL_SENSITIVITY, -MAX_VX, MAX_VX);
-  const vy0 = PERFECT_VY0 * powerRatio;
-  ctx.fillStyle = 'rgba(255,255,255,0.7)';
-  for (let i = 1; i <= 14; i++) {
-    const depthT = i * 0.07;
-    const flightTime = depthT * DEPTH_DURATION;
-    const baseY = lerp(START_POS.y, hoopY, depthT);
-    const scale = clamp(lerp(1, HOOP_SCALE, depthT), 0.35, 1.3);
-    const archHeight = vy0 * flightTime - 0.5 * ARC_GRAVITY * flightTime * flightTime;
-    const px = START_POS.x + vx * flightTime;
-    const py = baseY - archHeight * scale;
-    if (py > H || depthT > 1.3) break;
-    ctx.beginPath(); ctx.arc(px, py, 2.4 * scale, 0, Math.PI * 2); ctx.fill();
-  }
+  if (dist < MIN_SWIPE_DIST || dy >= -6) return;
+  const len = Math.min(dist, 90);
+  const ux = dx / dist, uy = dy / dist;
+  const ex = START_POS.x + ux * len, ey = START_POS.y + uy * len;
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(START_POS.x, START_POS.y); ctx.lineTo(ex, ey); ctx.stroke();
+  const ang = Math.atan2(uy, ux);
+  ctx.beginPath();
+  ctx.moveTo(ex, ey);
+  ctx.lineTo(ex - 10 * Math.cos(ang - 0.5), ey - 10 * Math.sin(ang - 0.5));
+  ctx.lineTo(ex - 10 * Math.cos(ang + 0.5), ey - 10 * Math.sin(ang + 0.5));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.fill();
 }
 
 function drawPopups() {
@@ -710,7 +666,7 @@ function drawPopups() {
 function drawHud() {
   ctx.font = 'bold 16px Arial';
   ctx.fillStyle = 'white';
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = 'rgba(90,35,5,0.9)';
   ctx.lineWidth = 3;
   ctx.textAlign = 'left';
   const scoreText = 'Score: ' + score;
@@ -732,11 +688,14 @@ function drawHud() {
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  drawCourt();
+  drawBackdrop();
   if (state === 'menu') return;
-  drawHoop();
+  drawHoopShadow();
+  drawBackboard();
+  drawRimBack();
   drawBall();
-  drawAimHint();
+  drawRimFront();
+  drawAimArrow();
   drawPopups();
   drawHud();
 }
