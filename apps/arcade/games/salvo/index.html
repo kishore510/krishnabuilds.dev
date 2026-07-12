@@ -555,11 +555,14 @@ function setupPointerMove(p) {
   const ship = setupShips.find((s) => s.id === dragShipId);
   if (!ship) return;
   if (inRect(p, BOARD_GX, SETUP_GY, BOARD_PX, BOARD_PX)) {
+    // The grab offset only applies along the ship's own length axis (so the
+    // cell you actually grabbed stays under the pointer as you slide it
+    // along that axis) - the cross axis has no such offset and must just
+    // track the pointer directly, or the ship can only ever slide along the
+    // single row/column it started on instead of moving freely in 2D.
     const cell = pointToCell(p, BOARD_GX, SETUP_GY, BOARD_CELL);
-    let x = ship.dir === 'h' ? cell.x - dragGrabOffset : cell.x;
-    let y = ship.dir === 'v' ? cell.y - dragGrabOffset : cell.y;
-    if (ship.dir === 'h') y = ship.placed ? ship.y : cell.y;
-    if (ship.dir === 'v') x = ship.placed ? ship.x : cell.x;
+    const x = ship.dir === 'h' ? cell.x - dragGrabOffset : cell.x;
+    const y = ship.dir === 'v' ? cell.y - dragGrabOffset : cell.y;
     const valid = setupValidAt(ship.id, x, y, ship.dir, ship.length);
     dragGhost = { x, y, dir: ship.dir, length: ship.length, valid };
     if (valid) { ship.x = x; ship.y = y; ship.placed = true; }

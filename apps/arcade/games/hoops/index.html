@@ -367,7 +367,8 @@ function launchBall(dx, dy) {
     x: START_POS.x, y: START_POS.y,
     vx: v.vx, vy: v.vy,
     prevY: START_POS.y, age: 0, spin: 0,
-    touchedRim: false, touchedBoard: false, scored: false, sinkTimer: 0
+    touchedRim: false, touchedBoard: false, scored: false, sinkTimer: 0,
+    reachedRim: false
   };
 }
 
@@ -478,12 +479,28 @@ function updateBall(dt) {
   ball.y += ball.vy * dt;
   ball.spin += ball.vx * dt * 0.05;
 
-  const speed = Math.hypot(ball.vx, ball.vy);
-  const rimRestitution = clamp(RIM_RESTITUTION * (0.4 + speed / 600), 0.18, RIM_RESTITUTION);
-  for (const pt of rimPoints()) {
-    if (circlePointCollide(pt, rimRestitution)) { playClank(); break; }
+  if (ball.y <= hoopY) ball.reachedRim = true;
+
+  // The ball can only interact with the rim/backboard on the way DOWN, past
+  // its apex - during ascent it's still approaching from in front of the
+  // whole structure (matches the render order: it's drawn on top the entire
+  // way up) and hasn't "arrived" yet. This matters a lot with a moving hoop:
+  // horizontal velocity is constant, so the ball's x is still catching up to
+  // its eventual value throughout the ascent, while the hoop may have already
+  // moved elsewhere - checking collisions against the hoop's CURRENT position
+  // mid-ascent compares two positions that have nothing to do with each
+  // other, and was clipping rim points / banking off the board for shots
+  // that were actually aimed correctly for where the hoop ends up. Gating to
+  // descent-only means collisions are only ever checked once the ball is
+  // actually closing in on its real target.
+  if (ball.vy >= 0) {
+    const speed = Math.hypot(ball.vx, ball.vy);
+    const rimRestitution = clamp(RIM_RESTITUTION * (0.4 + speed / 600), 0.18, RIM_RESTITUTION);
+    for (const pt of rimPoints()) {
+      if (circlePointCollide(pt, rimRestitution)) { playClank(); break; }
+    }
+    boardCollide();
   }
-  boardCollide();
 
   // Scored = a downward crossing of the rim-to-rim line, fully inside the
   // open gap (ball edges clear of both rim points), not merely touching.
@@ -752,15 +769,16 @@ function draw() {
   drawDiagonalShadow();
   drawBackboard();
   drawRimBack();
-  // The front rim should only occlude the ball during the narrow instant it's
-  // actually falling THROUGH the rim's plane - on the way up (approaching
-  // from below/in front, before it has gone up and over) the ball is closer
-  // to the viewer than the whole hoop and must render fully on top, or the
-  // very first frames of every throw make it look like the ball is already
-  // passing behind the rim from underneath. Once it's on its way down and
-  // right at the rim's height, sandwiching it between the back and front rim
-  // is what sells "dropping through the opening."
-  const sandwich = ball && !ball.scored && ball.vy > 0 && Math.abs(ball.y - hoopY) < BALL_R;
+  // On the way up (approaching from below/in front, before it has gone up
+  // and over) the ball is closer to the viewer than the whole hoop and must
+  // render fully on top, or every throw looks like it's already passing
+  // behind the rim from underneath. Once it has genuinely been up there at
+  // least once (reachedRim - can't be true during the initial rise, which
+  // also sits below hoopY) and is back at or below the rim's height, the
+  // front rim needs to occlude it for the entire descent - through the
+  // rattle, the net, and the sink animation - not just a one-frame sliver,
+  // or it never actually reads as "going into the hoop."
+  const sandwich = ball && ball.reachedRim && ball.y >= hoopY;
   if (sandwich) {
     drawBall();
     drawRimFront();
