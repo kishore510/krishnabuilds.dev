@@ -398,7 +398,7 @@ function fireProjectile() {
     x: LAUNCHER.x, y: LAUNCHER.y,
     vx: Math.cos(aimAngle) * speed,
     vy: Math.sin(aimAngle) * speed,
-    spin: 0
+    spin: 0, age: 0
   };
   ammo--;
   playThwack();
@@ -432,7 +432,14 @@ function resolveBlockCollisions() {
         } else {
           const push = overlapY / 2 * Math.sign(dy || 1);
           a.y -= push; b.y += push;
-          if (dy > 0) { b.vy = Math.min(b.vy, 0); } else { a.vy = Math.min(a.vy, 0); }
+          // Symmetric relative-velocity split, mirroring the X branch above -
+          // clamping only one side's vy (the original approach) left the
+          // other side free to keep accelerating under gravity forever while
+          // its position was repeatedly yanked back by the push-apart, an
+          // unbounded energy injection that eventually went chaotic enough
+          // to keep re-colliding with the projectile and never let it settle.
+          const relVY = (b.vy - a.vy) * 0.5;
+          a.vy -= relVY * 0.4; b.vy += relVY * 0.4;
         }
       }
     }
@@ -458,6 +465,13 @@ function updateBlock(b, dt) {
     if (impact > 200) { playClatter(impact / 700); triggerShake(impact / 26); }
   }
   b.x = clamp(b.x, b.w / 2 + 4, W - b.w / 2 - 4);
+
+  // Snap tiny residual motion to zero rather than letting it decay forever -
+  // without this, resting blocks can jitter indefinitely from the pairwise
+  // overlap resolution in resolveBlockCollisions, which never looks "settled".
+  if (Math.abs(b.vx) < 3) b.vx = 0;
+  if (Math.abs(b.vy) < 3) b.vy = 0;
+  if (Math.abs(b.angVel) < 0.03) b.angVel = 0;
 }
 
 function triggerShake(mag) {
@@ -477,6 +491,7 @@ function circleRectCollide(cx, cy, r, b) {
 function updateProjectile(dt) {
   if (!projectile) return;
   const p = projectile;
+  p.age += dt;
   p.vy += GRAVITY * dt;
   p.x += p.vx * dt;
   p.y += p.vy * dt;
@@ -497,16 +512,32 @@ function updateProjectile(dt) {
       b.vx += p.vx * 0.55;
       b.vy += p.vy * 0.25 - 40;
       const hitOffsetY = clamp((hit.closestY - b.y) / (b.h / 2), -1, 1);
-      b.angVel += (hitOffsetY * -1) * Math.sign(p.vx || 1) * (speed / 90);
+      b.angVel += (hitOffsetY * -1) * Math.sign(p.vx) * (speed / 90);
       b.hitFlash = 0.15;
       playClatter(speed / 900);
       if (speed > 260) triggerShake(speed / 60);
-      p.vx *= 0.32; p.vy *= 0.32;
-      const pushDist = (PROJECTILE_R + 2) - Math.hypot(hit.dx, hit.dy);
-      if (pushDist > 0 && (hit.dx !== 0 || hit.dy !== 0)) {
-        const n = Math.hypot(hit.dx, hit.dy) || 1;
-        p.x += (hit.dx / n) * pushDist;
-        p.y += (hit.dy / n) * pushDist;
+
+      // Reflect the velocity component along the collision normal (with
+      // heavy restitution loss) and only friction-damp the tangential
+      // component - uniformly scaling total velocity without ever
+      // reversing the inward component let a ball resting on a block's
+      // flat top re-collide every frame forever (gravity pulls it back in
+      // just as far as the push-out moved it), which is what caused shots
+      // to permanently "stick" instead of settling.
+      const dist = Math.hypot(hit.dx, hit.dy);
+      if (dist > 0.0001) {
+        const nx = hit.dx / dist, ny = hit.dy / dist;
+        const vDotN = p.vx * nx + p.vy * ny;
+        if (vDotN < 0) {
+          const restitution = 0.3;
+          p.vx -= (1 + restitution) * vDotN * nx;
+          p.vy -= (1 + restitution) * vDotN * ny;
+        }
+        p.vx *= 0.75; p.vy *= 0.92;
+        const pushDist = (PROJECTILE_R + 2) - dist;
+        if (pushDist > 0) { p.x += nx * pushDist; p.y += ny * pushDist; }
+      } else {
+        p.vx *= 0.32; p.vy *= 0.32;
       }
     }
   }
@@ -515,12 +546,26 @@ function updateProjectile(dt) {
     p.y = GROUND_Y - PROJECTILE_R;
     p.vy = Math.abs(p.vy) > 50 ? -p.vy * 0.15 : 0;
     p.vx *= 0.85;
-    if (Math.abs(p.vx) < 6 && Math.abs(p.vy) < 6) {
-      projectileRestTimer += dt;
-      if (projectileRestTimer > 0.35) { projectile = null; projectileRestTimer = 0; }
-    }
+  }
+
+  // Settle detection is speed-based, not surface-based - a shot can come to
+  // rest sitting on top of a block just as easily as on the ground, and a
+  // check that only fired on ground contact left the projectile (and the
+  // player's next shot) stuck forever whenever a ball settled on a block.
+  const speedNow = Math.hypot(p.vx, p.vy);
+  if (speedNow < 55) {
+    projectileRestTimer += dt;
+    if (projectileRestTimer > 0.4) { projectile = null; projectileRestTimer = 0; }
+  } else {
+    projectileRestTimer = 0;
   }
   if (p.x > W + 30 || p.x < -30) projectile = null;
+  // Hard safety net: a ball wedged in a rare corner case (e.g. against a
+  // wall and a block at once) could in principle keep re-triggering just
+  // enough velocity each frame to dodge the speed check indefinitely - no
+  // shot should ever be able to permanently block the next one, so force
+  // it clear after a few seconds no matter what state it's in.
+  if (projectile && projectile.age > 5) projectile = null;
 }
 
 function updateTargetsFree(dt) {
@@ -585,19 +630,84 @@ function drawSky() {
   }
 }
 
-function drawLauncher() {
-  ctx.save();
-  ctx.translate(LAUNCHER.x, LAUNCHER.y);
-  ctx.fillStyle = '#5b3d22';
-  ctx.fillRect(-8, 0, 16, GROUND_Y - LAUNCHER.y);
-  ctx.strokeStyle = '#3a2814';
-  ctx.lineWidth = 4;
+function drawCastle() {
+  const bx = W - 76, by = GROUND_Y;
+  ctx.fillStyle = 'rgba(110,110,120,0.4)';
+  ctx.fillRect(bx, by - 86, 66, 86);
+  for (let i = 0; i < 4; i++) ctx.fillRect(bx + i * 18, by - 100, 11, 14);
+  ctx.fillStyle = 'rgba(80,80,92,0.4)';
+  ctx.fillRect(bx + 22, by - 50, 22, 50);
   ctx.beginPath();
-  ctx.moveTo(0, 10);
-  ctx.lineTo(Math.cos(aiming ? aimAngle + Math.PI : -2.3) * 46, 10 + Math.sin(aiming ? aimAngle + Math.PI : -2.3) * 46);
+  ctx.moveTo(bx + 22, by - 50); ctx.lineTo(bx + 33, by - 66); ctx.lineTo(bx + 44, by - 50);
+  ctx.fill();
+}
+
+function drawLauncher() {
+  const px = LAUNCHER.x, py = LAUNCHER.y - 14;
+  ctx.save();
+
+  ctx.fillStyle = '#4a3320';
+  ctx.fillRect(LAUNCHER.x - 34, GROUND_Y - 6, 20, 6);
+  ctx.fillRect(LAUNCHER.x + 10, GROUND_Y - 6, 20, 6);
+
+  ctx.strokeStyle = '#6b4a2b';
+  ctx.lineWidth = 7;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(LAUNCHER.x - 28, GROUND_Y - 4);
+  ctx.lineTo(px, py);
+  ctx.lineTo(LAUNCHER.x + 24, GROUND_Y - 4);
   ctx.stroke();
-  ctx.fillStyle = '#c9853a';
-  ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.lineCap = 'butt';
+
+  ctx.strokeStyle = '#5b3d22';
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(LAUNCHER.x - 18, GROUND_Y - 26);
+  ctx.lineTo(LAUNCHER.x + 15, GROUND_Y - 26);
+  ctx.stroke();
+
+  let longDir;
+  if (aiming) {
+    longDir = { x: -Math.cos(aimAngle), y: -Math.sin(aimAngle) };
+  } else {
+    const m = Math.hypot(0.85, 0.45);
+    longDir = { x: -0.85 / m, y: 0.45 / m };
+  }
+  const LONG_ARM = 34, SHORT_ARM = 15;
+  const tipX = px + longDir.x * LONG_ARM, tipY = py + longDir.y * LONG_ARM;
+  const cwX = px - longDir.x * SHORT_ARM, cwY = py - longDir.y * SHORT_ARM;
+
+  ctx.strokeStyle = '#3a2814';
+  ctx.lineWidth = 4.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(cwX, cwY); ctx.lineTo(tipX, tipY); ctx.stroke();
+  ctx.lineCap = 'butt';
+
+  ctx.save();
+  ctx.translate(cwX, cwY);
+  ctx.rotate(Math.atan2(longDir.y, longDir.x));
+  ctx.fillStyle = '#5a5a5a';
+  ctx.fillRect(-7, -7, 14, 14);
+  ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 1;
+  ctx.strokeRect(-7, -7, 14, 14);
+  ctx.restore();
+
+  ctx.fillStyle = '#2a2a2a';
+  ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2); ctx.fill();
+
+  if (!projectile && ammo > 0) {
+    ctx.strokeStyle = '#3a2814';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(tipX - 4, tipY); ctx.lineTo(tipX, tipY + 9); ctx.lineTo(tipX + 4, tipY);
+    ctx.stroke();
+    const grad = ctx.createLinearGradient(tipX - 7, tipY, tipX + 7, tipY + 16);
+    grad.addColorStop(0, '#6a6a6a'); grad.addColorStop(1, '#3a3a3a');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(tipX, tipY + 9, 7, 0, Math.PI * 2); ctx.fill();
+  }
+
   ctx.restore();
 }
 
@@ -700,6 +810,7 @@ function draw() {
   const mag = shakeTimer > 0 ? (shakeTimer / shakeDuration) * shakeMag : 0;
   if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
   drawGround();
+  drawCastle();
   drawLauncher();
   drawBlocks();
   drawTargets();

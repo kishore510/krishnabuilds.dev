@@ -133,6 +133,12 @@
     color: white;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
   }
+  #setupBar .shipHint {
+    display: block;
+    font-size: calc(11px * var(--game-scale, 1));
+    color: rgba(255,255,255,0.7);
+    margin-top: 2px;
+  }
   #setupControls {
     position: absolute;
     bottom: calc(14px * var(--game-scale, 1));
@@ -161,7 +167,10 @@
 <div id="wrap">
   <canvas id="game" width="360" height="540"></canvas>
   <button id="muteBtn" type="button">🔊</button>
-  <div id="setupBar"><span class="shipName" id="shipNameText"></span></div>
+  <div id="setupBar">
+    <span class="shipName" id="shipNameText"></span>
+    <span class="shipHint" id="shipHintText">Drag on the grid to preview, release to place</span>
+  </div>
   <div id="setupControls">
     <button id="rotateBtn" type="button">⟳ Rotate</button>
     <button id="randomizeBtn" type="button">🎲 Randomize</button>
@@ -196,6 +205,7 @@ const muteBtn = document.getElementById('muteBtn');
 const diffButtons = document.getElementById('diffButtons');
 const setupBar = document.getElementById('setupBar');
 const shipNameText = document.getElementById('shipNameText');
+const shipHintText = document.getElementById('shipHintText');
 const setupControls = document.getElementById('setupControls');
 const rotateBtn = document.getElementById('rotateBtn');
 const randomizeBtn = document.getElementById('randomizeBtn');
@@ -327,7 +337,9 @@ function shipAt(ships, x, y) { return ships.find((s) => s.cells.some((c) => c.x 
 let difficulty = 'hard';
 let playerGrid, playerShips, cpuGrid, cpuShips;
 let playerShots, cpuShots; // what each side has learned about the OTHER's board
+const SETUP_GRID_Y = 108;
 let placingShipIndex = 0, placingDir = 'h';
+let previewAnchor = null;
 let turn = 'player'; // player | cpu | over
 let cpuThinkTimer = 0;
 let cpuHits = []; // unresolved hit cells (not yet part of a sunk ship) on the player's board
@@ -368,6 +380,7 @@ function beginSetup() {
   playerShips = [];
   placingShipIndex = 0;
   placingDir = 'h';
+  previewAnchor = null;
   const cpuFleet = randomFleet();
   cpuGrid = cpuFleet.grid;
   cpuShips = cpuFleet.ships;
@@ -390,9 +403,11 @@ function beginSetup() {
 function updateSetupBar() {
   if (placingShipIndex >= SHIP_DEFS.length) {
     shipNameText.textContent = 'Fleet ready!';
+    shipHintText.style.display = 'none';
   } else {
     const def = SHIP_DEFS[placingShipIndex];
     shipNameText.textContent = 'Place: ' + def.name + ' (' + def.length + ')';
+    shipHintText.style.display = 'block';
   }
 }
 
@@ -411,6 +426,7 @@ randomizeBtn.addEventListener('click', () => {
     }
   });
   placingShipIndex = SHIP_DEFS.length;
+  previewAnchor = null;
   startBattleBtn.disabled = false;
   updateSetupBar();
 });
@@ -439,24 +455,39 @@ function cellFromPoint(p, gridY) {
 canvas.addEventListener('pointerdown', (e) => {
   const p = pointerToCanvas(e);
   if (state === 'setup') {
-    handleSetupTap(p);
+    updateSetupPreview(p);
   } else if (state === 'battle' && turn === 'player') {
     const cell = cellFromPoint(p, ENEMY_GRID_Y);
     if (cell) firePlayer(cell.x, cell.y);
   }
 });
+canvas.addEventListener('pointermove', (e) => {
+  if (state === 'setup') updateSetupPreview(pointerToCanvas(e));
+});
+canvas.addEventListener('pointerup', (e) => {
+  if (state === 'setup') { updateSetupPreview(pointerToCanvas(e)); commitSetupPlacement(); }
+});
 
-function handleSetupTap(p) {
-  if (placingShipIndex >= SHIP_DEFS.length) return;
-  const gridTop = 108;
+// Setup placement is drag-to-preview: the ghost ship follows the pointer
+// (hovering on desktop, dragging on touch) and only commits on release, so
+// the player can see and rotate it before it's locked in - a plain tap that
+// placed instantly left no way to reposition or preview a ship first.
+function updateSetupPreview(p) {
+  if (placingShipIndex >= SHIP_DEFS.length) { previewAnchor = null; return; }
   const cx = Math.floor((p.x - GRID_X) / CELL);
-  const cy = Math.floor((p.y - gridTop) / CELL);
-  if (cx < 0 || cx >= GRID_N || cy < 0 || cy >= GRID_N) return;
+  const cy = Math.floor((p.y - SETUP_GRID_Y) / CELL);
+  if (cx < 0 || cx >= GRID_N || cy < 0 || cy >= GRID_N) { previewAnchor = null; return; }
+  previewAnchor = { x: cx, y: cy };
+}
+
+function commitSetupPlacement() {
+  if (placingShipIndex >= SHIP_DEFS.length || !previewAnchor) return;
   const def = SHIP_DEFS[placingShipIndex];
-  if (canPlaceOn(playerGrid, cx, cy, def.length, placingDir)) {
-    placeOn(playerGrid, playerShips, placingShipIndex, def.length, cx, cy, placingDir);
+  if (canPlaceOn(playerGrid, previewAnchor.x, previewAnchor.y, def.length, placingDir)) {
+    placeOn(playerGrid, playerShips, placingShipIndex, def.length, previewAnchor.x, previewAnchor.y, placingDir);
     placingShipIndex++;
     playFire();
+    previewAnchor = null;
     updateSetupBar();
     if (placingShipIndex >= SHIP_DEFS.length) startBattleBtn.disabled = false;
   } else {
@@ -714,7 +745,7 @@ function drawGrid(gx, gy, label, shots, shipsGrid, revealShips) {
 }
 
 function drawSetupGrid() {
-  const gx = GRID_X, gy = 108;
+  const gx = GRID_X, gy = SETUP_GRID_Y;
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.fillRect(gx, gy, BOARD_PX, BOARD_PX);
   for (let y = 0; y < GRID_N; y++) {
@@ -722,6 +753,8 @@ function drawSetupGrid() {
       if (playerGrid[y][x] !== null) {
         ctx.fillStyle = '#4a7a9e';
         ctx.fillRect(gx + x * CELL + 1, gy + y * CELL + 1, CELL - 2, CELL - 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1;
+        ctx.strokeRect(gx + x * CELL + 1, gy + y * CELL + 1, CELL - 2, CELL - 2);
       }
     }
   }
@@ -730,6 +763,21 @@ function drawSetupGrid() {
   for (let i = 0; i <= GRID_N; i++) {
     ctx.beginPath(); ctx.moveTo(gx + i * CELL, gy); ctx.lineTo(gx + i * CELL, gy + BOARD_PX); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(gx, gy + i * CELL); ctx.lineTo(gx + BOARD_PX, gy + i * CELL); ctx.stroke();
+  }
+
+  if (previewAnchor && placingShipIndex < SHIP_DEFS.length) {
+    const def = SHIP_DEFS[placingShipIndex];
+    const valid = canPlaceOn(playerGrid, previewAnchor.x, previewAnchor.y, def.length, placingDir);
+    ctx.fillStyle = valid ? 'rgba(90,200,140,0.55)' : 'rgba(230,57,70,0.55)';
+    ctx.strokeStyle = valid ? '#5ac88c' : '#e63946';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < def.length; i++) {
+      const cx = placingDir === 'h' ? previewAnchor.x + i : previewAnchor.x;
+      const cy = placingDir === 'h' ? previewAnchor.y : previewAnchor.y + i;
+      if (cx < 0 || cx >= GRID_N || cy < 0 || cy >= GRID_N) continue;
+      ctx.fillRect(gx + cx * CELL + 1, gy + cy * CELL + 1, CELL - 2, CELL - 2);
+      ctx.strokeRect(gx + cx * CELL + 1, gy + cy * CELL + 1, CELL - 2, CELL - 2);
+    }
   }
 }
 

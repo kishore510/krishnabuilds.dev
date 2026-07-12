@@ -208,16 +208,6 @@ let state = 'menu'; // menu | playing | over
 
 function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
 
-function resetBall() {
-  ball = null;
-}
-
-function maybeMoveHoop() {
-  if (Math.random() < clamp(score / 40, 0, 0.6)) {
-    hoopX = clamp(hoopX + (Math.random() * 2 - 1) * 60, 250, 340);
-  }
-}
-
 function showMenu() {
   state = 'menu';
   title.textContent = 'Hoops';
@@ -315,7 +305,6 @@ function endShot(made) {
       playMake();
       netFlash = 0.2;
     }
-    maybeMoveHoop();
   } else {
     combo = 0;
   }

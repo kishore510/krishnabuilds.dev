@@ -222,7 +222,7 @@
   <div id="weatherBanner"></div>
   <div id="overlay">
     <h1 id="title">Losing the Plot</h1>
-    <p id="subtitle">Tend every bed before the season gets away from you</p>
+    <p id="subtitle">One gardener, one job at a time — plan your route</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <p id="moneyLine"></p>
@@ -336,10 +336,11 @@ function saveBest(v) { try { sessionStorage.setItem('losingThePlotBest', v); } c
 function loadMoney() { return parseInt(sessionStorage.getItem('losingThePlotMoney') || '0', 10); }
 function saveMoney(v) { try { sessionStorage.setItem('losingThePlotMoney', v); } catch (e) {} }
 function loadUpgrades() {
+  const fallback = { water: 0, plot: 0, tools: 0, seeds: 0, boots: 0 };
   try {
     const raw = sessionStorage.getItem('losingThePlotUpgrades');
-    return raw ? JSON.parse(raw) : { water: 0, plot: 0, tools: 0, seeds: 0 };
-  } catch (e) { return { water: 0, plot: 0, tools: 0, seeds: 0 }; }
+    return raw ? Object.assign(fallback, JSON.parse(raw)) : fallback;
+  } catch (e) { return fallback; }
 }
 function saveUpgrades(u) { try { sessionStorage.setItem('losingThePlotUpgrades', JSON.stringify(u)); } catch (e) {} }
 function loadDifficulty() { return sessionStorage.getItem('losingThePlotDifficulty') || 'easy'; }
@@ -349,7 +350,8 @@ const UPGRADES = {
   water: { name: 'Water Butts', desc: 'Water lasts longer before wilting', maxLevel: 3, baseCost: 40, costMul: 1.8 },
   plot: { name: 'Bigger Plot', desc: 'Unlocks extra beds sooner', maxLevel: 3, baseCost: 60, costMul: 2.0 },
   tools: { name: 'Better Tools', desc: 'Tend every bed faster', maxLevel: 3, baseCost: 35, costMul: 1.8 },
-  seeds: { name: 'Better Seeds', desc: 'Harvests are worth more', maxLevel: 4, baseCost: 30, costMul: 1.7 }
+  seeds: { name: 'Better Seeds', desc: 'Harvests are worth more', maxLevel: 4, baseCost: 30, costMul: 1.7 },
+  boots: { name: 'Sturdy Boots', desc: 'Your gardener moves faster between beds', maxLevel: 3, baseCost: 45, costMul: 1.8 }
 };
 
 let money = loadMoney();
@@ -365,6 +367,7 @@ function upgradeCost(key) {
 function waterUpgradeMul() { return 1 + upgradeLevels.water * 0.2; }
 function harvestPointsMul() { return 1 + upgradeLevels.seeds * 0.2; }
 function effectiveTendDuration() { return Math.max(200, TEND_DURATION - upgradeLevels.tools * 100); }
+function gardenerSpeedMul() { return 1 + upgradeLevels.boots * 0.25; }
 function effectiveUnlockAt(index) {
   const base = BED_SLOTS[index].unlockAt;
   const lvl = upgradeLevels.plot;
@@ -384,10 +387,13 @@ const TEND_DURATION = 550;
 const WATER_INTERVAL = [9000, 4200];
 const FEED_INTERVAL = [12000, 5500];
 const WEED_INTERVAL = [11000, 5000];
-const WATER_GRACE = [7500, 3800];
-const WEED_GRACE = [7000, 3500];
-const FEED_GRACE = [6500, 3200];
-const HARVEST_GRACE = [9000, 4500];
+// Grace floors are a bit more generous than a pure reflex-tap version would
+// need, since the gardener now has to physically walk to a bed before
+// tending starts - that travel time already eats into the response window.
+const WATER_GRACE = [7500, 4200];
+const WEED_GRACE = [7000, 3900];
+const FEED_GRACE = [6500, 3600];
+const HARVEST_GRACE = [9000, 5000];
 
 const DIFFICULTY_PRESETS = {
   easy: { intervalMul: 1.15, graceMul: 1.2 },
@@ -430,6 +436,14 @@ const BED_SLOTS = [
 const BED_W = 96, BED_H = 92;
 
 const NEED_ICON = { water: '💧', feed: '⭐', weed: '🌿', harvest: '🧺' };
+
+// The gardener: a single actor who must physically walk to a bed before
+// tending it. This is what actually enforces "only one thing at a time" -
+// tapping a second urgent bed abandons whatever's in progress and sends the
+// gardener there instead, so which bed to run to next (given where the
+// gardener already is) is the real decision, not just "tap the reddest icon".
+const GARDENER_SPEED = 150;
+const SHED = { x: 180, y: 400 };
 
 function rampT(elapsed) { return clamp((elapsed - CALM_DURATION) / (SEASON_LENGTH - CALM_DURATION), 0, 1); }
 function intervalFor(range, elapsed) { const v = lerp(range[0], range[1], rampT(elapsed)); return randRange(v * 0.85, v * 1.15); }
@@ -491,6 +505,7 @@ let score = 0, elapsed = 0, moneyEarnedThisRun = 0;
 let popups = [];
 let state = 'menu'; // menu | playing | over
 let hintVisible = false, hintAlpha = 1;
+let gardener = { x: SHED.x, y: SHED.y, targetIndex: null, state: 'idle', tendingNeed: null, tendProgress: 0, tendDuration: 0 };
 
 function makeBed(slot, index) {
   return {
@@ -504,8 +519,7 @@ function makeBed(slot, index) {
     needs: { water: false, feed: false, weed: false },
     activeSince: { water: 0, feed: 0, weed: 0, harvest: 0 },
     nextDue: { water: Infinity, feed: Infinity, weed: Infinity },
-    weedSpread: false,
-    tending: null
+    weedSpread: false
   };
 }
 
@@ -518,7 +532,7 @@ function initBed(bed, atTime, firstStagger) {
   bed.rainClearAt = 0;
   bed.needs.water = false; bed.needs.feed = false; bed.needs.weed = false;
   bed.weedSpread = false;
-  bed.tending = null;
+  if (gardener.targetIndex === bed.index) { gardener.targetIndex = null; gardener.state = 'idle'; }
   if (firstStagger !== undefined) {
     bed.nextDue.water = firstStagger + randRange(-1500, 1500);
     bed.nextDue.feed = firstStagger + randRange(2500, 5000);
@@ -539,6 +553,7 @@ function reset() {
   popups = [];
   weather = null;
   scheduleNextWeather(0);
+  gardener = { x: SHED.x, y: SHED.y, targetIndex: null, state: 'idle', tendingNeed: null, tendProgress: 0, tendDuration: 0 };
   hintVisible = sessionStorage.getItem('losingThePlotSeenHint') !== '1';
   hintAlpha = 1;
   beds.forEach((bed, i) => {
@@ -559,7 +574,7 @@ updateDiffButtonStyles();
 function showMenu() {
   state = 'menu';
   title.textContent = 'Losing the Plot';
-  subtitle.textContent = 'Tend every bed before the season gets away from you';
+  subtitle.textContent = 'One gardener, one job at a time — plan your route';
   scoreLine.style.display = 'none';
   bestLine.textContent = 'Best score: ' + loadBest();
   moneyLine.textContent = '💰 ' + money;
@@ -644,9 +659,14 @@ function rotBed(bed) {
 }
 
 function spreadWeed(bed) {
-  const neighborIdx = [bed.index - 1, bed.index + 1].filter(i => i >= 0 && i < beds.length && beds[i].active);
-  if (!neighborIdx.length) return;
-  const target = beds[neighborIdx[Math.floor(Math.random() * neighborIdx.length)]];
+  const candidates = beds.filter((b) => b.index !== bed.index && b.active);
+  if (!candidates.length) return;
+  candidates.sort((a, b) => {
+    const da = Math.hypot(a.slot.x - bed.slot.x, a.slot.y - bed.slot.y);
+    const db = Math.hypot(b.slot.x - bed.slot.x, b.slot.y - bed.slot.y);
+    return da - db;
+  });
+  const target = candidates.find((b) => !b.needs.weed) || candidates[0];
   if (!target.needs.weed) {
     target.needs.weed = true;
     target.activeSince.weed = elapsed;
@@ -664,9 +684,7 @@ function topNeed(bed) {
   return null;
 }
 
-function resolveTend(bed) {
-  const need = bed.tending.need;
-  bed.tending = null;
+function resolveTend(bed, need) {
   if (need === 'harvest') {
     const points = Math.round(bed.crop.value * bed.quality * harvestPointsMul());
     score += points;
@@ -694,14 +712,53 @@ function resolveTend(bed) {
 }
 
 function tapBed(bed) {
-  if (!bed.active || bed.tending) return;
+  if (!bed.active) return;
   const need = topNeed(bed);
   if (!need) return;
-  bed.tending = { need, progress: 0, duration: effectiveTendDuration() };
+  // Re-tapping the bed the gardener is already heading to/working on is a
+  // no-op rather than a reset, so an accidental double-tap doesn't throw
+  // away progress that was already under way.
+  if (gardener.targetIndex === bed.index && gardener.state !== 'idle') return;
+  gardener.targetIndex = bed.index;
+  gardener.state = 'walking';
+  gardener.tendingNeed = null;
+  gardener.tendProgress = 0;
   playStartTend();
   if (hintVisible) {
     hintVisible = false;
     try { sessionStorage.setItem('losingThePlotSeenHint', '1'); } catch (e) {}
+  }
+}
+
+function updateGardener(dt) {
+  if (gardener.targetIndex === null) return;
+  const bed = beds[gardener.targetIndex];
+  if (!bed || !bed.active) { gardener.targetIndex = null; gardener.state = 'idle'; return; }
+  const targetX = bed.slot.x + BED_W / 2, targetY = bed.slot.y + BED_H / 2;
+  if (gardener.state === 'walking') {
+    const dx = targetX - gardener.x, dy = targetY - gardener.y;
+    const dist = Math.hypot(dx, dy);
+    const step = GARDENER_SPEED * gardenerSpeedMul() * dt;
+    if (dist <= step) {
+      gardener.x = targetX; gardener.y = targetY;
+      const need = topNeed(bed);
+      if (!need) { gardener.targetIndex = null; gardener.state = 'idle'; return; }
+      gardener.state = 'tending';
+      gardener.tendingNeed = need;
+      gardener.tendProgress = 0;
+      gardener.tendDuration = effectiveTendDuration();
+    } else {
+      gardener.x += (dx / dist) * step;
+      gardener.y += (dy / dist) * step;
+    }
+  } else if (gardener.state === 'tending') {
+    gardener.tendProgress += dt * 1000;
+    if (gardener.tendProgress >= gardener.tendDuration) {
+      resolveTend(bed, gardener.tendingNeed);
+      gardener.targetIndex = null;
+      gardener.state = 'idle';
+      gardener.tendingNeed = null;
+    }
   }
 }
 
@@ -742,11 +799,6 @@ function endSeason() {
 function updateBed(bed, dt) {
   if (!bed.active) return;
 
-  if (bed.tending) {
-    bed.tending.progress += dt * 1000;
-    if (bed.tending.progress >= bed.tending.duration) resolveTend(bed);
-  }
-
   if (bed.stage === 'growing' && elapsed >= bed.growStart + bed.crop.growDuration) {
     bed.stage = 'ripe';
     bed.activeSince.harvest = elapsed;
@@ -782,6 +834,7 @@ function update(dt) {
     if (!bed.active && elapsed >= effectiveUnlockAt(bed.index)) initBed(bed, elapsed, elapsed + randRange(1500, 4000));
   });
   beds.forEach((bed) => updateBed(bed, dt));
+  updateGardener(dt);
   updateWeather(dt);
 
   if (hintVisible && elapsed > CALM_DURATION + 6000) hintVisible = false;
@@ -876,8 +929,8 @@ function drawNeedIcons(bed) {
 }
 
 function drawTendingRing(bed) {
-  if (!bed.tending) return;
-  const frac = bed.tending.progress / bed.tending.duration;
+  if (gardener.state !== 'tending' || gardener.targetIndex !== bed.index) return;
+  const frac = gardener.tendProgress / gardener.tendDuration;
   const cx = bed.slot.x + BED_W / 2, cy = bed.slot.y + BED_H / 2;
   ctx.strokeStyle = '#ffe28a';
   ctx.lineWidth = 4;
@@ -894,6 +947,44 @@ function drawBeds() {
     drawTendingRing(bed);
     drawNeedIcons(bed);
   });
+}
+
+function drawShed() {
+  ctx.fillStyle = '#5b3d22';
+  ctx.beginPath();
+  ctx.roundRect(SHED.x - 26, SHED.y - 18, 52, 36, 4);
+  ctx.fill();
+  ctx.fillStyle = '#7a3d1a';
+  ctx.beginPath();
+  ctx.moveTo(SHED.x - 30, SHED.y - 18); ctx.lineTo(SHED.x, SHED.y - 34); ctx.lineTo(SHED.x + 30, SHED.y - 18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#3a2a1a';
+  ctx.fillRect(SHED.x - 7, SHED.y - 4, 14, 20);
+}
+
+function drawGardener() {
+  const cx = gardener.x, cy = gardener.y;
+  const bob = gardener.state === 'walking' ? Math.sin(performance.now() / 90) * 2 : 0;
+  ctx.save();
+  ctx.translate(cx, cy + bob);
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath(); ctx.ellipse(0, 20, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3a6b8a';
+  ctx.beginPath(); ctx.roundRect(-9, -2, 18, 20, 4); ctx.fill();
+  ctx.fillStyle = '#e8b96b';
+  ctx.beginPath(); ctx.arc(0, -12, 9, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#c9853a';
+  ctx.beginPath(); ctx.arc(0, -16, 9.5, Math.PI, 0); ctx.fill();
+  if (gardener.state === 'tending' && gardener.tendingNeed) {
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'white';
+    ctx.beginPath(); ctx.arc(14, -14, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.fillText(NEED_ICON[gardener.tendingNeed], 14, -13);
+  }
+  ctx.restore();
 }
 
 function drawPopups() {
@@ -935,7 +1026,7 @@ function drawHint() {
   if (hintAlpha <= 0.01) return;
   ctx.save();
   ctx.globalAlpha = hintAlpha;
-  const text = 'Tap a bed to tend whatever it needs';
+  const text = 'Tap a bed to send your gardener over';
   ctx.font = 'bold 13px Arial';
   const tw = ctx.measureText(text).width;
   const pillW = tw + 28, pillH = 30, px = W / 2 - pillW / 2, py = 46;
@@ -958,7 +1049,9 @@ function draw() {
   ctx.fillStyle = '#3a2a18';
   ctx.fillRect(0, 0, W, H);
   if (state === 'menu') return;
+  drawShed();
   drawBeds();
+  drawGardener();
   drawPopups();
   drawHud();
   drawHint();
