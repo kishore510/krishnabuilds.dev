@@ -752,8 +752,22 @@ function draw() {
   drawDiagonalShadow();
   drawBackboard();
   drawRimBack();
-  drawBall();
-  drawRimFront();
+  // The front rim should only occlude the ball during the narrow instant it's
+  // actually falling THROUGH the rim's plane - on the way up (approaching
+  // from below/in front, before it has gone up and over) the ball is closer
+  // to the viewer than the whole hoop and must render fully on top, or the
+  // very first frames of every throw make it look like the ball is already
+  // passing behind the rim from underneath. Once it's on its way down and
+  // right at the rim's height, sandwiching it between the back and front rim
+  // is what sells "dropping through the opening."
+  const sandwich = ball && !ball.scored && ball.vy > 0 && Math.abs(ball.y - hoopY) < BALL_R;
+  if (sandwich) {
+    drawBall();
+    drawRimFront();
+  } else {
+    drawRimFront();
+    drawBall();
+  }
   drawAimArrow();
   drawPopups();
   drawHud();

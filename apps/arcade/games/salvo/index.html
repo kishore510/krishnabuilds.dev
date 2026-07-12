@@ -8,7 +8,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #051824;
+    background: #3fa8d4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,9 +23,9 @@
   }
   #wrap { position: relative; }
   canvas {
-    background: #0a3550;
+    background: #bfe8f5;
     border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
     display: block;
     max-width: 100vw;
     max-height: 100vh;
@@ -40,22 +40,22 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    color: #0f3244;
+    text-shadow: 0 2px 6px rgba(255,255,255,0.4);
     pointer-events: none;
     text-align: center;
     padding: calc(10px * var(--game-scale, 1));
     box-sizing: border-box;
   }
   #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
-  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.85; }
   #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
   #bestLine { opacity: 0.8; }
   .rowLabel {
     font-size: calc(10.5px * var(--game-scale, 1));
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    opacity: 0.6;
+    opacity: 0.7;
     margin-top: calc(8px * var(--game-scale, 1));
   }
   .btnRow {
@@ -72,13 +72,13 @@
     font-weight: bold;
     padding: calc(7px * var(--game-scale, 1)) calc(15px * var(--game-scale, 1));
     border-radius: calc(18px * var(--game-scale, 1));
-    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
-    background: rgba(255,255,255,0.12);
-    color: white;
+    border: calc(2px * var(--game-scale, 1)) solid #1c4a5e;
+    background: rgba(255,255,255,0.5);
+    color: #1c4a5e;
     cursor: pointer;
   }
-  .btnRow button:active { background: rgba(255,255,255,0.3); }
-  .btnRow button.selected { background: #ffb703; border-color: #ffb703; color: #04121c; }
+  .btnRow button:active { background: rgba(255,255,255,0.8); }
+  .btnRow button.selected { background: #ffb703; border-color: #ffb703; color: #3a2400; }
   #startBtn {
     margin-top: calc(14px * var(--game-scale, 1));
     font-size: calc(17px * var(--game-scale, 1));
@@ -86,18 +86,18 @@
     padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
     border-radius: calc(24px * var(--game-scale, 1));
     border: none;
-    background: #2aa9c9;
-    color: #04121c;
+    background: #ffb703;
+    color: #3a2400;
     cursor: pointer;
     pointer-events: auto;
   }
-  #startBtn:active { background: #5ed4ea; }
+  #startBtn:active { background: #ffcb42; }
   #backToArcade {
     display: none;
     margin-top: calc(12px * var(--game-scale, 1));
     font-size: calc(13px * var(--game-scale, 1));
     font-weight: bold;
-    color: white;
+    color: #0f3244;
     text-decoration: underline;
     text-underline-offset: 3px;
     opacity: 0.85;
@@ -112,15 +112,15 @@
     font-size: calc(13px * var(--game-scale, 1));
     padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
     border-radius: calc(14px * var(--game-scale, 1));
-    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
-    background: rgba(0,0,0,0.35);
-    color: white;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(28,74,94,0.5);
+    background: rgba(255,255,255,0.55);
+    color: #1c4a5e;
     cursor: pointer;
     z-index: 5;
   }
   #setupBar {
     position: absolute;
-    top: calc(10px * var(--game-scale, 1));
+    top: calc(8px * var(--game-scale, 1));
     left: 0; right: 0;
     text-align: center;
     display: none;
@@ -128,52 +128,54 @@
     pointer-events: none;
   }
   #setupBar .shipName {
-    font-size: calc(16px * var(--game-scale, 1));
+    font-size: calc(15px * var(--game-scale, 1));
     font-weight: bold;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    color: #0f3244;
   }
   #setupBar .shipHint {
     display: block;
-    font-size: calc(11px * var(--game-scale, 1));
-    color: rgba(255,255,255,0.7);
-    margin-top: 2px;
+    font-size: calc(10.5px * var(--game-scale, 1));
+    color: #2a5b70;
+    margin-top: 1px;
   }
   #setupControls {
     position: absolute;
-    bottom: calc(14px * var(--game-scale, 1));
+    bottom: calc(12px * var(--game-scale, 1));
     left: 0; right: 0;
     display: none;
     justify-content: center;
-    gap: calc(8px * var(--game-scale, 1));
+    gap: calc(6px * var(--game-scale, 1));
     z-index: 4;
+    flex-wrap: wrap;
+    padding: 0 calc(8px * var(--game-scale, 1));
   }
   #setupControls button {
     font-family: inherit;
-    font-size: calc(12.5px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
     font-weight: bold;
-    padding: calc(8px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    padding: calc(8px * var(--game-scale, 1)) calc(12px * var(--game-scale, 1));
     border-radius: calc(18px * var(--game-scale, 1));
-    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
-    background: rgba(0,0,0,0.4);
-    color: white;
+    border: calc(1.5px * var(--game-scale, 1)) solid #1c4a5e;
+    background: rgba(255,255,255,0.65);
+    color: #1c4a5e;
     cursor: pointer;
   }
   #setupControls button:disabled { opacity: 0.4; }
-  #setupControls #startBattleBtn { background: #2aa9c9; border-color: #2aa9c9; color: #04121c; }
+  #setupControls #startBattleBtn { background: #ffb703; border-color: #ffb703; color: #3a2400; }
 </style>
 </head>
 <body>
 <div id="wrap">
-  <canvas id="game" width="380" height="600"></canvas>
+  <canvas id="game" width="380" height="580"></canvas>
   <button id="muteBtn" type="button">🔊</button>
   <div id="setupBar">
-    <span class="shipName" id="shipNameText"></span>
-    <span class="shipHint" id="shipHintText">Drag on the grid to preview, release to place</span>
+    <span class="shipName" id="shipNameText">Place your fleet</span>
+    <span class="shipHint" id="shipHintText">Drag ships to move &middot; tap to rotate</span>
   </div>
   <div id="setupControls">
     <button id="rotateBtn" type="button">⟳ Rotate</button>
-    <button id="randomizeBtn" type="button">🎲 Randomize</button>
+    <button id="randomizeBtn" type="button">🎲 Auto-place</button>
+    <button id="clearBtn" type="button">✕ Clear</button>
     <button id="startBattleBtn" type="button" disabled>Start Battle</button>
   </div>
   <div id="overlay">
@@ -209,6 +211,7 @@ const shipHintText = document.getElementById('shipHintText');
 const setupControls = document.getElementById('setupControls');
 const rotateBtn = document.getElementById('rotateBtn');
 const randomizeBtn = document.getElementById('randomizeBtn');
+const clearBtn = document.getElementById('clearBtn');
 const startBattleBtn = document.getElementById('startBattleBtn');
 
 const W = canvas.width, H = canvas.height;
@@ -278,28 +281,34 @@ muteBtn.addEventListener('click', () => {
 function loadBest() { const v = sessionStorage.getItem('salvoBest'); return v ? parseInt(v, 10) : null; }
 function saveBest(v) { try { sessionStorage.setItem('salvoBest', v); } catch (e) {} }
 
-// --- Board setup ---
-// 12x12 (up from the original 10x10): same five-ship fleet spread over more
-// water lowers ship density symmetrically for both sides, so games run
-// longer and feel less like an instant coin-flip without actually tuning
-// either side's aim to be worse - "bigger, not easier."
-const GRID_N = 12;
-const CELL = 19;
-const BOARD_PX = GRID_N * CELL;
-const SIDEBAR_W = 66;
-const SIDEBAR_GAP = 8;
-const GRID_X = 38 + SIDEBAR_W + SIDEBAR_GAP;
-const SIDEBAR_X = 38;
-const ENEMY_GRID_Y = 54;
-const PLAYER_GRID_Y = ENEMY_GRID_Y + BOARD_PX + 40;
+// --- Board setup: standard 10x10, standard 5-ship fleet ---
+const GRID_N = 10;
+const BOARD_CELL = 30;
+const BOARD_PX = GRID_N * BOARD_CELL;
+const BOARD_GX = Math.round((W - BOARD_PX) / 2);
+const SETUP_GY = 70;
+
+const MINI_CELL = 12;
+const MINI_PX = GRID_N * MINI_CELL;
+const MINI_GX = 20;
+const MINI_GY = 372;
+const ENEMY_GY = 54;
+const LEGEND_X = MINI_GX + MINI_PX + 18;
+const LEGEND_Y = MINI_GY;
+const LEGEND_H = MINI_PX;
+
+const TRAY_X = 20, TRAY_Y = 384, TRAY_W = W - 40, TRAY_H = 58;
 
 const SHIP_DEFS = [
-  { name: 'Carrier', short: 'Carrier', length: 5 },
-  { name: 'Battleship', short: 'B\'ship', length: 4 },
-  { name: 'Cruiser', short: 'Cruiser', length: 3 },
-  { name: 'Submarine', short: 'Sub', length: 3 },
-  { name: 'Destroyer', short: 'D\'stroy', length: 2 }
+  { name: 'Carrier', short: 'Carrier', length: 5, color: '#3a5068' },
+  { name: 'Battleship', short: 'B\'ship', length: 4, color: '#3a6b82' },
+  { name: 'Cruiser', short: 'Cruiser', length: 3, color: '#4a7a5a' },
+  { name: 'Submarine', short: 'Sub', length: 3, color: '#7a5a8a' },
+  { name: 'Destroyer', short: 'D\'stroy', length: 2, color: '#e8834a' }
 ];
+
+const SEA = '#4db6e0', SEA2 = '#3fa8d4';
+const HIT_COLOR = '#ff5a4d', MISS_COLOR = '#eaf6ff', SUNK_OVERLAY = 'rgba(160,20,20,0.45)';
 
 function makeGrid(fill) { return Array.from({ length: GRID_N }, () => Array(GRID_N).fill(fill)); }
 
@@ -343,19 +352,82 @@ function shipAt(ships, x, y) { return ships.find((s) => s.cells.some((c) => c.x 
 // --- Game state ---
 let difficulty = 'hard';
 let playerGrid, playerShips, cpuGrid, cpuShips;
-let playerShots, cpuShots; // what each side has learned about the OTHER's board
-const SETUP_GRID_Y = Math.round((H - BOARD_PX) / 2);
-let placingShipIndex = 0, placingDir = 'h';
-let previewAnchor = null;
+let playerShots, cpuShots;
 let turn = 'player'; // player | cpu | over
 let cpuThinkTimer = 0;
-let cpuHits = []; // unresolved hit cells (not yet part of a sunk ship) on the player's board
+let cpuHits = [];
 let cpuMode = 'hunt';
 let shotsTaken = 0;
 let particles = [];
 let popups = [];
 let state = 'menu'; // menu | setup | battle | over
 let shake = 0;
+
+// --- Setup: ships are freely rearrangeable until Start Battle is pressed.
+// Each ship is either placed (has a live x/y/dir on the board) or sitting in
+// the tray (placed: false). Nothing is committed - dragging always shows a
+// live preview, and only a currently-valid position ever actually moves the
+// real ship; an invalid drop just leaves it where it last validly was. ---
+let setupShips = [];
+let dragShipId = null, dragGrabOffset = 0, dragMoved = false;
+let dragGhost = null; // {x,y,dir,length,valid} - the position/validity under the pointer while dragging
+let selectedShipId = null;
+
+function shipCells(x, y, dir, length) {
+  const cells = [];
+  for (let i = 0; i < length; i++) cells.push(dir === 'h' ? { x: x + i, y } : { x, y: y + i });
+  return cells;
+}
+function cellsInBounds(cells) { return cells.every((c) => c.x >= 0 && c.x < GRID_N && c.y >= 0 && c.y < GRID_N); }
+function setupValidAt(movingId, x, y, dir, length) {
+  const cells = shipCells(x, y, dir, length);
+  if (!cellsInBounds(cells)) return false;
+  for (const s of setupShips) {
+    if (s.id === movingId || !s.placed) continue;
+    const other = shipCells(s.x, s.y, s.dir, s.length);
+    if (cells.some((c) => other.some((o) => o.x === c.x && o.y === c.y))) return false;
+  }
+  return true;
+}
+function allPlaced() { return setupShips.every((s) => s.placed); }
+function shipAtSetupCell(x, y) {
+  for (const s of setupShips) {
+    if (!s.placed) continue;
+    if (shipCells(s.x, s.y, s.dir, s.length).some((c) => c.x === x && c.y === y)) return s;
+  }
+  return null;
+}
+function unplacedShips() { return setupShips.filter((s) => !s.placed); }
+
+function randomizeSetup() {
+  let ok = false, guard = 0;
+  while (!ok && guard < 60) {
+    guard++;
+    const next = SHIP_DEFS.map((def, id) => ({ id, length: def.length, color: def.color, dir: 'h', x: 0, y: 0, placed: false }));
+    let allGood = true;
+    for (const ship of next) {
+      let placedOne = false, tries = 0;
+      while (!placedOne && tries < 300) {
+        tries++;
+        const dir = Math.random() < 0.5 ? 'h' : 'v';
+        const x = Math.floor(Math.random() * GRID_N), y = Math.floor(Math.random() * GRID_N);
+        const cells = shipCells(x, y, dir, ship.length);
+        if (!cellsInBounds(cells)) continue;
+        let clash = false;
+        for (const other of next) {
+          if (other === ship || !other.placed) continue;
+          const oc = shipCells(other.x, other.y, other.dir, other.length);
+          if (cells.some((c) => oc.some((o) => o.x === c.x && o.y === c.y))) { clash = true; break; }
+        }
+        if (!clash) { ship.x = x; ship.y = y; ship.dir = dir; ship.placed = true; placedOne = true; }
+      }
+      if (!placedOne) { allGood = false; break; }
+    }
+    if (allGood) { setupShips = next; ok = true; }
+  }
+}
+
+function refreshStartEnabled() { startBattleBtn.disabled = !allPlaced(); }
 
 function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
 diffButtons.addEventListener('click', (e) => {
@@ -383,11 +455,10 @@ function showMenu() {
 }
 
 function beginSetup() {
-  playerGrid = makeGrid(null);
-  playerShips = [];
-  placingShipIndex = 0;
-  placingDir = 'h';
-  previewAnchor = null;
+  randomizeSetup();
+  selectedShipId = setupShips[0].id;
+  dragShipId = null;
+  dragGhost = null;
   const cpuFleet = randomFleet();
   cpuGrid = cpuFleet.grid;
   cpuShips = cpuFleet.ships;
@@ -403,42 +474,32 @@ function beginSetup() {
   overlay.style.display = 'none';
   setupBar.style.display = 'block';
   setupControls.style.display = 'flex';
-  startBattleBtn.disabled = true;
-  updateSetupBar();
+  refreshStartEnabled();
   ensureAudio();
 }
-function updateSetupBar() {
-  if (placingShipIndex >= SHIP_DEFS.length) {
-    shipNameText.textContent = 'Fleet ready!';
-    shipHintText.style.display = 'none';
-  } else {
-    const def = SHIP_DEFS[placingShipIndex];
-    shipNameText.textContent = 'Place: ' + def.name + ' (' + def.length + ')';
-    shipHintText.style.display = 'block';
-  }
+
+function commitPlayerFleet() {
+  playerGrid = makeGrid(null);
+  playerShips = [];
+  setupShips.forEach((s) => placeOn(playerGrid, playerShips, s.id, s.length, s.x, s.y, s.dir));
 }
 
 startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') beginSetup(); });
-rotateBtn.addEventListener('click', () => { placingDir = placingDir === 'h' ? 'v' : 'h'; });
-randomizeBtn.addEventListener('click', () => {
-  playerGrid = makeGrid(null);
-  playerShips = [];
-  SHIP_DEFS.forEach((def, id) => {
-    let placed = false;
-    while (!placed) {
-      const dir = Math.random() < 0.5 ? 'h' : 'v';
-      const x = Math.floor(Math.random() * GRID_N);
-      const y = Math.floor(Math.random() * GRID_N);
-      if (canPlaceOn(playerGrid, x, y, def.length, dir)) { placeOn(playerGrid, playerShips, id, def.length, x, y, dir); placed = true; }
-    }
-  });
-  placingShipIndex = SHIP_DEFS.length;
-  previewAnchor = null;
-  startBattleBtn.disabled = false;
-  updateSetupBar();
+rotateBtn.addEventListener('click', () => {
+  const ship = setupShips.find((s) => s.id === selectedShipId) || setupShips[0];
+  if (!ship) return;
+  const newDir = ship.dir === 'h' ? 'v' : 'h';
+  if (!ship.placed || setupValidAt(ship.id, ship.x, ship.y, newDir, ship.length)) { ship.dir = newDir; playFire(); }
+  else playInvalid();
+});
+randomizeBtn.addEventListener('click', () => { randomizeSetup(); refreshStartEnabled(); });
+clearBtn.addEventListener('click', () => {
+  setupShips.forEach((s) => { s.placed = false; });
+  refreshStartEnabled();
 });
 startBattleBtn.addEventListener('click', () => {
-  if (placingShipIndex < SHIP_DEFS.length) return;
+  if (!allPlaced()) return;
+  commitPlayerFleet();
   state = 'battle';
   setupBar.style.display = 'none';
   setupControls.style.display = 'none';
@@ -452,55 +513,99 @@ function pointerToCanvas(e) {
     y: (e.clientY - rect.top) * (canvas.height / rect.height)
   };
 }
-function cellFromPoint(p, gridY) {
-  const cx = Math.floor((p.x - GRID_X) / CELL);
-  const cy = Math.floor((p.y - gridY) / CELL);
-  if (cx < 0 || cx >= GRID_N || cy < 0 || cy >= GRID_N) return null;
-  return { x: cx, y: cy };
+function pointToCell(p, gx, gy, cellSize) {
+  return { x: Math.floor((p.x - gx) / cellSize), y: Math.floor((p.y - gy) / cellSize) };
+}
+function inRect(p, x, y, w, h) { return p.x >= x && p.x < x + w && p.y >= y && p.y < y + h; }
+
+function traySlotIndexAt(p) {
+  if (!inRect(p, TRAY_X, TRAY_Y, TRAY_W, TRAY_H)) return null;
+  const idx = Math.floor((p.x - TRAY_X) / (TRAY_W / 5));
+  return clamp(idx, 0, 4);
+}
+
+function setupPointerDown(p) {
+  dragMoved = false;
+  if (inRect(p, BOARD_GX, SETUP_GY, BOARD_PX, BOARD_PX)) {
+    const cell = pointToCell(p, BOARD_GX, SETUP_GY, BOARD_CELL);
+    const ship = shipAtSetupCell(cell.x, cell.y);
+    if (ship) {
+      dragShipId = ship.id;
+      selectedShipId = ship.id;
+      dragGrabOffset = ship.dir === 'h' ? cell.x - ship.x : cell.y - ship.y;
+      dragGhost = { x: ship.x, y: ship.y, dir: ship.dir, length: ship.length, valid: true };
+    }
+    return;
+  }
+  const slot = traySlotIndexAt(p);
+  if (slot !== null) {
+    const ship = unplacedShips()[slot];
+    if (ship) {
+      dragShipId = ship.id;
+      selectedShipId = ship.id;
+      dragGrabOffset = 0;
+      dragGhost = null;
+    }
+  }
+}
+
+function setupPointerMove(p) {
+  if (dragShipId === null) return;
+  dragMoved = true;
+  const ship = setupShips.find((s) => s.id === dragShipId);
+  if (!ship) return;
+  if (inRect(p, BOARD_GX, SETUP_GY, BOARD_PX, BOARD_PX)) {
+    const cell = pointToCell(p, BOARD_GX, SETUP_GY, BOARD_CELL);
+    let x = ship.dir === 'h' ? cell.x - dragGrabOffset : cell.x;
+    let y = ship.dir === 'v' ? cell.y - dragGrabOffset : cell.y;
+    if (ship.dir === 'h') y = ship.placed ? ship.y : cell.y;
+    if (ship.dir === 'v') x = ship.placed ? ship.x : cell.x;
+    const valid = setupValidAt(ship.id, x, y, ship.dir, ship.length);
+    dragGhost = { x, y, dir: ship.dir, length: ship.length, valid };
+    if (valid) { ship.x = x; ship.y = y; ship.placed = true; }
+  } else {
+    dragGhost = null;
+  }
+}
+
+function setupPointerUp(p) {
+  if (dragShipId === null) return;
+  const ship = setupShips.find((s) => s.id === dragShipId);
+  const onBoard = inRect(p, BOARD_GX, SETUP_GY, BOARD_PX, BOARD_PX);
+  if (ship) {
+    if (!dragMoved) {
+      const newDir = ship.dir === 'h' ? 'v' : 'h';
+      if (ship.placed) {
+        if (setupValidAt(ship.id, ship.x, ship.y, newDir, ship.length)) { ship.dir = newDir; playFire(); }
+        else playInvalid();
+      } else {
+        ship.dir = newDir;
+      }
+    } else if (!onBoard) {
+      ship.placed = false;
+    }
+  }
+  dragShipId = null;
+  dragGhost = null;
+  dragMoved = false;
+  refreshStartEnabled();
 }
 
 canvas.addEventListener('pointerdown', (e) => {
   const p = pointerToCanvas(e);
   if (state === 'setup') {
-    updateSetupPreview(p);
+    setupPointerDown(p);
   } else if (state === 'battle' && turn === 'player') {
-    const cell = cellFromPoint(p, ENEMY_GRID_Y);
-    if (cell) firePlayer(cell.x, cell.y);
+    const cell = pointToCell(p, BOARD_GX, ENEMY_GY, BOARD_CELL);
+    if (cell.x >= 0 && cell.x < GRID_N && cell.y >= 0 && cell.y < GRID_N) firePlayer(cell.x, cell.y);
   }
 });
 canvas.addEventListener('pointermove', (e) => {
-  if (state === 'setup') updateSetupPreview(pointerToCanvas(e));
+  if (state === 'setup') setupPointerMove(pointerToCanvas(e));
 });
 canvas.addEventListener('pointerup', (e) => {
-  if (state === 'setup') { updateSetupPreview(pointerToCanvas(e)); commitSetupPlacement(); }
+  if (state === 'setup') setupPointerUp(pointerToCanvas(e));
 });
-
-// Setup placement is drag-to-preview: the ghost ship follows the pointer
-// (hovering on desktop, dragging on touch) and only commits on release, so
-// the player can see and rotate it before it's locked in - a plain tap that
-// placed instantly left no way to reposition or preview a ship first.
-function updateSetupPreview(p) {
-  if (placingShipIndex >= SHIP_DEFS.length) { previewAnchor = null; return; }
-  const cx = Math.floor((p.x - GRID_X) / CELL);
-  const cy = Math.floor((p.y - SETUP_GRID_Y) / CELL);
-  if (cx < 0 || cx >= GRID_N || cy < 0 || cy >= GRID_N) { previewAnchor = null; return; }
-  previewAnchor = { x: cx, y: cy };
-}
-
-function commitSetupPlacement() {
-  if (placingShipIndex >= SHIP_DEFS.length || !previewAnchor) return;
-  const def = SHIP_DEFS[placingShipIndex];
-  if (canPlaceOn(playerGrid, previewAnchor.x, previewAnchor.y, def.length, placingDir)) {
-    placeOn(playerGrid, playerShips, placingShipIndex, def.length, previewAnchor.x, previewAnchor.y, placingDir);
-    placingShipIndex++;
-    playFire();
-    previewAnchor = null;
-    updateSetupBar();
-    if (placingShipIndex >= SHIP_DEFS.length) startBattleBtn.disabled = false;
-  } else {
-    playInvalid();
-  }
-}
 
 function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
 function addBurst(x, y, color, count) {
@@ -519,7 +624,7 @@ function firePlayer(x, y) {
   shotsTaken++;
   playFire();
   const ship = shipAt(cpuShips, x, y);
-  const px = GRID_X + x * CELL + CELL / 2, py = ENEMY_GRID_Y + y * CELL + CELL / 2;
+  const px = BOARD_GX + x * BOARD_CELL + BOARD_CELL / 2, py = ENEMY_GY + y * BOARD_CELL + BOARD_CELL / 2;
   if (ship) {
     playerShots[y][x] = 'hit';
     ship.hits++;
@@ -527,21 +632,22 @@ function firePlayer(x, y) {
     playExplosion();
     if (ship.hits >= ship.length) {
       ship.sunk = true;
-      addPopup(px, py, ship.name + ' sunk!', '#ffe28a');
+      addPopup(px, py, ship.name + ' sunk!', '#1c4a5e');
       playSunk();
       shake = 0.3;
     }
     if (checkWin()) { endBattle(true); return; }
   } else {
     playerShots[y][x] = 'miss';
-    addBurst(px, py, '#bfe8f0', 6);
+    addBurst(px, py, '#ffffff', 6);
     playSplash();
   }
   turn = 'cpu';
   cpuThinkTimer = 650;
 }
 
-// --- CPU AI: probability-density hunting + hit-chasing target mode ---
+// --- CPU AI: probability-density hunting + hit-chasing target mode (kept
+// from the previous build - this part was already good). ---
 function cpuCanPlace(x, y, length, dir) {
   for (let i = 0; i < length; i++) {
     const cx = dir === 'h' ? x + i : x;
@@ -640,16 +746,16 @@ function cpuFire() {
   const { x, y } = cell;
   playFire();
   const ship = shipAt(playerShips, x, y);
-  const px = GRID_X + x * CELL + CELL / 2, py = PLAYER_GRID_Y + y * CELL + CELL / 2;
+  const px = MINI_GX + x * MINI_CELL + MINI_CELL / 2, py = MINI_GY + y * MINI_CELL + MINI_CELL / 2;
   if (ship) {
     cpuShots[y][x] = 'hit';
     ship.hits++;
     cpuHits.push({ x, y });
-    addBurst(px, py, '#ff8a4a', 14);
+    addBurst(px, py, '#ff8a4a', 10);
     playExplosion();
     if (ship.hits >= ship.length) {
       ship.sunk = true;
-      addPopup(px, py, ship.name + ' sunk!', '#ff6b5e');
+      addPopup(px, py - 10, ship.name + ' sunk!', '#ff5a4d');
       playSunk();
       shake = 0.3;
       cpuHits = cpuHits.filter((h) => !ship.cells.some((c) => c.x === h.x && c.y === h.y));
@@ -657,7 +763,7 @@ function cpuFire() {
     if (checkLose()) { endBattle(false); return; }
   } else {
     cpuShots[y][x] = 'miss';
-    addBurst(px, py, '#bfe8f0', 6);
+    addBurst(px, py, '#ffffff', 4);
     playSplash();
   }
   turn = 'player';
@@ -710,159 +816,186 @@ function update(dt) {
   if (cpuThinkTimer <= 0) cpuFire();
 }
 
-// A small hull silhouette per ship reads as "a fleet roster" at a glance -
-// a row of identical squares looked too much like a generic pegboard and
-// didn't give each ship its own visual identity.
-function drawShipIcon(cx, cy, length, sunk) {
-  const w = 12 + length * 4.2, h = 8;
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.fillStyle = sunk ? 'rgba(230,57,70,0.9)' : 'rgba(150,205,225,0.9)';
-  ctx.strokeStyle = sunk ? '#7a1a1a' : 'rgba(255,255,255,0.55)';
+// --- Rendering: bright, warm, high-contrast palette. Chunky rounded ships,
+// bold coral/white hit-miss markers, checkerboard sea for readability. ---
+function roundRectPath(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+}
+
+function drawSea(gx, gy, cellSize) {
+  for (let y = 0; y < GRID_N; y++) {
+    for (let x = 0; x < GRID_N; x++) {
+      ctx.fillStyle = (x + y) % 2 === 0 ? SEA : SEA2;
+      ctx.fillRect(gx + x * cellSize, gy + y * cellSize, cellSize, cellSize);
+    }
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.45)';
   ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(-w / 2, -h / 2);
-  ctx.lineTo(w / 2 - h * 0.7, -h / 2);
-  ctx.lineTo(w / 2, 0);
-  ctx.lineTo(w / 2 - h * 0.7, h / 2);
-  ctx.lineTo(-w / 2, h / 2);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(-w / 2 + 3, 0); ctx.lineTo(w / 2 - h * 0.9, 0);
-  ctx.stroke();
-  ctx.restore();
+  for (let i = 0; i <= GRID_N; i++) {
+    ctx.beginPath(); ctx.moveTo(gx + i * cellSize, gy); ctx.lineTo(gx + i * cellSize, gy + GRID_N * cellSize); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gx, gy + i * cellSize); ctx.lineTo(gx + GRID_N * cellSize, gy + i * cellSize); ctx.stroke();
+  }
 }
 
-function drawPanelCard(x, y, w, h) {
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(x, y, w, h, 12);
+function drawShipHull(gx, gy, cellSize, x, y, dir, length, color) {
+  const w = dir === 'h' ? length * cellSize : cellSize;
+  const h = dir === 'h' ? cellSize : length * cellSize;
+  const px = gx + x * cellSize, py = gy + y * cellSize;
+  const pad = Math.max(1.5, cellSize * 0.09);
+  ctx.fillStyle = color;
+  roundRectPath(px + pad, py + pad, w - pad * 2, h - pad * 2, cellSize * 0.32);
   ctx.fill();
-  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  if (dir === 'h') roundRectPath(px + pad, py + pad, w - pad * 2, (h - pad * 2) * 0.42, cellSize * 0.26);
+  else roundRectPath(px + pad, py + pad, (w - pad * 2) * 0.42, h - pad * 2, cellSize * 0.26);
+  ctx.fill();
+  if (cellSize >= 18) {
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    for (let i = 0; i < length; i++) {
+      const cx = dir === 'h' ? px + cellSize * i + cellSize / 2 : px + cellSize / 2;
+      const cy = dir === 'h' ? py + cellSize / 2 : py + cellSize * i + cellSize / 2;
+      ctx.beginPath(); ctx.arc(cx, cy, cellSize * 0.06, 0, Math.PI * 2); ctx.fill();
+    }
+  }
 }
 
-function drawFleetTracker(x, y, height, ships) {
-  const rowH = height / ships.length;
+function drawMarker(cx, cy, cellSize, kind) {
+  if (kind === 'miss') {
+    ctx.fillStyle = MISS_COLOR;
+    ctx.strokeStyle = 'rgba(28,74,94,0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, cellSize * 0.14, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  } else if (kind === 'hit') {
+    ctx.fillStyle = HIT_COLOR;
+    ctx.beginPath(); ctx.arc(cx, cy, cellSize * 0.32, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = Math.max(1.3, cellSize * 0.08);
+    const r = cellSize * 0.15;
+    ctx.beginPath(); ctx.moveTo(cx - r, cy - r); ctx.lineTo(cx + r, cy + r); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + r, cy - r); ctx.lineTo(cx - r, cy + r); ctx.stroke();
+  }
+}
+
+function drawShotsAndSunk(gx, gy, cellSize, shots, ships) {
+  for (let y = 0; y < GRID_N; y++) {
+    for (let x = 0; x < GRID_N; x++) {
+      const s = shots[y][x];
+      if (!s) continue;
+      drawMarker(gx + x * cellSize + cellSize / 2, gy + y * cellSize + cellSize / 2, cellSize, s);
+    }
+  }
+  if (ships) {
+    for (const ship of ships) {
+      if (!ship.sunk) continue;
+      ctx.fillStyle = SUNK_OVERLAY;
+      for (const c of ship.cells) ctx.fillRect(gx + c.x * cellSize + 1, gy + c.y * cellSize + 1, cellSize - 2, cellSize - 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 1.5;
+      const xs = ship.cells.map((c) => c.x), ys = ship.cells.map((c) => c.y);
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      ctx.strokeRect(gx + minX * cellSize + 1, gy + minY * cellSize + 1, (maxX - minX + 1) * cellSize - 2, (maxY - minY + 1) * cellSize - 2);
+    }
+  }
+}
+
+function drawBoardLabel(gx, gy, text, color) {
+  ctx.font = 'bold 13px Arial';
+  ctx.fillStyle = color;
+  ctx.textAlign = 'left';
+  ctx.fillText(text, gx, gy - 8);
+}
+
+function drawLegend(x, y, w, h, ships) {
+  const rowH = h / ships.length;
   ctx.textAlign = 'left';
   ctx.textBaseline = 'middle';
   ships.forEach((ship, i) => {
     const ry = y + i * rowH + rowH / 2;
-    const sunk = ship.sunk;
-    ctx.globalAlpha = sunk ? 0.45 : 1;
-    ctx.font = (sunk ? '10px' : 'bold 10px') + ' Arial';
-    ctx.fillStyle = sunk ? 'rgba(255,255,255,0.55)' : 'white';
-    ctx.fillText(ship.short, x, ry - 9);
-    const iconW = 12 + ship.length * 4.2;
-    drawShipIcon(x + iconW / 2, ry + 6, ship.length, sunk);
-    if (sunk) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(x - 1, ry + 6); ctx.lineTo(x + iconW + 1, ry + 6); ctx.stroke();
+    ctx.globalAlpha = ship.sunk ? 0.4 : 1;
+    ctx.font = ship.sunk ? '10px Arial' : 'bold 10px Arial';
+    ctx.fillStyle = ship.sunk ? '#6a8a98' : '#1c4a5e';
+    ctx.fillText(ship.short, x, ry);
+    let px = x + 46;
+    for (let i2 = 0; i2 < ship.length; i2++) {
+      ctx.fillStyle = ship.sunk ? '#c0392b' : ship.color || '#3a6b82';
+      ctx.beginPath(); ctx.arc(px, ry, 3, 0, Math.PI * 2); ctx.fill();
+      px += 9;
     }
     ctx.globalAlpha = 1;
   });
 }
 
-function drawGrid(gx, gy, label, shots, shipsGrid, revealShips, ships) {
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
-  ctx.fillRect(gx, gy, BOARD_PX, BOARD_PX);
-  if (revealShips) {
+function drawSetup() {
+  drawSea(BOARD_GX, SETUP_GY, BOARD_CELL);
+  // real (last-valid) ship positions
+  for (const s of setupShips) {
+    if (!s.placed) continue;
+    const dim = dragShipId === s.id;
+    ctx.globalAlpha = dim ? 0.55 : 1;
+    drawShipHull(BOARD_GX, SETUP_GY, BOARD_CELL, s.x, s.y, s.dir, s.length, s.color);
+    ctx.globalAlpha = 1;
+  }
+  // drag ghost - green if the attempted spot is valid, red if not
+  if (dragGhost) {
+    const cells = shipCells(dragGhost.x, dragGhost.y, dragGhost.dir, dragGhost.length);
+    ctx.fillStyle = dragGhost.valid ? 'rgba(90,200,140,0.5)' : 'rgba(230,57,70,0.55)';
+    ctx.strokeStyle = dragGhost.valid ? '#5ac88c' : '#e63946';
+    ctx.lineWidth = 2;
+    for (const c of cells) {
+      if (c.x < 0 || c.x >= GRID_N || c.y < 0 || c.y >= GRID_N) continue;
+      ctx.fillRect(BOARD_GX + c.x * BOARD_CELL + 1, SETUP_GY + c.y * BOARD_CELL + 1, BOARD_CELL - 2, BOARD_CELL - 2);
+      ctx.strokeRect(BOARD_GX + c.x * BOARD_CELL + 1, SETUP_GY + c.y * BOARD_CELL + 1, BOARD_CELL - 2, BOARD_CELL - 2);
+    }
+  }
+
+  // tray
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  roundRectPath(TRAY_X, TRAY_Y, TRAY_W, TRAY_H, 10);
+  ctx.fill();
+  const unplaced = unplacedShips();
+  const slotW = TRAY_W / 5;
+  unplaced.forEach((s, i) => {
+    if (dragShipId === s.id) return; // being dragged - don't also draw it resting in the tray
+    const slotX = TRAY_X + i * slotW;
+    const cs = 14;
+    const w = s.dir === 'h' ? s.length * cs : cs;
+    const h = s.dir === 'h' ? cs : s.length * cs;
+    const ox = slotX + (slotW - w) / 2 - (s.dir === 'h' ? 0 : 0);
+    const oy = TRAY_Y + (TRAY_H - h) / 2;
+    drawShipHull(ox, oy, cs, 0, 0, s.dir, s.length, s.color);
+  });
+}
+
+function drawBattle() {
+  drawBoardLabel(BOARD_GX, ENEMY_GY, 'Enemy waters — tap to fire', '#0f3244');
+  drawSea(BOARD_GX, ENEMY_GY, BOARD_CELL);
+  if (state === 'over') {
     for (let y = 0; y < GRID_N; y++) {
       for (let x = 0; x < GRID_N; x++) {
-        if (shipsGrid[y][x] !== null) {
-          ctx.fillStyle = 'rgba(255,255,255,0.16)';
-          ctx.fillRect(gx + x * CELL + 1, gy + y * CELL + 1, CELL - 2, CELL - 2);
+        if (cpuGrid[y][x] !== null && playerShots[y][x] === null) {
+          ctx.fillStyle = 'rgba(255,255,255,0.22)';
+          ctx.fillRect(BOARD_GX + x * BOARD_CELL + 1, ENEMY_GY + y * BOARD_CELL + 1, BOARD_CELL - 2, BOARD_CELL - 2);
         }
       }
     }
   }
-  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= GRID_N; i++) {
-    ctx.beginPath(); ctx.moveTo(gx + i * CELL, gy); ctx.lineTo(gx + i * CELL, gy + BOARD_PX); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(gx, gy + i * CELL); ctx.lineTo(gx + BOARD_PX, gy + i * CELL); ctx.stroke();
-  }
-  for (let y = 0; y < GRID_N; y++) {
-    for (let x = 0; x < GRID_N; x++) {
-      const s = shots[y][x];
-      const cx = gx + x * CELL + CELL / 2, cy = gy + y * CELL + CELL / 2;
-      if (s === 'miss') {
-        // A splash ripple instead of a plain dot - reads as "water", not a
-        // peg-board marker.
-        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-        ctx.lineWidth = 1.3;
-        ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,0.75)';
-        ctx.beginPath(); ctx.arc(cx, cy, 1.6, 0, Math.PI * 2); ctx.fill();
-      } else if (s === 'hit') {
-        ctx.fillStyle = '#e63946';
-        ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = '#7a1a1a'; ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(cx - 4, cy - 4); ctx.lineTo(cx + 4, cy + 4); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx + 4, cy - 4); ctx.lineTo(cx - 4, cy + 4); ctx.stroke();
-      }
-    }
-  }
-  // Outline sunk ships' footprints on the board itself - once a ship is
-  // down, its cells are known information either way, so tracing its exact
-  // shape answers "what did I just hit" at a glance instead of just a
-  // cluster of red X's.
-  if (ships) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-    ctx.lineWidth = 2;
-    for (const ship of ships) {
-      if (!ship.sunk) continue;
-      const xs = ship.cells.map((c) => c.x), ys = ship.cells.map((c) => c.y);
-      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-      ctx.strokeRect(gx + minX * CELL + 1, gy + minY * CELL + 1, (maxX - minX + 1) * CELL - 2, (maxY - minY + 1) * CELL - 2);
-    }
-  }
+  drawShotsAndSunk(BOARD_GX, ENEMY_GY, BOARD_CELL, playerShots, cpuShips);
 
-  ctx.font = 'bold 11px Arial';
-  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  drawBoardLabel(MINI_GX, MINI_GY, 'Your fleet', '#0f3244');
+  drawSea(MINI_GX, MINI_GY, MINI_CELL);
+  for (const ship of playerShips) {
+    drawShipHull(MINI_GX, MINI_GY, MINI_CELL, ship.cells[0].x, ship.cells[0].y, ship.cells.length > 1 && ship.cells[1].x !== ship.cells[0].x ? 'h' : (ship.cells.length > 1 ? 'v' : 'h'), ship.length, SHIP_DEFS[ship.id].color);
+  }
+  drawShotsAndSunk(MINI_GX, MINI_GY, MINI_CELL, cpuShots, playerShips);
+
+  ctx.font = 'bold 10px Arial';
+  ctx.fillStyle = '#0f3244';
   ctx.textAlign = 'left';
-  ctx.fillText(label, gx, gy - 6);
-}
+  ctx.fillText('Enemy fleet', LEGEND_X, LEGEND_Y - 8);
+  drawLegend(LEGEND_X, LEGEND_Y, W - LEGEND_X - 20, LEGEND_H, cpuShips.map((s) => ({ ...s, color: SHIP_DEFS[s.id].color })));
 
-function drawSetupGrid() {
-  const gx = GRID_X, gy = SETUP_GRID_Y;
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
-  ctx.fillRect(gx, gy, BOARD_PX, BOARD_PX);
-  for (let y = 0; y < GRID_N; y++) {
-    for (let x = 0; x < GRID_N; x++) {
-      if (playerGrid[y][x] !== null) {
-        ctx.fillStyle = '#4a7a9e';
-        ctx.fillRect(gx + x * CELL + 1, gy + y * CELL + 1, CELL - 2, CELL - 2);
-        ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1;
-        ctx.strokeRect(gx + x * CELL + 1, gy + y * CELL + 1, CELL - 2, CELL - 2);
-      }
-    }
-  }
-  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= GRID_N; i++) {
-    ctx.beginPath(); ctx.moveTo(gx + i * CELL, gy); ctx.lineTo(gx + i * CELL, gy + BOARD_PX); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(gx, gy + i * CELL); ctx.lineTo(gx + BOARD_PX, gy + i * CELL); ctx.stroke();
-  }
-
-  if (previewAnchor && placingShipIndex < SHIP_DEFS.length) {
-    const def = SHIP_DEFS[placingShipIndex];
-    const valid = canPlaceOn(playerGrid, previewAnchor.x, previewAnchor.y, def.length, placingDir);
-    ctx.fillStyle = valid ? 'rgba(90,200,140,0.55)' : 'rgba(230,57,70,0.55)';
-    ctx.strokeStyle = valid ? '#5ac88c' : '#e63946';
-    ctx.lineWidth = 2;
-    for (let i = 0; i < def.length; i++) {
-      const cx = placingDir === 'h' ? previewAnchor.x + i : previewAnchor.x;
-      const cy = placingDir === 'h' ? previewAnchor.y : previewAnchor.y + i;
-      if (cx < 0 || cx >= GRID_N || cy < 0 || cy >= GRID_N) continue;
-      ctx.fillRect(gx + cx * CELL + 1, gy + cy * CELL + 1, CELL - 2, CELL - 2);
-      ctx.strokeRect(gx + cx * CELL + 1, gy + cy * CELL + 1, CELL - 2, CELL - 2);
-    }
-  }
+  drawTurnHud();
 }
 
 function drawParticles() {
@@ -877,9 +1010,12 @@ function drawParticles() {
 function drawPopups() {
   ctx.textAlign = 'center';
   ctx.font = 'bold 13px Arial';
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 3;
   for (const p of popups) {
     const t = p.t / 900;
     ctx.globalAlpha = 1 - t;
+    ctx.strokeText(p.text, p.x, p.y - t * 26);
     ctx.fillStyle = p.color;
     ctx.fillText(p.text, p.x, p.y - t * 26);
     ctx.globalAlpha = 1;
@@ -888,42 +1024,27 @@ function drawPopups() {
 
 function drawTurnHud() {
   ctx.font = 'bold 14px Arial';
-  ctx.fillStyle = 'white';
-  ctx.strokeStyle = 'black';
-  ctx.lineWidth = 3;
+  ctx.fillStyle = '#0f3244';
   ctx.textAlign = 'center';
   const text = turn === 'player' ? 'Your shot — tap enemy waters' : turn === 'cpu' ? 'Enemy is firing…' : '';
-  ctx.strokeText(text, W / 2, 44);
-  ctx.fillText(text, W / 2, 44);
+  ctx.fillText(text, W / 2, 26);
   ctx.textAlign = 'left';
   ctx.font = 'bold 12px Arial';
-  ctx.strokeText('Shots: ' + shotsTaken, 14, 24);
-  ctx.fillText('Shots: ' + shotsTaken, 14, 24);
+  ctx.fillText('Shots: ' + shotsTaken, 14, 26);
 }
 
 function draw() {
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#0a3550';
+  ctx.fillStyle = '#bfe8f5';
   ctx.fillRect(0, 0, W, H);
   if (state === 'menu') return;
   ctx.save();
   const mag = shake > 0 ? shake * 10 : 0;
   if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
   if (state === 'setup') {
-    drawSetupGrid();
+    drawSetup();
   } else {
-    // Grouping each grid + its fleet sidebar inside its own rounded card
-    // reads as two distinct panels instead of loose canvas elements
-    // floating in open water - a cleaner, more app-like layout.
-    drawPanelCard(SIDEBAR_X - 10, ENEMY_GRID_Y - 10, BOARD_PX + SIDEBAR_GAP + SIDEBAR_W + 20, BOARD_PX + 20);
-    drawPanelCard(SIDEBAR_X - 10, PLAYER_GRID_Y - 10, BOARD_PX + SIDEBAR_GAP + SIDEBAR_W + 20, BOARD_PX + 20);
-    // Enemy board only reveals ship positions once the battle is over -
-    // that's the "where did I miss" review the player can't get mid-game.
-    drawGrid(GRID_X, ENEMY_GRID_Y, 'Enemy Waters', playerShots, cpuGrid, state === 'over', cpuShips);
-    drawFleetTracker(SIDEBAR_X, ENEMY_GRID_Y, BOARD_PX, cpuShips);
-    drawGrid(GRID_X, PLAYER_GRID_Y, 'Your Fleet', cpuShots, playerGrid, true, playerShips);
-    drawFleetTracker(SIDEBAR_X, PLAYER_GRID_Y, BOARD_PX, playerShips);
-    drawTurnHud();
+    drawBattle();
   }
   drawParticles();
   drawPopups();
