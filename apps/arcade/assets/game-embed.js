@@ -8,6 +8,10 @@
 // Optional data attributes on the <script> tag:
 //   data-games-url  - where "All games" points (default: ../../index.html)
 //   data-coffee-url - your Buy Me a Coffee (or similar) link
+//   data-fullscreen - set to "landscape" to opt a game into fullscreen mode:
+//     no navbar at all (replaced by a small floating circular back button,
+//     top-left), and kbNavbarHeight/kbBottomReserve both report ~0. Pair
+//     with window.kbEnterFullscreen(el) / window.kbExitFullscreen() below.
 //
 // The nav bar (top) and support link (bottom) take real screen space
 // rather than floating over the game, so games that size a canvas to the
@@ -21,11 +25,37 @@
 // and fires a `kb-navbar-ready` event on window once all of the above are
 // set, so a game can re-fit itself after the chrome (which loads after
 // game markup) is actually in the DOM.
+//
+// Fullscreen mode also exposes:
+//   window.kbEnterFullscreen(el) - call from inside a user-gesture click
+//     handler (e.g. a Start button), before doing anything async. Requests
+//     fullscreen on `el` and tries to lock landscape orientation. Both are
+//     feature-detected and silently no-op where unsupported (iOS Safari
+//     has no Fullscreen API at all - the game just runs as normal there).
+//   window.kbExitFullscreen() - reverses both; call before navigating back
+//     to the games list. Also runs automatically on 'fullscreenchange' if
+//     the player exits some other way (Android back gesture, Esc), so
+//     orientation lock never gets stuck.
 
 (function () {
   const script = document.currentScript;
   const gamesUrl = (script && script.dataset.gamesUrl) || '../../index.html';
   const coffeeUrl = (script && script.dataset.coffeeUrl) || 'https://buymeacoffee.com/Krishnabuilds';
+  const fullscreenMode = !!(script && script.dataset.fullscreen === 'landscape');
+
+  window.kbEnterFullscreen = function (el) {
+    try { (el || document.documentElement).requestFullscreen?.(); } catch (e) {}
+    try { screen.orientation?.lock?.('landscape').catch(() => {}); } catch (e) {}
+  };
+  window.kbExitFullscreen = function () {
+    try { document.exitFullscreen?.(); } catch (e) {}
+    try { screen.orientation?.unlock?.(); } catch (e) {}
+  };
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      try { screen.orientation?.unlock?.(); } catch (e) {}
+    }
+  });
 
   const style = document.createElement('style');
   style.textContent = `
@@ -122,24 +152,57 @@
     }
     .kb-navbar--landscape .kb-back svg { width: 14px; height: 14px; }
     .kb-navbar--landscape .kb-brand { display: none; }
+    /* Fullscreen-mode games skip the navbar entirely - just a small,
+       unobtrusive circular back button in the corner, like a typical
+       mobile game's in-fullscreen back control. */
+    .kb-fs-back {
+      position: fixed;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      left: calc(10px + env(safe-area-inset-left, 0px));
+      z-index: 999;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #eef2f5;
+      background: rgba(10,15,26,0.55);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(3px);
+      text-decoration: none;
+    }
+    .kb-fs-back:active { background: rgba(34,184,160,0.4); }
   `;
   document.head.appendChild(style);
 
-  const navbar = document.createElement('div');
-  navbar.className = 'kb-navbar';
+  const arrowSvg = '<svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L4 8l6 5"/></svg>';
+  let navbar = null;
 
-  const back = document.createElement('a');
-  back.href = gamesUrl;
-  back.className = 'kb-back';
-  back.innerHTML = '<svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L4 8l6 5"/></svg><span>All games</span>';
-  navbar.appendChild(back);
+  if (fullscreenMode) {
+    const fsBack = document.createElement('a');
+    fsBack.href = gamesUrl;
+    fsBack.className = 'kb-fs-back';
+    fsBack.innerHTML = arrowSvg;
+    fsBack.addEventListener('click', () => { window.kbExitFullscreen(); });
+    document.body.appendChild(fsBack);
+  } else {
+    navbar = document.createElement('div');
+    navbar.className = 'kb-navbar';
 
-  const brand = document.createElement('span');
-  brand.className = 'kb-brand';
-  brand.textContent = '🕹️ Krishnabuilds Arcade' + (window.KB_VERSION ? ' · v' + window.KB_VERSION : '');
-  navbar.appendChild(brand);
+    const back = document.createElement('a');
+    back.href = gamesUrl;
+    back.className = 'kb-back';
+    back.innerHTML = arrowSvg + '<span>All games</span>';
+    navbar.appendChild(back);
 
-  document.body.appendChild(navbar);
+    const brand = document.createElement('span');
+    brand.className = 'kb-brand';
+    brand.textContent = '🕹️ Krishnabuilds Arcade' + (window.KB_VERSION ? ' · v' + window.KB_VERSION : '');
+    navbar.appendChild(brand);
+
+    document.body.appendChild(navbar);
+  }
 
   const coffee = document.createElement('a');
   coffee.href = coffeeUrl;
@@ -150,6 +213,16 @@
   document.body.appendChild(coffee);
 
   function publishChromeMetrics() {
+    if (fullscreenMode) {
+      // No navbar exists in this mode - just the small floating corner
+      // button, which isn't worth reserving layout space for.
+      window.kbNavbarHeight = 0;
+      window.kbBottomReserve = 0;
+      document.documentElement.style.setProperty('--kb-navbar-h', '0px');
+      document.documentElement.style.setProperty('--kb-bottom-reserve', '0px');
+      window.dispatchEvent(new Event('kb-navbar-ready'));
+      return;
+    }
     // Landscape games are typically much shorter viewports where the
     // portrait-tuned chrome sizes would crush the canvas scale - shrink the
     // navbar to a slim strip and let the coffee link float free with no

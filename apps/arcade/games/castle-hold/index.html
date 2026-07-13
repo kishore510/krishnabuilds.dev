@@ -303,7 +303,14 @@ function startGame() {
   ensureAudio();
 }
 
-startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+startBtn.addEventListener('click', () => {
+  if (state !== 'menu' && state !== 'over') return;
+  // Must be called synchronously from this user-gesture handler, before
+  // anything async, or Fullscreen/orientation-lock requests get rejected.
+  window.kbEnterFullscreen?.(document.documentElement);
+  startGame();
+});
+backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
 
 function pointerToCanvas(e) {
   const rect = canvas.getBoundingClientRect();
@@ -673,6 +680,6 @@ showMenu();
 requestAnimationFrame(loop);
 </script>
 <script src="../../assets/version.js"></script>
-<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds" data-fullscreen="landscape"></script>
 </body>
 </html>
