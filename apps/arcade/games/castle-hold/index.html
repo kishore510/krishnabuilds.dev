@@ -122,7 +122,7 @@
   <button id="muteBtn" type="button">🔊</button>
   <div id="overlay">
     <h1 id="title">Castle Hold</h1>
-    <p id="subtitle">Hold the line. Tap the battlements to place archers - stop every enemy before they reach your gate.</p>
+    <p id="subtitle">Hold the line. Man the tiers with archers, gunmen and cannon, and deploy spearmen or cavalry at the gate.</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <button id="startBtn" type="button">Start</button>
@@ -208,6 +208,10 @@ function tone(freq, duration, type, volume, delay) {
 }
 function playBowFire() { tone(700, 0.05, 'triangle', 0.07); }
 function playArrowHit() { tone(240, 0.07, 'square', 0.09); }
+function playCannonFire() { tone(80, 0.1, 'square', 0.16); }
+function playCannonHit() { tone(70, 0.22, 'square', 0.18); tone(50, 0.28, 'sawtooth', 0.15, 0.04); }
+function playMeleeClash() { tone(320, 0.05, 'square', 0.08); }
+function playUnitFall() { tone(150, 0.16, 'sawtooth', 0.12); }
 function playEnemyDie() { tone(180, 0.12, 'sawtooth', 0.1); }
 function playWallThud() { tone(90, 0.18, 'square', 0.16); tone(60, 0.22, 'sine', 0.14, 0.05); }
 function playGold() { tone(880, 0.06, 'triangle', 0.07); }
@@ -237,29 +241,55 @@ const TOWER_X = WALL_W - 46, TOWER_W = 54, TOWER_TOP = 8;
 const MID_Y = WALL_TOP + 70;
 const WALL_FRONT_X = WALL_W; // enemies are "at the wall" once they reach this x
 
-// PHASE 1: only the tier-3 battlement slots are functional (archers). Tiers 2
-// and the gate are drawn for visual completeness (matching the concept) but
-// are inert until later phases add gunman/cannon/melee.
+// Tier 3 (top battlement): archers only - long range, thins enemies out early.
 const TIER3_SLOTS = [
   { x: 22, y: 30, unit: null, cooldown: 0 },
   { x: 58, y: 30, unit: null, cooldown: 0 },
   { x: 132, y: 22, unit: null, cooldown: 0 }
 ];
+// Tier 2 (mid gallery): gunman OR cannon, player's choice per slot.
+const TIER2_SLOTS = [
+  { x: 40, y: 100, unit: null, cooldown: 0 },
+  { x: 100, y: 98, unit: null, cooldown: 0 }
+];
+// Ground, just outside the gate: spearman OR cavalry, player's choice per
+// slot. Listed RIGHTMOST-first - that's the order an enemy walking
+// right-to-left actually reaches them in, which the melee-engagement logic
+// below relies on.
+const GROUND_SLOTS = [
+  { x: 210, y: GROUND_Y, unit: null, busy: false, hp: 0, maxHp: 0, atkCooldown: 0 },
+  { x: 178, y: GROUND_Y, unit: null, busy: false, hp: 0, maxHp: 0, atkCooldown: 0 },
+  { x: 146, y: GROUND_Y, unit: null, busy: false, hp: 0, maxHp: 0, atkCooldown: 0 }
+];
+const ENGAGE_DIST = 10, QUEUE_GAP = 20;
+const PROJECTILE_SPEED = 620; // px/s
 
-const ARCHER_COST = 40;
-const ARCHER_RANGE = 430;
-const ARCHER_FIRE_INTERVAL = 0.9;
-const ARCHER_DAMAGE = 14;
-const ARROW_SPEED = 620; // px/s
+// Ranged units all share the same targeting (nearest enemy in range) and
+// projectile-travel logic - only these numbers differ. Melee units instead
+// hold their GROUND_SLOTS position and trade blows with whatever enemy is
+// currently engaged there (see updateEnemies).
+const UNIT_DEFS = {
+  archer:   { cost: 40, kind: 'ranged', range: 430, fireInterval: 0.9, damage: 14, color: '#3a5a8a' },
+  gunman:   { cost: 60, kind: 'ranged', range: 320, fireInterval: 1.1, damage: 20, color: '#6a5a3a' },
+  cannon:   { cost: 90, kind: 'ranged', range: 260, fireInterval: 1.8, damage: 24, color: '#3a3f48', splash: 34 },
+  spearman: { cost: 50, kind: 'melee', hp: 40, damage: 8, attackInterval: 0.8, color: '#5a6a3a' },
+  cavalry:  { cost: 70, kind: 'melee', hp: 55, damage: 14, attackInterval: 0.7, color: '#6b4a2f' }
+};
 
-const FOOTMAN_HP = 30;
-const FOOTMAN_SPEED = 44;
-const FOOTMAN_DAMAGE = 9;
-const FOOTMAN_GOLD = 8;
-const WAVE_FOOTMEN = 10;
-const SPAWN_INTERVAL = 1.7;
+const ENEMY_DEFS = {
+  footman:  { hp: 30, speed: 44, wallDamage: 9, meleeDamage: 6, atkInterval: 1.0, goldReward: 8 },
+  horseman: { hp: 45, speed: 95, wallDamage: 14, meleeDamage: 10, atkInterval: 0.9, goldReward: 14 }
+};
+
+// PHASE 2 is still a single test wave (the full 10-12 wave scripted system
+// with between-wave breathers is phase 3) - but it escalates internally:
+// footmen only at first, horsemen mixed in with rising probability as the
+// wave progresses, so even this one wave has a building-difficulty arc
+// rather than a flat drip of identical enemies.
+const WAVE_TOTAL = 16;
+const SPAWN_INTERVAL = 1.5;
 const CASTLE_MAX_HP = 100;
-const START_GOLD = 90;
+const START_GOLD = 110;
 
 let castleHP = CASTLE_MAX_HP;
 let gold = START_GOLD;
@@ -271,12 +301,13 @@ let killCount = 0;
 let spawned = 0;
 let spawnTimer = 0;
 let shake = 0;
+let activeMenu = null; // { slot, kind: 'tier2'|'ground', options, x, y, _rects }
 let state = 'menu'; // menu | playing | over
 
 function showMenu() {
   state = 'menu';
   title.textContent = 'Castle Hold';
-  subtitle.textContent = 'Hold the line. Tap the battlements to place archers - stop every enemy before they reach your gate.';
+  subtitle.textContent = 'Hold the line. Man the tiers with archers, gunmen and cannon, and deploy spearmen or cavalry at the gate.';
   scoreLine.style.display = 'none';
   const best = loadBest();
   bestLine.textContent = best > 0 ? 'Best: ' + best + ' kills' : '';
@@ -297,7 +328,10 @@ function startGame() {
   spawned = 0;
   spawnTimer = 1;
   shake = 0;
+  activeMenu = null;
   TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
+  TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
+  GROUND_SLOTS.forEach((s) => { s.unit = null; s.busy = false; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; });
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
@@ -320,18 +354,57 @@ function pointerToCanvas(e) {
   };
 }
 
+function slotHit(p, slot, radius) { return Math.hypot(p.x - slot.x, p.y - slot.y) <= radius; }
+
+function openMenuForSlot(slot, kind) {
+  const options = kind === 'tier2'
+    ? [{ type: 'gunman' }, { type: 'cannon' }]
+    : [{ type: 'spearman' }, { type: 'cavalry' }];
+  activeMenu = { slot, kind, options, x: slot.x, y: slot.y, _rects: null };
+}
+
+function placeUnit(slot, kind, type) {
+  const def = UNIT_DEFS[type];
+  if (gold < def.cost) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + def.cost + 'g', '#ff8a4a'); return; }
+  gold -= def.cost;
+  slot.unit = { type };
+  if (kind === 'ranged-slot') {
+    slot.cooldown = 0.2;
+  } else {
+    slot.hp = def.hp;
+    slot.maxHp = def.hp;
+    slot.atkCooldown = 0.2;
+    slot.busy = false;
+  }
+  playGold();
+}
+
 canvas.addEventListener('pointerdown', (e) => {
   if (state !== 'playing') return;
   const p = pointerToCanvas(e);
+
+  if (activeMenu) {
+    const hit = activeMenu._rects && activeMenu._rects.find((r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h);
+    if (hit) placeUnit(activeMenu.slot, activeMenu.kind === 'tier2' ? 'ranged-slot' : 'ground-slot', hit.type);
+    activeMenu = null;
+    return;
+  }
+
   for (const slot of TIER3_SLOTS) {
-    const dx = p.x - slot.x, dy = p.y - slot.y;
-    if (Math.hypot(dx, dy) < 16) {
-      if (slot.unit) return; // occupied - selling/upgrading comes later
-      if (gold < ARCHER_COST) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + ARCHER_COST + 'g', '#ff8a4a'); return; }
-      gold -= ARCHER_COST;
-      slot.unit = { type: 'archer' };
-      slot.cooldown = 0.2;
-      playGold();
+    if (slotHit(p, slot, 16)) {
+      if (!slot.unit) placeUnit(slot, 'ranged-slot', 'archer');
+      return;
+    }
+  }
+  for (const slot of TIER2_SLOTS) {
+    if (slotHit(p, slot, 16)) {
+      if (!slot.unit) openMenuForSlot(slot, 'tier2');
+      return;
+    }
+  }
+  for (const slot of GROUND_SLOTS) {
+    if (slotHit(p, { x: slot.x, y: slot.y - 12 }, 16)) {
+      if (!slot.unit) openMenuForSlot(slot, 'ground');
       return;
     }
   }
@@ -346,25 +419,36 @@ function addBurst(x, y, color, count) {
   }
 }
 
-function spawnFootman() {
-  enemies.push({ type: 'footman', x: W + 20, y: GROUND_Y, hp: FOOTMAN_HP, maxHp: FOOTMAN_HP, speed: FOOTMAN_SPEED, dead: false, bob: Math.random() * 10 });
+// Footmen only at first; horsemen mixed in with rising probability as the
+// wave progresses, so difficulty ramps even within this single test wave.
+function spawnEnemy() {
+  const progress = spawned / WAVE_TOTAL;
+  const horsemanChance = clamp(progress * 0.6, 0, 0.5);
+  const type = Math.random() < horsemanChance ? 'horseman' : 'footman';
+  const def = ENEMY_DEFS[type];
+  enemies.push({
+    type, x: W + 20, y: GROUND_Y, hp: def.hp, maxHp: def.hp, speed: def.speed,
+    dead: false, bob: Math.random() * 10, meleeSlot: null, atkCooldown: 0.3,
+    queueOffset: Math.random() * 16
+  });
 }
 
-function updateArchers(dt) {
-  for (const slot of TIER3_SLOTS) {
+function updateRangedSlots(slots, dt) {
+  for (const slot of slots) {
     if (!slot.unit) continue;
+    const def = UNIT_DEFS[slot.unit.type];
     slot.cooldown -= dt;
     if (slot.cooldown > 0) continue;
-    let target = null, bestDist = ARCHER_RANGE;
+    let target = null, bestDist = def.range;
     for (const en of enemies) {
       if (en.dead) continue;
       const d = en.x - slot.x;
       if (d >= 0 && d <= bestDist) { bestDist = d; target = en; }
     }
     if (target) {
-      slot.cooldown = ARCHER_FIRE_INTERVAL;
-      playBowFire();
-      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, damage: ARCHER_DAMAGE, spawnX: slot.x, spawnY: slot.y });
+      slot.cooldown = def.fireInterval;
+      if (def.splash) playCannonFire(); else playBowFire();
+      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, damage: def.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
     }
   }
 }
@@ -376,13 +460,23 @@ function updateProjectiles(dt) {
     if (!en || en.dead) { p.done = true; continue; }
     const dx = en.x - p.x, dy = (en.y - 14) - p.y;
     const dist = Math.hypot(dx, dy);
-    const step = ARROW_SPEED * dt;
+    const step = PROJECTILE_SPEED * dt;
     if (dist <= step) {
       p.done = true;
-      en.hp -= p.damage;
-      addBurst(en.x, en.y - 14, '#e8834a', 6);
-      playArrowHit();
-      if (en.hp <= 0 && !en.dead) killEnemy(en);
+      if (p.splash > 0) {
+        for (const other of enemies) {
+          if (other.dead || Math.abs(other.x - en.x) > p.splash) continue;
+          other.hp -= p.damage;
+          if (other.hp <= 0 && !other.dead) killEnemy(other);
+        }
+        addBurst(en.x, en.y - 10, '#5a5f68', 16);
+        playCannonHit();
+      } else {
+        en.hp -= p.damage;
+        addBurst(en.x, en.y - 14, '#e8834a', 6);
+        playArrowHit();
+        if (en.hp <= 0 && !en.dead) killEnemy(en);
+      }
     } else {
       p.x += (dx / dist) * step;
       p.y += (dy / dist) * step;
@@ -394,18 +488,63 @@ function updateProjectiles(dt) {
 function killEnemy(en) {
   en.dead = true;
   killCount++;
-  gold += FOOTMAN_GOLD;
+  const reward = ENEMY_DEFS[en.type].goldReward;
+  gold += reward;
   addBurst(en.x, en.y - 10, '#8a3a3a', 12);
-  addPopup(en.x, en.y - 24, '+' + FOOTMAN_GOLD + 'g', '#ffd76a');
+  addPopup(en.x, en.y - 24, '+' + reward + 'g', '#ffd76a');
   playEnemyDie();
+  if (en.meleeSlot) { en.meleeSlot.busy = false; en.meleeSlot = null; }
 }
 
+// Ground units block: an enemy reaching an occupied slot stops and trades
+// blows with it instead of walking through. If the slot's unit dies, the
+// enemy resumes advancing (and may hit the next slot, or the wall). If the
+// slot is already fighting someone else, the enemy just queues behind it.
 function updateEnemies(dt) {
   for (const en of enemies) {
     if (en.dead) continue;
+    const def = ENEMY_DEFS[en.type];
+
+    if (en.meleeSlot) {
+      const slot = en.meleeSlot;
+      if (!slot.unit) { en.meleeSlot = null; continue; }
+      en.atkCooldown -= dt;
+      if (en.atkCooldown <= 0) {
+        en.atkCooldown = def.atkInterval;
+        slot.hp -= def.meleeDamage;
+        playMeleeClash();
+        addBurst(slot.x, slot.y - 14, '#c0392b', 4);
+        if (slot.hp <= 0) {
+          addPopup(slot.x, slot.y - 26, slot.unit.type + ' fell!', '#ff8a4a');
+          slot.unit = null; slot.busy = false; slot.hp = 0;
+          en.meleeSlot = null;
+          playUnitFall();
+        }
+      }
+      continue;
+    }
+
     en.x -= en.speed * dt;
+
+    let blocked = false;
+    for (const slot of GROUND_SLOTS) {
+      if (!slot.unit) continue;
+      if (en.x <= slot.x + ENGAGE_DIST) {
+        blocked = true;
+        if (!slot.busy) {
+          slot.busy = true;
+          en.meleeSlot = slot;
+          en.atkCooldown = UNIT_DEFS[slot.unit.type].attackInterval * 0.5;
+        } else {
+          en.x = slot.x + ENGAGE_DIST + QUEUE_GAP + en.queueOffset;
+        }
+        break;
+      }
+    }
+    if (blocked) continue;
+
     if (en.x <= WALL_FRONT_X + 14) {
-      castleHP -= FOOTMAN_DAMAGE;
+      castleHP -= def.wallDamage;
       en.dead = true;
       shake = 0.25;
       playWallThud();
@@ -417,7 +556,7 @@ function updateEnemies(dt) {
 }
 
 function checkWaveComplete() {
-  if (spawned >= WAVE_FOOTMEN && enemies.length === 0 && state === 'playing') {
+  if (spawned >= WAVE_TOTAL && enemies.length === 0 && state === 'playing') {
     endGame(true);
   }
 }
@@ -458,11 +597,12 @@ function update(dt) {
 
   if (state !== 'playing') return;
 
-  if (spawned < WAVE_FOOTMEN) {
+  if (spawned < WAVE_TOTAL) {
     spawnTimer -= dt;
-    if (spawnTimer <= 0) { spawnFootman(); spawned++; spawnTimer = SPAWN_INTERVAL; }
+    if (spawnTimer <= 0) { spawnEnemy(); spawned++; spawnTimer = SPAWN_INTERVAL; }
   }
-  updateArchers(dt);
+  updateRangedSlots(TIER3_SLOTS, dt);
+  updateRangedSlots(TIER2_SLOTS, dt);
   updateEnemies(dt);
   updateProjectiles(dt);
   checkWaveComplete();
@@ -550,32 +690,89 @@ function drawArcherFigure(x, y) {
   ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(x + 5, y, 7, -1, 1); ctx.stroke();
 }
+function drawGunmanFigure(x, y) {
+  ctx.fillStyle = '#6a5a3a'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#222'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 12, y - 3); ctx.stroke();
+}
+function drawCannonFigure(x, y) {
+  ctx.fillStyle = '#3a3f48'; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(x, y - 4, 16, 7);
+}
+function drawSpearmanFigure(x, y) {
+  ctx.fillStyle = '#5a6a3a'; ctx.beginPath(); ctx.arc(x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(x - 2, y - 6, 4, 14);
+  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x + 6, y - 20); ctx.lineTo(x + 6, y + 8); ctx.stroke();
+}
+function drawCavalryFigure(x, y) {
+  ctx.fillStyle = '#6b4a2f'; ctx.beginPath(); ctx.ellipse(x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(x - 12, y + 4, 3, 9); ctx.fillRect(x + 9, y + 4, 3, 9);
+  ctx.beginPath(); ctx.ellipse(x - 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x, y - 9); ctx.lineTo(x - 16, y - 14); ctx.stroke();
+}
+const RANGED_FIGURE_DRAWERS = { archer: drawArcherFigure, gunman: drawGunmanFigure, cannon: drawCannonFigure };
+const MELEE_FIGURE_DRAWERS = { spearman: drawSpearmanFigure, cavalry: drawCavalryFigure };
+
+function drawEmptySlotMarker(x, y) {
+  ctx.strokeStyle = 'rgba(255,215,106,0.85)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,215,106,0.25)';
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,215,106,0.95)';
+  ctx.font = 'bold 9px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('+', x, y + 3);
+}
 
 function drawTier3Slots() {
   for (const slot of TIER3_SLOTS) {
+    if (slot.unit) RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y);
+    else drawEmptySlotMarker(slot.x, slot.y);
+  }
+}
+function drawTier2Slots() {
+  for (const slot of TIER2_SLOTS) {
+    if (slot.unit) RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y);
+    else drawEmptySlotMarker(slot.x, slot.y);
+  }
+}
+function drawGroundSlots() {
+  for (const slot of GROUND_SLOTS) {
     if (slot.unit) {
-      drawArcherFigure(slot.x, slot.y);
+      MELEE_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y);
+      if (slot.hp < slot.maxHp) {
+        const w = 26;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(slot.x - w / 2, slot.y - 32, w, 4);
+        ctx.fillStyle = '#5cc85c'; ctx.fillRect(slot.x - w / 2, slot.y - 32, w * clamp(slot.hp / slot.maxHp, 0, 1), 4);
+      }
     } else {
-      ctx.strokeStyle = 'rgba(255,215,106,0.85)';
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(slot.x, slot.y, 10, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = 'rgba(255,215,106,0.25)';
-      ctx.beginPath(); ctx.arc(slot.x, slot.y, 10, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = 'rgba(255,215,106,0.95)';
-      ctx.font = 'bold 9px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('+', slot.x, slot.y + 3);
+      drawEmptySlotMarker(slot.x, slot.y - 12);
     }
   }
 }
 
-function drawFootman(en) {
-  const y = en.y + Math.sin((en.bob + performance.now() / 140)) * 1.4;
+function drawFootman(en, y) {
   ctx.fillStyle = '#8a3a3a';
   ctx.beginPath(); ctx.arc(en.x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
   ctx.fillRect(en.x - 3, y - 6, 6, 14);
   ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(en.x - 6, y - 12); ctx.lineTo(en.x - 12, y - 18); ctx.stroke();
+}
+function drawHorseman(en, y) {
+  ctx.fillStyle = '#5a3a2a'; ctx.beginPath(); ctx.ellipse(en.x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(en.x - 12, y + 4, 3, 9); ctx.fillRect(en.x + 9, y + 4, 3, 9);
+  ctx.beginPath(); ctx.ellipse(en.x + 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#8a3a3a'; ctx.beginPath(); ctx.arc(en.x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
+}
+const ENEMY_DRAWERS = { footman: drawFootman, horseman: drawHorseman };
+
+function drawEnemy(en) {
+  const y = en.y + Math.sin((en.bob + performance.now() / 140)) * 1.4;
+  ENEMY_DRAWERS[en.type](en, y);
   if (en.hp < en.maxHp) {
     const w = 22;
     ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(en.x - w / 2, y - 30, w, 4);
@@ -583,14 +780,40 @@ function drawFootman(en) {
   }
 }
 
+function drawMenu() {
+  if (!activeMenu) return;
+  const bw = 82, bh = 28, gap = 5;
+  const totalH = activeMenu.options.length * bh + (activeMenu.options.length - 1) * gap;
+  const mx = clamp(activeMenu.x - bw / 2, 6, W - bw - 6);
+  const my = clamp(activeMenu.y + 16, 6, H - totalH - 6);
+  activeMenu._rects = activeMenu.options.map((opt, i) => ({ x: mx, y: my + i * (bh + gap), w: bw, h: bh, type: opt.type }));
+  for (const r of activeMenu._rects) {
+    const def = UNIT_DEFS[r.type];
+    ctx.fillStyle = 'rgba(15,15,20,0.92)';
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.strokeStyle = gold >= def.cost ? 'rgba(255,215,106,0.9)' : 'rgba(180,80,80,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(r.x, r.y, r.w, r.h);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+    ctx.fillText(r.type[0].toUpperCase() + r.type.slice(1), r.x + r.w / 2, r.y + 12);
+    ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 10px Arial';
+    ctx.fillText(def.cost + 'g', r.x + r.w / 2, r.y + 24);
+  }
+}
+
 function drawProjectiles() {
-  ctx.strokeStyle = '#4a3a20'; ctx.lineWidth = 2;
   for (const p of projectiles) {
+    if (p.splash > 0) {
+      ctx.fillStyle = '#222';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+      continue;
+    }
     const en = p.targetRef;
     const tx = en && !en.dead ? en.x : p.x, ty = en && !en.dead ? en.y - 14 : p.y;
     const dx = tx - p.spawnX, dy = ty - p.spawnY;
     const dist = Math.hypot(dx, dy) || 1;
     const ux = dx / dist, uy = dy / dist;
+    ctx.strokeStyle = '#4a3a20'; ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(p.x - ux * 12, p.y - uy * 12);
     ctx.lineTo(p.x + ux * 4, p.y + uy * 4);
@@ -639,10 +862,10 @@ function drawHud() {
   ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'left';
   ctx.fillText('Gold: ' + gold, W - 160, 28);
   ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Arial';
-  ctx.fillText('Kills: ' + killCount + ' / ' + WAVE_FOOTMEN, W - 160, 46);
+  ctx.fillText('Kills: ' + killCount + ' / ' + WAVE_TOTAL, W - 160, 46);
 
   ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
-  ctx.fillText('Tap a glowing wall slot to place an Archer (' + ARCHER_COST + 'g)', W / 2, H - 10);
+  ctx.fillText('Tap a glowing wall or ground slot to place a defender', W / 2, H - 10);
 }
 
 function draw() {
@@ -650,17 +873,17 @@ function draw() {
   const mag = shake > 0 ? shake * 8 : 0;
   if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
   drawBackdrop();
+  drawCastle();
+  drawGroundSlots();
+  drawTier3Slots();
+  drawTier2Slots();
   if (state !== 'menu') {
-    drawCastle();
-    drawTier3Slots();
-    for (const en of enemies) drawFootman(en);
+    for (const en of enemies) drawEnemy(en);
     drawProjectiles();
     drawParticles();
     drawPopups();
     drawHud();
-  } else {
-    drawCastle();
-    drawTier3Slots();
+    drawMenu();
   }
   ctx.restore();
 }
