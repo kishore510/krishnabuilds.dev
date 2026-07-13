@@ -157,7 +157,7 @@
        mobile game's in-fullscreen back control. */
     .kb-fs-back {
       position: fixed;
-      top: calc(10px + env(safe-area-inset-top, 0px));
+      bottom: calc(10px + env(safe-area-inset-bottom, 0px));
       left: calc(10px + env(safe-area-inset-left, 0px));
       z-index: 999;
       width: 40px;
