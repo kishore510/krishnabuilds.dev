@@ -212,6 +212,7 @@ function playCannonFire() { tone(80, 0.1, 'square', 0.16); }
 function playCannonHit() { tone(70, 0.22, 'square', 0.18); tone(50, 0.28, 'sawtooth', 0.15, 0.04); }
 function playMeleeClash() { tone(320, 0.05, 'square', 0.08); }
 function playUnitFall() { tone(150, 0.16, 'sawtooth', 0.12); }
+function playWaveClear() { tone(660, 0.1, 'triangle', 0.12); tone(880, 0.14, 'triangle', 0.12, 0.1); }
 function playEnemyDie() { tone(180, 0.12, 'sawtooth', 0.1); }
 function playWallThud() { tone(90, 0.18, 'square', 0.16); tone(60, 0.22, 'sine', 0.14, 0.05); }
 function playGold() { tone(880, 0.06, 'triangle', 0.07); }
@@ -253,43 +254,83 @@ const TIER2_SLOTS = [
   { x: 100, y: 98, unit: null, cooldown: 0 }
 ];
 // Ground, just outside the gate: spearman OR cavalry, player's choice per
-// slot. Listed RIGHTMOST-first - that's the order an enemy walking
-// right-to-left actually reaches them in, which the melee-engagement logic
-// below relies on.
+// slot. Each is an active skirmisher, not a static wall segment: `x` is its
+// fixed home/leash anchor (also where the empty-slot marker draws), `ux` is
+// its CURRENT position, which moves out toward a target within `range` (up
+// to `maxAdvance` past home) and back - see updateGroundUnits.
 const GROUND_SLOTS = [
-  { x: 210, y: GROUND_Y, unit: null, busy: false, hp: 0, maxHp: 0, atkCooldown: 0 },
-  { x: 178, y: GROUND_Y, unit: null, busy: false, hp: 0, maxHp: 0, atkCooldown: 0 },
-  { x: 146, y: GROUND_Y, unit: null, busy: false, hp: 0, maxHp: 0, atkCooldown: 0 }
+  { x: 210, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 210, state: 'home', target: null },
+  { x: 178, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 178, state: 'home', target: null },
+  { x: 146, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 146, state: 'home', target: null }
 ];
-const ENGAGE_DIST = 10, QUEUE_GAP = 20;
+const TOUCH_DIST = 14;
 const PROJECTILE_SPEED = 620; // px/s
 
-// Ranged units all share the same targeting (nearest enemy in range) and
+// Ranged units share the same targeting (nearest enemy in range) and
 // projectile-travel logic - only these numbers differ. Melee units instead
-// hold their GROUND_SLOTS position and trade blows with whatever enemy is
-// currently engaged there (see updateEnemies).
+// actively chase/engage anything within `range` of their home position (see
+// updateGroundUnits) rather than waiting for it to walk into them.
 const UNIT_DEFS = {
   archer:   { cost: 40, kind: 'ranged', range: 430, fireInterval: 0.9, damage: 14, color: '#3a5a8a' },
   gunman:   { cost: 60, kind: 'ranged', range: 320, fireInterval: 1.1, damage: 20, color: '#6a5a3a' },
   cannon:   { cost: 90, kind: 'ranged', range: 260, fireInterval: 1.8, damage: 24, color: '#3a3f48', splash: 34 },
-  spearman: { cost: 50, kind: 'melee', hp: 40, damage: 8, attackInterval: 0.8, color: '#5a6a3a' },
-  cavalry:  { cost: 70, kind: 'melee', hp: 55, damage: 14, attackInterval: 0.7, color: '#6b4a2f' }
+  spearman: { cost: 50, kind: 'melee', hp: 40, damage: 8, attackInterval: 0.8, color: '#5a6a3a', range: 70, maxAdvance: 45, speed: 55 },
+  cavalry:  { cost: 70, kind: 'melee', hp: 55, damage: 14, attackInterval: 0.7, color: '#6b4a2f', range: 100, maxAdvance: 70, speed: 100 }
 };
 
 const ENEMY_DEFS = {
   footman:  { hp: 30, speed: 44, wallDamage: 9, meleeDamage: 6, atkInterval: 1.0, goldReward: 8 },
-  horseman: { hp: 45, speed: 95, wallDamage: 14, meleeDamage: 10, atkInterval: 0.9, goldReward: 14 }
+  horseman: { hp: 45, speed: 95, wallDamage: 14, meleeDamage: 10, atkInterval: 0.9, goldReward: 14 },
+  pikeman:  { hp: 55, speed: 40, wallDamage: 11, meleeDamage: 9, atkInterval: 1.0, goldReward: 12 },
+  elephant: { hp: 160, speed: 22, wallDamage: 30, meleeDamage: 18, atkInterval: 1.3, goldReward: 30 },
+  ram:      { hp: 90, speed: 26, wallDamage: 40, meleeDamage: 6, atkInterval: 1.5, goldReward: 22 }
 };
 
-// PHASE 2 is still a single test wave (the full 10-12 wave scripted system
-// with between-wave breathers is phase 3) - but it escalates internally:
-// footmen only at first, horsemen mixed in with rising probability as the
-// wave progresses, so even this one wave has a building-difficulty arc
-// rather than a flat drip of identical enemies.
-const WAVE_TOTAL = 16;
-const SPAWN_INTERVAL = 1.5;
+// Type-matchup multipliers applied to damage a defender deals to a given
+// enemy type - archers shred footmen but struggle vs armored elephants,
+// cannon splash wrecks elephants/rams, spearmen brace well vs cavalry-style
+// charges (horsemen), cavalry runs down footmen but bogs down vs pikemen.
+const MATCHUPS = {
+  archer:   { footman: 1.3, horseman: 1.0, pikeman: 0.9, elephant: 0.5, ram: 0.6 },
+  gunman:   { footman: 1.1, horseman: 1.1, pikeman: 1.1, elephant: 0.8, ram: 0.9 },
+  cannon:   { footman: 0.9, horseman: 0.9, pikeman: 1.0, elephant: 1.6, ram: 1.6 },
+  spearman: { footman: 1.0, horseman: 1.6, pikeman: 0.9, elephant: 0.7, ram: 0.8 },
+  cavalry:  { footman: 1.4, horseman: 1.0, pikeman: 0.6, elephant: 0.8, ram: 1.0 }
+};
+function matchupMult(attackerType, enemyType) { return (MATCHUPS[attackerType] && MATCHUPS[attackerType][enemyType]) || 1; }
+
+// Full scripted wave system: each wave is a composition (counts per enemy
+// type), flattened and shuffled into a spawn queue so types are mixed
+// rather than arriving in blocks. Difficulty ramps by introducing pikeman
+// (wave 3), elephants (wave 5), and rams (wave 6), not just raising counts.
+const WAVES = [
+  { footman: 5 },
+  { footman: 6, horseman: 2 },
+  { footman: 6, horseman: 3, pikeman: 2 },
+  { footman: 5, horseman: 3, pikeman: 3 },
+  { footman: 6, horseman: 4, pikeman: 3, elephant: 1 },
+  { footman: 5, horseman: 4, pikeman: 4, elephant: 1, ram: 1 },
+  { footman: 6, horseman: 5, pikeman: 4, elephant: 2 },
+  { footman: 6, horseman: 5, pikeman: 5, elephant: 1, ram: 2 },
+  { footman: 7, horseman: 6, pikeman: 5, elephant: 2, ram: 1 },
+  { footman: 7, horseman: 6, pikeman: 6, elephant: 2, ram: 2 },
+  { footman: 8, horseman: 7, pikeman: 6, elephant: 3, ram: 2 }
+];
+const SPAWN_INTERVAL = 1.4;
+const PRE_WAVE_COUNTDOWN = 3;
+const WAVE_BREATHER = 5;
 const CASTLE_MAX_HP = 100;
 const START_GOLD = 110;
+
+function buildWaveQueue(wave) {
+  const queue = [];
+  for (const type in wave) for (let i = 0; i < wave[type]; i++) queue.push(type);
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  return queue;
+}
 
 let castleHP = CASTLE_MAX_HP;
 let gold = START_GOLD;
@@ -298,9 +339,13 @@ let projectiles = [];
 let particles = [];
 let popups = [];
 let killCount = 0;
-let spawned = 0;
-let spawnTimer = 0;
 let shake = 0;
+let waveIndex = 0;
+let waveQueue = [];
+let waveQueuePos = 0;
+let waveState = 'countdown'; // 'countdown' | 'active' | 'breather'
+let waveTimer = 0;
+let spawnTimer = 0;
 let activeMenu = null; // { slot, kind: 'tier2'|'ground', options, x, y, _rects }
 let state = 'menu'; // menu | playing | over
 
@@ -310,7 +355,7 @@ function showMenu() {
   subtitle.textContent = 'Hold the line. Man the tiers with archers, gunmen and cannon, and deploy spearmen or cavalry at the gate.';
   scoreLine.style.display = 'none';
   const best = loadBest();
-  bestLine.textContent = best > 0 ? 'Best: ' + best + ' kills' : '';
+  bestLine.textContent = best > 0 ? 'Best score: ' + best : '';
   startBtn.textContent = 'Start';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'none';
@@ -325,13 +370,17 @@ function startGame() {
   particles = [];
   popups = [];
   killCount = 0;
-  spawned = 0;
-  spawnTimer = 1;
   shake = 0;
   activeMenu = null;
+  waveIndex = 0;
+  waveQueue = buildWaveQueue(WAVES[0]);
+  waveQueuePos = 0;
+  waveState = 'countdown';
+  waveTimer = PRE_WAVE_COUNTDOWN;
+  spawnTimer = 0;
   TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
   TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
-  GROUND_SLOTS.forEach((s) => { s.unit = null; s.busy = false; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; });
+  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.ux = s.x; s.state = 'home'; s.target = null; });
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
@@ -374,7 +423,9 @@ function placeUnit(slot, kind, type) {
     slot.hp = def.hp;
     slot.maxHp = def.hp;
     slot.atkCooldown = 0.2;
-    slot.busy = false;
+    slot.ux = slot.x;
+    slot.state = 'home';
+    slot.target = null;
   }
   playGold();
 }
@@ -419,17 +470,11 @@ function addBurst(x, y, color, count) {
   }
 }
 
-// Footmen only at first; horsemen mixed in with rising probability as the
-// wave progresses, so difficulty ramps even within this single test wave.
-function spawnEnemy() {
-  const progress = spawned / WAVE_TOTAL;
-  const horsemanChance = clamp(progress * 0.6, 0, 0.5);
-  const type = Math.random() < horsemanChance ? 'horseman' : 'footman';
+function spawnEnemy(type) {
   const def = ENEMY_DEFS[type];
   enemies.push({
     type, x: W + 20, y: GROUND_Y, hp: def.hp, maxHp: def.hp, speed: def.speed,
-    dead: false, bob: Math.random() * 10, meleeSlot: null, atkCooldown: 0.3,
-    queueOffset: Math.random() * 16
+    dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3
   });
 }
 
@@ -448,7 +493,7 @@ function updateRangedSlots(slots, dt) {
     if (target) {
       slot.cooldown = def.fireInterval;
       if (def.splash) playCannonFire(); else playBowFire();
-      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, damage: def.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
+      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, unitType: slot.unit.type, damage: def.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
     }
   }
 }
@@ -466,13 +511,13 @@ function updateProjectiles(dt) {
       if (p.splash > 0) {
         for (const other of enemies) {
           if (other.dead || Math.abs(other.x - en.x) > p.splash) continue;
-          other.hp -= p.damage;
+          other.hp -= p.damage * matchupMult(p.unitType, other.type);
           if (other.hp <= 0 && !other.dead) killEnemy(other);
         }
         addBurst(en.x, en.y - 10, '#5a5f68', 16);
         playCannonHit();
       } else {
-        en.hp -= p.damage;
+        en.hp -= p.damage * matchupMult(p.unitType, en.type);
         addBurst(en.x, en.y - 14, '#e8834a', 6);
         playArrowHit();
         if (en.hp <= 0 && !en.dead) killEnemy(en);
@@ -493,56 +538,21 @@ function killEnemy(en) {
   addBurst(en.x, en.y - 10, '#8a3a3a', 12);
   addPopup(en.x, en.y - 24, '+' + reward + 'g', '#ffd76a');
   playEnemyDie();
-  if (en.meleeSlot) { en.meleeSlot.busy = false; en.meleeSlot = null; }
+  if (en.meleeUnit) {
+    if (en.meleeUnit.target === en) { en.meleeUnit.state = 'returning'; en.meleeUnit.target = null; }
+    en.meleeUnit = null;
+  }
 }
 
-// Ground units block: an enemy reaching an occupied slot stops and trades
-// blows with it instead of walking through. If the slot's unit dies, the
-// enemy resumes advancing (and may hit the next slot, or the wall). If the
-// slot is already fighting someone else, the enemy just queues behind it.
+// Ground units are active skirmishers: updateGroundUnits (below) moves them
+// out to meet anything in range and back again. An enemy just walks
+// straight for the wall UNLESS a melee unit has come out to engage it
+// (en.meleeUnit set), in which case it's paused fighting - see updateGroundUnits.
 function updateEnemies(dt) {
   for (const en of enemies) {
-    if (en.dead) continue;
+    if (en.dead || en.meleeUnit) continue;
     const def = ENEMY_DEFS[en.type];
-
-    if (en.meleeSlot) {
-      const slot = en.meleeSlot;
-      if (!slot.unit) { en.meleeSlot = null; continue; }
-      en.atkCooldown -= dt;
-      if (en.atkCooldown <= 0) {
-        en.atkCooldown = def.atkInterval;
-        slot.hp -= def.meleeDamage;
-        playMeleeClash();
-        addBurst(slot.x, slot.y - 14, '#c0392b', 4);
-        if (slot.hp <= 0) {
-          addPopup(slot.x, slot.y - 26, slot.unit.type + ' fell!', '#ff8a4a');
-          slot.unit = null; slot.busy = false; slot.hp = 0;
-          en.meleeSlot = null;
-          playUnitFall();
-        }
-      }
-      continue;
-    }
-
     en.x -= en.speed * dt;
-
-    let blocked = false;
-    for (const slot of GROUND_SLOTS) {
-      if (!slot.unit) continue;
-      if (en.x <= slot.x + ENGAGE_DIST) {
-        blocked = true;
-        if (!slot.busy) {
-          slot.busy = true;
-          en.meleeSlot = slot;
-          en.atkCooldown = UNIT_DEFS[slot.unit.type].attackInterval * 0.5;
-        } else {
-          en.x = slot.x + ENGAGE_DIST + QUEUE_GAP + en.queueOffset;
-        }
-        break;
-      }
-    }
-    if (blocked) continue;
-
     if (en.x <= WALL_FRONT_X + 14) {
       castleHP -= def.wallDamage;
       en.dead = true;
@@ -555,33 +565,97 @@ function updateEnemies(dt) {
   enemies = enemies.filter((en) => !en.dead);
 }
 
-function checkWaveComplete() {
-  if (spawned >= WAVE_TOTAL && enemies.length === 0 && state === 'playing') {
-    endGame(true);
+// Melee units lunge out from their home position to meet the nearest enemy
+// within range (capped at maxAdvance past home, so cavalry doesn't run off
+// chasing something far away), fight it where they meet, then return home
+// and watch for the next threat.
+function updateGroundUnits(dt) {
+  for (const slot of GROUND_SLOTS) {
+    if (!slot.unit) continue;
+    const def = UNIT_DEFS[slot.unit.type];
+    const homeX = slot.x;
+
+    if (slot.state === 'fighting') {
+      const en = slot.target;
+      if (!en || en.dead) { slot.state = 'returning'; slot.target = null; continue; }
+      const edef = ENEMY_DEFS[en.type];
+
+      slot.atkCooldown -= dt;
+      if (slot.atkCooldown <= 0) {
+        slot.atkCooldown = def.attackInterval;
+        en.hp -= def.damage * matchupMult(slot.unit.type, en.type);
+        playMeleeClash();
+        addBurst(en.x, en.y - 14, '#e8834a', 4);
+        if (en.hp <= 0 && !en.dead) { killEnemy(en); slot.state = 'returning'; slot.target = null; continue; }
+      }
+
+      en.atkCooldown -= dt;
+      if (en.atkCooldown <= 0) {
+        en.atkCooldown = edef.atkInterval;
+        slot.hp -= edef.meleeDamage;
+        addBurst(slot.ux, slot.y - 14, '#c0392b', 4);
+        if (slot.hp <= 0) {
+          addPopup(slot.x, slot.y - 26, slot.unit.type + ' fell!', '#ff8a4a');
+          slot.unit = null; slot.hp = 0; slot.state = 'home'; slot.target = null;
+          en.meleeUnit = null;
+          playUnitFall();
+        }
+      }
+      continue;
+    }
+
+    if (slot.state === 'advancing') {
+      const en = slot.target;
+      if (!en || en.dead) { slot.state = 'returning'; slot.target = null; continue; }
+      if (Math.abs(en.x - slot.ux) <= TOUCH_DIST || slot.ux >= homeX + def.maxAdvance) {
+        slot.state = 'fighting';
+        slot.atkCooldown = def.attackInterval * 0.4;
+        continue;
+      }
+      slot.ux = Math.min(slot.ux + def.speed * dt, homeX + def.maxAdvance);
+      continue;
+    }
+
+    if (slot.state === 'returning') {
+      if (slot.ux > homeX) slot.ux = Math.max(homeX, slot.ux - def.speed * dt);
+      else slot.state = 'home';
+    }
+
+    // 'home' or just arrived back - scan for the closest unclaimed enemy in range
+    let best = null, bestDist = def.range;
+    for (const en of enemies) {
+      if (en.dead || en.meleeUnit) continue;
+      const d = en.x - slot.ux;
+      if (d >= 0 && d <= bestDist) { bestDist = d; best = en; }
+    }
+    if (best) {
+      slot.target = best;
+      slot.state = 'advancing';
+      best.meleeUnit = slot;
+    }
   }
 }
 
 function endGame(won) {
   state = 'over';
+  const finalScore = killCount + waveIndex * 20 + Math.round(castleHP);
+  const best = loadBest();
+  const isNewBest = finalScore > best;
+  if (isNewBest) saveBest(finalScore);
   if (won) {
     playWin();
-    const best = loadBest();
-    const isNewBest = killCount > best;
-    if (isNewBest) saveBest(killCount);
     title.textContent = 'The line held!';
-    subtitle.textContent = 'Every enemy stopped before the gate.';
+    subtitle.textContent = 'Every wave stopped before the gate.';
     scoreLine.style.display = 'block';
-    scoreLine.textContent = 'Kills: ' + killCount + ' · Castle HP left: ' + Math.round(castleHP) + '%';
-    bestLine.textContent = isNewBest ? '🏆 New best!' : 'Best: ' + best + ' kills';
+    scoreLine.textContent = 'Kills: ' + killCount + ' · Waves cleared: ' + WAVES.length + ' · Castle HP left: ' + Math.round(castleHP) + '%';
   } else {
     playLose();
     title.textContent = 'The castle has fallen';
     subtitle.textContent = 'Enemies broke through the gate.';
     scoreLine.style.display = 'block';
-    scoreLine.textContent = 'Kills: ' + killCount;
-    const best = loadBest();
-    bestLine.textContent = best > 0 ? 'Best: ' + best + ' kills' : '';
+    scoreLine.textContent = 'Kills: ' + killCount + ' · Waves cleared: ' + waveIndex + ' / ' + WAVES.length;
   }
+  bestLine.textContent = isNewBest ? '🏆 New best!' : 'Best score: ' + best;
   startBtn.textContent = 'Play Again';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'inline-block';
@@ -597,15 +671,39 @@ function update(dt) {
 
   if (state !== 'playing') return;
 
-  if (spawned < WAVE_TOTAL) {
-    spawnTimer -= dt;
-    if (spawnTimer <= 0) { spawnEnemy(); spawned++; spawnTimer = SPAWN_INTERVAL; }
+  if (waveState === 'countdown') {
+    waveTimer -= dt;
+    if (waveTimer <= 0) { waveState = 'active'; spawnTimer = 0.3; }
+  } else if (waveState === 'active') {
+    if (waveQueuePos < waveQueue.length) {
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) { spawnEnemy(waveQueue[waveQueuePos]); waveQueuePos++; spawnTimer = SPAWN_INTERVAL; }
+    } else if (enemies.length === 0) {
+      waveIndex++;
+      if (waveIndex >= WAVES.length) {
+        endGame(true);
+        return;
+      }
+      waveState = 'breather';
+      waveTimer = WAVE_BREATHER;
+      addPopup(W / 2, 70, 'Wave ' + waveIndex + ' cleared!', '#5cc85c');
+      playWaveClear();
+    }
+  } else if (waveState === 'breather') {
+    waveTimer -= dt;
+    if (waveTimer <= 0) {
+      waveQueue = buildWaveQueue(WAVES[waveIndex]);
+      waveQueuePos = 0;
+      waveState = 'countdown';
+      waveTimer = PRE_WAVE_COUNTDOWN;
+    }
   }
+
   updateRangedSlots(TIER3_SLOTS, dt);
   updateRangedSlots(TIER2_SLOTS, dt);
+  updateGroundUnits(dt);
   updateEnemies(dt);
   updateProjectiles(dt);
-  checkWaveComplete();
 }
 
 // --- Rendering (matches the concept art's palette/silhouette) ---
@@ -743,11 +841,13 @@ function drawTier2Slots() {
 function drawGroundSlots() {
   for (const slot of GROUND_SLOTS) {
     if (slot.unit) {
-      MELEE_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y);
+      // Drawn at ux (current position), not x (home) - it actively moves
+      // out to meet enemies within range and back, not a fixed wall block.
+      MELEE_FIGURE_DRAWERS[slot.unit.type](slot.ux, slot.y);
       if (slot.hp < slot.maxHp) {
         const w = 26;
-        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(slot.x - w / 2, slot.y - 32, w, 4);
-        ctx.fillStyle = '#5cc85c'; ctx.fillRect(slot.x - w / 2, slot.y - 32, w * clamp(slot.hp / slot.maxHp, 0, 1), 4);
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(slot.ux - w / 2, slot.y - 32, w, 4);
+        ctx.fillStyle = '#5cc85c'; ctx.fillRect(slot.ux - w / 2, slot.y - 32, w * clamp(slot.hp / slot.maxHp, 0, 1), 4);
       }
     } else {
       drawEmptySlotMarker(slot.x, slot.y - 12);
@@ -755,20 +855,44 @@ function drawGroundSlots() {
   }
 }
 
-function drawFootman(en, y) {
-  ctx.fillStyle = '#8a3a3a';
+function drawFootSoldier(en, y, color) {
+  ctx.fillStyle = color;
   ctx.beginPath(); ctx.arc(en.x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
   ctx.fillRect(en.x - 3, y - 6, 6, 14);
   ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(en.x - 6, y - 12); ctx.lineTo(en.x - 12, y - 18); ctx.stroke();
 }
+function drawFootman(en, y) { drawFootSoldier(en, y, '#8a3a3a'); }
+function drawPikeman(en, y) {
+  drawFootSoldier(en, y, '#7a4a2a');
+  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(en.x - 6, y - 28); ctx.lineTo(en.x - 6, y + 14); ctx.stroke();
+}
 function drawHorseman(en, y) {
   ctx.fillStyle = '#5a3a2a'; ctx.beginPath(); ctx.ellipse(en.x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillRect(en.x - 12, y + 4, 3, 9); ctx.fillRect(en.x + 9, y + 4, 3, 9);
-  ctx.beginPath(); ctx.ellipse(en.x + 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+  // Head leads on the LEFT - that's the direction of travel (enemies walk
+  // toward the castle, which is at lower x). It was drawn on the right
+  // before, so the horse looked like it was riding backwards.
+  ctx.beginPath(); ctx.ellipse(en.x - 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#8a3a3a'; ctx.beginPath(); ctx.arc(en.x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
 }
-const ENEMY_DRAWERS = { footman: drawFootman, horseman: drawHorseman };
+function drawElephant(en, y) {
+  const x = en.x;
+  ctx.fillStyle = '#7a7f88'; ctx.beginPath(); ctx.ellipse(x, y, 26, 17, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x - 24, y - 4, 11, 10, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#7a7f88'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - 32, y); ctx.lineTo(x - 40, y + 14); ctx.stroke();
+  ctx.fillStyle = '#5a5f68';
+  ctx.fillRect(x - 16, y - 4, 5, 14); ctx.fillRect(x + 10, y - 4, 5, 14);
+  ctx.fillStyle = '#8a3a3a'; ctx.fillRect(x - 6, y - 22, 12, 10);
+}
+function drawRam(en, y) {
+  const x = en.x;
+  ctx.fillStyle = '#6b4a2f'; ctx.fillRect(x - 26, y - 6, 52, 11);
+  ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.ellipse(x - 26, y - 1, 6, 7, 0, 0, Math.PI * 2); ctx.fill();
+}
+const ENEMY_DRAWERS = { footman: drawFootman, horseman: drawHorseman, pikeman: drawPikeman, elephant: drawElephant, ram: drawRam };
 
 function drawEnemy(en) {
   const y = en.y + Math.sin((en.bob + performance.now() / 140)) * 1.4;
@@ -858,14 +982,23 @@ function drawHud() {
   ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
   ctx.fillText('CASTLE  ' + Math.round(castleHP) + '%', W / 2, hpBarY + 14);
 
-  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(W - 170, 10, 160, 44);
-  ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'left';
-  ctx.fillText('Gold: ' + gold, W - 160, 28);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Arial';
-  ctx.fillText('Kills: ' + killCount + ' / ' + WAVE_TOTAL, W - 160, 46);
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(W - 170, 10, 160, 58);
+  ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'left';
+  ctx.fillText('Gold: ' + gold, W - 160, 27);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial';
+  ctx.fillText('Wave ' + Math.min(waveIndex + 1, WAVES.length) + ' / ' + WAVES.length, W - 160, 43);
+  ctx.fillText('Kills: ' + killCount, W - 160, 58);
 
   ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
   ctx.fillText('Tap a glowing wall or ground slot to place a defender', W / 2, H - 10);
+
+  if (waveState === 'countdown') {
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 13px Arial'; ctx.textAlign = 'center';
+    ctx.fillText('Wave ' + (waveIndex + 1) + ' incoming in ' + Math.ceil(waveTimer) + 's', W / 2, 60);
+  } else if (waveState === 'breather') {
+    ctx.fillStyle = '#5cc85c'; ctx.font = 'bold 13px Arial'; ctx.textAlign = 'center';
+    ctx.fillText('Prepare! Next wave in ' + Math.ceil(waveTimer) + 's', W / 2, 60);
+  }
 }
 
 function draw() {
