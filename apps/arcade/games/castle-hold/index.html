@@ -380,7 +380,7 @@ function startGame() {
   spawnTimer = 0;
   TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
   TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
-  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.ux = s.x; s.state = 'home'; s.target = null; });
+  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; });
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
@@ -423,6 +423,7 @@ function placeUnit(slot, kind, type) {
     slot.hp = def.hp;
     slot.maxHp = def.hp;
     slot.atkCooldown = 0.2;
+    slot.atkAnim = 0;
     slot.ux = slot.x;
     slot.state = 'home';
     slot.target = null;
@@ -474,7 +475,7 @@ function spawnEnemy(type) {
   const def = ENEMY_DEFS[type];
   enemies.push({
     type, x: W + 20, y: GROUND_Y, hp: def.hp, maxHp: def.hp, speed: def.speed,
-    dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3
+    dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3, atkAnim: 0
   });
 }
 
@@ -550,7 +551,9 @@ function killEnemy(en) {
 // (en.meleeUnit set), in which case it's paused fighting - see updateGroundUnits.
 function updateEnemies(dt) {
   for (const en of enemies) {
-    if (en.dead || en.meleeUnit) continue;
+    if (en.dead) continue;
+    if (en.atkAnim > 0) en.atkAnim -= dt;
+    if (en.meleeUnit) continue;
     const def = ENEMY_DEFS[en.type];
     en.x -= en.speed * dt;
     if (en.x <= WALL_FRONT_X + 14) {
@@ -572,6 +575,7 @@ function updateEnemies(dt) {
 function updateGroundUnits(dt) {
   for (const slot of GROUND_SLOTS) {
     if (!slot.unit) continue;
+    if (slot.atkAnim > 0) slot.atkAnim -= dt;
     const def = UNIT_DEFS[slot.unit.type];
     const homeX = slot.x;
 
@@ -583,6 +587,7 @@ function updateGroundUnits(dt) {
       slot.atkCooldown -= dt;
       if (slot.atkCooldown <= 0) {
         slot.atkCooldown = def.attackInterval;
+        slot.atkAnim = 0.25;
         en.hp -= def.damage * matchupMult(slot.unit.type, en.type);
         playMeleeClash();
         addBurst(en.x, en.y - 14, '#e8834a', 4);
@@ -592,6 +597,7 @@ function updateGroundUnits(dt) {
       en.atkCooldown -= dt;
       if (en.atkCooldown <= 0) {
         en.atkCooldown = edef.atkInterval;
+        en.atkAnim = 0.25;
         slot.hp -= edef.meleeDamage;
         addBurst(slot.ux, slot.y - 14, '#c0392b', 4);
         if (slot.hp <= 0) {
@@ -806,10 +812,14 @@ function drawSpearmanFigure(x, y) {
 function drawCavalryFigure(x, y) {
   ctx.fillStyle = '#6b4a2f'; ctx.beginPath(); ctx.ellipse(x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillRect(x - 12, y + 4, 3, 9); ctx.fillRect(x + 9, y + 4, 3, 9);
-  ctx.beginPath(); ctx.ellipse(x - 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+  // Head + lance face RIGHT - toward the battlefield/oncoming enemies, the
+  // opposite of the enemy horseman (which correctly faces left, toward the
+  // castle it's advancing on). This is a deployed defender watching/riding
+  // out to the right, not an attacker riding in from the right.
+  ctx.beginPath(); ctx.ellipse(x + 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(x, y - 9); ctx.lineTo(x - 16, y - 14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x, y - 9); ctx.lineTo(x + 16, y - 14); ctx.stroke();
 }
 const RANGED_FIGURE_DRAWERS = { archer: drawArcherFigure, gunman: drawGunmanFigure, cannon: drawCannonFigure };
 const MELEE_FIGURE_DRAWERS = { spearman: drawSpearmanFigure, cavalry: drawCavalryFigure };
@@ -838,12 +848,31 @@ function drawTier2Slots() {
     else drawEmptySlotMarker(slot.x, slot.y);
   }
 }
+function drawMeleeAttackEffect(slot) {
+  if (slot.atkAnim <= 0) return;
+  const t = slot.atkAnim / 0.25;
+  const target = slot.target;
+  const tx = target ? target.x : slot.ux + 24, ty = target ? target.y - 10 : slot.y - 10;
+  if (slot.unit.type === 'spearman') {
+    // A quick bright thrust toward whatever it's fighting - "throwing" the
+    // spear at the enemy rather than just standing there holding it.
+    ctx.strokeStyle = 'rgba(224,224,224,' + t + ')';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(slot.ux + 3, slot.y - 12); ctx.lineTo(tx, ty); ctx.stroke();
+  } else if (slot.unit.type === 'cavalry') {
+    ctx.strokeStyle = 'rgba(255,255,255,' + t + ')';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(slot.ux, slot.y - 9); ctx.lineTo(slot.ux + 22, slot.y - 15); ctx.stroke();
+  }
+}
+
 function drawGroundSlots() {
   for (const slot of GROUND_SLOTS) {
     if (slot.unit) {
       // Drawn at ux (current position), not x (home) - it actively moves
       // out to meet enemies within range and back, not a fixed wall block.
       MELEE_FIGURE_DRAWERS[slot.unit.type](slot.ux, slot.y);
+      drawMeleeAttackEffect(slot);
       if (slot.hp < slot.maxHp) {
         const w = 26;
         ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(slot.ux - w / 2, slot.y - 32, w, 4);
@@ -876,6 +905,17 @@ function drawHorseman(en, y) {
   // before, so the horse looked like it was riding backwards.
   ctx.beginPath(); ctx.ellipse(en.x - 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#8a3a3a'; ctx.beginPath(); ctx.arc(en.x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
+  // Sword, resting near the head; swings through an arc while actively
+  // attacking (atkAnim set by updateGroundUnits whenever it lands a hit).
+  const active = en.atkAnim > 0;
+  const swing = active ? 1 - en.atkAnim / 0.25 : 0;
+  ctx.save();
+  ctx.translate(en.x - 16, y - 11);
+  ctx.rotate(active ? lerp(-0.9, 0.6, swing) : -0.3);
+  ctx.strokeStyle = active ? '#fff' : '#ddd';
+  ctx.lineWidth = active ? 3 : 2;
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-9, -3); ctx.stroke();
+  ctx.restore();
 }
 function drawElephant(en, y) {
   const x = en.x;
