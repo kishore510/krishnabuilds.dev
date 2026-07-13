@@ -213,6 +213,7 @@ function playCannonHit() { tone(70, 0.22, 'square', 0.18); tone(50, 0.28, 'sawto
 function playMeleeClash() { tone(320, 0.05, 'square', 0.08); }
 function playUnitFall() { tone(150, 0.16, 'sawtooth', 0.12); }
 function playWaveClear() { tone(660, 0.1, 'triangle', 0.12); tone(880, 0.14, 'triangle', 0.12, 0.1); }
+function playBombardFire() { tone(65, 0.3, 'sawtooth', 0.2); tone(45, 0.35, 'square', 0.16, 0.06); }
 function playEnemyDie() { tone(180, 0.12, 'sawtooth', 0.1); }
 function playWallThud() { tone(90, 0.18, 'square', 0.16); tone(60, 0.22, 'sine', 0.14, 0.05); }
 function playGold() { tone(880, 0.06, 'triangle', 0.07); }
@@ -259,9 +260,9 @@ const TIER2_SLOTS = [
 // its CURRENT position, which moves out toward a target within `range` (up
 // to `maxAdvance` past home) and back - see updateGroundUnits.
 const GROUND_SLOTS = [
-  { x: 210, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 210, state: 'home', target: null },
-  { x: 178, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 178, state: 'home', target: null },
-  { x: 146, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 146, state: 'home', target: null }
+  { x: 210, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 210, state: 'home', target: null, hunting: false },
+  { x: 178, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 178, state: 'home', target: null, hunting: false },
+  { x: 146, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 146, state: 'home', target: null, hunting: false }
 ];
 const TOUCH_DIST = 14;
 const PROJECTILE_SPEED = 620; // px/s
@@ -275,7 +276,12 @@ const UNIT_DEFS = {
   gunman:   { cost: 60, kind: 'ranged', range: 320, fireInterval: 1.1, damage: 20, color: '#6a5a3a' },
   cannon:   { cost: 90, kind: 'ranged', range: 260, fireInterval: 1.8, damage: 24, color: '#3a3f48', splash: 34 },
   spearman: { cost: 50, kind: 'melee', hp: 40, damage: 8, attackInterval: 0.8, color: '#5a6a3a', range: 70, maxAdvance: 45, speed: 55 },
-  cavalry:  { cost: 70, kind: 'melee', hp: 55, damage: 14, attackInterval: 0.7, color: '#6b4a2f', range: 100, maxAdvance: 70, speed: 100 }
+  // Cavalry also gets a huntRange/huntMaxAdvance: far beyond its normal
+  // short leash, but ONLY to chase the types listed in huntTypes (bombards)
+  // - those sit past every ranged defender's reach by design, so only an
+  // active sortie can stop them. Ordinary melee threats still only pull it
+  // out to maxAdvance, per the original "doesn't run off" design.
+  cavalry:  { cost: 70, kind: 'melee', hp: 55, damage: 14, attackInterval: 0.7, color: '#6b4a2f', range: 100, maxAdvance: 70, speed: 100, huntRange: 560, huntMaxAdvance: 480, huntTypes: ['bombard'] }
 };
 
 const ENEMY_DEFS = {
@@ -283,26 +289,38 @@ const ENEMY_DEFS = {
   horseman: { hp: 45, speed: 95, wallDamage: 14, meleeDamage: 10, atkInterval: 0.9, goldReward: 14 },
   pikeman:  { hp: 55, speed: 40, wallDamage: 11, meleeDamage: 9, atkInterval: 1.0, goldReward: 12 },
   elephant: { hp: 160, speed: 22, wallDamage: 30, meleeDamage: 18, atkInterval: 1.3, goldReward: 30 },
-  ram:      { hp: 90, speed: 26, wallDamage: 40, meleeDamage: 6, atkInterval: 1.5, goldReward: 22 }
+  ram:      { hp: 90, speed: 26, wallDamage: 40, meleeDamage: 6, atkInterval: 1.5, goldReward: 22 },
+  // Stops well short of the wall - past every ranged defender's reach - and
+  // bombards the castle from range instead of closing in. Only a melee
+  // unit that actively sorties out (cavalry, via huntRange) can silence it.
+  bombard:  { hp: 60, speed: 26, wallDamage: 0, rangedDamage: 14, fireInterval: 2.4, meleeDamage: 7, atkInterval: 1.0, goldReward: 25 }
 };
 
 // Type-matchup multipliers applied to damage a defender deals to a given
 // enemy type - archers shred footmen but struggle vs armored elephants,
 // cannon splash wrecks elephants/rams, spearmen brace well vs cavalry-style
-// charges (horsemen), cavalry runs down footmen but bogs down vs pikemen.
+// charges (horsemen), cavalry runs down footmen but bogs down vs pikemen,
+// and a cavalry charge (or cannon shell) makes short work of a bombard crew.
 const MATCHUPS = {
-  archer:   { footman: 1.3, horseman: 1.0, pikeman: 0.9, elephant: 0.5, ram: 0.6 },
-  gunman:   { footman: 1.1, horseman: 1.1, pikeman: 1.1, elephant: 0.8, ram: 0.9 },
-  cannon:   { footman: 0.9, horseman: 0.9, pikeman: 1.0, elephant: 1.6, ram: 1.6 },
-  spearman: { footman: 1.0, horseman: 1.6, pikeman: 0.9, elephant: 0.7, ram: 0.8 },
-  cavalry:  { footman: 1.4, horseman: 1.0, pikeman: 0.6, elephant: 0.8, ram: 1.0 }
+  archer:   { footman: 1.3, horseman: 1.0, pikeman: 0.9, elephant: 0.5, ram: 0.6, bombard: 0.8 },
+  gunman:   { footman: 1.1, horseman: 1.1, pikeman: 1.1, elephant: 0.8, ram: 0.9, bombard: 0.9 },
+  cannon:   { footman: 0.9, horseman: 0.9, pikeman: 1.0, elephant: 1.6, ram: 1.6, bombard: 1.3 },
+  spearman: { footman: 1.0, horseman: 1.6, pikeman: 0.9, elephant: 0.7, ram: 0.8, bombard: 1.2 },
+  cavalry:  { footman: 1.4, horseman: 1.0, pikeman: 0.6, elephant: 0.8, ram: 1.0, bombard: 1.4 }
 };
 function matchupMult(attackerType, enemyType) { return (MATCHUPS[attackerType] && MATCHUPS[attackerType][enemyType]) || 1; }
+
+// How far out a bombard stops and starts firing - past archer's max reach
+// plus a margin, but clamped so it never sits off the visible battlefield
+// on a narrower canvas.
+const BOMBARD_STOP_MARGIN = 80;
+function bombardStopX() { return Math.min(WALL_FRONT_X + UNIT_DEFS.archer.range + BOMBARD_STOP_MARGIN, W - 40); }
 
 // Full scripted wave system: each wave is a composition (counts per enemy
 // type), flattened and shuffled into a spawn queue so types are mixed
 // rather than arriving in blocks. Difficulty ramps by introducing pikeman
-// (wave 3), elephants (wave 5), and rams (wave 6), not just raising counts.
+// (wave 3), elephants (wave 5), rams (wave 6), and bombards (wave 7), not
+// just raising counts.
 const WAVES = [
   { footman: 5 },
   { footman: 6, horseman: 2 },
@@ -310,11 +328,11 @@ const WAVES = [
   { footman: 5, horseman: 3, pikeman: 3 },
   { footman: 6, horseman: 4, pikeman: 3, elephant: 1 },
   { footman: 5, horseman: 4, pikeman: 4, elephant: 1, ram: 1 },
-  { footman: 6, horseman: 5, pikeman: 4, elephant: 2 },
-  { footman: 6, horseman: 5, pikeman: 5, elephant: 1, ram: 2 },
-  { footman: 7, horseman: 6, pikeman: 5, elephant: 2, ram: 1 },
-  { footman: 7, horseman: 6, pikeman: 6, elephant: 2, ram: 2 },
-  { footman: 8, horseman: 7, pikeman: 6, elephant: 3, ram: 2 }
+  { footman: 6, horseman: 5, pikeman: 4, elephant: 2, bombard: 1 },
+  { footman: 6, horseman: 5, pikeman: 5, elephant: 1, ram: 2, bombard: 1 },
+  { footman: 7, horseman: 6, pikeman: 5, elephant: 2, ram: 1, bombard: 2 },
+  { footman: 7, horseman: 6, pikeman: 6, elephant: 2, ram: 2, bombard: 2 },
+  { footman: 8, horseman: 7, pikeman: 6, elephant: 3, ram: 2, bombard: 3 }
 ];
 const SPAWN_INTERVAL = 1.4;
 const PRE_WAVE_COUNTDOWN = 3;
@@ -380,7 +398,7 @@ function startGame() {
   spawnTimer = 0;
   TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
   TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
-  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; });
+  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; s.hunting = false; });
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
@@ -427,6 +445,7 @@ function placeUnit(slot, kind, type) {
     slot.ux = slot.x;
     slot.state = 'home';
     slot.target = null;
+    slot.hunting = false;
   }
   playGold();
 }
@@ -475,7 +494,8 @@ function spawnEnemy(type) {
   const def = ENEMY_DEFS[type];
   enemies.push({
     type, x: W + 20, y: GROUND_Y, hp: def.hp, maxHp: def.hp, speed: def.speed,
-    dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3, atkAnim: 0
+    dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3, atkAnim: 0,
+    fireCooldown: 1.2
   });
 }
 
@@ -555,6 +575,26 @@ function updateEnemies(dt) {
     if (en.atkAnim > 0) en.atkAnim -= dt;
     if (en.meleeUnit) continue;
     const def = ENEMY_DEFS[en.type];
+
+    if (en.type === 'bombard') {
+      const stopX = bombardStopX();
+      if (en.x > stopX) {
+        en.x -= en.speed * dt;
+      } else {
+        en.fireCooldown -= dt;
+        if (en.fireCooldown <= 0) {
+          en.fireCooldown = def.fireInterval;
+          castleHP -= def.rangedDamage;
+          shake = 0.2;
+          playBombardFire();
+          addPopup(en.x, en.y - 26, 'Bombard fires!', '#e05a4a');
+          addBurst(WALL_FRONT_X + 10, GROUND_Y - 10, '#c0392b', 6);
+          if (castleHP <= 0) { castleHP = 0; endGame(false); return; }
+        }
+      }
+      continue;
+    }
+
     en.x -= en.speed * dt;
     if (en.x <= WALL_FRONT_X + 14) {
       castleHP -= def.wallDamage;
@@ -612,13 +652,14 @@ function updateGroundUnits(dt) {
 
     if (slot.state === 'advancing') {
       const en = slot.target;
-      if (!en || en.dead) { slot.state = 'returning'; slot.target = null; continue; }
-      if (Math.abs(en.x - slot.ux) <= TOUCH_DIST || slot.ux >= homeX + def.maxAdvance) {
+      if (!en || en.dead) { slot.state = 'returning'; slot.target = null; slot.hunting = false; continue; }
+      const cap = slot.hunting ? def.huntMaxAdvance : def.maxAdvance;
+      if (Math.abs(en.x - slot.ux) <= TOUCH_DIST || slot.ux >= homeX + cap) {
         slot.state = 'fighting';
         slot.atkCooldown = def.attackInterval * 0.4;
         continue;
       }
-      slot.ux = Math.min(slot.ux + def.speed * dt, homeX + def.maxAdvance);
+      slot.ux = Math.min(slot.ux + def.speed * dt, homeX + cap);
       continue;
     }
 
@@ -627,12 +668,25 @@ function updateGroundUnits(dt) {
       else slot.state = 'home';
     }
 
-    // 'home' or just arrived back - scan for the closest unclaimed enemy in range
+    // 'home' or just arrived back - scan for the closest unclaimed enemy in
+    // range first. Only if nothing ordinary is nearby does a unit with a
+    // huntRange (cavalry) look much farther out for a high-priority target
+    // like a bombard - normal melee threats never trigger a sortie.
     let best = null, bestDist = def.range;
     for (const en of enemies) {
       if (en.dead || en.meleeUnit) continue;
       const d = en.x - slot.ux;
       if (d >= 0 && d <= bestDist) { bestDist = d; best = en; }
+    }
+    slot.hunting = false;
+    if (!best && def.huntRange) {
+      let huntBestDist = def.huntRange;
+      for (const en of enemies) {
+        if (en.dead || en.meleeUnit || !def.huntTypes.includes(en.type)) continue;
+        const d = en.x - slot.ux;
+        if (d >= 0 && d <= huntBestDist) { huntBestDist = d; best = en; }
+      }
+      if (best) slot.hunting = true;
     }
     if (best) {
       slot.target = best;
@@ -919,20 +973,59 @@ function drawHorseman(en, y) {
 }
 function drawElephant(en, y) {
   const x = en.x;
+  // A real walk cycle: back/front leg pairs swing opposite each other, and
+  // legs are drawn both behind AND in front of the body so all four read
+  // clearly instead of two thin rects that blended into the silhouette.
+  const walk = Math.sin(performance.now() / 220 + en.bob) * 5;
+  ctx.fillStyle = '#4f535c';
+  ctx.fillRect(x - 19, y + 5, 7, 15 + walk * 0.4);
+  ctx.fillRect(x + 11, y + 5, 7, 15 - walk * 0.4);
   ctx.fillStyle = '#7a7f88'; ctx.beginPath(); ctx.ellipse(x, y, 26, 17, 0, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.ellipse(x - 24, y - 4, 11, 10, 0, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = '#7a7f88'; ctx.lineWidth = 6; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(x - 32, y); ctx.lineTo(x - 40, y + 14); ctx.stroke();
   ctx.fillStyle = '#5a5f68';
-  ctx.fillRect(x - 16, y - 4, 5, 14); ctx.fillRect(x + 10, y - 4, 5, 14);
+  ctx.fillRect(x - 16, y - 2, 6, 17 - walk * 0.4);
+  ctx.fillRect(x + 13, y - 2, 6, 17 + walk * 0.4);
   ctx.fillStyle = '#8a3a3a'; ctx.fillRect(x - 6, y - 22, 12, 10);
 }
 function drawRam(en, y) {
   const x = en.x;
-  ctx.fillStyle = '#6b4a2f'; ctx.fillRect(x - 26, y - 6, 52, 11);
-  ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.ellipse(x - 26, y - 1, 6, 7, 0, 0, Math.PI * 2); ctx.fill();
+  const bob = Math.sin(performance.now() / 160 + en.bob) * 1.4;
+  // wheeled frame the log hangs from
+  ctx.strokeStyle = '#4a3320'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x - 30, y - 12); ctx.lineTo(x - 30, y + 6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + 24, y - 12); ctx.lineTo(x + 24, y + 6); ctx.stroke();
+  ctx.fillStyle = '#2a2f36';
+  ctx.beginPath(); ctx.arc(x - 30, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 24, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  // canopy roof over the crew
+  ctx.fillStyle = 'rgba(90,60,40,0.7)'; ctx.fillRect(x - 24, y - 22, 44, 6);
+  // the log itself, metal-capped on the leading (left) end
+  ctx.fillStyle = '#6b4a2f'; ctx.fillRect(x - 30, y - 9, 54, 10);
+  ctx.fillStyle = '#5a5f68'; ctx.beginPath(); ctx.arc(x - 30, y - 4, 7, 0, Math.PI * 2); ctx.fill();
+  // a few crew dragging it, walking beneath the canopy
+  ctx.fillStyle = '#3a2a18';
+  for (const dx of [-8, 6, 20]) {
+    ctx.beginPath(); ctx.arc(x + dx, y + bob, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillRect(x + dx - 2, y + 3 + bob, 4, 9);
+  }
 }
-const ENEMY_DRAWERS = { footman: drawFootman, horseman: drawHorseman, pikeman: drawPikeman, elephant: drawElephant, ram: drawRam };
+function drawBombard(en, y) {
+  const x = en.x;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-0.35);
+  ctx.fillStyle = '#3a3f48'; ctx.fillRect(-4, -22, 8, 26);
+  ctx.restore();
+  ctx.fillStyle = '#5a4a34'; ctx.fillRect(x - 10, y - 2, 20, 8);
+  ctx.fillStyle = '#2a2f36';
+  ctx.beginPath(); ctx.arc(x - 8, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 8, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#6a5a3a'; ctx.beginPath(); ctx.arc(x + 16, y - 8, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(x + 14, y - 5, 4, 10);
+}
+const ENEMY_DRAWERS = { footman: drawFootman, horseman: drawHorseman, pikeman: drawPikeman, elephant: drawElephant, ram: drawRam, bombard: drawBombard };
 
 function drawEnemy(en) {
   const y = en.y + Math.sin((en.bob + performance.now() / 140)) * 1.4;
