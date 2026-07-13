@@ -106,6 +106,22 @@
       .kb-back { font-size: 18px; padding: 12px 22px; }
       .kb-brand { display: none; }
     }
+    /* Landscape games (short viewport height) get a slim strip instead of
+       the full navbar - the fixed ~64-68px + ~54px bottom reserve that's a
+       fine ~15% of a portrait viewport eats 30%+ of a landscape one,
+       crushing the game's canvas scale. */
+    .kb-navbar--landscape {
+      height: 36px;
+      padding: 0 10px;
+    }
+    .kb-navbar--landscape::after { height: 20px; }
+    .kb-navbar--landscape .kb-back {
+      font-size: 13px;
+      padding: 5px 12px;
+      gap: 6px;
+    }
+    .kb-navbar--landscape .kb-back svg { width: 14px; height: 14px; }
+    .kb-navbar--landscape .kb-brand { display: none; }
   `;
   document.head.appendChild(style);
 
@@ -134,11 +150,20 @@
   document.body.appendChild(coffee);
 
   function publishChromeMetrics() {
+    // Landscape games are typically much shorter viewports where the
+    // portrait-tuned chrome sizes would crush the canvas scale - shrink the
+    // navbar to a slim strip and let the coffee link float free with no
+    // reserved space at all (it's already pointer-events-safe over the
+    // game). Set the class before measuring so offsetHeight reflects it.
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+    navbar.classList.toggle('kb-navbar--landscape', isLandscape);
+
     const navH = navbar.offsetHeight;
     // Coffee link floats bottom:10px with its own height - reserve that
     // plus its offset plus a little breathing room, so it gets real space
-    // below the game instead of overlapping whatever renders there.
-    const bottomReserve = coffee.offsetHeight + 24;
+    // below the game instead of overlapping whatever renders there. In
+    // landscape it just floats over the game as a small corner badge.
+    const bottomReserve = isLandscape ? 0 : (coffee.offsetHeight + 24);
     window.kbNavbarHeight = navH;
     window.kbBottomReserve = bottomReserve;
     document.documentElement.style.setProperty('--kb-navbar-h', navH + 'px');
@@ -147,6 +172,7 @@
   }
   publishChromeMetrics();
   window.addEventListener('resize', publishChromeMetrics);
+  window.addEventListener('orientationchange', publishChromeMetrics);
 })();
 
 // Fire-and-forget play-count ping, once per page load. Silently does
