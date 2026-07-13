@@ -143,13 +143,29 @@ const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 const rotateHint = document.getElementById('rotateHint');
 
-const W = canvas.width, H = canvas.height;
+// H is a fixed "world height" (360 logical units) so the castle/HUD never
+// change size - W is deliberately mutable and re-derived from the device's
+// actual aspect ratio on every fit, so the canvas fills the WHOLE landscape
+// viewport instead of being letterboxed inside a fixed 640x360 rectangle.
+// Everything the castle needs (wall, tiers, gate) is anchored near x=0, so
+// widening W just reveals more open battlefield on the right - exactly the
+// side a wider screen should get more of. Clamped so a pathological window
+// shape doesn't produce a degenerate battlefield.
+let W = canvas.width;
+const H = canvas.height;
 const GROUND_Y = H - 70;
+const MIN_WORLD_W = 480, MAX_WORLD_W = 960;
 
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availW = window.innerWidth;
   const availH = window.innerHeight - reserved;
-  const scale = Math.min(window.innerWidth / W, availH / H);
+  const targetW = clamp(Math.round(H * (availW / availH)), MIN_WORLD_W, MAX_WORLD_W);
+  if (targetW !== W) {
+    W = targetW;
+    canvas.width = W;
+  }
+  const scale = Math.min(availW / W, availH / H);
   canvas.style.width = (W * scale) + 'px';
   canvas.style.height = (H * scale) + 'px';
   document.getElementById('wrap').style.setProperty('--game-scale', scale);
@@ -463,8 +479,8 @@ function drawBackdrop() {
   ctx.fillStyle = 'rgba(180,160,110,0.5)';
   ctx.beginPath();
   ctx.moveTo(0, GROUND_Y);
-  ctx.quadraticCurveTo(200, GROUND_Y - 50, 400, GROUND_Y);
-  ctx.quadraticCurveTo(520, GROUND_Y - 40, W, GROUND_Y);
+  ctx.quadraticCurveTo(W * 0.3125, GROUND_Y - 50, W * 0.625, GROUND_Y);
+  ctx.quadraticCurveTo(W * 0.8125, GROUND_Y - 40, W, GROUND_Y);
   ctx.fill();
 }
 
@@ -600,11 +616,17 @@ function drawPopups() {
 }
 
 function drawHud() {
-  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(10, 10, 150, 20);
+  // Top-center, not top-left - top-left is where the tier-3 archer slots
+  // live on the wall, and an opaque HP bar there was sitting right on top
+  // of (and blocking taps on) the first two slots. Sits below y=32 so it
+  // also clears the floating mute button, which is centered at the very
+  // top of the canvas by its own CSS.
+  const hpBarW = 160, hpBarX = W / 2 - hpBarW / 2, hpBarY = 34;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(hpBarX, hpBarY, hpBarW, 20);
   ctx.fillStyle = castleHP > 40 ? '#5cc85c' : '#e05a4a';
-  ctx.fillRect(12, 12, 146 * clamp(castleHP / CASTLE_MAX_HP, 0, 1), 16);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'left';
-  ctx.fillText('CASTLE  ' + Math.round(castleHP) + '%', 16, 24);
+  ctx.fillRect(hpBarX + 2, hpBarY + 2, (hpBarW - 4) * clamp(castleHP / CASTLE_MAX_HP, 0, 1), 16);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+  ctx.fillText('CASTLE  ' + Math.round(castleHP) + '%', W / 2, hpBarY + 14);
 
   ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(W - 170, 10, 160, 44);
   ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 15px Arial'; ctx.textAlign = 'left';
