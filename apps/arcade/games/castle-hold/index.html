@@ -110,6 +110,95 @@
     0%, 100% { transform: rotate(0deg); }
     50% { transform: rotate(90deg); }
   }
+  .rowLabel {
+    font-size: calc(10.5px * var(--game-scale, 1));
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+    margin-top: calc(8px * var(--game-scale, 1));
+  }
+  .btnRow {
+    display: flex;
+    gap: calc(8px * var(--game-scale, 1));
+    margin-top: calc(5px * var(--game-scale, 1));
+    pointer-events: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btnRow button {
+    font-family: inherit;
+    font-size: calc(12.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(7px * var(--game-scale, 1)) calc(15px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  .btnRow button.selected { background: #ffd76a; border-color: #ffd76a; color: #3a2400; }
+  #helpBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    right: calc(8px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    width: calc(28px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #introOverlay, #helpPanel {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 40;
+    background: rgba(10, 8, 4, 0.82);
+    align-items: center;
+    justify-content: center;
+    padding: calc(14px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  .introBox, .helpBox {
+    background: #241a0d;
+    border: 2px solid rgba(255,215,106,0.4);
+    border-radius: 14px;
+    padding: calc(18px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    max-width: calc(420px * var(--game-scale, 1));
+    max-height: 90%;
+    overflow-y: auto;
+    color: #f0e8d8;
+    text-align: left;
+  }
+  .introBox h2, .helpBox h2 { margin: 0 0 calc(10px * var(--game-scale, 1)); color: #ffd76a; font-size: calc(19px * var(--game-scale, 1)); }
+  .introBox ul { margin: 0 0 calc(14px * var(--game-scale, 1)); padding-left: calc(18px * var(--game-scale, 1)); font-size: calc(13px * var(--game-scale, 1)); line-height: 1.5; }
+  .introBox li { margin-bottom: calc(6px * var(--game-scale, 1)); }
+  .introBox b, .helpBox b { color: #ffd76a; }
+  .introBox button, .helpBox button {
+    font-family: inherit;
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(9px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: none;
+    background: #ffd76a;
+    color: #3a2400;
+    cursor: pointer;
+    margin-top: calc(6px * var(--game-scale, 1));
+    margin-right: calc(8px * var(--game-scale, 1));
+  }
+  .helpBox #helpCloseBtn { background: rgba(255,255,255,0.15); color: #f0e8d8; }
+  #matchupTableWrap { overflow-x: auto; margin-bottom: calc(10px * var(--game-scale, 1)); }
+  #matchupTableWrap table { border-collapse: collapse; font-size: calc(11px * var(--game-scale, 1)); white-space: nowrap; }
+  #matchupTableWrap th, #matchupTableWrap td { padding: calc(4px * var(--game-scale, 1)) calc(7px * var(--game-scale, 1)); text-align: center; border: 1px solid rgba(255,255,255,0.12); }
+  #matchupTableWrap th { color: #ffd76a; font-weight: bold; }
+  #matchupTableWrap td.strong { background: rgba(92,200,92,0.28); color: #bdf0bd; }
+  #matchupTableWrap td.weak { background: rgba(224,90,74,0.28); color: #f5c5be; }
+  .costList { font-size: calc(12px * var(--game-scale, 1)); line-height: 1.6; margin-bottom: calc(12px * var(--game-scale, 1)); }
 </style>
 </head>
 <body>
@@ -120,13 +209,41 @@
 <div id="wrap">
   <canvas id="game" width="640" height="360"></canvas>
   <button id="muteBtn" type="button">🔊</button>
+  <button id="helpBtn" type="button">?</button>
   <div id="overlay">
     <h1 id="title">Castle Hold</h1>
     <p id="subtitle">Hold the line. Man the tiers with archers, gunmen and cannon, and deploy spearmen or cavalry at the gate.</p>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
+    <div class="rowLabel">Difficulty</div>
+    <div class="btnRow" id="diffButtons">
+      <button data-d="easy" type="button">Easy</button>
+      <button data-d="hard" type="button">Hard</button>
+    </div>
     <button id="startBtn" type="button">Start</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+  <div id="introOverlay">
+    <div class="introBox">
+      <h2>How to hold the line</h2>
+      <ul>
+        <li><b>Tiers 3 &amp; 2</b> on the wall hold ranged units (archer, gunman, cannon) - tap a glowing circle to place one.</li>
+        <li><b>Ground slots</b> by the gate hold melee units (spearman, cavalry) - they actively chase down anything that gets close, and cavalry will even sortie out after long-range bombards.</li>
+        <li>Tap an already-placed unit to <b>upgrade or sell</b> it.</li>
+        <li>Enemies that reach the wall (or a bombard firing from range) damage your <b>Castle HP</b> at the top - if it hits 0, you lose.</li>
+        <li>Earn <b>gold</b> per kill. Survive all the waves with the castle standing to win!</li>
+      </ul>
+      <button id="introStartBtn" type="button">Got it - let's go!</button>
+    </div>
+  </div>
+  <div id="helpPanel">
+    <div class="helpBox">
+      <h2>Defenders &amp; Matchups</h2>
+      <div class="costList" id="costListWrap"></div>
+      <div id="matchupTableWrap"></div>
+      <button id="tutorialAgainBtn" type="button">Show tutorial again</button>
+      <button id="helpCloseBtn" type="button">Close</button>
+    </div>
   </div>
 </div>
 
@@ -142,6 +259,15 @@ const startBtn = document.getElementById('startBtn');
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 const rotateHint = document.getElementById('rotateHint');
+const helpBtn = document.getElementById('helpBtn');
+const diffButtons = document.getElementById('diffButtons');
+const introOverlay = document.getElementById('introOverlay');
+const introStartBtn = document.getElementById('introStartBtn');
+const helpPanel = document.getElementById('helpPanel');
+const helpCloseBtn = document.getElementById('helpCloseBtn');
+const tutorialAgainBtn = document.getElementById('tutorialAgainBtn');
+const costListWrap = document.getElementById('costListWrap');
+const matchupTableWrap = document.getElementById('matchupTableWrap');
 
 // H is a fixed "world height" (360 logical units) so the castle/HUD never
 // change size - W is deliberately mutable and re-derived from the device's
@@ -334,11 +460,19 @@ const WAVES = [
   { footman: 7, horseman: 6, pikeman: 6, elephant: 2, ram: 2, bombard: 2 },
   { footman: 8, horseman: 7, pikeman: 6, elephant: 3, ram: 2, bombard: 3 }
 ];
-const SPAWN_INTERVAL = 1.4;
 const PRE_WAVE_COUNTDOWN = 3;
-const WAVE_BREATHER = 5;
 const CASTLE_MAX_HP = 100;
-const START_GOLD = 110;
+
+// Hard doesn't just scale enemy stats up - it also tightens the economy
+// (less starting/per-kill gold) and shortens breathers/spawn gaps, so the
+// player has less time and less money to react. hpMult/dmgMult make
+// enemies individually tougher; goldMult makes the economy tighter.
+const DIFFICULTY_PRESETS = {
+  easy: { startGold: 130, spawnInterval: 1.5, waveBreather: 6, hpMult: 1, dmgMult: 1, goldMult: 1.15 },
+  hard: { startGold: 90, spawnInterval: 1.05, waveBreather: 3.5, hpMult: 1.35, dmgMult: 1.25, goldMult: 0.85 }
+};
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS[difficulty];
 
 function buildWaveQueue(wave) {
   const queue = [];
@@ -351,13 +485,14 @@ function buildWaveQueue(wave) {
 }
 
 let castleHP = CASTLE_MAX_HP;
-let gold = START_GOLD;
+let gold = preset.startGold;
 let enemies = [];
 let projectiles = [];
 let particles = [];
 let popups = [];
 let killCount = 0;
 let shake = 0;
+let flashTimer = 0;
 let waveIndex = 0;
 let waveQueue = [];
 let waveQueuePos = 0;
@@ -365,7 +500,18 @@ let waveState = 'countdown'; // 'countdown' | 'active' | 'breather'
 let waveTimer = 0;
 let spawnTimer = 0;
 let activeMenu = null; // { slot, kind: 'tier2'|'ground', options, x, y, _rects }
+let activeUnitPanel = null; // { slot, kind: 'ranged'|'melee', x, y, _rects }
 let state = 'menu'; // menu | playing | over
+let paused = false;
+let seenTutorial = sessionStorage.getItem('castleHoldSeenTutorial') === '1';
+
+function updateDiffButtonStyles() {
+  diffButtons.querySelectorAll('button').forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty));
+}
+diffButtons.querySelectorAll('button').forEach((btn) => {
+  btn.addEventListener('click', () => { difficulty = btn.dataset.d; updateDiffButtonStyles(); });
+});
+updateDiffButtonStyles();
 
 function showMenu() {
   state = 'menu';
@@ -381,24 +527,27 @@ function showMenu() {
 }
 
 function startGame() {
+  preset = DIFFICULTY_PRESETS[difficulty];
   castleHP = CASTLE_MAX_HP;
-  gold = START_GOLD;
+  gold = preset.startGold;
   enemies = [];
   projectiles = [];
   particles = [];
   popups = [];
   killCount = 0;
   shake = 0;
+  flashTimer = 0;
   activeMenu = null;
+  activeUnitPanel = null;
   waveIndex = 0;
   waveQueue = buildWaveQueue(WAVES[0]);
   waveQueuePos = 0;
   waveState = 'countdown';
   waveTimer = PRE_WAVE_COUNTDOWN;
   spawnTimer = 0;
-  TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
-  TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; });
-  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; s.hunting = false; });
+  TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.stats = null; });
+  TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.stats = null; });
+  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; s.hunting = false; s.stats = null; });
   state = 'playing';
   overlay.style.display = 'none';
   ensureAudio();
@@ -410,8 +559,34 @@ startBtn.addEventListener('click', () => {
   // anything async, or Fullscreen/orientation-lock requests get rejected.
   window.kbEnterFullscreen?.(document.documentElement);
   startGame();
+  if (!seenTutorial) {
+    seenTutorial = true;
+    try { sessionStorage.setItem('castleHoldSeenTutorial', '1'); } catch (e) {}
+    paused = true;
+    introOverlay.style.display = 'flex';
+  }
 });
 backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+
+introStartBtn.addEventListener('click', () => {
+  introOverlay.style.display = 'none';
+  paused = false;
+  lastFrameTime = null;
+});
+
+helpBtn.addEventListener('click', () => {
+  if (state === 'playing') paused = true;
+  helpPanel.style.display = 'flex';
+});
+helpCloseBtn.addEventListener('click', () => {
+  helpPanel.style.display = 'none';
+  if (state === 'playing') { paused = false; lastFrameTime = null; }
+});
+tutorialAgainBtn.addEventListener('click', () => {
+  helpPanel.style.display = 'none';
+  paused = true;
+  introOverlay.style.display = 'flex';
+});
 
 function pointerToCanvas(e) {
   const rect = canvas.getBoundingClientRect();
@@ -430,16 +605,36 @@ function openMenuForSlot(slot, kind) {
   activeMenu = { slot, kind, options, x: slot.x, y: slot.y, _rects: null };
 }
 
+// Upgrading raises damage on every unit, plus range/fire-speed for ranged
+// units or max HP (with a full heal) for melee - a level-3 unit hits
+// noticeably harder without needing a second copy of the unit's numbers.
+const MAX_LEVEL = 3;
+const UPGRADE_COST_MULT = [0.7, 1.3]; // level 1->2, level 2->3
+function statsForLevel(type, level) {
+  const base = UNIT_DEFS[type];
+  const dmgMult = 1 + 0.18 * (level - 1);
+  if (base.kind === 'ranged') {
+    return {
+      damage: base.damage * dmgMult,
+      range: base.range * (1 + 0.12 * (level - 1)),
+      fireInterval: Math.max(0.35, base.fireInterval * (1 - 0.1 * (level - 1)))
+    };
+  }
+  return { damage: base.damage * dmgMult, hp: Math.round(base.hp * (1 + 0.22 * (level - 1))) };
+}
+function upgradeCost(type, level) { return Math.round(UNIT_DEFS[type].cost * UPGRADE_COST_MULT[level - 1]); }
+
 function placeUnit(slot, kind, type) {
   const def = UNIT_DEFS[type];
   if (gold < def.cost) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + def.cost + 'g', '#ff8a4a'); return; }
   gold -= def.cost;
-  slot.unit = { type };
+  slot.unit = { type, level: 1, spent: def.cost };
+  slot.stats = statsForLevel(type, 1);
   if (kind === 'ranged-slot') {
     slot.cooldown = 0.2;
   } else {
-    slot.hp = def.hp;
-    slot.maxHp = def.hp;
+    slot.hp = slot.stats.hp;
+    slot.maxHp = slot.stats.hp;
     slot.atkCooldown = 0.2;
     slot.atkAnim = 0;
     slot.ux = slot.x;
@@ -450,9 +645,51 @@ function placeUnit(slot, kind, type) {
   playGold();
 }
 
+function openUnitPanel(slot, kind) {
+  activeUnitPanel = { slot, kind, x: slot.x, y: slot.y, _rects: null };
+}
+
+function upgradeSlot(slot, kind) {
+  const level = slot.unit.level;
+  if (level >= MAX_LEVEL) { playInvalid(); return; }
+  const cost = upgradeCost(slot.unit.type, level);
+  if (gold < cost) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + cost + 'g', '#ff8a4a'); return; }
+  gold -= cost;
+  slot.unit.level = level + 1;
+  slot.unit.spent += cost;
+  slot.stats = statsForLevel(slot.unit.type, slot.unit.level);
+  if (kind === 'melee') { slot.maxHp = slot.stats.hp; slot.hp = slot.stats.hp; }
+  playGold();
+  addBurst(kind === 'melee' ? slot.ux : slot.x, slot.y - 10, '#ffd76a', 10);
+}
+
+function sellSlot(slot, kind) {
+  const refund = Math.round(slot.unit.spent * 0.6);
+  gold += refund;
+  addPopup(slot.x, slot.y - 20, '+' + refund + 'g', '#ffd76a');
+  playGold();
+  slot.unit = null;
+  slot.stats = null;
+  if (kind === 'melee') {
+    slot.hp = 0; slot.maxHp = 0; slot.ux = slot.x; slot.state = 'home'; slot.target = null; slot.hunting = false; slot.atkCooldown = 0; slot.atkAnim = 0;
+  } else {
+    slot.cooldown = 0;
+  }
+}
+
 canvas.addEventListener('pointerdown', (e) => {
-  if (state !== 'playing') return;
+  if (state !== 'playing' || paused) return;
   const p = pointerToCanvas(e);
+
+  if (activeUnitPanel) {
+    const hit = activeUnitPanel._rects && activeUnitPanel._rects.find((r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h);
+    if (hit && activeUnitPanel.slot.unit) {
+      if (hit.type === 'upgrade') upgradeSlot(activeUnitPanel.slot, activeUnitPanel.kind);
+      else if (hit.type === 'sell') sellSlot(activeUnitPanel.slot, activeUnitPanel.kind);
+    }
+    activeUnitPanel = null;
+    return;
+  }
 
   if (activeMenu) {
     const hit = activeMenu._rects && activeMenu._rects.find((r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h);
@@ -463,19 +700,19 @@ canvas.addEventListener('pointerdown', (e) => {
 
   for (const slot of TIER3_SLOTS) {
     if (slotHit(p, slot, 16)) {
-      if (!slot.unit) placeUnit(slot, 'ranged-slot', 'archer');
+      if (slot.unit) openUnitPanel(slot, 'ranged'); else placeUnit(slot, 'ranged-slot', 'archer');
       return;
     }
   }
   for (const slot of TIER2_SLOTS) {
     if (slotHit(p, slot, 16)) {
-      if (!slot.unit) openMenuForSlot(slot, 'tier2');
+      if (slot.unit) openUnitPanel(slot, 'ranged'); else openMenuForSlot(slot, 'tier2');
       return;
     }
   }
   for (const slot of GROUND_SLOTS) {
     if (slotHit(p, { x: slot.x, y: slot.y - 12 }, 16)) {
-      if (!slot.unit) openMenuForSlot(slot, 'ground');
+      if (slot.unit) openUnitPanel(slot, 'melee'); else openMenuForSlot(slot, 'ground');
       return;
     }
   }
@@ -492,8 +729,9 @@ function addBurst(x, y, color, count) {
 
 function spawnEnemy(type) {
   const def = ENEMY_DEFS[type];
+  const hp = Math.round(def.hp * preset.hpMult);
   enemies.push({
-    type, x: W + 20, y: GROUND_Y, hp: def.hp, maxHp: def.hp, speed: def.speed,
+    type, x: W + 20, y: GROUND_Y, hp, maxHp: hp, speed: def.speed,
     dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3, atkAnim: 0,
     fireCooldown: 1.2
   });
@@ -503,18 +741,19 @@ function updateRangedSlots(slots, dt) {
   for (const slot of slots) {
     if (!slot.unit) continue;
     const def = UNIT_DEFS[slot.unit.type];
+    const stats = slot.stats;
     slot.cooldown -= dt;
     if (slot.cooldown > 0) continue;
-    let target = null, bestDist = def.range;
+    let target = null, bestDist = stats.range;
     for (const en of enemies) {
       if (en.dead) continue;
       const d = en.x - slot.x;
       if (d >= 0 && d <= bestDist) { bestDist = d; target = en; }
     }
     if (target) {
-      slot.cooldown = def.fireInterval;
+      slot.cooldown = stats.fireInterval;
       if (def.splash) playCannonFire(); else playBowFire();
-      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, unitType: slot.unit.type, damage: def.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
+      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, unitType: slot.unit.type, damage: stats.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
     }
   }
 }
@@ -554,7 +793,7 @@ function updateProjectiles(dt) {
 function killEnemy(en) {
   en.dead = true;
   killCount++;
-  const reward = ENEMY_DEFS[en.type].goldReward;
+  const reward = Math.round(ENEMY_DEFS[en.type].goldReward * preset.goldMult);
   gold += reward;
   addBurst(en.x, en.y - 10, '#8a3a3a', 12);
   addPopup(en.x, en.y - 24, '+' + reward + 'g', '#ffd76a');
@@ -584,8 +823,9 @@ function updateEnemies(dt) {
         en.fireCooldown -= dt;
         if (en.fireCooldown <= 0) {
           en.fireCooldown = def.fireInterval;
-          castleHP -= def.rangedDamage;
+          castleHP -= def.rangedDamage * preset.dmgMult;
           shake = 0.2;
+          flashTimer = 0.2;
           playBombardFire();
           addPopup(en.x, en.y - 26, 'Bombard fires!', '#e05a4a');
           addBurst(WALL_FRONT_X + 10, GROUND_Y - 10, '#c0392b', 6);
@@ -597,9 +837,10 @@ function updateEnemies(dt) {
 
     en.x -= en.speed * dt;
     if (en.x <= WALL_FRONT_X + 14) {
-      castleHP -= def.wallDamage;
+      castleHP -= def.wallDamage * preset.dmgMult;
       en.dead = true;
       shake = 0.25;
+      flashTimer = 0.25;
       playWallThud();
       addBurst(WALL_FRONT_X + 10, en.y - 10, '#c0392b', 10);
       if (castleHP <= 0) { castleHP = 0; endGame(false); return; }
@@ -628,7 +869,7 @@ function updateGroundUnits(dt) {
       if (slot.atkCooldown <= 0) {
         slot.atkCooldown = def.attackInterval;
         slot.atkAnim = 0.25;
-        en.hp -= def.damage * matchupMult(slot.unit.type, en.type);
+        en.hp -= slot.stats.damage * matchupMult(slot.unit.type, en.type);
         playMeleeClash();
         addBurst(en.x, en.y - 14, '#e8834a', 4);
         if (en.hp <= 0 && !en.dead) { killEnemy(en); slot.state = 'returning'; slot.target = null; continue; }
@@ -638,11 +879,11 @@ function updateGroundUnits(dt) {
       if (en.atkCooldown <= 0) {
         en.atkCooldown = edef.atkInterval;
         en.atkAnim = 0.25;
-        slot.hp -= edef.meleeDamage;
+        slot.hp -= edef.meleeDamage * preset.dmgMult;
         addBurst(slot.ux, slot.y - 14, '#c0392b', 4);
         if (slot.hp <= 0) {
           addPopup(slot.x, slot.y - 26, slot.unit.type + ' fell!', '#ff8a4a');
-          slot.unit = null; slot.hp = 0; slot.state = 'home'; slot.target = null;
+          slot.unit = null; slot.stats = null; slot.hp = 0; slot.state = 'home'; slot.target = null;
           en.meleeUnit = null;
           playUnitFall();
         }
@@ -728,8 +969,9 @@ function update(dt) {
   popups.forEach((p) => { p.t += dt * 1000; });
   popups = popups.filter((p) => p.t < 900);
   if (shake > 0) shake -= dt;
+  if (flashTimer > 0) flashTimer -= dt;
 
-  if (state !== 'playing') return;
+  if (state !== 'playing' || paused) return;
 
   if (waveState === 'countdown') {
     waveTimer -= dt;
@@ -737,7 +979,7 @@ function update(dt) {
   } else if (waveState === 'active') {
     if (waveQueuePos < waveQueue.length) {
       spawnTimer -= dt;
-      if (spawnTimer <= 0) { spawnEnemy(waveQueue[waveQueuePos]); waveQueuePos++; spawnTimer = SPAWN_INTERVAL; }
+      if (spawnTimer <= 0) { spawnEnemy(waveQueue[waveQueuePos]); waveQueuePos++; spawnTimer = preset.spawnInterval; }
     } else if (enemies.length === 0) {
       waveIndex++;
       if (waveIndex >= WAVES.length) {
@@ -745,7 +987,7 @@ function update(dt) {
         return;
       }
       waveState = 'breather';
-      waveTimer = WAVE_BREATHER;
+      waveTimer = preset.waveBreather;
       addPopup(W / 2, 70, 'Wave ' + waveIndex + ' cleared!', '#5cc85c');
       playWaveClear();
     }
@@ -890,15 +1132,23 @@ function drawEmptySlotMarker(x, y) {
   ctx.fillText('+', x, y + 3);
 }
 
+function drawLevelBadge(x, y, level) {
+  if (level <= 1) return;
+  ctx.fillStyle = '#ffd76a';
+  ctx.font = 'bold 8px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('★'.repeat(level - 1), x, y - 16);
+}
+
 function drawTier3Slots() {
   for (const slot of TIER3_SLOTS) {
-    if (slot.unit) RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y);
+    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
     else drawEmptySlotMarker(slot.x, slot.y);
   }
 }
 function drawTier2Slots() {
   for (const slot of TIER2_SLOTS) {
-    if (slot.unit) RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y);
+    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
     else drawEmptySlotMarker(slot.x, slot.y);
   }
 }
@@ -927,6 +1177,7 @@ function drawGroundSlots() {
       // out to meet enemies within range and back, not a fixed wall block.
       MELEE_FIGURE_DRAWERS[slot.unit.type](slot.ux, slot.y);
       drawMeleeAttackEffect(slot);
+      drawLevelBadge(slot.ux, slot.y, slot.unit.level);
       if (slot.hp < slot.maxHp) {
         const w = 26;
         ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(slot.ux - w / 2, slot.y - 32, w, 4);
@@ -1058,6 +1309,46 @@ function drawMenu() {
   }
 }
 
+function drawUnitPanel() {
+  if (!activeUnitPanel) return;
+  const { slot, kind } = activeUnitPanel;
+  if (!slot.unit) { activeUnitPanel = null; return; }
+  const level = slot.unit.level;
+  const rows = [];
+  if (level < MAX_LEVEL) rows.push({ type: 'upgrade', label: 'Upgrade Lv' + (level + 1), cost: upgradeCost(slot.unit.type, level) });
+  const sellVal = Math.round(slot.unit.spent * 0.6);
+  rows.push({ type: 'sell', label: 'Sell', cost: sellVal });
+
+  const bw = 100, bh = 26, gap = 5, titleH = 16;
+  const totalH = titleH + rows.length * bh + (rows.length - 1) * gap;
+  const anchorX = kind === 'melee' ? slot.ux : slot.x;
+  const mx = clamp(anchorX - bw / 2, 6, W - bw - 6);
+  const my = clamp(slot.y - 12 - totalH, 6, H - totalH - 6);
+
+  ctx.fillStyle = 'rgba(15,15,20,0.92)';
+  ctx.fillRect(mx, my, bw, totalH);
+  ctx.strokeStyle = 'rgba(255,215,106,0.6)'; ctx.lineWidth = 1;
+  ctx.strokeRect(mx, my, bw, totalH);
+  ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
+  ctx.fillText(slot.unit.type[0].toUpperCase() + slot.unit.type.slice(1) + ' Lv' + level, mx + bw / 2, my + 12);
+
+  activeUnitPanel._rects = [];
+  rows.forEach((r, i) => {
+    const ry = my + titleH + i * (bh + gap);
+    activeUnitPanel._rects.push({ x: mx, y: ry, w: bw, h: bh, type: r.type });
+    const affordable = r.type === 'sell' || gold >= r.cost;
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(mx, ry, bw, bh);
+    ctx.strokeStyle = affordable ? 'rgba(255,215,106,0.9)' : 'rgba(180,80,80,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(mx, ry, bw, bh);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Arial';
+    ctx.fillText(r.label, mx + bw / 2, ry + 11);
+    ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 9px Arial';
+    ctx.fillText((r.type === 'sell' ? '+' : '') + r.cost + 'g', mx + bw / 2, ry + 22);
+  });
+}
+
 function drawProjectiles() {
   for (const p of projectiles) {
     if (p.splash > 0) {
@@ -1150,6 +1441,11 @@ function draw() {
     drawPopups();
     drawHud();
     drawMenu();
+    drawUnitPanel();
+    if (flashTimer > 0) {
+      ctx.fillStyle = 'rgba(224,90,74,' + (flashTimer / 0.25 * 0.35) + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
   }
   ctx.restore();
 }
@@ -1164,6 +1460,32 @@ function loop(now) {
   draw();
   requestAnimationFrame(loop);
 }
+
+const UNIT_ORDER = ['archer', 'gunman', 'cannon', 'spearman', 'cavalry'];
+function buildCostList() {
+  costListWrap.innerHTML = UNIT_ORDER.map((t) => {
+    const d = UNIT_DEFS[t];
+    const where = t === 'archer' ? 'ranged, tier 3' : d.kind === 'ranged' ? 'ranged, tier 2' : 'melee, gate';
+    return '<div><b>' + t[0].toUpperCase() + t.slice(1) + '</b> - ' + d.cost + 'g (' + where + ')</div>';
+  }).join('');
+}
+function buildMatchupTable() {
+  const enemyKeys = Object.keys(ENEMY_DEFS);
+  let html = '<table><thead><tr><th></th>' + enemyKeys.map((k) => '<th>' + k[0].toUpperCase() + k.slice(1) + '</th>').join('') + '</tr></thead><tbody>';
+  for (const a of UNIT_ORDER) {
+    html += '<tr><th>' + a[0].toUpperCase() + a.slice(1) + '</th>';
+    for (const e of enemyKeys) {
+      const m = matchupMult(a, e);
+      const cls = m >= 1.3 ? 'strong' : m <= 0.7 ? 'weak' : '';
+      html += '<td class="' + cls + '">' + m.toFixed(1) + 'x</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  matchupTableWrap.innerHTML = html;
+}
+buildCostList();
+buildMatchupTable();
 
 showMenu();
 requestAnimationFrame(loop);
