@@ -498,6 +498,7 @@ let castleHP = CASTLE_MAX_HP;
 let gold = preset.startGold;
 let enemies = [];
 let projectiles = [];
+let shells = []; // bombard mortar shells - separate from `projectiles` since they arc toward a fixed wall point, not a tracked enemy
 let particles = [];
 let popups = [];
 let killCount = 0;
@@ -542,6 +543,7 @@ function startGame() {
   gold = preset.startGold;
   enemies = [];
   projectiles = [];
+  shells = [];
   particles = [];
   popups = [];
   killCount = 0;
@@ -555,8 +557,8 @@ function startGame() {
   waveState = 'countdown';
   waveTimer = PRE_WAVE_COUNTDOWN;
   spawnTimer = 0;
-  TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.stats = null; });
-  TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.stats = null; });
+  TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.fireAnim = 0; s.stats = null; });
+  TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.fireAnim = 0; s.stats = null; });
   GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; s.hunting = false; s.stats = null; });
   state = 'playing';
   overlay.style.display = 'none';
@@ -642,6 +644,7 @@ function placeUnit(slot, kind, type) {
   slot.stats = statsForLevel(type, 1);
   if (kind === 'ranged-slot') {
     slot.cooldown = 0.2;
+    slot.fireAnim = 0;
   } else {
     slot.hp = slot.stats.hp;
     slot.maxHp = slot.stats.hp;
@@ -743,13 +746,14 @@ function spawnEnemy(type) {
   enemies.push({
     type, x: W + 20, y: GROUND_Y, hp, maxHp: hp, speed: def.speed,
     dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3, atkAnim: 0,
-    fireCooldown: 1.2
+    fireCooldown: 1.2, fireAnim: 0
   });
 }
 
 function updateRangedSlots(slots, dt) {
   for (const slot of slots) {
     if (!slot.unit) continue;
+    if (slot.fireAnim > 0) slot.fireAnim -= dt;
     const def = UNIT_DEFS[slot.unit.type];
     const stats = slot.stats;
     slot.cooldown -= dt;
@@ -762,6 +766,7 @@ function updateRangedSlots(slots, dt) {
     }
     if (target) {
       slot.cooldown = stats.fireInterval;
+      slot.fireAnim = def.splash ? 0.4 : 0.25; // drives the recoil/muzzle-flash/bow-release draw animation
       if (def.splash) playCannonFire(); else playBowFire();
       projectiles.push({ x: slot.x, y: slot.y, targetRef: target, unitType: slot.unit.type, damage: stats.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
     }
@@ -795,9 +800,52 @@ function updateProjectiles(dt) {
     } else {
       p.x += (dx / dist) * step;
       p.y += (dy / dist) * step;
+      if (p.splash > 0) {
+        // Trailing smoke puffs behind the cannonball - spawned into the
+        // shared particle system so they fade/fall with everything else.
+        p.smokeTimer = (p.smokeTimer || 0) - dt;
+        if (p.smokeTimer <= 0) {
+          p.smokeTimer = 0.045;
+          const traveled = Math.hypot(p.x - p.spawnX, p.y - p.spawnY);
+          const dip = Math.sin(clamp(traveled / (traveled + dist || 1), 0, 1) * Math.PI) * 20;
+          particles.push({ x: p.x, y: p.y - dip, vx: (Math.random() - 0.5) * 6, vy: -4 - Math.random() * 5, life: 0, maxLife: 260, color: 'rgba(110,110,110,0.45)', size: 2 + Math.random() * 1.5 });
+        }
+      }
     }
   }
   projectiles = projectiles.filter((p) => !p.done);
+}
+
+// A bombard's shot is a real lobbed shell rather than instant damage - it
+// arcs from the bombard to the wall over real travel time (telegraphed by
+// the "Bombard fires!" popup at launch), leaving a smoke trail, and only
+// applies castle damage/shake/flash on impact.
+function updateShells(dt) {
+  for (const s of shells) {
+    if (s.done) continue;
+    s.traveled += s.speed * dt;
+    const frac = clamp(s.traveled / s.dist, 0, 1);
+    s.x = lerp(s.startX, s.targetX, frac);
+    s.y = lerp(s.startY, s.targetY, frac);
+    s.smokeTimer -= dt;
+    if (s.smokeTimer <= 0) {
+      s.smokeTimer = 0.05;
+      const dip = Math.sin(frac * Math.PI) * 30;
+      particles.push({ x: s.x, y: s.y - dip, vx: (Math.random() - 0.5) * 6, vy: -3 - Math.random() * 4, life: 0, maxLife: 300, color: 'rgba(100,100,100,0.4)', size: 2 + Math.random() * 1.5 });
+    }
+    if (frac >= 1) {
+      s.done = true;
+      castleHP -= s.dmg;
+      shake = 0.2;
+      flashTimer = 0.2;
+      addPopup(s.targetX, s.targetY - 16, 'Direct hit!', '#e05a4a');
+      addBurst(s.targetX, s.targetY, '#c0392b', 8);
+      addBurst(s.targetX, s.targetY, '#5a5f68', 10);
+      playCannonHit();
+      if (castleHP <= 0) { castleHP = 0; shells = shells.filter((x) => !x.done); endGame(false); return; }
+    }
+  }
+  shells = shells.filter((s) => !s.done);
 }
 
 function killEnemy(en) {
@@ -822,6 +870,7 @@ function updateEnemies(dt) {
   for (const en of enemies) {
     if (en.dead) continue;
     if (en.atkAnim > 0) en.atkAnim -= dt;
+    if (en.fireAnim > 0) en.fireAnim -= dt;
     if (en.meleeUnit) continue;
     const def = ENEMY_DEFS[en.type];
 
@@ -833,13 +882,11 @@ function updateEnemies(dt) {
         en.fireCooldown -= dt;
         if (en.fireCooldown <= 0) {
           en.fireCooldown = def.fireInterval;
-          castleHP -= def.rangedDamage * preset.dmgMult;
-          shake = 0.2;
-          flashTimer = 0.2;
+          en.fireAnim = 0.35;
           playBombardFire();
           addPopup(en.x, en.y - 26, 'Bombard fires!', '#e05a4a');
-          addBurst(WALL_FRONT_X + 10, GROUND_Y - 10, '#c0392b', 6);
-          if (castleHP <= 0) { castleHP = 0; endGame(false); return; }
+          const startX = en.x, startY = en.y - 20, targetX = WALL_FRONT_X + 10, targetY = GROUND_Y - 10;
+          shells.push({ x: startX, y: startY, startX, startY, targetX, targetY, dist: Math.hypot(targetX - startX, targetY - startY) || 1, traveled: 0, speed: 340, dmg: def.rangedDamage * preset.dmgMult, smokeTimer: 0 });
         }
       }
       continue;
@@ -1016,6 +1063,7 @@ function update(dt) {
   updateGroundUnits(dt);
   updateEnemies(dt);
   updateProjectiles(dt);
+  updateShells(dt);
 }
 
 // --- Rendering (matches the concept art's palette/silhouette) ---
@@ -1095,44 +1143,96 @@ function drawCastle() {
   ctx.beginPath(); ctx.moveTo(46, GROUND_Y - 52); ctx.lineTo(110, GROUND_Y - 52); ctx.stroke();
 }
 
-function drawArcherFigure(x, y) {
+// fireAnim counts down from a fixed duration the instant a shot is loosed
+// (set in updateRangedSlots) - t goes 1 -> 0 across that window, driving
+// the bowstring snap / gun recoil+flash / cannon recoil+flash+smoke below.
+// Static (non-firing) units still hold their weapon at a real drawn angle
+// instead of a fixed decorative doodle.
+function drawArcherFigure(x, y, fireAnim) {
+  const firing = fireAnim > 0;
+  const t = firing ? fireAnim / 0.25 : 0;
   ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1.5;
+  ctx.strokeStyle = '#8a6a3a'; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(x + 5, y, 7, -1, 1); ctx.stroke();
+  // string - bulges back toward the archer right after loosing an arrow,
+  // then relaxes to a straight resting string.
+  const draw = firing ? t * 5 : 0;
+  ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x + 5, y - 6.7);
+  ctx.lineTo(x + 5 - draw, y);
+  ctx.lineTo(x + 5, y + 6.7);
+  ctx.stroke();
+  if (firing) {
+    ctx.strokeStyle = 'rgba(255,255,255,' + t + ')';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x + 6, y); ctx.lineTo(x + 6 + (1 - t) * 14, y); ctx.stroke();
+  }
 }
-function drawGunmanFigure(x, y) {
+function drawGunmanFigure(x, y, fireAnim) {
+  const firing = fireAnim > 0;
+  const t = firing ? fireAnim / 0.25 : 0;
+  const recoil = firing ? t * 3 : 0;
   ctx.fillStyle = '#6a5a3a'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = '#222'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 12, y - 3); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - recoil, y); ctx.lineTo(x + 12 - recoil, y - 3); ctx.stroke();
+  if (firing) {
+    ctx.fillStyle = 'rgba(255,205,110,' + t + ')';
+    ctx.beginPath(); ctx.arc(x + 14 - recoil, y - 3.5, 3 * t + 1.5, 0, Math.PI * 2); ctx.fill();
+  }
 }
-function drawCannonFigure(x, y) {
+function drawCannonFigure(x, y, fireAnim) {
+  const firing = fireAnim > 0;
+  const t = firing ? fireAnim / 0.4 : 0;
+  const recoil = firing ? t * 6 : 0;
+  ctx.fillStyle = '#2a2f36';
+  ctx.beginPath(); ctx.arc(x - 1, y + 7, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#4a3f30'; ctx.lineWidth = 1.5;
+  for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) { ctx.beginPath(); ctx.moveTo(x - 1, y + 7); ctx.lineTo(x - 1 + Math.cos(a) * 5, y + 7 + Math.sin(a) * 5); ctx.stroke(); }
   ctx.fillStyle = '#3a3f48'; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
-  ctx.fillRect(x, y - 4, 16, 7);
+  ctx.fillRect(x - recoil, y - 4, 16, 7);
+  ctx.fillStyle = '#2a2f36'; ctx.beginPath(); ctx.arc(x + 16 - recoil, y - 0.5, 3.2, 0, Math.PI * 2); ctx.fill();
+  if (firing) {
+    ctx.fillStyle = 'rgba(255,195,90,' + t + ')';
+    ctx.beginPath(); ctx.arc(x + 18 - recoil, y - 0.5, 5 * t + 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(140,140,140,' + (t * 0.6) + ')';
+    ctx.beginPath(); ctx.arc(x + 23 - recoil, y - 0.5, 7 * (1 - t) + 3, 0, Math.PI * 2); ctx.fill();
+  }
 }
 // dir=1 faces right (out toward the battlefield - watching, advancing, or
-// fighting); dir=-1 faces left (heading home). Drawn in a translated +
-// mirrored local space so the unit visibly turns around instead of
-// sliding backwards while still "looking" the wrong way.
-function drawSpearmanFigure(x, y, dir) {
+// fighting); dir=-1 faces left (heading home). moving=true swings the legs
+// through a marching cycle; false holds an idle stance. Drawn in a
+// translated + mirrored local space so the unit visibly turns around
+// instead of sliding backwards while still "looking" the wrong way.
+function drawSpearmanFigure(x, y, dir, moving) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(dir || 1, 1);
+  const stride = moving ? Math.sin(performance.now() / 120) * 3.5 : 0;
+  ctx.strokeStyle = '#2a1f14'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-1, 6); ctx.lineTo(-1 + stride * 0.7, 14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(2, 6); ctx.lineTo(2 - stride * 0.7, 14); ctx.stroke();
   ctx.fillStyle = '#5a6a3a'; ctx.beginPath(); ctx.arc(0, -10, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.fillRect(-2, -6, 4, 14);
+  ctx.fillRect(-2, -6, 4, 12);
   ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(6, -20); ctx.lineTo(6, 8); ctx.stroke();
+  ctx.fillStyle = '#c0c0c0';
+  ctx.beginPath(); ctx.moveTo(6, -20); ctx.lineTo(3, -15); ctx.lineTo(9, -15); ctx.closePath(); ctx.fill();
   ctx.restore();
 }
-function drawCavalryFigure(x, y, dir) {
+function drawCavalryFigure(x, y, dir, moving) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(dir || 1, 1);
+  const gallop = moving ? Math.sin(performance.now() / 85) * 4.5 : 0;
   ctx.fillStyle = '#6b4a2f'; ctx.beginPath(); ctx.ellipse(0, 0, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillRect(-12, 4, 3, 9); ctx.fillRect(9, 4, 3, 9);
+  ctx.fillRect(-12, 4, 3, 9 + gallop * 0.5); ctx.fillRect(9, 4, 3, 9 - gallop * 0.5);
   ctx.beginPath(); ctx.ellipse(13, -6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(0, -9, 5, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(16, -14); ctx.stroke();
+  ctx.fillStyle = '#c0c0c0';
+  ctx.beginPath(); ctx.moveTo(16, -14); ctx.lineTo(12, -12); ctx.lineTo(14, -17); ctx.closePath(); ctx.fill();
   ctx.restore();
 }
 const RANGED_FIGURE_DRAWERS = { archer: drawArcherFigure, gunman: drawGunmanFigure, cannon: drawCannonFigure };
@@ -1160,13 +1260,13 @@ function drawLevelBadge(x, y, level) {
 
 function drawTier3Slots() {
   for (const slot of TIER3_SLOTS) {
-    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
+    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y, slot.fireAnim || 0); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
     else drawEmptySlotMarker(slot.x, slot.y);
   }
 }
 function drawTier2Slots() {
   for (const slot of TIER2_SLOTS) {
-    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
+    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y, slot.fireAnim || 0); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
     else drawEmptySlotMarker(slot.x, slot.y);
   }
 }
@@ -1176,15 +1276,31 @@ function drawMeleeAttackEffect(slot) {
   const target = slot.target;
   const tx = target ? target.x : slot.ux + 24, ty = target ? target.y - 10 : slot.y - 10;
   if (slot.unit.type === 'spearman') {
-    // A quick bright thrust toward whatever it's fighting - "throwing" the
-    // spear at the enemy rather than just standing there holding it.
+    // A quick bright thrust toward whatever it's fighting, tipped with a
+    // real spearhead so the point of contact reads clearly.
+    const ang = Math.atan2(ty - (slot.y - 12), tx - (slot.ux + 3));
     ctx.strokeStyle = 'rgba(224,224,224,' + t + ')';
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(slot.ux + 3, slot.y - 12); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.rotate(ang);
+    ctx.fillStyle = 'rgba(224,224,224,' + t + ')';
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-7, -3); ctx.lineTo(-7, 3); ctx.closePath(); ctx.fill();
+    ctx.restore();
   } else if (slot.unit.type === 'cavalry') {
+    // Blade rotates through a real slashing arc (same pivoted-swing
+    // technique as the enemy horseman) instead of snapping to one line.
+    const swing = 1 - t;
+    ctx.save();
+    ctx.translate(slot.ux, slot.y - 9);
+    ctx.rotate(lerp(-0.9, 0.6, swing));
     ctx.strokeStyle = 'rgba(255,255,255,' + t + ')';
     ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(slot.ux, slot.y - 9); ctx.lineTo(slot.ux + 22, slot.y - 15); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(22, -6); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,' + t + ')';
+    ctx.beginPath(); ctx.moveTo(22, -6); ctx.lineTo(17, -3); ctx.lineTo(19, -9); ctx.closePath(); ctx.fill();
+    ctx.restore();
   }
 }
 
@@ -1196,7 +1312,8 @@ function drawGroundSlots() {
       // Faces left (-1) while retreating home so it visibly turns around
       // instead of sliding backwards; every other state faces the field.
       const facing = slot.state === 'returning' ? -1 : 1;
-      MELEE_FIGURE_DRAWERS[slot.unit.type](slot.ux, slot.y, facing);
+      const moving = slot.state === 'advancing' || slot.state === 'returning';
+      MELEE_FIGURE_DRAWERS[slot.unit.type](slot.ux, slot.y, facing, moving);
       drawMeleeAttackEffect(slot);
       drawLevelBadge(slot.ux, slot.y, slot.unit.level);
       if (slot.hp < slot.maxHp) {
@@ -1210,25 +1327,53 @@ function drawGroundSlots() {
   }
 }
 
-function drawFootSoldier(en, y, color) {
+// Two-leg walking gait (alternating swing, weighted toward the leading
+// direction of travel) plus a weapon that swings through a real pivoted
+// arc while actively attacking (en.atkAnim, set in updateGroundUnits) and
+// otherwise just held at a carried-ready angle - not a fixed decoration.
+function drawFootSoldier(en, y, color, opts) {
+  opts = opts || {};
+  const x = en.x;
+  const stride = en.meleeUnit ? 0 : Math.sin(performance.now() / 130 + en.bob) * 4;
+  ctx.strokeStyle = '#2a1f14'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - 2, y + 4); ctx.lineTo(x - 2 + stride * 0.6, y + 13); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + 2, y + 4); ctx.lineTo(x + 2 - stride * 0.6, y + 13); ctx.stroke();
   ctx.fillStyle = color;
-  ctx.beginPath(); ctx.arc(en.x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.fillRect(en.x - 3, y - 6, 6, 14);
-  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(en.x - 6, y - 12); ctx.lineTo(en.x - 12, y - 18); ctx.stroke();
+  ctx.fillRect(x - 3, y - 6, 6, 12);
+  ctx.beginPath(); ctx.arc(x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
+  if (opts.weapon !== false) {
+    const active = en.atkAnim > 0;
+    const swing = active ? 1 - en.atkAnim / 0.25 : 0;
+    ctx.save();
+    ctx.translate(x - 3, y - 12);
+    ctx.rotate(active ? lerp(-1.1, 0.5, swing) : -0.5);
+    ctx.strokeStyle = active ? '#fff' : '#c0c0c0';
+    ctx.lineWidth = active ? 2.5 : 2;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -6); ctx.stroke();
+    ctx.restore();
+  }
 }
 function drawFootman(en, y) { drawFootSoldier(en, y, '#8a3a3a'); }
 function drawPikeman(en, y) {
-  drawFootSoldier(en, y, '#7a4a2a');
-  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(en.x - 6, y - 28); ctx.lineTo(en.x - 6, y + 14); ctx.stroke();
+  drawFootSoldier(en, y, '#7a4a2a', { weapon: false });
+  const x = en.x;
+  const active = en.atkAnim > 0;
+  // Pikes thrust straight forward-and-back rather than swinging, unlike a
+  // sword - punch the tip out on the attack then pull it back.
+  const thrust = active ? Math.sin((1 - en.atkAnim / 0.25) * Math.PI) * 7 : 0;
+  ctx.strokeStyle = active ? '#fff' : '#c0c0c0'; ctx.lineWidth = active ? 2.5 : 2;
+  ctx.beginPath(); ctx.moveTo(x - 6 - thrust, y - 28); ctx.lineTo(x - 6, y + 12); ctx.stroke();
+  ctx.fillStyle = active ? '#fff' : '#8a8f98';
+  ctx.beginPath(); ctx.moveTo(x - 6 - thrust, y - 28); ctx.lineTo(x - 10 - thrust, y - 21); ctx.lineTo(x - 2 - thrust, y - 21); ctx.closePath(); ctx.fill();
 }
 function drawHorseman(en, y) {
-  ctx.fillStyle = '#5a3a2a'; ctx.beginPath(); ctx.ellipse(en.x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillRect(en.x - 12, y + 4, 3, 9); ctx.fillRect(en.x + 9, y + 4, 3, 9);
   // Head leads on the LEFT - that's the direction of travel (enemies walk
   // toward the castle, which is at lower x). It was drawn on the right
   // before, so the horse looked like it was riding backwards.
+  const galloping = !en.meleeUnit;
+  const gallop = galloping ? Math.sin(performance.now() / 75 + en.bob) * 5 : 0;
+  ctx.fillStyle = '#5a3a2a'; ctx.beginPath(); ctx.ellipse(en.x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(en.x - 12, y + 4, 3, 9 - gallop * 0.5); ctx.fillRect(en.x + 9, y + 4, 3, 9 + gallop * 0.5);
   ctx.beginPath(); ctx.ellipse(en.x - 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = '#8a3a3a'; ctx.beginPath(); ctx.arc(en.x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
   // Sword, resting near the head; swings through an arc while actively
@@ -1241,6 +1386,7 @@ function drawHorseman(en, y) {
   ctx.strokeStyle = active ? '#fff' : '#ddd';
   ctx.lineWidth = active ? 3 : 2;
   ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-9, -3); ctx.stroke();
+  if (active) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-9, -3); ctx.lineTo(-6, -1); ctx.lineTo(-7, -5); ctx.closePath(); ctx.fill(); }
   ctx.restore();
 }
 function drawElephant(en, y) {
@@ -1254,8 +1400,9 @@ function drawElephant(en, y) {
   ctx.fillRect(x + 11, y + 5, 7, 15 - walk * 0.4);
   ctx.fillStyle = '#7a7f88'; ctx.beginPath(); ctx.ellipse(x, y, 26, 17, 0, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.ellipse(x - 24, y - 4, 11, 10, 0, 0, Math.PI * 2); ctx.fill();
+  const trunkSway = Math.sin(performance.now() / 300 + en.bob) * 3;
   ctx.strokeStyle = '#7a7f88'; ctx.lineWidth = 6; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(x - 32, y); ctx.lineTo(x - 40, y + 14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 32, y); ctx.lineTo(x - 40 + trunkSway, y + 14); ctx.stroke();
   ctx.fillStyle = '#5a5f68';
   ctx.fillRect(x - 16, y - 2, 6, 17 - walk * 0.4);
   ctx.fillRect(x + 13, y - 2, 6, 17 + walk * 0.4);
@@ -1273,9 +1420,16 @@ function drawRam(en, y) {
   ctx.beginPath(); ctx.arc(x + 24, y + 8, 5, 0, Math.PI * 2); ctx.fill();
   // canopy roof over the crew
   ctx.fillStyle = 'rgba(90,60,40,0.7)'; ctx.fillRect(x - 24, y - 22, 44, 6);
-  // the log itself, metal-capped on the leading (left) end
-  ctx.fillStyle = '#6b4a2f'; ctx.fillRect(x - 30, y - 9, 54, 10);
-  ctx.fillStyle = '#5a5f68'; ctx.beginPath(); ctx.arc(x - 30, y - 4, 7, 0, Math.PI * 2); ctx.fill();
+  // the log itself, metal-capped on the leading (left) end - hangs from the
+  // frame and rocks on its ropes as the crew marches it forward, so it
+  // already reads as "about to batter" before it ever reaches the wall.
+  const logSwing = Math.sin(performance.now() / 260 + en.bob) * 0.12;
+  ctx.save();
+  ctx.translate(x - 3, y - 12);
+  ctx.rotate(logSwing);
+  ctx.fillStyle = '#6b4a2f'; ctx.fillRect(-27, 3, 54, 10);
+  ctx.fillStyle = '#5a5f68'; ctx.beginPath(); ctx.arc(-27, 8, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
   // a few crew dragging it, walking beneath the canopy
   ctx.fillStyle = '#3a2a18';
   for (const dx of [-8, 6, 20]) {
@@ -1285,10 +1439,20 @@ function drawRam(en, y) {
 }
 function drawBombard(en, y) {
   const x = en.x;
+  const firing = en.fireAnim > 0;
+  const t = firing ? en.fireAnim / 0.35 : 0;
+  const recoil = firing ? t * 4 : 0;
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(-0.35);
+  ctx.translate(0, recoil); // barrel kicks back along its own angled axis on fire
   ctx.fillStyle = '#3a3f48'; ctx.fillRect(-4, -22, 8, 26);
+  if (firing) {
+    ctx.fillStyle = 'rgba(255,150,60,' + t + ')';
+    ctx.beginPath(); ctx.arc(0, -22, 5 * t + 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(120,120,120,' + (t * 0.6) + ')';
+    ctx.beginPath(); ctx.arc(0, -27, 7 * (1 - t) + 3, 0, Math.PI * 2); ctx.fill();
+  }
   ctx.restore();
   ctx.fillStyle = '#5a4a34'; ctx.fillRect(x - 10, y - 2, 20, 8);
   ctx.fillStyle = '#2a2f36';
@@ -1370,23 +1534,66 @@ function drawUnitPanel() {
   });
 }
 
+// A slight sine "lob" dip layered purely on top of the straight-line
+// homing position (which stays exact for hit detection) - just enough to
+// read as a real arced shot instead of a laser-straight dart.
+function projectileArcFrac(p, tx, ty) {
+  const traveled = Math.hypot(p.x - p.spawnX, p.y - p.spawnY);
+  const remaining = Math.hypot(tx - p.x, ty - p.y);
+  return clamp(traveled / (traveled + remaining || 1), 0, 1);
+}
+
+function drawCannonball(p) {
+  const en = p.targetRef;
+  const tx = en && !en.dead ? en.x : p.x, ty = en && !en.dead ? en.y - 10 : p.y;
+  const dip = Math.sin(projectileArcFrac(p, tx, ty) * Math.PI) * 20;
+  const dx = p.x, dy = p.y - dip;
+  const grad = ctx.createRadialGradient(dx - 1.5, dy - 1.5, 0.5, dx, dy, 4.5);
+  grad.addColorStop(0, '#6a6f78');
+  grad.addColorStop(1, '#15171a');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(dx, dy, 4.5, 0, Math.PI * 2); ctx.fill();
+}
+
 function drawProjectiles() {
   for (const p of projectiles) {
-    if (p.splash > 0) {
-      ctx.fillStyle = '#222';
-      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
-      continue;
-    }
+    if (p.splash > 0) { drawCannonball(p); continue; }
     const en = p.targetRef;
     const tx = en && !en.dead ? en.x : p.x, ty = en && !en.dead ? en.y - 14 : p.y;
     const dx = tx - p.spawnX, dy = ty - p.spawnY;
     const dist = Math.hypot(dx, dy) || 1;
     const ux = dx / dist, uy = dy / dist;
-    ctx.strokeStyle = '#4a3a20'; ctx.lineWidth = 2;
+    const dip = Math.sin(projectileArcFrac(p, tx, ty) * Math.PI) * 8;
+    const px = p.x, py = p.y - dip;
+    const perpX = -uy, perpY = ux;
+    ctx.strokeStyle = '#4a3a20'; ctx.lineWidth = 2; ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(p.x - ux * 12, p.y - uy * 12);
-    ctx.lineTo(p.x + ux * 4, p.y + uy * 4);
+    ctx.moveTo(px - ux * 12, py - uy * 12);
+    ctx.lineTo(px + ux * 4, py + uy * 4);
     ctx.stroke();
+    // fletching - a small V near the tail end
+    const tailX = px - ux * 9, tailY = py - uy * 9;
+    ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(tailX - ux * 3 + perpX * 3, tailY - uy * 3 + perpY * 3);
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(tailX - ux * 3 - perpX * 3, tailY - uy * 3 - perpY * 3);
+    ctx.stroke();
+  }
+}
+
+function drawShells() {
+  for (const s of shells) {
+    const frac = clamp(s.traveled / s.dist, 0, 1);
+    const dip = Math.sin(frac * Math.PI) * 30;
+    const dx = s.x, dy = s.y - dip;
+    const grad = ctx.createRadialGradient(dx - 1.5, dy - 1.5, 0.5, dx, dy, 5.5);
+    grad.addColorStop(0, '#ffb066');
+    grad.addColorStop(0.55, '#a03a1e');
+    grad.addColorStop(1, '#2a1008');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(dx, dy, 5.5, 0, Math.PI * 2); ctx.fill();
   }
 }
 
@@ -1470,6 +1677,7 @@ function draw() {
   if (state !== 'menu') {
     for (const en of enemies) drawEnemy(en);
     drawProjectiles();
+    drawShells();
     drawParticles();
     drawPopups();
     drawHud();
