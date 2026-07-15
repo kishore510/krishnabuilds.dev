@@ -224,23 +224,31 @@ document.addEventListener('webkitfullscreenchange', syncFsButtons);
 
 // ==================== Maze ====================
 // Validated in a standalone BFS/loop/dead-end script before being used here:
-// fully connected (183/183 walkable tiles reached), 49 independent loops,
-// only 2 non-tunnel tiles with <=1 open neighbor (both short 1-tile nubs).
+// fully connected (187/187 walkable tiles reached), 53 independent loops,
+// zero non-tunnel tiles with <=1 open neighbor.
+//
+// Column 6 (the wall bounding the left prong of the ghost-box antechamber,
+// col 7) was originally a solid wall from row 3 to row 15, while its mirror
+// column 12 (bounding the right prong, col 11) had gaps at rows 5/7/11/13 -
+// so the left prong was a one-way dead-end shaft with no exit to its own
+// side, while the right prong already had one. Opened col 6 at those same
+// four rows to match, giving both prongs a side exit the way the layout's
+// symmetry always implied they should have.
 const MAZE = [
   "0000000000000000000",
   "0311111111111111130",
   "0111111111111111110",
   "0100010001000100010",
   "0100010001000100010",
-  "0111110101011111110",
+  "0111111101011111110",
   "0000010101010000000",
-  "0111110111011111110",
+  "0111111111011111110",
   "0100000111000010010",
   "9999910444444019999",
   "0100000111000010010",
-  "0111110111011111110",
+  "0111111111011111110",
   "0000010101010000000",
-  "0111110101011111110",
+  "0111111101011111110",
   "0100010001000100010",
   "0100010001000100010",
   "0111111111111111110",
