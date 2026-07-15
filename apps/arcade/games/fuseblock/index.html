@@ -74,27 +74,28 @@
     font-size: calc(13px * var(--game-scale, 1));
   }
   #fsExitBtn { display: none; }
-  .dpad-zone {
+  /* One big hit-region for the whole d-pad rather than four separate
+     overlapping zones. Four equal-z-index absolutely-positioned squares
+     sized bigger than the gap between their centers (needed for a decent
+     touch target) inevitably overlap each other - with a tie, later DOM
+     order wins, so up/down (listed first) silently lost taps to left/right
+     in the shared area. A single region with live pointer-position math
+     has no such ambiguity, is unambiguously "big", and lets a thumb slide
+     between directions without lifting. */
+  #dpadZone {
     position: absolute;
     z-index: 5;
+    left: calc(-5px * var(--game-scale, 1)); top: calc(419px * var(--game-scale, 1));
+    width: calc(130px * var(--game-scale, 1)); height: calc(130px * var(--game-scale, 1));
     touch-action: none;
     -webkit-user-select: none;
     user-select: none;
   }
-  /* Each zone is a 48x48 minimum touch target (up from the original 28x28,
-     which read as fiddly next to the 56px bomb button) plus ~7px of
-     invisible hit-padding on every side, for a ~62px effective tap area -
-     centered on the same points as before so the drawn d-pad graphic and
-     the gap between zones don't move, only how forgiving each zone is. */
-  #dzUp    { left: calc(29px * var(--game-scale, 1)); top: calc(439px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
-  #dzDown  { left: calc(29px * var(--game-scale, 1)); top: calc(483px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
-  #dzLeft  { left: calc(7px  * var(--game-scale, 1)); top: calc(461px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
-  #dzRight { left: calc(51px * var(--game-scale, 1)); top: calc(461px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
   #bombBtn {
     position: absolute;
     z-index: 5;
-    left: calc(272px * var(--game-scale, 1)); top: calc(464px * var(--game-scale, 1));
-    width: calc(56px * var(--game-scale, 1)); height: calc(56px * var(--game-scale, 1));
+    left: calc(268px * var(--game-scale, 1)); top: calc(452px * var(--game-scale, 1));
+    width: calc(64px * var(--game-scale, 1)); height: calc(64px * var(--game-scale, 1));
     border-radius: 50%;
     touch-action: none;
     -webkit-user-select: none;
@@ -146,10 +147,7 @@
     <button id="fsEnterBtn" class="kbz-btn" type="button">⛶</button>
     <button id="fsExitBtn" class="kbz-btn" type="button">✕</button>
 
-    <div id="dzUp" class="dpad-zone" data-dir="up"></div>
-    <div id="dzDown" class="dpad-zone" data-dir="down"></div>
-    <div id="dzLeft" class="dpad-zone" data-dir="left"></div>
-    <div id="dzRight" class="dpad-zone" data-dir="right"></div>
+    <div id="dpadZone"></div>
     <div id="bombBtn"></div>
 
     <div id="overlay">
@@ -228,15 +226,15 @@ document.addEventListener('webkitfullscreenchange', syncFsButtons);
 
 // ==================== Grid ====================
 const GRID_COLS = 11, GRID_ROWS = 13;
-const HUD_TOP = 58, HUD_BOTTOM = 96;
+const HUD_TOP = 58, HUD_BOTTOM = 112;
 const boardAvailW = W, boardAvailH = H - HUD_TOP - HUD_BOTTOM;
 const CELL = Math.floor(Math.min(boardAvailW / GRID_COLS, boardAvailH / GRID_ROWS));
 const boardW = CELL * GRID_COLS, boardH = CELL * GRID_ROWS;
 const OFFSET_X = Math.floor((W - boardW) / 2);
 const OFFSET_Y = HUD_TOP + Math.floor((boardAvailH - boardH) / 2);
 
-const DPAD_CX = 60, DPAD_CY = 492, DPAD_S = 20, DPAD_GAP = 2;
-const BOMB_CX = 300, BOMB_CY = 492, BOMB_R = 26;
+const DPAD_CX = 60, DPAD_CY = 484, DPAD_S = 32, DPAD_GAP = 4;
+const BOMB_CX = 300, BOMB_CY = 484, BOMB_R = 30;
 
 const DIRS = {
   up: { dr: -1, dc: 0 }, down: { dr: 1, dc: 0 },
@@ -336,6 +334,7 @@ bgGradient.addColorStop(1, COL.bgBottom);
 let state = 'ready'; // ready | playing | won | lost
 let heldDir = null;
 let bombs = [], explosions = [], fx = [];
+let bombPressFlash = -999;
 let player, bots;
 let gameClock = 0;
 let attemptNum = 0;
@@ -365,6 +364,7 @@ function resetLevel() {
   grid = buildGrid();
   bombs = []; explosions = []; fx = [];
   heldDir = null;
+  bombPressFlash = -999;
   player = {
     r: PLAYER_SPAWN.r, c: PLAYER_SPAWN.c,
     px: cellCenterX(PLAYER_SPAWN.c), py: cellCenterY(PLAYER_SPAWN.r),
@@ -432,14 +432,39 @@ function fmtTime(t) {
 function setHeldDir(dir) { heldDir = dir; }
 function clearHeldDir(dir) { if (heldDir === dir) heldDir = null; }
 
-['dzUp', 'dzDown', 'dzLeft', 'dzRight'].forEach(id => {
-  const el = document.getElementById(id);
-  const dir = el.dataset.dir;
-  el.addEventListener('pointerdown', (e) => { e.preventDefault(); setHeldDir(dir); try { el.setPointerCapture(e.pointerId); } catch (err) {} });
-  el.addEventListener('pointerup', () => clearHeldDir(dir));
-  el.addEventListener('pointercancel', () => clearHeldDir(dir));
-  el.addEventListener('pointerleave', () => clearHeldDir(dir));
+const dpadZoneEl = document.getElementById('dpadZone');
+const DPAD_DEADZONE = 10; // px, canvas-space - a dead-center tap picks no direction rather than jittering
+let dpadPointerId = null;
+
+// Axis-dominant direction from raw pointer position, recomputed live on
+// every move rather than off a fixed hit-box, so one big region can't
+// suffer the overlap/z-order ambiguity four separate zones had, and a
+// thumb can slide between directions without lifting.
+function dirFromPointer(e) {
+  const rect = dpadZoneEl.getBoundingClientRect();
+  const scale = parseFloat(getComputedStyle(wrap).getPropertyValue('--game-scale')) || 1;
+  const dx = e.clientX - (rect.left + rect.width / 2);
+  const dy = e.clientY - (rect.top + rect.height / 2);
+  if (Math.hypot(dx, dy) < DPAD_DEADZONE * scale) return null;
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
+}
+dpadZoneEl.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  dpadPointerId = e.pointerId;
+  try { dpadZoneEl.setPointerCapture(e.pointerId); } catch (err) {}
+  setHeldDir(dirFromPointer(e));
 });
+dpadZoneEl.addEventListener('pointermove', (e) => {
+  if (e.pointerId !== dpadPointerId) return;
+  setHeldDir(dirFromPointer(e));
+});
+function releaseDpadPointer(e) {
+  if (e.pointerId !== dpadPointerId) return;
+  dpadPointerId = null;
+  heldDir = null;
+}
+dpadZoneEl.addEventListener('pointerup', releaseDpadPointer);
+dpadZoneEl.addEventListener('pointercancel', releaseDpadPointer);
 
 const bombBtnEl = document.getElementById('bombBtn');
 bombBtnEl.addEventListener('pointerdown', (e) => { e.preventDefault(); placeBomb(); });
@@ -464,6 +489,7 @@ function placeBomb() {
   if (bombAt(player.r, player.c)) return;
   bombs.push({ r: player.r, c: player.c, range: player.blastRange, fuse: FUSE_TIME, exploded: false, lastTick: 0 });
   player.bombsActive++;
+  bombPressFlash = gameClock;
   playBombPlace();
 }
 
@@ -854,38 +880,42 @@ function drawBots() {
   }
 }
 
+const DPAD_ARM_OFFSETS = [['up', 0, -1], ['down', 0, 1], ['left', -1, 0], ['right', 1, 0]];
 function drawDpadGraphic() {
   const s = DPAD_S, gap = DPAD_GAP;
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  DIR_LIST.forEach((d, i) => {
-    const off = [[0, -1], [0, 1], [-1, 0], [1, 0]][i];
-    ctx.fillRect(DPAD_CX + off[0] * (s + gap) - s / 2, DPAD_CY + off[1] * (s + gap) - s / 2, s, s);
-  });
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(([dx, dy]) => {
-    ctx.strokeRect(DPAD_CX + dx * (s + gap) - s / 2, DPAD_CY + dy * (s + gap) - s / 2, s, s);
+  DPAD_ARM_OFFSETS.forEach(([dir, dx, dy]) => {
+    const lit = heldDir === dir;
+    const x = DPAD_CX + dx * (s + gap) - s / 2, y = DPAD_CY + dy * (s + gap) - s / 2;
+    ctx.save();
+    if (lit) { ctx.shadowColor = COL.emberBright; ctx.shadowBlur = 10; }
+    ctx.fillStyle = lit ? 'rgba(255,179,71,0.6)' : 'rgba(255,255,255,0.08)';
+    ctx.fillRect(x, y, s, s);
+    ctx.strokeStyle = lit ? COL.emberBright : 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = lit ? 2 : 1;
+    ctx.strokeRect(x, y, s, s);
+    ctx.restore();
   });
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.beginPath();
-  ctx.arc(DPAD_CX, DPAD_CY, 6, 0, Math.PI * 2);
+  ctx.arc(DPAD_CX, DPAD_CY, 7, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = COL.textDim;
-  ctx.font = '8px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('MOVE', DPAD_CX, DPAD_CY + 46);
 }
 function drawBombButtonGraphic() {
+  const flashT = gameClock - bombPressFlash;
+  const flash = (flashT >= 0 && flashT < 0.2) ? (1 - flashT / 0.2) : 0;
   ctx.save();
-  ctx.fillStyle = 'rgba(255,107,53,0.18)';
+  if (flash > 0) { ctx.shadowColor = COL.emberBright; ctx.shadowBlur = 12 * flash; }
+  ctx.fillStyle = `rgba(255,107,53,${0.18 + flash * 0.55})`;
   ctx.beginPath();
   ctx.arc(BOMB_CX, BOMB_CY, BOMB_R, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = COL.emberBright;
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 2 + flash * 2;
   ctx.stroke();
+  ctx.shadowBlur = 0;
   ctx.fillStyle = '#1a1a1a';
   ctx.beginPath();
-  ctx.arc(BOMB_CX, BOMB_CY - 2, 10, 0, Math.PI * 2);
+  ctx.arc(BOMB_CX, BOMB_CY - 2, 11, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = COL.emberBright;
   ctx.lineWidth = 1.5;
