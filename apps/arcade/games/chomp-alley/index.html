@@ -152,7 +152,7 @@
 
     <div id="overlay">
       <h1 id="ovTitle">CHOMP ALLEY</h1>
-      <p id="ovSubtitle">Gobble every pellet in the alley. Ember never stops hunting - keep moving.</p>
+      <p id="ovSubtitle">Gobble every pellet in the alley. Four ghosts are hunting - keep moving.</p>
       <p id="ovScore" style="display:none;"></p>
       <button id="startBtn" type="button" data-kb-play>Start</button>
       <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
@@ -300,7 +300,24 @@ function canStep(r, c, dir, allowWrap) {
 }
 
 const PLAYER_SPAWN = { r: 16, c: 9 };
-const GHOST_SPAWN = { r: 9, c: 9 };
+const GHOST_SPAWN_ROW = 9;
+
+// Each corner doubles as a scatter-phase home AND (for Wisp) a flee
+// candidate - one shared list rather than two separate ones.
+const CORNERS = [{ r: 1, c: 1 }, { r: 1, c: 17 }, { r: 16, c: 1 }, { r: 16, c: 17 }];
+
+// Four distinct pathing personalities, per the build brief:
+// - chase:   always paths straight at the player's current tile (Ember)
+// - ambush:  paths at a tile projected ahead of the player's facing (Glint)
+// - flipper: direct-chases when far, patrols/wanders when close (Drift)
+// - avoider: always paths toward whichever corner is farthest from the
+//            player, so it hovers at the edges rather than engaging (Wisp)
+const GHOST_DEFS = [
+  { id: 'ember', color: 'ember', personality: 'chase',   home: CORNERS[0], spawnC: 9 },
+  { id: 'glint', color: 'glint', personality: 'ambush',  home: CORNERS[1], spawnC: 8 },
+  { id: 'drift', color: 'drift', personality: 'flipper', home: CORNERS[2], spawnC: 10 },
+  { id: 'wisp',  color: 'wisp',  personality: 'avoider', home: CORNERS[3], spawnC: 11 }
+];
 
 let pellets, totalPellets, remainingPellets;
 function setupPellets() {
@@ -337,6 +354,9 @@ const COL = {
   pellet: '#ffe66d', power: '#ff9f4a',
   player: '#7cff6b', playerDark: '#2f6b28',
   ember: '#ff4d4d', emberDark: '#8a1f1f',
+  glint: '#3fd9ff', glintDark: '#0e4a57',
+  drift: '#ff9f40', driftDark: '#7a3c0f',
+  wisp: '#c77dff', wispDark: '#4a1f70',
   textMain: '#f0eaff', textDim: '#8a7fae', textAlert: '#ff6b6b'
 };
 
@@ -381,14 +401,14 @@ function makeEntity(spawn, tileTime, canWrap) {
   };
 }
 
-let player, ember;
+let player, ghosts = [];
 let playerTileTime = 0.15;
-// Ember starts at ~80% of the player's speed (tileTime is seconds/tile, so a
-// *larger* value is slower) - a chaser you can out-leg in open corridors,
+// Ghosts start at ~80% of the player's speed (tileTime is seconds/tile, so
+// a *larger* value is slower) - chasers you can out-leg in open corridors,
 // so getting caught is about routing/turns, not raw speed disadvantage.
-let emberTileTime = 0.188;
-const EMBER_TILE_TIME_FLOOR = 0.12;
-const EMBER_SPEEDUP_PER_CLEAR = 0.008;
+let ghostTileTime = 0.188;
+const GHOST_TILE_TIME_FLOOR = 0.12;
+const GHOST_SPEEDUP_PER_CLEAR = 0.008;
 
 // Brief window of contact-immunity at the very start of a run only (not on
 // every respawn - the post-death "Ready?" pause already gives that beat).
@@ -397,7 +417,16 @@ let invulnerableT = 0;
 
 function resetEntities() {
   player = makeEntity(PLAYER_SPAWN, playerTileTime, true);
-  ember = makeEntity(GHOST_SPAWN, emberTileTime, false);
+  ghosts = GHOST_DEFS.map((def) => {
+    const g = makeEntity({ r: GHOST_SPAWN_ROW, c: def.spawnC }, ghostTileTime, false);
+    g.id = def.id;
+    g.color = def.color;
+    g.personality = def.personality;
+    g.home = def.home;
+    g.wanderDir = { dr: 0, dc: 0 };
+    g.wanderTimer = 0;
+    return g;
+  });
 }
 
 // Live input intent - joystick or keyboard, whichever fired last. An ordered
@@ -444,11 +473,11 @@ function stepEntity(entity, wantedDirs, dt) {
   entity.wrapStep = false;
 }
 
-// ==================== Ember: BFS shortest path to the player's current tile,
+// ==================== Ghost pathing: BFS shortest path to a target tile,
 // recomputed at every decision point (small board, trivially cheap). ====================
-// allowWrap defaults to false since every ghost added so far is meant to be
-// locked out of the tunnel edge-jump - the player's escape hatch stays an
-// escape only if the pathfinding never routes a chaser through it either.
+// allowWrap defaults to false since every ghost is meant to be locked out
+// of the tunnel edge-jump - the player's escape hatch stays an escape only
+// if the pathfinding never routes a chaser through it either.
 function bfsNextDir(fromR, fromC, toR, toC, allowWrap) {
   if (fromR === toR && fromC === toC) return null;
   const key = (r, c) => r * COLS + c;
@@ -470,8 +499,88 @@ function bfsNextDir(fromR, fromC, toR, toC, allowWrap) {
   }
   return null;
 }
-function emberDesiredDir() {
-  return [bfsNextDir(ember.r, ember.c, player.r, player.c, ember.canWrap)];
+function manhattan(r1, c1, r2, c2) { return Math.abs(r1 - r2) + Math.abs(c1 - c2); }
+
+// Walks up to `steps` tiles in a straight line from (r,c), stopping at the
+// last open tile before a wall/boundary rather than landing past one - a
+// literal "N tiles ahead" projection would often land inside a wall, which
+// bfsNextDir can never path to (it only terminates on an exact, walkable
+// target tile).
+function projectAhead(r, c, dir, steps) {
+  let tr = r, tc = c;
+  for (let i = 0; i < steps; i++) {
+    const nr = tr + dir.dr, nc = tc + dir.dc;
+    if (!isWalkable(nr, nc)) break;
+    tr = nr; tc = nc;
+  }
+  return { r: tr, c: tc };
+}
+
+function farthestCorner(fromR, fromC) {
+  let best = CORNERS[0], bestDist = -1;
+  for (const corner of CORNERS) {
+    const d = manhattan(fromR, fromC, corner.r, corner.c);
+    if (d > bestDist) { bestDist = d; best = corner; }
+  }
+  return best;
+}
+
+// Drift's "patrol" sub-state: semi-random wander, independent of the BFS
+// chase targeting every other personality uses. Re-rolls a direction when
+// the current one runs out or is blocked, same shape as Fuseblock's bots.
+function wanderDir(g, dt) {
+  g.wanderTimer -= dt;
+  const stuck = !(g.wanderDir.dr || g.wanderDir.dc) || !canStep(g.r, g.c, g.wanderDir, g.canWrap);
+  if (g.wanderTimer <= 0 || stuck) {
+    const options = DIR_LIST.filter(d => canStep(g.r, g.c, d, g.canWrap));
+    if (options.length > 0) g.wanderDir = options[Math.floor(Math.random() * options.length)];
+    g.wanderTimer = 0.6 + Math.random() * 0.8;
+  }
+  return [g.wanderDir];
+}
+
+const GLINT_AMBUSH_DIST = 4;
+const DRIFT_FAR_THRESHOLD = 8;
+
+// Scatter/chase alternation: every ghost retreats to its own home corner on
+// a timer, then re-engages with its personality logic, then back again.
+// Permanent chase mode makes the game feel impossible rather than
+// relentless-but-fair - this is what keeps it fair over a long run.
+const SCATTER_DURATION = 7, CHASE_DURATION = 20;
+let ghostPhase = 'scatter';
+let ghostPhaseT = 0;
+function resetGhostPhase() { ghostPhase = 'scatter'; ghostPhaseT = 0; }
+function updateGhostPhase(dt) {
+  ghostPhaseT += dt;
+  const duration = ghostPhase === 'scatter' ? SCATTER_DURATION : CHASE_DURATION;
+  if (ghostPhaseT >= duration) {
+    ghostPhase = ghostPhase === 'scatter' ? 'chase' : 'scatter';
+    ghostPhaseT = 0;
+  }
+}
+
+function ghostDesiredDir(g, dt) {
+  if (ghostPhase === 'scatter') {
+    return [bfsNextDir(g.r, g.c, g.home.r, g.home.c, g.canWrap)];
+  }
+  if (g.personality === 'chase') {
+    return [bfsNextDir(g.r, g.c, player.r, player.c, g.canWrap)];
+  }
+  if (g.personality === 'ambush') {
+    const facing = (player.dir.dr || player.dir.dc) ? player.dir : { dr: 0, dc: 0 };
+    const target = projectAhead(player.r, player.c, facing, GLINT_AMBUSH_DIST);
+    return [bfsNextDir(g.r, g.c, target.r, target.c, g.canWrap)];
+  }
+  if (g.personality === 'flipper') {
+    const dist = manhattan(g.r, g.c, player.r, player.c);
+    if (dist > DRIFT_FAR_THRESHOLD) return [bfsNextDir(g.r, g.c, player.r, player.c, g.canWrap)];
+    return wanderDir(g, dt);
+  }
+  if (g.personality === 'avoider') {
+    const target = farthestCorner(player.r, player.c);
+    return [bfsNextDir(g.r, g.c, target.r, target.c, g.canWrap)];
+  }
+  return [null];
 }
 
 // ==================== Joystick input ====================
@@ -627,6 +736,7 @@ function recordProgress() {
 function setupMaze() {
   setupPellets();
   resetEntities();
+  resetGhostPhase();
   desiredDirs = [];
 }
 
@@ -634,7 +744,7 @@ function resetRun() {
   loadBest();
   score = 0; lives = 3; level = 1;
   playerTileTime = 0.15;
-  emberTileTime = 0.188;
+  ghostTileTime = 0.188;
   setupMaze();
 }
 
@@ -659,7 +769,7 @@ function showOverlay(title, subtitle, scoreText) {
   overlay.style.display = 'flex';
 }
 startBtn.addEventListener('click', beginPlay);
-showOverlay('CHOMP ALLEY', 'Gobble every pellet in the alley. Ember never stops hunting - keep moving.');
+showOverlay('CHOMP ALLEY', 'Gobble every pellet in the alley. Four ghosts are hunting - keep moving.');
 
 function loseLife() {
   state = 'dying';
@@ -682,6 +792,7 @@ function finishDeath() {
     showOverlay('CAUGHT!', 'Attempt #' + attemptNum, 'Score: ' + score + '   Best: ' + bestScore + '   Best level: ' + bestLevel);
   } else {
     resetEntities();
+    resetGhostPhase();
     desiredDirs = [];
     state = 'lifeReady';
     showReadyOverlay();
@@ -694,15 +805,17 @@ function clearMaze() {
 }
 function startNextMaze() {
   level++;
-  emberTileTime = Math.max(EMBER_TILE_TIME_FLOOR, emberTileTime - EMBER_SPEEDUP_PER_CLEAR);
+  ghostTileTime = Math.max(GHOST_TILE_TIME_FLOOR, ghostTileTime - GHOST_SPEEDUP_PER_CLEAR);
   setupMaze();
   state = 'playing';
 }
 
 function checkContact() {
   if (invulnerableT > 0) return;
-  const dist = Math.hypot(player.px - ember.px, player.py - ember.py);
-  if (dist < TILE * 0.55) loseLife();
+  for (const g of ghosts) {
+    const dist = Math.hypot(player.px - g.px, player.py - g.py);
+    if (dist < TILE * 0.55) { loseLife(); return; }
+  }
 }
 function checkPelletPickup() {
   const type = pellets[player.r][player.c];
@@ -728,8 +841,9 @@ function update(dt) {
   }
   if (state !== 'playing') return;
   if (invulnerableT > 0) invulnerableT = Math.max(0, invulnerableT - dt);
+  updateGhostPhase(dt);
   stepEntity(player, desiredDirs, dt);
-  stepEntity(ember, emberDesiredDir(), dt);
+  for (const g of ghosts) stepEntity(g, ghostDesiredDir(g, dt), dt);
   checkPelletPickup();
   checkContact();
 }
@@ -894,7 +1008,7 @@ function drawClearBanner() {
   ctx.fillText('ALLEY CLEARED!', W / 2, H / 2 + 2);
   ctx.font = '11px Arial';
   ctx.fillStyle = COL.textMain;
-  ctx.fillText('Ember is getting faster...', W / 2, H / 2 + 20);
+  ctx.fillText('The ghosts are getting faster...', W / 2, H / 2 + 20);
   ctx.restore();
 }
 
@@ -902,7 +1016,7 @@ function draw() {
   drawBackground();
   drawMazeLayer();
   drawPellets();
-  drawGhost(ember, COL.ember, COL.emberDark);
+  for (const g of ghosts) drawGhost(g, COL[g.color], COL[g.color + 'Dark']);
   drawPlayer();
   drawDeathAnim();
   drawJoystick();
