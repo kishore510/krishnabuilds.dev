@@ -312,11 +312,19 @@ const CORNERS = [{ r: 1, c: 1 }, { r: 1, c: 17 }, { r: 16, c: 1 }, { r: 16, c: 1
 // - flipper: direct-chases when far, patrols/wanders when close (Drift)
 // - avoider: always paths toward whichever corner is farthest from the
 //            player, so it hovers at the edges rather than engaging (Wisp)
+//
+// releasePellets/releaseTime: staggered release from the box at the start
+// of each life - a ghost joins the hunt once EITHER threshold is crossed,
+// whichever comes first. Pellets-eaten rewards active play with a longer
+// ghost-free window; the time fallback stops a player stalling indefinitely
+// to keep the roster small forever. Ember's pellet threshold is effectively
+// disabled (Infinity) since the brief frames it as a near-immediate,
+// time-only release rather than pellet-gated like the other three.
 const GHOST_DEFS = [
-  { id: 'ember', color: 'ember', personality: 'chase',   home: CORNERS[0], spawnC: 9 },
-  { id: 'glint', color: 'glint', personality: 'ambush',  home: CORNERS[1], spawnC: 8 },
-  { id: 'drift', color: 'drift', personality: 'flipper', home: CORNERS[2], spawnC: 10 },
-  { id: 'wisp',  color: 'wisp',  personality: 'avoider', home: CORNERS[3], spawnC: 11 }
+  { id: 'ember', color: 'ember', personality: 'chase',   home: CORNERS[0], spawnC: 9,  releasePellets: Infinity, releaseTime: 1 },
+  { id: 'glint', color: 'glint', personality: 'ambush',  home: CORNERS[1], spawnC: 8,  releasePellets: 7,        releaseTime: 4 },
+  { id: 'drift', color: 'drift', personality: 'flipper', home: CORNERS[2], spawnC: 10, releasePellets: 17,       releaseTime: 8 },
+  { id: 'wisp',  color: 'wisp',  personality: 'avoider', home: CORNERS[3], spawnC: 11, releasePellets: 32,       releaseTime: 12 }
 ];
 
 let pellets, totalPellets, remainingPellets;
@@ -415,6 +423,11 @@ const GHOST_SPEEDUP_PER_CLEAR = 0.008;
 const START_GRACE = 1.5;
 let invulnerableT = 0;
 
+// Staggered ghost release, reset at the start of every life (not just once
+// per run) - see updateGhostRelease().
+let pelletsEatenThisLife = 0;
+let lifeElapsedT = 0;
+
 function resetEntities() {
   player = makeEntity(PLAYER_SPAWN, playerTileTime, true);
   ghosts = GHOST_DEFS.map((def) => {
@@ -425,8 +438,13 @@ function resetEntities() {
     g.home = def.home;
     g.wanderDir = { dr: 0, dc: 0 };
     g.wanderTimer = 0;
+    g.released = false;
+    g.releasePellets = def.releasePellets;
+    g.releaseTime = def.releaseTime;
     return g;
   });
+  pelletsEatenThisLife = 0;
+  lifeElapsedT = 0;
 }
 
 // Live input intent - joystick or keyboard, whichever fired last. An ordered
@@ -556,6 +574,21 @@ function updateGhostPhase(dt) {
   if (ghostPhaseT >= duration) {
     ghostPhase = ghostPhase === 'scatter' ? 'chase' : 'scatter';
     ghostPhaseT = 0;
+  }
+}
+
+// Staggered release: a ghost still waiting sits in the box (drawn, but
+// stepEntity is never called on it - see update()) until either threshold
+// crosses. Once released it just plugs straight into whatever scatter/chase
+// phase is already in progress - this only changes WHEN a ghost joins, not
+// how it behaves once active.
+function updateGhostRelease(dt) {
+  lifeElapsedT += dt;
+  for (const g of ghosts) {
+    if (g.released) continue;
+    if (pelletsEatenThisLife >= g.releasePellets || lifeElapsedT >= g.releaseTime) {
+      g.released = true;
+    }
   }
 }
 
@@ -813,6 +846,7 @@ function startNextMaze() {
 function checkContact() {
   if (invulnerableT > 0) return;
   for (const g of ghosts) {
+    if (!g.released) continue;
     const dist = Math.hypot(player.px - g.px, player.py - g.py);
     if (dist < TILE * 0.55) { loseLife(); return; }
   }
@@ -822,6 +856,7 @@ function checkPelletPickup() {
   if (!type) return;
   pellets[player.r][player.c] = null;
   remainingPellets--;
+  pelletsEatenThisLife++;
   score += type === 'power' ? 50 : 10;
   playPelletEat();
   if (remainingPellets <= 0) clearMaze();
@@ -842,8 +877,11 @@ function update(dt) {
   if (state !== 'playing') return;
   if (invulnerableT > 0) invulnerableT = Math.max(0, invulnerableT - dt);
   updateGhostPhase(dt);
+  updateGhostRelease(dt);
   stepEntity(player, desiredDirs, dt);
-  for (const g of ghosts) stepEntity(g, ghostDesiredDir(g, dt), dt);
+  for (const g of ghosts) {
+    if (g.released) stepEntity(g, ghostDesiredDir(g, dt), dt);
+  }
   checkPelletPickup();
   checkContact();
 }
