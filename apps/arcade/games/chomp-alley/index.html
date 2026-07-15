@@ -111,6 +111,32 @@
     text-decoration: underline;
     text-underline-offset: 3px;
   }
+  /* Lighter than #overlay on purpose - a quick beat between lives, not the
+     full pre-run title screen. Board stays dimly visible underneath so the
+     reset layout reads as "known" rather than hidden behind a blackout. */
+  #readyOverlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,7,22,0.45);
+    color: #f0eaff;
+    text-align: center;
+    z-index: 8;
+    cursor: pointer;
+  }
+  #readyOverlay p { margin: 0; }
+  #readyOverlay .readyTitle {
+    font-size: calc(24px * var(--game-scale, 1));
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: calc(6px * var(--game-scale, 1)) !important;
+  }
+  #readyOverlay .readyHint {
+    font-size: calc(12px * var(--game-scale, 1));
+    color: #b7a9d9;
+  }
 </style>
 </head>
 <body>
@@ -131,6 +157,13 @@
       <button id="startBtn" type="button" data-kb-play>Start</button>
       <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
     </div>
+
+    <div id="readyOverlay">
+      <div>
+        <p class="readyTitle">Ready?</p>
+        <p class="readyHint">Tap to continue</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -148,6 +181,7 @@ const muteBtn = document.getElementById('muteBtn');
 const fsEnterBtn = document.getElementById('fsEnterBtn');
 const fsExitBtn = document.getElementById('fsExitBtn');
 const joystickZoneEl = document.getElementById('joystickZone');
+const readyOverlayEl = document.getElementById('readyOverlay');
 
 const W = canvas.width, H = canvas.height;
 
@@ -338,25 +372,41 @@ function makeEntity(spawn, tileTime) {
 
 let player, ember;
 let playerTileTime = 0.15;
-let emberTileTime = 0.175;
+// Ember starts at ~80% of the player's speed (tileTime is seconds/tile, so a
+// *larger* value is slower) - a chaser you can out-leg in open corridors,
+// so getting caught is about routing/turns, not raw speed disadvantage.
+let emberTileTime = 0.188;
 const EMBER_TILE_TIME_FLOOR = 0.12;
 const EMBER_SPEEDUP_PER_CLEAR = 0.008;
+
+// Brief window of contact-immunity at the very start of a run only (not on
+// every respawn - the post-death "Ready?" pause already gives that beat).
+const START_GRACE = 1.5;
+let invulnerableT = 0;
 
 function resetEntities() {
   player = makeEntity(PLAYER_SPAWN, playerTileTime);
   ember = makeEntity(GHOST_SPAWN, emberTileTime);
 }
 
-let desiredDir = null; // live input intent - joystick or keyboard, whichever fired last
+// Live input intent - joystick or keyboard, whichever fired last. An ordered
+// list (dominant axis first) rather than a single direction, so a diagonal-
+// ish held drag still turns the player the instant the dominant axis is
+// blocked but the secondary one is open (see candidateDirsFromDelta).
+let desiredDirs = [];
 
-function stepEntity(entity, wantedDir, dt) {
+function stepEntity(entity, wantedDirs, dt) {
   if (entity.moveCooldown > 0) {
     entity.moveCooldown = Math.max(0, entity.moveCooldown - dt);
   }
   if (entity.moveCooldown <= 0) {
     let dir = null;
-    if (wantedDir && canStep(entity.r, entity.c, wantedDir)) dir = wantedDir;
-    else if ((entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir)) dir = entity.dir;
+    if (wantedDirs) {
+      for (const d of wantedDirs) {
+        if (d && canStep(entity.r, entity.c, d)) { dir = d; break; }
+      }
+    }
+    if (!dir && (entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir)) dir = entity.dir;
     if (dir) {
       const next = stepCoords(entity.r, entity.c, dir);
       entity.prevR = entity.r; entity.prevC = entity.c;
@@ -407,14 +457,13 @@ function bfsNextDir(fromR, fromC, toR, toC) {
   return null;
 }
 function emberDesiredDir() {
-  return bfsNextDir(ember.r, ember.c, player.r, player.c);
+  return [bfsNextDir(ember.r, ember.c, player.r, player.c)];
 }
 
 // ==================== Joystick input ====================
 // Floating-anchor virtual joystick: the base appears wherever the first
-// touch in the control band lands, not at a fixed spot. Direction snaps to
-// the nearest cardinal axis (dx vs dy dominance = nearest of the 4).
-const JOY_DEADZONE = 10, JOY_MAX_RADIUS = 34;
+// touch in the control band lands, not at a fixed spot.
+const JOY_DEADZONE = 5, JOY_MAX_RADIUS = 34;
 let joystick = { active: false, pointerId: null, anchorX: 0, anchorY: 0, curX: 0, curY: 0 };
 
 function positionJoystickZone() {
@@ -431,9 +480,20 @@ function clientToCanvas(clientX, clientY) {
   return { x: (clientX - rect.left) / scale, y: (clientY - rect.top) / scale };
 }
 
-function dirFromDelta(dx, dy) {
-  if (Math.hypot(dx, dy) < JOY_DEADZONE) return null;
-  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? DIRS.right : DIRS.left) : (dy > 0 ? DIRS.down : DIRS.up);
+// Dominant-axis resolution with a fallback to the secondary axis, not a
+// one-shot angle-snap: a held drag at, say, 11 o'clock has real leftward
+// AND upward intent, so if the dominant axis (up) is blocked but the
+// secondary one (left) is open, the player should still turn - without
+// needing the drag to straighten toward a near-perfect cardinal angle.
+// Recomputed fresh from the live raw dx/dy on every pointermove.
+function candidateDirsFromDelta(dx, dy) {
+  const adx = Math.abs(dx), ady = Math.abs(dy);
+  const horiz = adx >= JOY_DEADZONE ? (dx > 0 ? DIRS.right : DIRS.left) : null;
+  const vert = ady >= JOY_DEADZONE ? (dy > 0 ? DIRS.down : DIRS.up) : null;
+  if (!horiz && !vert) return [];
+  if (!horiz) return [vert];
+  if (!vert) return [horiz];
+  return adx >= ady ? [horiz, vert] : [vert, horiz];
 }
 
 joystickZoneEl.addEventListener('pointerdown', (e) => {
@@ -444,7 +504,7 @@ joystickZoneEl.addEventListener('pointerdown', (e) => {
   joystick.anchorX = joystick.curX = p.x;
   joystick.anchorY = joystick.curY = p.y;
   try { joystickZoneEl.setPointerCapture(e.pointerId); } catch (err) {}
-  desiredDir = null;
+  desiredDirs = [];
 });
 joystickZoneEl.addEventListener('pointermove', (e) => {
   if (!joystick.active || e.pointerId !== joystick.pointerId) return;
@@ -455,24 +515,28 @@ joystickZoneEl.addEventListener('pointermove', (e) => {
   const ang = Math.atan2(dy, dx);
   joystick.curX = joystick.anchorX + Math.cos(ang) * clampedDist;
   joystick.curY = joystick.anchorY + Math.sin(ang) * clampedDist;
-  desiredDir = dirFromDelta(dx, dy);
+  desiredDirs = candidateDirsFromDelta(dx, dy);
 });
 function releaseJoystick(e) {
   if (e.pointerId !== joystick.pointerId) return;
   joystick.active = false;
   joystick.pointerId = null;
-  desiredDir = null;
+  desiredDirs = [];
 }
 joystickZoneEl.addEventListener('pointerup', releaseJoystick);
 joystickZoneEl.addEventListener('pointercancel', releaseJoystick);
-window.addEventListener('blur', () => { joystick.active = false; desiredDir = null; });
+window.addEventListener('blur', () => { joystick.active = false; desiredDirs = []; });
 
 const KEY_DIR = {
   ArrowUp: DIRS.up, KeyW: DIRS.up, ArrowDown: DIRS.down, KeyS: DIRS.down,
   ArrowLeft: DIRS.left, KeyA: DIRS.left, ArrowRight: DIRS.right, KeyD: DIRS.right
 };
 document.addEventListener('keydown', (e) => {
-  if (KEY_DIR[e.code]) { e.preventDefault(); desiredDir = KEY_DIR[e.code]; }
+  if (KEY_DIR[e.code]) {
+    e.preventDefault();
+    if (state === 'lifeReady') dismissReadyOverlay();
+    desiredDirs = [KEY_DIR[e.code]];
+  }
 });
 
 // ==================== Audio ====================
@@ -523,7 +587,7 @@ muteBtn.addEventListener('click', () => {
 });
 
 // ==================== Run state ====================
-let state = 'ready'; // ready | playing | dying | levelClear | over
+let state = 'ready'; // ready | playing | dying | lifeReady | levelClear | over
 let score = 0, lives = 3, level = 1, attemptNum = 0;
 let bestScore = 0, bestLevel = 1;
 let deathT = 0, clearT = 0;
@@ -549,14 +613,14 @@ function recordProgress() {
 function setupMaze() {
   setupPellets();
   resetEntities();
-  desiredDir = null;
+  desiredDirs = [];
 }
 
 function resetRun() {
   loadBest();
   score = 0; lives = 3; level = 1;
   playerTileTime = 0.15;
-  emberTileTime = 0.175;
+  emberTileTime = 0.188;
   setupMaze();
 }
 
@@ -566,6 +630,7 @@ function beginPlay() {
   resetRun();
   attemptNum++;
   state = 'playing';
+  invulnerableT = START_GRACE;
   overlay.style.display = 'none';
   ensureAudio();
 }
@@ -587,6 +652,14 @@ function loseLife() {
   deathT = 0;
   playDeath();
 }
+function showReadyOverlay() { readyOverlayEl.style.display = 'flex'; }
+function dismissReadyOverlay() {
+  if (state !== 'lifeReady') return;
+  readyOverlayEl.style.display = 'none';
+  state = 'playing';
+}
+readyOverlayEl.addEventListener('pointerdown', (e) => { e.preventDefault(); dismissReadyOverlay(); });
+
 function finishDeath() {
   lives--;
   if (lives <= 0) {
@@ -595,8 +668,9 @@ function finishDeath() {
     showOverlay('CAUGHT!', 'Attempt #' + attemptNum, 'Score: ' + score + '   Best: ' + bestScore + '   Best level: ' + bestLevel);
   } else {
     resetEntities();
-    desiredDir = null;
-    state = 'playing';
+    desiredDirs = [];
+    state = 'lifeReady';
+    showReadyOverlay();
   }
 }
 function clearMaze() {
@@ -612,6 +686,7 @@ function startNextMaze() {
 }
 
 function checkContact() {
+  if (invulnerableT > 0) return;
   const dist = Math.hypot(player.px - ember.px, player.py - ember.py);
   if (dist < TILE * 0.55) loseLife();
 }
@@ -638,7 +713,8 @@ function update(dt) {
     return;
   }
   if (state !== 'playing') return;
-  stepEntity(player, desiredDir, dt);
+  if (invulnerableT > 0) invulnerableT = Math.max(0, invulnerableT - dt);
+  stepEntity(player, desiredDirs, dt);
   stepEntity(ember, emberDesiredDir(), dt);
   checkPelletPickup();
   checkContact();
@@ -689,6 +765,7 @@ function drawPlayer() {
   const mouthAngle = 0.08 + mouthPhase * 0.55;
   const facing = facingAngle(player.dir);
   ctx.save();
+  if (invulnerableT > 0) ctx.globalAlpha = 0.55 + 0.45 * Math.sin(gameClock * 22);
   ctx.translate(player.px, player.py);
   ctx.rotate(facing);
   ctx.fillStyle = COL.player;
