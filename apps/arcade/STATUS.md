@@ -1,8 +1,40 @@
 # Krishnabuilds Arcade — Status
 
-Last updated: 2026-07-09, Plot Defender built end-to-end (phases 1-5, onboarding, maps) + play-count worker
+Last updated: 2026-07-15, Fuseblock phase 1 + played-count fix + changelog page
 
-## This session (2026-07-09)
+## This session (2026-07-15)
+- Built Fuseblock phase 1: a bomb-arena grid game (11x13 alternating-pillar
+  arena, discrete d-pad movement, single bomb with expanding-blast animation
+  that destroys soft blocks and kills on contact including self, one
+  random-wander bot, hidden exit door, procedural audio, sessionStorage best
+  time, and a from-scratch fullscreen toggle built clean rather than reusing
+  Castle Hold's landscape-locked mode — flagged in BACKLOG.md as a candidate
+  for a shared `assets/` helper once a third game wants the same shape).
+  Verified with a headless Playwright session (movement, bomb fuse/pulse,
+  blast expansion, block crumble, self-kill, win/lose overlays, touch d-pad,
+  mute, fullscreen) rather than just eyeballing it; caught and fixed two real
+  bugs that way (board rendering before the grid existed on first frame, and
+  the fullscreen button visually overlapping the on-canvas timer text).
+  Stopping after phase 1 per the build brief for playtesting.
+- Fixed played-count undercounting: the only ping was a fire-once-per-page-
+  load call, which missed every replay because every game reuses the same
+  Start button (relabelled "Play Again"/"Retry") instead of reloading the
+  page. Replaced it with a delegated click listener in `game-embed.js` that
+  pings on any `[data-kb-play]` element; added that attribute to the actual
+  play-triggering button(s) in all 22 games (careful to pick the right one
+  where a game has more than one candidate button, e.g. Salvo's
+  `startBattleBtn` vs. its setup-phase `startBtn`, Globe Quiz's category
+  buttons + `playAgainBtn`). Documented the convention in CLAUDE.md's
+  "Adding a new game" steps so it isn't dropped on the next game. Verified
+  with Playwright that a page load alone fires zero pings and each Start/
+  Play Again click fires exactly one.
+- Added `changelog.html`, a lightweight player-facing changelog (new games
+  + major fixes per session, not commit-level detail), linked from the
+  landing page footer next to the version tag.
+- Added Fuseblock to the landing page `GAMES` array (brief had this as a
+  Phase 4 item, but moved it up at Krishna's request for easier testing).
+
+## Previous session (2026-07-09)
 - Fixed Crate Stack's HUD/overlay text losing contrast against its pale
   sky-gradient background (the score was rendering directly under the mute
   button, and popups/streak text had no backdrop) — gave it a solid HUD
@@ -62,6 +94,18 @@ Last updated: 2026-07-09, Plot Defender built end-to-end (phases 1-5, onboarding
 - Everything above is committed and pushed to `master`
 
 ## Recent history (last 6 sessions, newest first)
+- 2026-07-15: Fuseblock phase 1 (bomb-arena grid game); fixed played-count
+  to ping on every replay instead of only the first page load; added
+  `changelog.html`; added Fuseblock to the landing page early at Krishna's
+  request
+- 2026-07-11 to 2026-07-14: Added 7 games in one stretch (Slide, Regatta,
+  Losing the Plot, Trebuchet, Hoops, Salvo, Star Salvo), then Castle Hold
+  built end-to-end (4 phases: core hold loop, tiers/melee, waves/matchups,
+  upgrades/onboarding) with several animation and balance passes; added
+  category filter tiles to the landing page; multiple bugfix rounds across
+  Hoops/Trebuchet/Salvo/Losing the Plot after playtesting (this range
+  wasn't logged in detail here at the time - see `git log` for the full
+  commit-level record)
 - 2026-07-09: Plot Defender built end-to-end (5 phases, two rebalance
   passes, onboarding, 3 new maps); Crate Stack contrast fix; play-count
   worker built (pending KV namespace creation)

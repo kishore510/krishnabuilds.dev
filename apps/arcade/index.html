@@ -404,6 +404,11 @@
     text-align: center;
     padding: 18px 0 0;
   }
+  .version-tag a {
+    color: var(--teal);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 </style>
 </head>
 <body>
@@ -660,6 +665,16 @@
       tags: ['arcade', 'shooter', '5 min'],
       path: 'games/star-salvo/index.html',
       published: '2026-07-11'
+    },
+    {
+      name: 'Fuseblock',
+      tagline: 'Plant bombs, crack the arena open, dodge your own blast, find the door.',
+      emoji: '💣',
+      color: 'linear-gradient(135deg, #1c140f, #ff6b35)',
+      category: 'arcade',
+      tags: ['arcade', 'grid', '2 min'],
+      path: 'games/fuseblock/index.html',
+      published: '2026-07-15'
     }
     // Next game:
     // {
@@ -810,8 +825,9 @@
   }).catch(() => {});
 
   if (window.KB_VERSION) {
-    document.getElementById('versionTag').textContent =
-      'v' + window.KB_VERSION + (window.KB_UPDATED ? ' \u00b7 updated ' + window.KB_UPDATED : '');
+    document.getElementById('versionTag').innerHTML =
+      'v' + window.KB_VERSION + (window.KB_UPDATED ? ' \u00b7 updated ' + window.KB_UPDATED : '') +
+      ' \u00b7 <a href="changelog.html">Changelog</a>';
   }
 
   // Layout toggle: single column (default) or multi-column grid, remembered per browser

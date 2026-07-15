@@ -57,6 +57,15 @@ games/<slug>/index.html       — next game goes here
 3. Add one entry to the `GAMES` array near the bottom of `index.html`'s
    inline script (name, tagline, emoji, gradient `color`, `tags`, `path`).
    The card on the landing page is generated entirely from this array.
+4. Add a bare `data-kb-play` attribute to whichever button actually begins
+   a play — the button that's initially labelled "Start"/"Play" and gets
+   relabelled "Play Again"/"Retry" for replays (every game follows this
+   reuse pattern; see e.g. `games/fin-dash/index.html`'s `easyBtn`/`hardBtn`
+   or `games/castle-hold/index.html`'s `startBtn`). `game-embed.js` listens
+   for clicks on `[data-kb-play]` to ping the play-count API — without this
+   attribute a game's plays silently never get counted (page-load alone
+   isn't a reliable proxy: it only ever caught the first attempt, missing
+   every replay via the same reused button).
 
 That's the whole process for a new game — no other files need to change.
 

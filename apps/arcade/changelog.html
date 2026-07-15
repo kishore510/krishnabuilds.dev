@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog — Krishnabuilds Arcade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="assets/version.js"></script>
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #121a2a;
+    --surface-2: #17233a;
+    --teal: #22b8a0;
+    --amber: #ffb703;
+    --text: #eef2f5;
+    --muted: #8a97ab;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    line-height: 1.5;
+  }
+  a { color: var(--teal); }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    padding: 48px 0 8px;
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .back-link:hover { color: var(--text); }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 40px);
+    margin: 0 0 10px;
+  }
+  .lede {
+    font-size: 15.5px;
+    color: var(--muted);
+    max-width: 52ch;
+    margin: 0 0 40px;
+  }
+
+  .timeline { padding: 0 0 64px; }
+  .entry {
+    position: relative;
+    padding: 0 0 32px 26px;
+    border-left: 2px solid rgba(255,255,255,0.08);
+  }
+  .entry:last-child { border-left-color: transparent; }
+  .entry::before {
+    content: '';
+    position: absolute;
+    left: -6px; top: 4px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 4px var(--bg);
+  }
+  .entry-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 6px;
+  }
+  .entry ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .entry li {
+    margin: 0 0 6px;
+    font-size: 15px;
+  }
+  .entry li:last-child { margin-bottom: 0; }
+  .entry .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    padding: 1px 7px;
+    border-radius: 999px;
+    margin-right: 7px;
+    vertical-align: 1px;
+  }
+  .tag.new { background: rgba(34,184,160,0.18); color: var(--teal); }
+  .tag.fix { background: rgba(255,183,3,0.18); color: var(--amber); }
+
+  footer {
+    padding: 24px 0 60px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .version-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(138,151,171,0.55);
+    padding: 18px 0 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back-link" href="index.html">&larr; All games</a>
+    <p class="eyebrow">Krishnabuilds Arcade</p>
+    <h1>Changelog</h1>
+    <p class="lede">What's new and what got fixed, roughly grouped by session — not every commit, just the stuff worth knowing about.</p>
+  </header>
+
+  <div class="timeline">
+    <div class="entry">
+      <p class="entry-date">Jul 15, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Fuseblock — a bomb-arena grid game: plant a bomb, dodge the blast, crack the arena open, find the hidden door (phase 1 of a multi-phase build)</li>
+        <li><span class="tag new">NEW</span>This changelog page</li>
+        <li><span class="tag fix">FIX</span>Played-count now updates on every replay, not just the first time you load a game page</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <p class="entry-date">Jul 12–14, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Castle Hold — a real-time siege defense game (landscape mode): place archers and troops, hold the gate, upgrade as waves escalate</li>
+        <li><span class="tag fix">FIX</span>Several rounds of animation, balance, and readability passes on Castle Hold — troop/weapon/cannon animation, off-screen targeting, HUD contrast</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <p class="entry-date">Jul 11, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Six games in one day: Slide, Regatta, Losing the Plot, Trebuchet, Hoops, Salvo, and Star Salvo</li>
+        <li>Added category filter tiles (Arcade / Racing / Puzzle / Strategy / Sports / Trivia) to the home page</li>
+        <li><span class="tag fix">FIX</span>Follow-up physics and collision fixes across Hoops, Trebuchet, and Salvo after playtesting</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <p class="entry-date">Jul 9, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Plot Defender — an allotment tower-defense game with 4 maps, defence upgrades, and onboarding</li>
+        <li>Home page: added play counts per game and a Newest / Popular sort</li>
+        <li><span class="tag fix">FIX</span>Crate Stack's score and popup text losing contrast against its background</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <p class="entry-date">Jul 8, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Garden Snake, Veg Merge, and Crate Stack</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <p class="entry-date">Jul 7, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Globe Quiz and Lane Racer</li>
+        <li>Reworked Koala Climb's visuals and weather; fixed a Jungle Runner rendering bug</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <p class="entry-date">Jul 6, 2026</p>
+      <ul>
+        <li><span class="tag new">NEW</span>Launch day — Fin Dash, Burrow Bash, Air Hockey, Jungle Runner, Koala Climb, Brick Breaker, Safari Rescue, and the arcade itself</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <p class="version-tag" id="versionTag"></p>
+  </footer>
+</div>
+<script>
+  if (window.KB_VERSION) {
+    document.getElementById('versionTag').textContent =
+      'v' + window.KB_VERSION + (window.KB_UPDATED ? ' · updated ' + window.KB_UPDATED : '');
+  }
+</script>
+</body>
+</html>

@@ -248,12 +248,28 @@
   window.addEventListener('orientationchange', publishChromeMetrics);
 })();
 
-// Fire-and-forget play-count ping, once per page load. Silently does
-// nothing if the slug can't be determined or the API isn't reachable
-// (e.g. the KV-backed worker endpoint isn't deployed yet) - a game must
-// never fail to load because of this.
+// Fire-and-forget play-count ping - once per actual play rather than once
+// per page load, so retrying/replaying counts too. Every game's Start
+// button relabels itself "Play Again"/"Retry" and is reused for replays
+// (rather than a page reload), so a load-time ping alone only ever counted
+// the first attempt. Any button that begins an actual play carries a
+// `data-kb-play` attribute (see CLAUDE.md "Adding a new game") - a
+// delegated click listener pings on those. Silently does nothing if the
+// slug can't be determined or the API isn't reachable (e.g. the KV-backed
+// worker endpoint isn't deployed yet) - a game must never fail to load or
+// play because of this.
 (function () {
   const match = location.pathname.match(/\/games\/([a-z0-9-]+)\//);
   if (!match) return;
-  fetch('/api/play/' + match[1], { method: 'POST' }).catch(() => {});
+  const slug = match[1];
+  let lastPing = 0;
+  function pingPlay() {
+    const now = Date.now();
+    if (now - lastPing < 500) return; // guards a stray double-fire from one click
+    lastPing = now;
+    fetch('/api/play/' + slug, { method: 'POST' }).catch(() => {});
+  }
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-kb-play]')) pingPlay();
+  });
 })();
