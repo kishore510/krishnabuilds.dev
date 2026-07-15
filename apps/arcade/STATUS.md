@@ -1,8 +1,79 @@
 # Krishnabuilds Arcade — Status
 
-Last updated: 2026-07-15, Fuseblock phase 1 + played-count fix + changelog page
+Last updated: 2026-07-15, Fuseblock phases 1-4 complete (core loop, bot tiers +
+levels, power-ups, polish) + played-count fix + changelog page
 
-## This session (2026-07-15)
+## Fuseblock fix-forward + phases 2-4 (2026-07-15, later in the day)
+- Fix-forward pass on Phase 1 issues found in playtesting: d-pad hit zones
+  grew from 28x28 to a ~62px effective tap area; root-caused (not just
+  padded around) why up/down felt unreliable in fullscreen and in general -
+  the four directional hit-zones overlapped each other and, tied on
+  z-index, later-DOM-order zones (left/right) silently stole taps from
+  up/down. Replaced all four with a single big hit-region that computes
+  direction live from pointer position - no overlap possible, and a thumb
+  can slide between directions without lifting. Also found and fixed the
+  actual fullscreen bugs: `#wrap` (the fullscreen element) growing to fill
+  the viewport had stopped coinciding with the canvas's own box once it did
+  its own flex-centering, so every absolutely-positioned control silently
+  drifted off the visible d-pad/bomb button; fixed by adding `#stage` as an
+  inner wrapper that always exactly matches the canvas, with `#wrap` only
+  responsible for growing/centering `#stage`. Separately, `fitCanvas()` was
+  still reserving space for the nav bar/coffee-link even in fullscreen
+  (where neither renders, being outside `#wrap`), so the canvas never
+  visibly grew - fixed. Added a still-missing Phase 1 rule: player-bot cell
+  overlap is now instant death either direction, matching blast contact.
+  Added a lit/pressed glow on the d-pad and a flash on the bomb button so a
+  tap's registration is never in doubt. Real Fullscreen API calls hang in
+  this sandboxed headless environment, so fullscreen fixes were verified by
+  simulating the exact `:fullscreen` CSS state and checking hit-zone
+  alignment + canvas growth against it, not by driving the literal API.
+- Phase 2: five bot tiers (Green/wander, Blue/+chase, Purple/+blast
+  avoidance, Red/+bomb-placing+speed, Gold/+dodge-dash), each strictly the
+  previous tier's behavior plus one new trait, no tier gets blast
+  resistance or extra HP. Bombs gained an `owner` field (player or bot) so
+  bombsActive credits back to whoever placed it. Roguelike level
+  progression - bot count and tier mix ramp on a tunable weighted-pool
+  formula rather than a hand-authored table, no fixed ending, runs until
+  the player dies. Best level reached tracked in sessionStorage.
+- Phase 3: power-ups (Bomb Up, Fire Up, Speed Boots, Kick, Remote
+  Detonate) drop at a tunable 22% chance from destroyed blocks, never the
+  door block, never a type already maxed. Remote Detonate adds a third
+  control button, hidden until picked up, that fires all the player's own
+  armed bombs at once.
+- Phase 4 polish: distinct pickup jingle per power-up type instead of one
+  shared sound; a subtle pitch drop on enemy-placed bombs and a whoosh on
+  Gold's dash as light audio tells; screen shake on explosion (arena only -
+  HUD stays legible) and particle debris on both block destruction and
+  bomb blasts, on top of (not replacing) the Phase 1 crumble/expand/death
+  animations; a proper glowing halo behind the bomb fuse spark instead of
+  a flat dot; re-confirmed the fullscreen toggle still behaves correctly
+  after all the above.
+- Post-phase-4 tuning from live feedback: levels 1-2 only ever spawned 1
+  bot (`botCountForLevel`'s floor was 1), which read as too sparse -
+  bumped the floor to 2 so every level has at least a real threat, cap
+  still 6 (now reached at level 9 instead of 11). Also clarified for
+  Krishna that blocks currently only ever drop power-ups, never bots -
+  bots spawning mid-level from a destroyed block is a different mechanic
+  that isn't built and would need its own design pass (spawn safety,
+  whether it can ambush the player right by a wall they just cleared).
+  Separately, `BOT_SPAWN_CELLS` was ordered corner-by-corner (all 3 cells
+  of one corner, then the next), so low bot counts clustered in a single
+  corner instead of spreading out - 2 bots meant the same corner's first
+  two cells. Reordered to interleave across the three non-player corners
+  (each corner's primary cell first, then each corner's secondary, then
+  tertiary) so N bots always claim N different corners before any corner
+  doubles up. Verified with real coordinates, not just eyeballing it -
+  first verification attempt used a sloppy corner-classifier in the test
+  itself and produced a false negative.
+- Every phase verified with headless Playwright rather than eyeballing it -
+  forced state manipulation to isolate mechanics from the maze/RNG
+  (multiple test bugs caught along the way, e.g. testing movement on an
+  even grid row, which still has real pillars at every even column), plus
+  full real-time simulations to catch anything a scripted shortcut would
+  miss.
+- Everything above is committed and pushed to `master`.
+
+## This session (2026-07-15, earlier)
 - Built Fuseblock phase 1: a bomb-arena grid game (11x13 alternating-pillar
   arena, discrete d-pad movement, single bomb with expanding-blast animation
   that destroys soft blocks and kills on contact including self, one

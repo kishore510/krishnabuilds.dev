@@ -265,10 +265,15 @@ function cellCenterY(r) { return cellY(r) + CELL / 2; }
 const PLAYER_SPAWN = { r: 1, c: 1 };
 // Three safe cells per non-player corner - up to 6 bots (the level-9+ cap)
 // each get a distinct spawn cell with no repeats, cycling through corners.
+// Interleaved across the three non-player corners (primary cell of each
+// corner first, then each corner's secondary, then tertiary) rather than
+// filled corner-by-corner, so low bot counts spread across the arena
+// instead of clustering in a single corner - 2 bots means 2 different
+// corners, not the same corner's first two cells.
 const BOT_SPAWN_CELLS = [
-  { r: 1, c: GRID_COLS - 2 }, { r: 1, c: GRID_COLS - 3 }, { r: 2, c: GRID_COLS - 2 },
-  { r: GRID_ROWS - 2, c: 1 }, { r: GRID_ROWS - 2, c: 2 }, { r: GRID_ROWS - 3, c: 1 },
-  { r: GRID_ROWS - 2, c: GRID_COLS - 2 }, { r: GRID_ROWS - 2, c: GRID_COLS - 3 }, { r: GRID_ROWS - 3, c: GRID_COLS - 2 }
+  { r: 1, c: GRID_COLS - 2 }, { r: GRID_ROWS - 2, c: 1 }, { r: GRID_ROWS - 2, c: GRID_COLS - 2 },
+  { r: 1, c: GRID_COLS - 3 }, { r: GRID_ROWS - 2, c: 2 }, { r: GRID_ROWS - 2, c: GRID_COLS - 3 },
+  { r: 2, c: GRID_COLS - 2 }, { r: GRID_ROWS - 3, c: 1 }, { r: GRID_ROWS - 3, c: GRID_COLS - 2 }
 ];
 const SAFE_ZONES = [
   [PLAYER_SPAWN.r, PLAYER_SPAWN.c], [1, 2], [2, 1],
@@ -296,7 +301,7 @@ const BOT_TIERS = {
 // are a simple tunable pool (not hand-authored per level) so pacing can be
 // adjusted by nudging a few numbers after playtesting, rather than editing
 // per-level tables.
-function botCountForLevel(level) { return Math.min(1 + Math.floor((level - 1) / 2), 6); }
+function botCountForLevel(level) { return Math.min(2 + Math.floor((level - 1) / 2), 6); }
 function pickTierForLevel(level) {
   const pool = [['green', Math.max(1, 10 - level)]];
   if (level >= 3) pool.push(['blue', Math.min(level, 8)]);
@@ -425,8 +430,9 @@ bgGradient.addColorStop(1, COL.bgBottom);
 // ==================== State ====================
 let state = 'ready'; // ready | playing | levelTransition | lost
 let heldDir = null;
-let bombs = [], explosions = [], fx = [], powerups = [];
+let bombs = [], explosions = [], fx = [], powerups = [], particles = [];
 let bombPressFlash = -999;
+let shakeT = 0, shakeMag = 0;
 let player, bots;
 let gameClock = 0;
 let attemptNum = 0;
@@ -454,6 +460,36 @@ function computeBlast(br, bc, range) {
   return cells;
 }
 
+// ==================== Juice: particles + screen shake ====================
+function spawnParticles(x, y, color, count, speed) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = speed * (0.4 + Math.random() * 0.6);
+    const life = 0.3 + Math.random() * 0.3;
+    particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life, maxLife: life, color, size: 2 + Math.random() * 2 });
+  }
+}
+function updateParticles(dt) {
+  for (const p of particles) {
+    p.life -= dt;
+    p.vy += 220 * dt;
+    p.vx *= (1 - Math.min(1, 3 * dt));
+    p.x += p.vx * dt; p.y += p.vy * dt;
+  }
+  particles = particles.filter(p => p.life > 0);
+}
+// The arena shakes, the HUD doesn't (see draw()) - screen shake only around
+// the play area keeps the timer/enemy count/controls always legible even
+// mid-chaos. Magnitude takes the max rather than stacking so a chain of
+// several bombs going off at once doesn't fling the camera absurdly far.
+const SHAKE_DURATION = 0.22;
+function triggerShake(mag) { shakeT = SHAKE_DURATION; shakeMag = Math.max(shakeMag, mag); }
+function updateShake(dt) {
+  if (shakeT <= 0) return;
+  shakeT -= dt;
+  if (shakeT <= 0) { shakeT = 0; shakeMag = 0; }
+}
+
 function buildBotsForLevel(lvl) {
   return botCompositionForLevel(lvl).map((tier, i) => {
     const spawn = BOT_SPAWN_CELLS[i % BOT_SPAWN_CELLS.length];
@@ -474,7 +510,8 @@ function buildBotsForLevel(lvl) {
 // first level of a run and for advancing to the next one mid-run.
 function setupLevel(lvl) {
   grid = buildGrid();
-  bombs = []; explosions = []; fx = []; powerups = [];
+  bombs = []; explosions = []; fx = []; powerups = []; particles = [];
+  shakeT = 0; shakeMag = 0;
   heldDir = null;
   bombPressFlash = -999;
   player.r = PLAYER_SPAWN.r; player.c = PLAYER_SPAWN.c;
@@ -614,7 +651,7 @@ function spawnBomb(owner, r, c, range) {
   const bomb = { r, c, range, fuse: FUSE_TIME, exploded: false, lastTick: 0, owner, remoteTriggered: false, px: cellCenterX(c), py: cellCenterY(r) };
   bombs.push(bomb);
   owner.bombsActive++;
-  playBombPlace();
+  playBombPlace(owner !== player);
   triggerGoldDodge(bomb);
   return bomb;
 }
@@ -635,7 +672,7 @@ function applyPowerup(type, r, c) {
   else if (type === 'remote') { player.hasRemote = true; syncDetonateBtn(); }
   const def = POWERUP_DEFS[type];
   fx.push({ type: 'popup', r, c, start: gameClock, duration: 0.8, text: def.label, color: COL[def.color] });
-  playPowerupPickup();
+  playPickup(type);
 }
 
 function checkPowerupPickup() {
@@ -697,13 +734,28 @@ function noiseBurst(duration, volume, filterFreq, filterType) {
   src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
   src.start();
 }
-function playBombPlace() { tone(160, 0.12, 'sine', 0.14); tone(90, 0.15, 'sine', 0.1, 0.02); }
+function playBombPlace(fromBot) {
+  // Enemy-planted bombs get a slightly darker, lower-pitched thud than the
+  // player's own - a subtle audio tell that something dangerous just
+  // happened off-screen without needing a dedicated per-tier sound.
+  const drop = fromBot ? 0.72 : 1;
+  tone(160 * drop, 0.12, 'sine', 0.14); tone(90 * drop, 0.15, 'sine', 0.1, 0.02);
+}
 function playFuseTick() { tone(1400, 0.04, 'square', 0.05); }
 function playExplosion() { noiseBurst(0.35, 0.22, 900, 'lowpass'); tone(70, 0.3, 'sawtooth', 0.12); }
 function playBlockDestroy() { noiseBurst(0.12, 0.12, 2500, 'highpass'); }
 function playDeath() { tone(300, 0.15, 'sawtooth', 0.15); tone(150, 0.25, 'sawtooth', 0.15, 0.12); }
-function playPowerupPickup() { tone(660, 0.08, 'triangle', 0.14); tone(880, 0.1, 'triangle', 0.14, 0.07); tone(1100, 0.12, 'triangle', 0.15, 0.14); }
 function playKick() { tone(200, 0.08, 'square', 0.12); }
+function playDash() { tone(900, 0.05, 'sine', 0.08); tone(500, 0.08, 'sine', 0.08, 0.04); }
+// Each power-up gets its own short, distinct pickup jingle rather than one
+// shared sound, so a pickup is identifiable by ear alone.
+function playPickup(type) {
+  if (type === 'bombUp') { tone(220, 0.1, 'square', 0.14); tone(330, 0.12, 'square', 0.14, 0.08); }
+  else if (type === 'fireUp') { tone(500, 0.08, 'sawtooth', 0.12); tone(750, 0.08, 'sawtooth', 0.12, 0.06); tone(1000, 0.1, 'sawtooth', 0.13, 0.12); }
+  else if (type === 'speed') { tone(700, 0.05, 'triangle', 0.12); tone(900, 0.05, 'triangle', 0.12, 0.05); tone(1200, 0.08, 'triangle', 0.13, 0.1); }
+  else if (type === 'kick') { tone(440, 0.06, 'square', 0.12); tone(300, 0.08, 'square', 0.1, 0.05); }
+  else if (type === 'remote') { tone(1200, 0.04, 'sine', 0.1); tone(1200, 0.04, 'sine', 0.1, 0.08); tone(1600, 0.08, 'sine', 0.12, 0.16); }
+}
 function playWin() {
   tone(523, 0.12, 'triangle', 0.14, 0);
   tone(659, 0.12, 'triangle', 0.14, 0.12);
@@ -812,6 +864,7 @@ function triggerGoldDodge(bomb) {
       : { dr: 0, dc: dc !== 0 ? Math.sign(dc) : (Math.random() < 0.5 ? 1 : -1) };
     bot.dashSteps = GOLD_DASH_STEPS;
     bot.moveCooldown = 0;
+    playDash();
   }
 }
 
@@ -860,6 +913,7 @@ function onBlastCellLive(r, c) {
   if (cell.type === 2) {
     cell.type = 0;
     fx.push({ type: 'crumble', r, c, start: gameClock, duration: CRUMBLE_MS });
+    spawnParticles(cellCenterX(c), cellCenterY(r), COL.softBlockEdge, 6, 60);
     if (cell.isDoor) {
       cell.doorRevealed = true;
     } else {
@@ -896,6 +950,8 @@ function explodeBomb(bomb) {
   const cells = computeBlast(bomb.r, bomb.c, bomb.range);
   const maxDist = cells.reduce((m, c) => Math.max(m, c.dist), 0);
   explosions.push({ cells, elapsed: 0, maxDist });
+  spawnParticles(cellCenterX(bomb.c), cellCenterY(bomb.r), COL.emberBright, 12, 110);
+  triggerShake(4 + Math.min(maxDist, 3));
   playExplosion();
 }
 
@@ -986,6 +1042,8 @@ function update(dt) {
   updateBombs(dt);
   updateExplosions(dt);
   updateDeaths(dt);
+  updateParticles(dt);
+  updateShake(dt);
   checkWin();
   fx = fx.filter(f => gameClock - f.start < f.duration);
 }
@@ -1134,6 +1192,15 @@ function drawBomb(bomb) {
   ctx.moveTo(0, -CELL / 2 + 3);
   ctx.quadraticCurveTo(4, -CELL / 2 - 2, 2, -CELL / 2 - 7);
   ctx.stroke();
+  // Soft halo behind the spark, brightening and widening as the fuse gets
+  // more urgent, so the tip actually glows rather than just being a solid dot.
+  const sparkGlow = ctx.createRadialGradient(2, -CELL / 2 - 7, 0, 2, -CELL / 2 - 7, 5 + frac * 4);
+  sparkGlow.addColorStop(0, `rgba(255,179,71,${0.7 + frac * 0.3})`);
+  sparkGlow.addColorStop(1, 'rgba(255,179,71,0)');
+  ctx.fillStyle = sparkGlow;
+  ctx.beginPath();
+  ctx.arc(2, -CELL / 2 - 7, 5 + frac * 4, 0, Math.PI * 2);
+  ctx.fill();
   ctx.fillStyle = COL.emberBright;
   ctx.beginPath();
   ctx.arc(2, -CELL / 2 - 7, 2 + Math.sin(gameClock * 20) * 0.6, 0, Math.PI * 2);
@@ -1359,16 +1426,35 @@ function drawLevelBanner() {
   ctx.restore();
 }
 
+function drawParticles() {
+  for (const p of particles) {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+    ctx.restore();
+  }
+}
+
 function draw() {
+  // Screen shake only wraps the arena, not drawHUD()/the level banner below -
+  // the timer, enemy count, and controls should stay legible even mid-chaos.
+  ctx.save();
+  if (shakeT > 0) {
+    const s = shakeMag * (shakeT / SHAKE_DURATION);
+    ctx.translate((Math.random() * 2 - 1) * s, (Math.random() * 2 - 1) * s);
+  }
   drawBackground();
   drawBoard();
   drawPowerups();
   drawCrumbleFx();
   for (const b of bombs) drawBomb(b);
   drawExplosions();
+  drawParticles();
   drawBots();
   drawPlayer();
   drawPopups();
+  ctx.restore();
   drawHUD();
   if (state === 'levelTransition') drawLevelBanner();
 }

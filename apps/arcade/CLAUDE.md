@@ -41,6 +41,7 @@ games/brick-breaker/index.html — Brick Breaker (canvas, drag-steered paddle, c
 games/safari-rescue/index.html — Safari Rescue (canvas, discrete lane-switch dodge-and-collect vs. a timer)
 games/lane-racer/index.html   — Lane Racer (canvas, lane-changing traffic/potholes/roadblocks dodge with fuel management)
 games/globe-quiz/index.html   — Globe Quiz (DOM, timed multiple-choice trivia: capitals/flags, no Easy/Hard — see note below)
+games/fuseblock/index.html    — Fuseblock (canvas, bomb-placement grid arena: 5 bot tiers, roguelike level progression, power-ups)
 games/<slug>/index.html       — next game goes here
 ```
 
