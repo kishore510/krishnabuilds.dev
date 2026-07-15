@@ -101,6 +101,19 @@
     -webkit-user-select: none;
     user-select: none;
   }
+  /* Third control button, top-right of the bomb button - only shown once the
+     Remote Detonate power-up is picked up (see syncDetonateBtn), never a
+     permanent unused button on screen. */
+  #detonateBtn {
+    left: calc(323px * var(--game-scale, 1));
+    top: calc(431px * var(--game-scale, 1));
+    width: calc(30px * var(--game-scale, 1));
+    height: calc(30px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    background: rgba(74,158,255,0.25);
+    border-color: #4a9eff;
+    display: none;
+  }
   #overlay {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -149,6 +162,7 @@
 
     <div id="dpadZone"></div>
     <div id="bombBtn"></div>
+    <button id="detonateBtn" class="kbz-btn" type="button">💥</button>
 
     <div id="overlay">
       <h1 id="ovTitle">FUSEBLOCK</h1>
@@ -173,6 +187,7 @@ const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 const fsEnterBtn = document.getElementById('fsEnterBtn');
 const fsExitBtn = document.getElementById('fsExitBtn');
+const detonateBtn = document.getElementById('detonateBtn');
 
 const W = canvas.width, H = canvas.height;
 
@@ -300,6 +315,34 @@ function botCompositionForLevel(level) {
   return tiers;
 }
 
+// ==================== Power-ups ====================
+// Dropped at random from destroyed soft blocks (never the door block, and
+// never a type the player has already maxed, so a drop always means
+// something). Caps exist so a long run doesn't turn unreadable or trivial:
+// bomb cap and blast range both stop well short of covering the arena, and
+// speed/kick/remote are each capped or one-shot rather than unbounded.
+const POWERUP_DROP_RATE = 0.22;
+const MAX_BOMB_CAP = 5;
+const MAX_BLAST_RANGE = 4;
+const MAX_SPEED_TIER = 3;
+const SPEED_STEPS = [0.15, 0.125, 0.105, 0.09]; // indexed by speedTier 0-3
+const POWERUP_DEFS = {
+  bombUp: { label: '+B', color: 'emberBright' },
+  fireUp: { label: '+F', color: 'textAlert' },
+  speed:  { label: 'SP', color: 'player' },
+  kick:   { label: 'KK', color: 'botPurple' },
+  remote: { label: 'RD', color: 'botBlue' }
+};
+function availablePowerupTypes() {
+  const types = [];
+  if (player.bombCap < MAX_BOMB_CAP) types.push('bombUp');
+  if (player.blastRange < MAX_BLAST_RANGE) types.push('fireUp');
+  if (player.speedTier < MAX_SPEED_TIER) types.push('speed');
+  if (!player.hasKick) types.push('kick');
+  if (!player.hasRemote) types.push('remote');
+  return types;
+}
+
 let grid;
 
 function buildGrid() {
@@ -346,6 +389,11 @@ function canEnter(r, c) {
   return true;
 }
 function bombAt(r, c) { return bombs.find(b => b.r === r && b.c === c && !b.exploded); }
+function cellType(r, c) {
+  if (r < 0 || r >= GRID_ROWS || c < 0 || c >= GRID_COLS) return -1;
+  return grid[r][c].type;
+}
+function cellIsOpenFloor(r, c) { return cellType(r, c) === 0 && !bombAt(r, c); }
 
 // ==================== Tuning ====================
 const FUSE_TIME = 2.2;
@@ -353,7 +401,6 @@ const EXPAND_STEP = 0.15;
 const HOT_MS = 0.22;
 const FADE_MS = 0.15;
 const DEATH_ANIM = 0.3;
-const PLAYER_STEP = 0.15;
 const BOT_STEP = 0.34;
 const CRUMBLE_MS = 0.28;
 
@@ -378,7 +425,7 @@ bgGradient.addColorStop(1, COL.bgBottom);
 // ==================== State ====================
 let state = 'ready'; // ready | playing | levelTransition | lost
 let heldDir = null;
-let bombs = [], explosions = [], fx = [];
+let bombs = [], explosions = [], fx = [], powerups = [];
 let bombPressFlash = -999;
 let player, bots;
 let gameClock = 0;
@@ -427,7 +474,7 @@ function buildBotsForLevel(lvl) {
 // first level of a run and for advancing to the next one mid-run.
 function setupLevel(lvl) {
   grid = buildGrid();
-  bombs = []; explosions = []; fx = [];
+  bombs = []; explosions = []; fx = []; powerups = [];
   heldDir = null;
   bombPressFlash = -999;
   player.r = PLAYER_SPAWN.r; player.c = PLAYER_SPAWN.c;
@@ -444,8 +491,10 @@ function resetRun() {
     r: PLAYER_SPAWN.r, c: PLAYER_SPAWN.c,
     px: cellCenterX(PLAYER_SPAWN.c), py: cellCenterY(PLAYER_SPAWN.r),
     moveCooldown: 0, bombCap: 1, blastRange: 1, bombsActive: 0,
+    speedTier: 0, hasKick: false, hasRemote: false,
     dying: false, dead: false, deathT: 0, deathCause: null
   };
+  syncDetonateBtn();
   setupLevel(level);
 }
 
@@ -562,7 +611,7 @@ document.addEventListener('keyup', (e) => {
 // credit the right bombsActive count back on explosion) and the Gold dash
 // trigger only need to live in one place.
 function spawnBomb(owner, r, c, range) {
-  const bomb = { r, c, range, fuse: FUSE_TIME, exploded: false, lastTick: 0, owner };
+  const bomb = { r, c, range, fuse: FUSE_TIME, exploded: false, lastTick: 0, owner, remoteTriggered: false, px: cellCenterX(c), py: cellCenterY(r) };
   bombs.push(bomb);
   owner.bombsActive++;
   playBombPlace();
@@ -577,6 +626,36 @@ function placeBomb() {
   spawnBomb(player, player.r, player.c, player.blastRange);
   bombPressFlash = gameClock;
 }
+
+function applyPowerup(type, r, c) {
+  if (type === 'bombUp' && player.bombCap < MAX_BOMB_CAP) player.bombCap++;
+  else if (type === 'fireUp' && player.blastRange < MAX_BLAST_RANGE) player.blastRange++;
+  else if (type === 'speed' && player.speedTier < MAX_SPEED_TIER) player.speedTier++;
+  else if (type === 'kick') player.hasKick = true;
+  else if (type === 'remote') { player.hasRemote = true; syncDetonateBtn(); }
+  const def = POWERUP_DEFS[type];
+  fx.push({ type: 'popup', r, c, start: gameClock, duration: 0.8, text: def.label, color: COL[def.color] });
+  playPowerupPickup();
+}
+
+function checkPowerupPickup() {
+  const idx = powerups.findIndex(p => p.r === player.r && p.c === player.c);
+  if (idx === -1) return;
+  applyPowerup(powerups[idx].type, powerups[idx].r, powerups[idx].c);
+  powerups.splice(idx, 1);
+}
+
+// Remote Detonate replaces auto-fuse with player-triggered for the
+// player's own bombs only (see updateBombs) - this button fires all of
+// them at once. Hidden until the power-up is actually picked up.
+function syncDetonateBtn() { detonateBtn.style.display = player.hasRemote ? 'flex' : 'none'; }
+function detonateAll() {
+  if (!player.hasRemote) return;
+  for (const b of bombs) {
+    if (!b.exploded && b.owner === player) { b.remoteTriggered = true; b.fuse = 0; }
+  }
+}
+detonateBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); detonateAll(); });
 
 // ==================== Audio ====================
 let audioCtx = null;
@@ -623,6 +702,8 @@ function playFuseTick() { tone(1400, 0.04, 'square', 0.05); }
 function playExplosion() { noiseBurst(0.35, 0.22, 900, 'lowpass'); tone(70, 0.3, 'sawtooth', 0.12); }
 function playBlockDestroy() { noiseBurst(0.12, 0.12, 2500, 'highpass'); }
 function playDeath() { tone(300, 0.15, 'sawtooth', 0.15); tone(150, 0.25, 'sawtooth', 0.15, 0.12); }
+function playPowerupPickup() { tone(660, 0.08, 'triangle', 0.14); tone(880, 0.1, 'triangle', 0.14, 0.07); tone(1100, 0.12, 'triangle', 0.15, 0.14); }
+function playKick() { tone(200, 0.08, 'square', 0.12); }
 function playWin() {
   tone(523, 0.12, 'triangle', 0.14, 0);
   tone(659, 0.12, 'triangle', 0.14, 0.12);
@@ -645,8 +726,20 @@ function updatePlayer(dt) {
   if (heldDir && player.moveCooldown <= 0) {
     const d = DIRS[heldDir];
     const nr = player.r + d.dr, nc = player.c + d.dc;
-    if (canEnter(nr, nc)) { player.r = nr; player.c = nc; }
-    player.moveCooldown = PLAYER_STEP;
+    if (canEnter(nr, nc)) {
+      player.r = nr; player.c = nc;
+    } else if (player.hasKick && cellType(nr, nc) === 0) {
+      // Blocked by a bomb specifically (canEnter already ruled out walls/
+      // soft blocks failing this branch) - punch it one cell further along
+      // the same direction if that cell is open, then step into its spot.
+      const kicked = bombAt(nr, nc);
+      if (kicked && cellIsOpenFloor(nr + d.dr, nc + d.dc)) {
+        kicked.r = nr + d.dr; kicked.c = nc + d.dc;
+        player.r = nr; player.c = nc;
+        playKick();
+      }
+    }
+    player.moveCooldown = SPEED_STEPS[player.speedTier];
   }
   const tx = cellCenterX(player.c), ty = cellCenterY(player.r);
   player.px += (tx - player.px) * Math.min(1, dt * 14);
@@ -766,9 +859,21 @@ function onBlastCellLive(r, c) {
   const cell = grid[r][c];
   if (cell.type === 2) {
     cell.type = 0;
-    fx.push({ type: 'crumble', r, c, start: gameClock });
-    if (cell.isDoor) cell.doorRevealed = true;
+    fx.push({ type: 'crumble', r, c, start: gameClock, duration: CRUMBLE_MS });
+    if (cell.isDoor) {
+      cell.doorRevealed = true;
+    } else {
+      const avail = availablePowerupTypes();
+      if (avail.length > 0 && Math.random() < POWERUP_DROP_RATE) {
+        powerups.push({ r, c, type: avail[Math.floor(Math.random() * avail.length)] });
+      }
+    }
     playBlockDestroy();
+  } else {
+    // Not a fresh destruction this frame (already floor) - a later blast
+    // passing through here should sweep away anything sitting uncollected,
+    // rather than leaving an orphaned power-up under live fire.
+    powerups = powerups.filter(p => !(p.r === r && p.c === c));
   }
   const chained = bombAt(r, c);
   if (chained) chained.fuse = 0;
@@ -797,12 +902,20 @@ function explodeBomb(bomb) {
 function updateBombs(dt) {
   for (const b of bombs) {
     if (b.exploded) continue;
-    b.fuse -= dt;
-    if (b.fuse <= 1.0) {
+    // Remote Detonate freezes the player's own bombs' fuses - they only go
+    // off when detonateAll() flags them, never on their own. Bot-placed
+    // bombs and the player's bombs from before picking up Remote (already
+    // ticking) are unaffected.
+    const frozen = b.owner === player && player.hasRemote && !b.remoteTriggered;
+    if (!frozen) b.fuse -= dt;
+    if (!frozen && b.fuse <= 1.0) {
       b.lastTick += dt;
       if (b.lastTick > 0.22) { playFuseTick(); b.lastTick = 0; }
     }
     if (b.fuse <= 0) explodeBomb(b);
+    const tx = cellCenterX(b.c), ty = cellCenterY(b.r);
+    b.px += (tx - b.px) * Math.min(1, dt * 16);
+    b.py += (ty - b.py) * Math.min(1, dt * 16);
   }
   bombs = bombs.filter(b => !b.exploded);
 }
@@ -867,13 +980,14 @@ function update(dt) {
   if (state !== 'playing') return;
   gameClock += dt;
   updatePlayer(dt);
+  checkPowerupPickup();
   for (const bot of bots) updateBot(bot, dt);
   checkContactKill();
   updateBombs(dt);
   updateExplosions(dt);
   updateDeaths(dt);
   checkWin();
-  fx = fx.filter(f => gameClock - f.start < CRUMBLE_MS);
+  fx = fx.filter(f => gameClock - f.start < f.duration);
 }
 
 // ==================== Draw ====================
@@ -943,7 +1057,8 @@ function drawBoard() {
 
 function drawCrumbleFx() {
   for (const f of fx) {
-    const t = (gameClock - f.start) / CRUMBLE_MS;
+    if (f.type !== 'crumble') continue;
+    const t = (gameClock - f.start) / f.duration;
     const x = cellX(f.c), y = cellY(f.r);
     ctx.save();
     ctx.globalAlpha = Math.max(0, 1 - t);
@@ -955,8 +1070,45 @@ function drawCrumbleFx() {
   }
 }
 
+function drawPopups() {
+  for (const f of fx) {
+    if (f.type !== 'popup') continue;
+    const t = (gameClock - f.start) / f.duration;
+    const x = cellCenterX(f.c), y = cellCenterY(f.r) - t * 18;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 1 - t);
+    ctx.fillStyle = f.color;
+    ctx.font = 'bold 10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(f.text, x, y);
+    ctx.restore();
+  }
+}
+
+function drawPowerups() {
+  for (const p of powerups) {
+    const x = cellCenterX(p.c), y = cellCenterY(p.r);
+    const def = POWERUP_DEFS[p.type];
+    ctx.save();
+    ctx.globalAlpha = 0.85 + 0.15 * Math.sin(gameClock * 5 + p.r + p.c);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.beginPath();
+    ctx.arc(x, y, CELL / 2 - 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = COL[def.color];
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = COL[def.color];
+    ctx.font = 'bold 9px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(def.label, x, y + 0.5);
+    ctx.restore();
+  }
+}
+
 function drawBomb(bomb) {
-  const x = cellCenterX(bomb.c), y = cellCenterY(bomb.r);
+  const x = bomb.px, y = bomb.py;
   const frac = 1 - bomb.fuse / FUSE_TIME;
   const pulseFreq = 3 + frac * 9;
   const scale = 1 + 0.14 * Math.sin(gameClock * pulseFreq * Math.PI * 2) * frac + 0.03 * Math.sin(gameClock * 3);
@@ -1117,6 +1269,19 @@ function drawMiniBomb(x, y, active) {
   ctx.restore();
 }
 
+function drawRangePip(x, y, active) {
+  ctx.save();
+  ctx.globalAlpha = active ? 1 : 0.25;
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath();
+  ctx.arc(x, y, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = active ? COL.textAlert : '#555';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawHUD() {
   ctx.fillStyle = COL.hudBg;
   ctx.fillRect(0, 0, W, HUD_TOP);
@@ -1150,12 +1315,30 @@ function drawHUD() {
   drawDpadGraphic();
   drawBombButtonGraphic();
 
+  const bandTop = H - HUD_BOTTOM;
   ctx.font = '9px monospace';
   ctx.fillStyle = COL.textDim;
   ctx.textAlign = 'center';
-  ctx.fillText('BOMBS', 180, H - HUD_BOTTOM + 18);
+  ctx.fillText('BOMBS', 180, bandTop + 18);
   for (let i = 0; i < player.bombCap; i++) {
-    drawMiniBomb(180 - (player.bombCap - 1) * 10 + i * 20, H - HUD_BOTTOM + 34, i < player.bombsActive);
+    drawMiniBomb(180 - (player.bombCap - 1) * 10 + i * 20, bandTop + 34, i < player.bombsActive);
+  }
+
+  ctx.font = '9px monospace';
+  ctx.fillStyle = COL.textDim;
+  ctx.fillText('RANGE', 180, bandTop + 50);
+  for (let i = 0; i < MAX_BLAST_RANGE; i++) {
+    drawRangePip(180 - (MAX_BLAST_RANGE - 1) * 9 + i * 18, bandTop + 64, i < player.blastRange);
+  }
+
+  const badges = [];
+  if (player.speedTier > 0) badges.push('SPD' + player.speedTier);
+  if (player.hasKick) badges.push('KICK');
+  if (player.hasRemote) badges.push('RD');
+  if (badges.length > 0) {
+    ctx.font = '8px monospace';
+    ctx.fillStyle = COL.textDim;
+    ctx.fillText(badges.join('  '), 180, bandTop + 80);
   }
 }
 
@@ -1179,11 +1362,13 @@ function drawLevelBanner() {
 function draw() {
   drawBackground();
   drawBoard();
+  drawPowerups();
   drawCrumbleFx();
   for (const b of bombs) drawBomb(b);
   drawExplosions();
   drawBots();
   drawPlayer();
+  drawPopups();
   drawHUD();
   if (state === 'levelTransition') drawLevelBanner();
 }
