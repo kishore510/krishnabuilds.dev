@@ -26,6 +26,15 @@
     display: flex; align-items: center; justify-content: center;
     background: #0d0a08;
   }
+  /* #wrap grows to the full viewport and flex-centers #stage once it becomes
+     the fullscreen element - #stage (not #wrap) is what the canvas and every
+     absolutely-positioned control actually measures against, so it always
+     exactly coincides with the canvas's own box. Positioning controls
+     directly against #wrap instead would misalign them the moment #wrap's
+     box stops matching the canvas's box, i.e. exactly in fullscreen. */
+  #stage {
+    position: relative;
+  }
   canvas {
     background: #120d09;
     border-radius: 6px;
@@ -72,10 +81,15 @@
     -webkit-user-select: none;
     user-select: none;
   }
-  #dzUp    { left: calc(46px  * var(--game-scale, 1)); top: calc(456px * var(--game-scale, 1)); width: calc(28px * var(--game-scale, 1)); height: calc(28px * var(--game-scale, 1)); }
-  #dzDown  { left: calc(46px  * var(--game-scale, 1)); top: calc(500px * var(--game-scale, 1)); width: calc(28px * var(--game-scale, 1)); height: calc(28px * var(--game-scale, 1)); }
-  #dzLeft  { left: calc(24px  * var(--game-scale, 1)); top: calc(478px * var(--game-scale, 1)); width: calc(28px * var(--game-scale, 1)); height: calc(28px * var(--game-scale, 1)); }
-  #dzRight { left: calc(68px  * var(--game-scale, 1)); top: calc(478px * var(--game-scale, 1)); width: calc(28px * var(--game-scale, 1)); height: calc(28px * var(--game-scale, 1)); }
+  /* Each zone is a 48x48 minimum touch target (up from the original 28x28,
+     which read as fiddly next to the 56px bomb button) plus ~7px of
+     invisible hit-padding on every side, for a ~62px effective tap area -
+     centered on the same points as before so the drawn d-pad graphic and
+     the gap between zones don't move, only how forgiving each zone is. */
+  #dzUp    { left: calc(29px * var(--game-scale, 1)); top: calc(439px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
+  #dzDown  { left: calc(29px * var(--game-scale, 1)); top: calc(483px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
+  #dzLeft  { left: calc(7px  * var(--game-scale, 1)); top: calc(461px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
+  #dzRight { left: calc(51px * var(--game-scale, 1)); top: calc(461px * var(--game-scale, 1)); width: calc(62px * var(--game-scale, 1)); height: calc(62px * var(--game-scale, 1)); }
   #bombBtn {
     position: absolute;
     z-index: 5;
@@ -125,24 +139,26 @@
 </head>
 <body>
 <div id="wrap">
-  <canvas id="game" width="360" height="540"></canvas>
+  <div id="stage">
+    <canvas id="game" width="360" height="540"></canvas>
 
-  <button id="muteBtn" class="kbz-btn" type="button">🔊</button>
-  <button id="fsEnterBtn" class="kbz-btn" type="button">⛶</button>
-  <button id="fsExitBtn" class="kbz-btn" type="button">✕</button>
+    <button id="muteBtn" class="kbz-btn" type="button">🔊</button>
+    <button id="fsEnterBtn" class="kbz-btn" type="button">⛶</button>
+    <button id="fsExitBtn" class="kbz-btn" type="button">✕</button>
 
-  <div id="dzUp" class="dpad-zone" data-dir="up"></div>
-  <div id="dzDown" class="dpad-zone" data-dir="down"></div>
-  <div id="dzLeft" class="dpad-zone" data-dir="left"></div>
-  <div id="dzRight" class="dpad-zone" data-dir="right"></div>
-  <div id="bombBtn"></div>
+    <div id="dzUp" class="dpad-zone" data-dir="up"></div>
+    <div id="dzDown" class="dpad-zone" data-dir="down"></div>
+    <div id="dzLeft" class="dpad-zone" data-dir="left"></div>
+    <div id="dzRight" class="dpad-zone" data-dir="right"></div>
+    <div id="bombBtn"></div>
 
-  <div id="overlay">
-    <h1 id="ovTitle">FUSEBLOCK</h1>
-    <p id="ovSubtitle">Plant bombs. Crack the arena open. Find the door.</p>
-    <p id="ovScore" style="display:none;"></p>
-    <button id="startBtn" type="button" data-kb-play>Start</button>
-    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    <div id="overlay">
+      <h1 id="ovTitle">FUSEBLOCK</h1>
+      <p id="ovSubtitle">Plant bombs. Crack the arena open. Find the door.</p>
+      <p id="ovScore" style="display:none;"></p>
+      <button id="startBtn" type="button" data-kb-play>Start</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    </div>
   </div>
 </div>
 
@@ -163,7 +179,11 @@ const fsExitBtn = document.getElementById('fsExitBtn');
 const W = canvas.width, H = canvas.height;
 
 function fitCanvas() {
-  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  // The shared nav bar and coffee-link live outside #wrap, so once #wrap is
+  // the fullscreen element they aren't rendered at all - reserving their
+  // height in that state was leaving a permanent, pointless margin around a
+  // canvas that never grew to use the freed-up screen space.
+  const reserved = isFs() ? 0 : (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
   const availH = window.innerHeight - reserved;
   const scale = Math.min(window.innerWidth / W, availH / H);
   canvas.style.width = (W * scale) + 'px';
@@ -349,7 +369,7 @@ function resetLevel() {
     r: PLAYER_SPAWN.r, c: PLAYER_SPAWN.c,
     px: cellCenterX(PLAYER_SPAWN.c), py: cellCenterY(PLAYER_SPAWN.r),
     moveCooldown: 0, bombCap: 1, blastRange: 1, bombsActive: 0,
-    dying: false, dead: false, deathT: 0
+    dying: false, dead: false, deathT: 0, deathCause: null
   };
   bots = [{
     r: BOT_SPAWN.r, c: BOT_SPAWN.c,
@@ -398,7 +418,8 @@ function endWin() {
 }
 function endLose() {
   state = 'lost';
-  showOverlay('CAUGHT IN THE BLAST', 'Attempt #' + attemptNum, 'Best time: ' + (bestTime ? fmtTime(bestTime) : '--'));
+  const title = player.deathCause === 'contact' ? 'CAUGHT BY A BOT' : 'CAUGHT IN THE BLAST';
+  showOverlay(title, 'Attempt #' + attemptNum, 'Best time: ' + (bestTime ? fmtTime(bestTime) : '--'));
 }
 
 function fmtTime(t) {
@@ -559,7 +580,7 @@ function onBlastCellLive(r, c) {
 
 function checkBlastKill(r, c) {
   if (!player.dying && !player.dead && player.r === r && player.c === c) {
-    player.dying = true; player.deathT = 0; playDeath();
+    player.dying = true; player.deathT = 0; player.deathCause = 'blast'; playDeath();
   }
   for (const bot of bots) {
     if (!bot.dying && !bot.dead && bot.r === r && bot.c === c) {
@@ -618,6 +639,20 @@ function updateDeaths(dt) {
   }
 }
 
+// Contact is checked as plain cell-overlap after both the player and every
+// bot have moved for the frame, so it catches either direction (the bot
+// walking into the player, or the player walking into the bot) with the
+// same rule - only the player dies, bots pass through each other freely.
+function checkContactKill() {
+  if (player.dying || player.dead) return;
+  for (const bot of bots) {
+    if (!bot.dying && !bot.dead && bot.r === player.r && bot.c === player.c) {
+      player.dying = true; player.deathT = 0; player.deathCause = 'contact'; playDeath();
+      return;
+    }
+  }
+}
+
 function checkWin() {
   if (state !== 'playing') return;
   if (player.dying || player.dead) return;
@@ -631,6 +666,7 @@ function update(dt) {
   gameClock += dt;
   updatePlayer(dt);
   for (const bot of bots) updateBot(bot, dt);
+  checkContactKill();
   updateBombs(dt);
   updateExplosions(dt);
   updateDeaths(dt);
