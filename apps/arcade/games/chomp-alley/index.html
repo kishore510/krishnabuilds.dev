@@ -365,6 +365,8 @@ const COL = {
   glint: '#3fd9ff', glintDark: '#0e4a57',
   drift: '#ff9f40', driftDark: '#7a3c0f',
   wisp: '#c77dff', wispDark: '#4a1f70',
+  frightened: '#2b3fd6', frightenedWarn: '#e8ecff',
+  eyesWhite: '#f0eaff', eyesPupil: '#1a1330',
   textMain: '#f0eaff', textDim: '#8a7fae', textAlert: '#ff6b6b'
 };
 
@@ -428,6 +430,19 @@ let invulnerableT = 0;
 let pelletsEatenThisLife = 0;
 let lifeElapsedT = 0;
 
+// Frightened state: a single global countdown (not per-ghost) - any ghost
+// that isn't currently eaten is frightened exactly when this is > 0. Also
+// shortens slightly each maze clear, per the brief.
+let frightenedT = 0;
+let frightenedDuration = 7;
+const FRIGHTENED_DURATION_FLOOR = 3;
+const FRIGHTENED_DURATION_SHRINK_PER_CLEAR = 0.3;
+const FRIGHTENED_SPEED_MULT = 1.6; // frightened ghosts are noticeably slower
+const EYES_TILE_TIME = 0.08; // eaten ghosts race back to the box fast
+const EYES_RESPAWN_COOLDOWN = 2; // sits in the box briefly before rejoining
+let eatenComboCount = 0;
+const GHOST_EAT_SCORES = [200, 400, 800, 1600];
+
 function resetEntities() {
   player = makeEntity(PLAYER_SPAWN, playerTileTime, true);
   ghosts = GHOST_DEFS.map((def) => {
@@ -436,15 +451,26 @@ function resetEntities() {
     g.color = def.color;
     g.personality = def.personality;
     g.home = def.home;
+    g.boxR = GHOST_SPAWN_ROW;
+    g.boxC = def.spawnC;
     g.wanderDir = { dr: 0, dc: 0 };
     g.wanderTimer = 0;
     g.released = false;
     g.releasePellets = def.releasePellets;
     g.releaseTime = def.releaseTime;
+    g.eaten = false;
+    g.respawnCooldownT = 0;
     return g;
   });
   pelletsEatenThisLife = 0;
   lifeElapsedT = 0;
+  frightenedT = 0;
+  eatenComboCount = 0;
+}
+function ghostMode(g) {
+  if (g.eaten) return 'eyes';
+  if (frightenedT > 0) return 'frightened';
+  return 'normal';
 }
 
 // Live input intent - joystick or keyboard, whichever fired last. An ordered
@@ -453,7 +479,12 @@ function resetEntities() {
 // blocked but the secondary one is open (see candidateDirsFromDelta).
 let desiredDirs = [];
 
-function stepEntity(entity, wantedDirs, dt) {
+// `speed` (seconds/tile) is only consulted at the instant a new tween
+// begins, locked into entity.tileTime for that tween's whole duration -
+// a mode change (e.g. normal -> frightened) mid-tween must never rewrite
+// the denominator an in-flight px/py interpolation is already using, or
+// the sprite visibly jumps.
+function stepEntity(entity, wantedDirs, dt, speed) {
   if (entity.moveCooldown > 0) {
     entity.moveCooldown = Math.max(0, entity.moveCooldown - dt);
   }
@@ -470,7 +501,8 @@ function stepEntity(entity, wantedDirs, dt) {
       entity.prevR = entity.r; entity.prevC = entity.c;
       entity.r = next.r; entity.c = next.c;
       entity.dir = dir;
-      entity.moveCooldown = entity.tileTime;
+      entity.tileTime = speed;
+      entity.moveCooldown = speed;
       entity.wrapStep = next.wrapped;
       if (next.wrapped) {
         // Snap instantly across the wrap rather than tweening the whole
@@ -778,6 +810,7 @@ function resetRun() {
   score = 0; lives = 3; level = 1;
   playerTileTime = 0.15;
   ghostTileTime = 0.188;
+  frightenedDuration = 7;
   setupMaze();
 }
 
@@ -839,16 +872,46 @@ function clearMaze() {
 function startNextMaze() {
   level++;
   ghostTileTime = Math.max(GHOST_TILE_TIME_FLOOR, ghostTileTime - GHOST_SPEEDUP_PER_CLEAR);
+  frightenedDuration = Math.max(FRIGHTENED_DURATION_FLOOR, frightenedDuration - FRIGHTENED_DURATION_SHRINK_PER_CLEAR);
   setupMaze();
   state = 'playing';
+}
+
+function eatGhost(g) {
+  g.eaten = true;
+  eatenComboCount++;
+  const idx = Math.min(eatenComboCount - 1, GHOST_EAT_SCORES.length - 1);
+  score += GHOST_EAT_SCORES[idx];
+  playPelletEat();
+}
+
+function triggerFrightened() {
+  frightenedT = frightenedDuration;
+  eatenComboCount = 0;
+  for (const g of ghosts) {
+    if (g.eaten) continue; // already-eaten eyes keep racing home, unaffected
+    // Direction instantly reverses the moment frightened triggers - flip
+    // both the entity's actual heading AND the wander target it'll read on
+    // its very next decision, or wanderDir() would just re-roll randomly
+    // and the reversal would never actually show up in its movement.
+    const rev = { dr: -g.dir.dr, dc: -g.dir.dc };
+    g.dir = rev;
+    g.wanderDir = rev;
+    g.wanderTimer = 0.6 + Math.random() * 0.8;
+  }
 }
 
 function checkContact() {
   if (invulnerableT > 0) return;
   for (const g of ghosts) {
-    if (!g.released) continue;
+    if (!g.released || g.respawnCooldownT > 0) continue;
     const dist = Math.hypot(player.px - g.px, player.py - g.py);
-    if (dist < TILE * 0.55) { loseLife(); return; }
+    if (dist >= TILE * 0.55) continue;
+    const mode = ghostMode(g);
+    if (mode === 'eyes') continue; // harmless, already eaten
+    if (mode === 'frightened') { eatGhost(g); continue; }
+    loseLife();
+    return;
   }
 }
 function checkPelletPickup() {
@@ -859,6 +922,7 @@ function checkPelletPickup() {
   pelletsEatenThisLife++;
   score += type === 'power' ? 50 : 10;
   playPelletEat();
+  if (type === 'power') triggerFrightened();
   if (remainingPellets <= 0) clearMaze();
 }
 
@@ -876,11 +940,30 @@ function update(dt) {
   }
   if (state !== 'playing') return;
   if (invulnerableT > 0) invulnerableT = Math.max(0, invulnerableT - dt);
+  if (frightenedT > 0) frightenedT = Math.max(0, frightenedT - dt);
   updateGhostPhase(dt);
   updateGhostRelease(dt);
-  stepEntity(player, desiredDirs, dt);
+  stepEntity(player, desiredDirs, dt, playerTileTime);
   for (const g of ghosts) {
-    if (g.released) stepEntity(g, ghostDesiredDir(g, dt), dt);
+    if (!g.released) continue;
+    if (g.eaten && g.r === g.boxR && g.c === g.boxC) {
+      // Arrived home - respawns normally after a short cooldown rather
+      // than instantly rejoining the hunt.
+      g.eaten = false;
+      g.respawnCooldownT = EYES_RESPAWN_COOLDOWN;
+    }
+    if (g.respawnCooldownT > 0) {
+      g.respawnCooldownT = Math.max(0, g.respawnCooldownT - dt);
+      continue;
+    }
+    const mode = ghostMode(g);
+    if (mode === 'eyes') {
+      stepEntity(g, [bfsNextDir(g.r, g.c, g.boxR, g.boxC, g.canWrap)], dt, EYES_TILE_TIME);
+    } else if (mode === 'frightened') {
+      stepEntity(g, wanderDir(g, dt), dt, ghostTileTime * FRIGHTENED_SPEED_MULT);
+    } else {
+      stepEntity(g, ghostDesiredDir(g, dt), dt, ghostTileTime);
+    }
   }
   checkPelletPickup();
   checkContact();
@@ -957,11 +1040,44 @@ function drawDeathAnim() {
   ctx.restore();
 }
 
-function drawGhost(entity, bodyColor, darkColor) {
-  const x = entity.px, y = entity.py;
+// Eaten ghosts render as eyes only (no body) racing back to the box - a
+// distinct silhouette so "already harmless" reads at a glance mid-chase.
+function drawGhostEyes(g) {
+  const r = TILE * 0.42;
+  const dir = g.dir;
+  const eyeOffX = dir.dc * 1.6, eyeOffY = dir.dr * 1.6;
+  ctx.save();
+  ctx.translate(g.px, g.py);
+  for (const s of [-1, 1]) {
+    ctx.fillStyle = COL.eyesWhite;
+    ctx.beginPath();
+    ctx.arc(s * r * 0.42, -r * 0.15, r * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = COL.eyesPupil;
+    ctx.beginPath();
+    ctx.arc(s * r * 0.42 + eyeOffX, -r * 0.15 + eyeOffY, r * 0.14, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawGhost(g) {
+  const mode = ghostMode(g);
+  if (mode === 'eyes') { drawGhostEyes(g); return; }
+  let bodyColor, darkColor;
+  if (mode === 'frightened') {
+    // Flashes between two blues in the last 2s as a fairness cue - the
+    // window closing shouldn't be a silent surprise mid-chase.
+    const warn = frightenedT < 2 && Math.floor(frightenedT * 6) % 2 === 0;
+    bodyColor = warn ? COL.frightenedWarn : COL.frightened;
+    darkColor = COL.eyesPupil;
+  } else {
+    bodyColor = COL[g.color];
+    darkColor = COL[g.color + 'Dark'];
+  }
   const r = TILE * 0.42;
   ctx.save();
-  ctx.translate(x, y);
+  ctx.translate(g.px, g.py);
   ctx.fillStyle = bodyColor;
   ctx.beginPath();
   ctx.arc(0, -r * 0.1, r, Math.PI, 0, false);
@@ -976,7 +1092,7 @@ function drawGhost(entity, bodyColor, darkColor) {
   ctx.closePath();
   ctx.fill();
 
-  const dir = entity.dir;
+  const dir = g.dir;
   const eyeOffX = dir.dc * 1.6, eyeOffY = dir.dr * 1.6;
   for (const s of [-1, 1]) {
     ctx.fillStyle = '#fff';
@@ -1054,7 +1170,7 @@ function draw() {
   drawBackground();
   drawMazeLayer();
   drawPellets();
-  for (const g of ghosts) drawGhost(g, COL[g.color], COL[g.color + 'Dark']);
+  for (const g of ghosts) drawGhost(g);
   drawPlayer();
   drawDeathAnim();
   drawJoystick();
