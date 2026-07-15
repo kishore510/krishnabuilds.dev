@@ -281,18 +281,21 @@ const DIR_LIST = [DIRS.up, DIRS.down, DIRS.left, DIRS.right];
 
 // Handles the tunnel row wraparound (col 0 <-> col COLS-1); any other
 // row simply can't produce an out-of-range column since walls line
-// every non-tunnel row's edges.
-function stepCoords(r, c, dir) {
+// every non-tunnel row's edges. The wrap itself is a player-only escape
+// hatch - ghosts can walk the tunnel corridor like any other floor tile,
+// but allowWrap=false stops them completing the edge-to-edge jump, so a
+// chase into the tunnel dead-ends for them right at the mouth.
+function stepCoords(r, c, dir, allowWrap) {
   let nr = r + dir.dr, nc = c + dir.dc;
   let wrapped = false;
-  if (r === TUNNEL_ROW) {
+  if (allowWrap && r === TUNNEL_ROW) {
     if (nc < 0) { nc = COLS - 1; wrapped = true; }
     else if (nc >= COLS) { nc = 0; wrapped = true; }
   }
   return { r: nr, c: nc, wrapped };
 }
-function canStep(r, c, dir) {
-  const next = stepCoords(r, c, dir);
+function canStep(r, c, dir, allowWrap) {
+  const next = stepCoords(r, c, dir, allowWrap);
   return isWalkable(next.r, next.c);
 }
 
@@ -369,12 +372,12 @@ buildMazeLayer();
 // a full cell at a time on a cooldown, px/py tween smoothly across that same
 // window for the draw call - keeps chase logic simple and grid-exact while
 // still reading as continuous motion.
-function makeEntity(spawn, tileTime) {
+function makeEntity(spawn, tileTime, canWrap) {
   return {
     r: spawn.r, c: spawn.c, prevR: spawn.r, prevC: spawn.c,
     dir: { dr: 0, dc: 0 }, moveCooldown: 0, tileTime,
     px: cellCenterX(spawn.c), py: cellCenterY(spawn.r),
-    wrapStep: false
+    wrapStep: false, canWrap: !!canWrap
   };
 }
 
@@ -393,8 +396,8 @@ const START_GRACE = 1.5;
 let invulnerableT = 0;
 
 function resetEntities() {
-  player = makeEntity(PLAYER_SPAWN, playerTileTime);
-  ember = makeEntity(GHOST_SPAWN, emberTileTime);
+  player = makeEntity(PLAYER_SPAWN, playerTileTime, true);
+  ember = makeEntity(GHOST_SPAWN, emberTileTime, false);
 }
 
 // Live input intent - joystick or keyboard, whichever fired last. An ordered
@@ -411,12 +414,12 @@ function stepEntity(entity, wantedDirs, dt) {
     let dir = null;
     if (wantedDirs) {
       for (const d of wantedDirs) {
-        if (d && canStep(entity.r, entity.c, d)) { dir = d; break; }
+        if (d && canStep(entity.r, entity.c, d, entity.canWrap)) { dir = d; break; }
       }
     }
-    if (!dir && (entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir)) dir = entity.dir;
+    if (!dir && (entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir, entity.canWrap)) dir = entity.dir;
     if (dir) {
-      const next = stepCoords(entity.r, entity.c, dir);
+      const next = stepCoords(entity.r, entity.c, dir, entity.canWrap);
       entity.prevR = entity.r; entity.prevC = entity.c;
       entity.r = next.r; entity.c = next.c;
       entity.dir = dir;
@@ -443,7 +446,10 @@ function stepEntity(entity, wantedDirs, dt) {
 
 // ==================== Ember: BFS shortest path to the player's current tile,
 // recomputed at every decision point (small board, trivially cheap). ====================
-function bfsNextDir(fromR, fromC, toR, toC) {
+// allowWrap defaults to false since every ghost added so far is meant to be
+// locked out of the tunnel edge-jump - the player's escape hatch stays an
+// escape only if the pathfinding never routes a chaser through it either.
+function bfsNextDir(fromR, fromC, toR, toC, allowWrap) {
   if (fromR === toR && fromC === toC) return null;
   const key = (r, c) => r * COLS + c;
   const visited = new Set([key(fromR, fromC)]);
@@ -452,8 +458,8 @@ function bfsNextDir(fromR, fromC, toR, toC) {
   while (qi < queue.length) {
     const cur = queue[qi++];
     for (const d of DIR_LIST) {
-      if (!canStep(cur.r, cur.c, d)) continue;
-      const next = stepCoords(cur.r, cur.c, d);
+      if (!canStep(cur.r, cur.c, d, allowWrap)) continue;
+      const next = stepCoords(cur.r, cur.c, d, allowWrap);
       const k = key(next.r, next.c);
       if (visited.has(k)) continue;
       const first = cur.first || d;
@@ -465,7 +471,7 @@ function bfsNextDir(fromR, fromC, toR, toC) {
   return null;
 }
 function emberDesiredDir() {
-  return [bfsNextDir(ember.r, ember.c, player.r, player.c)];
+  return [bfsNextDir(ember.r, ember.c, player.r, player.c, ember.canWrap)];
 }
 
 // ==================== Joystick input ====================
