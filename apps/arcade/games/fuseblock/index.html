@@ -152,7 +152,7 @@
 
     <div id="overlay">
       <h1 id="ovTitle">FUSEBLOCK</h1>
-      <p id="ovSubtitle">Plant bombs. Crack the arena open. Find the door.</p>
+      <p id="ovSubtitle">Plant bombs, crack the arena open, find the door. Clear a level and the next one gets tougher - keep going until you don't.</p>
       <p id="ovScore" style="display:none;"></p>
       <button id="startBtn" type="button" data-kb-play>Start</button>
       <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
@@ -248,12 +248,57 @@ function cellCenterX(c) { return cellX(c) + CELL / 2; }
 function cellCenterY(r) { return cellY(r) + CELL / 2; }
 
 const PLAYER_SPAWN = { r: 1, c: 1 };
-const BOT_SPAWN = { r: 1, c: GRID_COLS - 2 };
+// Three safe cells per non-player corner - up to 6 bots (the level-9+ cap)
+// each get a distinct spawn cell with no repeats, cycling through corners.
+const BOT_SPAWN_CELLS = [
+  { r: 1, c: GRID_COLS - 2 }, { r: 1, c: GRID_COLS - 3 }, { r: 2, c: GRID_COLS - 2 },
+  { r: GRID_ROWS - 2, c: 1 }, { r: GRID_ROWS - 2, c: 2 }, { r: GRID_ROWS - 3, c: 1 },
+  { r: GRID_ROWS - 2, c: GRID_COLS - 2 }, { r: GRID_ROWS - 2, c: GRID_COLS - 3 }, { r: GRID_ROWS - 3, c: GRID_COLS - 2 }
+];
 const SAFE_ZONES = [
   [PLAYER_SPAWN.r, PLAYER_SPAWN.c], [1, 2], [2, 1],
-  [BOT_SPAWN.r, BOT_SPAWN.c], [1, GRID_COLS - 3], [2, GRID_COLS - 2]
+  ...BOT_SPAWN_CELLS.map(({ r, c }) => [r, c])
 ];
 function isSafeZone(r, c) { return SAFE_ZONES.some(([sr, sc]) => sr === r && sc === c); }
+
+// ==================== Bot tiers ====================
+// Traits stack cumulatively tier-to-tier: each tier is the previous tier's
+// behavior plus exactly one new trait, so difficulty ramps in clear,
+// individually-tunable steps rather than every bot getting every trait at
+// once. No tier gets blast resistance or extra hit points - one hit is
+// death for every bot, same as the player; higher tiers get harder to
+// land a hit on, never harder to kill once hit.
+const BOT_TIERS = {
+  green:  { rank: 1, color: 'botGreen',  label: 'LV1', chase: false, avoidBlast: false, placeBombs: false, fastMove: false, dodgeDash: false },
+  blue:   { rank: 2, color: 'botBlue',   label: 'LV2', chase: true,  avoidBlast: false, placeBombs: false, fastMove: false, dodgeDash: false },
+  purple: { rank: 3, color: 'botPurple', label: 'LV3', chase: true,  avoidBlast: true,  placeBombs: false, fastMove: false, dodgeDash: false },
+  red:    { rank: 4, color: 'botRed',    label: 'LV4', chase: true,  avoidBlast: true,  placeBombs: true,  fastMove: true,  dodgeDash: false },
+  gold:   { rank: 5, color: 'botGold',   label: 'LV5', chase: true,  avoidBlast: true,  placeBombs: true,  fastMove: true,  dodgeDash: true  }
+};
+
+// Roguelike progression: bot count and tier mix both ramp with level, no
+// fixed level count or ending - keep going until the player loses. Weights
+// are a simple tunable pool (not hand-authored per level) so pacing can be
+// adjusted by nudging a few numbers after playtesting, rather than editing
+// per-level tables.
+function botCountForLevel(level) { return Math.min(1 + Math.floor((level - 1) / 2), 6); }
+function pickTierForLevel(level) {
+  const pool = [['green', Math.max(1, 10 - level)]];
+  if (level >= 3) pool.push(['blue', Math.min(level, 8)]);
+  if (level >= 5) pool.push(['purple', Math.min(level - 2, 8)]);
+  if (level >= 7) pool.push(['red', Math.min(level - 4, 8)]);
+  if (level >= 10) pool.push(['gold', 2]);
+  const total = pool.reduce((sum, [, w]) => sum + w, 0);
+  let roll = Math.random() * total;
+  for (const [tier, w] of pool) { if (roll < w) return tier; roll -= w; }
+  return pool[pool.length - 1][0];
+}
+function botCompositionForLevel(level) {
+  const count = botCountForLevel(level);
+  const tiers = [];
+  for (let i = 0; i < count; i++) tiers.push(pickTierForLevel(level));
+  return tiers;
+}
 
 let grid;
 
@@ -322,7 +367,7 @@ const COL = {
   ember: '#ff6b35', emberGlow: 'rgba(255,107,53,0.35)', emberBright: '#ffb347',
   textMain: '#f2e8d8', textDim: '#8a7a68', textAlert: '#ef4444',
   player: '#3fd0c9', playerDark: '#0d2b28',
-  botGreen: '#6bcf5f',
+  botGreen: '#6bcf5f', botBlue: '#4a9eff', botPurple: '#a855f7', botRed: '#ef4444', botGold: '#fbbf24',
   doorGold: '#fbbf24'
 };
 
@@ -331,18 +376,20 @@ bgGradient.addColorStop(0, COL.bgTop);
 bgGradient.addColorStop(1, COL.bgBottom);
 
 // ==================== State ====================
-let state = 'ready'; // ready | playing | won | lost
+let state = 'ready'; // ready | playing | levelTransition | lost
 let heldDir = null;
 let bombs = [], explosions = [], fx = [];
 let bombPressFlash = -999;
 let player, bots;
 let gameClock = 0;
 let attemptNum = 0;
-let bestTime = 0;
+let level = 1;
+let bestLevel = 1;
+let levelTransitionT = 0;
 
-function loadBestTime() { return parseFloat(sessionStorage.getItem('fuseblockBestTime') || '0'); }
-function saveBestTime(t) { try { sessionStorage.setItem('fuseblockBestTime', t); } catch (e) {} }
+function loadBestLevel() { return parseInt(sessionStorage.getItem('fuseblockBestLevel') || '1', 10); }
 function saveBestLevel(lv) { try { sessionStorage.setItem('fuseblockBestLevel', lv); } catch (e) {} }
+function recordLevelReached() { if (level > bestLevel) { bestLevel = level; saveBestLevel(bestLevel); } }
 
 function computeBlast(br, bc, range) {
   const cells = [{ r: br, c: bc, dist: 0 }];
@@ -360,34 +407,55 @@ function computeBlast(br, bc, range) {
   return cells;
 }
 
-function resetLevel() {
+function buildBotsForLevel(lvl) {
+  return botCompositionForLevel(lvl).map((tier, i) => {
+    const spawn = BOT_SPAWN_CELLS[i % BOT_SPAWN_CELLS.length];
+    return {
+      r: spawn.r, c: spawn.c,
+      px: cellCenterX(spawn.c), py: cellCenterY(spawn.r),
+      dir: { dr: 0, dc: 0 }, wanderTimer: Math.random() * 0.5, moveCooldown: 0,
+      dying: false, dead: false, deathT: 0,
+      tier, label: BOT_TIERS[tier].label,
+      bombCap: 1, bombsActive: 0, bombCooldown: 1 + Math.random() * 1.5,
+      dashSteps: 0, dashDir: { dr: 0, dc: 0 }
+    };
+  });
+}
+
+// Rebuilds the arena and bots for a given level, keeping the player's
+// persistent stats (bomb cap, blast range) intact - used both for the
+// first level of a run and for advancing to the next one mid-run.
+function setupLevel(lvl) {
   grid = buildGrid();
   bombs = []; explosions = []; fx = [];
   heldDir = null;
   bombPressFlash = -999;
+  player.r = PLAYER_SPAWN.r; player.c = PLAYER_SPAWN.c;
+  player.px = cellCenterX(PLAYER_SPAWN.c); player.py = cellCenterY(PLAYER_SPAWN.r);
+  player.moveCooldown = 0; player.bombsActive = 0;
+  bots = buildBotsForLevel(lvl);
+}
+
+function resetRun() {
+  level = 1;
+  gameClock = 0;
+  bestLevel = loadBestLevel();
   player = {
     r: PLAYER_SPAWN.r, c: PLAYER_SPAWN.c,
     px: cellCenterX(PLAYER_SPAWN.c), py: cellCenterY(PLAYER_SPAWN.r),
     moveCooldown: 0, bombCap: 1, blastRange: 1, bombsActive: 0,
     dying: false, dead: false, deathT: 0, deathCause: null
   };
-  bots = [{
-    r: BOT_SPAWN.r, c: BOT_SPAWN.c,
-    px: cellCenterX(BOT_SPAWN.c), py: cellCenterY(BOT_SPAWN.r),
-    dir: { dr: 0, dc: 0 }, wanderTimer: 0, moveCooldown: 0,
-    dying: false, dead: false, deathT: 0, tier: 'green', label: 'LV1'
-  }];
-  gameClock = 0;
-  bestTime = loadBestTime();
+  setupLevel(level);
 }
 
-// Build an initial grid immediately so the board renders behind the start
+// Build an initial run immediately so the board renders behind the start
 // overlay instead of leaving drawBoard() reading an undefined grid on the
 // very first frames, before the player has clicked Start.
-resetLevel();
+resetRun();
 
 function beginPlay() {
-  resetLevel();
+  resetRun();
   attemptNum++;
   state = 'playing';
   overlay.style.display = 'none';
@@ -405,21 +473,28 @@ function showOverlay(title, subtitle, scoreText) {
 }
 
 startBtn.addEventListener('click', () => { beginPlay(); });
-showOverlay('FUSEBLOCK', 'Plant bombs. Crack the arena open. Find the door.');
+showOverlay('FUSEBLOCK', "Plant bombs, crack the arena open, find the door. Clear a level and the next one gets tougher - keep going until you don't.");
 
-function endWin() {
-  state = 'won';
-  const t = gameClock;
-  const improved = bestTime === 0 || t < bestTime;
-  if (improved) { bestTime = t; saveBestTime(t); }
-  saveBestLevel(1);
+// Clearing a level doesn't end the run - it's a roguelike climb, so this
+// just shows a brief non-blocking banner (see drawLevelBanner) and hands
+// off to startNextLevel() once it's had time to read, rather than stopping
+// on a "you won" screen the way a fixed-level game would.
+function advanceLevel() {
+  state = 'levelTransition';
+  levelTransitionT = 0;
+  recordLevelReached();
   playWin();
-  showOverlay('CLEARED!', 'Attempt #' + attemptNum, 'Time ' + fmtTime(t) + (improved ? '  (new best!)' : '  ·  Best ' + fmtTime(bestTime)));
+}
+function startNextLevel() {
+  level++;
+  setupLevel(level);
+  state = 'playing';
 }
 function endLose() {
   state = 'lost';
+  recordLevelReached();
   const title = player.deathCause === 'contact' ? 'CAUGHT BY A BOT' : 'CAUGHT IN THE BLAST';
-  showOverlay(title, 'Attempt #' + attemptNum, 'Best time: ' + (bestTime ? fmtTime(bestTime) : '--'));
+  showOverlay(title, 'Attempt #' + attemptNum, 'Reached level ' + level + '  ·  Best level ' + bestLevel + '  ·  Time ' + fmtTime(gameClock));
 }
 
 function fmtTime(t) {
@@ -483,14 +558,24 @@ document.addEventListener('keyup', (e) => {
   if (KEY_DIR[e.code]) clearHeldDir(KEY_DIR[e.code]);
 });
 
+// Shared by the player and any bomb-placing bot tier so ownership (used to
+// credit the right bombsActive count back on explosion) and the Gold dash
+// trigger only need to live in one place.
+function spawnBomb(owner, r, c, range) {
+  const bomb = { r, c, range, fuse: FUSE_TIME, exploded: false, lastTick: 0, owner };
+  bombs.push(bomb);
+  owner.bombsActive++;
+  playBombPlace();
+  triggerGoldDodge(bomb);
+  return bomb;
+}
+
 function placeBomb() {
   if (state !== 'playing' || player.dying || player.dead) return;
   if (player.bombsActive >= player.bombCap) return;
   if (bombAt(player.r, player.c)) return;
-  bombs.push({ r: player.r, c: player.c, range: player.blastRange, fuse: FUSE_TIME, exploded: false, lastTick: 0 });
-  player.bombsActive++;
+  spawnBomb(player, player.r, player.c, player.blastRange);
   bombPressFlash = gameClock;
-  playBombPlace();
 }
 
 // ==================== Audio ====================
@@ -568,25 +653,110 @@ function updatePlayer(dt) {
   player.py += (ty - player.py) * Math.min(1, dt * 14);
 }
 
-function pickBotDir(bot) {
-  const candidates = DIR_LIST.filter(d => canEnter(bot.r + d.dr, bot.c + d.dc));
+// A cell counts as "danger" if a bomb whose fuse is close enough to blow
+// (not the instant it's placed - only once it's actually imminent) would
+// reach it, or if a live explosion is still resolving there. Purple+ bots
+// check this before committing to a step; it's a local, one-bomb-deep
+// lookahead, not a full safety search, matching "won't walk into an
+// active or imminent blast" rather than true pathfinding around it.
+function isDangerCell(r, c) {
+  for (const b of bombs) {
+    if (b.exploded || b.fuse > 1.2) continue;
+    if (computeBlast(b.r, b.c, b.range).some(cell => cell.r === r && cell.c === c)) return true;
+  }
+  for (const ex of explosions) {
+    for (const cell of ex.cells) {
+      const localT = ex.elapsed - cell.dist * EXPAND_STEP;
+      if (localT >= 0 && localT < HOT_MS + FADE_MS && cell.r === r && cell.c === c) return true;
+    }
+  }
+  return false;
+}
+
+function pickBotDir(bot, traits) {
+  let candidates = DIR_LIST.filter(d => canEnter(bot.r + d.dr, bot.c + d.dc));
+  if (traits.avoidBlast) {
+    // Prefer a cell that isn't dangerous, but don't strand the bot in place
+    // refusing to move if every option happens to be dangerous.
+    const safe = candidates.filter(d => !isDangerCell(bot.r + d.dr, bot.c + d.dc));
+    if (safe.length > 0) candidates = safe;
+  }
   if (candidates.length === 0) return { dr: 0, dc: 0 };
+  if (traits.chase && Math.random() < 0.7) {
+    let best = null, bestDist = Infinity;
+    for (const d of candidates) {
+      const dist = Math.abs(bot.r + d.dr - player.r) + Math.abs(bot.c + d.dc - player.c);
+      if (dist < bestDist) { bestDist = dist; best = d; }
+    }
+    return best;
+  }
   return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function updateBotBombing(bot, dt) {
+  bot.bombCooldown -= dt;
+  if (bot.bombCooldown > 0) return;
+  if (bot.bombsActive >= bot.bombCap || bombAt(bot.r, bot.c)) { bot.bombCooldown = 0.4; return; }
+  const dist = Math.abs(bot.r - player.r) + Math.abs(bot.c - player.c);
+  if (dist > 4) { bot.bombCooldown = 0.4; return; } // only bothers cornering the player when it's actually close
+  spawnBomb(bot, bot.r, bot.c, 1);
+  bot.bombCooldown = 2.2 + Math.random() * 1.2;
+}
+
+// Gold's dash: flee two cells along whichever axis puts the most distance
+// between it and the bomb fastest. Triggers off ANY bomb placement nearby
+// (the player's included, not just other bots') since Gold doesn't care
+// who lit the fuse, only that one is about to go off close by.
+const GOLD_DASH_RADIUS = 3, GOLD_DASH_STEPS = 2, BOT_STEP_DASH = 0.08;
+function triggerGoldDodge(bomb) {
+  for (const bot of bots) {
+    if (bot.dying || bot.dead || !BOT_TIERS[bot.tier].dodgeDash) continue;
+    const dr = bot.r - bomb.r, dc = bot.c - bomb.c;
+    const dist = Math.abs(dr) + Math.abs(dc);
+    if (dist === 0 || dist > GOLD_DASH_RADIUS) continue;
+    bot.dashDir = Math.abs(dr) >= Math.abs(dc)
+      ? { dr: dr !== 0 ? Math.sign(dr) : (Math.random() < 0.5 ? 1 : -1), dc: 0 }
+      : { dr: 0, dc: dc !== 0 ? Math.sign(dc) : (Math.random() < 0.5 ? 1 : -1) };
+    bot.dashSteps = GOLD_DASH_STEPS;
+    bot.moveCooldown = 0;
+  }
 }
 
 function updateBot(bot, dt) {
   if (bot.dying || bot.dead) return;
+
+  if (bot.dashSteps > 0) {
+    if (bot.moveCooldown > 0) bot.moveCooldown -= dt;
+    if (bot.moveCooldown <= 0) {
+      const nr = bot.r + bot.dashDir.dr, nc = bot.c + bot.dashDir.dc;
+      if (canEnter(nr, nc)) { bot.r = nr; bot.c = nc; bot.dashSteps--; }
+      else bot.dashSteps = 0; // blocked - abandon the dash rather than stall on it
+      bot.moveCooldown = BOT_STEP_DASH;
+    }
+    const tx = cellCenterX(bot.c), ty = cellCenterY(bot.r);
+    bot.px += (tx - bot.px) * Math.min(1, dt * 14);
+    bot.py += (ty - bot.py) * Math.min(1, dt * 14);
+    return;
+  }
+
+  const traits = BOT_TIERS[bot.tier];
+  if (traits.avoidBlast && isDangerCell(bot.r, bot.c)) bot.wanderTimer = 0; // standing in danger - re-decide now, don't wait out the timer
+
   bot.wanderTimer -= dt;
-  if (bot.wanderTimer <= 0 || !canEnter(bot.r + bot.dir.dr, bot.c + bot.dir.dc)) {
-    bot.dir = pickBotDir(bot);
+  const aheadDangerous = traits.avoidBlast && isDangerCell(bot.r + bot.dir.dr, bot.c + bot.dir.dc);
+  if (bot.wanderTimer <= 0 || !canEnter(bot.r + bot.dir.dr, bot.c + bot.dir.dc) || aheadDangerous) {
+    bot.dir = pickBotDir(bot, traits);
     bot.wanderTimer = 0.6 + Math.random() * 0.8;
   }
   if (bot.moveCooldown > 0) bot.moveCooldown -= dt;
   if (bot.moveCooldown <= 0 && (bot.dir.dr || bot.dir.dc)) {
     const nr = bot.r + bot.dir.dr, nc = bot.c + bot.dir.dc;
     if (canEnter(nr, nc)) { bot.r = nr; bot.c = nc; }
-    bot.moveCooldown = BOT_STEP;
+    bot.moveCooldown = traits.fastMove ? BOT_STEP * 0.75 : BOT_STEP;
   }
+
+  if (traits.placeBombs) updateBotBombing(bot, dt);
+
   const tx = cellCenterX(bot.c), ty = cellCenterY(bot.r);
   bot.px += (tx - bot.px) * Math.min(1, dt * 10);
   bot.py += (ty - bot.py) * Math.min(1, dt * 10);
@@ -617,7 +787,7 @@ function checkBlastKill(r, c) {
 
 function explodeBomb(bomb) {
   bomb.exploded = true;
-  player.bombsActive = Math.max(0, player.bombsActive - 1);
+  bomb.owner.bombsActive = Math.max(0, bomb.owner.bombsActive - 1);
   const cells = computeBlast(bomb.r, bomb.c, bomb.range);
   const maxDist = cells.reduce((m, c) => Math.max(m, c.dist), 0);
   explosions.push({ cells, elapsed: 0, maxDist });
@@ -684,10 +854,16 @@ function checkWin() {
   if (player.dying || player.dead) return;
   if (!bots.every(b => b.dead)) return;
   const cell = grid[player.r][player.c];
-  if (cell.isDoor && cell.doorRevealed) endWin();
+  if (cell.isDoor && cell.doorRevealed) advanceLevel();
 }
 
+const LEVEL_TRANSITION_TIME = 1.3;
 function update(dt) {
+  if (state === 'levelTransition') {
+    levelTransitionT += dt;
+    if (levelTransitionT >= LEVEL_TRANSITION_TIME) startNextLevel();
+    return;
+  }
   if (state !== 'playing') return;
   gameClock += dt;
   updatePlayer(dt);
@@ -868,11 +1044,12 @@ function drawPlayer() {
 function drawBots() {
   for (const bot of bots) {
     if (bot.dead) continue;
-    drawCharacter(bot.px, bot.py, COL.botGreen, bot.dying, bot.deathT, CELL / 2 - 5);
+    const color = COL[BOT_TIERS[bot.tier].color];
+    drawCharacter(bot.px, bot.py, color, bot.dying, bot.deathT, CELL / 2 - 5);
     if (!bot.dying) {
       ctx.save();
       ctx.font = 'bold 7px monospace';
-      ctx.fillStyle = COL.botGreen;
+      ctx.fillStyle = color;
       ctx.textAlign = 'center';
       ctx.fillText(bot.label, bot.px, bot.py - CELL / 2 - 4);
       ctx.restore();
@@ -960,10 +1137,10 @@ function drawHUD() {
   ctx.textAlign = 'center';
   ctx.font = '9px monospace';
   ctx.fillStyle = COL.textDim;
-  ctx.fillText('ATTEMPT #' + attemptNum, W / 2 - 55, 53);
+  ctx.fillText('LV ' + level, W / 2 - 55, 53);
   ctx.fillStyle = aliveCount > 0 ? COL.textAlert : COL.doorGold;
   ctx.font = 'bold 10px monospace';
-  ctx.fillText(aliveCount > 0 ? (aliveCount + ' ENEMY LEFT') : 'FIND THE DOOR', W / 2 + 45, 53);
+  ctx.fillText(aliveCount > 0 ? (aliveCount + (aliveCount === 1 ? ' ENEMY LEFT' : ' ENEMIES LEFT')) : 'FIND THE DOOR', W / 2 + 45, 53);
 
   ctx.fillStyle = COL.hudBg;
   ctx.fillRect(0, H - HUD_BOTTOM, W, HUD_BOTTOM);
@@ -982,6 +1159,23 @@ function drawHUD() {
   }
 }
 
+function drawLevelBanner() {
+  const t = levelTransitionT / LEVEL_TRANSITION_TIME;
+  const alpha = t < 0.15 ? t / 0.15 : (t > 0.8 ? (1 - t) / 0.2 : 1);
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.fillStyle = 'rgba(13,10,8,0.7)';
+  ctx.fillRect(0, H / 2 - 32, W, 64);
+  ctx.fillStyle = COL.doorGold;
+  ctx.font = 'bold 22px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('LEVEL ' + level + ' CLEAR', W / 2, H / 2 + 2);
+  ctx.font = '11px monospace';
+  ctx.fillStyle = COL.textMain;
+  ctx.fillText('Entering level ' + (level + 1) + '...', W / 2, H / 2 + 20);
+  ctx.restore();
+}
+
 function draw() {
   drawBackground();
   drawBoard();
@@ -991,6 +1185,7 @@ function draw() {
   drawBots();
   drawPlayer();
   drawHUD();
+  if (state === 'levelTransition') drawLevelBanner();
 }
 
 // ==================== Loop ====================
