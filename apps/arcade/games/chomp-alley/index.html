@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chomp Alley</title>
+<style>
+  html, body {
+    margin: 0; height: 100%;
+    background: #0a0716;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  #wrap:fullscreen, #wrap:-webkit-full-screen {
+    width: 100vw; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a0716;
+  }
+  #stage { position: relative; }
+  canvas {
+    background: #0a0716;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+  }
+  .kbz-btn {
+    position: absolute;
+    z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.4);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.55);
+    color: #f0eaff;
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: inherit;
+  }
+  #muteBtn {
+    top: calc(4px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(24px * var(--game-scale, 1));
+    height: calc(24px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+  }
+  #fsEnterBtn, #fsExitBtn {
+    top: calc(4px * var(--game-scale, 1));
+    right: calc(4px * var(--game-scale, 1));
+    width: calc(24px * var(--game-scale, 1));
+    height: calc(24px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+  }
+  #fsExitBtn { display: none; }
+  /* Covers the whole bottom control band rather than a fixed-position stick,
+     so a touch anywhere down there anchors the joystick where the thumb
+     actually landed - see the floating-anchor requirement in the brief. */
+  #joystickZone {
+    position: absolute;
+    z-index: 5;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,7,22,0.78);
+    color: #f0eaff;
+    text-align: center;
+    z-index: 10;
+    padding: 0 calc(20px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(26px * var(--game-scale, 1)); letter-spacing: 1px; }
+  #overlay p { margin: 4px 0; font-size: calc(13px * var(--game-scale, 1)); color: #b7a9d9; }
+  #startBtn {
+    margin-top: calc(20px * var(--game-scale, 1));
+    font-family: inherit;
+    font-weight: bold;
+    font-size: calc(15px * var(--game-scale, 1));
+    padding: calc(10px * var(--game-scale, 1)) calc(28px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #7cff6b;
+    background: rgba(124,255,107,0.16);
+    color: #a8ffa0;
+    cursor: pointer;
+  }
+  #startBtn:active { background: rgba(124,255,107,0.35); }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+    color: #8a7fae;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <canvas id="game" width="360" height="540"></canvas>
+
+    <button id="muteBtn" class="kbz-btn" type="button">🔊</button>
+    <button id="fsEnterBtn" class="kbz-btn" type="button">⛶</button>
+    <button id="fsExitBtn" class="kbz-btn" type="button">✕</button>
+
+    <div id="joystickZone"></div>
+
+    <div id="overlay">
+      <h1 id="ovTitle">CHOMP ALLEY</h1>
+      <p id="ovSubtitle">Gobble every pellet in the alley. Ember never stops hunting - keep moving.</p>
+      <p id="ovScore" style="display:none;"></p>
+      <button id="startBtn" type="button" data-kb-play>Start</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const overlay = document.getElementById('overlay');
+const ovTitle = document.getElementById('ovTitle');
+const ovSubtitle = document.getElementById('ovSubtitle');
+const ovScore = document.getElementById('ovScore');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const fsEnterBtn = document.getElementById('fsEnterBtn');
+const fsExitBtn = document.getElementById('fsExitBtn');
+const joystickZoneEl = document.getElementById('joystickZone');
+
+const W = canvas.width, H = canvas.height;
+
+function isFs() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+
+function fitCanvas() {
+  const reserved = isFs() ? 0 : (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  wrap.style.setProperty('--game-scale', scale);
+  positionJoystickZone();
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+
+// ==================== Fullscreen (self-contained, same pattern as Fuseblock) ====================
+function fsSupported() {
+  return !!(wrap.requestFullscreen || wrap.webkitRequestFullscreen);
+}
+function requestFs() {
+  if (wrap.requestFullscreen) wrap.requestFullscreen().catch(() => {});
+  else if (wrap.webkitRequestFullscreen) wrap.webkitRequestFullscreen();
+}
+function exitFs() {
+  if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+}
+function syncFsButtons() {
+  fsEnterBtn.style.display = isFs() ? 'none' : (fsSupported() ? 'flex' : 'none');
+  fsExitBtn.style.display = isFs() ? 'flex' : 'none';
+  fitCanvas();
+}
+if (!fsSupported()) fsEnterBtn.style.display = 'none';
+fsEnterBtn.addEventListener('click', requestFs);
+fsExitBtn.addEventListener('click', exitFs);
+document.addEventListener('fullscreenchange', syncFsButtons);
+document.addEventListener('webkitfullscreenchange', syncFsButtons);
+
+// ==================== Maze ====================
+// Validated in a standalone BFS/loop/dead-end script before being used here:
+// fully connected (183/183 walkable tiles reached), 49 independent loops,
+// only 2 non-tunnel tiles with <=1 open neighbor (both short 1-tile nubs).
+const MAZE = [
+  "0000000000000000000",
+  "0311111111111111130",
+  "0111111111111111110",
+  "0100010001000100010",
+  "0100010001000100010",
+  "0111110101011111110",
+  "0000010101010000000",
+  "0111110111011111110",
+  "0100000111000010010",
+  "9999910444444019999",
+  "0100000111000010010",
+  "0111110111011111110",
+  "0000010101010000000",
+  "0111110101011111110",
+  "0100010001000100010",
+  "0100010001000100010",
+  "0111111111111111110",
+  "0311111111111111130"
+];
+const ROWS = MAZE.length, COLS = MAZE[0].length;
+const TUNNEL_ROW = MAZE.findIndex(r => r.includes('9'));
+const TILE = 18;
+const boardW = COLS * TILE, boardH = ROWS * TILE;
+const HUD_TOP = 46;
+const CONTROL_BAND_H = 170;
+const boardAvailH = H - HUD_TOP - CONTROL_BAND_H;
+const OFFSET_X = Math.floor((W - boardW) / 2);
+const OFFSET_Y = HUD_TOP + Math.floor((boardAvailH - boardH) / 2);
+
+function cellX(c) { return OFFSET_X + c * TILE; }
+function cellY(r) { return OFFSET_Y + r * TILE; }
+function cellCenterX(c) { return cellX(c) + TILE / 2; }
+function cellCenterY(r) { return cellY(r) + TILE / 2; }
+
+function inBounds(r, c) { return r >= 0 && r < ROWS && c >= 0 && c < COLS; }
+function tileAt(r, c) { return MAZE[r][c]; }
+function isWalkable(r, c) { return inBounds(r, c) && tileAt(r, c) !== '0'; }
+
+const DIRS = {
+  up: { dr: -1, dc: 0 }, down: { dr: 1, dc: 0 },
+  left: { dr: 0, dc: -1 }, right: { dr: 0, dc: 1 }
+};
+const DIR_LIST = [DIRS.up, DIRS.down, DIRS.left, DIRS.right];
+
+// Handles the tunnel row wraparound (col 0 <-> col COLS-1); any other
+// row simply can't produce an out-of-range column since walls line
+// every non-tunnel row's edges.
+function stepCoords(r, c, dir) {
+  let nr = r + dir.dr, nc = c + dir.dc;
+  let wrapped = false;
+  if (r === TUNNEL_ROW) {
+    if (nc < 0) { nc = COLS - 1; wrapped = true; }
+    else if (nc >= COLS) { nc = 0; wrapped = true; }
+  }
+  return { r: nr, c: nc, wrapped };
+}
+function canStep(r, c, dir) {
+  const next = stepCoords(r, c, dir);
+  return isWalkable(next.r, next.c);
+}
+
+const PLAYER_SPAWN = { r: 16, c: 9 };
+const GHOST_SPAWN = { r: 9, c: 9 };
+
+let pellets, totalPellets, remainingPellets;
+function setupPellets() {
+  pellets = [];
+  totalPellets = 0;
+  for (let r = 0; r < ROWS; r++) {
+    const row = [];
+    for (let c = 0; c < COLS; c++) {
+      const ch = tileAt(r, c);
+      let type = null;
+      if (ch === '1') type = 'pellet';
+      else if (ch === '3') type = 'power';
+      row.push(type);
+      if (type) totalPellets++;
+    }
+    pellets.push(row);
+  }
+  // The player's own spawn tile is consumed before the player ever moves -
+  // clear it up front so it neither inflates the win count nor hands out a
+  // free point at the start of every run.
+  if (pellets[PLAYER_SPAWN.r][PLAYER_SPAWN.c]) {
+    pellets[PLAYER_SPAWN.r][PLAYER_SPAWN.c] = null;
+    totalPellets--;
+  }
+  remainingPellets = totalPellets;
+}
+
+// ==================== Static maze layer (walls+floor never change mid-run,
+// pellets/entities are drawn fresh each frame on top) ====================
+const COL = {
+  bgTop: '#140f28', bgBottom: '#0a0716',
+  floor: '#150f2a',
+  wallFill: '#5b3aa8', wallTop: '#8b63e0', wallEdge: '#2c1a5c',
+  pellet: '#ffe66d', power: '#ff9f4a',
+  player: '#7cff6b', playerDark: '#2f6b28',
+  ember: '#ff4d4d', emberDark: '#8a1f1f',
+  textMain: '#f0eaff', textDim: '#8a7fae', textAlert: '#ff6b6b'
+};
+
+const bgGradient = ctx.createLinearGradient(0, 0, 0, H);
+bgGradient.addColorStop(0, COL.bgTop);
+bgGradient.addColorStop(1, COL.bgBottom);
+
+let mazeLayer = null;
+function buildMazeLayer() {
+  const off = document.createElement('canvas');
+  off.width = boardW; off.height = boardH;
+  const octx = off.getContext('2d');
+  octx.fillStyle = COL.floor;
+  octx.fillRect(0, 0, boardW, boardH);
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (tileAt(r, c) !== '0') continue;
+      const x = c * TILE, y = r * TILE;
+      octx.fillStyle = COL.wallEdge;
+      octx.fillRect(x, y, TILE, TILE);
+      octx.fillStyle = COL.wallFill;
+      octx.fillRect(x + 1, y + 1, TILE - 2, TILE - 2);
+      octx.fillStyle = COL.wallTop;
+      octx.fillRect(x + 1, y + 1, TILE - 2, 3);
+    }
+  }
+  mazeLayer = off;
+}
+buildMazeLayer();
+
+// ==================== Entities ====================
+// Discrete per-tile stepping (like Fuseblock's bots): logical position moves
+// a full cell at a time on a cooldown, px/py tween smoothly across that same
+// window for the draw call - keeps chase logic simple and grid-exact while
+// still reading as continuous motion.
+function makeEntity(spawn, tileTime) {
+  return {
+    r: spawn.r, c: spawn.c, prevR: spawn.r, prevC: spawn.c,
+    dir: { dr: 0, dc: 0 }, moveCooldown: 0, tileTime,
+    px: cellCenterX(spawn.c), py: cellCenterY(spawn.r),
+    wrapStep: false
+  };
+}
+
+let player, ember;
+let playerTileTime = 0.15;
+let emberTileTime = 0.175;
+const EMBER_TILE_TIME_FLOOR = 0.12;
+const EMBER_SPEEDUP_PER_CLEAR = 0.008;
+
+function resetEntities() {
+  player = makeEntity(PLAYER_SPAWN, playerTileTime);
+  ember = makeEntity(GHOST_SPAWN, emberTileTime);
+}
+
+let desiredDir = null; // live input intent - joystick or keyboard, whichever fired last
+
+function stepEntity(entity, wantedDir, dt) {
+  if (entity.moveCooldown > 0) {
+    entity.moveCooldown = Math.max(0, entity.moveCooldown - dt);
+  }
+  if (entity.moveCooldown <= 0) {
+    let dir = null;
+    if (wantedDir && canStep(entity.r, entity.c, wantedDir)) dir = wantedDir;
+    else if ((entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir)) dir = entity.dir;
+    if (dir) {
+      const next = stepCoords(entity.r, entity.c, dir);
+      entity.prevR = entity.r; entity.prevC = entity.c;
+      entity.r = next.r; entity.c = next.c;
+      entity.dir = dir;
+      entity.moveCooldown = entity.tileTime;
+      entity.wrapStep = next.wrapped;
+      if (next.wrapped) {
+        // Snap instantly across the wrap rather than tweening the whole
+        // board width - a tunnel is a warp, not a long sprint.
+        entity.px = cellCenterX(entity.c);
+        entity.py = cellCenterY(entity.r);
+        entity.prevR = entity.r; entity.prevC = entity.c;
+      }
+    } else {
+      entity.dir = { dr: 0, dc: 0 };
+    }
+  }
+  if (!entity.wrapStep) {
+    const progress = entity.moveCooldown > 0 ? 1 - (entity.moveCooldown / entity.tileTime) : 1;
+    entity.px = cellCenterX(entity.prevC) + (cellCenterX(entity.c) - cellCenterX(entity.prevC)) * progress;
+    entity.py = cellCenterY(entity.prevR) + (cellCenterY(entity.r) - cellCenterY(entity.prevR)) * progress;
+  }
+  entity.wrapStep = false;
+}
+
+// ==================== Ember: BFS shortest path to the player's current tile,
+// recomputed at every decision point (small board, trivially cheap). ====================
+function bfsNextDir(fromR, fromC, toR, toC) {
+  if (fromR === toR && fromC === toC) return null;
+  const key = (r, c) => r * COLS + c;
+  const visited = new Set([key(fromR, fromC)]);
+  const queue = [{ r: fromR, c: fromC, first: null }];
+  let qi = 0;
+  while (qi < queue.length) {
+    const cur = queue[qi++];
+    for (const d of DIR_LIST) {
+      if (!canStep(cur.r, cur.c, d)) continue;
+      const next = stepCoords(cur.r, cur.c, d);
+      const k = key(next.r, next.c);
+      if (visited.has(k)) continue;
+      const first = cur.first || d;
+      if (next.r === toR && next.c === toC) return first;
+      visited.add(k);
+      queue.push({ r: next.r, c: next.c, first });
+    }
+  }
+  return null;
+}
+function emberDesiredDir() {
+  return bfsNextDir(ember.r, ember.c, player.r, player.c);
+}
+
+// ==================== Joystick input ====================
+// Floating-anchor virtual joystick: the base appears wherever the first
+// touch in the control band lands, not at a fixed spot. Direction snaps to
+// the nearest cardinal axis (dx vs dy dominance = nearest of the 4).
+const JOY_DEADZONE = 10, JOY_MAX_RADIUS = 34;
+let joystick = { active: false, pointerId: null, anchorX: 0, anchorY: 0, curX: 0, curY: 0 };
+
+function positionJoystickZone() {
+  const scale = parseFloat(getComputedStyle(wrap).getPropertyValue('--game-scale')) || (canvas.getBoundingClientRect().width / W) || 1;
+  joystickZoneEl.style.left = '0px';
+  joystickZoneEl.style.top = (H - CONTROL_BAND_H) * scale + 'px';
+  joystickZoneEl.style.width = W * scale + 'px';
+  joystickZoneEl.style.height = CONTROL_BAND_H * scale + 'px';
+}
+
+function clientToCanvas(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  const scale = rect.width / W;
+  return { x: (clientX - rect.left) / scale, y: (clientY - rect.top) / scale };
+}
+
+function dirFromDelta(dx, dy) {
+  if (Math.hypot(dx, dy) < JOY_DEADZONE) return null;
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? DIRS.right : DIRS.left) : (dy > 0 ? DIRS.down : DIRS.up);
+}
+
+joystickZoneEl.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  const p = clientToCanvas(e.clientX, e.clientY);
+  joystick.active = true;
+  joystick.pointerId = e.pointerId;
+  joystick.anchorX = joystick.curX = p.x;
+  joystick.anchorY = joystick.curY = p.y;
+  try { joystickZoneEl.setPointerCapture(e.pointerId); } catch (err) {}
+  desiredDir = null;
+});
+joystickZoneEl.addEventListener('pointermove', (e) => {
+  if (!joystick.active || e.pointerId !== joystick.pointerId) return;
+  const p = clientToCanvas(e.clientX, e.clientY);
+  const dx = p.x - joystick.anchorX, dy = p.y - joystick.anchorY;
+  const dist = Math.hypot(dx, dy);
+  const clampedDist = Math.min(dist, JOY_MAX_RADIUS);
+  const ang = Math.atan2(dy, dx);
+  joystick.curX = joystick.anchorX + Math.cos(ang) * clampedDist;
+  joystick.curY = joystick.anchorY + Math.sin(ang) * clampedDist;
+  desiredDir = dirFromDelta(dx, dy);
+});
+function releaseJoystick(e) {
+  if (e.pointerId !== joystick.pointerId) return;
+  joystick.active = false;
+  joystick.pointerId = null;
+  desiredDir = null;
+}
+joystickZoneEl.addEventListener('pointerup', releaseJoystick);
+joystickZoneEl.addEventListener('pointercancel', releaseJoystick);
+window.addEventListener('blur', () => { joystick.active = false; desiredDir = null; });
+
+const KEY_DIR = {
+  ArrowUp: DIRS.up, KeyW: DIRS.up, ArrowDown: DIRS.down, KeyS: DIRS.down,
+  ArrowLeft: DIRS.left, KeyA: DIRS.left, ArrowRight: DIRS.right, KeyD: DIRS.right
+};
+document.addEventListener('keydown', (e) => {
+  if (KEY_DIR[e.code]) { e.preventDefault(); desiredDir = KEY_DIR[e.code]; }
+});
+
+// ==================== Audio ====================
+let audioCtx = null;
+let muted = sessionStorage.getItem('chompAlleyMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+let pelletToneToggle = false;
+function playPelletEat() {
+  pelletToneToggle = !pelletToneToggle;
+  tone(pelletToneToggle ? 480 : 380, 0.06, 'square', 0.08);
+}
+function playDeath() {
+  tone(320, 0.14, 'sawtooth', 0.15);
+  tone(220, 0.16, 'sawtooth', 0.14, 0.12);
+  tone(120, 0.22, 'sawtooth', 0.13, 0.26);
+}
+function playClear() {
+  tone(523, 0.1, 'triangle', 0.14, 0);
+  tone(659, 0.1, 'triangle', 0.14, 0.1);
+  tone(784, 0.1, 'triangle', 0.14, 0.2);
+  tone(1047, 0.22, 'triangle', 0.15, 0.3);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  try { sessionStorage.setItem('chompAlleyMuted', muted ? '1' : '0'); } catch (e) {}
+  updateMuteBtn();
+});
+
+// ==================== Run state ====================
+let state = 'ready'; // ready | playing | dying | levelClear | over
+let score = 0, lives = 3, level = 1, attemptNum = 0;
+let bestScore = 0, bestLevel = 1;
+let deathT = 0, clearT = 0;
+const DEATH_ANIM = 0.9, CLEAR_BANNER = 1.4;
+let gameClock = 0;
+
+function loadBest() {
+  bestScore = parseInt(sessionStorage.getItem('chompAlleyBestScore_classic') || '0', 10);
+  bestLevel = parseInt(sessionStorage.getItem('chompAlleyBestLevel_classic') || '1', 10);
+}
+function saveBest() {
+  try {
+    sessionStorage.setItem('chompAlleyBestScore_classic', bestScore);
+    sessionStorage.setItem('chompAlleyBestLevel_classic', bestLevel);
+  } catch (e) {}
+}
+function recordProgress() {
+  if (score > bestScore) bestScore = score;
+  if (level > bestLevel) bestLevel = level;
+  saveBest();
+}
+
+function setupMaze() {
+  setupPellets();
+  resetEntities();
+  desiredDir = null;
+}
+
+function resetRun() {
+  loadBest();
+  score = 0; lives = 3; level = 1;
+  playerTileTime = 0.15;
+  emberTileTime = 0.175;
+  setupMaze();
+}
+
+resetRun();
+
+function beginPlay() {
+  resetRun();
+  attemptNum++;
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+function showOverlay(title, subtitle, scoreText) {
+  ovTitle.textContent = title;
+  ovSubtitle.textContent = subtitle;
+  if (scoreText) { ovScore.textContent = scoreText; ovScore.style.display = 'block'; }
+  else { ovScore.style.display = 'none'; }
+  startBtn.textContent = state === 'ready' ? 'Start' : 'Retry';
+  backToArcade.style.display = state === 'ready' ? 'none' : 'inline-block';
+  overlay.style.display = 'flex';
+}
+startBtn.addEventListener('click', beginPlay);
+showOverlay('CHOMP ALLEY', 'Gobble every pellet in the alley. Ember never stops hunting - keep moving.');
+
+function loseLife() {
+  state = 'dying';
+  deathT = 0;
+  playDeath();
+}
+function finishDeath() {
+  lives--;
+  if (lives <= 0) {
+    recordProgress();
+    state = 'over';
+    showOverlay('CAUGHT!', 'Attempt #' + attemptNum, 'Score: ' + score + '   Best: ' + bestScore + '   Best level: ' + bestLevel);
+  } else {
+    resetEntities();
+    desiredDir = null;
+    state = 'playing';
+  }
+}
+function clearMaze() {
+  state = 'levelClear';
+  clearT = 0;
+  playClear();
+}
+function startNextMaze() {
+  level++;
+  emberTileTime = Math.max(EMBER_TILE_TIME_FLOOR, emberTileTime - EMBER_SPEEDUP_PER_CLEAR);
+  setupMaze();
+  state = 'playing';
+}
+
+function checkContact() {
+  const dist = Math.hypot(player.px - ember.px, player.py - ember.py);
+  if (dist < TILE * 0.55) loseLife();
+}
+function checkPelletPickup() {
+  const type = pellets[player.r][player.c];
+  if (!type) return;
+  pellets[player.r][player.c] = null;
+  remainingPellets--;
+  score += type === 'power' ? 50 : 10;
+  playPelletEat();
+  if (remainingPellets <= 0) clearMaze();
+}
+
+function update(dt) {
+  gameClock += dt;
+  if (state === 'dying') {
+    deathT += dt;
+    if (deathT >= DEATH_ANIM) finishDeath();
+    return;
+  }
+  if (state === 'levelClear') {
+    clearT += dt;
+    if (clearT >= CLEAR_BANNER) startNextMaze();
+    return;
+  }
+  if (state !== 'playing') return;
+  stepEntity(player, desiredDir, dt);
+  stepEntity(ember, emberDesiredDir(), dt);
+  checkPelletPickup();
+  checkContact();
+}
+
+// ==================== Draw ====================
+function drawBackground() {
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0, 0, W, H);
+}
+function drawMazeLayer() {
+  ctx.drawImage(mazeLayer, OFFSET_X, OFFSET_Y);
+}
+function drawPellets() {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const type = pellets[r][c];
+      if (!type) continue;
+      const x = cellCenterX(c), y = cellCenterY(r);
+      if (type === 'power') {
+        const pulse = 3.2 + Math.sin(gameClock * 6) * 1.1;
+        ctx.fillStyle = COL.power;
+        ctx.beginPath();
+        ctx.arc(x, y, pulse, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = COL.pellet;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+}
+
+function facingAngle(dir) {
+  if (dir.dc === 1) return 0;
+  if (dir.dc === -1) return Math.PI;
+  if (dir.dr === 1) return Math.PI / 2;
+  if (dir.dr === -1) return -Math.PI / 2;
+  return 0;
+}
+
+function drawPlayer() {
+  if (state === 'dying') return;
+  const r = TILE * 0.42;
+  const mouthPhase = (Math.sin(gameClock * 12) + 1) / 2;
+  const mouthAngle = 0.08 + mouthPhase * 0.55;
+  const facing = facingAngle(player.dir);
+  ctx.save();
+  ctx.translate(player.px, player.py);
+  ctx.rotate(facing);
+  ctx.fillStyle = COL.player;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, mouthAngle, Math.PI * 2 - mouthAngle);
+  ctx.lineTo(0, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawDeathAnim() {
+  if (state !== 'dying') return;
+  const t = Math.min(1, deathT / DEATH_ANIM);
+  const r = TILE * 0.42 * (1 - t);
+  if (r <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = 1 - t;
+  ctx.fillStyle = COL.player;
+  ctx.beginPath();
+  ctx.arc(player.px, player.py, r, 0, Math.PI * 2 * (1 - t));
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawGhost(entity, bodyColor, darkColor) {
+  const x = entity.px, y = entity.py;
+  const r = TILE * 0.42;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = bodyColor;
+  ctx.beginPath();
+  ctx.arc(0, -r * 0.1, r, Math.PI, 0, false);
+  ctx.lineTo(r, r * 0.75);
+  const bumps = 4;
+  for (let i = 0; i < bumps; i++) {
+    const bx0 = r - (2 * r / bumps) * i;
+    const bx1 = bx0 - r / bumps;
+    const midX = (bx0 + bx1) / 2;
+    ctx.quadraticCurveTo(midX, r * 0.45, bx1, r * 0.75);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  const dir = entity.dir;
+  const eyeOffX = dir.dc * 1.6, eyeOffY = dir.dr * 1.6;
+  for (const s of [-1, 1]) {
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(s * r * 0.42, -r * 0.15, r * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = darkColor;
+    ctx.beginPath();
+    ctx.arc(s * r * 0.42 + eyeOffX, -r * 0.15 + eyeOffY, r * 0.14, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawJoystick() {
+  if (!joystick.active) return;
+  ctx.save();
+  ctx.globalAlpha = 0.55;
+  ctx.strokeStyle = 'rgba(240,234,255,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(joystick.anchorX, joystick.anchorY, JOY_MAX_RADIUS, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(124,255,107,0.55)';
+  ctx.beginPath();
+  ctx.arc(joystick.curX, joystick.curY, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawLifeIcon(x, y) {
+  ctx.fillStyle = COL.player;
+  ctx.beginPath();
+  ctx.arc(x, y, 6, 0.35, Math.PI * 2 - 0.35);
+  ctx.lineTo(x, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawHUD() {
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 13px Arial';
+  ctx.fillStyle = COL.textMain;
+  ctx.fillText('SCORE ' + score, 12, 20);
+
+  ctx.textAlign = 'right';
+  ctx.fillText('LEVEL ' + level, W - 12, 20);
+
+  for (let i = 0; i < 3; i++) {
+    ctx.globalAlpha = i < lives ? 1 : 0.25;
+    drawLifeIcon(W / 2 - 20 + i * 20, 34);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawClearBanner() {
+  if (state !== 'levelClear') return;
+  const t = clearT / CLEAR_BANNER;
+  const alpha = t < 0.15 ? t / 0.15 : (t > 0.8 ? (1 - t) / 0.2 : 1);
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.fillStyle = 'rgba(10,7,22,0.75)';
+  ctx.fillRect(0, H / 2 - 30, W, 60);
+  ctx.fillStyle = COL.power;
+  ctx.font = 'bold 20px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('ALLEY CLEARED!', W / 2, H / 2 + 2);
+  ctx.font = '11px Arial';
+  ctx.fillStyle = COL.textMain;
+  ctx.fillText('Ember is getting faster...', W / 2, H / 2 + 20);
+  ctx.restore();
+}
+
+function draw() {
+  drawBackground();
+  drawMazeLayer();
+  drawPellets();
+  drawGhost(ember, COL.ember, COL.emberDark);
+  drawPlayer();
+  drawDeathAnim();
+  drawJoystick();
+  drawHUD();
+  drawClearBanner();
+}
+
+// ==================== Loop ====================
+let lastT = null;
+function loop(ts) {
+  if (lastT === null) lastT = ts;
+  const dt = Math.min(0.05, (ts - lastT) / 1000);
+  lastT = ts;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+fitCanvas();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
