@@ -670,13 +670,17 @@ const DRIFT_FAR_THRESHOLD = 8;
 // a timer, then re-engages with its personality logic, then back again.
 // Permanent chase mode makes the game feel impossible rather than
 // relentless-but-fair - this is what keeps it fair over a long run.
-const SCATTER_DURATION = 7, CHASE_DURATION = 20;
+// Both durations scale with level - scatter shrinks, chase grows - same
+// shrink-per-clear pattern as ghost speed and the frightened window.
+let scatterDuration = 7, chaseDuration = 20;
+const SCATTER_DURATION_FLOOR = 3, CHASE_DURATION_CEIL = 35;
+const SCATTER_SHRINK_PER_CLEAR = 0.4, CHASE_GROW_PER_CLEAR = 1.5;
 let ghostPhase = 'scatter';
 let ghostPhaseT = 0;
 function resetGhostPhase() { ghostPhase = 'scatter'; ghostPhaseT = 0; }
 function updateGhostPhase(dt) {
   ghostPhaseT += dt;
-  const duration = ghostPhase === 'scatter' ? SCATTER_DURATION : CHASE_DURATION;
+  const duration = ghostPhase === 'scatter' ? scatterDuration : chaseDuration;
   if (ghostPhaseT >= duration) {
     ghostPhase = ghostPhase === 'scatter' ? 'chase' : 'scatter';
     ghostPhaseT = 0;
@@ -843,6 +847,31 @@ function playPelletEat() {
   pelletToneToggle = !pelletToneToggle;
   tone(pelletToneToggle ? 480 : 380, 0.06, 'square', 0.08);
 }
+// Fuller/richer than a regular pellet blip - a little three-note run so a
+// power pellet reads as a distinct, bigger pickup even before the
+// frightened cue that follows it.
+function playPowerPelletEat() {
+  tone(392, 0.07, 'triangle', 0.13, 0);
+  tone(523, 0.08, 'triangle', 0.13, 0.05);
+  tone(659, 0.1, 'triangle', 0.14, 0.1);
+}
+// One-shot cue at the moment frightened triggers - a quick rising sweep,
+// distinct from every other sound so "the ghosts just went vulnerable"
+// registers even mid-chase without needing to check colors first.
+function playFrightenedStart() {
+  tone(220, 0.09, 'sawtooth', 0.1, 0);
+  tone(330, 0.09, 'sawtooth', 0.1, 0.07);
+  tone(440, 0.09, 'sawtooth', 0.11, 0.14);
+  tone(587, 0.14, 'sawtooth', 0.12, 0.21);
+}
+// Pitch climbs with the combo tier so the 200/400/800/1600 escalation is
+// audible, not just a HUD number - a satisfying "run" of eats sounds
+// distinctly bigger by the fourth ghost, not identical to the first.
+function playGhostEaten(comboIndex) {
+  const base = 260 + comboIndex * 90;
+  tone(base, 0.05, 'square', 0.14, 0);
+  tone(base * 1.6, 0.12, 'square', 0.13, 0.05);
+}
 function playDeath() {
   tone(320, 0.14, 'sawtooth', 0.15);
   tone(220, 0.16, 'sawtooth', 0.14, 0.12);
@@ -900,6 +929,8 @@ function resetRun() {
   playerTileTime = 0.15;
   ghostTileTime = 0.188;
   frightenedDuration = 7;
+  scatterDuration = 7;
+  chaseDuration = 20;
   setupMaze();
 }
 
@@ -962,6 +993,8 @@ function startNextMaze() {
   level++;
   ghostTileTime = Math.max(GHOST_TILE_TIME_FLOOR, ghostTileTime - GHOST_SPEEDUP_PER_CLEAR);
   frightenedDuration = Math.max(FRIGHTENED_DURATION_FLOOR, frightenedDuration - FRIGHTENED_DURATION_SHRINK_PER_CLEAR);
+  scatterDuration = Math.max(SCATTER_DURATION_FLOOR, scatterDuration - SCATTER_SHRINK_PER_CLEAR);
+  chaseDuration = Math.min(CHASE_DURATION_CEIL, chaseDuration + CHASE_GROW_PER_CLEAR);
   setupMaze();
   state = 'playing';
 }
@@ -970,13 +1003,17 @@ function eatGhost(g) {
   g.eaten = true;
   eatenComboCount++;
   const idx = Math.min(eatenComboCount - 1, GHOST_EAT_SCORES.length - 1);
-  score += GHOST_EAT_SCORES[idx];
-  playPelletEat();
+  const points = GHOST_EAT_SCORES[idx];
+  score += points;
+  playGhostEaten(idx);
+  spawnParticles(g.px, g.py, COL.eyesWhite, 8, 90);
+  spawnPopup(g.px, g.py, '+' + points, COL.frightenedWarn);
 }
 
 function triggerFrightened() {
   frightenedT = frightenedDuration;
   eatenComboCount = 0;
+  playFrightenedStart();
   for (const g of ghosts) {
     if (g.eaten) continue; // already-eaten eyes keep racing home, unaffected
     // Direction instantly reverses the moment frightened triggers - flip
@@ -1010,8 +1047,13 @@ function checkPelletPickup() {
   remainingPellets--;
   pelletsEatenThisLife++;
   score += type === 'power' ? 50 : 10;
-  playPelletEat();
-  if (type === 'power') triggerFrightened();
+  if (type === 'power') {
+    playPowerPelletEat();
+    spawnParticles(player.px, player.py, COL.power, 10, 100);
+    triggerFrightened();
+  } else {
+    playPelletEat();
+  }
   if (remainingPellets <= 0) clearMaze();
 }
 
@@ -1056,6 +1098,54 @@ function update(dt) {
   }
   checkPelletPickup();
   checkContact();
+  updateParticles(dt);
+}
+
+// ==================== Juice: particles + score popups on power pellet
+// pickup and ghost-eaten events ====================
+let particles = [];
+let fx = [];
+function spawnParticles(x, y, color, count, speed) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = speed * (0.4 + Math.random() * 0.6);
+    const life = 0.3 + Math.random() * 0.25;
+    particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life, maxLife: life, color, size: 2 + Math.random() * 2 });
+  }
+}
+function updateParticles(dt) {
+  for (const p of particles) {
+    p.life -= dt;
+    p.x += p.vx * dt; p.y += p.vy * dt;
+    p.vx *= (1 - Math.min(1, 3 * dt));
+    p.vy *= (1 - Math.min(1, 3 * dt));
+  }
+  particles = particles.filter(p => p.life > 0);
+  fx = fx.filter(f => gameClock - f.start < f.duration);
+}
+function spawnPopup(x, y, text, color) {
+  fx.push({ x, y, text, color, start: gameClock, duration: 0.7 });
+}
+function drawParticles() {
+  for (const p of particles) {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+    ctx.restore();
+  }
+}
+function drawFx() {
+  for (const f of fx) {
+    const t = (gameClock - f.start) / f.duration;
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, 1 - t);
+    ctx.fillStyle = f.color;
+    ctx.font = 'bold 11px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(f.text, f.x, f.y - t * 16);
+    ctx.restore();
+  }
 }
 
 // ==================== Draw ====================
@@ -1268,6 +1358,8 @@ function draw() {
   for (const g of ghosts) drawGhost(g);
   drawPlayer();
   drawDeathAnim();
+  drawParticles();
+  drawFx();
   drawJoystick();
   drawHUD();
   drawClearBanner();
