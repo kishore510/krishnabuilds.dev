@@ -224,8 +224,8 @@ document.addEventListener('webkitfullscreenchange', syncFsButtons);
 
 // ==================== Maze ====================
 // Validated in a standalone BFS/loop/dead-end script before being used here:
-// fully connected (187/187 walkable tiles reached), 53 independent loops,
-// zero non-tunnel tiles with <=1 open neighbor.
+// general graph (all tiles, box included) fully connected at 184/184, 48
+// independent loops, zero non-tunnel dead-ends.
 //
 // Column 6 (the wall bounding the left prong of the ghost-box antechamber,
 // col 7) was originally a solid wall from row 3 to row 15, while its mirror
@@ -234,6 +234,15 @@ document.addEventListener('webkitfullscreenchange', syncFsButtons);
 // side, while the right prong already had one. Opened col 6 at those same
 // four rows to match, giving both prongs a side exit the way the layout's
 // symmetry always implied they should have.
+//
+// The ghost box (row 9, cols 7-12) originally had two entrances - row 8
+// (north) and row 10 (south), mirror images of each other. Closed the south
+// one (row 10, cols 7-9) so there's a single door, matching a real cage
+// with one way in/out rather than a walk-through room. Re-validated after
+// the close: player-graph still fully connected (178/178, 46 loops, zero
+// dead-ends) with the box itself excluded from player-walkable tiles, and
+// the ghost-graph (box included, only the one door) still fully connected
+// separately (184/184).
 const MAZE = [
   "0000000000000000000",
   "0311111111111111130",
@@ -245,7 +254,7 @@ const MAZE = [
   "0111111111011111110",
   "0100000111000010010",
   "9999910444444019999",
-  "0100000111000010010",
+  "0100000000000010010",
   "0111111111011111110",
   "0000010101010000000",
   "0111111101011111110",
@@ -271,7 +280,17 @@ function cellCenterY(r) { return cellY(r) + TILE / 2; }
 
 function inBounds(r, c) { return r >= 0 && r < ROWS && c >= 0 && c < COLS; }
 function tileAt(r, c) { return MAZE[r][c]; }
-function isWalkable(r, c) { return inBounds(r, c) && tileAt(r, c) !== '0'; }
+function isBoxCell(r, c) { return inBounds(r, c) && tileAt(r, c) === '4'; }
+// blockBox is true only for the player - the box interior is a real wall
+// for player collision (the cage is a genuine barrier, not just visual),
+// while ghosts still treat it as ordinary floor so they can spawn, wait,
+// and route through it via the single door.
+function isWalkable(r, c, blockBox) {
+  if (!inBounds(r, c)) return false;
+  if (tileAt(r, c) === '0') return false;
+  if (blockBox && isBoxCell(r, c)) return false;
+  return true;
+}
 
 const DIRS = {
   up: { dr: -1, dc: 0 }, down: { dr: 1, dc: 0 },
@@ -294,9 +313,9 @@ function stepCoords(r, c, dir, allowWrap) {
   }
   return { r: nr, c: nc, wrapped };
 }
-function canStep(r, c, dir, allowWrap) {
+function canStep(r, c, dir, allowWrap, blockBox) {
   const next = stepCoords(r, c, dir, allowWrap);
-  return isWalkable(next.r, next.c);
+  return isWalkable(next.r, next.c, blockBox);
 }
 
 const PLAYER_SPAWN = { r: 16, c: 9 };
@@ -322,9 +341,9 @@ const CORNERS = [{ r: 1, c: 1 }, { r: 1, c: 17 }, { r: 16, c: 1 }, { r: 16, c: 1
 // time-only release rather than pellet-gated like the other three.
 const GHOST_DEFS = [
   { id: 'ember', color: 'ember', personality: 'chase',   home: CORNERS[0], spawnC: 9,  releasePellets: Infinity, releaseTime: 1 },
-  { id: 'glint', color: 'glint', personality: 'ambush',  home: CORNERS[1], spawnC: 8,  releasePellets: 7,        releaseTime: 4 },
-  { id: 'drift', color: 'drift', personality: 'flipper', home: CORNERS[2], spawnC: 10, releasePellets: 17,       releaseTime: 8 },
-  { id: 'wisp',  color: 'wisp',  personality: 'avoider', home: CORNERS[3], spawnC: 11, releasePellets: 32,       releaseTime: 12 }
+  { id: 'glint', color: 'glint', personality: 'ambush',  home: CORNERS[1], spawnC: 8,  releasePellets: 14,       releaseTime: 8 },
+  { id: 'drift', color: 'drift', personality: 'flipper', home: CORNERS[2], spawnC: 10, releasePellets: 30,       releaseTime: 15 },
+  { id: 'wisp',  color: 'wisp',  personality: 'avoider', home: CORNERS[3], spawnC: 11, releasePellets: 50,       releaseTime: 22 }
 ];
 
 let pellets, totalPellets, remainingPellets;
@@ -367,6 +386,7 @@ const COL = {
   wisp: '#c77dff', wispDark: '#4a1f70',
   frightened: '#2b3fd6', frightenedWarn: '#e8ecff',
   eyesWhite: '#f0eaff', eyesPupil: '#1a1330',
+  boxFloor: '#1f1638', boxBars: '#8b7aa8',
   textMain: '#f0eaff', textDim: '#8a7fae', textAlert: '#ff6b6b'
 };
 
@@ -375,6 +395,58 @@ bgGradient.addColorStop(0, COL.bgTop);
 bgGradient.addColorStop(1, COL.bgBottom);
 
 let mazeLayer = null;
+// Box perimeter is found dynamically from the maze data (not hardcoded
+// coordinates) so this stays correct if the layout ever changes. The
+// "door" is any open floor tile directly above the box's top row - the
+// one deliberate gap in an otherwise fully wall-bounded cage.
+function drawBoxCage(octx) {
+  let minR = Infinity, maxR = -Infinity, minC = Infinity, maxC = -Infinity;
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (!isBoxCell(r, c)) continue;
+      minR = Math.min(minR, r); maxR = Math.max(maxR, r);
+      minC = Math.min(minC, c); maxC = Math.max(maxC, c);
+    }
+  }
+  if (!isFinite(minR)) return;
+  const bx = minC * TILE, by = minR * TILE;
+  const bw = (maxC - minC + 1) * TILE, bh = (maxR - minR + 1) * TILE;
+
+  octx.fillStyle = COL.boxFloor;
+  octx.fillRect(bx, by, bw, bh);
+
+  octx.strokeStyle = COL.boxBars;
+  octx.lineWidth = 2;
+  // Left/right/bottom are always solid - real walls sit there already, this
+  // just makes the enclosure pop visually. The top edge is NOT one solid
+  // line straight across: a continuous stroke over the door would read as
+  // closed even though it's walkable, so it's split per-column into solid
+  // wall segments and bar-line door segments to match what's actually there.
+  octx.beginPath();
+  octx.moveTo(bx + 1, by + 1);
+  octx.lineTo(bx + 1, by + bh - 1);
+  octx.lineTo(bx + bw - 1, by + bh - 1);
+  octx.lineTo(bx + bw - 1, by + 1);
+  octx.stroke();
+
+  for (let c = minC; c <= maxC; c++) {
+    const cx = c * TILE;
+    if (isWalkable(minR - 1, c)) {
+      for (const frac of [0.3, 0.7]) {
+        octx.beginPath();
+        octx.moveTo(cx + TILE * frac, by - 3);
+        octx.lineTo(cx + TILE * frac, by + 4);
+        octx.stroke();
+      }
+    } else {
+      octx.beginPath();
+      octx.moveTo(cx, by + 1);
+      octx.lineTo(cx + TILE, by + 1);
+      octx.stroke();
+    }
+  }
+}
+
 function buildMazeLayer() {
   const off = document.createElement('canvas');
   off.width = boardW; off.height = boardH;
@@ -393,6 +465,7 @@ function buildMazeLayer() {
       octx.fillRect(x + 1, y + 1, TILE - 2, 3);
     }
   }
+  drawBoxCage(octx);
   mazeLayer = off;
 }
 buildMazeLayer();
@@ -402,12 +475,12 @@ buildMazeLayer();
 // a full cell at a time on a cooldown, px/py tween smoothly across that same
 // window for the draw call - keeps chase logic simple and grid-exact while
 // still reading as continuous motion.
-function makeEntity(spawn, tileTime, canWrap) {
+function makeEntity(spawn, tileTime, canWrap, blockBox) {
   return {
     r: spawn.r, c: spawn.c, prevR: spawn.r, prevC: spawn.c,
     dir: { dr: 0, dc: 0 }, moveCooldown: 0, tileTime,
     px: cellCenterX(spawn.c), py: cellCenterY(spawn.r),
-    wrapStep: false, canWrap: !!canWrap
+    wrapStep: false, canWrap: !!canWrap, blockBox: !!blockBox
   };
 }
 
@@ -444,9 +517,9 @@ let eatenComboCount = 0;
 const GHOST_EAT_SCORES = [200, 400, 800, 1600];
 
 function resetEntities() {
-  player = makeEntity(PLAYER_SPAWN, playerTileTime, true);
+  player = makeEntity(PLAYER_SPAWN, playerTileTime, true, true);
   ghosts = GHOST_DEFS.map((def) => {
-    const g = makeEntity({ r: GHOST_SPAWN_ROW, c: def.spawnC }, ghostTileTime, false);
+    const g = makeEntity({ r: GHOST_SPAWN_ROW, c: def.spawnC }, ghostTileTime, false, false);
     g.id = def.id;
     g.color = def.color;
     g.personality = def.personality;
@@ -460,6 +533,7 @@ function resetEntities() {
     g.releaseTime = def.releaseTime;
     g.eaten = false;
     g.respawnCooldownT = 0;
+    g.bobPhase = Math.random() * Math.PI * 2;
     return g;
   });
   pelletsEatenThisLife = 0;
@@ -492,10 +566,10 @@ function stepEntity(entity, wantedDirs, dt, speed) {
     let dir = null;
     if (wantedDirs) {
       for (const d of wantedDirs) {
-        if (d && canStep(entity.r, entity.c, d, entity.canWrap)) { dir = d; break; }
+        if (d && canStep(entity.r, entity.c, d, entity.canWrap, entity.blockBox)) { dir = d; break; }
       }
     }
-    if (!dir && (entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir, entity.canWrap)) dir = entity.dir;
+    if (!dir && (entity.dir.dr || entity.dir.dc) && canStep(entity.r, entity.c, entity.dir, entity.canWrap, entity.blockBox)) dir = entity.dir;
     if (dir) {
       const next = stepCoords(entity.r, entity.c, dir, entity.canWrap);
       entity.prevR = entity.r; entity.prevC = entity.c;
@@ -649,10 +723,17 @@ function ghostDesiredDir(g, dt) {
 }
 
 // ==================== Joystick input ====================
-// Floating-anchor virtual joystick: the base appears wherever the first
-// touch in the control band lands, not at a fixed spot.
-const JOY_DEADZONE = 5, JOY_MAX_RADIUS = 34;
-let joystick = { active: false, pointerId: null, anchorX: 0, anchorY: 0, curX: 0, curY: 0 };
+// Fixed-position virtual joystick: the base sits at one constant screen
+// location (bottom-center of the control band) and never moves - a stable
+// physical reference point the thumb can return to by feel, like a
+// hardware stick, rather than a floating anchor that drifts with touch.
+// The touch-DETECTION zone still covers the whole control band (so the
+// player doesn't need to precisely land on the graphic to start a touch),
+// but once active, direction is always measured relative to the fixed
+// anchor, never the touch's own start point.
+const JOY_ANCHOR_X = W / 2, JOY_ANCHOR_Y = H - CONTROL_BAND_H / 2;
+const JOY_DEADZONE = 5, JOY_MAX_RADIUS = 34; // short throw - full direction strength well within a thumb's resting reach
+let joystick = { active: false, pointerId: null, curX: JOY_ANCHOR_X, curY: JOY_ANCHOR_Y };
 
 function positionJoystickZone() {
   const scale = parseFloat(getComputedStyle(wrap).getPropertyValue('--game-scale')) || (canvas.getBoundingClientRect().width / W) || 1;
@@ -673,7 +754,7 @@ function clientToCanvas(clientX, clientY) {
 // AND upward intent, so if the dominant axis (up) is blocked but the
 // secondary one (left) is open, the player should still turn - without
 // needing the drag to straighten toward a near-perfect cardinal angle.
-// Recomputed fresh from the live raw dx/dy on every pointermove.
+// Recomputed fresh from the live raw dx/dy on every pointer event.
 function candidateDirsFromDelta(dx, dy) {
   const adx = Math.abs(dx), ady = Math.abs(dy);
   const horiz = adx >= JOY_DEADZONE ? (dx > 0 ? DIRS.right : DIRS.left) : null;
@@ -684,36 +765,44 @@ function candidateDirsFromDelta(dx, dy) {
   return adx >= ady ? [horiz, vert] : [vert, horiz];
 }
 
-joystickZoneEl.addEventListener('pointerdown', (e) => {
-  e.preventDefault();
-  const p = clientToCanvas(e.clientX, e.clientY);
-  joystick.active = true;
-  joystick.pointerId = e.pointerId;
-  joystick.anchorX = joystick.curX = p.x;
-  joystick.anchorY = joystick.curY = p.y;
-  try { joystickZoneEl.setPointerCapture(e.pointerId); } catch (err) {}
-  desiredDirs = [];
-});
-joystickZoneEl.addEventListener('pointermove', (e) => {
-  if (!joystick.active || e.pointerId !== joystick.pointerId) return;
-  const p = clientToCanvas(e.clientX, e.clientY);
-  const dx = p.x - joystick.anchorX, dy = p.y - joystick.anchorY;
+function updateJoystickFromPoint(clientX, clientY) {
+  const p = clientToCanvas(clientX, clientY);
+  const dx = p.x - JOY_ANCHOR_X, dy = p.y - JOY_ANCHOR_Y;
   const dist = Math.hypot(dx, dy);
   const clampedDist = Math.min(dist, JOY_MAX_RADIUS);
   const ang = Math.atan2(dy, dx);
-  joystick.curX = joystick.anchorX + Math.cos(ang) * clampedDist;
-  joystick.curY = joystick.anchorY + Math.sin(ang) * clampedDist;
+  joystick.curX = JOY_ANCHOR_X + Math.cos(ang) * clampedDist;
+  joystick.curY = JOY_ANCHOR_Y + Math.sin(ang) * clampedDist;
   desiredDirs = candidateDirsFromDelta(dx, dy);
+}
+
+joystickZoneEl.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  joystick.active = true;
+  joystick.pointerId = e.pointerId;
+  try { joystickZoneEl.setPointerCapture(e.pointerId); } catch (err) {}
+  updateJoystickFromPoint(e.clientX, e.clientY);
+});
+joystickZoneEl.addEventListener('pointermove', (e) => {
+  if (!joystick.active || e.pointerId !== joystick.pointerId) return;
+  updateJoystickFromPoint(e.clientX, e.clientY);
 });
 function releaseJoystick(e) {
   if (e.pointerId !== joystick.pointerId) return;
   joystick.active = false;
   joystick.pointerId = null;
+  joystick.curX = JOY_ANCHOR_X;
+  joystick.curY = JOY_ANCHOR_Y;
   desiredDirs = [];
 }
 joystickZoneEl.addEventListener('pointerup', releaseJoystick);
 joystickZoneEl.addEventListener('pointercancel', releaseJoystick);
-window.addEventListener('blur', () => { joystick.active = false; desiredDirs = []; });
+window.addEventListener('blur', () => {
+  joystick.active = false;
+  joystick.curX = JOY_ANCHOR_X;
+  joystick.curY = JOY_ANCHOR_Y;
+  desiredDirs = [];
+});
 
 const KEY_DIR = {
   ArrowUp: DIRS.up, KeyW: DIRS.up, ArrowDown: DIRS.down, KeyS: DIRS.down,
@@ -1076,8 +1165,12 @@ function drawGhost(g) {
     darkColor = COL[g.color + 'Dark'];
   }
   const r = TILE * 0.42;
+  // Still waiting on its release timer - a small idle bob (draw-only, never
+  // touches the real logical position) so it visibly reads as alive and
+  // caged rather than a static prop.
+  const bob = !g.released ? Math.sin(gameClock * 4 + g.bobPhase) * 2 : 0;
   ctx.save();
-  ctx.translate(g.px, g.py);
+  ctx.translate(g.px, g.py + bob);
   ctx.fillStyle = bodyColor;
   ctx.beginPath();
   ctx.arc(0, -r * 0.1, r, Math.PI, 0, false);
@@ -1107,16 +1200,18 @@ function drawGhost(g) {
   ctx.restore();
 }
 
+// Always visible, even before the first touch - a fixed landmark the thumb
+// can find and return to by feel, the way a hardware stick's base never
+// moves. Brightens once actually held so touch feedback is still clear.
 function drawJoystick() {
-  if (!joystick.active) return;
   ctx.save();
-  ctx.globalAlpha = 0.55;
+  ctx.globalAlpha = joystick.active ? 0.6 : 0.3;
   ctx.strokeStyle = 'rgba(240,234,255,0.5)';
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(joystick.anchorX, joystick.anchorY, JOY_MAX_RADIUS, 0, Math.PI * 2);
+  ctx.arc(JOY_ANCHOR_X, JOY_ANCHOR_Y, JOY_MAX_RADIUS, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = 'rgba(124,255,107,0.55)';
+  ctx.fillStyle = joystick.active ? 'rgba(124,255,107,0.6)' : 'rgba(124,255,107,0.3)';
   ctx.beginPath();
   ctx.arc(joystick.curX, joystick.curY, 14, 0, Math.PI * 2);
   ctx.fill();
