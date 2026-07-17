@@ -235,13 +235,17 @@ function playPA(when) {
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.type = 'triangle';
-  osc.frequency.setValueAtTime(190, when);
-  osc.frequency.exponentialRampToValueAtTime(48, when + 0.13);
+  // Pitch-drop and gain decay now span the same ~0.1s as PON's total
+  // envelope, ending together - the old version dropped pitch to near-
+  // silence by 130ms while the node lingered open to 220ms, which read as
+  // an abrupt cutoff rather than a settled low thump.
+  osc.frequency.setValueAtTime(170, when);
+  osc.frequency.exponentialRampToValueAtTime(62, when + 0.095);
   gain.gain.setValueAtTime(0.001, when);
-  gain.gain.exponentialRampToValueAtTime(0.28, when + 0.008);
-  gain.gain.exponentialRampToValueAtTime(0.001, when + 0.18);
+  gain.gain.exponentialRampToValueAtTime(0.34, when + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.001, when + 0.095);
   osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.start(when); osc.stop(when + 0.22);
+  osc.start(when); osc.stop(when + 0.1);
 }
 function playPON(when) {
   if (muted) return;
@@ -448,7 +452,6 @@ let enemyHP = ENEMY_MAX_HP;
 let nextExpectedIndex = 0;
 let seqAllPerfect = true;
 let combo = 0;
-let attackFlashTimer = 0;
 let missFlashTimer = 0;
 let judgePopup = null; // { text, color, timer }
 const PERFECT_MS = 120;
@@ -479,18 +482,87 @@ function failAttempt() {
   nextExpectedIndex = nextAttemptStart;
   seqAllPerfect = true;
 }
-function landSequence() {
+// --- Attack throw animation: windup -> release -> flight -> impact -> recovery ---
+// Enemy health is decremented at the start of the impact phase (when the
+// spear actually lands), not the moment the sequence is judged - see
+// updateAnimTimers/resolveAttackImpact.
+const THROW_WINDUP = 0.3;
+const THROW_RELEASE = 0.1;
+const THROW_FLIGHT = 0.4;
+const THROW_IMPACT = 0.2;
+const THROW_RECOVERY = 0.2;
+const THROW_SPAWN_T = THROW_WINDUP + THROW_RELEASE * 0.5;
+const THROW_FLIGHT_START = THROW_WINDUP + THROW_RELEASE;
+const THROW_IMPACT_START = THROW_FLIGHT_START + THROW_FLIGHT;
+const THROW_RECOVERY_START = THROW_IMPACT_START + THROW_IMPACT;
+const THROW_TOTAL = THROW_RECOVERY_START + THROW_RECOVERY;
+
+let throwActive = false;
+let throwElapsed = 0;
+let throwSpearSpawned = false;
+let pendingAllPerfect = true;
+let projectile = null; // { x0, y0, x1, y1 }
+
+function easeOutCubic(p) { return 1 - Math.pow(1 - p, 3); }
+
+function triggerAttack(allPerfect) {
+  throwActive = true;
+  throwElapsed = 0;
+  throwSpearSpawned = false;
+  pendingAllPerfect = allPerfect;
+  projectile = null;
+}
+// One arm angle drives every squad member's throwing arm in sync so the
+// whole squad reads as throwing together, even though only one projectile
+// is ever spawned per landed sequence (see spawnProjectile).
+function armAngleForThrow(t) {
+  if (!throwActive) return Math.sin(t * 1.6) * 0.05;
+  const et = throwElapsed;
+  if (et < THROW_WINDUP) return lerp(0, -0.9, easeOutCubic(et / THROW_WINDUP));
+  if (et < THROW_FLIGHT_START) return lerp(-0.9, 0.6, (et - THROW_WINDUP) / THROW_RELEASE);
+  if (et < THROW_RECOVERY_START) return 0.6;
+  return lerp(0.6, 0, easeOutCubic(clamp((et - THROW_RECOVERY_START) / THROW_RECOVERY, 0, 1)));
+}
+function spawnProjectile() {
+  const throwerX = SQUAD_X[SQUAD_X.length - 1];
+  projectile = {
+    x0: throwerX + 10 * SQUAD_SCALE, y0: GROUND_Y - 26 * SQUAD_SCALE,
+    x1: SPEAR_TARGET_X, y1: SPEAR_TARGET_Y
+  };
+}
+function projectilePos(p) {
+  const x = lerp(projectile.x0, projectile.x1, p);
+  const y = lerp(projectile.y0, projectile.y1, p) - 40 * Math.sin(Math.PI * p);
+  const dx = projectile.x1 - projectile.x0;
+  const dy = (projectile.y1 - projectile.y0) - 40 * Math.PI * Math.cos(Math.PI * p);
+  return { x, y, angle: Math.atan2(dy, dx) };
+}
+function resolveAttackImpact() {
   enemyHP = Math.max(0, enemyHP - 1);
-  attackFlashTimer = 0.4;
   playHit();
-  if (seqAllPerfect) {
+  if (pendingAllPerfect) {
     combo++;
     if (combo > bestCombo) { bestCombo = combo; saveBestCombo(combo); }
   } else {
     combo = 0;
   }
-  seqAllPerfect = true;
   if (enemyHP <= 0) triggerCleared();
+}
+function updateAnimTimers(dt) {
+  if (throwActive) {
+    throwElapsed += dt;
+    if (!throwSpearSpawned && throwElapsed >= THROW_SPAWN_T) {
+      throwSpearSpawned = true;
+      spawnProjectile();
+    }
+    if (projectile && throwElapsed >= THROW_IMPACT_START) {
+      projectile = null;
+      resolveAttackImpact();
+    }
+    if (throwElapsed >= THROW_TOTAL) throwActive = false;
+  }
+  if (missFlashTimer > 0) missFlashTimer = Math.max(0, missFlashTimer - dt);
+  if (judgePopup) { judgePopup.timer -= dt; if (judgePopup.timer <= 0) judgePopup = null; }
 }
 // Beyond this, a tap can't be a real attempt at the currently-expected beat
 // (it's a stray touch, or the tail end of muscle memory from a sequence
@@ -513,7 +585,10 @@ function handleDrumTap(type) {
     if (!withinPerfect) seqAllPerfect = false;
     showJudgePopup(withinPerfect ? 'PERFECT' : 'GOOD', withinPerfect ? '#7cfc9a' : '#ffd76a');
     nextExpectedIndex++;
-    if (nextExpectedIndex % 4 === 0) landSequence();
+    if (nextExpectedIndex % 4 === 0) {
+      triggerAttack(seqAllPerfect);
+      seqAllPerfect = true;
+    }
   } else {
     ev.judged = 'miss';
     failAttempt();
@@ -538,7 +613,9 @@ function startGame() {
   nextExpectedIndex = 0;
   seqAllPerfect = true;
   combo = 0;
-  attackFlashTimer = 0;
+  throwActive = false;
+  throwElapsed = 0;
+  projectile = null;
   missFlashTimer = 0;
   judgePopup = null;
   state = 'playing';
@@ -668,15 +745,34 @@ function drawGroundLane() {
 }
 
 // --- Squad ---
-const SQUAD_X = [90, 128, 166, 204];
+// Spacing doubled from the original 38px gap per playtest feedback (the
+// tight spacing read as one connected chain rather than 4 animals) - at
+// this canvas width 4 units at double gap still leaves a wide clear strip
+// before the enemy, so no need to drop to 3 units.
+const SQUAD_SCALE = 1.6;
+const SQUAD_X = [90, 166, 242, 318];
 const SQUAD_PHASE = [0, 0.55, 1.1, 1.65];
-function drawCreature(x, y, s, phase, t, lunge) {
+function drawArm(x, shoulderY, angle, s) {
+  ctx.save();
+  ctx.translate(x, shoulderY);
+  ctx.rotate(angle);
+  ctx.strokeStyle = CREATURE_PALETTE.dark;
+  ctx.lineWidth = 3 * s;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, 13 * s);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawCreature(x, y, s, phase, t, throwAngle) {
   const legFreq = (Math.PI * 2) / BEAT_SEC;
   const legA = Math.sin(t * legFreq + phase) * 0.5;
   const legB = Math.sin(t * legFreq + phase + Math.PI) * 0.5;
-  const hipX = x + lunge, hipY = y - 10 * s;
+  const hipY = y - 10 * s;
+  const bodyY = y - 24 * s;
   ctx.save();
-  ctx.translate(hipX, hipY);
+  ctx.translate(x, hipY);
   ctx.strokeStyle = CREATURE_PALETTE.dark;
   ctx.lineWidth = 3 * s;
   ctx.lineCap = 'round';
@@ -690,13 +786,11 @@ function drawCreature(x, y, s, phase, t, lunge) {
     ctx.restore();
   });
   ctx.restore();
-  // tail nub
-  ctx.fillStyle = CREATURE_PALETTE.dark;
-  ctx.beginPath();
-  ctx.ellipse(x - 16 * s + lunge, y - 16 * s, 7 * s, 4 * s, -0.3, 0, Math.PI * 2);
-  ctx.fill();
-  // body
-  const grad = ctx.createRadialGradient(x + lunge - 4 * s, y - 24 * s, 2 * s, x + lunge, y - 16 * s, 22 * s);
+  // back arm just idles - only the front (enemy-facing) arm throws
+  drawArm(x - 13 * s, bodyY, Math.sin(t * 1.6 + phase) * 0.05, s);
+  drawArm(x + 13 * s, bodyY, throwAngle, s);
+  // body - plain round shape, warm gradient, no snout/tusks/tail
+  const grad = ctx.createRadialGradient(x - 4 * s, bodyY - 6 * s, 2 * s, x, bodyY, 17 * s);
   grad.addColorStop(0, CREATURE_PALETTE.light);
   grad.addColorStop(0.55, CREATURE_PALETTE.mid);
   grad.addColorStop(1, CREATURE_PALETTE.dark);
@@ -704,43 +798,28 @@ function drawCreature(x, y, s, phase, t, lunge) {
   ctx.strokeStyle = CREATURE_PALETTE.outline;
   ctx.lineWidth = 1.5 * s;
   ctx.beginPath();
-  ctx.ellipse(x + lunge, y - 16 * s, 18 * s, 14 * s, 0, 0, Math.PI * 2);
+  ctx.arc(x, bodyY, 16 * s, 0, Math.PI * 2);
   ctx.fill(); ctx.stroke();
-  // head
-  ctx.beginPath();
-  ctx.ellipse(x + lunge + 14 * s, y - 24 * s, 11 * s, 9 * s, 0, 0, Math.PI * 2);
-  ctx.fill(); ctx.stroke();
-  // horn/ear nubs
-  ctx.fillStyle = CREATURE_PALETTE.dark;
-  ctx.beginPath();
-  ctx.moveTo(x + lunge + 10 * s, y - 31 * s);
-  ctx.lineTo(x + lunge + 13 * s, y - 40 * s);
-  ctx.lineTo(x + lunge + 16 * s, y - 31 * s);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(x + lunge + 18 * s, y - 30 * s);
-  ctx.lineTo(x + lunge + 22 * s, y - 38 * s);
-  ctx.lineTo(x + lunge + 24 * s, y - 29 * s);
-  ctx.fill();
-  // eyes
+  // eyes - unchanged from the previous version, just re-anchored to the round face
   ctx.fillStyle = '#2a1a10';
   ctx.beginPath();
-  ctx.arc(x + lunge + 17 * s, y - 25 * s, 1.8 * s, 0, Math.PI * 2);
-  ctx.arc(x + lunge + 22 * s, y - 25 * s, 1.8 * s, 0, Math.PI * 2);
+  ctx.arc(x + 4 * s, bodyY - 3 * s, 1.8 * s, 0, Math.PI * 2);
+  ctx.arc(x + 9 * s, bodyY - 3 * s, 1.8 * s, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = '#fff';
   ctx.beginPath();
-  ctx.arc(x + lunge + 17.6 * s, y - 25.6 * s, 0.6 * s, 0, Math.PI * 2);
-  ctx.arc(x + lunge + 22.6 * s, y - 25.6 * s, 0.6 * s, 0, Math.PI * 2);
+  ctx.arc(x + 4.6 * s, bodyY - 3.6 * s, 0.6 * s, 0, Math.PI * 2);
+  ctx.arc(x + 9.6 * s, bodyY - 3.6 * s, 0.6 * s, 0, Math.PI * 2);
   ctx.fill();
 }
 function drawSquad(t) {
-  const lunge = attackFlashTimer > 0 ? Math.sin((0.4 - attackFlashTimer) / 0.4 * Math.PI) * 14 : 0;
-  SQUAD_X.forEach((x, i) => drawCreature(x, GROUND_Y, 1.6, SQUAD_PHASE[i], t, lunge));
+  const throwAngle = armAngleForThrow(t);
+  SQUAD_X.forEach((x, i) => drawCreature(x, GROUND_Y, SQUAD_SCALE, SQUAD_PHASE[i], t, throwAngle));
 }
 
 // --- Enemy ---
 const ENEMY_X = 660, ENEMY_Y = GROUND_Y - 20;
+const SPEAR_TARGET_X = ENEMY_X - 26, SPEAR_TARGET_Y = ENEMY_Y - 45;
 const ENEMY_SHAPE = [
   { x: 0, y: -95 }, { x: 18, y: -70 }, { x: 42, y: -78 }, { x: 50, y: -40 },
   { x: 34, y: -10 }, { x: 40, y: 20 }, { x: 10, y: 24 }, { x: -10, y: 24 },
@@ -749,14 +828,16 @@ const ENEMY_SHAPE = [
 ];
 function drawEnemy(t) {
   const bob = Math.sin(t * 2) * 4;
-  const hitShake = attackFlashTimer > 0 ? Math.sin(attackFlashTimer * 60) * 5 * (attackFlashTimer / 0.4) : 0;
-  const ex = ENEMY_X + hitShake, ey = ENEMY_Y + bob;
+  const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
+  const impactP = inImpact ? (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT : 0;
+  const shake = inImpact ? 6 * (1 - impactP) * Math.sin(impactP * Math.PI * 5) : 0;
+  const ex = ENEMY_X + shake, ey = ENEMY_Y + bob;
   ctx.save();
   ctx.translate(ex, ey);
   ctx.beginPath();
   ENEMY_SHAPE.forEach((p, i) => { i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
   ctx.closePath();
-  ctx.fillStyle = attackFlashTimer > 0 ? '#7a2a2a' : '#20161e';
+  ctx.fillStyle = inImpact ? '#7a2a2a' : '#20161e';
   ctx.fill();
   ctx.strokeStyle = 'rgba(190,230,255,0.75)';
   ctx.lineWidth = 2.5;
@@ -775,6 +856,54 @@ function drawEnemy(t) {
   ctx.fillStyle = '#ff5a4a';
   const pct = Math.max(0, enemyHP / ENEMY_MAX_HP);
   roundRect(ctx, bx + 2, by + 2, (barW - 4) * pct, barH - 4, 4); ctx.fill();
+}
+
+// --- Attack FX: thrown spear + impact flash ---
+function drawSpearAt(x, y, angle, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.strokeStyle = '#d8c9a8';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-11, 0); ctx.lineTo(8, 0);
+  ctx.stroke();
+  ctx.fillStyle = '#8a8f9a';
+  ctx.beginPath();
+  ctx.moveTo(8, 0); ctx.lineTo(2, -3.5); ctx.lineTo(2, 3.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+function drawAttackFX() {
+  if (projectile) {
+    const p = clamp((throwElapsed - THROW_FLIGHT_START) / THROW_FLIGHT, 0, 1);
+    // motion streak: a few fading echoes sampled from slightly earlier
+    // along the same analytic path, instead of storing a position history
+    [0.18, 0.12, 0.06].forEach((back, i) => {
+      const pp = p - back;
+      if (pp < 0) return;
+      const pos = projectilePos(pp);
+      drawSpearAt(pos.x, pos.y, pos.angle, 0.12 * (i + 1));
+    });
+    const pos = projectilePos(p);
+    drawSpearAt(pos.x, pos.y, pos.angle, 1);
+  }
+  const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
+  if (inImpact) {
+    const ip = (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT;
+    const r = 14 + ip * 26;
+    ctx.save();
+    ctx.globalAlpha = (1 - ip) * 0.85;
+    const glow = ctx.createRadialGradient(SPEAR_TARGET_X, SPEAR_TARGET_Y, 0, SPEAR_TARGET_X, SPEAR_TARGET_Y, r);
+    glow.addColorStop(0, 'rgba(255,240,200,0.9)');
+    glow.addColorStop(1, 'rgba(255,240,200,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(SPEAR_TARGET_X, SPEAR_TARGET_Y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
 }
 
 // --- Beat bar ---
@@ -865,6 +994,7 @@ function drawWorld(t, dt) {
   drawGroundLane();
   drawSquad(t);
   drawEnemy(t);
+  drawAttackFX();
   drawVegLayer(FG_SHAPES, fgScroll, GROUND_Y + 26, 1.4, '#132018');
   if (missFlashTimer > 0) {
     ctx.fillStyle = `rgba(255,40,40,${missFlashTimer / 0.3 * 0.25})`;
@@ -874,9 +1004,7 @@ function drawWorld(t, dt) {
 
 function updateGame(dt, now) {
   checkAutoMiss(now);
-  if (attackFlashTimer > 0) attackFlashTimer = Math.max(0, attackFlashTimer - dt);
-  if (missFlashTimer > 0) missFlashTimer = Math.max(0, missFlashTimer - dt);
-  if (judgePopup) { judgePopup.timer -= dt; if (judgePopup.timer <= 0) judgePopup = null; }
+  updateAnimTimers(dt);
 }
 
 let animT = 0;
@@ -894,8 +1022,7 @@ function loop(now) {
     drawBeatBar(now);
     drawHUD();
   } else {
-    if (attackFlashTimer > 0) attackFlashTimer = Math.max(0, attackFlashTimer - dt);
-    if (missFlashTimer > 0) missFlashTimer = Math.max(0, missFlashTimer - dt);
+    updateAnimTimers(dt);
     drawWorld(animT, dt);
   }
   requestAnimationFrame(loop);
