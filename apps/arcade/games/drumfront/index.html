@@ -612,11 +612,21 @@ const enemyScale = unitScale * 1.4;
 const SQUAD_X = [90, 166, 242, 318];
 const SQUAD_PHASE = [0, 0.55, 1.1, 1.65];
 const SQUAD_COLORS = ['#8a5a24', '#96632a', '#7f521f', '#8e5e27'];
-const GROUND_Y = H * 0.62 + 68;
-const ENEMY_X = 660, ENEMY_Y = GROUND_Y - 20;
+const GROUND_Y = 320;
+const ENEMY_Y = GROUND_Y - 20;
 const ENEMY_COLOR = '#050505';
 
-const ENGAGE_DISTANCE = 220;
+// Fixed camera, scrolling world: the squad's screen X never moves - only
+// distanceMarched changes (via landed March/Retreat), and everything else
+// (enemy, decorations) is positioned in world space and converted to
+// screen space as worldX - distanceMarched * layerRatio. The enemy sits far
+// enough down the path (ENEMY_WORLD_X) that it's fully off-screen at the
+// start of a run - "hidden until encountered" falls out of this model for
+// free rather than needing a separate visibility flag.
+const SQUAD_FRONT_X = SQUAD_X[SQUAD_X.length - 1];
+const ENGAGE_RANGE_PX = 150;
+const ENEMY_WORLD_X = 900;
+const MAX_DISTANCE_MARCHED = ENEMY_WORLD_X - SQUAD_FRONT_X - ENGAGE_RANGE_PX;
 const MARCH_STEP = 55;
 const SQUAD_MAX_HP = 100;
 const SQUAD_HIT_DAMAGE = 22;
@@ -626,7 +636,7 @@ const ATTACK_DAMAGE = 1;
 const ENEMY_IDLE_DURATION = 3.0;
 const ENEMY_TELEGRAPH_DURATION = 0.7;
 
-let squadAdvance = 0; // 0..ENGAGE_DISTANCE
+let distanceMarched = 0; // 0..MAX_DISTANCE_MARCHED
 let squadAction = null; // { kind: 'march'|'retreat'|'guard', elapsed, duration, fromX, toX }
 let squadHP = SQUAD_MAX_HP;
 let squadHitFlash = 0;
@@ -637,6 +647,8 @@ let enemyCyclePhase = 'idle'; // 'idle' | 'telegraph'
 let enemyCycleTimer = ENEMY_IDLE_DURATION;
 let telegraphGuarded = false;
 
+function enemyScreenX() { return ENEMY_WORLD_X - distanceMarched; }
+
 function executeCommand(name) {
   if (name === 'march') doMarch();
   else if (name === 'attack') doAttack();
@@ -644,20 +656,20 @@ function executeCommand(name) {
   else if (name === 'retreat') doRetreat();
 }
 function doMarch() {
-  const from = squadAdvance;
-  const to = Math.min(ENGAGE_DISTANCE, squadAdvance + MARCH_STEP);
+  const from = distanceMarched;
+  const to = Math.min(MAX_DISTANCE_MARCHED, distanceMarched + MARCH_STEP);
   squadAction = { kind: 'march', elapsed: 0, duration: 1.0, fromX: from, toX: to };
   playMarchStinger();
   announce('March', COMMAND_COLOR.march, 0.5);
 }
 function doRetreat() {
-  const from = squadAdvance;
+  const from = distanceMarched;
   squadAction = { kind: 'retreat', elapsed: 0, duration: 1.0, fromX: from, toX: 0 };
   playRetreatStinger();
   announce('Retreat', COMMAND_COLOR.retreat, 0.5);
 }
 function doGuard() {
-  squadAction = { kind: 'guard', elapsed: 0, duration: 0.9, fromX: squadAdvance, toX: squadAdvance };
+  squadAction = { kind: 'guard', elapsed: 0, duration: 0.9, fromX: distanceMarched, toX: distanceMarched };
   playGuardStinger();
   if (combatActive && enemyCyclePhase === 'telegraph' && !telegraphGuarded) {
     telegraphGuarded = true;
@@ -671,15 +683,16 @@ function updateSquadActionStep(dt) {
   squadAction.elapsed += dt;
   const p = clamp(squadAction.elapsed / squadAction.duration, 0, 1);
   if (squadAction.kind === 'march' || squadAction.kind === 'retreat') {
-    squadAdvance = lerp(squadAction.fromX, squadAction.toX, easeOutCubic(p));
+    distanceMarched = lerp(squadAction.fromX, squadAction.toX, easeOutCubic(p));
   }
   if (squadAction.elapsed >= squadAction.duration) squadAction = null;
 }
 function updateCombat(dt) {
-  combatActive = squadAdvance >= ENGAGE_DISTANCE - 0.5;
+  combatActive = distanceMarched >= MAX_DISTANCE_MARCHED - 0.5;
   if (combatActive && !wasCombatActive) {
-    enemyCyclePhase = 'idle';
-    enemyCycleTimer = ENEMY_IDLE_DURATION;
+    // Engaging (or re-engaging after a Retreat) never resets the enemy's
+    // HP or attack-cycle timer - per the encounter brief, disengaging is
+    // purely positional and the fight resumes exactly where it left off.
     announce('Engaged!', '#ffd76a', 0.8);
   }
   if (!combatActive && wasCombatActive) {
@@ -724,7 +737,7 @@ let throwElapsed = 0;
 let throwSpearSpawned = false;
 let throwStingerPlayed = false;
 let projectile = null; // { x0, y0, x1, y1 }
-const SPEAR_TARGET_X = ENEMY_X - 20, SPEAR_TARGET_Y = ENEMY_Y - 75;
+const SPEAR_TARGET_Y = ENEMY_Y - 75;
 
 function triggerAttack() {
   throwActive = true;
@@ -749,10 +762,9 @@ function armAngleForThrow(t) {
   return lerp(0.6, 0, easeOutCubic(clamp((et - THROW_RECOVERY_START) / THROW_RECOVERY, 0, 1)));
 }
 function spawnProjectile() {
-  const throwerX = SQUAD_X[SQUAD_X.length - 1] + squadAdvance;
   projectile = {
-    x0: throwerX + 14 * unitScale, y0: GROUND_Y - 46 * unitScale,
-    x1: SPEAR_TARGET_X, y1: SPEAR_TARGET_Y
+    x0: SQUAD_FRONT_X + 14 * unitScale, y0: GROUND_Y - 46 * unitScale,
+    x1: enemyScreenX() - 20, y1: SPEAR_TARGET_Y
   };
 }
 function projectilePos(p) {
@@ -811,7 +823,7 @@ function showMenu() {
   overlay.style.display = 'flex';
 }
 function startGame() {
-  squadAdvance = 0;
+  distanceMarched = 0;
   squadAction = null;
   squadHP = SQUAD_MAX_HP;
   squadHitFlash = 0;
@@ -870,60 +882,143 @@ canvas.addEventListener('pointerdown', (e) => {
 highBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDrumTap('high'); });
 lowBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDrumTap('low'); });
 
-// --- Forest scene ---
-let skyCache = null;
-function drawCanopy(g) {
-  g.beginPath();
-  g.moveTo(0, 0);
-  for (let x = 0; x <= W; x += 60) {
-    g.lineTo(x, 18 + Math.sin(x * 0.02) * 14 + Math.sin(x * 0.007) * 10);
+// --- Forest scene: static cached backdrop (sky, light shafts, far
+// trunks, both mist bands, ground/path) - the exact approved background,
+// restored as-is rather than a simplified flat gradient. Cached once since
+// the gradients/paths here are expensive to redraw every frame.
+let forestBg = null;
+function buildForestBackground(W, H) {
+  const bg = document.createElement('canvas');
+  bg.width = W; bg.height = H;
+  const b = bg.getContext('2d');
+
+  let sky = b.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, '#0e1712');
+  sky.addColorStop(0.5, '#1c2b20');
+  sky.addColorStop(1, '#3a4a38');
+  b.fillStyle = sky;
+  b.fillRect(0, 0, W, GROUND_Y);
+
+  function lightShaft(x, w, alpha) {
+    let g = b.createLinearGradient(x, 0, x + w * 0.4, GROUND_Y);
+    g.addColorStop(0, `rgba(210,200,140,${alpha})`);
+    g.addColorStop(1, 'rgba(210,200,140,0)');
+    b.fillStyle = g;
+    b.beginPath();
+    b.moveTo(x, 0); b.lineTo(x + w, 0);
+    b.lineTo(x + w * 0.15, GROUND_Y); b.lineTo(x - w * 0.15, GROUND_Y);
+    b.closePath(); b.fill();
   }
-  g.lineTo(W, 0);
-  g.closePath();
-  g.fill();
-  for (let x = 40; x < W; x += 140) {
-    g.beginPath();
-    g.ellipse(x, 32 + Math.sin(x) * 6, 16, 30, 0, 0, Math.PI * 2);
-    g.fill();
+  lightShaft(180, 70, 0.10);
+  lightShaft(430, 90, 0.14);
+  lightShaft(620, 60, 0.09);
+
+  b.globalAlpha = 0.55;
+  [60, 140, 230, 340, 460, 560, 660, 740].forEach((x, i) => {
+    const h = 70 + (i % 3) * 15;
+    b.fillStyle = '#1a241c';
+    b.fillRect(x - 2, GROUND_Y - h - 40, 4, h);
+  });
+  b.globalAlpha = 1;
+
+  let mist1 = b.createLinearGradient(0, GROUND_Y - 70, 0, GROUND_Y - 20);
+  mist1.addColorStop(0, 'rgba(200,215,190,0)');
+  mist1.addColorStop(0.5, 'rgba(200,215,190,0.16)');
+  mist1.addColorStop(1, 'rgba(200,215,190,0)');
+  b.fillStyle = mist1;
+  b.fillRect(0, GROUND_Y - 90, W, 90);
+
+  function midTree(x, trunkH, canopyR) {
+    b.save();
+    b.translate(x, GROUND_Y);
+    b.fillStyle = '#141d16';
+    b.fillRect(-5, -trunkH, 10, trunkH);
+    b.fillStyle = '#1e3324';
+    const top = -trunkH - 10;
+    b.beginPath();
+    b.arc(-canopyR * 0.5, top, canopyR, 0, Math.PI * 2);
+    b.arc(canopyR * 0.5, top - canopyR * 0.3, canopyR * 1.1, 0, Math.PI * 2);
+    b.arc(0, top - canopyR * 0.9, canopyR * 0.8, 0, Math.PI * 2);
+    b.fill();
+    b.restore();
   }
+  midTree(40, 130, 55);
+  midTree(230, 150, 65);
+  midTree(470, 140, 60);
+  midTree(700, 155, 68);
+
+  let mist2 = b.createLinearGradient(0, GROUND_Y - 30, 0, GROUND_Y + 10);
+  mist2.addColorStop(0, 'rgba(220,230,210,0)');
+  mist2.addColorStop(0.6, 'rgba(220,230,210,0.22)');
+  mist2.addColorStop(1, 'rgba(220,230,210,0.05)');
+  b.fillStyle = mist2;
+  b.fillRect(0, GROUND_Y - 30, W, 60);
+
+  let ground = b.createLinearGradient(0, GROUND_Y, 0, H);
+  ground.addColorStop(0, '#1c2418');
+  ground.addColorStop(1, '#0d130d');
+  b.fillStyle = ground;
+  b.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+
+  b.fillStyle = 'rgba(120,110,80,0.3)';
+  b.fillRect(0, GROUND_Y + 4, W, 24);
+
+  return bg;
 }
-function buildSkyCache() {
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const g = c.getContext('2d');
-  const sky = g.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, '#3a453e');
-  sky.addColorStop(0.45, '#5c6b5f');
-  sky.addColorStop(1, '#7c8a78');
-  g.fillStyle = sky;
-  g.fillRect(0, 0, W, H);
-  g.fillStyle = 'rgba(24,32,24,0.92)';
-  drawCanopy(g);
-  g.fillStyle = 'rgba(220,228,214,0.10)';
-  g.fillRect(0, H * 0.38, W, 26);
-  g.fillStyle = 'rgba(220,228,214,0.14)';
-  g.fillRect(0, H * 0.55, W, 34);
-  skyCache = c;
-}
-function drawGroundLane() {
-  ctx.fillStyle = 'rgba(90,100,70,0.35)';
-  ctx.fillRect(0, GROUND_Y - 10, W, 20);
-}
-function drawEngageMarker() {
-  const mx = SQUAD_X[SQUAD_X.length - 1] + ENGAGE_DISTANCE + 20;
+
+// --- Scrolling decoration layers: each instance has a fixed world-space X
+// and is drawn at worldX - distanceMarched * layerRatio. This is a finite
+// one-shot approach (not an infinite looping runner), so instances are just
+// scattered across the world range once rather than tiled/wrapped. Ratios
+// reuse the approved preview's speeds (18px/sec midground, 55px/sec
+// foreground) translated into distanceMarched terms: MARCH_STEP=55 covers
+// 55px over the ~1s march-step animation, i.e. an effective 55px/sec while
+// actually marching, so foreground scrolling 1:1 with distanceMarched
+// reproduces that same 55px/sec-equivalent, and midground at 18/55 of that.
+const MID_SCROLL_RATIO = 18 / 55;
+const FG_SCROLL_RATIO = 1;
+
+function midTreeAt(x, trunkH, canopyR) {
   ctx.save();
-  ctx.globalAlpha = combatActive ? 0.55 : 0.25;
-  ctx.strokeStyle = combatActive ? '#ffd76a' : '#9ab0c9';
-  ctx.setLineDash([6, 6]);
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(mx, GROUND_Y - 40); ctx.lineTo(mx, GROUND_Y + 30); ctx.stroke();
-  ctx.setLineDash([]);
+  ctx.translate(x, GROUND_Y);
+  ctx.fillStyle = '#141d16';
+  ctx.fillRect(-5, -trunkH, 10, trunkH);
+  ctx.fillStyle = '#1e3324';
+  const top = -trunkH - 10;
+  ctx.beginPath();
+  ctx.arc(-canopyR * 0.5, top, canopyR, 0, Math.PI * 2);
+  ctx.arc(canopyR * 0.5, top - canopyR * 0.3, canopyR * 1.1, 0, Math.PI * 2);
+  ctx.arc(0, top - canopyR * 0.9, canopyR * 0.8, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
-const FOLIAGE_PATTERN_W = 1100;
-const FOLIAGE_SPEED = 40;
-let foliageScroll = 0;
-const FOLIAGE_X = [60, 240, 420, 610, 800, 980];
+// Hanging vine - thin curved line(s) dropping from the canopy, with a
+// small leaf cluster at the bottom. `sway` (+1/-1) offsets the curve so
+// instances don't all look identical.
+function drawVine(c, x, canopyY, length, sway) {
+  c.save();
+  c.translate(x, canopyY);
+  c.strokeStyle = '#141d16';
+  c.lineWidth = 2.5;
+  c.lineCap = 'round';
+  c.beginPath();
+  c.moveTo(0, 0);
+  c.quadraticCurveTo(sway * 8, length * 0.5, sway * 4, length);
+  c.stroke();
+  c.lineWidth = 1.5;
+  c.beginPath();
+  c.moveTo(sway * 3, length * 0.35);
+  c.quadraticCurveTo(sway * 3 + 10, length * 0.45, sway * 3 + 6, length * 0.6);
+  c.stroke();
+  c.fillStyle = '#1e3324';
+  const endX = sway * 4, endY = length;
+  c.beginPath();
+  c.arc(endX - 4, endY, 5, 0, Math.PI * 2);
+  c.arc(endX + 4, endY - 3, 5.5, 0, Math.PI * 2);
+  c.arc(endX, endY + 5, 4, 0, Math.PI * 2);
+  c.fill();
+  c.restore();
+}
 function drawFern(x, y) {
   ctx.fillStyle = '#182417';
   ctx.beginPath();
@@ -932,14 +1027,38 @@ function drawFern(x, y) {
   ctx.ellipse(x + 22, y + 4, 22, 13, 0, 0, Math.PI * 2);
   ctx.fill();
 }
-function drawForeground(dt) {
-  foliageScroll = (foliageScroll + FOLIAGE_SPEED * dt) % FOLIAGE_PATTERN_W;
-  for (const bx of FOLIAGE_X) {
-    for (let rep = -1; rep <= 1; rep++) {
-      const x = bx - foliageScroll + rep * FOLIAGE_PATTERN_W;
-      if (x < -60 || x > W + 60) continue;
-      drawFern(x, GROUND_Y + 16);
-    }
+
+const MID_TREES = [
+  { x: 120, trunkH: 110, canopyR: 48 }, { x: 340, trunkH: 135, canopyR: 58 },
+  { x: 520, trunkH: 120, canopyR: 52 }, { x: 700, trunkH: 145, canopyR: 62 },
+  { x: 880, trunkH: 125, canopyR: 54 }, { x: 1020, trunkH: 150, canopyR: 64 }
+];
+const VINES = [
+  { x: 200, canopyY: -90, length: 70, sway: 1 }, { x: 420, canopyY: -85, length: 55, sway: -1 },
+  { x: 610, canopyY: -92, length: 65, sway: 1 }, { x: 800, canopyY: -80, length: 50, sway: -1 },
+  { x: 950, canopyY: -88, length: 60, sway: 1 }
+];
+const FG_BUSHES = [80, 260, 460, 640, 820, 980, 1120];
+
+function drawMidground() {
+  const off = distanceMarched * MID_SCROLL_RATIO;
+  for (const tr of MID_TREES) {
+    const x = tr.x - off;
+    if (x < -100 || x > W + 100) continue;
+    midTreeAt(x, tr.trunkH, tr.canopyR);
+  }
+  for (const v of VINES) {
+    const x = v.x - off;
+    if (x < -60 || x > W + 60) continue;
+    drawVine(ctx, x, GROUND_Y + v.canopyY, v.length, v.sway);
+  }
+}
+function drawForeground() {
+  const off = distanceMarched * FG_SCROLL_RATIO;
+  for (const bx of FG_BUSHES) {
+    const x = bx - off;
+    if (x < -60 || x > W + 60) continue;
+    drawFern(x, GROUND_Y + 16);
   }
 }
 
@@ -1063,9 +1182,10 @@ function tribePoseFor(t, phase, throwAngle) {
   return { legL: idleSway * 0.6, legR: -idleSway * 0.6, armL: idleSway, armR: throwAngle, lean: 0 };
 }
 function drawSquad(t) {
+  // Fixed camera: the squad's screen X never moves - only the world
+  // (enemy, decorations) scrolls past them as distanceMarched changes.
   const throwAngle = armAngleForThrow(t);
-  SQUAD_X.forEach((baseX, i) => {
-    const x = baseX + squadAdvance;
+  SQUAD_X.forEach((x, i) => {
     const phase = SQUAD_PHASE[i];
     const pose = tribePoseFor(t, phase, throwAngle);
     drawStickFigure(x, GROUND_Y, unitScale, {
@@ -1086,6 +1206,11 @@ function enemyPose(t) {
   return { legL: idleSway * 0.3, legR: -idleSway * 0.3, armL: idleSway, armR: -idleSway, bob: Math.sin(t * 2) * 4 };
 }
 function drawEnemy(t) {
+  const ex0 = enemyScreenX();
+  // Hidden until encountered: the enemy simply isn't drawn while it's off
+  // the right edge of the canvas - no separate visibility flag needed,
+  // this falls straight out of the world-space position.
+  if (ex0 - enemyScale * 60 > W) return;
   const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
   const impactP = inImpact ? (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT : 0;
   const shake = inImpact ? 6 * (1 - impactP) * Math.sin(impactP * Math.PI * 5) : 0;
@@ -1096,19 +1221,19 @@ function drawEnemy(t) {
     ctx.save();
     ctx.globalAlpha = 0.15 + p * 0.35;
     const r = 70 + p * 30;
-    const glow = ctx.createRadialGradient(ENEMY_X, ENEMY_Y - 90, 10, ENEMY_X, ENEMY_Y - 90, r);
+    const glow = ctx.createRadialGradient(ex0, ENEMY_Y - 90, 10, ex0, ENEMY_Y - 90, r);
     glow.addColorStop(0, 'rgba(255,60,40,0.8)');
     glow.addColorStop(1, 'rgba(255,60,40,0)');
     ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(ENEMY_X, ENEMY_Y - 90, r, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(ex0, ENEMY_Y - 90, r, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
-  drawStickFigure(ENEMY_X + shake, ENEMY_Y, enemyScale, {
+  drawStickFigure(ex0 + shake, ENEMY_Y, enemyScale, {
     color: inImpact ? '#8a2a2a' : ENEMY_COLOR, hair: 'curl', face: 'enemy',
     legL: pose.legL, legR: pose.legR, armL: pose.armL, armR: pose.armR, lean: 0, bob: pose.bob
   });
   const barW = 130, barH = 12;
-  const bx = ENEMY_X - barW / 2, by = ENEMY_Y - 178;
+  const bx = ex0 - barW / 2, by = ENEMY_Y - 178;
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   roundRect(ctx, bx, by, barW, barH, 5); ctx.fill();
   ctx.fillStyle = '#ff5a4a';
@@ -1234,7 +1359,7 @@ function drawHPBar(x, y, w, h, pct, color, label) {
 
 function drawCalibrate() {
   ctx.clearRect(0, 0, W, H);
-  ctx.drawImage(skyCache, 0, 0);
+  ctx.drawImage(forestBg, 0, 0);
   ctx.fillStyle = 'rgba(10,8,20,0.55)';
   ctx.fillRect(0, 0, W, H);
   const now = performance.now();
@@ -1259,15 +1384,14 @@ function drawCalibrate() {
   ctx.fillText('Beat ' + Math.min(beatGlobalIndex, CALIB_BEATS) + ' / ' + CALIB_BEATS, W / 2, H / 2 + 110);
 }
 
-function drawWorld(t, dt) {
+function drawWorld(t) {
   ctx.clearRect(0, 0, W, H);
-  ctx.drawImage(skyCache, 0, 0);
-  drawGroundLane();
-  drawEngageMarker();
+  ctx.drawImage(forestBg, 0, 0);
+  drawMidground();
   drawSquad(t);
   drawEnemy(t);
   drawAttackFX();
-  drawForeground(dt);
+  drawForeground();
   if (squadHitFlash > 0) {
     ctx.fillStyle = `rgba(255,40,40,${squadHitFlash / 0.3 * 0.3})`;
     ctx.fillRect(0, 0, W, H);
@@ -1285,17 +1409,17 @@ function loop(now) {
     drawCalibrate();
   } else if (state === 'playing') {
     updateGame(dt);
-    drawWorld(animT, dt);
+    drawWorld(animT);
     drawBeatBar(now);
     drawHUD();
   } else {
     updateAnimTimers(dt);
-    drawWorld(animT, dt);
+    drawWorld(animT);
   }
   requestAnimationFrame(loop);
 }
 
-buildSkyCache();
+forestBg = buildForestBackground(W, H);
 handleResize();
 showMenu();
 requestAnimationFrame(loop);
