@@ -8,7 +8,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #140d24;
+    background: #1c231e;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +23,7 @@
   }
   #wrap { position: relative; }
   canvas {
-    background: #140d24;
+    background: #1c231e;
     border-radius: 8px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     display: block;
@@ -42,17 +42,34 @@
     justify-content: center;
     color: white;
     text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-    background: rgba(8, 5, 18, 0.62);
-    pointer-events: none;
+    background: rgba(8, 10, 8, 0.68);
+    /* auto (not none like other games' overlays) - this one now scrolls
+       via overflow-y since the command legend can be taller than a short
+       landscape viewport, and there's nothing underneath worth reaching */
+    pointer-events: auto;
     text-align: center;
     padding: calc(10px * var(--game-scale, 1));
     box-sizing: border-box;
+    overflow-y: auto;
   }
   #overlay h1 { margin: 0 0 6px; font-size: calc(28px * var(--game-scale, 1)); }
-  #overlay p { margin: 4px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(420px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(440px * var(--game-scale, 1)); }
   #bestLine { opacity: 0.85; font-weight: bold; }
+  #legend {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: calc(3px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    margin: calc(8px * var(--game-scale, 1)) 0;
+    font-size: calc(12px * var(--game-scale, 1));
+    background: rgba(255,255,255,0.07);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.25);
+    border-radius: calc(10px * var(--game-scale, 1));
+    padding: calc(8px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+  }
+  #legend b { color: #ffd76a; }
+  #legend span { opacity: 0.85; letter-spacing: 0.02em; }
   #startBtn {
-    margin-top: calc(16px * var(--game-scale, 1));
+    margin-top: calc(14px * var(--game-scale, 1));
     font-size: calc(17px * var(--game-scale, 1));
     font-weight: bold;
     padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
@@ -106,7 +123,7 @@
     display: none;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: #140d24;
+    background: #1c231e;
     color: white;
     z-index: 50;
     flex-direction: column;
@@ -155,7 +172,13 @@
   <button id="lowBtn" class="drumBtn" type="button">PA</button>
   <div id="overlay">
     <h1 id="title">Drumfront</h1>
-    <p id="subtitle">Command your squad's Attack: tap PON (left, high beats) three times, then PA (right, low beat) — four taps, right on the rhythm.</p>
+    <p id="subtitle">Command your squad with two drums - PON (high) and PA (low). Play one of these four rhythms on the beat, from memory:</p>
+    <div id="legend">
+      <b>March</b><span>PA-PA-PA-PON</span>
+      <b>Attack</b><span>PON-PON-PON-PA</span>
+      <b>Guard</b><span>PA-PA-PON-PON</span>
+      <b>Retreat</b><span>PON-PON-PA-PA</span>
+    </div>
     <p id="scoreLine" style="display:none;"></p>
     <p id="bestLine"></p>
     <button id="startBtn" type="button" data-kb-play>Start</button>
@@ -202,6 +225,7 @@ window.addEventListener('kb-navbar-ready', fitCanvas);
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function lerp(a, b, t) { return a + (b - a) * t; }
+function easeOutCubic(p) { return 1 - Math.pow(1 - p, 3); }
 function roundRect(g, x, y, w, h, r) {
   g.beginPath();
   g.moveTo(x + r, y);
@@ -212,11 +236,7 @@ function roundRect(g, x, y, w, h, r) {
   g.closePath();
 }
 
-// Creature body color kept isolated as a single constant so trying a
-// different palette later is a one-line change, not a re-build.
-const CREATURE_PALETTE = { light: '#fdf0d5', mid: '#f0a94f', dark: '#8a5628', outline: '#4a2c12' };
-
-// --- Audio: procedural, lookahead-scheduled ---
+// --- Audio: procedural, base drum hits + one-shot stingers ---
 let audioCtx = null;
 let audioTimeOrigin = 0; // performance.now() - audioCtx.currentTime*1000, fixed at creation
 let muted = sessionStorage.getItem('drumfrontMuted') === '1';
@@ -235,10 +255,6 @@ function playPA(when) {
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.type = 'triangle';
-  // Pitch-drop and gain decay now span the same ~0.1s as PON's total
-  // envelope, ending together - the old version dropped pitch to near-
-  // silence by 130ms while the node lingered open to 220ms, which read as
-  // an abrupt cutoff rather than a settled low thump.
   osc.frequency.setValueAtTime(170, when);
   osc.frequency.exponentialRampToValueAtTime(62, when + 0.095);
   gain.gain.setValueAtTime(0.001, when);
@@ -290,21 +306,6 @@ function playHit() {
   osc.connect(gain); gain.connect(audioCtx.destination);
   osc.start(t); osc.stop(t + 0.22);
 }
-function playMiss() {
-  if (muted) return;
-  ensureAudio();
-  const t = audioCtx.currentTime;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'square';
-  osc.frequency.setValueAtTime(160, t);
-  osc.frequency.exponentialRampToValueAtTime(70, t + 0.2);
-  gain.gain.setValueAtTime(0.001, t);
-  gain.gain.exponentialRampToValueAtTime(0.14, t + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.start(t); osc.stop(t + 0.26);
-}
 function playClear() {
   if (muted) return;
   ensureAudio();
@@ -322,6 +323,86 @@ function playClear() {
     osc.start(st); osc.stop(st + 0.26);
   });
 }
+// One-shot command stingers - layered on top of the base PA/PON taps, only
+// on a successfully-landed 4-tap sequence, each ~150-250ms so it clears
+// before the next beat's drum hit.
+function playMarchStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  [420, 560].forEach((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = f;
+    const st = t + i * 0.07;
+    gain.gain.setValueAtTime(0.001, st);
+    gain.gain.exponentialRampToValueAtTime(0.18, st + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, st + 0.14);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(st); osc.stop(st + 0.16);
+  });
+}
+function playAttackStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(900, t);
+  osc.frequency.exponentialRampToValueAtTime(120, t + 0.12);
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.3, t + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.18);
+}
+function playGuardStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const bp = audioCtx.createBiquadFilter();
+  osc.type = 'square'; osc.frequency.setValueAtTime(1200, t);
+  bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 6;
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.22, t + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+  osc.connect(bp); bp.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.24);
+}
+function playRetreatStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(300, t);
+  osc.frequency.exponentialRampToValueAtTime(90, t + 0.22);
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.16, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.28);
+}
+function playFeverFanfare() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  [660, 880, 1100, 1320].forEach((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = f;
+    const st = t + i * 0.06;
+    gain.gain.setValueAtTime(0.001, st);
+    gain.gain.exponentialRampToValueAtTime(0.2, st + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, st + 0.2);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(st); osc.stop(st + 0.22);
+  });
+}
 
 function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
 updateMuteBtn();
@@ -332,8 +413,8 @@ muteBtn.addEventListener('click', () => {
 });
 
 // --- Best score / calibration persistence ---
-function loadBestCombo() { return parseInt(sessionStorage.getItem('drumfrontBestCombo') || '0', 10); }
-function saveBestCombo(v) { try { sessionStorage.setItem('drumfrontBestCombo', v); } catch (e) {} }
+function loadBestStreak() { return parseInt(sessionStorage.getItem('drumfrontBestStreak') || '0', 10); }
+function saveBestStreak(v) { try { sessionStorage.setItem('drumfrontBestStreak', v); } catch (e) {} }
 function loadCalibOffset() {
   const v = sessionStorage.getItem('drumfrontCalibOffset');
   return v === null ? null : parseFloat(v);
@@ -341,18 +422,16 @@ function loadCalibOffset() {
 function saveCalibOffset(v) { try { sessionStorage.setItem('drumfrontCalibOffset', String(v)); } catch (e) {} }
 
 let calibOffset = loadCalibOffset();
-let bestCombo = loadBestCombo();
+let bestStreak = loadBestStreak();
 
-// --- Beat scheduler: shared by calibration and gameplay ---
-// The visual/judging timeline is generated well ahead (VISUAL_LEAD_SEC) so
-// notes are visible scrolling in on the beat bar long before they're due;
-// the actual audio node for each beat is only scheduled once its play time
-// is within AUDIO_SCHEDULE_AHEAD_SEC, per the standard Web Audio lookahead
-// pattern - the two are decoupled on purpose, not the same window.
+// --- Beat clock: still runs continuously so taps have a timing reference
+// and the beat bar can pulse, but (per phase 2) no longer drives a note
+// preview or auto-plays PA/PON - the player's own taps trigger those sounds
+// immediately, since which drum plays is now the player's choice, not a
+// predetermined sequence the game already knows.
 const BPM = 100;
 const BEAT_SEC = 60 / BPM;
-const BEATS_VISIBLE = 4;
-const VISUAL_LEAD_SEC = BEATS_VISIBLE * BEAT_SEC;
+const BEAT_GEN_LEAD_SEC = BEAT_SEC * 2;
 const AUDIO_SCHEDULE_AHEAD_SEC = 0.1;
 const TICK_MS = 25;
 const CALIB_BEATS = 4;
@@ -364,15 +443,13 @@ let beatGlobalIndex = 0;
 let beatEvents = [];
 let calibFinishScheduled = false;
 
-function noteTypeForIndex(i) { return (i % 4 === 3) ? 'low' : 'high'; }
-
 function startScheduler(mode) {
   ensureAudio();
   schedulerMode = mode;
   beatGlobalIndex = 0;
   beatEvents = [];
   calibFinishScheduled = false;
-  genTime = audioCtx.currentTime + (mode === 'calibrate' ? BEAT_SEC : VISUAL_LEAD_SEC);
+  genTime = audioCtx.currentTime + (mode === 'calibrate' ? BEAT_SEC : BEAT_GEN_LEAD_SEC);
   if (schedulerHandle) clearInterval(schedulerHandle);
   schedulerHandle = setInterval(schedulerTick, TICK_MS);
   schedulerTick();
@@ -383,34 +460,33 @@ function stopScheduler() {
 }
 function schedulerTick() {
   const now = audioCtx.currentTime;
-  while (genTime < now + VISUAL_LEAD_SEC) {
+  while (genTime < now + BEAT_GEN_LEAD_SEC) {
     if (schedulerMode === 'calibrate') {
       if (beatGlobalIndex >= CALIB_BEATS) break;
       beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), type: 'click', claimed: false, diff: 0, soundScheduled: false });
     } else {
-      const type = noteTypeForIndex(beatGlobalIndex);
-      beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), type, judged: null, soundScheduled: false });
+      beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), claimed: false });
     }
     beatGlobalIndex++;
     genTime += BEAT_SEC;
   }
-  for (const ev of beatEvents) {
-    if (!ev.soundScheduled && ev.audioTime <= now + AUDIO_SCHEDULE_AHEAD_SEC) {
-      if (ev.type === 'click') playClick(ev.audioTime);
-      else if (ev.type === 'high') playPON(ev.audioTime);
-      else playPA(ev.audioTime);
-      ev.soundScheduled = true;
+  if (schedulerMode === 'calibrate') {
+    for (const ev of beatEvents) {
+      if (!ev.soundScheduled && ev.audioTime <= now + AUDIO_SCHEDULE_AHEAD_SEC) {
+        playClick(ev.audioTime);
+        ev.soundScheduled = true;
+      }
+    }
+    if (beatGlobalIndex >= CALIB_BEATS) {
+      const allDone = beatEvents.every((e) => e.soundScheduled);
+      if (allDone && !calibFinishScheduled) {
+        calibFinishScheduled = true;
+        stopScheduler();
+        setTimeout(finishCalibration, 700);
+      }
     }
   }
-  if (schedulerMode === 'calibrate' && beatGlobalIndex >= CALIB_BEATS) {
-    const allDone = beatEvents.every((e) => e.soundScheduled);
-    if (allDone && !calibFinishScheduled) {
-      calibFinishScheduled = true;
-      stopScheduler();
-      setTimeout(finishCalibration, 700);
-    }
-  }
-  const cutoff = performance.now() - 8000;
+  const cutoff = performance.now() - 4000;
   while (beatEvents.length && beatEvents[0].time < cutoff) beatEvents.shift();
 }
 
@@ -445,53 +521,199 @@ function beginCalibration(autoStartAfter) {
   startScheduler('calibrate');
 }
 
+// --- Command grammar (all four built from the same PA/PON vocabulary) ---
+const PATTERNS = {
+  march: ['low', 'low', 'low', 'high'],
+  attack: ['high', 'high', 'high', 'low'],
+  guard: ['low', 'low', 'high', 'high'],
+  retreat: ['high', 'high', 'low', 'low']
+};
+const COMMAND_LABEL = { march: 'March', attack: 'Attack', guard: 'Guard', retreat: 'Retreat' };
+const COMMAND_COLOR = { march: '#8fd9a8', attack: '#ff6a4a', guard: '#8ad8ff', retreat: '#c9a8ff' };
+function matchPattern(types) {
+  for (const name in PATTERNS) {
+    if (PATTERNS[name].every((t, i) => t === types[i])) return name;
+  }
+  return null;
+}
+
 // --- Game state ---
 let state = 'menu'; // menu | calibrating | playing | cleared
-const ENEMY_MAX_HP = 8;
-let enemyHP = ENEMY_MAX_HP;
-let nextExpectedIndex = 0;
-let seqAllPerfect = true;
-let combo = 0;
-let missFlashTimer = 0;
-let judgePopup = null; // { text, color, timer }
 const PERFECT_MS = 120;
 const GOOD_MS = 200;
+const CONSUME_MS = BEAT_SEC * 1000 * 0.75;
+
+let tapBuffer = []; // { type, judged }
+let judgePopup = null; // { text, color, timer } - per-tap timing feedback
+let banner = null; // { text, color, timer } - per-command outcome feedback
 
 function showJudgePopup(text, color) { judgePopup = { text, color, timer: 0.55 }; }
+function announce(text, color, duration) { banner = { text, color, timer: duration }; }
 
-function checkAutoMiss(now) {
-  const ev = beatEvents.find((e) => e.index === nextExpectedIndex);
-  if (!ev || ev.judged) return;
-  if (now > ev.time + calibOffset + GOOD_MS) {
-    ev.judged = 'miss';
-    failAttempt();
+// --- Fever: 5 consecutive successfully-landed sequences, any command ---
+const FEVER_STREAK_THRESHOLD = 5;
+const FEVER_ATTACK_MULT = 1.5;
+let feverStreak = 0;
+let feverActive = false;
+
+function breakFever() {
+  feverStreak = 0;
+  feverActive = false;
+}
+function growFeverOnLanding() {
+  feverStreak++;
+  if (feverStreak > bestStreak) { bestStreak = feverStreak; saveBestStreak(bestStreak); }
+  if (feverStreak >= FEVER_STREAK_THRESHOLD && !feverActive) {
+    feverActive = true;
+    playFeverFanfare();
   }
 }
-function failAttempt() {
-  combo = 0;
-  missFlashTimer = 0.3;
-  showJudgePopup('MISS', '#ff5a5a');
-  playMiss();
-  const nextAttemptStart = (Math.floor(nextExpectedIndex / 4) + 1) * 4;
-  // The remaining beats of this failed attempt keep scrolling past the hit
-  // window with nothing left to check against them - mark them resolved so
-  // they render dimmed instead of looking like live, tappable notes.
+
+function handleDrumTap(type) {
+  if (state !== 'playing') return;
+  ensureAudio();
+  if (type === 'high') playPON(audioCtx.currentTime); else playPA(audioCtx.currentTime);
+  const now = performance.now();
+  let best = null, bestDist = Infinity;
   for (const ev of beatEvents) {
-    if (ev.index >= nextExpectedIndex && ev.index < nextAttemptStart && !ev.judged) ev.judged = 'skipped';
+    if (ev.claimed) continue;
+    const d = Math.abs(now - ev.time);
+    if (d < bestDist) { bestDist = d; best = ev; }
   }
-  nextExpectedIndex = nextAttemptStart;
-  seqAllPerfect = true;
+  let judged = 'miss';
+  if (best && bestDist <= CONSUME_MS) best.claimed = true;
+  if (best && bestDist <= GOOD_MS) judged = bestDist <= PERFECT_MS ? 'perfect' : 'good';
+  showJudgePopup(judged === 'perfect' ? 'PERFECT' : judged === 'good' ? 'GOOD' : 'MISS', judged === 'perfect' ? '#7cfc9a' : judged === 'good' ? '#ffd76a' : '#ff5a5a');
+  if (judged === 'miss') breakFever();
+  tapBuffer.push({ type, judged });
+  if (tapBuffer.length >= 4) resolveTapBuffer();
 }
+function resolveTapBuffer() {
+  const types = tapBuffer.map((t) => t.type);
+  const allGood = tapBuffer.every((t) => t.judged !== 'miss');
+  const matched = matchPattern(types);
+  tapBuffer = [];
+  if (matched && allGood) {
+    executeCommand(matched);
+    growFeverOnLanding();
+  } else if (matched && !allGood) {
+    // Streak already broken per-tap the instant the mistimed tap happened -
+    // this is just the "which command you were attempting" feedback.
+    announce(COMMAND_LABEL[matched] + ' - mistimed', '#ff9a5a', 0.6);
+  } else {
+    announce('No match', '#9aa0a8', 0.5);
+    breakFever();
+  }
+}
+
+// --- Combat loop state ---
+const unitScale = 1.6;
+const enemyScale = unitScale * 1.4;
+const SQUAD_X = [90, 166, 242, 318];
+const SQUAD_PHASE = [0, 0.55, 1.1, 1.65];
+const SQUAD_COLORS = ['#8a5a24', '#96632a', '#7f521f', '#8e5e27'];
+const GROUND_Y = H * 0.62 + 68;
+const ENEMY_X = 660, ENEMY_Y = GROUND_Y - 20;
+const ENEMY_COLOR = '#050505';
+
+const ENGAGE_DISTANCE = 220;
+const MARCH_STEP = 55;
+const SQUAD_MAX_HP = 100;
+const SQUAD_HIT_DAMAGE = 22;
+const SQUAD_REGEN_RATE = 3; // hp/sec while not in combat
+const ENEMY_MAX_HP = 8;
+const ATTACK_DAMAGE = 1;
+const ENEMY_IDLE_DURATION = 3.0;
+const ENEMY_TELEGRAPH_DURATION = 0.7;
+
+let squadAdvance = 0; // 0..ENGAGE_DISTANCE
+let squadAction = null; // { kind: 'march'|'retreat'|'guard', elapsed, duration, fromX, toX }
+let squadHP = SQUAD_MAX_HP;
+let squadHitFlash = 0;
+let enemyHP = ENEMY_MAX_HP;
+let combatActive = false;
+let wasCombatActive = false;
+let enemyCyclePhase = 'idle'; // 'idle' | 'telegraph'
+let enemyCycleTimer = ENEMY_IDLE_DURATION;
+let telegraphGuarded = false;
+
+function executeCommand(name) {
+  if (name === 'march') doMarch();
+  else if (name === 'attack') doAttack();
+  else if (name === 'guard') doGuard();
+  else if (name === 'retreat') doRetreat();
+}
+function doMarch() {
+  const from = squadAdvance;
+  const to = Math.min(ENGAGE_DISTANCE, squadAdvance + MARCH_STEP);
+  squadAction = { kind: 'march', elapsed: 0, duration: 1.0, fromX: from, toX: to };
+  playMarchStinger();
+  announce('March', COMMAND_COLOR.march, 0.5);
+}
+function doRetreat() {
+  const from = squadAdvance;
+  squadAction = { kind: 'retreat', elapsed: 0, duration: 1.0, fromX: from, toX: 0 };
+  playRetreatStinger();
+  announce('Retreat', COMMAND_COLOR.retreat, 0.5);
+}
+function doGuard() {
+  squadAction = { kind: 'guard', elapsed: 0, duration: 0.9, fromX: squadAdvance, toX: squadAdvance };
+  playGuardStinger();
+  if (combatActive && enemyCyclePhase === 'telegraph' && !telegraphGuarded) {
+    telegraphGuarded = true;
+    announce('Blocked!', COMMAND_COLOR.guard, 0.7);
+  } else {
+    announce('Guard', COMMAND_COLOR.guard, 0.5);
+  }
+}
+function updateSquadActionStep(dt) {
+  if (!squadAction) return;
+  squadAction.elapsed += dt;
+  const p = clamp(squadAction.elapsed / squadAction.duration, 0, 1);
+  if (squadAction.kind === 'march' || squadAction.kind === 'retreat') {
+    squadAdvance = lerp(squadAction.fromX, squadAction.toX, easeOutCubic(p));
+  }
+  if (squadAction.elapsed >= squadAction.duration) squadAction = null;
+}
+function updateCombat(dt) {
+  combatActive = squadAdvance >= ENGAGE_DISTANCE - 0.5;
+  if (combatActive && !wasCombatActive) {
+    enemyCyclePhase = 'idle';
+    enemyCycleTimer = ENEMY_IDLE_DURATION;
+    announce('Engaged!', '#ffd76a', 0.8);
+  }
+  if (!combatActive && wasCombatActive) {
+    announce('Disengaged', '#9ab0c9', 0.6);
+  }
+  wasCombatActive = combatActive;
+
+  if (combatActive) {
+    enemyCycleTimer -= dt;
+    if (enemyCyclePhase === 'idle' && enemyCycleTimer <= 0) {
+      enemyCyclePhase = 'telegraph';
+      enemyCycleTimer = ENEMY_TELEGRAPH_DURATION;
+      telegraphGuarded = false;
+    } else if (enemyCyclePhase === 'telegraph' && enemyCycleTimer <= 0) {
+      if (!telegraphGuarded) {
+        squadHP = Math.max(0, squadHP - SQUAD_HIT_DAMAGE);
+        squadHitFlash = 0.3;
+      }
+      enemyCyclePhase = 'idle';
+      enemyCycleTimer = ENEMY_IDLE_DURATION;
+    }
+  } else {
+    squadHP = Math.min(SQUAD_MAX_HP, squadHP + SQUAD_REGEN_RATE * dt);
+  }
+}
+
 // --- Attack throw animation: windup -> release -> flight -> impact -> recovery ---
 // Enemy health is decremented at the start of the impact phase (when the
-// spear actually lands), not the moment the sequence is judged - see
-// updateAnimTimers/resolveAttackImpact.
+// spear actually lands), not the moment the sequence is judged.
 const THROW_WINDUP = 0.3;
 const THROW_RELEASE = 0.1;
 const THROW_FLIGHT = 0.4;
 const THROW_IMPACT = 0.2;
 const THROW_RECOVERY = 0.2;
-const THROW_SPAWN_T = THROW_WINDUP + THROW_RELEASE * 0.5;
 const THROW_FLIGHT_START = THROW_WINDUP + THROW_RELEASE;
 const THROW_IMPACT_START = THROW_FLIGHT_START + THROW_FLIGHT;
 const THROW_RECOVERY_START = THROW_IMPACT_START + THROW_IMPACT;
@@ -500,17 +722,20 @@ const THROW_TOTAL = THROW_RECOVERY_START + THROW_RECOVERY;
 let throwActive = false;
 let throwElapsed = 0;
 let throwSpearSpawned = false;
-let pendingAllPerfect = true;
+let throwStingerPlayed = false;
 let projectile = null; // { x0, y0, x1, y1 }
+const SPEAR_TARGET_X = ENEMY_X - 20, SPEAR_TARGET_Y = ENEMY_Y - 75;
 
-function easeOutCubic(p) { return 1 - Math.pow(1 - p, 3); }
-
-function triggerAttack(allPerfect) {
+function triggerAttack() {
   throwActive = true;
   throwElapsed = 0;
   throwSpearSpawned = false;
-  pendingAllPerfect = allPerfect;
+  throwStingerPlayed = false;
   projectile = null;
+}
+function doAttack() {
+  triggerAttack();
+  announce('Attack', COMMAND_COLOR.attack, 0.5);
 }
 // One arm angle drives every squad member's throwing arm in sync so the
 // whole squad reads as throwing together, even though only one projectile
@@ -524,9 +749,9 @@ function armAngleForThrow(t) {
   return lerp(0.6, 0, easeOutCubic(clamp((et - THROW_RECOVERY_START) / THROW_RECOVERY, 0, 1)));
 }
 function spawnProjectile() {
-  const throwerX = SQUAD_X[SQUAD_X.length - 1];
+  const throwerX = SQUAD_X[SQUAD_X.length - 1] + squadAdvance;
   projectile = {
-    x0: throwerX + 10 * SQUAD_SCALE, y0: GROUND_Y - 26 * SQUAD_SCALE,
+    x0: throwerX + 14 * unitScale, y0: GROUND_Y - 46 * unitScale,
     x1: SPEAR_TARGET_X, y1: SPEAR_TARGET_Y
   };
 }
@@ -538,20 +763,21 @@ function projectilePos(p) {
   return { x, y, angle: Math.atan2(dy, dx) };
 }
 function resolveAttackImpact() {
-  enemyHP = Math.max(0, enemyHP - 1);
   playHit();
-  if (pendingAllPerfect) {
-    combo++;
-    if (combo > bestCombo) { bestCombo = combo; saveBestCombo(combo); }
-  } else {
-    combo = 0;
+  if (combatActive) {
+    const dmg = feverActive ? ATTACK_DAMAGE * FEVER_ATTACK_MULT : ATTACK_DAMAGE;
+    enemyHP = Math.max(0, enemyHP - dmg);
+    if (enemyHP <= 0) triggerCleared();
   }
-  if (enemyHP <= 0) triggerCleared();
 }
 function updateAnimTimers(dt) {
   if (throwActive) {
     throwElapsed += dt;
-    if (!throwSpearSpawned && throwElapsed >= THROW_SPAWN_T) {
+    if (!throwStingerPlayed && throwElapsed >= THROW_WINDUP) {
+      throwStingerPlayed = true;
+      playAttackStinger();
+    }
+    if (!throwSpearSpawned && throwElapsed >= THROW_WINDUP + THROW_RELEASE * 0.5) {
       throwSpearSpawned = true;
       spawnProjectile();
     }
@@ -561,38 +787,14 @@ function updateAnimTimers(dt) {
     }
     if (throwElapsed >= THROW_TOTAL) throwActive = false;
   }
-  if (missFlashTimer > 0) missFlashTimer = Math.max(0, missFlashTimer - dt);
+  if (squadAction) updateSquadActionStep(dt);
+  if (squadHitFlash > 0) squadHitFlash = Math.max(0, squadHitFlash - dt);
+  if (banner) { banner.timer -= dt; if (banner.timer <= 0) banner = null; }
   if (judgePopup) { judgePopup.timer -= dt; if (judgePopup.timer <= 0) judgePopup = null; }
 }
-// Beyond this, a tap can't be a real attempt at the currently-expected beat
-// (it's a stray touch, or the tail end of muscle memory from a sequence
-// that already failed and jumped ahead) - ignore it instead of cascading
-// another failAttempt() that skips even more measures.
-const STRAY_MS = BEAT_SEC * 1000 * 0.6;
-function handleDrumTap(type) {
-  if (state !== 'playing') return;
-  ensureAudio();
-  const now = performance.now();
-  const ev = beatEvents.find((e) => e.index === nextExpectedIndex);
-  if (!ev || ev.judged) return;
-  const target = ev.time + calibOffset;
-  const delta = now - target;
-  if (Math.abs(delta) > STRAY_MS) return;
-  const withinGood = Math.abs(delta) <= GOOD_MS;
-  const withinPerfect = Math.abs(delta) <= PERFECT_MS;
-  if (ev.type === type && withinGood) {
-    ev.judged = withinPerfect ? 'perfect' : 'good';
-    if (!withinPerfect) seqAllPerfect = false;
-    showJudgePopup(withinPerfect ? 'PERFECT' : 'GOOD', withinPerfect ? '#7cfc9a' : '#ffd76a');
-    nextExpectedIndex++;
-    if (nextExpectedIndex % 4 === 0) {
-      triggerAttack(seqAllPerfect);
-      seqAllPerfect = true;
-    }
-  } else {
-    ev.judged = 'miss';
-    failAttempt();
-  }
+function updateGame(dt) {
+  updateAnimTimers(dt);
+  updateCombat(dt);
 }
 
 function showMenu() {
@@ -600,7 +802,7 @@ function showMenu() {
   stopScheduler();
   title.textContent = 'Drumfront';
   scoreLine.style.display = 'none';
-  bestLine.textContent = bestCombo > 0 ? 'Best Perfect streak: ' + bestCombo : '';
+  bestLine.textContent = bestStreak > 0 ? 'Best streak: ' + bestStreak : '';
   startBtn.textContent = calibOffset === null ? 'Calibrate & Start' : 'Start';
   startBtn.style.display = 'inline-block';
   backToArcade.style.display = 'none';
@@ -609,14 +811,23 @@ function showMenu() {
   overlay.style.display = 'flex';
 }
 function startGame() {
+  squadAdvance = 0;
+  squadAction = null;
+  squadHP = SQUAD_MAX_HP;
+  squadHitFlash = 0;
   enemyHP = ENEMY_MAX_HP;
-  nextExpectedIndex = 0;
-  seqAllPerfect = true;
-  combo = 0;
+  combatActive = false;
+  wasCombatActive = false;
+  enemyCyclePhase = 'idle';
+  enemyCycleTimer = ENEMY_IDLE_DURATION;
+  telegraphGuarded = false;
+  tapBuffer = [];
+  feverStreak = 0;
+  feverActive = false;
   throwActive = false;
   throwElapsed = 0;
   projectile = null;
-  missFlashTimer = 0;
+  banner = null;
   judgePopup = null;
   state = 'playing';
   overlay.style.display = 'none';
@@ -632,7 +843,7 @@ function triggerCleared() {
   lowBtn.style.display = 'none';
   title.textContent = 'Cleared!';
   scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Best Perfect streak: ' + bestCombo;
+  scoreLine.textContent = 'Best streak: ' + bestStreak;
   bestLine.textContent = '';
   startBtn.textContent = 'Play Again';
   backToArcade.style.display = 'inline-block';
@@ -659,198 +870,245 @@ canvas.addEventListener('pointerdown', (e) => {
 highBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDrumTap('high'); });
 lowBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDrumTap('low'); });
 
-// --- World rendering ---
+// --- Forest scene ---
 let skyCache = null;
-function drawRidge(g, baseY, amp, seed) {
+function drawCanopy(g) {
   g.beginPath();
-  g.moveTo(0, H);
-  g.lineTo(0, baseY);
-  for (let x = 0; x <= W; x += 32) {
-    g.lineTo(x, baseY - Math.max(0, Math.sin(x * 0.012 + seed) * amp));
+  g.moveTo(0, 0);
+  for (let x = 0; x <= W; x += 60) {
+    g.lineTo(x, 18 + Math.sin(x * 0.02) * 14 + Math.sin(x * 0.007) * 10);
   }
-  g.lineTo(W, H);
+  g.lineTo(W, 0);
   g.closePath();
   g.fill();
+  for (let x = 40; x < W; x += 140) {
+    g.beginPath();
+    g.ellipse(x, 32 + Math.sin(x) * 6, 16, 30, 0, 0, Math.PI * 2);
+    g.fill();
+  }
 }
 function buildSkyCache() {
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
   const g = c.getContext('2d');
-  const skyH = H * 0.62;
-  const sky = g.createLinearGradient(0, 0, 0, skyH);
-  sky.addColorStop(0, '#2b1f4a');
-  sky.addColorStop(0.55, '#7a4468');
-  sky.addColorStop(1, '#dd8752');
+  const sky = g.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#3a453e');
+  sky.addColorStop(0.45, '#5c6b5f');
+  sky.addColorStop(1, '#7c8a78');
   g.fillStyle = sky;
-  g.fillRect(0, 0, W, skyH);
-  const sunX = W * 0.78, sunY = H * 0.4;
-  const glow = g.createRadialGradient(sunX, sunY, 8, sunX, sunY, 100);
-  glow.addColorStop(0, 'rgba(255,224,150,0.9)');
-  glow.addColorStop(1, 'rgba(255,224,150,0)');
-  g.fillStyle = glow;
-  g.beginPath(); g.arc(sunX, sunY, 100, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#ffe6a8';
-  g.beginPath(); g.arc(sunX, sunY, 32, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#241a38';
-  drawRidge(g, H * 0.48, 26, 1.3);
-  g.fillStyle = '#18122a';
-  drawRidge(g, H * 0.56, 34, 4.1);
-  const ground = g.createLinearGradient(0, skyH, 0, H);
-  ground.addColorStop(0, '#241f30');
-  ground.addColorStop(1, '#0f0c18');
-  g.fillStyle = ground;
-  g.fillRect(0, skyH, W, H - skyH);
+  g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(24,32,24,0.92)';
+  drawCanopy(g);
+  g.fillStyle = 'rgba(220,228,214,0.10)';
+  g.fillRect(0, H * 0.38, W, 26);
+  g.fillStyle = 'rgba(220,228,214,0.14)';
+  g.fillRect(0, H * 0.55, W, 34);
   skyCache = c;
 }
-
-const PATTERN_W = 1100;
-const MID_SPEED = 18, FG_SPEED = 55;
-let midScroll = 0, fgScroll = 0;
-const MID_SHAPES = [80, 260, 430, 620, 800, 980].map((x, i) => ({ x, kind: i % 2 }));
-const FG_SHAPES = [140, 360, 560, 780, 990].map((x, i) => ({ x, kind: (i + 1) % 2 }));
-
-function drawBush(g, x, y, s, color) {
-  g.fillStyle = color;
-  g.beginPath();
-  g.ellipse(x, y, 30 * s, 16 * s, 0, 0, Math.PI * 2);
-  g.ellipse(x - 20 * s, y + 4 * s, 20 * s, 12 * s, 0, 0, Math.PI * 2);
-  g.ellipse(x + 20 * s, y + 4 * s, 20 * s, 12 * s, 0, 0, Math.PI * 2);
-  g.fill();
+function drawGroundLane() {
+  ctx.fillStyle = 'rgba(90,100,70,0.35)';
+  ctx.fillRect(0, GROUND_Y - 10, W, 20);
 }
-function drawTree(g, x, y, s, color) {
-  g.fillStyle = color;
-  g.fillRect(x - 3 * s, y - 2 * s, 6 * s, 26 * s);
-  g.beginPath();
-  g.moveTo(x, y - 60 * s);
-  g.lineTo(x - 26 * s, y - 4 * s);
-  g.lineTo(x + 26 * s, y - 4 * s);
-  g.closePath();
-  g.fill();
+function drawEngageMarker() {
+  const mx = SQUAD_X[SQUAD_X.length - 1] + ENGAGE_DISTANCE + 20;
+  ctx.save();
+  ctx.globalAlpha = combatActive ? 0.55 : 0.25;
+  ctx.strokeStyle = combatActive ? '#ffd76a' : '#9ab0c9';
+  ctx.setLineDash([6, 6]);
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(mx, GROUND_Y - 40); ctx.lineTo(mx, GROUND_Y + 30); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
 }
-function drawVegLayer(shapes, offset, y, scale, color) {
-  for (const sh of shapes) {
+const FOLIAGE_PATTERN_W = 1100;
+const FOLIAGE_SPEED = 40;
+let foliageScroll = 0;
+const FOLIAGE_X = [60, 240, 420, 610, 800, 980];
+function drawFern(x, y) {
+  ctx.fillStyle = '#182417';
+  ctx.beginPath();
+  ctx.ellipse(x, y, 34, 18, 0, 0, Math.PI * 2);
+  ctx.ellipse(x - 22, y + 4, 22, 13, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + 22, y + 4, 22, 13, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+function drawForeground(dt) {
+  foliageScroll = (foliageScroll + FOLIAGE_SPEED * dt) % FOLIAGE_PATTERN_W;
+  for (const bx of FOLIAGE_X) {
     for (let rep = -1; rep <= 1; rep++) {
-      const x = sh.x - offset + rep * PATTERN_W;
-      if (x < -80 || x > W + 80) continue;
-      if (sh.kind === 0) drawTree(ctx, x, y, scale, color);
-      else drawBush(ctx, x, y, scale, color);
+      const x = bx - foliageScroll + rep * FOLIAGE_PATTERN_W;
+      if (x < -60 || x > W + 60) continue;
+      drawFern(x, GROUND_Y + 16);
     }
   }
 }
 
-const GROUND_Y = H * 0.62 + 68;
-function drawGroundLane() {
-  ctx.fillStyle = 'rgba(120,90,50,0.35)';
-  ctx.fillRect(0, GROUND_Y - 10, W, 20);
-}
-
-// --- Squad ---
-// Spacing doubled from the original 38px gap per playtest feedback (the
-// tight spacing read as one connected chain rather than 4 animals) - at
-// this canvas width 4 units at double gap still leaves a wide clear strip
-// before the enemy, so no need to drop to 3 units.
-const SQUAD_SCALE = 1.6;
-const SQUAD_X = [90, 166, 242, 318];
-const SQUAD_PHASE = [0, 0.55, 1.1, 1.65];
-function drawArm(x, shoulderY, angle, s) {
+// --- Stick-figure creature rendering (shared by tribe + enemy) ---
+function drawLimb(originX, originY, angle, length, color, width) {
   ctx.save();
-  ctx.translate(x, shoulderY);
+  ctx.translate(originX, originY);
   ctx.rotate(angle);
-  ctx.strokeStyle = CREATURE_PALETTE.dark;
-  ctx.lineWidth = 3 * s;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(0, 0);
-  ctx.lineTo(0, 13 * s);
+  ctx.lineTo(0, length);
   ctx.stroke();
   ctx.restore();
 }
-function drawCreature(x, y, s, phase, t, throwAngle) {
-  const legFreq = (Math.PI * 2) / BEAT_SEC;
-  const legA = Math.sin(t * legFreq + phase) * 0.5;
-  const legB = Math.sin(t * legFreq + phase + Math.PI) * 0.5;
-  const hipY = y - 10 * s;
-  const bodyY = y - 24 * s;
-  ctx.save();
-  ctx.translate(x, hipY);
-  ctx.strokeStyle = CREATURE_PALETTE.dark;
-  ctx.lineWidth = 3 * s;
+function drawEarNubs(cx, headY, headR, color, s) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(cx - headR * 0.95, headY, 2.6 * s, 0, Math.PI * 2);
+  ctx.arc(cx + headR * 0.95, headY, 2.6 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+function drawTuftHair(cx, headY, headR, color, s) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.6 * s;
   ctx.lineCap = 'round';
-  [legA, legB].forEach((a) => {
-    ctx.save();
-    ctx.rotate(a);
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, 14 * s);
-    ctx.stroke();
-    ctx.restore();
+  [-0.9, -0.45, 0, 0.45, 0.9].forEach((a) => {
+    const x1 = cx + Math.sin(a) * headR * 0.6, y1 = headY - Math.cos(a) * headR * 0.6;
+    const x2 = cx + Math.sin(a) * headR * 1.9, y2 = headY - Math.cos(a) * headR * 1.9;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
   });
+}
+function drawCurlHair(cx, headY, headR, color, s) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2 * s;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 4; i++) {
+    const a = -0.7 + i * 0.45;
+    const sx = cx + Math.sin(a) * headR * 0.8, sy = headY - Math.cos(a) * headR * 0.6;
+    ctx.beginPath();
+    ctx.arc(sx, sy + headR * 0.9, headR * 0.7, Math.PI * 1.1, Math.PI * 2.1);
+    ctx.stroke();
+  }
+}
+function drawTribeFace(cx, headY, headR, s) {
+  const ex = headR * 0.42;
+  [-1, 1].forEach((side) => {
+    const x = cx + side * ex, y = headY - headR * 0.05;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x, y, 1.9 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#2a1a10';
+    ctx.beginPath(); ctx.arc(x + side * 0.3 * s, y, 1.0 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#8a5a24';
+    ctx.lineWidth = 1 * s;
+    ctx.beginPath(); ctx.arc(x, y - 3.2 * s, 2.2 * s, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+  });
+  ctx.strokeStyle = '#8a5a24';
+  ctx.lineWidth = 1 * s;
+  ctx.beginPath();
+  ctx.arc(cx, headY + headR * 0.35, headR * 0.4, 0.25, Math.PI - 0.25);
+  ctx.stroke();
+}
+function drawEnemyFace(cx, headY, headR, s) {
+  ctx.fillStyle = '#ff2a2a';
+  ctx.beginPath();
+  ctx.arc(cx - headR * 0.4, headY, 1.8 * s, 0, Math.PI * 2);
+  ctx.arc(cx + headR * 0.4, headY, 1.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+function drawStickFigure(cx, groundY, s, cfg) {
+  const leanX = cfg.lean || 0;
+  const bob = cfg.bob || 0;
+  const hipY = groundY - 22 * s;
+  const shoulderY = groundY - 46 * s - bob;
+  const headY = groundY - 60 * s - bob;
+  const headR = 8 * s;
+  ctx.save();
+  ctx.strokeStyle = cfg.color;
+  ctx.lineWidth = 2.4 * s;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, hipY);
+  ctx.lineTo(cx + leanX, shoulderY);
+  ctx.stroke();
+  drawLimb(cx, hipY, cfg.legL, 20 * s, cfg.color, 2.4 * s);
+  drawLimb(cx, hipY, cfg.legR, 20 * s, cfg.color, 2.4 * s);
+  drawLimb(cx + leanX, shoulderY, cfg.armL, 17 * s, cfg.color, 2.2 * s);
+  drawLimb(cx + leanX, shoulderY, cfg.armR, 17 * s, cfg.color, 2.2 * s);
+  ctx.beginPath();
+  ctx.arc(cx + leanX, headY, headR, 0, Math.PI * 2);
+  ctx.stroke();
+  drawEarNubs(cx + leanX, headY, headR, cfg.color, s);
+  if (cfg.hair === 'tuft') drawTuftHair(cx + leanX, headY, headR, cfg.color, s);
+  else drawCurlHair(cx + leanX, headY, headR, cfg.color, s);
+  if (cfg.face === 'tribe') drawTribeFace(cx + leanX, headY, headR, s);
+  else drawEnemyFace(cx + leanX, headY, headR, s);
   ctx.restore();
-  // back arm just idles - only the front (enemy-facing) arm throws
-  drawArm(x - 13 * s, bodyY, Math.sin(t * 1.6 + phase) * 0.05, s);
-  drawArm(x + 13 * s, bodyY, throwAngle, s);
-  // body - plain round shape, warm gradient, no snout/tusks/tail
-  const grad = ctx.createRadialGradient(x - 4 * s, bodyY - 6 * s, 2 * s, x, bodyY, 17 * s);
-  grad.addColorStop(0, CREATURE_PALETTE.light);
-  grad.addColorStop(0.55, CREATURE_PALETTE.mid);
-  grad.addColorStop(1, CREATURE_PALETTE.dark);
-  ctx.fillStyle = grad;
-  ctx.strokeStyle = CREATURE_PALETTE.outline;
-  ctx.lineWidth = 1.5 * s;
-  ctx.beginPath();
-  ctx.arc(x, bodyY, 16 * s, 0, Math.PI * 2);
-  ctx.fill(); ctx.stroke();
-  // eyes - unchanged from the previous version, just re-anchored to the round face
-  ctx.fillStyle = '#2a1a10';
-  ctx.beginPath();
-  ctx.arc(x + 4 * s, bodyY - 3 * s, 1.8 * s, 0, Math.PI * 2);
-  ctx.arc(x + 9 * s, bodyY - 3 * s, 1.8 * s, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(x + 4.6 * s, bodyY - 3.6 * s, 0.6 * s, 0, Math.PI * 2);
-  ctx.arc(x + 9.6 * s, bodyY - 3.6 * s, 0.6 * s, 0, Math.PI * 2);
-  ctx.fill();
+}
+
+// --- Squad ---
+function tribePoseFor(t, phase, throwAngle) {
+  const idleSway = Math.sin(t * 1.3 + phase) * 0.05;
+  if (squadAction && squadAction.kind === 'guard') {
+    const inP = clamp(squadAction.elapsed / 0.2, 0, 1);
+    const outP = clamp((squadAction.duration - squadAction.elapsed) / 0.25, 0, 1);
+    const braceP = Math.min(inP, outP);
+    return { legL: lerp(0, 0.35, braceP), legR: lerp(0, -0.35, braceP), armL: lerp(idleSway, 0.5, braceP), armR: lerp(idleSway, -0.5, braceP), lean: 0 };
+  }
+  if (squadAction && (squadAction.kind === 'march' || squadAction.kind === 'retreat')) {
+    const legFreq = (Math.PI * 2) / BEAT_SEC;
+    const legL = Math.sin(t * legFreq + phase) * 0.5;
+    const legR = Math.sin(t * legFreq + phase + Math.PI) * 0.5;
+    const armL = -legR * 0.6, armR = -legL * 0.6;
+    const lean = squadAction.kind === 'retreat' ? -5 * unitScale * 0.4 : 0;
+    return { legL, legR, armL, armR, lean };
+  }
+  // Idle - and Attack, which only overrides the arm via throwAngle - legs
+  // stay in a small weight-shift sway, never the full marching stride.
+  return { legL: idleSway * 0.6, legR: -idleSway * 0.6, armL: idleSway, armR: throwAngle, lean: 0 };
 }
 function drawSquad(t) {
   const throwAngle = armAngleForThrow(t);
-  SQUAD_X.forEach((x, i) => drawCreature(x, GROUND_Y, SQUAD_SCALE, SQUAD_PHASE[i], t, throwAngle));
+  SQUAD_X.forEach((baseX, i) => {
+    const x = baseX + squadAdvance;
+    const phase = SQUAD_PHASE[i];
+    const pose = tribePoseFor(t, phase, throwAngle);
+    drawStickFigure(x, GROUND_Y, unitScale, {
+      color: SQUAD_COLORS[i], hair: 'tuft', face: 'tribe',
+      legL: pose.legL, legR: pose.legR, armL: pose.armL, armR: pose.armR, lean: pose.lean, bob: 0
+    });
+  });
 }
 
 // --- Enemy ---
-const ENEMY_X = 660, ENEMY_Y = GROUND_Y - 20;
-const SPEAR_TARGET_X = ENEMY_X - 26, SPEAR_TARGET_Y = ENEMY_Y - 45;
-const ENEMY_SHAPE = [
-  { x: 0, y: -95 }, { x: 18, y: -70 }, { x: 42, y: -78 }, { x: 50, y: -40 },
-  { x: 34, y: -10 }, { x: 40, y: 20 }, { x: 10, y: 24 }, { x: -10, y: 24 },
-  { x: -40, y: 20 }, { x: -34, y: -10 }, { x: -50, y: -40 }, { x: -42, y: -78 },
-  { x: -18, y: -70 }
-];
+function enemyPose(t) {
+  const idleSway = Math.sin(t * 1.1) * 0.04;
+  if (combatActive && enemyCyclePhase === 'telegraph') {
+    const p = clamp((ENEMY_TELEGRAPH_DURATION - enemyCycleTimer) / ENEMY_TELEGRAPH_DURATION, 0, 1);
+    const raise = lerp(0, -2.4, easeOutCubic(p));
+    return { legL: 0.15, legR: -0.15, armL: raise, armR: raise, bob: Math.sin(t * 2) * 3 };
+  }
+  return { legL: idleSway * 0.3, legR: -idleSway * 0.3, armL: idleSway, armR: -idleSway, bob: Math.sin(t * 2) * 4 };
+}
 function drawEnemy(t) {
-  const bob = Math.sin(t * 2) * 4;
   const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
   const impactP = inImpact ? (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT : 0;
   const shake = inImpact ? 6 * (1 - impactP) * Math.sin(impactP * Math.PI * 5) : 0;
-  const ex = ENEMY_X + shake, ey = ENEMY_Y + bob;
-  ctx.save();
-  ctx.translate(ex, ey);
-  ctx.beginPath();
-  ENEMY_SHAPE.forEach((p, i) => { i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
-  ctx.closePath();
-  ctx.fillStyle = inImpact ? '#7a2a2a' : '#20161e';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(190,230,255,0.75)';
-  ctx.lineWidth = 2.5;
-  ctx.stroke();
-  ctx.fillStyle = '#ff3b3b';
-  ctx.beginPath();
-  ctx.arc(-14, -62, 3.4, 0, Math.PI * 2);
-  ctx.arc(6, -62, 3.4, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-  // HP bar
+  const pose = enemyPose(t);
+  const telegraphing = combatActive && enemyCyclePhase === 'telegraph';
+  if (telegraphing) {
+    const p = clamp((ENEMY_TELEGRAPH_DURATION - enemyCycleTimer) / ENEMY_TELEGRAPH_DURATION, 0, 1);
+    ctx.save();
+    ctx.globalAlpha = 0.15 + p * 0.35;
+    const r = 70 + p * 30;
+    const glow = ctx.createRadialGradient(ENEMY_X, ENEMY_Y - 90, 10, ENEMY_X, ENEMY_Y - 90, r);
+    glow.addColorStop(0, 'rgba(255,60,40,0.8)');
+    glow.addColorStop(1, 'rgba(255,60,40,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(ENEMY_X, ENEMY_Y - 90, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  drawStickFigure(ENEMY_X + shake, ENEMY_Y, enemyScale, {
+    color: inImpact ? '#8a2a2a' : ENEMY_COLOR, hair: 'curl', face: 'enemy',
+    legL: pose.legL, legR: pose.legR, armL: pose.armL, armR: pose.armR, lean: 0, bob: pose.bob
+  });
   const barW = 130, barH = 12;
-  const bx = ex - barW / 2, by = ey - 132;
+  const bx = ENEMY_X - barW / 2, by = ENEMY_Y - 178;
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   roundRect(ctx, bx, by, barW, barH, 5); ctx.fill();
   ctx.fillStyle = '#ff5a4a';
@@ -858,30 +1116,30 @@ function drawEnemy(t) {
   roundRect(ctx, bx + 2, by + 2, (barW - 4) * pct, barH - 4, 4); ctx.fill();
 }
 
-// --- Attack FX: thrown spear + impact flash ---
+// --- Attack FX: long spear + impact flash ---
 function drawSpearAt(x, y, angle, alpha) {
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.translate(x, y);
   ctx.rotate(angle);
   ctx.strokeStyle = '#d8c9a8';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.6;
   ctx.lineCap = 'round';
   ctx.beginPath();
-  ctx.moveTo(-11, 0); ctx.lineTo(8, 0);
+  ctx.moveTo(-22, 0); ctx.lineTo(13, 0);
   ctx.stroke();
-  ctx.fillStyle = '#8a8f9a';
+  ctx.fillStyle = '#9aa0aa';
   ctx.beginPath();
-  ctx.moveTo(8, 0); ctx.lineTo(2, -3.5); ctx.lineTo(2, 3.5);
-  ctx.closePath();
-  ctx.fill();
+  ctx.moveTo(13, 0); ctx.lineTo(5, -4.5); ctx.lineTo(5, 4.5);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#b23a2a';
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(-15, -5); ctx.lineTo(-16, 0); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(-15, 5); ctx.lineTo(-16, 0); ctx.closePath(); ctx.fill();
   ctx.restore();
 }
 function drawAttackFX() {
   if (projectile) {
     const p = clamp((throwElapsed - THROW_FLIGHT_START) / THROW_FLIGHT, 0, 1);
-    // motion streak: a few fading echoes sampled from slightly earlier
-    // along the same analytic path, instead of storing a position history
     [0.18, 0.12, 0.06].forEach((back, i) => {
       const pp = p - back;
       if (pp < 0) return;
@@ -906,56 +1164,72 @@ function drawAttackFX() {
   }
 }
 
-// --- Beat bar ---
+// --- Beat bar: pulse only (phase 2 removed the note-preview ticker - see
+// brief section 1b) - just tells the player WHEN the beat lands, no icons,
+// predicts nothing about which command is being attempted.
 const BAR_Y = 22, BAR_H = 54;
-const HIT_X = 170, SPAWN_X = 770;
-const NOTE_SPEED = (SPAWN_X - HIT_X) / VISUAL_LEAD_SEC;
+const HIT_X = W / 2;
 function drawBeatBar(nowPerf) {
+  let pulse = 0;
+  for (const ev of beatEvents) {
+    const dt = nowPerf - ev.time;
+    if (dt >= 0 && dt < 200) pulse = Math.max(pulse, 1 - dt / 200);
+  }
   ctx.save();
   ctx.fillStyle = 'rgba(20,14,34,0.6)';
   roundRect(ctx, 16, BAR_Y, W - 32, BAR_H, 14); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-  ctx.lineWidth = 3;
+  const glowColor = feverActive ? '255,214,90' : '120,200,255';
+  ctx.lineWidth = feverActive ? 4 + pulse * 3 : 3 + pulse * 2;
+  ctx.strokeStyle = `rgba(${glowColor},${0.35 + pulse * 0.45})`;
+  roundRect(ctx, 16, BAR_Y, W - 32, BAR_H, 14); ctx.stroke();
   ctx.beginPath();
-  ctx.moveTo(HIT_X, BAR_Y - 6); ctx.lineTo(HIT_X, BAR_Y + BAR_H + 6);
-  ctx.stroke();
-  for (const ev of beatEvents) {
-    if (ev.type === 'click') continue;
-    const x = HIT_X + (ev.time - nowPerf) / 1000 * NOTE_SPEED;
-    if (x < -24 || x > W + 24) continue;
-    const isHigh = ev.type === 'high';
-    const color = isHigh ? '#5ad1e6' : '#ff8a5a';
-    const label = isHigh ? 'PON' : 'PA';
-    const near = Math.abs(x - HIT_X) < 20;
-    ctx.globalAlpha = ev.judged ? 0.32 : 1;
-    ctx.beginPath();
-    ctx.arc(x, BAR_Y + BAR_H / 2, near ? 20 : 16, 0, Math.PI * 2);
-    ctx.fillStyle = (ev.judged === 'miss' || ev.judged === 'skipped') ? '#555' : color;
-    ctx.fill();
-    if (near && !ev.judged) { ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.stroke(); }
+  ctx.arc(HIT_X, BAR_Y + BAR_H / 2, 9 + pulse * 11, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${glowColor},${0.5 + pulse * 0.5})`;
+  ctx.fill();
+  if (banner) {
+    ctx.globalAlpha = clamp(banner.timer / 0.5, 0, 1) * 0.8;
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = banner.color;
+    roundRect(ctx, 12, BAR_Y - 4, W - 24, BAR_H + 8, 16); ctx.stroke();
     ctx.globalAlpha = 1;
-    ctx.fillStyle = '#1a1020';
-    ctx.font = 'bold 11px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(label, x, BAR_Y + BAR_H / 2 + 1);
   }
   ctx.restore();
 }
-
 function drawHUD() {
+  // Squad HP (left)
+  drawHPBar(20, BAR_Y + BAR_H + 10, 170, 14, squadHP / SQUAD_MAX_HP, '#5fd88a', 'SQUAD');
+  // Fever streak (right)
   ctx.textAlign = 'right';
   ctx.textBaseline = 'top';
-  ctx.font = 'bold 15px sans-serif';
-  ctx.fillStyle = '#ffd76a';
-  ctx.fillText('Combo x' + combo, W - 20, BAR_Y + BAR_H + 8);
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillStyle = feverActive ? '#ffd76a' : '#cfd6dc';
+  ctx.fillText(feverActive ? 'FEVER! x' + feverStreak : 'Streak x' + feverStreak, W - 20, BAR_Y + BAR_H + 12);
   if (judgePopup) {
     ctx.textAlign = 'center';
-    ctx.font = 'bold 20px sans-serif';
+    ctx.font = 'bold 18px sans-serif';
     ctx.globalAlpha = clamp(judgePopup.timer / 0.55, 0, 1);
     ctx.fillStyle = judgePopup.color;
-    ctx.fillText(judgePopup.text, HIT_X, BAR_Y + BAR_H + 34);
+    ctx.fillText(judgePopup.text, HIT_X, BAR_Y + BAR_H + 32);
     ctx.globalAlpha = 1;
   }
+  if (banner) {
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.globalAlpha = clamp(banner.timer / 0.3, 0, 1);
+    ctx.fillStyle = banner.color;
+    ctx.fillText(banner.text, HIT_X, BAR_Y + BAR_H + 58);
+    ctx.globalAlpha = 1;
+  }
+}
+function drawHPBar(x, y, w, h, pct, color, label) {
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  roundRect(ctx, x, y, w, h, 5); ctx.fill();
+  ctx.fillStyle = color;
+  roundRect(ctx, x + 2, y + 2, (w - 4) * clamp(pct, 0, 1), h - 4, 4); ctx.fill();
+  ctx.fillStyle = '#cfd6dc';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.fillText(label, x, y - 3);
 }
 
 function drawCalibrate() {
@@ -988,23 +1262,16 @@ function drawCalibrate() {
 function drawWorld(t, dt) {
   ctx.clearRect(0, 0, W, H);
   ctx.drawImage(skyCache, 0, 0);
-  midScroll = (midScroll + MID_SPEED * dt) % PATTERN_W;
-  fgScroll = (fgScroll + FG_SPEED * dt) % PATTERN_W;
-  drawVegLayer(MID_SHAPES, midScroll, GROUND_Y - 60, 0.9, '#1c2a22');
   drawGroundLane();
+  drawEngageMarker();
   drawSquad(t);
   drawEnemy(t);
   drawAttackFX();
-  drawVegLayer(FG_SHAPES, fgScroll, GROUND_Y + 26, 1.4, '#132018');
-  if (missFlashTimer > 0) {
-    ctx.fillStyle = `rgba(255,40,40,${missFlashTimer / 0.3 * 0.25})`;
+  drawForeground(dt);
+  if (squadHitFlash > 0) {
+    ctx.fillStyle = `rgba(255,40,40,${squadHitFlash / 0.3 * 0.3})`;
     ctx.fillRect(0, 0, W, H);
   }
-}
-
-function updateGame(dt, now) {
-  checkAutoMiss(now);
-  updateAnimTimers(dt);
 }
 
 let animT = 0;
@@ -1017,7 +1284,7 @@ function loop(now) {
   if (state === 'calibrating') {
     drawCalibrate();
   } else if (state === 'playing') {
-    updateGame(dt, now);
+    updateGame(dt);
     drawWorld(animT, dt);
     drawBeatBar(now);
     drawHUD();
