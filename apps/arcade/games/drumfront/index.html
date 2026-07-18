@@ -291,6 +291,21 @@ function playClick(when) {
   osc.connect(gain); gain.connect(audioCtx.destination);
   osc.start(when); osc.stop(when + 0.07);
 }
+// Constant background metronome (phase 2 fix): a quiet, very short tick on
+// every beat during play, regardless of whether the player taps - distinct
+// timbre/volume from PA (low triangle sweep), PON (bandpass noise), and the
+// command stingers, so it reads as a timing reference rather than an event.
+function playMetronomeTick(when) {
+  if (muted) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine'; osc.frequency.value = 1800;
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.exponentialRampToValueAtTime(0.06, when + 0.004);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.035);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(when); osc.stop(when + 0.04);
+}
 function playHit() {
   if (muted) return;
   ensureAudio();
@@ -465,10 +480,18 @@ function schedulerTick() {
       if (beatGlobalIndex >= CALIB_BEATS) break;
       beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), type: 'click', claimed: false, diff: 0, soundScheduled: false });
     } else {
-      beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), claimed: false });
+      beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), claimed: false, soundScheduled: false });
     }
     beatGlobalIndex++;
     genTime += BEAT_SEC;
+  }
+  if (schedulerMode === 'play') {
+    for (const ev of beatEvents) {
+      if (!ev.soundScheduled && ev.audioTime <= now + AUDIO_SCHEDULE_AHEAD_SEC) {
+        playMetronomeTick(ev.audioTime);
+        ev.soundScheduled = true;
+      }
+    }
   }
   if (schedulerMode === 'calibrate') {
     for (const ev of beatEvents) {
@@ -528,22 +551,24 @@ const PATTERNS = {
   guard: ['low', 'low', 'high', 'high'],
   retreat: ['high', 'high', 'low', 'low']
 };
-const COMMAND_LABEL = { march: 'March', attack: 'Attack', guard: 'Guard', retreat: 'Retreat' };
 const COMMAND_COLOR = { march: '#8fd9a8', attack: '#ff6a4a', guard: '#8ad8ff', retreat: '#c9a8ff' };
-function matchPattern(types) {
-  for (const name in PATTERNS) {
-    if (PATTERNS[name].every((t, i) => t === types[i])) return name;
-  }
-  return null;
+// Rolling prefix-filter: candidates are every pattern whose first
+// buffer.length beats match the buffer so far. A tap that doesn't extend
+// any candidate restarts the buffer as a fresh attempt on that same tap,
+// rather than waiting out a fixed 4-beat grid (see handleDrumTap).
+function getCandidates(buffer) {
+  return Object.keys(PATTERNS).filter((name) =>
+    PATTERNS[name].slice(0, buffer.length).every((v, i) => v === buffer[i])
+  );
 }
 
 // --- Game state ---
 let state = 'menu'; // menu | calibrating | playing | cleared
-const PERFECT_MS = 120;
-const GOOD_MS = 200;
+const PERFECT_MS = 150;
+const GOOD_MS = 280;
 const CONSUME_MS = BEAT_SEC * 1000 * 0.75;
 
-let tapBuffer = []; // { type, judged }
+let inputBuffer = []; // rolling buffer of drum types for the in-progress attempt
 let judgePopup = null; // { text, color, timer } - per-tap timing feedback
 let banner = null; // { text, color, timer } - per-command outcome feedback
 
@@ -584,25 +609,31 @@ function handleDrumTap(type) {
   if (best && bestDist <= CONSUME_MS) best.claimed = true;
   if (best && bestDist <= GOOD_MS) judged = bestDist <= PERFECT_MS ? 'perfect' : 'good';
   showJudgePopup(judged === 'perfect' ? 'PERFECT' : judged === 'good' ? 'GOOD' : 'MISS', judged === 'perfect' ? '#7cfc9a' : judged === 'good' ? '#ffd76a' : '#ff5a5a');
-  if (judged === 'miss') breakFever();
-  tapBuffer.push({ type, judged });
-  if (tapBuffer.length >= 4) resolveTapBuffer();
-}
-function resolveTapBuffer() {
-  const types = tapBuffer.map((t) => t.type);
-  const allGood = tapBuffer.every((t) => t.judged !== 'miss');
-  const matched = matchPattern(types);
-  tapBuffer = [];
-  if (matched && allGood) {
-    executeCommand(matched);
-    growFeverOnLanding();
-  } else if (matched && !allGood) {
-    // Streak already broken per-tap the instant the mistimed tap happened -
-    // this is just the "which command you were attempting" feedback.
-    announce(COMMAND_LABEL[matched] + ' - mistimed', '#ff9a5a', 0.6);
-  } else {
-    announce('No match', '#9aa0a8', 0.5);
+
+  if (judged === 'miss') {
+    // Completely off-beat tap: doesn't extend or start anything. Clearing
+    // the buffer immediately (instead of waiting out a fixed 4-beat grid)
+    // means the very next correctly-timed tap can start a brand-new
+    // attempt right away.
     breakFever();
+    inputBuffer = [];
+    return;
+  }
+
+  let candidates = getCandidates(inputBuffer.concat(type));
+  if (candidates.length === 0) {
+    // This tap doesn't continue any pattern from the current buffer -
+    // reset and try it as the start of a new attempt instead, immediately.
+    inputBuffer = [type];
+    candidates = getCandidates(inputBuffer);
+  } else {
+    inputBuffer = inputBuffer.concat(type);
+  }
+
+  if (inputBuffer.length === 4 && candidates.length === 1) {
+    executeCommand(candidates[0]);
+    growFeverOnLanding();
+    inputBuffer = [];
   }
 }
 
@@ -737,6 +768,7 @@ let throwElapsed = 0;
 let throwSpearSpawned = false;
 let throwStingerPlayed = false;
 let projectile = null; // { x0, y0, x1, y1 }
+let impactX = 0; // captured from projectile.x1 at spawn - projectile is null by impact time
 const SPEAR_TARGET_Y = ENEMY_Y - 75;
 
 function triggerAttack() {
@@ -766,6 +798,7 @@ function spawnProjectile() {
     x0: SQUAD_FRONT_X + 14 * unitScale, y0: GROUND_Y - 46 * unitScale,
     x1: enemyScreenX() - 20, y1: SPEAR_TARGET_Y
   };
+  impactX = projectile.x1;
 }
 function projectilePos(p) {
   const x = lerp(projectile.x0, projectile.x1, p);
@@ -833,7 +866,7 @@ function startGame() {
   enemyCyclePhase = 'idle';
   enemyCycleTimer = ENEMY_IDLE_DURATION;
   telegraphGuarded = false;
-  tapBuffer = [];
+  inputBuffer = [];
   feverStreak = 0;
   feverActive = false;
   throwActive = false;
@@ -1063,19 +1096,6 @@ function drawForeground() {
 }
 
 // --- Stick-figure creature rendering (shared by tribe + enemy) ---
-function drawLimb(originX, originY, angle, length, color, width) {
-  ctx.save();
-  ctx.translate(originX, originY);
-  ctx.rotate(angle);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = width;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(0, length);
-  ctx.stroke();
-  ctx.restore();
-}
 function drawEarNubs(cx, headY, headR, color, s) {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -1105,24 +1125,6 @@ function drawCurlHair(cx, headY, headR, color, s) {
     ctx.stroke();
   }
 }
-function drawTribeFace(cx, headY, headR, s) {
-  const ex = headR * 0.42;
-  [-1, 1].forEach((side) => {
-    const x = cx + side * ex, y = headY - headR * 0.05;
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(x, y, 1.9 * s, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#2a1a10';
-    ctx.beginPath(); ctx.arc(x + side * 0.3 * s, y, 1.0 * s, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#8a5a24';
-    ctx.lineWidth = 1 * s;
-    ctx.beginPath(); ctx.arc(x, y - 3.2 * s, 2.2 * s, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
-  });
-  ctx.strokeStyle = '#8a5a24';
-  ctx.lineWidth = 1 * s;
-  ctx.beginPath();
-  ctx.arc(cx, headY + headR * 0.35, headR * 0.4, 0.25, Math.PI - 0.25);
-  ctx.stroke();
-}
 function drawEnemyFace(cx, headY, headR, s) {
   ctx.fillStyle = '#ff2a2a';
   ctx.beginPath();
@@ -1130,56 +1132,98 @@ function drawEnemyFace(cx, headY, headR, s) {
   ctx.arc(cx + headR * 0.4, headY, 1.8 * s, 0, Math.PI * 2);
   ctx.fill();
 }
-function drawStickFigure(cx, groundY, s, cfg) {
-  const leanX = cfg.lean || 0;
-  const bob = cfg.bob || 0;
-  const hipY = groundY - 22 * s;
-  const shoulderY = groundY - 46 * s - bob;
-  const headY = groundY - 60 * s - bob;
-  const headR = 8 * s;
+// pose = { legSpread, legBend, armIn, lean, crouch } for Idle/March/Guard/
+// Retreat, OR pose = { armThrow } for Attack - the whole body is driven by
+// one of these two vocabularies depending on which fields are present.
+// hairStyle/eyeStyle keep tribe vs. enemy visually distinct (brown tuft
+// hair + white-sclera eyes for tribe, dark curl hair + solid red eyes for
+// the enemy) the way the previous stick-figure renderer did.
+function drawCreature(x, y, scale, pose, color, hairStyle, eyeStyle) {
   ctx.save();
-  ctx.strokeStyle = cfg.color;
-  ctx.lineWidth = 2.4 * s;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(cx, hipY);
-  ctx.lineTo(cx + leanX, shoulderY);
-  ctx.stroke();
-  drawLimb(cx, hipY, cfg.legL, 20 * s, cfg.color, 2.4 * s);
-  drawLimb(cx, hipY, cfg.legR, 20 * s, cfg.color, 2.4 * s);
-  drawLimb(cx + leanX, shoulderY, cfg.armL, 17 * s, cfg.color, 2.2 * s);
-  drawLimb(cx + leanX, shoulderY, cfg.armR, 17 * s, cfg.color, 2.2 * s);
-  ctx.beginPath();
-  ctx.arc(cx + leanX, headY, headR, 0, Math.PI * 2);
-  ctx.stroke();
-  drawEarNubs(cx + leanX, headY, headR, cfg.color, s);
-  if (cfg.hair === 'tuft') drawTuftHair(cx + leanX, headY, headR, cfg.color, s);
-  else drawCurlHair(cx + leanX, headY, headR, cfg.color, s);
-  if (cfg.face === 'tribe') drawTribeFace(cx + leanX, headY, headR, s);
-  else drawEnemyFace(cx + leanX, headY, headR, s);
+  ctx.translate(x, y + (pose.crouch || 0));
+  ctx.scale(scale, scale);
+  ctx.rotate(pose.lean || 0);
+
+  const ink = color;
+  ctx.strokeStyle = ink; ctx.fillStyle = ink; ctx.lineCap = 'round';
+
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath(); ctx.ellipse(0, 21, 13, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = ink;
+
+  const legSpread = pose.legSpread || 0, legBend = pose.legBend || 0;
+  ctx.lineWidth = 3.3;
+  ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(-9 - legSpread, 20 - legBend); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(8 + legSpread, 20 - legBend); ctx.stroke();
+
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(0, 7); ctx.stroke();
+
+  ctx.lineWidth = 2.7;
+  let handX, handY;
+  if (pose.armThrow !== undefined) {
+    // ATTACK pose - throwing arm angle drives hand position
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(-13, -3, -11, 9); ctx.stroke();
+    handX = 13 * Math.cos(pose.armThrow - Math.PI / 2 + 0.3);
+    handY = -9 + 13 * Math.sin(pose.armThrow - Math.PI / 2 + 0.3) + 6;
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(handX, handY); ctx.stroke();
+  } else {
+    // IDLE / MARCH / GUARD / RETREAT - arms pull toward center by armIn
+    const armIn = pose.armIn || 0;
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(-13 + armIn, -3, -11 + armIn * 1.5, 9 - legBend * 0.3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(13 - armIn, -3, 12 - armIn * 1.5, 10 - legBend * 0.3); ctx.stroke();
+  }
+
+  ctx.beginPath(); ctx.arc(0, -20, 7, 0, Math.PI * 2); ctx.fill();
+  drawEarNubs(0, -20, 7, ink, 1);
+  if (hairStyle === 'curl') drawCurlHair(0, -20, 7, ink, 1);
+  else drawTuftHair(0, -20, 7, ink, 1);
+
+  if (eyeStyle === 'enemy') {
+    drawEnemyFace(0, -20, 7, 1);
+  } else {
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath(); ctx.arc(-2.6, -20.5, 1.9, 0, Math.PI * 2); ctx.arc(2.6, -20.5, 1.9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#241610';
+    ctx.beginPath(); ctx.arc(-2.3, -20.3, 1.1, 0, Math.PI * 2); ctx.arc(2.9, -20.3, 1.1, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ink; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(-2.6, -23.5, 2, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+    ctx.beginPath(); ctx.arc(2.6, -23.5, 2, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, -19, 2.2, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+  }
+
   ctx.restore();
+  if (pose.armThrow !== undefined) return { x: x + handX * scale, y: y + handY * scale };
 }
 
 // --- Squad ---
+// State -> pose mapping: legSpread/legBend/armIn driven by a sine wave
+// timed to the beat while March/Retreat is active; Idle uses a small-
+// amplitude sway; Guard eases into a fixed braced pose and holds it;
+// Attack hands off to armAngleForThrow's windup/release/flight/impact
+// timeline and ignores leg pose entirely (per the throw-pose vocabulary).
 function tribePoseFor(t, phase, throwAngle) {
-  const idleSway = Math.sin(t * 1.3 + phase) * 0.05;
+  if (throwActive) return { armThrow: throwAngle };
   if (squadAction && squadAction.kind === 'guard') {
     const inP = clamp(squadAction.elapsed / 0.2, 0, 1);
     const outP = clamp((squadAction.duration - squadAction.elapsed) / 0.25, 0, 1);
     const braceP = Math.min(inP, outP);
-    return { legL: lerp(0, 0.35, braceP), legR: lerp(0, -0.35, braceP), armL: lerp(idleSway, 0.5, braceP), armR: lerp(idleSway, -0.5, braceP), lean: 0 };
+    return {
+      legSpread: lerp(0, 4, braceP), legBend: lerp(0, 3, braceP),
+      armIn: lerp(0, 6, braceP), lean: 0, crouch: lerp(0, 1.5, braceP)
+    };
   }
   if (squadAction && (squadAction.kind === 'march' || squadAction.kind === 'retreat')) {
     const legFreq = (Math.PI * 2) / BEAT_SEC;
-    const legL = Math.sin(t * legFreq + phase) * 0.5;
-    const legR = Math.sin(t * legFreq + phase + Math.PI) * 0.5;
-    const armL = -legR * 0.6, armR = -legL * 0.6;
-    const lean = squadAction.kind === 'retreat' ? -5 * unitScale * 0.4 : 0;
-    return { legL, legR, armL, armR, lean };
+    const stride = Math.sin(t * legFreq + phase) * 7;
+    const legBend = Math.abs(stride) * 0.3;
+    if (squadAction.kind === 'march') {
+      return { legSpread: stride, legBend, armIn: -stride * 0.4, lean: 0, crouch: Math.abs(stride) * 0.2 };
+    }
+    return { legSpread: stride, legBend, armIn: stride * 0.3, lean: -0.06, crouch: 0 };
   }
-  // Idle - and Attack, which only overrides the arm via throwAngle - legs
-  // stay in a small weight-shift sway, never the full marching stride.
-  return { legL: idleSway * 0.6, legR: -idleSway * 0.6, armL: idleSway, armR: throwAngle, lean: 0 };
+  const sway = Math.sin(t * 1.3 + phase) * 3;
+  return { legSpread: sway * 0.3, legBend: 0, armIn: sway * 0.3, lean: 0, crouch: 0 };
 }
 function drawSquad(t) {
   // Fixed camera: the squad's screen X never moves - only the world
@@ -1188,22 +1232,24 @@ function drawSquad(t) {
   SQUAD_X.forEach((x, i) => {
     const phase = SQUAD_PHASE[i];
     const pose = tribePoseFor(t, phase, throwAngle);
-    drawStickFigure(x, GROUND_Y, unitScale, {
-      color: SQUAD_COLORS[i], hair: 'tuft', face: 'tribe',
-      legL: pose.legL, legR: pose.legR, armL: pose.armL, armR: pose.armR, lean: pose.lean, bob: 0
-    });
+    drawCreature(x, GROUND_Y, unitScale, pose, SQUAD_COLORS[i], 'tuft', 'tribe');
   });
 }
 
 // --- Enemy ---
-function enemyPose(t) {
-  const idleSway = Math.sin(t * 1.1) * 0.04;
+// Same pose vocabulary as the squad; telegraph (wind-up before its hit
+// lands) eases arms outward/up and leans back slightly rather than using
+// a separate animation model.
+function enemyPoseFor(t) {
   if (combatActive && enemyCyclePhase === 'telegraph') {
     const p = clamp((ENEMY_TELEGRAPH_DURATION - enemyCycleTimer) / ENEMY_TELEGRAPH_DURATION, 0, 1);
-    const raise = lerp(0, -2.4, easeOutCubic(p));
-    return { legL: 0.15, legR: -0.15, armL: raise, armR: raise, bob: Math.sin(t * 2) * 3 };
+    return {
+      legSpread: lerp(0, 3, p), legBend: lerp(0, 2, p),
+      armIn: lerp(0, -8, p), lean: lerp(0, -0.08, p), crouch: lerp(0, -3, p)
+    };
   }
-  return { legL: idleSway * 0.3, legR: -idleSway * 0.3, armL: idleSway, armR: -idleSway, bob: Math.sin(t * 2) * 4 };
+  const sway = Math.sin(t * 1.1) * 3;
+  return { legSpread: sway * 0.3, legBend: 0, armIn: sway * 0.3, lean: 0, crouch: Math.sin(t * 2) * 1.5 };
 }
 function drawEnemy(t) {
   const ex0 = enemyScreenX();
@@ -1214,7 +1260,7 @@ function drawEnemy(t) {
   const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
   const impactP = inImpact ? (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT : 0;
   const shake = inImpact ? 6 * (1 - impactP) * Math.sin(impactP * Math.PI * 5) : 0;
-  const pose = enemyPose(t);
+  const pose = enemyPoseFor(t);
   const telegraphing = combatActive && enemyCyclePhase === 'telegraph';
   if (telegraphing) {
     const p = clamp((ENEMY_TELEGRAPH_DURATION - enemyCycleTimer) / ENEMY_TELEGRAPH_DURATION, 0, 1);
@@ -1228,10 +1274,7 @@ function drawEnemy(t) {
     ctx.beginPath(); ctx.arc(ex0, ENEMY_Y - 90, r, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
-  drawStickFigure(ex0 + shake, ENEMY_Y, enemyScale, {
-    color: inImpact ? '#8a2a2a' : ENEMY_COLOR, hair: 'curl', face: 'enemy',
-    legL: pose.legL, legR: pose.legR, armL: pose.armL, armR: pose.armR, lean: 0, bob: pose.bob
-  });
+  drawCreature(ex0 + shake, ENEMY_Y, enemyScale, pose, inImpact ? '#8a2a2a' : ENEMY_COLOR, 'curl', 'enemy');
   const barW = 130, barH = 12;
   const bx = ex0 - barW / 2, by = ENEMY_Y - 178;
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
@@ -1280,11 +1323,11 @@ function drawAttackFX() {
     const r = 14 + ip * 26;
     ctx.save();
     ctx.globalAlpha = (1 - ip) * 0.85;
-    const glow = ctx.createRadialGradient(SPEAR_TARGET_X, SPEAR_TARGET_Y, 0, SPEAR_TARGET_X, SPEAR_TARGET_Y, r);
+    const glow = ctx.createRadialGradient(impactX, SPEAR_TARGET_Y, 0, impactX, SPEAR_TARGET_Y, r);
     glow.addColorStop(0, 'rgba(255,240,200,0.9)');
     glow.addColorStop(1, 'rgba(255,240,200,0)');
     ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(SPEAR_TARGET_X, SPEAR_TARGET_Y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(impactX, SPEAR_TARGET_Y, r, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
 }
