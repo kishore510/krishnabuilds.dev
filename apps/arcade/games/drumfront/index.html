@@ -650,14 +650,17 @@ const ENEMY_COLOR = '#050505';
 // Fixed camera, scrolling world: the squad's screen X never moves - only
 // distanceMarched changes (via landed March/Retreat), and everything else
 // (enemy, decorations) is positioned in world space and converted to
-// screen space as worldX - distanceMarched * layerRatio. The enemy sits far
-// enough down the path (ENEMY_WORLD_X) that it's fully off-screen at the
-// start of a run - "hidden until encountered" falls out of this model for
-// free rather than needing a separate visibility flag.
+// screen space as worldX - distanceMarched * layerRatio. Each enemy sits
+// far enough down the path that it's fully off-screen until the squad
+// marches close - "hidden until encountered" falls out of this model for
+// free rather than needing a separate visibility flag, and chaining
+// encounters (see triggerEnemyDefeat/advanceToNextEnemy below) is just
+// reassigning enemyWorldX further down the same path.
 const SQUAD_FRONT_X = SQUAD_X[SQUAD_X.length - 1];
 const ENGAGE_RANGE_PX = 150;
-const ENEMY_WORLD_X = 900;
-const MAX_DISTANCE_MARCHED = ENEMY_WORLD_X - SQUAD_FRONT_X - ENGAGE_RANGE_PX;
+// Hardcoded chapter of 4 encounters at increasing distance - each enemy is
+// identical (same HP/timing, per brief: no difficulty scaling this pass).
+const ENEMY_WORLD_X_LIST = [900, 1400, 1900, 2400];
 const MARCH_STEP = 55;
 const SQUAD_MAX_HP = 100;
 const SQUAD_HIT_DAMAGE = 22;
@@ -666,8 +669,17 @@ const ENEMY_MAX_HP = 8;
 const ATTACK_DAMAGE = 1;
 const ENEMY_IDLE_DURATION = 3.0;
 const ENEMY_TELEGRAPH_DURATION = 0.7;
+const ENEMY_DEFEAT_FADE_DURATION = 0.4;
 
-let distanceMarched = 0; // 0..MAX_DISTANCE_MARCHED
+function computeMaxDistance() { return enemyWorldX - SQUAD_FRONT_X - ENGAGE_RANGE_PX; }
+
+let enemyIndex = 0;
+let enemyWorldX = ENEMY_WORLD_X_LIST[0];
+let maxDistanceMarched = computeMaxDistance(); // 0..this is the reachable range for the current enemy
+let enemiesDefeated = 0;
+let enemyDefeating = false; // true during the brief fade/collapse after a kill, before the next enemy is live
+let enemyDefeatElapsed = 0;
+let distanceMarched = 0; // 0..maxDistanceMarched, keeps growing across the whole chapter (never rewound)
 let squadAction = null; // { kind: 'march'|'retreat'|'guard', elapsed, duration, fromX, toX }
 let squadHP = SQUAD_MAX_HP;
 let squadHitFlash = 0;
@@ -678,7 +690,7 @@ let enemyCyclePhase = 'idle'; // 'idle' | 'telegraph'
 let enemyCycleTimer = ENEMY_IDLE_DURATION;
 let telegraphGuarded = false;
 
-function enemyScreenX() { return ENEMY_WORLD_X - distanceMarched; }
+function enemyScreenX() { return enemyWorldX - distanceMarched; }
 
 function executeCommand(name) {
   if (name === 'march') doMarch();
@@ -688,7 +700,7 @@ function executeCommand(name) {
 }
 function doMarch() {
   const from = distanceMarched;
-  const to = Math.min(MAX_DISTANCE_MARCHED, distanceMarched + MARCH_STEP);
+  const to = Math.min(maxDistanceMarched, distanceMarched + MARCH_STEP);
   squadAction = { kind: 'march', elapsed: 0, duration: 1.0, fromX: from, toX: to };
   playMarchStinger();
   announce('March', COMMAND_COLOR.march, 0.5);
@@ -719,7 +731,13 @@ function updateSquadActionStep(dt) {
   if (squadAction.elapsed >= squadAction.duration) squadAction = null;
 }
 function updateCombat(dt) {
-  combatActive = distanceMarched >= MAX_DISTANCE_MARCHED - 0.5;
+  // While the just-killed enemy is fading out, hold off on re-deriving
+  // combatActive from distance - the squad is still standing at the old
+  // enemy's engage point, and maxDistanceMarched/enemyWorldX don't move to
+  // the next encounter until the fade finishes (see advanceToNextEnemy),
+  // so recomputing here would immediately re-engage a dead enemy.
+  if (enemyDefeating) return;
+  combatActive = distanceMarched >= maxDistanceMarched - 0.5;
   if (combatActive && !wasCombatActive) {
     // Engaging (or re-engaging after a Retreat) never resets the enemy's
     // HP or attack-cycle timer - per the encounter brief, disengaging is
@@ -812,8 +830,34 @@ function resolveAttackImpact() {
   if (combatActive) {
     const dmg = feverActive ? ATTACK_DAMAGE * FEVER_ATTACK_MULT : ATTACK_DAMAGE;
     enemyHP = Math.max(0, enemyHP - dmg);
-    if (enemyHP <= 0) triggerCleared();
+    if (enemyHP <= 0) triggerEnemyDefeat();
   }
+}
+// --- Enemy progression: defeat this enemy, fade/collapse it out, then
+// either bring in the next one further down the path or end the chapter.
+// distanceMarched is never rewound between encounters - the squad's
+// screen position stays fixed and the world keeps scrolling past exactly
+// like it does mid-encounter, so the next enemy is simply out of reach
+// (per enemyScreenX()) until the squad marches far enough forward.
+function triggerEnemyDefeat() {
+  enemiesDefeated++;
+  enemyDefeating = true;
+  enemyDefeatElapsed = 0;
+  combatActive = false;
+  wasCombatActive = false;
+}
+function advanceToNextEnemy() {
+  if (enemyIndex + 1 >= ENEMY_WORLD_X_LIST.length) {
+    triggerChapterCleared();
+    return;
+  }
+  enemyIndex++;
+  enemyWorldX = ENEMY_WORLD_X_LIST[enemyIndex];
+  maxDistanceMarched = computeMaxDistance();
+  enemyHP = ENEMY_MAX_HP;
+  enemyCyclePhase = 'idle';
+  enemyCycleTimer = ENEMY_IDLE_DURATION;
+  telegraphGuarded = false;
 }
 function updateAnimTimers(dt) {
   if (throwActive) {
@@ -831,6 +875,13 @@ function updateAnimTimers(dt) {
       resolveAttackImpact();
     }
     if (throwElapsed >= THROW_TOTAL) throwActive = false;
+  }
+  if (enemyDefeating) {
+    enemyDefeatElapsed += dt;
+    if (enemyDefeatElapsed >= ENEMY_DEFEAT_FADE_DURATION) {
+      enemyDefeating = false;
+      advanceToNextEnemy();
+    }
   }
   if (squadAction) updateSquadActionStep(dt);
   if (squadHitFlash > 0) squadHitFlash = Math.max(0, squadHitFlash - dt);
@@ -856,6 +907,12 @@ function showMenu() {
   overlay.style.display = 'flex';
 }
 function startGame() {
+  enemyIndex = 0;
+  enemyWorldX = ENEMY_WORLD_X_LIST[0];
+  maxDistanceMarched = computeMaxDistance();
+  enemiesDefeated = 0;
+  enemyDefeating = false;
+  enemyDefeatElapsed = 0;
   distanceMarched = 0;
   squadAction = null;
   squadHP = SQUAD_MAX_HP;
@@ -880,15 +937,15 @@ function startGame() {
   lowBtn.style.display = 'block';
   startScheduler('play');
 }
-function triggerCleared() {
+function triggerChapterCleared() {
   state = 'cleared';
   stopScheduler();
   playClear();
   highBtn.style.display = 'none';
   lowBtn.style.display = 'none';
-  title.textContent = 'Cleared!';
+  title.textContent = 'Chapter Cleared!';
   scoreLine.style.display = 'block';
-  scoreLine.textContent = 'Best streak: ' + bestStreak;
+  scoreLine.textContent = 'Enemies defeated: ' + enemiesDefeated + ' | Best streak: ' + bestStreak;
   bestLine.textContent = '';
   startBtn.textContent = 'Play Again';
   backToArcade.style.display = 'inline-block';
@@ -1073,6 +1130,21 @@ const VINES = [
 ];
 const FG_BUSHES = [80, 260, 460, 640, 820, 980, 1120];
 
+// The chapter now chains multiple encounters far down the path (see
+// ENEMY_WORLD_X_LIST), well past where the hand-placed decorations above
+// end - extend all three layers with the same spacing/variation pattern
+// so later encounters don't scroll into a bare backdrop.
+const WORLD_DECOR_END = ENEMY_WORLD_X_LIST[ENEMY_WORLD_X_LIST.length - 1] + 800;
+for (let x = 1220, i = 0; x < WORLD_DECOR_END; x += 190, i++) {
+  const base = MID_TREES[i % 6];
+  MID_TREES.push({ x, trunkH: base.trunkH, canopyR: base.canopyR });
+}
+for (let x = 1150, i = 0; x < WORLD_DECOR_END; x += 195, i++) {
+  const base = VINES[i % 5];
+  VINES.push({ x, canopyY: base.canopyY, length: base.length, sway: base.sway });
+}
+for (let x = 1300; x < WORLD_DECOR_END; x += 180) FG_BUSHES.push(x);
+
 function drawMidground() {
   const off = distanceMarched * MID_SCROLL_RATIO;
   for (const tr of MID_TREES) {
@@ -1113,12 +1185,20 @@ function drawTuftHair(cx, headY, headR, color, s) {
     ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
   });
 }
-function drawCurlHair(cx, headY, headR, color, s) {
+// Slow ambient sway for the enemy's curl hair: each curl gets a distinct
+// phase offset so the strands ripple rather than moving as one rigid
+// block. Small amplitude/slow speed - a gentle breeze, not head-shaking.
+function hairSway(baseRot, phaseOffset, time) {
+  const swayAmount = 0.12; // radians of sway
+  const swaySpeed = 1.3; // radians/sec equivalent
+  return baseRot + Math.sin(time * swaySpeed + phaseOffset) * swayAmount;
+}
+function drawCurlHair(cx, headY, headR, color, s, time) {
   ctx.strokeStyle = color;
   ctx.lineWidth = 2 * s;
   ctx.lineCap = 'round';
   for (let i = 0; i < 4; i++) {
-    const a = -0.7 + i * 0.45;
+    const a = hairSway(-0.7 + i * 0.45, i * 1.4, time || 0);
     const sx = cx + Math.sin(a) * headR * 0.8, sy = headY - Math.cos(a) * headR * 0.6;
     ctx.beginPath();
     ctx.arc(sx, sy + headR * 0.9, headR * 0.7, Math.PI * 1.1, Math.PI * 2.1);
@@ -1138,7 +1218,7 @@ function drawEnemyFace(cx, headY, headR, s) {
 // hairStyle/eyeStyle keep tribe vs. enemy visually distinct (brown tuft
 // hair + white-sclera eyes for tribe, dark curl hair + solid red eyes for
 // the enemy) the way the previous stick-figure renderer did.
-function drawCreature(x, y, scale, pose, color, hairStyle, eyeStyle) {
+function drawCreature(x, y, scale, pose, color, hairStyle, eyeStyle, time) {
   ctx.save();
   ctx.translate(x, y + (pose.crouch || 0));
   ctx.scale(scale, scale);
@@ -1176,7 +1256,7 @@ function drawCreature(x, y, scale, pose, color, hairStyle, eyeStyle) {
 
   ctx.beginPath(); ctx.arc(0, -20, 7, 0, Math.PI * 2); ctx.fill();
   drawEarNubs(0, -20, 7, ink, 1);
-  if (hairStyle === 'curl') drawCurlHair(0, -20, 7, ink, 1);
+  if (hairStyle === 'curl') drawCurlHair(0, -20, 7, ink, 1, time);
   else drawTuftHair(0, -20, 7, ink, 1);
 
   if (eyeStyle === 'enemy') {
@@ -1255,8 +1335,9 @@ function drawEnemy(t) {
   const ex0 = enemyScreenX();
   // Hidden until encountered: the enemy simply isn't drawn while it's off
   // the right edge of the canvas - no separate visibility flag needed,
-  // this falls straight out of the world-space position.
-  if (ex0 - enemyScale * 60 > W) return;
+  // this falls straight out of the world-space position. Skip the cull
+  // while defeating so the fade-out plays out fully even at the edge.
+  if (!enemyDefeating && ex0 - enemyScale * 60 > W) return;
   const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
   const impactP = inImpact ? (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT : 0;
   const shake = inImpact ? 6 * (1 - impactP) * Math.sin(impactP * Math.PI * 5) : 0;
@@ -1274,7 +1355,15 @@ function drawEnemy(t) {
     ctx.beginPath(); ctx.arc(ex0, ENEMY_Y - 90, r, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
-  drawCreature(ex0 + shake, ENEMY_Y, enemyScale, pose, inImpact ? '#8a2a2a' : ENEMY_COLOR, 'curl', 'enemy');
+  // Defeat reaction: cheap fade + sink, rather than a whole new animation -
+  // reuses the existing pose.crouch/globalAlpha machinery.
+  const defeatP = enemyDefeating ? clamp(enemyDefeatElapsed / ENEMY_DEFEAT_FADE_DURATION, 0, 1) : 0;
+  if (enemyDefeating) pose.crouch = (pose.crouch || 0) + defeatP * 16;
+  ctx.save();
+  ctx.globalAlpha = 1 - defeatP;
+  drawCreature(ex0 + shake, ENEMY_Y, enemyScale, pose, inImpact ? '#8a2a2a' : ENEMY_COLOR, 'curl', 'enemy', t);
+  ctx.restore();
+  if (enemyDefeating) return; // no HP bar for a dying/dead enemy
   const barW = 130, barH = 12;
   const bx = ex0 - barW / 2, by = ENEMY_Y - 178;
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
