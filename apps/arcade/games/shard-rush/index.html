@@ -225,14 +225,13 @@ function playGameOverSound() {
   tone(240, 0.24, 'sawtooth', 0.1, 0.3);
 }
 
-// Background music - no sustained drone at all (that read as an annoying
-// hum on repeat). Just sparse, fully-randomized soft notes in a low, warm
-// register, each with a slow swell in and gentle fade out. Nothing is ever
-// held continuously, so there's no hum to fatigue on - only quiet, isolated
-// notes. Root still lines up with playMatchSound's 440Hz (A4) base an
-// octave down, so match chimes stay consonant with whatever's ringing.
+// Background music - sparse, fully-randomized notes (never a loop, never a
+// sustained drone), using a lowpass-filtered square wave: the classic
+// "computer tone" timbre, but the filter rounds off the raw square wave's
+// buzz so it reads as soft rather than harsh/chiptune-bright. Moderate-low
+// register - below the old chiptune loop's melody range, above a bass drone.
 const MUSIC_FADE_SEC = 2; // soft fade when toggling mute
-const MELODY_SCALE = [110.00, 130.81, 146.83, 164.81, 196.00, 220.00]; // A2 C3 D3 E3 G3 A3 - low minor pentatonic
+const MELODY_SCALE = [196.00, 220.00, 261.63, 293.66, 329.63]; // G3 A3 C4 D4 E4 - A minor pentatonic
 let musicStarted = false;
 let musicGain = null;
 let noteTimer = 0;
@@ -254,17 +253,22 @@ function playAmbientNote() {
   // notes can form a recognizable phrase.
   const freq = MELODY_SCALE[Math.floor(Math.random() * MELODY_SCALE.length)];
   const osc = audioCtx.createOscillator();
-  osc.type = 'sine';
+  osc.type = 'square';
   osc.frequency.value = freq;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 1400; // rounds off the square wave's edge - soft, not buzzy
+  filter.Q.value = 0.5;
   const g = audioCtx.createGain();
-  osc.connect(g);
+  osc.connect(filter);
+  filter.connect(g);
   g.connect(musicGain);
   const t = audioCtx.currentTime;
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(0.15, t + 0.5); // slow, soft swell in
-  g.gain.exponentialRampToValueAtTime(0.001, t + 3.2); // long, gentle fade out
+  g.gain.linearRampToValueAtTime(0.11, t + 0.12); // soft attack, not a hard beep
+  g.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
   osc.start(t);
-  osc.stop(t + 3.3);
+  osc.stop(t + 1.9);
 }
 
 function toggleMute() {
