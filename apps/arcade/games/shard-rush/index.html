@@ -318,6 +318,41 @@ function hasValidMove(g) {
   return false;
 }
 
+function anyNeighbor(r, c) {
+  if (c + 1 < GRID_SIZE) return { r1: r, c1: c, r2: r, c2: c + 1 };
+  if (c - 1 >= 0) return { r1: r, c1: c, r2: r, c2: c - 1 };
+  if (r + 1 < GRID_SIZE) return { r1: r, c1: c, r2: r + 1, c2: c };
+  if (r - 1 >= 0) return { r1: r, c1: c, r2: r - 1, c2: c };
+  return null;
+}
+
+// Same scan as hasValidMove, but returns the swap coordinates instead of a
+// boolean - used to highlight a real move once the timer gets critical.
+function findHintMove() {
+  for (let r = 0; r < GRID_SIZE; r++) {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      if (grid[r][c].special === 'color') return anyNeighbor(r, c);
+    }
+  }
+  for (let r = 0; r < GRID_SIZE; r++) {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      if (c + 1 < GRID_SIZE) {
+        swapCells(grid, r, c, r, c + 1);
+        const ok = hasMatchAt(grid, r, c) || hasMatchAt(grid, r, c + 1);
+        swapCells(grid, r, c, r, c + 1);
+        if (ok) return { r1: r, c1: c, r2: r, c2: c + 1 };
+      }
+      if (r + 1 < GRID_SIZE) {
+        swapCells(grid, r, c, r + 1, c);
+        const ok = hasMatchAt(grid, r, c) || hasMatchAt(grid, r + 1, c);
+        swapCells(grid, r, c, r + 1, c);
+        if (ok) return { r1: r, c1: c, r2: r + 1, c2: c };
+      }
+    }
+  }
+  return null;
+}
+
 function generateBoard() {
   let attempts = 0;
   do {
@@ -558,11 +593,14 @@ let heat = 0;
 let bestBeatenThisRun = false;
 let bestFlash = null;
 let gameOverReason = 'moves'; // 'moves' | 'time'
+const HINT_THRESHOLD = 3; // seconds remaining when a hint starts showing
+let hintPair = null;
 
 function enterIdle() {
   phase = 'idle';
   moveTimeLeft = moveTimeAllotment(score);
   tickTimer = 0;
+  hintPair = null;
 }
 
 function beginGame() {
@@ -755,6 +793,9 @@ function update(dt) {
     if (tickTimer >= interval) {
       tickTimer -= interval;
       playTickSound(urgency);
+    }
+    if (!hintPair && moveTimeLeft <= HINT_THRESHOLD) {
+      hintPair = findHintMove();
     }
     if (moveTimeLeft <= 0) {
       moveTimeLeft = 0;
@@ -973,6 +1014,27 @@ function drawSelection() {
   ctx.restore();
 }
 
+function drawHint() {
+  if (!hintPair || phase !== 'idle') return;
+  const now = performance.now() / 1000;
+  const wave = Math.sin(now * Math.PI * 3); // fast pulse, ~0.33s period
+  const pulse = 1.1 + 0.1 * wave;
+  const alpha = 0.55 + 0.35 * wave;
+  for (const [r, c] of [[hintPair.r1, hintPair.c1], [hintPair.r2, hintPair.c2]]) {
+    const { x, y } = cellCenter(r, c);
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(pulse, pulse);
+    ctx.shadowColor = 'rgba(232,196,104,0.9)';
+    ctx.shadowBlur = 16;
+    hexPath(GEM_S * 1.15);
+    ctx.strokeStyle = 'rgba(232,196,104,' + alpha + ')';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
 function getDrawPos(r, c) {
   const rest = cellCenter(r, c);
   if (phase !== 'swap') return rest;
@@ -1118,6 +1180,7 @@ function draw() {
   drawCheckerboard();
   drawSelection();
   drawGems();
+  drawHint();
   drawComboToast();
   if (phase === 'gameover') drawGameOver();
 }
