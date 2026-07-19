@@ -132,8 +132,8 @@ function chainMultiplier(depth) { return 1 + (depth - 1) * CHAIN_MULT_STEP; }
 // same leisurely pace forever. Only ticks while waiting on the player's next
 // move - resolving cascades never eats into thinking time.
 const MOVE_TIME_START = 12; // seconds of thinking time at score 0
-const MOVE_TIME_MIN = 4;    // hard floor - never gets unreactably tight
-const MOVE_TIME_SCORE_DIVISOR = 250; // lose ~1s of allotment per this many points
+const MOVE_TIME_MIN = 5;    // hard floor - never gets unreactably tight
+const MOVE_TIME_SCORE_DIVISOR = 700; // lose ~1s of allotment per this many points
 function moveTimeAllotment(s) { return Math.max(MOVE_TIME_MIN, MOVE_TIME_START - s / MOVE_TIME_SCORE_DIVISOR); }
 
 // Heat: a streak multiplier for consecutive moves that each trigger a
