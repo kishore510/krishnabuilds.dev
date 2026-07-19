@@ -132,7 +132,7 @@ function chainMultiplier(depth) { return 1 + (depth - 1) * CHAIN_MULT_STEP; }
 // same leisurely pace forever. Only ticks while waiting on the player's next
 // move - resolving cascades never eats into thinking time.
 const MOVE_TIME_START = 12; // seconds of thinking time at score 0
-const MOVE_TIME_MIN = 5;    // hard floor - never gets unreactably tight
+const MOVE_TIME_MIN = 8;    // hard floor - never gets unreactably tight
 const MOVE_TIME_SCORE_DIVISOR = 700; // lose ~1s of allotment per this many points
 function moveTimeAllotment(s) { return Math.max(MOVE_TIME_MIN, MOVE_TIME_START - s / MOVE_TIME_SCORE_DIVISOR); }
 
@@ -246,7 +246,7 @@ function playBestSound() {
 // closes in on zero, so the pressure is heard as well as seen.
 function playTickSound(urgency) {
   const freq = 650 + urgency * 550;
-  const vol = 0.05 + urgency * 0.18;
+  const vol = 0.025 + urgency * 0.2; // quiet at the start of a move, loud near zero
   tone(freq, 0.05, 'square', vol);
 }
 
@@ -748,17 +748,13 @@ function update(dt) {
   } else if (phase === 'idle') {
     moveTimeLeft -= dt;
     const allotment = moveTimeAllotment(score);
-    const frac = Math.max(0, moveTimeLeft / allotment);
-    if (frac <= 0.5) {
-      tickTimer += dt;
-      const urgency = 1 - frac / 0.5; // 0 right at the halfway mark, 1 at zero
-      const interval = 0.9 - urgency * 0.65; // 0.9s down to 0.25s between ticks
-      if (tickTimer >= interval) {
-        tickTimer -= interval;
-        playTickSound(urgency);
-      }
-    } else {
-      tickTimer = 0;
+    const frac = Math.max(0, Math.min(1, moveTimeLeft / allotment));
+    const urgency = 1 - frac; // 0 at the start of the move, 1 right at zero
+    tickTimer += dt;
+    const interval = 1.0 - urgency * 0.75; // 1.0s at the start down to 0.25s near zero
+    if (tickTimer >= interval) {
+      tickTimer -= interval;
+      playTickSound(urgency);
     }
     if (moveTimeLeft <= 0) {
       moveTimeLeft = 0;
