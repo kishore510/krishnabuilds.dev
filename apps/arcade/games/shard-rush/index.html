@@ -55,7 +55,7 @@
     color: #e8c468;
     box-shadow: 0 0 calc(18px * var(--game-scale, 1)) rgba(232,196,104,0.35);
     cursor: pointer;
-    margin-top: calc(150px * var(--game-scale, 1));
+    margin-top: calc(225px * var(--game-scale, 1));
   }
   #playBtn:active { background: rgba(232,196,104,0.32); }
   #backToArcade {
@@ -595,6 +595,12 @@ let bestFlash = null;
 let gameOverReason = 'moves'; // 'moves' | 'time'
 const HINT_THRESHOLD = 3; // seconds remaining when a hint starts showing
 let hintPair = null;
+let elapsedTime = 0;
+function formatTime(t) {
+  const total = Math.floor(t);
+  const m = Math.floor(total / 60), s = total % 60;
+  return m + ':' + String(s).padStart(2, '0');
+}
 
 function enterIdle() {
   phase = 'idle';
@@ -612,6 +618,7 @@ function beginGame() {
   bestFlash = null;
   selected = null;
   comboToast = null;
+  elapsedTime = 0;
   enterIdle();
   overlay.style.display = 'none';
   ensureAudio();
@@ -762,6 +769,9 @@ function update(dt) {
   if (bestFlash) {
     bestFlash.t += dt;
     if (bestFlash.t >= bestFlash.duration) bestFlash = null;
+  }
+  if (phase !== 'start' && phase !== 'gameover') {
+    elapsedTime += dt;
   }
 
   if (phase === 'swap') {
@@ -944,6 +954,11 @@ function drawScoreHud() {
     ctx.shadowBlur = 8 + heat * 2;
     ctx.fillText('\u{1F525} HEAT ×' + heat, 180, 90);
     ctx.shadowBlur = 0;
+  } else if (phase !== 'start') {
+    ctx.textAlign = 'center';
+    ctx.font = '600 11px "Courier New", monospace';
+    ctx.fillStyle = '#a89bc7';
+    ctx.fillText('⏱ ' + formatTime(elapsedTime), 180, 90);
   }
   ctx.restore();
 }
@@ -1162,8 +1177,9 @@ function drawGameOver() {
   ctx.fillText(gameOverReason === 'time' ? 'Ran out of time!' : 'No moves left!', 180, 270);
   ctx.font = '600 15px sans-serif';
   ctx.fillStyle = '#f4eeff';
-  ctx.fillText('Score: ' + score, 180, 295);
-  ctx.fillText((score > 0 && score >= best) ? 'New Best!' : ('Best: ' + best), 180, 318);
+  ctx.fillText('Score: ' + score, 180, 292);
+  ctx.fillText('Time: ' + formatTime(elapsedTime), 180, 313);
+  ctx.fillText((score > 0 && score >= best) ? 'New Best!' : ('Best: ' + best), 180, 334);
   ctx.restore();
 }
 
