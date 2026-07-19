@@ -149,6 +149,32 @@ for (const key of GEM_TYPES) {
   gemGradients[key] = grad;
 }
 
+// Color bomb's rainbow gradient can't be precomputed - it has to cycle
+// through all 5 gem colors continuously, so it's rebuilt per-frame from an
+// interpolated light/base/dark set. Only the rare bomb gem(s) pay this cost;
+// the bulk 64-cell render above still uses the cached gemGradients.
+const COLOR_BOMB_CYCLE_SEC = 2;
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+function lerpColorHex(hexA, hexB, t) {
+  const a = hexToRgb(hexA), b = hexToRgb(hexB);
+  return 'rgb(' + Math.round(a.r + (b.r - a.r) * t) + ',' + Math.round(a.g + (b.g - a.g) * t) + ',' + Math.round(a.b + (b.b - a.b) * t) + ')';
+}
+function colorBombColorSet(nowSec) {
+  const t = ((nowSec % COLOR_BOMB_CYCLE_SEC) / COLOR_BOMB_CYCLE_SEC) * GEM_TYPES.length;
+  const i0 = Math.floor(t) % GEM_TYPES.length;
+  const i1 = (i0 + 1) % GEM_TYPES.length;
+  const frac = t - Math.floor(t);
+  const c0 = GEM_COLORS[GEM_TYPES[i0]], c1 = GEM_COLORS[GEM_TYPES[i1]];
+  return {
+    light: lerpColorHex(c0.light, c1.light, frac),
+    base: lerpColorHex(c0.base, c1.base, frac),
+    dark: lerpColorHex(c0.dark, c1.dark, frac)
+  };
+}
+
 // ---------------------------------------------------------------------
 // Audio - procedural Web Audio only, no external files
 // ---------------------------------------------------------------------
@@ -337,6 +363,13 @@ function hasMatchAt(g, row, col) {
 }
 
 function hasValidMove(g) {
+  // A color bomb is always swappable-and-effective, regardless of whether
+  // it forms a run - so its mere presence guarantees a move exists.
+  for (let r = 0; r < GRID_SIZE; r++) {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      if (g[r][c].special === 'color') return true;
+    }
+  }
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
       if (c + 1 < GRID_SIZE) {
@@ -410,30 +443,104 @@ function findAllRuns(g) {
   return runs;
 }
 
+// Cells where a horizontal run (len>=3) and a vertical run (len>=3) share a
+// gem - the L/T-shaped area-bomb trigger. findAllRuns only returns runs of
+// len>=3 already, so any shared cell between an 'h' and a 'v' run qualifies.
+function findJunctions(runs) {
+  const hRuns = runs.filter(r => r.dir === 'h');
+  const vRuns = runs.filter(r => r.dir === 'v');
+  const junctions = new Set();
+  for (const hr of hRuns) {
+    const hCells = new Set(hr.cells.map(([r, c]) => r + ',' + c));
+    for (const vr of vRuns) {
+      for (const [r, c] of vr.cells) {
+        const k = r + ',' + c;
+        if (hCells.has(k)) junctions.add(k);
+      }
+    }
+  }
+  return junctions;
+}
+
+// Which color a color bomb clears: the color it was directly swapped with,
+// or (when swept up as part of a larger match) the most common color among
+// the other gems in whichever run(s) caught it.
+function colorBombTargetColor(r, c, runs, swapPair) {
+  if (swapPair) {
+    const isCell1 = (r === swapPair.r1 && c === swapPair.c1);
+    const isCell2 = (r === swapPair.r2 && c === swapPair.c2);
+    if (isCell1) return grid[swapPair.r2][swapPair.c2].color;
+    if (isCell2) return grid[swapPair.r1][swapPair.c1].color;
+  }
+  const counts = {};
+  for (const run of runs) {
+    if (!run.cells.some(([rr, cc]) => rr === r && cc === c)) continue;
+    for (const [rr, cc] of run.cells) {
+      if (rr === r && cc === c) continue;
+      const col = grid[rr][cc].color;
+      counts[col] = (counts[col] || 0) + 1;
+    }
+  }
+  let best = null, bestCount = -1;
+  for (const col in counts) {
+    if (counts[col] > bestCount) { best = col; bestCount = counts[col]; }
+  }
+  return best;
+}
+
 function computeMatchedCells(swapPair) {
   const runs = findAllRuns(grid);
   const matched = new Set();
   for (const run of runs) {
     for (const [r, c] of run.cells) matched.add(r + ',' + c);
   }
-  const specials = [];
-  for (const run of runs) {
-    if (run.len === 4) {
-      let trigger = null;
-      if (swapPair) {
-        for (const [r, c] of run.cells) {
-          if ((r === swapPair.r1 && c === swapPair.c1) || (r === swapPair.r2 && c === swapPair.c2)) {
-            trigger = [r, c];
-            break;
-          }
-        }
-      }
-      if (!trigger) trigger = run.cells[run.cells.length - 1];
-      matched.delete(trigger[0] + ',' + trigger[1]);
-      specials.push({ r: trigger[0], c: trigger[1], dir: run.dir });
+
+  // Direct color-bomb activation: swapping a color bomb with any gem clears
+  // every gem of that other gem's color, even if the swap forms no run.
+  if (swapPair) {
+    const g1 = grid[swapPair.r1][swapPair.c1];
+    const g2 = grid[swapPair.r2][swapPair.c2];
+    if (g1.special === 'color' || g2.special === 'color') {
+      matched.add(swapPair.r1 + ',' + swapPair.c1);
+      matched.add(swapPair.r2 + ',' + swapPair.c2);
     }
   }
-  // Existing striped gems caught in this match clear their whole row/column too.
+
+  const junctions = findJunctions(runs);
+  const claimed = new Set();
+  const specials = [];
+
+  // L/T junctions become area bombs - highest precedence, since it's a
+  // richer structural match than a plain straight run.
+  for (const key of junctions) {
+    if (claimed.has(key)) continue;
+    claimed.add(key);
+    matched.delete(key);
+    const [r, c] = key.split(',').map(Number);
+    specials.push({ r, c, kind: 'area' });
+  }
+
+  // Exactly-4 straight runs become striped gems, exactly-5 become color
+  // bombs. Skip any cell already claimed by an area bomb this pass.
+  for (const run of runs) {
+    if (run.len !== 4 && run.len !== 5) continue;
+    const candidates = run.cells.filter(([r, c]) => !claimed.has(r + ',' + c));
+    if (candidates.length === 0) continue;
+    let trigger = null;
+    if (swapPair) {
+      trigger = candidates.find(([r, c]) =>
+        (r === swapPair.r1 && c === swapPair.c1) || (r === swapPair.r2 && c === swapPair.c2)) || null;
+    }
+    if (!trigger) trigger = candidates[candidates.length - 1];
+    const key = trigger[0] + ',' + trigger[1];
+    claimed.add(key);
+    matched.delete(key);
+    specials.push({ r: trigger[0], c: trigger[1], kind: run.len === 5 ? 'color' : 'striped', dir: run.dir });
+  }
+
+  // Any pre-existing special swept into this match resolves its own effect
+  // independently - row/column, 3x3 area, or a full-color clear. No combo
+  // detection between specials caught in the same pass.
   let grew = true, iterations = 0;
   while (grew && iterations < 10) {
     grew = false;
@@ -441,16 +548,35 @@ function computeMatchedCells(swapPair) {
     for (const key of Array.from(matched)) {
       const [r, c] = key.split(',').map(Number);
       const g = grid[r][c];
-      if (g && g.special) {
-        if (g.special === 'h') {
-          for (let cc = 0; cc < GRID_SIZE; cc++) {
-            const k = r + ',' + cc;
+      if (!g || !g.special) continue;
+      if (g.special === 'h') {
+        for (let cc = 0; cc < GRID_SIZE; cc++) {
+          const k = r + ',' + cc;
+          if (!matched.has(k)) { matched.add(k); grew = true; }
+        }
+      } else if (g.special === 'v') {
+        for (let rr = 0; rr < GRID_SIZE; rr++) {
+          const k = rr + ',' + c;
+          if (!matched.has(k)) { matched.add(k); grew = true; }
+        }
+      } else if (g.special === 'area') {
+        for (let rr = r - 1; rr <= r + 1; rr++) {
+          for (let cc = c - 1; cc <= c + 1; cc++) {
+            if (rr < 0 || rr >= GRID_SIZE || cc < 0 || cc >= GRID_SIZE) continue;
+            const k = rr + ',' + cc;
             if (!matched.has(k)) { matched.add(k); grew = true; }
           }
-        } else {
+        }
+      } else if (g.special === 'color') {
+        const targetColor = colorBombTargetColor(r, c, runs, swapPair);
+        if (targetColor) {
           for (let rr = 0; rr < GRID_SIZE; rr++) {
-            const k = rr + ',' + c;
-            if (!matched.has(k)) { matched.add(k); grew = true; }
+            for (let cc = 0; cc < GRID_SIZE; cc++) {
+              if (grid[rr][cc].color === targetColor) {
+                const k = rr + ',' + cc;
+                if (!matched.has(k)) { matched.add(k); grew = true; }
+              }
+            }
           }
         }
       }
@@ -528,8 +654,8 @@ function processMatches(swapPair) {
     checkGameOver();
     return;
   }
-  for (const { r, c, dir } of specials) {
-    grid[r][c].special = dir;
+  for (const { r, c, kind, dir } of specials) {
+    grid[r][c].special = kind === 'striped' ? dir : kind;
     grid[r][c].justCreated = 1;
   }
   let sumX = 0, sumY = 0, cnt = 0;
@@ -853,16 +979,27 @@ function getDrawPos(r, c) {
 }
 
 function drawGem(g, x, y) {
-  const cs = GEM_COLORS[g.color];
+  const now = performance.now() / 1000;
+  let fillStyle = gemGradients[g.color];
+  let glowColor = GEM_COLORS[g.color].light;
+  if (g.special === 'color') {
+    const bombCs = colorBombColorSet(now);
+    const grad = ctx.createLinearGradient(-0.87 * GEM_S, -GEM_S, 0.87 * GEM_S, GEM_S);
+    grad.addColorStop(0, bombCs.light);
+    grad.addColorStop(0.5, bombCs.base);
+    grad.addColorStop(1, bombCs.dark);
+    fillStyle = grad;
+    glowColor = bombCs.light;
+  }
   const glowing = g.clearing || g.justCreated > 0;
   const scale = g.clearing ? 1.08 : 1;
   ctx.save();
   ctx.translate(x, y);
   if (scale !== 1) ctx.scale(scale, scale);
-  if (glowing) { ctx.shadowColor = cs.light; ctx.shadowBlur = 18; }
+  if (glowing) { ctx.shadowColor = glowColor; ctx.shadowBlur = 18; }
 
   hexPath(GEM_S);
-  ctx.fillStyle = gemGradients[g.color];
+  ctx.fillStyle = fillStyle;
   ctx.fill();
   ctx.shadowBlur = 0;
   ctx.lineWidth = 1;
@@ -886,12 +1023,23 @@ function drawGem(g, x, y) {
   ctx.lineWidth = 1;
   ctx.stroke();
 
-  if (g.special) {
+  if (g.special === 'h' || g.special === 'v') {
     ctx.save();
     hexPath(GEM_S);
     ctx.clip();
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
     ctx.fillRect(-GEM_S, -3, GEM_S * 2, 6);
+    ctx.restore();
+  }
+
+  if (g.special === 'area') {
+    const pulse = 1.0 + 0.15 * (1 + Math.sin(now * (2 * Math.PI / 1.5)));
+    ctx.save();
+    ctx.scale(pulse, pulse);
+    hexPath(GEM_S);
+    ctx.strokeStyle = 'rgba(232,196,104,0.6)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
     ctx.restore();
   }
   ctx.restore();
