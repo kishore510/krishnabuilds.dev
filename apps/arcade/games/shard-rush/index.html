@@ -225,82 +225,34 @@ function playGameOverSound() {
   tone(240, 0.24, 'sawtooth', 0.1, 0.3);
 }
 
-// Background music - atmosphere, not a tune. A sustained A-minor pad (three
-// detuned sine/triangle voices run through a shared lowpass filter whose
-// cutoff drifts on a slow LFO, so the timbre evolves instead of repeating)
-// with sparse, fully-randomized pentatonic "pluck" accents floating on top.
-// No short repeating melodic phrase anywhere in this layer - that was the
-// problem with the previous chiptune loop. The pad's A-minor root still
-// lines up with playMatchSound's 440Hz (A4) base so match chimes stay
-// consonant, but nothing here forms a hookable pattern.
-const PAD_FADE_SEC = 3; // long soft attack/release, nothing percussive
-const PAD_VOICES = [
-  { freq: 110.00, detune: -4, type: 'sine' },     // A2
-  { freq: 130.81, detune: 3, type: 'triangle' },  // C3
-  { freq: 164.81, detune: -3, type: 'sine' }      // E3
-];
-const PLUCK_SCALE = [220.00, 261.63, 293.66, 329.63, 392.00, 440.00]; // A minor pentatonic, A3-A4
+// Background music - no sustained drone at all (that read as an annoying
+// hum on repeat). Just sparse, fully-randomized soft notes in a low, warm
+// register, each with a slow swell in and gentle fade out. Nothing is ever
+// held continuously, so there's no hum to fatigue on - only quiet, isolated
+// notes. Root still lines up with playMatchSound's 440Hz (A4) base an
+// octave down, so match chimes stay consonant with whatever's ringing.
+const MUSIC_FADE_SEC = 2; // soft fade when toggling mute
+const MELODY_SCALE = [110.00, 130.81, 146.83, 164.81, 196.00, 220.00]; // A2 C3 D3 E3 G3 A3 - low minor pentatonic
 let musicStarted = false;
 let musicGain = null;
-let pluckTimer = 0;
-let nextPluckIn = 4 + Math.random() * 4;
+let noteTimer = 0;
+let nextNoteIn = 3.5 + Math.random() * 3.5;
 
 function startAmbientMusic() {
   if (musicStarted) return;
   musicStarted = true;
-
   musicGain = audioCtx.createGain();
   const t0 = audioCtx.currentTime;
   musicGain.gain.setValueAtTime(0.0001, t0);
-  musicGain.gain.linearRampToValueAtTime(muted ? 0 : MUSIC_BUS_VOLUME, t0 + PAD_FADE_SEC);
+  musicGain.gain.linearRampToValueAtTime(muted ? 0 : MUSIC_BUS_VOLUME, t0 + MUSIC_FADE_SEC);
   musicGain.connect(audioCtx.destination);
-
-  const padFilter = audioCtx.createBiquadFilter();
-  padFilter.type = 'lowpass';
-  padFilter.frequency.value = 800;
-  padFilter.Q.value = 0.6;
-  padFilter.connect(musicGain);
-
-  // Very slow cutoff sweep (~28s period) so the pad's timbre drifts instead
-  // of holding a fixed, repeating character.
-  const filterLfo = audioCtx.createOscillator();
-  filterLfo.type = 'sine';
-  filterLfo.frequency.value = 1 / 28;
-  const filterLfoGain = audioCtx.createGain();
-  filterLfoGain.gain.value = 450;
-  filterLfo.connect(filterLfoGain);
-  filterLfoGain.connect(padFilter.frequency);
-  filterLfo.start();
-
-  for (const voice of PAD_VOICES) {
-    const osc = audioCtx.createOscillator();
-    osc.type = voice.type;
-    osc.frequency.value = voice.freq;
-    osc.detune.value = voice.detune; // a few cents off - soft chorus shimmer, not a beat
-    const voiceGain = audioCtx.createGain();
-    voiceGain.gain.value = 0.4;
-    osc.connect(voiceGain);
-    voiceGain.connect(padFilter);
-    osc.start();
-
-    // Gentle per-voice swell, a different slow period per voice, so the
-    // chord breathes rather than sitting static.
-    const swellLfo = audioCtx.createOscillator();
-    swellLfo.type = 'sine';
-    swellLfo.frequency.value = 0.03 + Math.random() * 0.04;
-    const swellGain = audioCtx.createGain();
-    swellGain.gain.value = 0.15;
-    swellLfo.connect(swellGain);
-    swellGain.connect(voiceGain.gain);
-    swellLfo.start();
-  }
 }
 
-function playPluckAccent() {
+function playAmbientNote() {
   if (muted || !musicGain) return;
   // Fully random pick each time (no sequencing) so no two consecutive
-  // plucks can form a recognizable phrase.
-  const freq = PLUCK_SCALE[Math.floor(Math.random() * PLUCK_SCALE.length)];
+  // notes can form a recognizable phrase.
+  const freq = MELODY_SCALE[Math.floor(Math.random() * MELODY_SCALE.length)];
   const osc = audioCtx.createOscillator();
   osc.type = 'sine';
   osc.frequency.value = freq;
@@ -309,10 +261,10 @@ function playPluckAccent() {
   g.connect(musicGain);
   const t = audioCtx.currentTime;
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(0.22, t + 0.08); // quick soft attack
-  g.gain.exponentialRampToValueAtTime(0.001, t + 1.4); // quick decay
+  g.gain.linearRampToValueAtTime(0.15, t + 0.5); // slow, soft swell in
+  g.gain.exponentialRampToValueAtTime(0.001, t + 3.2); // long, gentle fade out
   osc.start(t);
-  osc.stop(t + 1.5);
+  osc.stop(t + 3.3);
 }
 
 function toggleMute() {
@@ -322,7 +274,7 @@ function toggleMute() {
     const t = audioCtx.currentTime;
     musicGain.gain.cancelScheduledValues(t);
     musicGain.gain.setValueAtTime(musicGain.gain.value, t);
-    musicGain.gain.linearRampToValueAtTime(muted ? 0 : MUSIC_BUS_VOLUME, t + PAD_FADE_SEC);
+    musicGain.gain.linearRampToValueAtTime(muted ? 0 : MUSIC_BUS_VOLUME, t + MUSIC_FADE_SEC);
   }
 }
 
@@ -766,11 +718,11 @@ function update(dt) {
     if (comboToast.t >= comboToast.duration) comboToast = null;
   }
   if (musicStarted && !muted) {
-    pluckTimer += dt;
-    if (pluckTimer >= nextPluckIn) {
-      pluckTimer = 0;
-      nextPluckIn = 4 + Math.random() * 4; // 4-8s, randomized - never on a fixed beat
-      playPluckAccent();
+    noteTimer += dt;
+    if (noteTimer >= nextNoteIn) {
+      noteTimer = 0;
+      nextNoteIn = 3.5 + Math.random() * 3.5; // randomized, never on a fixed beat
+      playAmbientNote();
     }
   }
 
