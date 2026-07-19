@@ -188,61 +188,54 @@ function playGameOverSound() {
   tone(240, 0.24, 'sawtooth', 0.1, 0.3);
 }
 
-// Ambient background music - a slow A-minor-pentatonic drone + generative
-// melody notes, sharing the same key as playMatchSound's 440Hz (A4) base
-// so match chimes land as consonant notes over the bed rather than clashing.
-const AMBIENT_VOLUME = 0.05;
-const DRONE_FREQS = [110.00, 164.81, 220.00]; // A2, E3, A3
-const MELODY_SCALE = [220.00, 261.63, 293.66, 329.63, 392.00, 440.00]; // A3 C4 D4 E4 G4 A4
+// Background music - a looping 8-bit chiptune riff (square-wave melody over
+// a triangle-wave bassline), old-arcade style. Shares its root with
+// playMatchSound's 440Hz (A4) base so match chimes land as consonant notes
+// over the loop rather than clashing. musicGain is a plain mute gate at
+// unity gain - each step's own gain node shapes its audible volume, so
+// nothing here needs a second volume knob layered on top.
+const STEP_SEC = 0.18; // eighth-note pace, classic arcade tempo
+const MELODY_PATTERN = [
+  440, null, 523.25, null, 587.33, 523.25, 440, null,
+  392, null, 440, null, 523.25, 440, 392, null
+]; // A4 . C5 . D5 C5 A4 . G4 . A4 . C5 A4 G4 .
+const BASS_PATTERN = [
+  110, null, null, null, 164.81, null, null, null,
+  110, null, null, null, 130.81, null, null, null
+]; // A2 . . . E3 . . . A2 . . . C3 . . .
 let musicStarted = false;
 let musicGain = null;
-let melodyTimer = 0;
-let nextMelodyIn = 2.5;
+let stepTimer = 0;
+let stepIndex = 0;
 
 function startAmbientMusic() {
   if (musicStarted) return;
   musicStarted = true;
   musicGain = audioCtx.createGain();
-  musicGain.gain.value = muted ? 0 : AMBIENT_VOLUME;
+  musicGain.gain.value = muted ? 0 : 1;
   musicGain.connect(audioCtx.destination);
-
-  for (const f of DRONE_FREQS) {
-    const osc = audioCtx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = f;
-    const g = audioCtx.createGain();
-    g.gain.value = 0.5;
-    osc.connect(g);
-    g.connect(musicGain);
-    osc.start();
-
-    // Slow, gentle swell per drone voice so the pad breathes instead of droning flat.
-    const lfo = audioCtx.createOscillator();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.04 + Math.random() * 0.05;
-    const lfoGain = audioCtx.createGain();
-    lfoGain.gain.value = 0.3;
-    lfo.connect(lfoGain);
-    lfoGain.connect(g.gain);
-    lfo.start();
-  }
 }
 
-function playMelodyNote() {
-  if (muted || !musicGain) return;
-  const freq = MELODY_SCALE[Math.floor(Math.random() * MELODY_SCALE.length)];
+function playChiptuneNote(freq, type, volume, duration) {
   const osc = audioCtx.createOscillator();
-  osc.type = 'triangle';
-  osc.frequency.value = freq;
   const g = audioCtx.createGain();
-  g.gain.value = 0;
+  osc.type = type;
+  osc.frequency.value = freq;
+  g.gain.value = volume;
   osc.connect(g);
   g.connect(musicGain);
   const t = audioCtx.currentTime;
-  g.gain.linearRampToValueAtTime(0.35, t + 0.6);
-  g.gain.linearRampToValueAtTime(0, t + 3.2);
   osc.start(t);
-  osc.stop(t + 3.3);
+  g.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc.stop(t + duration + 0.02);
+}
+
+function playMusicStep() {
+  const mFreq = MELODY_PATTERN[stepIndex % MELODY_PATTERN.length];
+  const bFreq = BASS_PATTERN[stepIndex % BASS_PATTERN.length];
+  if (mFreq) playChiptuneNote(mFreq, 'square', 0.1, STEP_SEC * 0.85);
+  if (bFreq) playChiptuneNote(bFreq, 'triangle', 0.12, STEP_SEC * 3.6);
+  stepIndex++;
 }
 
 function toggleMute() {
@@ -252,7 +245,7 @@ function toggleMute() {
     const t = audioCtx.currentTime;
     musicGain.gain.cancelScheduledValues(t);
     musicGain.gain.setValueAtTime(musicGain.gain.value, t);
-    musicGain.gain.linearRampToValueAtTime(muted ? 0 : AMBIENT_VOLUME, t + 0.15);
+    musicGain.gain.linearRampToValueAtTime(muted ? 0 : 1, t + 0.15);
   }
 }
 
@@ -596,11 +589,10 @@ function update(dt) {
     if (comboToast.t >= comboToast.duration) comboToast = null;
   }
   if (musicStarted && !muted) {
-    melodyTimer += dt;
-    if (melodyTimer >= nextMelodyIn) {
-      melodyTimer = 0;
-      nextMelodyIn = 2.5 + Math.random() * 3.5;
-      playMelodyNote();
+    stepTimer += dt;
+    while (stepTimer >= STEP_SEC) {
+      stepTimer -= STEP_SEC;
+      playMusicStep();
     }
   }
 
