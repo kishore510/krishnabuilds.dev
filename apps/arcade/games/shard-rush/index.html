@@ -196,10 +196,7 @@ function colorBombColorSet(nowSec) {
 let audioCtx = null;
 let muted = sessionStorage.getItem('shardRushMuted') === '1';
 
-// Separate buses for SFX vs music so their relative loudness is tunable
-// independently - music is meant to sit noticeably under the SFX.
 const SFX_BUS_VOLUME = 1.0;
-const MUSIC_BUS_VOLUME = 0.45; // roughly half the perceived loudness of a swap/match tone
 let sfxBus = null;
 
 function ensureAudio() {
@@ -210,7 +207,6 @@ function ensureAudio() {
     sfxBus.connect(audioCtx.destination);
   }
   if (audioCtx.state === 'suspended') audioCtx.resume();
-  startAmbientMusic();
 }
 function tone(freq, duration, type, volume, delay) {
   if (muted) return;
@@ -244,63 +240,19 @@ function playBestSound() {
   tone(659.25, 0.1, 'triangle', 0.13, 0.08);
   tone(880, 0.16, 'triangle', 0.14, 0.16);
 }
-function playTimeTickSound() { tone(880, 0.05, 'square', 0.07); }
-
-// Background music - sparse, fully-randomized notes (never a loop, never a
-// sustained drone), using a lowpass-filtered square wave: the classic
-// "computer tone" timbre, but the filter rounds off the raw square wave's
-// buzz so it reads as soft rather than harsh/chiptune-bright. Moderate-low
-// register - below the old chiptune loop's melody range, above a bass drone.
-const MUSIC_FADE_SEC = 2; // soft fade when toggling mute
-const MELODY_SCALE = [196.00, 220.00, 261.63, 293.66, 329.63]; // G3 A3 C4 D4 E4 - A minor pentatonic
-let musicStarted = false;
-let musicGain = null;
-let noteTimer = 0;
-let nextNoteIn = 3.5 + Math.random() * 3.5;
-
-function startAmbientMusic() {
-  if (musicStarted) return;
-  musicStarted = true;
-  musicGain = audioCtx.createGain();
-  const t0 = audioCtx.currentTime;
-  musicGain.gain.setValueAtTime(0.0001, t0);
-  musicGain.gain.linearRampToValueAtTime(muted ? 0 : MUSIC_BUS_VOLUME, t0 + MUSIC_FADE_SEC);
-  musicGain.connect(audioCtx.destination);
-}
-
-function playAmbientNote() {
-  if (muted || !musicGain) return;
-  // Fully random pick each time (no sequencing) so no two consecutive
-  // notes can form a recognizable phrase.
-  const freq = MELODY_SCALE[Math.floor(Math.random() * MELODY_SCALE.length)];
-  const osc = audioCtx.createOscillator();
-  osc.type = 'square';
-  osc.frequency.value = freq;
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = 'lowpass';
-  filter.frequency.value = 1400; // rounds off the square wave's edge - soft, not buzzy
-  filter.Q.value = 0.5;
-  const g = audioCtx.createGain();
-  osc.connect(filter);
-  filter.connect(g);
-  g.connect(musicGain);
-  const t = audioCtx.currentTime;
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(0.11, t + 0.12); // soft attack, not a hard beep
-  g.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
-  osc.start(t);
-  osc.stop(t + 1.9);
+// Countdown ticker - replaces background music entirely. Ticks only kick in
+// once a move is past its halfway point (silent while there's plenty of
+// time), then both accelerate and get louder/higher-pitched as the timer
+// closes in on zero, so the pressure is heard as well as seen.
+function playTickSound(urgency) {
+  const freq = 650 + urgency * 550;
+  const vol = 0.05 + urgency * 0.18;
+  tone(freq, 0.05, 'square', vol);
 }
 
 function toggleMute() {
   muted = !muted;
   try { sessionStorage.setItem('shardRushMuted', muted ? '1' : '0'); } catch (e) {}
-  if (musicGain) {
-    const t = audioCtx.currentTime;
-    musicGain.gain.cancelScheduledValues(t);
-    musicGain.gain.setValueAtTime(musicGain.gain.value, t);
-    musicGain.gain.linearRampToValueAtTime(muted ? 0 : MUSIC_BUS_VOLUME, t + MUSIC_FADE_SEC);
-  }
 }
 
 // ---------------------------------------------------------------------
@@ -601,7 +553,7 @@ let comboToast = null;
 let dragStart = null;
 let dragHandled = false;
 let moveTimeLeft = MOVE_TIME_START;
-let lowTimeTicked = false; // guards the tick sound to once per low-time entry
+let tickTimer = 0;
 let heat = 0;
 let bestBeatenThisRun = false;
 let bestFlash = null;
@@ -610,7 +562,7 @@ let gameOverReason = 'moves'; // 'moves' | 'time'
 function enterIdle() {
   phase = 'idle';
   moveTimeLeft = moveTimeAllotment(score);
-  lowTimeTicked = false;
+  tickTimer = 0;
 }
 
 function beginGame() {
@@ -773,14 +725,6 @@ function update(dt) {
     bestFlash.t += dt;
     if (bestFlash.t >= bestFlash.duration) bestFlash = null;
   }
-  if (musicStarted && !muted) {
-    noteTimer += dt;
-    if (noteTimer >= nextNoteIn) {
-      noteTimer = 0;
-      nextNoteIn = 3.5 + Math.random() * 3.5; // randomized, never on a fixed beat
-      playAmbientNote();
-    }
-  }
 
   if (phase === 'swap') {
     swapState.elapsed += dt;
@@ -803,9 +747,18 @@ function update(dt) {
     }
   } else if (phase === 'idle') {
     moveTimeLeft -= dt;
-    if (!lowTimeTicked && moveTimeLeft <= 3 && moveTimeLeft > 0) {
-      lowTimeTicked = true;
-      playTimeTickSound();
+    const allotment = moveTimeAllotment(score);
+    const frac = Math.max(0, moveTimeLeft / allotment);
+    if (frac <= 0.5) {
+      tickTimer += dt;
+      const urgency = 1 - frac / 0.5; // 0 right at the halfway mark, 1 at zero
+      const interval = 0.9 - urgency * 0.65; // 0.9s down to 0.25s between ticks
+      if (tickTimer >= interval) {
+        tickTimer -= interval;
+        playTickSound(urgency);
+      }
+    } else {
+      tickTimer = 0;
     }
     if (moveTimeLeft <= 0) {
       moveTimeLeft = 0;
