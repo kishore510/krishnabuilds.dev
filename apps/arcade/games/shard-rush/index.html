@@ -127,6 +127,21 @@ const BASE_SCORE_PER_GEM = 10;
 const CHAIN_MULT_STEP = 0.5;
 function chainMultiplier(depth) { return 1 + (depth - 1) * CHAIN_MULT_STEP; }
 
+// Escalating pressure: a per-move countdown that shrinks as score climbs, so
+// a long run gets objectively harder to sustain instead of playing at the
+// same leisurely pace forever. Only ticks while waiting on the player's next
+// move - resolving cascades never eats into thinking time.
+const MOVE_TIME_START = 12; // seconds of thinking time at score 0
+const MOVE_TIME_MIN = 4;    // hard floor - never gets unreactably tight
+const MOVE_TIME_SCORE_DIVISOR = 250; // lose ~1s of allotment per this many points
+function moveTimeAllotment(s) { return Math.max(MOVE_TIME_MIN, MOVE_TIME_START - s / MOVE_TIME_SCORE_DIVISOR); }
+
+// Heat: a streak multiplier for consecutive moves that each trigger a
+// cascade (chain depth >= 2). Resets the instant a move fails to cascade -
+// rewards chain-building play without duplicating the timer's pressure.
+const HEAT_MAX = 5;
+const HEAT_SCORE_BONUS = 0.1; // +10% score per heat level, multiplicative with chainMultiplier
+
 const SWAP_DURATION = 0.16;
 const CLEAR_DURATION = 0.28;
 const GRAVITY = 1800; // px/s^2, gem fall acceleration
@@ -224,6 +239,12 @@ function playGameOverSound() {
   tone(320, 0.18, 'sawtooth', 0.11, 0.14);
   tone(240, 0.24, 'sawtooth', 0.1, 0.3);
 }
+function playBestSound() {
+  tone(523.25, 0.1, 'triangle', 0.13);
+  tone(659.25, 0.1, 'triangle', 0.13, 0.08);
+  tone(880, 0.16, 'triangle', 0.14, 0.16);
+}
+function playTimeTickSound() { tone(880, 0.05, 'square', 0.07); }
 
 // Background music - sparse, fully-randomized notes (never a loop, never a
 // sustained drone), using a lowpass-filtered square wave: the classic
@@ -579,14 +600,29 @@ let pendingClear = [];
 let comboToast = null;
 let dragStart = null;
 let dragHandled = false;
+let moveTimeLeft = MOVE_TIME_START;
+let lowTimeTicked = false; // guards the tick sound to once per low-time entry
+let heat = 0;
+let bestBeatenThisRun = false;
+let bestFlash = null;
+let gameOverReason = 'moves'; // 'moves' | 'time'
+
+function enterIdle() {
+  phase = 'idle';
+  moveTimeLeft = moveTimeAllotment(score);
+  lowTimeTicked = false;
+}
 
 function beginGame() {
   generateBoard();
   score = 0;
   chainDepth = 0;
+  heat = 0;
+  bestBeatenThisRun = false;
+  bestFlash = null;
   selected = null;
   comboToast = null;
-  phase = 'idle';
+  enterIdle();
   overlay.style.display = 'none';
   ensureAudio();
 }
@@ -606,7 +642,10 @@ function attemptSwap(r1, c1, r2, c2) {
 function processMatches(swapPair) {
   const { matched, specials } = computeMatchedCells(swapPair);
   if (matched.size === 0) {
-    phase = 'idle';
+    // This move's actual last successful step is chainDepth-1 - it was
+    // speculatively incremented before this (empty) rescan.
+    heat = (chainDepth - 1 >= 2) ? Math.min(HEAT_MAX, heat + 1) : 0;
+    enterIdle();
     checkGameOver();
     return;
   }
@@ -625,10 +664,20 @@ function processMatches(swapPair) {
     const ctr = cellCenter(r, c);
     sumX += ctr.x; sumY += ctr.y; cnt++;
   }
-  const gain = Math.round(matched.size * BASE_SCORE_PER_GEM * chainMultiplier(chainDepth));
+  const heatMult = 1 + heat * HEAT_SCORE_BONUS;
+  const gain = Math.round(matched.size * BASE_SCORE_PER_GEM * chainMultiplier(chainDepth) * heatMult);
   score += gain;
   if (chainDepth >= 2) {
     comboToast = { text: '+' + gain + '  ×' + chainDepth + ' CHAIN', x: sumX / cnt, y: sumY / cnt - 26, t: 0, duration: 1.1 };
+  }
+  if (score > best) {
+    best = score;
+    try { sessionStorage.setItem('shardRushBest', String(best)); } catch (e) {}
+    if (!bestBeatenThisRun) {
+      bestBeatenThisRun = true;
+      bestFlash = { t: 0, duration: 1.2 };
+      playBestSound();
+    }
   }
   playMatchSound(chainDepth);
   phase = 'clearing';
@@ -636,18 +685,17 @@ function processMatches(swapPair) {
   pendingClear = Array.from(matched);
 }
 
+function endGame(reason) {
+  phase = 'gameover';
+  gameOverReason = reason;
+  playGameOverSound();
+  playBtn.textContent = 'Play Again';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
 function checkGameOver() {
-  if (!hasValidMove(grid)) {
-    phase = 'gameover';
-    if (score > best) {
-      best = score;
-      try { sessionStorage.setItem('shardRushBest', String(best)); } catch (e) {}
-    }
-    playGameOverSound();
-    playBtn.textContent = 'Play Again';
-    backToArcade.style.display = 'inline-block';
-    overlay.style.display = 'flex';
-  }
+  if (!hasValidMove(grid)) endGame('moves');
 }
 
 // ---------------------------------------------------------------------
@@ -721,6 +769,10 @@ function update(dt) {
     comboToast.t += dt;
     if (comboToast.t >= comboToast.duration) comboToast = null;
   }
+  if (bestFlash) {
+    bestFlash.t += dt;
+    if (bestFlash.t >= bestFlash.duration) bestFlash = null;
+  }
   if (musicStarted && !muted) {
     noteTimer += dt;
     if (noteTimer >= nextNoteIn) {
@@ -746,8 +798,18 @@ function update(dt) {
         }
       } else {
         swapCells(grid, swapState.r1, swapState.c1, swapState.r2, swapState.c2);
-        phase = 'idle';
+        enterIdle();
       }
+    }
+  } else if (phase === 'idle') {
+    moveTimeLeft -= dt;
+    if (!lowTimeTicked && moveTimeLeft <= 3 && moveTimeLeft > 0) {
+      lowTimeTicked = true;
+      playTimeTickSound();
+    }
+    if (moveTimeLeft <= 0) {
+      moveTimeLeft = 0;
+      endGame('time');
     }
   } else if (phase === 'clearing') {
     clearTimer += dt;
@@ -881,6 +943,51 @@ function drawScoreHud() {
   ctx.font = '700 20px "Courier New", monospace';
   ctx.fillStyle = '#f4eeff';
   ctx.fillText(String(best), 338, 96);
+
+  if (heat >= 1) {
+    const heatColors = ['#e8c468', '#f0a955', '#ef8a4a', '#ef6a4a', '#ff4d4d', '#ff2d2d'];
+    const col = heatColors[Math.min(heat, heatColors.length - 1)];
+    ctx.textAlign = 'center';
+    ctx.font = '800 12px sans-serif';
+    ctx.fillStyle = col;
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 8 + heat * 2;
+    ctx.fillText('\u{1F525} HEAT ×' + heat, 180, 90);
+    ctx.shadowBlur = 0;
+  }
+  ctx.restore();
+}
+
+function drawBestFlash() {
+  if (!bestFlash) return;
+  const p = bestFlash.t / bestFlash.duration;
+  const alpha = p < 0.15 ? p / 0.15 : (1 - (p - 0.15) / 0.85);
+  const rise = p * 14;
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.textAlign = 'right';
+  ctx.font = '800 13px sans-serif';
+  ctx.fillStyle = GOLD;
+  ctx.shadowColor = 'rgba(232,196,104,0.6)';
+  ctx.shadowBlur = 10;
+  ctx.fillText('NEW BEST!', 338, 66 - rise);
+  ctx.restore();
+}
+
+function drawMoveTimer() {
+  if (phase === 'start' || phase === 'gameover') return;
+  const allotment = moveTimeAllotment(score);
+  const t = Math.max(0, Math.min(1, moveTimeLeft / allotment));
+  const barX = 20, barY = 100, barW = 320, barH = 4;
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(barX, barY, barW, barH);
+  let color;
+  if (t > 0.5) color = 'rgba(232,196,104,0.9)';
+  else if (t > 0.25) color = 'rgba(232,150,80,0.9)';
+  else color = 'rgba(230,70,70,0.9)';
+  ctx.fillStyle = color;
+  ctx.fillRect(barX, barY, barW * t, barH);
   ctx.restore();
 }
 
@@ -1039,10 +1146,13 @@ function drawGameOver() {
   ctx.shadowBlur = 14;
   ctx.fillText('GAME OVER', 180, 250);
   ctx.shadowBlur = 0;
+  ctx.font = '600 13px sans-serif';
+  ctx.fillStyle = '#a89bc7';
+  ctx.fillText(gameOverReason === 'time' ? 'Ran out of time!' : 'No moves left!', 180, 270);
   ctx.font = '600 15px sans-serif';
   ctx.fillStyle = '#f4eeff';
-  ctx.fillText('Score: ' + score, 180, 285);
-  ctx.fillText((score > 0 && score >= best) ? 'New Best!' : ('Best: ' + best), 180, 308);
+  ctx.fillText('Score: ' + score, 180, 295);
+  ctx.fillText((score > 0 && score >= best) ? 'New Best!' : ('Best: ' + best), 180, 318);
   ctx.restore();
 }
 
@@ -1053,6 +1163,8 @@ function draw() {
   drawDivider();
   drawMuteButton();
   drawScoreHud();
+  drawBestFlash();
+  drawMoveTimer();
   drawBoardPanel();
   drawCheckerboard();
   drawSelection();
