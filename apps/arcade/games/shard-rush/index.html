@@ -158,6 +158,7 @@ let muted = sessionStorage.getItem('shardRushMuted') === '1';
 function ensureAudio() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
+  startAmbientMusic();
 }
 function tone(freq, duration, type, volume, delay) {
   if (muted) return;
@@ -187,9 +188,72 @@ function playGameOverSound() {
   tone(240, 0.24, 'sawtooth', 0.1, 0.3);
 }
 
+// Ambient background music - a slow A-minor-pentatonic drone + generative
+// melody notes, sharing the same key as playMatchSound's 440Hz (A4) base
+// so match chimes land as consonant notes over the bed rather than clashing.
+const AMBIENT_VOLUME = 0.05;
+const DRONE_FREQS = [110.00, 164.81, 220.00]; // A2, E3, A3
+const MELODY_SCALE = [220.00, 261.63, 293.66, 329.63, 392.00, 440.00]; // A3 C4 D4 E4 G4 A4
+let musicStarted = false;
+let musicGain = null;
+let melodyTimer = 0;
+let nextMelodyIn = 2.5;
+
+function startAmbientMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  musicGain = audioCtx.createGain();
+  musicGain.gain.value = muted ? 0 : AMBIENT_VOLUME;
+  musicGain.connect(audioCtx.destination);
+
+  for (const f of DRONE_FREQS) {
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    const g = audioCtx.createGain();
+    g.gain.value = 0.5;
+    osc.connect(g);
+    g.connect(musicGain);
+    osc.start();
+
+    // Slow, gentle swell per drone voice so the pad breathes instead of droning flat.
+    const lfo = audioCtx.createOscillator();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.04 + Math.random() * 0.05;
+    const lfoGain = audioCtx.createGain();
+    lfoGain.gain.value = 0.3;
+    lfo.connect(lfoGain);
+    lfoGain.connect(g.gain);
+    lfo.start();
+  }
+}
+
+function playMelodyNote() {
+  if (muted || !musicGain) return;
+  const freq = MELODY_SCALE[Math.floor(Math.random() * MELODY_SCALE.length)];
+  const osc = audioCtx.createOscillator();
+  osc.type = 'triangle';
+  osc.frequency.value = freq;
+  const g = audioCtx.createGain();
+  g.gain.value = 0;
+  osc.connect(g);
+  g.connect(musicGain);
+  const t = audioCtx.currentTime;
+  g.gain.linearRampToValueAtTime(0.35, t + 0.6);
+  g.gain.linearRampToValueAtTime(0, t + 3.2);
+  osc.start(t);
+  osc.stop(t + 3.3);
+}
+
 function toggleMute() {
   muted = !muted;
   try { sessionStorage.setItem('shardRushMuted', muted ? '1' : '0'); } catch (e) {}
+  if (musicGain) {
+    const t = audioCtx.currentTime;
+    musicGain.gain.cancelScheduledValues(t);
+    musicGain.gain.setValueAtTime(musicGain.gain.value, t);
+    musicGain.gain.linearRampToValueAtTime(muted ? 0 : AMBIENT_VOLUME, t + 0.15);
+  }
 }
 
 // ---------------------------------------------------------------------
@@ -530,6 +594,14 @@ function update(dt) {
   if (comboToast) {
     comboToast.t += dt;
     if (comboToast.t >= comboToast.duration) comboToast = null;
+  }
+  if (musicStarted && !muted) {
+    melodyTimer += dt;
+    if (melodyTimer >= nextMelodyIn) {
+      melodyTimer = 0;
+      nextMelodyIn = 2.5 + Math.random() * 3.5;
+      playMelodyNote();
+    }
   }
 
   if (phase === 'swap') {
