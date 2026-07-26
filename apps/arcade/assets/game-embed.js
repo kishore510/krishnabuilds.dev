@@ -40,7 +40,7 @@
 (function () {
   const script = document.currentScript;
   const gamesUrl = (script && script.dataset.gamesUrl) || '../../index.html';
-  const coffeeUrl = (script && script.dataset.coffeeUrl) || 'https://buymeacoffee.com/Krishnabuilds';
+  const coffeeUrl = (script && script.dataset.coffeeUrl) || 'https://kishorecraft88.gumroad.com/l/abuoox';
   const fullscreenMode = !!(script && script.dataset.fullscreen === 'landscape');
 
   window.kbEnterFullscreen = function (el) {
@@ -209,7 +209,7 @@
   coffee.target = '_blank';
   coffee.rel = 'noopener';
   coffee.className = 'kb-coffee';
-  coffee.textContent = '☕ Support';
+  coffee.textContent = 'Want to build your own? Get the guide';
   document.body.appendChild(coffee);
 
   function publishChromeMetrics() {
