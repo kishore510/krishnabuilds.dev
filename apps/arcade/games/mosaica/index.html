@@ -445,6 +445,7 @@ function updateActiveColFromX(x) {
   const rawCol = Math.round((x - GX - (shape.w * CELL) / 2) / CELL);
   activePiece.colOffset = Math.max(0, Math.min(COLS - shape.w, rawCol));
 }
+function isOverTray(y) { return y >= TRAY_Y; }
 function commitDrop() {
   const shape = getShape(activePiece);
   const rowOffset = computeLanding(shape, activePiece.colOffset);
@@ -485,18 +486,28 @@ canvas.addEventListener('pointermove', (e) => {
       const pieceData = traySlots[slotIdx];
       activePiece = {
         type: pieceData.type, orientIdx: pieceData.orientIdx, colorKey: pieceData.colorKey,
-        colOffset: 0, slotIndex: slotIdx
+        colOffset: 0, slotIndex: slotIdx, overTray: isOverTray(y)
       };
       traySlots[slotIdx] = null;
-      updateActiveColFromX(x);
+      if (!activePiece.overTray) updateActiveColFromX(x);
     }
     return;
   }
-  if (activePiece) updateActiveColFromX(x);
+  if (activePiece) {
+    activePiece.overTray = isOverTray(y);
+    if (!activePiece.overTray) updateActiveColFromX(x);
+  }
 });
 function onPointerUp() {
   if (activePiece) {
-    commitDrop();
+    if (activePiece.overTray) {
+      traySlots[activePiece.slotIndex] = {
+        type: activePiece.type, orientIdx: activePiece.orientIdx, colorKey: activePiece.colorKey
+      };
+      activePiece = null;
+    } else {
+      commitDrop();
+    }
     dragCandidate = null;
     return;
   }
@@ -637,7 +648,7 @@ function drawClearFlash() {
 }
 
 function drawActivePieceAndGuides() {
-  if (!activePiece) return;
+  if (!activePiece || activePiece.overTray) return;
   const shape = getShape(activePiece);
   const rowOffset = computeLanding(shape, activePiece.colOffset);
   const topByCol = topByColOf(shape);
@@ -710,7 +721,10 @@ function drawTray() {
     const sx = SLOT_XS[i];
     rr(sx, SLOT_Y, SLOT_W, SLOT_H, 8);
     ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fill();
-    const piece = traySlots[i];
+    let piece = traySlots[i];
+    if (!piece && activePiece && activePiece.slotIndex === i && activePiece.overTray) {
+      piece = { type: activePiece.type, orientIdx: activePiece.orientIdx, colorKey: activePiece.colorKey };
+    }
     if (piece) {
       drawPiecePreview(piece, sx, SLOT_Y, SLOT_W - 26, SLOT_H, 15);
       drawRotateIcon(sx + SLOT_W - 18, SLOT_Y + 18, 12);
