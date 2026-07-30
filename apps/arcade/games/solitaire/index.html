@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solitaire</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #05060d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #0F3D2E;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+    cursor: grab;
+  }
+  .hudBtn {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #EFEAE0;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    z-index: 5;
+  }
+  .hudBtn:active { background: rgba(255,255,255,0.2); }
+  #newDealBtn {
+    left: calc(180px * var(--game-scale, 1));
+    top: calc(22px * var(--game-scale, 1));
+    width: calc(30px * var(--game-scale, 1));
+    height: calc(30px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+  }
+  #undoBtn {
+    left: calc(136px * var(--game-scale, 1));
+    top: calc(22px * var(--game-scale, 1));
+    width: calc(26px * var(--game-scale, 1));
+    height: calc(26px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+  }
+  #undoBtn:disabled { opacity: 0.32; cursor: default; }
+  #muteBtn {
+    left: calc(224px * var(--game-scale, 1));
+    top: calc(22px * var(--game-scale, 1));
+    width: calc(26px * var(--game-scale, 1));
+    height: calc(26px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    background: rgba(0,0,0,0.35);
+  }
+  #winOverlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5,8,6,0.55);
+    border-radius: 10px;
+  }
+  #winCard {
+    background: #12251c;
+    border: 1.5px solid rgba(216,184,114,0.55);
+    border-radius: calc(14px * var(--game-scale, 1));
+    padding: calc(24px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  #winCard h1 {
+    margin: 0 0 calc(10px * var(--game-scale, 1));
+    color: #EFEAE0;
+    font-size: calc(26px * var(--game-scale, 1));
+  }
+  #winCard p {
+    margin: calc(4px * var(--game-scale, 1)) 0;
+    color: rgba(239,234,224,0.75);
+    font-size: calc(14px * var(--game-scale, 1));
+  }
+  #winPlayAgainBtn {
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(9px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid #D8B872;
+    background: rgba(216,184,114,0.16);
+    color: #EFEAE0;
+    cursor: pointer;
+  }
+  #winPlayAgainBtn:active { background: rgba(216,184,114,0.32); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="undoBtn" class="hudBtn" type="button" title="Undo">&#8618;</button>
+  <button id="newDealBtn" class="hudBtn" type="button" title="New Deal" data-kb-play>&#8635;</button>
+  <button id="muteBtn" class="hudBtn" type="button" title="Mute">&#128266;</button>
+  <div id="winOverlay">
+    <div id="winCard">
+      <h1>You Win!</h1>
+      <p id="winStats"></p>
+      <p id="winBest"></p>
+      <button id="winPlayAgainBtn" type="button" data-kb-play>Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const undoBtn = document.getElementById('undoBtn');
+const newDealBtn = document.getElementById('newDealBtn');
+const muteBtn = document.getElementById('muteBtn');
+const winOverlay = document.getElementById('winOverlay');
+const winStats = document.getElementById('winStats');
+const winBest = document.getElementById('winBest');
+const winPlayAgainBtn = document.getElementById('winPlayAgainBtn');
+
+const W = canvas.width, H = canvas.height;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  wrap.style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// ---------- palette (lifted from concept render) ----------
+const PAL = {
+  feltTop: '#0F3D2E',
+  feltBot: '#0A2A1F',
+  cardFace: '#F7F3E8',
+  cardBorder: 'rgba(0,0,0,0.25)',
+  black: '#22201B',
+  red: '#C1443C',
+  backBase: '#2C2F63',
+  backPatternA: '#3A3E7E',
+  backTrim: '#D8B872',
+  slotOutline: 'rgba(255,255,255,0.28)',
+  hudText: '#EFEAE0',
+  hudSub: 'rgba(239,234,224,0.6)',
+};
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// ---------- background (cached gradients) ----------
+let bgGradient, vignetteGradient;
+function initGradients() {
+  bgGradient = ctx.createLinearGradient(0, 0, 0, H);
+  bgGradient.addColorStop(0, PAL.feltTop);
+  bgGradient.addColorStop(1, PAL.feltBot);
+  vignetteGradient = ctx.createRadialGradient(180, 260, 60, 180, 260, 380);
+  vignetteGradient.addColorStop(0, 'rgba(0,0,0,0)');
+  vignetteGradient.addColorStop(1, 'rgba(0,0,0,0.25)');
+}
+function drawBackground() {
+  ctx.fillStyle = bgGradient;
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = vignetteGradient;
+  ctx.fillRect(0, 0, W, H);
+}
+
+// ---------- HUD text (New Deal/Undo/Mute are real DOM buttons - see below) ----------
+function drawHUD(moves, timeStr) {
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillText('MOVES', 16, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 17px -apple-system, sans-serif';
+  ctx.fillText(String(moves), 16, 34);
+
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('TIME', 344, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 17px -apple-system, sans-serif';
+  ctx.fillText(timeStr, 344, 34);
+  ctx.textAlign = 'left';
+}
+
+// ---------- card rendering (lifted from concept render) ----------
+const CW = 44, CH = 62, RADIUS = 4;
+const SUITS = ['S', 'H', 'D', 'C'];
+const SUIT_GLYPH = { S: '♠', H: '♥', D: '♦', C: '♣' };
+const SUIT_COLOR = { S: PAL.black, H: PAL.red, D: PAL.red, C: PAL.black };
+const RANK_LABEL = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' };
+function rankLabel(r) { return RANK_LABEL[r] || String(r); }
+const isRed = (suit) => suit === 'H' || suit === 'D';
+
+function drawCardBack(x, y) {
+  roundRect(x, y, CW, CH, RADIUS);
+  ctx.fillStyle = PAL.backBase;
+  ctx.fill();
+  ctx.save();
+  roundRect(x, y, CW, CH, RADIUS);
+  ctx.clip();
+  ctx.strokeStyle = PAL.backPatternA;
+  ctx.lineWidth = 1;
+  for (let i = -CH; i < CW + CH; i += 8) {
+    ctx.beginPath();
+    ctx.moveTo(x + i, y);
+    ctx.lineTo(x + i + CH, y + CH);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + i, y + CH);
+    ctx.lineTo(x + i + CH, y);
+    ctx.stroke();
+  }
+  ctx.restore();
+  roundRect(x + 3, y + 3, CW - 6, CH - 6, 3);
+  ctx.strokeStyle = PAL.backTrim;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  roundRect(x, y, CW, CH, RADIUS);
+  ctx.strokeStyle = PAL.cardBorder;
+  ctx.stroke();
+}
+
+function drawCardFace(x, y, rank, suit) {
+  roundRect(x, y, CW, CH, RADIUS);
+  ctx.fillStyle = PAL.cardFace;
+  ctx.fill();
+  ctx.strokeStyle = PAL.cardBorder;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const col = SUIT_COLOR[suit];
+  const label = rankLabel(rank);
+
+  ctx.fillStyle = col;
+  ctx.globalAlpha = 0.16;
+  ctx.font = `${CH * 0.55}px -apple-system, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(SUIT_GLYPH[suit], x + CW / 2, y + CH / 2 + 2);
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = col;
+  ctx.textAlign = 'left';
+  ctx.font = `700 ${CW * 0.26}px -apple-system, sans-serif`;
+  ctx.fillText(label, x + 4, y + 10);
+  ctx.font = `${CW * 0.22}px -apple-system, sans-serif`;
+  ctx.fillText(SUIT_GLYPH[suit], x + 4, y + 21);
+
+  ctx.save();
+  ctx.translate(x + CW - 4, y + CH - 4);
+  ctx.rotate(Math.PI);
+  ctx.textAlign = 'left';
+  ctx.font = `700 ${CW * 0.26}px -apple-system, sans-serif`;
+  ctx.fillText(label, 0, -6);
+  ctx.font = `${CW * 0.22}px -apple-system, sans-serif`;
+  ctx.fillText(SUIT_GLYPH[suit], 0, 5);
+  ctx.restore();
+
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawEmptySlot(x, y) {
+  roundRect(x, y, CW, CH, RADIUS);
+  ctx.strokeStyle = PAL.slotOutline;
+  ctx.lineWidth = 1.4;
+  ctx.setLineDash([3, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawSelectionRing(x, y) {
+  ctx.save();
+  roundRect(x - 2, y - 2, CW + 4, CH + 4, 6);
+  ctx.strokeStyle = '#ffd54a';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ---------- layout ----------
+const ROW_Y = 42;
+const SLOT_GAP = 6;
+const ROW_TOTAL_W = 6 * CW + 5 * SLOT_GAP;
+const ROW_X0 = (W - ROW_TOTAL_W) / 2;
+
+const TAB_Y = 116;
+const TAB_GAP = 4;
+const TAB_TOTAL_W = 7 * CW + 6 * TAB_GAP;
+const TAB_X0 = (W - TAB_TOTAL_W) / 2;
+const FACEDOWN_OFFSET = 13;
+const FACEUP_OFFSET = 22;
+
+const stockPos = { x: ROW_X0, y: ROW_Y };
+const wastePos = { x: ROW_X0 + (CW + SLOT_GAP), y: ROW_Y };
+function foundationPos(i) { return { x: ROW_X0 + (3 + i) * (CW + SLOT_GAP), y: ROW_Y }; }
+function tabColX(col) { return TAB_X0 + col * (CW + TAB_GAP); }
+
+// ---------- game state ----------
+let tableau = [[], [], [], [], [], [], []];
+let stock = [];
+let waste = [];
+let foundations = { S: [], H: [], D: [], C: [] };
+let moves = 0;
+let timerStarted = false;
+let startTimestamp = 0;
+let gameWon = false;
+let finalElapsed = 0;
+let selected = null;      // {pile:'waste'} | {pile:'foundation', suit} | {pile:'tableau', col, cardIndex}
+let undoSnapshot = null;
+let shake = null;         // {loc, start}
+const SHAKE_DUR = 300;
+let dealAnim = { active: false, startTs: null, totalDuration: 0 };
+let inputLocked = false;
+
+let pointerDownPos = null, pointerDownLoc = null, dragCandidate = null, pointerMoved = false;
+let dragging = null; // {loc, cards, grabDX, grabDY, x, y}
+
+function columnPositions(col) {
+  const positions = [];
+  let y = TAB_Y;
+  const x = tabColX(col);
+  for (const card of tableau[col]) {
+    positions.push({ x, y });
+    y += card.faceUp ? FACEUP_OFFSET : FACEDOWN_OFFSET;
+  }
+  return positions;
+}
+
+function getOriginPos(loc) {
+  if (loc.pile === 'stock') return stockPos;
+  if (loc.pile === 'waste') return wastePos;
+  if (loc.pile === 'foundation') return foundationPos(SUITS.indexOf(loc.suit));
+  if (loc.pile === 'tableau') {
+    const positions = columnPositions(loc.col);
+    return positions[loc.cardIndex] || { x: tabColX(loc.col), y: TAB_Y };
+  }
+}
+
+// ---------- deck / deal ----------
+function buildDeck() {
+  const deck = [];
+  for (const s of SUITS) for (let r = 1; r <= 13; r++) deck.push({ rank: r, suit: s, faceUp: false });
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
+}
+
+function dealNewGame() {
+  if (dealAnim.active) return;
+  const deck = buildDeck();
+  tableau = [[], [], [], [], [], [], []];
+  for (let col = 0; col < 7; col++) {
+    for (let n = 0; n <= col; n++) {
+      const card = deck.pop();
+      card.faceUp = (n === col);
+      tableau[col].push(card);
+    }
+  }
+  stock = deck;
+  stock.forEach(c => c.faceUp = false);
+  waste = [];
+  foundations = { S: [], H: [], D: [], C: [] };
+  moves = 0;
+  timerStarted = false;
+  gameWon = false;
+  finalElapsed = 0;
+  selected = null;
+  dragging = null;
+  undoSnapshot = null;
+  shake = null;
+  hideWinOverlay();
+  updateUndoBtnState();
+  startDealAnimation();
+}
+
+function startDealAnimation() {
+  inputLocked = true;
+  let i = 0, maxEnd = 0;
+  for (let col = 0; col < 7; col++) {
+    for (let idx = 0; idx < tableau[col].length; idx++) {
+      const card = tableau[col][idx];
+      const delay = i * 30, duration = 160;
+      card._dealDelay = delay;
+      card._dealDuration = duration;
+      maxEnd = Math.max(maxEnd, delay + duration);
+      i++;
+    }
+  }
+  dealAnim = { active: true, startTs: null, totalDuration: maxEnd };
+  playWhoosh();
+}
+
+function ensureTimerStarted() {
+  if (!timerStarted) { timerStarted = true; startTimestamp = performance.now(); }
+}
+function getElapsed() {
+  if (gameWon) return finalElapsed;
+  if (!timerStarted) return 0;
+  return (performance.now() - startTimestamp) / 1000;
+}
+function formatTime(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+// ---------- move rules ----------
+function canPlaceOnTableau(card, col) {
+  const pile = tableau[col];
+  if (pile.length === 0) return card.rank === 13;
+  const top = pile[pile.length - 1];
+  if (!top.faceUp) return false;
+  return top.rank === card.rank + 1 && isRed(top.suit) !== isRed(card.suit);
+}
+function canPlaceOnFoundation(card, suit) {
+  if (card.suit !== suit) return false;
+  const f = foundations[suit];
+  const need = f.length ? f[f.length - 1].rank + 1 : 1;
+  return card.rank === need;
+}
+function legalFoundationSuit(card) { return canPlaceOnFoundation(card, card.suit) ? card.suit : null; }
+function computeLegalTableauCols(card, excludeCol) {
+  const cols = [];
+  for (let c = 0; c < 7; c++) { if (c === excludeCol) continue; if (canPlaceOnTableau(card, c)) cols.push(c); }
+  return cols;
+}
+
+function isSelectable(loc) {
+  if (!loc) return false;
+  if (loc.pile === 'waste') return waste.length > 0;
+  if (loc.pile === 'foundation') return foundations[loc.suit].length > 0;
+  if (loc.pile === 'tableau') return loc.cardIndex >= 0 && !!tableau[loc.col][loc.cardIndex] && tableau[loc.col][loc.cardIndex].faceUp;
+  return false;
+}
+function getCardsAt(loc) {
+  if (loc.pile === 'waste') return waste.length ? [waste[waste.length - 1]] : [];
+  if (loc.pile === 'foundation') { const f = foundations[loc.suit]; return f.length ? [f[f.length - 1]] : []; }
+  if (loc.pile === 'tableau') return loc.cardIndex >= 0 ? tableau[loc.col].slice(loc.cardIndex) : [];
+  return [];
+}
+function isSameLocation(a, b) {
+  if (!a || !b || a.pile !== b.pile) return false;
+  if (a.pile === 'waste') return true;
+  if (a.pile === 'foundation') return a.suit === b.suit;
+  if (a.pile === 'tableau') return a.col === b.col && a.cardIndex === b.cardIndex;
+  return false;
+}
+function isValidMove(cards, destLoc, srcLoc) {
+  if (!destLoc || !cards || cards.length === 0) return false;
+  if (destLoc.pile === 'tableau') {
+    if (srcLoc && srcLoc.pile === 'tableau' && srcLoc.col === destLoc.col) return false;
+    return canPlaceOnTableau(cards[0], destLoc.col);
+  }
+  if (destLoc.pile === 'foundation') {
+    if (cards.length !== 1) return false;
+    if (srcLoc && srcLoc.pile === 'foundation' && srcLoc.suit === destLoc.suit) return false;
+    return canPlaceOnFoundation(cards[0], destLoc.suit);
+  }
+  return false;
+}
+
+function removeFrom(loc, count) {
+  if (loc.pile === 'waste') waste.pop();
+  else if (loc.pile === 'foundation') foundations[loc.suit].pop();
+  else if (loc.pile === 'tableau') tableau[loc.col].splice(loc.cardIndex, count);
+}
+function flipExposedTop(loc) {
+  if (loc.pile !== 'tableau') return;
+  const pile = tableau[loc.col];
+  if (pile.length) {
+    const top = pile[pile.length - 1];
+    if (!top.faceUp) { top.faceUp = true; playFlip(); }
+  }
+}
+
+function snapshotForUndo() {
+  undoSnapshot = {
+    tableau: tableau.map(col => col.map(c => ({ ...c }))),
+    stock: stock.map(c => ({ ...c })),
+    waste: waste.map(c => ({ ...c })),
+    foundations: Object.fromEntries(SUITS.map(s => [s, foundations[s].map(c => ({ ...c }))])),
+    moves
+  };
+  updateUndoBtnState();
+}
+function doUndo() {
+  if (!undoSnapshot) return;
+  tableau = undoSnapshot.tableau;
+  stock = undoSnapshot.stock;
+  waste = undoSnapshot.waste;
+  foundations = undoSnapshot.foundations;
+  moves = undoSnapshot.moves;
+  undoSnapshot = null;
+  selected = null;
+  dragging = null;
+  if (gameWon) { gameWon = false; hideWinOverlay(); }
+  updateUndoBtnState();
+}
+function updateUndoBtnState() { undoBtn.disabled = !undoSnapshot; }
+
+function executeMove(srcLoc, destLoc, cards) {
+  snapshotForUndo();
+  removeFrom(srcLoc, cards.length);
+  if (destLoc.pile === 'tableau') tableau[destLoc.col].push(...cards);
+  else if (destLoc.pile === 'foundation') foundations[destLoc.suit].push(cards[0]);
+  flipExposedTop(srcLoc);
+  moves++;
+  ensureTimerStarted();
+  if (destLoc.pile === 'foundation') playFoundation(); else playPlace();
+  selected = null;
+  checkWin();
+}
+
+function doStockTap() {
+  if (stock.length === 0 && waste.length === 0) return;
+  snapshotForUndo();
+  if (stock.length > 0) {
+    const c = stock.pop();
+    c.faceUp = true;
+    waste.push(c);
+    playFlip();
+  } else {
+    while (waste.length) { const c = waste.pop(); c.faceUp = false; stock.push(c); }
+    playRecycle();
+  }
+  ensureTimerStarted();
+}
+
+function trySelect(loc) {
+  if (!isSelectable(loc)) return;
+  const cards = getCardsAt(loc);
+  if (cards.length === 1 && loc.pile !== 'foundation') {
+    const fSuit = legalFoundationSuit(cards[0]);
+    if (fSuit) {
+      const excludeCol = loc.pile === 'tableau' ? loc.col : -1;
+      const tabCols = computeLegalTableauCols(cards[0], excludeCol);
+      if (tabCols.length === 0) {
+        executeMove(loc, { pile: 'foundation', suit: fSuit }, cards);
+        return;
+      }
+    }
+  }
+  selected = loc;
+}
+
+function triggerShake(loc) { shake = { loc, start: performance.now() }; }
+function getShakeX(matches) {
+  if (!matches || !shake) return 0;
+  const t = performance.now() - shake.start;
+  if (t > SHAKE_DUR) return 0;
+  return Math.sin((t / SHAKE_DUR) * Math.PI * 5) * 4 * (1 - t / SHAKE_DUR);
+}
+
+function checkWin() {
+  const total = SUITS.reduce((a, s) => a + foundations[s].length, 0);
+  if (total === 52) winGame();
+}
+function winGame() {
+  gameWon = true;
+  finalElapsed = getElapsed();
+  let bestTime = parseInt(sessionStorage.getItem('solitaire_best_time') || '', 10);
+  let bestMoves = parseInt(sessionStorage.getItem('solitaire_best_moves') || '', 10);
+  const newTimeBest = isNaN(bestTime) || finalElapsed < bestTime;
+  const newMovesBest = isNaN(bestMoves) || moves < bestMoves;
+  if (newTimeBest) { bestTime = Math.round(finalElapsed); try { sessionStorage.setItem('solitaire_best_time', String(bestTime)); } catch (e) {} }
+  if (newMovesBest) { bestMoves = moves; try { sessionStorage.setItem('solitaire_best_moves', String(bestMoves)); } catch (e) {} }
+  playWin();
+  showWinOverlay(newTimeBest || newMovesBest, bestTime, bestMoves);
+}
+function showWinOverlay(isNewBest, bestTime, bestMoves) {
+  winStats.textContent = 'Time ' + formatTime(finalElapsed) + ' · Moves ' + moves;
+  winBest.textContent = (isNewBest ? 'New best! · ' : 'Best: ') + formatTime(bestTime) + ' · ' + bestMoves + ' moves';
+  winOverlay.style.display = 'flex';
+}
+function hideWinOverlay() { winOverlay.style.display = 'none'; }
+
+// ---------- audio (procedural Web Audio, no files) ----------
+let audioCtx = null;
+let muted = sessionStorage.getItem('solitaireMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.1;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const t0 = audioCtx.currentTime + (delay || 0);
+  osc.start(t0);
+  gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+  osc.stop(t0 + duration + 0.03);
+}
+function playFlip() { tone(520, 0.07, 'sine', 0.08); }
+function playPlace() { tone(420, 0.06, 'triangle', 0.10); }
+function playFoundation() { tone(880, 0.09, 'triangle', 0.11); tone(1180, 0.10, 'triangle', 0.08, 0.05); }
+function playInvalid() { tone(140, 0.28, 'sawtooth', 0.14); }
+function playWin() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, 0.22, 'triangle', 0.12, i * 0.12)); }
+function playWhoosh() {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  gain.gain.value = 0.06;
+  osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(90, audioCtx.currentTime + 0.25);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.28);
+  osc.stop(audioCtx.currentTime + 0.3);
+}
+function playRecycle() {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  gain.gain.value = 0.05;
+  osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.15);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+  osc.stop(audioCtx.currentTime + 0.2);
+}
+function updateMuteBtn() { muteBtn.innerHTML = muted ? '&#128263;' : '&#128266;'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  try { sessionStorage.setItem('solitaireMuted', muted ? '1' : '0'); } catch (e) {}
+  updateMuteBtn();
+});
+
+// ---------- input ----------
+function getCanvasPos(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left) * (canvas.width / rect.width),
+    y: (clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+
+// Row band (stock/waste/foundations) hit test, then tableau band. `loose`
+// widens the tableau column's vertical hit area down to the canvas bottom
+// so a drag can be dropped anywhere below a short column, not just on it.
+function locateAt(px, py, loose) {
+  if (py >= ROW_Y - 6 && py <= ROW_Y + CH + 6) {
+    if (px >= stockPos.x - 2 && px <= stockPos.x + CW + 2) return { pile: 'stock' };
+    if (px >= wastePos.x - 2 && px <= wastePos.x + CW + 2) return { pile: 'waste' };
+    for (let i = 0; i < 4; i++) {
+      const fp = foundationPos(i);
+      if (px >= fp.x - 2 && px <= fp.x + CW + 2) return { pile: 'foundation', suit: SUITS[i] };
+    }
+    return null;
+  }
+  if (py >= TAB_Y - 6) {
+    for (let col = 0; col < 7; col++) {
+      const cx = tabColX(col);
+      if (px < cx - 2 || px > cx + CW + 2) continue;
+      const positions = columnPositions(col);
+      if (positions.length === 0) {
+        if (!loose && py > TAB_Y + CH + 4) return null;
+        return { pile: 'tableau', col, cardIndex: -1 };
+      }
+      if (!loose) {
+        const last = positions[positions.length - 1];
+        if (py > last.y + CH + 4) return null;
+      }
+      let idx = 0;
+      for (let i = 0; i < positions.length; i++) if (py >= positions[i].y - (i === 0 ? 6 : 0)) idx = i;
+      return { pile: 'tableau', col, cardIndex: idx };
+    }
+  }
+  return null;
+}
+
+function handlePointerTap(loc) {
+  if (!loc) return;
+  if (loc.pile === 'stock') { selected = null; doStockTap(); return; }
+  if (selected === null) { trySelect(loc); return; }
+  if (isSameLocation(selected, loc)) { selected = null; return; }
+  const cards = getCardsAt(selected);
+  if (isValidMove(cards, loc, selected)) { executeMove(selected, loc, cards); return; }
+  if (isSelectable(loc)) { trySelect(loc); return; }
+  triggerShake(selected);
+  playInvalid();
+}
+
+function onPointerDown(e) {
+  if (inputLocked || gameWon) return;
+  ensureAudio();
+  e.preventDefault();
+  const pos = getCanvasPos(e.clientX, e.clientY);
+  pointerDownPos = pos;
+  pointerMoved = false;
+  pointerDownLoc = locateAt(pos.x, pos.y, false);
+  dragCandidate = (pointerDownLoc && pointerDownLoc.pile !== 'stock' && isSelectable(pointerDownLoc)) ? pointerDownLoc : null;
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+}
+function onPointerMove(e) {
+  if (!pointerDownPos) return;
+  const pos = getCanvasPos(e.clientX, e.clientY);
+  const dx = pos.x - pointerDownPos.x, dy = pos.y - pointerDownPos.y;
+  if (!dragging && dragCandidate && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+    const cards = getCardsAt(dragCandidate);
+    if (cards.length) {
+      const origin = getOriginPos(dragCandidate);
+      dragging = { loc: dragCandidate, cards, grabDX: pointerDownPos.x - origin.x, grabDY: pointerDownPos.y - origin.y, x: pos.x, y: pos.y };
+      selected = null;
+    }
+  }
+  if (dragging) { dragging.x = pos.x; dragging.y = pos.y; }
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) pointerMoved = true;
+}
+function onPointerUp(e) {
+  if (inputLocked) { resetPointerState(); dragging = null; return; }
+  const pos = getCanvasPos(e.clientX, e.clientY);
+  if (dragging) {
+    const srcLoc = dragging.loc, cards = dragging.cards;
+    const dropLoc = locateAt(pos.x, pos.y, true);
+    dragging = null;
+    if (dropLoc && !isSameLocation(srcLoc, dropLoc) && !(dropLoc.pile === 'tableau' && srcLoc.pile === 'tableau' && dropLoc.col === srcLoc.col)) {
+      if (isValidMove(cards, dropLoc, srcLoc)) {
+        executeMove(srcLoc, dropLoc, cards);
+      } else if (dropLoc.pile === 'tableau' || dropLoc.pile === 'foundation') {
+        triggerShake(srcLoc);
+        playInvalid();
+      }
+    }
+  } else if (pointerDownLoc) {
+    handlePointerTap(pointerDownLoc);
+  }
+  resetPointerState();
+}
+function resetPointerState() { pointerDownPos = null; pointerDownLoc = null; dragCandidate = null; pointerMoved = false; }
+
+canvas.addEventListener('pointerdown', onPointerDown);
+canvas.addEventListener('pointermove', onPointerMove);
+canvas.addEventListener('pointerup', onPointerUp);
+canvas.addEventListener('pointercancel', () => { dragging = null; resetPointerState(); });
+
+undoBtn.addEventListener('click', doUndo);
+newDealBtn.addEventListener('click', dealNewGame);
+winPlayAgainBtn.addEventListener('click', () => { hideWinOverlay(); dealNewGame(); });
+
+// ---------- rendering ----------
+function isCardSelected(pile, a, b) {
+  if (!selected || selected.pile !== pile) return false;
+  if (pile === 'waste') return true;
+  if (pile === 'foundation') return selected.suit === a;
+  if (pile === 'tableau') return selected.col === a && b >= selected.cardIndex;
+  return false;
+}
+
+function drawStockWasteFoundations() {
+  if (!(dragging && dragging.loc.pile === 'stock')) {
+    if (stock.length) drawCardBack(stockPos.x, stockPos.y); else drawEmptySlot(stockPos.x, stockPos.y);
+  }
+
+  if (!(dragging && dragging.loc.pile === 'waste')) {
+    const wx = wastePos.x + getShakeX(shake && shake.loc.pile === 'waste');
+    const w = waste[waste.length - 1];
+    if (w) {
+      drawCardFace(wx, wastePos.y, w.rank, w.suit);
+      if (isCardSelected('waste')) drawSelectionRing(wx, wastePos.y);
+    } else drawEmptySlot(wx, wastePos.y);
+  }
+
+  SUITS.forEach((suit, i) => {
+    const fp = foundationPos(i);
+    if (dragging && dragging.loc.pile === 'foundation' && dragging.loc.suit === suit) {
+      const pile = foundations[suit];
+      if (pile.length > 1) drawCardFace(fp.x, fp.y, pile[pile.length - 2].rank, suit); else drawEmptySlot(fp.x, fp.y);
+      return;
+    }
+    const fx = fp.x + getShakeX(shake && shake.loc.pile === 'foundation' && shake.loc.suit === suit);
+    const pile = foundations[suit];
+    if (pile.length) {
+      const top = pile[pile.length - 1];
+      drawCardFace(fx, fp.y, top.rank, suit);
+      if (isCardSelected('foundation', suit)) drawSelectionRing(fx, fp.y);
+    } else drawEmptySlot(fx, fp.y);
+  });
+}
+
+function drawTableau() {
+  for (let col = 0; col < 7; col++) {
+    const positions = columnPositions(col);
+    for (let idx = 0; idx < tableau[col].length; idx++) {
+      const card = tableau[col][idx];
+      if (card._dealDelay !== undefined) continue;
+      if (dragging && dragging.loc.pile === 'tableau' && dragging.loc.col === col && idx >= dragging.loc.cardIndex) continue;
+      let { x, y } = positions[idx];
+      x += getShakeX(shake && shake.loc.pile === 'tableau' && shake.loc.col === col && idx >= shake.loc.cardIndex);
+      if (card.faceUp) drawCardFace(x, y, card.rank, card.suit); else drawCardBack(x, y);
+      if (isCardSelected('tableau', col, idx)) drawSelectionRing(x, y);
+    }
+  }
+}
+
+function drawFlights(dealT) {
+  if (!dealAnim.active) return;
+  for (let col = 0; col < 7; col++) {
+    const positions = columnPositions(col);
+    for (let idx = 0; idx < tableau[col].length; idx++) {
+      const card = tableau[col][idx];
+      if (card._dealDelay === undefined) continue;
+      if (dealT < card._dealDelay) continue;
+      const t = Math.min(1, (dealT - card._dealDelay) / card._dealDuration);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const to = positions[idx];
+      const x = stockPos.x + (to.x - stockPos.x) * ease;
+      const y = stockPos.y + (to.y - stockPos.y) * ease;
+      drawCardBack(x, y);
+    }
+  }
+}
+
+function drawDraggedCards() {
+  if (!dragging) return;
+  const baseX = dragging.x - dragging.grabDX;
+  const baseY = dragging.y - dragging.grabDY;
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.45)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 4;
+  dragging.cards.forEach((card, i) => {
+    drawCardFace(baseX, baseY + i * FACEUP_OFFSET, card.rank, card.suit);
+  });
+  ctx.restore();
+}
+
+function update(ts) {
+  if (dealAnim.active) {
+    if (dealAnim.startTs === null) dealAnim.startTs = ts;
+    const t = ts - dealAnim.startTs;
+    if (t >= dealAnim.totalDuration) {
+      for (const col of tableau) for (const c of col) { delete c._dealDelay; delete c._dealDuration; }
+      dealAnim.active = false;
+      inputLocked = false;
+    }
+  }
+  if (shake && performance.now() - shake.start > SHAKE_DUR) shake = null;
+}
+
+function render(ts) {
+  drawBackground();
+  drawHUD(moves, formatTime(getElapsed()));
+  drawStockWasteFoundations();
+  drawTableau();
+  const dealT = dealAnim.active && dealAnim.startTs !== null ? ts - dealAnim.startTs : 0;
+  drawFlights(dealT);
+  drawDraggedCards();
+}
+
+function loop(ts) {
+  update(ts);
+  render(ts);
+  requestAnimationFrame(loop);
+}
+
+initGradients();
+dealNewGame();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>
