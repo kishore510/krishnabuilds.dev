@@ -60,11 +60,18 @@
   }
   #selectOverlay { background: #0B1026; }
   #endOverlay {
-    /* translucent, not opaque - the fully-revealed board (every comet shown
-       at once on a loss) stays visible behind the banner instead of being
-       hidden right when it matters most */
-    background: rgba(8,11,26,0.82);
-    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    /* translucent scrim, not opaque - the fully-revealed board (every comet
+       shown at once on a loss) stays visible behind the banner instead of
+       being hidden right when it matters most */
+    background: rgba(5,7,18,0.5);
+    /* content anchored toward the bottom, well clear of the grid's middle -
+       a mine hit near the center of the board used to land its trailing
+       tap/click right on the "Play Again" button that appeared under it,
+       instantly restarting the game. Keeping all interactive controls down
+       here, away from typical mid-grid tap points, is half the fix (the
+       other half is the input-lock cooldown below). */
+    justify-content: flex-end;
+    padding-bottom: calc(30px * var(--game-scale, 1));
   }
   .overlay h1 {
     margin: 0 0 6px;
@@ -75,6 +82,42 @@
     margin: 0 0 22px;
     font-size: calc(13px * var(--game-scale, 1));
     color: #8891B5;
+  }
+  .endBanner {
+    background: rgba(8,11,26,0.95);
+    border: calc(2px * var(--game-scale, 1)) solid #333F7E;
+    border-radius: calc(16px * var(--game-scale, 1));
+    padding: calc(16px * var(--game-scale, 1)) calc(24px * var(--game-scale, 1));
+    margin-bottom: calc(22px * var(--game-scale, 1));
+    box-shadow: 0 0 calc(26px * var(--game-scale, 1)) rgba(51,63,126,0.5);
+  }
+  .endBanner h1 {
+    margin: 0 0 8px;
+    font-size: calc(30px * var(--game-scale, 1));
+    font-weight: 800;
+    letter-spacing: 0.3px;
+  }
+  .endBanner p {
+    margin: 0;
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: 700;
+    color: #EDE6D6;
+  }
+  #endOverlay.won .endBanner {
+    border-color: #4FE0A0;
+    box-shadow: 0 0 calc(30px * var(--game-scale, 1)) rgba(79,224,160,0.45);
+  }
+  #endOverlay.won .endBanner h1 {
+    color: #4FE0A0;
+    text-shadow: 0 0 calc(14px * var(--game-scale, 1)) rgba(79,224,160,0.7);
+  }
+  #endOverlay.lost .endBanner {
+    border-color: #FF6B4A;
+    box-shadow: 0 0 calc(30px * var(--game-scale, 1)) rgba(255,107,74,0.45);
+  }
+  #endOverlay.lost .endBanner h1 {
+    color: #FF9B7A;
+    text-shadow: 0 0 calc(14px * var(--game-scale, 1)) rgba(255,107,74,0.75);
   }
   .diffList {
     display: flex;
@@ -106,30 +149,40 @@
   .endActions {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: calc(10px * var(--game-scale, 1));
-    margin-top: calc(18px * var(--game-scale, 1));
     width: calc(200px * var(--game-scale, 1));
   }
-  .endActions button {
+  /* Deliberately subdued - the result banner above is the thing that should
+     grab attention, not this button. A quiet outline reads as "available"
+     without competing with the win/loss message. */
+  #playAgainBtn {
     font-family: inherit;
-    font-weight: 700;
-    font-size: calc(14px * var(--game-scale, 1));
-    padding: calc(10px * var(--game-scale, 1)) 0;
-    border-radius: calc(20px * var(--game-scale, 1));
-    border: calc(2px * var(--game-scale, 1)) solid #F4C95D;
-    background: rgba(244,201,93,0.16);
+    font-weight: 600;
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(8px * var(--game-scale, 1)) calc(24px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(237,230,214,0.4);
+    background: rgba(255,255,255,0.06);
     color: #EDE6D6;
     cursor: pointer;
   }
-  .endActions button:active { background: rgba(244,201,93,0.34); }
-  .endActions button.secondary {
-    border-color: #333F7E;
-    background: rgba(51,63,126,0.35);
+  #playAgainBtn:active { background: rgba(255,255,255,0.18); }
+  #changeDiffBtn {
+    font-family: inherit;
+    font-weight: 500;
+    font-size: calc(12px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) 0;
+    border: none;
+    background: none;
+    color: #8891B5;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
   }
-  .endActions button.secondary:active { background: rgba(51,63,126,0.55); }
   #backToArcade {
     display: inline-block;
-    margin-top: calc(16px * var(--game-scale, 1));
+    margin-top: calc(14px * var(--game-scale, 1));
     font-size: calc(12px * var(--game-scale, 1));
     color: #8891B5;
     text-decoration: underline;
@@ -153,11 +206,13 @@
   </div>
 
   <div id="endOverlay" class="overlay">
-    <h1 id="endTitle">Sky Cleared!</h1>
-    <p class="tagline" id="endSubtitle"></p>
+    <div class="endBanner">
+      <h1 id="endTitle">Sky Cleared!</h1>
+      <p id="endTime"></p>
+    </div>
     <div class="endActions">
       <button id="playAgainBtn" type="button" data-kb-play>Play Again</button>
-      <button id="changeDiffBtn" type="button" class="secondary">Change Difficulty</button>
+      <button id="changeDiffBtn" type="button">Change Difficulty</button>
     </div>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
@@ -171,7 +226,7 @@ const muteBtn = document.getElementById('muteBtn');
 const selectOverlay = document.getElementById('selectOverlay');
 const endOverlay = document.getElementById('endOverlay');
 const endTitle = document.getElementById('endTitle');
-const endSubtitle = document.getElementById('endSubtitle');
+const endTime = document.getElementById('endTime');
 const playAgainBtn = document.getElementById('playAgainBtn');
 const changeDiffBtn = document.getElementById('changeDiffBtn');
 
@@ -592,6 +647,7 @@ function refreshDiffButtons() {
 function showSelectScreen() {
   screenState = 'select';
   endOverlay.style.display = 'none';
+  endOverlay.style.pointerEvents = '';
   refreshDiffButtons();
   selectOverlay.style.display = 'flex';
 }
@@ -612,18 +668,34 @@ function startGame(diff) {
   ensureAudio();
   selectOverlay.style.display = 'none';
   endOverlay.style.display = 'none';
+  endOverlay.style.pointerEvents = '';
   screenState = 'game';
 }
 
+// How long the end overlay's buttons stay inert after appearing. The tap
+// that reveals a mine (or completes a win) also generates a trailing
+// pointerup/click at the same screen position a beat later - and since the
+// overlay's buttons can appear right under that position, that trailing
+// click would otherwise land on "Play Again" and restart the game instantly
+// (this is exactly why it only happened for mid-board mines: corner mines
+// aren't anywhere near the button). Locking out clicks for a short window
+// lets the message render immediately while eating that one stray click.
+const END_OVERLAY_INPUT_LOCK_MS = 400;
+
 function showEndOverlay() {
+  endOverlay.classList.remove('won', 'lost');
   if (result === 'won') {
-    endTitle.textContent = 'Sky Cleared!';
-    endSubtitle.textContent = 'Cleared in ' + formatTime(timerElapsed) + ' · ' + DIFFICULTIES[difficulty].label;
+    endOverlay.classList.add('won');
+    endTitle.textContent = 'Sky Cleared! ☄️';
+    endTime.textContent = formatTime(timerElapsed) + ' · ' + DIFFICULTIES[difficulty].label;
   } else {
-    endTitle.textContent = 'Comet Strike!';
-    endSubtitle.textContent = 'Hit at ' + formatTime(timerElapsed) + ' · ' + DIFFICULTIES[difficulty].label;
+    endOverlay.classList.add('lost');
+    endTitle.textContent = '💥 Comet Strike!';
+    endTime.textContent = 'Hit at ' + formatTime(timerElapsed) + ' · ' + DIFFICULTIES[difficulty].label;
   }
+  endOverlay.style.pointerEvents = 'none';
   endOverlay.style.display = 'flex';
+  setTimeout(() => { endOverlay.style.pointerEvents = 'auto'; }, END_OVERLAY_INPUT_LOCK_MS);
 }
 
 document.querySelectorAll('.diffBtn').forEach(btn => {
@@ -698,37 +770,54 @@ function drawNumber(x, y, v) {
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
 }
 
+// Revealed mines get their own dark maroon panel (instead of reusing the
+// plain grey revealed-tile panel) so every comet on the board reads clearly
+// at a glance - not just from the small icon at its center.
+function drawMinePanel(x, y, pad, exploded) {
+  const rg = ctx.createLinearGradient(x, y, x, y + TILE);
+  if (exploded) { rg.addColorStop(0, '#6b2430'); rg.addColorStop(1, '#3d1520'); }
+  else { rg.addColorStop(0, '#4a2a3a'); rg.addColorStop(1, '#301c2c'); }
+  roundRect(x + pad, y + pad, TILE - pad * 2, TILE - pad * 2, 5);
+  ctx.fillStyle = rg;
+  ctx.fill();
+  ctx.strokeStyle = exploded ? 'rgba(255,140,110,0.85)' : PAL.tileRevealedBorder;
+  ctx.lineWidth = exploded ? 2 : 1;
+  ctx.stroke();
+}
+
 function drawCometMine(x, y, exploded) {
   const cx = x + TILE / 2, cy = y + TILE / 2;
-  const r = TILE * 0.22;
+  const r = TILE * (exploded ? 0.30 : 0.25);
   ctx.save();
-  ctx.shadowColor = PAL.cometGlow;
-  ctx.shadowBlur = TILE * 0.35;
-  ctx.fillStyle = PAL.cometCore;
+  ctx.shadowColor = exploded ? 'rgba(255,170,100,0.95)' : PAL.cometGlow;
+  ctx.shadowBlur = TILE * (exploded ? 0.55 : 0.42);
+  ctx.fillStyle = exploded ? '#FFB199' : PAL.cometCore;
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
   ctx.save();
-  const tailGrad = ctx.createLinearGradient(cx - TILE * 0.3, cy - TILE * 0.3, cx, cy);
+  const tailGrad = ctx.createLinearGradient(cx - TILE * 0.32, cy - TILE * 0.32, cx, cy);
   tailGrad.addColorStop(0, 'rgba(255,107,74,0)');
-  tailGrad.addColorStop(1, 'rgba(255,214,170,0.85)');
+  tailGrad.addColorStop(1, 'rgba(255,214,170,0.9)');
   ctx.strokeStyle = tailGrad;
-  ctx.lineWidth = Math.max(2, TILE * 0.08);
+  ctx.lineWidth = Math.max(2, TILE * 0.09);
   ctx.lineCap = 'round';
   ctx.beginPath();
-  ctx.moveTo(cx - TILE * 0.3, cy - TILE * 0.3);
+  ctx.moveTo(cx - TILE * 0.32, cy - TILE * 0.32);
   ctx.lineTo(cx - r * 0.4, cy - r * 0.4);
   ctx.stroke();
   ctx.restore();
 
   if (exploded) {
+    // bright ring picks the one actually hit out from the rest of the
+    // (same-colored) revealed comets around it
     ctx.save();
-    ctx.strokeStyle = 'rgba(255,60,60,0.9)';
-    ctx.lineWidth = Math.max(2, TILE * 0.06);
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = Math.max(2, TILE * 0.07);
     ctx.beginPath();
-    ctx.arc(cx, cy, r + TILE * 0.12, 0, Math.PI * 2);
+    ctx.arc(cx, cy, r + TILE * 0.15, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
   }
@@ -761,9 +850,13 @@ function drawTile(r, c) {
     ctx.translate(-cx, -cy);
   }
 
-  drawRevealedPanel(x, y, pad);
-  if (cell.mine) drawCometMine(x, y, cell.exploded);
-  else if (cell.count > 0) drawNumber(x, y, cell.count);
+  if (cell.mine) {
+    drawMinePanel(x, y, pad, cell.exploded);
+    drawCometMine(x, y, cell.exploded);
+  } else {
+    drawRevealedPanel(x, y, pad);
+    if (cell.count > 0) drawNumber(x, y, cell.count);
+  }
   ctx.restore();
 }
 
@@ -831,7 +924,7 @@ function draw() {
   ctx.drawImage(bgCanvas, 0, 0);
   drawGrid();
   drawHUD();
-  drawFooter();
+  if (!ended) drawFooter(); // the end banner already states the time clearly
 }
 
 // ---------- main loop (delta-time driven) ----------
