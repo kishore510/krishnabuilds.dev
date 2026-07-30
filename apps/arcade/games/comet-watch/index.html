@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comet Watch</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #05060d;
+    display: flex; align-items: center; justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #0B1026;
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(244,201,93,0.65);
+    background: rgba(11,16,38,0.9);
+    color: #EDE6D6;
+    cursor: pointer;
+    z-index: 5;
+  }
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #EDE6D6;
+    border-radius: 14px;
+    padding: calc(20px * var(--game-scale, 1));
+    box-sizing: border-box;
+    z-index: 4;
+  }
+  #selectOverlay { background: #0B1026; }
+  #endOverlay {
+    /* translucent, not opaque - the fully-revealed board (every comet shown
+       at once on a loss) stays visible behind the banner instead of being
+       hidden right when it matters most */
+    background: rgba(8,11,26,0.82);
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  }
+  .overlay h1 {
+    margin: 0 0 6px;
+    font-size: calc(26px * var(--game-scale, 1));
+    letter-spacing: 0.3px;
+  }
+  .overlay p.tagline {
+    margin: 0 0 22px;
+    font-size: calc(13px * var(--game-scale, 1));
+    color: #8891B5;
+  }
+  .diffList {
+    display: flex;
+    flex-direction: column;
+    gap: calc(12px * var(--game-scale, 1));
+    width: calc(220px * var(--game-scale, 1));
+  }
+  .diffBtn {
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(3px * var(--game-scale, 1));
+    font-size: calc(16px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(12px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #333F7E;
+    background: #232B55;
+    color: #EDE6D6;
+    cursor: pointer;
+  }
+  .diffBtn:active { background: #333F7E; }
+  .diffBtn .best {
+    font-size: calc(11px * var(--game-scale, 1));
+    font-weight: 500;
+    color: #8891B5;
+  }
+  .endActions {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    width: calc(200px * var(--game-scale, 1));
+  }
+  .endActions button {
+    font-family: inherit;
+    font-weight: 700;
+    font-size: calc(14px * var(--game-scale, 1));
+    padding: calc(10px * var(--game-scale, 1)) 0;
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #F4C95D;
+    background: rgba(244,201,93,0.16);
+    color: #EDE6D6;
+    cursor: pointer;
+  }
+  .endActions button:active { background: rgba(244,201,93,0.34); }
+  .endActions button.secondary {
+    border-color: #333F7E;
+    background: rgba(51,63,126,0.35);
+  }
+  .endActions button.secondary:active { background: rgba(51,63,126,0.55); }
+  #backToArcade {
+    display: inline-block;
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+    color: #8891B5;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+
+  <div id="selectOverlay" class="overlay">
+    <h1>☄️ Comet Watch</h1>
+    <p class="tagline">Clear the night sky, one patch at a time.</p>
+    <div class="diffList">
+      <button class="diffBtn" data-diff="easy" data-kb-play>Easy <span class="best" id="bestEasy">Best: —</span></button>
+      <button class="diffBtn" data-diff="medium" data-kb-play>Medium <span class="best" id="bestMedium">Best: —</span></button>
+      <button class="diffBtn" data-diff="hard" data-kb-play>Hard <span class="best" id="bestHard">Best: —</span></button>
+    </div>
+  </div>
+
+  <div id="endOverlay" class="overlay">
+    <h1 id="endTitle">Sky Cleared!</h1>
+    <p class="tagline" id="endSubtitle"></p>
+    <div class="endActions">
+      <button id="playAgainBtn" type="button" data-kb-play>Play Again</button>
+      <button id="changeDiffBtn" type="button" class="secondary">Change Difficulty</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const muteBtn = document.getElementById('muteBtn');
+const selectOverlay = document.getElementById('selectOverlay');
+const endOverlay = document.getElementById('endOverlay');
+const endTitle = document.getElementById('endTitle');
+const endSubtitle = document.getElementById('endSubtitle');
+const playAgainBtn = document.getElementById('playAgainBtn');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
+
+const W = canvas.width, H = canvas.height;
+
+// ---------- responsive scaling (resize-only, never inside the loop) ----------
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  wrap.style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// ---------- palette (from concept render) ----------
+const PAL = {
+  bgTop: '#0B1026',
+  bgBot: '#1B1440',
+  tileBase: '#232B55',
+  tileHi: '#333F7E',
+  tileLo: '#141931',
+  tileRevealedTop: '#7D839F',
+  tileRevealedBot: '#666C87',
+  tileRevealedBorder: 'rgba(0,0,0,0.35)',
+  flagGold: '#F4C95D',
+  flagGlow: 'rgba(244,201,93,0.35)',
+  cometCore: '#FF6B4A',
+  cometGlow: 'rgba(255,107,74,0.65)',
+  hudText: '#EDE6D6',
+  hudSub: '#8891B5',
+  numberStroke: 'rgba(10,12,26,0.85)',
+  numbers: {
+    1: '#7FC4FF', 2: '#4FE0A0', 3: '#FF9BB0', 4: '#C3B2FF',
+    5: '#FFC069', 6: '#5FF0E5', 7: '#1B1E2E', 8: '#FF8A65'
+  }
+};
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// ---------- cached background (gradient + stars + signature comet) ----------
+const bgCanvas = document.createElement('canvas');
+bgCanvas.width = W; bgCanvas.height = H;
+(function renderBackground() {
+  const bctx = bgCanvas.getContext('2d');
+  const g = bctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, PAL.bgTop);
+  g.addColorStop(1, PAL.bgBot);
+  bctx.fillStyle = g;
+  bctx.fillRect(0, 0, W, H);
+
+  let seed = 42;
+  function rand() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 1000) / 1000; }
+  for (let i = 0; i < 90; i++) {
+    const x = rand() * W, y = rand() * H;
+    const r = rand() * 1.1 + 0.3;
+    bctx.globalAlpha = 0.25 + rand() * 0.5;
+    bctx.fillStyle = '#FFFFFF';
+    bctx.beginPath();
+    bctx.arc(x, y, r, 0, Math.PI * 2);
+    bctx.fill();
+  }
+  bctx.globalAlpha = 1;
+
+  // signature comet streak, decorative, behind the HUD
+  bctx.save();
+  const x0 = -20, y0 = 18, x1 = 250, y1 = 46;
+  const grad = bctx.createLinearGradient(x0, y0, x1, y1);
+  grad.addColorStop(0, 'rgba(255,107,74,0)');
+  grad.addColorStop(0.85, 'rgba(255,107,74,0.55)');
+  grad.addColorStop(1, 'rgba(255,214,170,0.9)');
+  bctx.strokeStyle = grad;
+  bctx.lineWidth = 3;
+  bctx.lineCap = 'round';
+  bctx.beginPath();
+  bctx.moveTo(x0, y0);
+  bctx.quadraticCurveTo(90, 10, x1, y1);
+  bctx.stroke();
+  bctx.fillStyle = '#FFE3D2';
+  bctx.beginPath();
+  bctx.arc(x1, y1, 3.5, 0, Math.PI * 2);
+  bctx.fill();
+  bctx.restore();
+})();
+
+// ---------- difficulty specs ----------
+const DIFFICULTIES = {
+  easy:   { cols: 8,  rows: 10, tile: 36, mines: 10, label: 'Easy' },
+  medium: { cols: 10, rows: 13, tile: 30, mines: 20, label: 'Medium' },
+  hard:   { cols: 12, rows: 16, tile: 26, mines: 36, label: 'Hard' }
+};
+const HUD_BOTTOM = 96, FOOTER_TOP = 516; // grid band: y 96 - 516
+
+// mode toggle pill, fixed HUD position (matches concept render)
+const PILL = { x: 180 - 74, y: 58, w: 148, h: 30 };
+
+// ---------- audio (procedural Web Audio only) ----------
+let audioCtx = null;
+let muted = sessionStorage.getItem('cometwatchMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.1;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const t0 = audioCtx.currentTime + (delay || 0);
+  osc.start(t0);
+  gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+  osc.stop(t0 + duration + 0.03);
+}
+
+function playBlip() { tone(760, 0.07, 'sine', 0.10); }
+function playCascade(n) {
+  const notes = Math.min(n, 10);
+  for (let i = 0; i < notes; i++) tone(520 + i * 40, 0.09, 'triangle', 0.07, i * 0.025);
+}
+function playRevealSound(count) { if (count > 1) playCascade(count); else if (count === 1) playBlip(); }
+function playFlagTick() { tone(1000, 0.035, 'square', 0.05); }
+function playModeTick() { tone(700, 0.04, 'square', 0.045); }
+function playLoss() {
+  tone(300, 0.18, 'sawtooth', 0.14);
+  tone(220, 0.22, 'sawtooth', 0.13, 0.09);
+  tone(150, 0.30, 'sawtooth', 0.12, 0.18);
+}
+function playWin() {
+  tone(660, 0.12, 'triangle', 0.11);
+  tone(880, 0.12, 'triangle', 0.11, 0.09);
+  tone(1100, 0.18, 'triangle', 0.12, 0.18);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('cometwatchMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+// ---------- best-time storage ----------
+function loadBest(diff) {
+  const v = sessionStorage.getItem('cometwatch_best_' + diff);
+  if (v === null) return null;
+  const n = parseFloat(v);
+  return isFinite(n) ? n : null;
+}
+function saveBest(diff, seconds) {
+  try { sessionStorage.setItem('cometwatch_best_' + diff, String(seconds)); } catch (e) {}
+}
+function formatTime(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+function formatBest(diff) {
+  const b = loadBest(diff);
+  return b === null ? '—' : formatTime(b);
+}
+
+// ---------- game state ----------
+let screenState = 'select'; // 'select' | 'game'
+let difficulty = 'easy';
+let COLS, ROWS, TILE, MINES, GX, GY;
+let grid = [];
+let mode = 'reveal'; // 'reveal' | 'flag'
+let modeAnimT = 0;   // 0 = reveal side highlighted, 1 = flag side
+let flaggedCount = 0;
+let generated = false;
+let ended = false;
+let result = null; // 'won' | 'lost'
+let timerStart = 0, timerElapsed = 0;
+let nowTs = 0;
+
+const REVEAL_ANIM_MS = 180;
+function easeOutQuad(t) { return 1 - (1 - t) * (1 - t); }
+
+function forEachNeighbor(r, c, fn) {
+  for (let dr = -1; dr <= 1; dr++)
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      const nr = r + dr, nc = c + dc;
+      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) fn(nr, nc);
+    }
+}
+
+function computeGridOrigin() {
+  const gridW = COLS * TILE, gridH = ROWS * TILE;
+  GX = (W - gridW) / 2;
+  GY = HUD_BOTTOM + ((FOOTER_TOP - HUD_BOTTOM) - gridH) / 2;
+}
+
+function initGrid() {
+  grid = [];
+  for (let r = 0; r < ROWS; r++) {
+    const row = [];
+    for (let c = 0; c < COLS; c++) row.push({ mine: false, count: 0, state: 'hidden', revealTime: 0, exploded: false });
+    grid.push(row);
+  }
+}
+
+function generateBoard(excludeR, excludeC) {
+  const excluded = new Set();
+  excluded.add(excludeR + ',' + excludeC);
+  forEachNeighbor(excludeR, excludeC, (nr, nc) => excluded.add(nr + ',' + nc));
+
+  const candidates = [];
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (!excluded.has(r + ',' + c)) candidates.push([r, c]);
+
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+  for (let i = 0; i < MINES && i < candidates.length; i++) {
+    const [r, c] = candidates[i];
+    grid[r][c].mine = true;
+  }
+
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++) {
+      if (grid[r][c].mine) continue;
+      let cnt = 0;
+      forEachNeighbor(r, c, (nr, nc) => { if (grid[nr][nc].mine) cnt++; });
+      grid[r][c].count = cnt;
+    }
+
+  generated = true;
+}
+
+function startTimer() { timerStart = performance.now(); }
+function currentElapsed() {
+  if (!generated) return 0;
+  if (ended) return timerElapsed;
+  return (performance.now() - timerStart) / 1000;
+}
+
+// flood-fill reveal (real BFS over actual board state, not an approximation)
+function floodOpen(r, c) {
+  const stack = [[r, c]];
+  const opened = [];
+  while (stack.length) {
+    const [rr, cc] = stack.pop();
+    const cell = grid[rr][cc];
+    if (cell.state !== 'hidden') continue;
+    cell.state = 'revealed';
+    cell.revealTime = nowTs;
+    opened.push([rr, cc]);
+    if (cell.count === 0) {
+      forEachNeighbor(rr, cc, (nr, nc) => {
+        if (grid[nr][nc].state === 'hidden' && !grid[nr][nc].mine) stack.push([nr, nc]);
+      });
+    }
+  }
+  return opened;
+}
+
+function revealTileAction(r, c) {
+  const cell = grid[r][c];
+  if (cell.mine) {
+    cell.exploded = true;
+    cell.state = 'revealed';
+    cell.revealTime = nowTs;
+    triggerLoss();
+    return;
+  }
+  const opened = floodOpen(r, c);
+  playRevealSound(opened.length);
+  checkWin();
+}
+
+function toggleFlag(r, c) {
+  const cell = grid[r][c];
+  if (cell.state === 'hidden') { cell.state = 'flagged'; flaggedCount++; playFlagTick(); }
+  else if (cell.state === 'flagged') { cell.state = 'hidden'; flaggedCount--; playFlagTick(); }
+}
+
+function chordTile(r, c) {
+  const cell = grid[r][c];
+  const neighbors = [];
+  let flaggedNeighbors = 0;
+  forEachNeighbor(r, c, (nr, nc) => {
+    neighbors.push([nr, nc]);
+    if (grid[nr][nc].state === 'flagged') flaggedNeighbors++;
+  });
+  if (flaggedNeighbors !== cell.count) return;
+
+  let hitMine = false;
+  let totalOpened = 0;
+  for (const [nr, nc] of neighbors) {
+    const n = grid[nr][nc];
+    if (n.state !== 'hidden') continue;
+    if (n.mine) {
+      n.exploded = true;
+      n.state = 'revealed';
+      n.revealTime = nowTs;
+      hitMine = true;
+    } else {
+      totalOpened += floodOpen(nr, nc).length;
+    }
+  }
+  if (hitMine) { triggerLoss(); return; }
+  if (totalOpened > 0) playRevealSound(totalOpened);
+  checkWin();
+}
+
+function handleTileTap(r, c) {
+  if (!generated) { generateBoard(r, c); startTimer(); }
+  const cell = grid[r][c];
+  if (cell.state === 'revealed') { chordTile(r, c); return; }
+  if (mode === 'reveal') {
+    if (cell.state === 'flagged') return;
+    revealTileAction(r, c);
+  } else {
+    toggleFlag(r, c);
+  }
+}
+
+function revealAllMines() {
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++) {
+      const cell = grid[r][c];
+      if (cell.mine && cell.state === 'hidden') {
+        cell.state = 'revealed';
+        cell.revealTime = nowTs; // simultaneous reveal, no stagger
+      }
+    }
+}
+
+function triggerLoss() {
+  if (ended) return;
+  ended = true;
+  result = 'lost';
+  timerElapsed = (performance.now() - timerStart) / 1000;
+  revealAllMines();
+  playLoss();
+  showEndOverlay();
+}
+
+function checkWin() {
+  if (ended) return;
+  let revealedNonMine = 0;
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (!grid[r][c].mine && grid[r][c].state === 'revealed') revealedNonMine++;
+  if (revealedNonMine === ROWS * COLS - MINES) {
+    ended = true;
+    result = 'won';
+    timerElapsed = (performance.now() - timerStart) / 1000;
+    const best = loadBest(difficulty);
+    if (best === null || timerElapsed < best) saveBest(difficulty, timerElapsed);
+    playWin();
+    showEndOverlay();
+  }
+}
+
+function setMode(next) {
+  if (next === mode) return;
+  mode = next;
+  playModeTick();
+}
+
+// ---------- input ----------
+function getCanvasPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+}
+function inPill(pos) {
+  return pos.x >= PILL.x && pos.x <= PILL.x + PILL.w && pos.y >= PILL.y && pos.y <= PILL.y + PILL.h;
+}
+function cellAt(pos) {
+  if (pos.x < GX || pos.y < GY) return null;
+  const c = Math.floor((pos.x - GX) / TILE);
+  const r = Math.floor((pos.y - GY) / TILE);
+  if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return null;
+  return { r, c };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (screenState !== 'game' || ended) return;
+  e.preventDefault();
+  ensureAudio();
+  const pos = getCanvasPos(e);
+  if (inPill(pos)) { setMode(mode === 'reveal' ? 'flag' : 'reveal'); return; }
+  const cell = cellAt(pos);
+  if (cell) handleTileTap(cell.r, cell.c);
+});
+
+// ---------- screen transitions ----------
+function refreshDiffButtons() {
+  document.getElementById('bestEasy').textContent = 'Best: ' + formatBest('easy');
+  document.getElementById('bestMedium').textContent = 'Best: ' + formatBest('medium');
+  document.getElementById('bestHard').textContent = 'Best: ' + formatBest('hard');
+}
+
+function showSelectScreen() {
+  screenState = 'select';
+  endOverlay.style.display = 'none';
+  refreshDiffButtons();
+  selectOverlay.style.display = 'flex';
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  const cfg = DIFFICULTIES[diff];
+  COLS = cfg.cols; ROWS = cfg.rows; TILE = cfg.tile; MINES = cfg.mines;
+  computeGridOrigin();
+  initGrid();
+  generated = false;
+  ended = false;
+  result = null;
+  flaggedCount = 0;
+  mode = 'reveal';
+  modeAnimT = 0;
+  timerElapsed = 0;
+  ensureAudio();
+  selectOverlay.style.display = 'none';
+  endOverlay.style.display = 'none';
+  screenState = 'game';
+}
+
+function showEndOverlay() {
+  if (result === 'won') {
+    endTitle.textContent = 'Sky Cleared!';
+    endSubtitle.textContent = 'Cleared in ' + formatTime(timerElapsed) + ' · ' + DIFFICULTIES[difficulty].label;
+  } else {
+    endTitle.textContent = 'Comet Strike!';
+    endSubtitle.textContent = 'Hit at ' + formatTime(timerElapsed) + ' · ' + DIFFICULTIES[difficulty].label;
+  }
+  endOverlay.style.display = 'flex';
+}
+
+document.querySelectorAll('.diffBtn').forEach(btn => {
+  btn.addEventListener('click', () => startGame(btn.dataset.diff));
+});
+playAgainBtn.addEventListener('click', () => startGame(difficulty));
+changeDiffBtn.addEventListener('click', showSelectScreen);
+
+// ---------- drawing ----------
+function drawUnopenedBase(x, y, pad) {
+  roundRect(x + pad, y + pad, TILE - pad * 2, TILE - pad * 2, 5);
+  ctx.fillStyle = PAL.tileBase;
+  ctx.fill();
+
+  ctx.save();
+  roundRect(x + pad, y + pad, TILE - pad * 2, TILE - pad * 2, 5);
+  ctx.clip();
+  ctx.beginPath();
+  ctx.moveTo(x, y); ctx.lineTo(x + TILE, y); ctx.lineTo(x, y + TILE);
+  ctx.closePath(); ctx.fillStyle = PAL.tileHi; ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + TILE, y); ctx.lineTo(x + TILE, y + TILE); ctx.lineTo(x, y + TILE);
+  ctx.closePath(); ctx.fillStyle = PAL.tileLo; ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  roundRect(x + pad, y + pad, TILE - pad * 2, TILE - pad * 2, 5);
+  ctx.stroke();
+}
+
+function drawFlagStar(x, y) {
+  ctx.save();
+  ctx.shadowColor = PAL.flagGlow;
+  ctx.shadowBlur = 10;
+  ctx.fillStyle = PAL.flagGold;
+  ctx.font = `${TILE * 0.5}px -apple-system, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('★', x + TILE / 2, y + TILE / 2 + 1);
+  ctx.restore();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawRevealedPanel(x, y, pad) {
+  const rg = ctx.createLinearGradient(x, y, x, y + TILE);
+  rg.addColorStop(0, PAL.tileRevealedTop);
+  rg.addColorStop(1, PAL.tileRevealedBot);
+  roundRect(x + pad, y + pad, TILE - pad * 2, TILE - pad * 2, 5);
+  ctx.fillStyle = rg;
+  ctx.fill();
+  ctx.strokeStyle = PAL.tileRevealedBorder;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  ctx.moveTo(x + pad + 4, y + pad + 1.5);
+  ctx.lineTo(x + TILE - pad - 4, y + pad + 1.5);
+  ctx.stroke();
+}
+
+function drawNumber(x, y, v) {
+  const label = String(v);
+  ctx.font = `700 ${TILE * 0.54}px -apple-system, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 3.5;
+  ctx.strokeStyle = PAL.numberStroke;
+  ctx.strokeText(label, x + TILE / 2, y + TILE / 2 + 1);
+  ctx.fillStyle = PAL.numbers[v] || '#FFFFFF';
+  ctx.fillText(label, x + TILE / 2, y + TILE / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawCometMine(x, y, exploded) {
+  const cx = x + TILE / 2, cy = y + TILE / 2;
+  const r = TILE * 0.22;
+  ctx.save();
+  ctx.shadowColor = PAL.cometGlow;
+  ctx.shadowBlur = TILE * 0.35;
+  ctx.fillStyle = PAL.cometCore;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  const tailGrad = ctx.createLinearGradient(cx - TILE * 0.3, cy - TILE * 0.3, cx, cy);
+  tailGrad.addColorStop(0, 'rgba(255,107,74,0)');
+  tailGrad.addColorStop(1, 'rgba(255,214,170,0.85)');
+  ctx.strokeStyle = tailGrad;
+  ctx.lineWidth = Math.max(2, TILE * 0.08);
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx - TILE * 0.3, cy - TILE * 0.3);
+  ctx.lineTo(cx - r * 0.4, cy - r * 0.4);
+  ctx.stroke();
+  ctx.restore();
+
+  if (exploded) {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,60,60,0.9)';
+    ctx.lineWidth = Math.max(2, TILE * 0.06);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r + TILE * 0.12, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawTile(r, c) {
+  const cell = grid[r][c];
+  const x = GX + c * TILE, y = GY + r * TILE;
+  const pad = 1.5;
+
+  if (cell.state === 'hidden' || cell.state === 'flagged') {
+    drawUnopenedBase(x, y, pad);
+    if (cell.state === 'flagged') drawFlagStar(x, y);
+    return;
+  }
+
+  let revealT = 1;
+  if (cell.revealTime) {
+    const age = nowTs - cell.revealTime;
+    revealT = age >= REVEAL_ANIM_MS ? 1 : Math.max(0, age / REVEAL_ANIM_MS);
+  }
+
+  ctx.save();
+  if (revealT < 1) {
+    const cx = x + TILE / 2, cy = y + TILE / 2;
+    const s = 0.72 + 0.28 * easeOutQuad(revealT);
+    ctx.globalAlpha = 0.35 + 0.65 * revealT;
+    ctx.translate(cx, cy);
+    ctx.scale(s, s);
+    ctx.translate(-cx, -cy);
+  }
+
+  drawRevealedPanel(x, y, pad);
+  if (cell.mine) drawCometMine(x, y, cell.exploded);
+  else if (cell.count > 0) drawNumber(x, y, cell.count);
+  ctx.restore();
+}
+
+function drawGrid() {
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      drawTile(r, c);
+}
+
+function drawModePill() {
+  roundRect(PILL.x, PILL.y, PILL.w, PILL.h, PILL.h / 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.06)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const half = PILL.w / 2 - 2;
+  const activeX = PILL.x + 2 + modeAnimT * half;
+  roundRect(activeX, PILL.y + 2, half, PILL.h - 4, (PILL.h - 4) / 2);
+  ctx.fillStyle = '#3A4A8F';
+  ctx.fill();
+
+  ctx.font = '600 12px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = mode === 'reveal' ? PAL.hudText : PAL.hudSub;
+  ctx.fillText('🔍 Reveal', PILL.x + PILL.w / 4 + 1, PILL.y + PILL.h / 2 + 1);
+  ctx.fillStyle = mode === 'flag' ? PAL.hudText : PAL.hudSub;
+  ctx.fillText('⭐ Flag', PILL.x + PILL.w * 0.75 + 1, PILL.y + PILL.h / 2 + 1);
+  ctx.textAlign = 'left';
+}
+
+function drawHUD() {
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('COMETS LEFT', 16, 18);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 20px -apple-system, sans-serif';
+  ctx.fillText(String(MINES - flaggedCount), 16, 40);
+
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('TIME', 344, 18);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 20px -apple-system, sans-serif';
+  ctx.fillText(formatTime(currentElapsed()), 344, 40);
+  ctx.textAlign = 'left';
+
+  drawModePill();
+}
+
+function drawFooter() {
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '11px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('Best: ' + formatBest(difficulty) + ' · ' + DIFFICULTIES[difficulty].label, 180, 526);
+  ctx.textAlign = 'left';
+}
+
+function draw() {
+  ctx.drawImage(bgCanvas, 0, 0);
+  drawGrid();
+  drawHUD();
+  drawFooter();
+}
+
+// ---------- main loop (delta-time driven) ----------
+let lastTs = 0;
+function updateAnimations(dt) {
+  const target = mode === 'reveal' ? 0 : 1;
+  const rate = 1 - Math.exp(-dt * 14);
+  modeAnimT += (target - modeAnimT) * rate;
+}
+
+function loop() {
+  const now = performance.now();
+  const dt = lastTs ? Math.min(0.05, (now - lastTs) / 1000) : 0;
+  lastTs = now;
+  nowTs = now;
+  updateAnimations(dt);
+  if (screenState === 'game') draw();
+  requestAnimationFrame(loop);
+}
+
+showSelectScreen();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
