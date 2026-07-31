@@ -340,7 +340,10 @@ const HUD_H = 72;
 const FOOTER_TOP = 516;
 const RW = 52, CH = 52; // row-clue width / col-clue height
 const CLUE_FONT = "600 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
-const CLUE_SPACING = 17;
+const CLUE_SPACING = 17;   // horizontal spacing between side-by-side row-clue numbers
+const CLUE_V_SPACING = 20; // vertical spacing between stacked column-clue numbers (wider
+                            // than CLUE_SPACING so two stacked single digits, e.g. "2"
+                            // over "2", don't read as one merged number like "22")
 
 const DIFFS = {
   easy:   { N: 8,  cell: 32, label: 'EASY' },
@@ -992,7 +995,20 @@ function drawColClues() {
     let y = L.GY - 8;
     for (let i = clues.length - 1; i >= 0; i--) {
       ctx.fillText(String(clues[i]), x, y + 1);
-      y -= CLUE_SPACING;
+      // A thin divider between consecutive stacked numbers makes the
+      // separation unambiguous regardless of spacing - skip it after the
+      // bottom-most (closest-to-grid) number, since there's nothing below
+      // it in the stack to divide from.
+      if (i > 0) {
+        const dividerY = y - CLUE_V_SPACING / 2;
+        ctx.strokeStyle = PAL.gridLine;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x - 6, dividerY);
+        ctx.lineTo(x + 6, dividerY);
+        ctx.stroke();
+      }
+      y -= CLUE_V_SPACING;
     }
   }
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
@@ -1022,13 +1038,19 @@ function drawStrikethroughs(now) {
     const frac = Math.min(1, (now - anim) / 220);
     const clues = puzzle.colClues[c];
     const x = L.GX + c * L.cell + L.cell / 2;
-    const bottomY = L.GY - 6;
-    const topY = bottomY - clues.length * CLUE_SPACING + 4;
-    const curTopY = bottomY - (bottomY - topY) * frac;
+    // Vertical strikethrough down through the center of the column's
+    // stacked clue numbers - the vertical equivalent of the row strike,
+    // not a small mark above them. bottomNumberY/topNumberY mirror exactly
+    // how drawColClues() positions the bottom-most and topmost numbers.
+    const bottomNumberY = L.GY - 8;
+    const topNumberY = bottomNumberY - (clues.length - 1) * CLUE_V_SPACING;
+    const fullTopY = topNumberY - 6;
+    const fullBottomY = bottomNumberY + 4;
+    const curTopY = fullBottomY - (fullBottomY - fullTopY) * frac;
     ctx.strokeStyle = PAL.clueDone;
     ctx.beginPath();
     ctx.moveTo(x, curTopY);
-    ctx.lineTo(x, bottomY);
+    ctx.lineTo(x, fullBottomY);
     ctx.stroke();
   }
 }
