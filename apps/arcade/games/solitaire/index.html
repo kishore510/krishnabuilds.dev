@@ -280,19 +280,19 @@ function drawCardFace(x, y, rank, suit) {
 
   ctx.fillStyle = col;
   ctx.textAlign = 'left';
-  ctx.font = `700 ${CW * 0.26}px -apple-system, sans-serif`;
-  ctx.fillText(label, x + 4, y + 10);
-  ctx.font = `${CW * 0.22}px -apple-system, sans-serif`;
-  ctx.fillText(SUIT_GLYPH[suit], x + 4, y + 21);
+  ctx.font = `700 ${CW * 0.32}px Arial, Helvetica, sans-serif`;
+  ctx.fillText(label, x + 4, y + 11);
+  ctx.font = `${CW * 0.26}px Arial, Helvetica, sans-serif`;
+  ctx.fillText(SUIT_GLYPH[suit], x + 4, y + 24);
 
   ctx.save();
   ctx.translate(x + CW - 4, y + CH - 4);
   ctx.rotate(Math.PI);
   ctx.textAlign = 'left';
-  ctx.font = `700 ${CW * 0.26}px -apple-system, sans-serif`;
-  ctx.fillText(label, 0, -6);
-  ctx.font = `${CW * 0.22}px -apple-system, sans-serif`;
-  ctx.fillText(SUIT_GLYPH[suit], 0, 5);
+  ctx.font = `700 ${CW * 0.32}px Arial, Helvetica, sans-serif`;
+  ctx.fillText(label, 0, -7);
+  ctx.font = `${CW * 0.26}px Arial, Helvetica, sans-serif`;
+  ctx.fillText(SUIT_GLYPH[suit], 0, 6);
   ctx.restore();
 
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
@@ -331,7 +331,14 @@ const FACEUP_OFFSET = 22;
 
 const stockPos = { x: ROW_X0, y: ROW_Y };
 const wastePos = { x: ROW_X0 + (CW + SLOT_GAP), y: ROW_Y };
-function foundationPos(i) { return { x: ROW_X0 + (3 + i) * (CW + SLOT_GAP), y: ROW_Y }; }
+// The row has 7 real slot positions (stock, waste, gap, 4 foundations) but
+// ROW_X0 above only centers for 6 slot-widths (matching the concept file's
+// own math) - taken at face value, slot 6 (the last foundation) would spill
+// off the right edge of the 360px canvas. Pull just the foundation block
+// left so its right edge lines up with the HUD's TIME text margin (x=344)
+// instead of overflowing, without touching the stock/waste/gap positions.
+const FOUND_X0 = 344 - (4 * CW + 3 * SLOT_GAP);
+function foundationPos(i) { return { x: FOUND_X0 + i * (CW + SLOT_GAP), y: ROW_Y }; }
 function tabColX(col) { return TAB_X0 + col * (CW + TAB_GAP); }
 
 // ---------- game state ----------
