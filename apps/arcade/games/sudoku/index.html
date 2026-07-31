@@ -221,7 +221,12 @@ const PAL = {
   conflict: '#C0392B',
   conflictBg: 'rgba(192,57,43,0.12)',
   selectedBg: 'rgba(244,196,48,0.28)',
-  peerBg: 'rgba(255,255,255,0.08)',
+  // Note: rgba(255,255,255,0.08) from the concept render assumed this tint
+  // sat directly on the dark canvas backdrop (replacing the white cell
+  // fill). Since the base cell color is now always painted first, a white
+  // wash on white would be invisible — use a soft ink-gray wash instead so
+  // peer cells stay legibly distinct without hurting digit/note contrast.
+  peerBg: 'rgba(45,55,72,0.07)',
   noteText: 'rgba(45,55,72,0.55)',
   hudText: '#F4F1EA',
   hudSub: 'rgba(244,241,234,0.6)',
@@ -613,6 +618,16 @@ function drawCellHighlights(now) {
       }
       const key = r + ',' + c;
       const inPeerLine = selected && (r === sr || c === sc || (Math.floor(r / 3) * 3 === sbr && Math.floor(c / 3) * 3 === sbc));
+
+      // Base fill is always the real cell color (white / given light-gray) so
+      // digit and note text never loses contrast — highlights below are a
+      // translucent wash layered on TOP of that base, never a replacement
+      // for it. (The concept render replaced the base with a bare tint over
+      // the dark canvas backdrop for selected/peer/conflict cells, which is
+      // what made notes and player digits unreadable in those cells.)
+      ctx.fillStyle = given[r][c] ? PAL.cellGivenBg : PAL.cellBg;
+      ctx.fillRect(x, y, CELL, CELL);
+
       if (conflicts.has(key)) {
         ctx.fillStyle = PAL.conflictBg;
         ctx.fillRect(x, y, CELL, CELL);
@@ -621,12 +636,6 @@ function drawCellHighlights(now) {
         ctx.fillRect(x, y, CELL, CELL);
       } else if (inPeerLine) {
         ctx.fillStyle = PAL.peerBg;
-        ctx.fillRect(x, y, CELL, CELL);
-      } else if (given[r][c]) {
-        ctx.fillStyle = PAL.cellGivenBg;
-        ctx.fillRect(x, y, CELL, CELL);
-      } else {
-        ctx.fillStyle = PAL.cellBg;
         ctx.fillRect(x, y, CELL, CELL);
       }
     }
@@ -718,7 +727,7 @@ function drawDigitPalette() {
 
 function draw(now) {
   ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
-  if (state !== 'playing' && state !== 'winning') return;
+  if (state !== 'playing' && state !== 'winning' && state !== 'won') return;
 
   let pulse = 1;
   if (state === 'winning') {
