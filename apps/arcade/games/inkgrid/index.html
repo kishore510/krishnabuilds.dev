@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inkgrid</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #05060d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas#game {
+    background: #EFEAD9;
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #2E2B22;
+    pointer-events: none;
+  }
+  .overlay.hidden { display: none; }
+
+  /* ---------- difficulty select ---------- */
+  #selectOverlay {
+    background: rgba(239,234,217,0.98);
+    border-radius: 14px;
+    pointer-events: auto;
+  }
+  #selectOverlay h1 {
+    margin: 0 0 4px;
+    font-size: calc(30px * var(--game-scale, 1));
+    color: #2E2B22;
+  }
+  #selectOverlay .tagline {
+    margin: 0 0 calc(18px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    color: #8A8370;
+  }
+  .diffList {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10px * var(--game-scale, 1));
+    width: calc(220px * var(--game-scale, 1));
+  }
+  .diffBtn {
+    font-family: inherit;
+    font-size: calc(16px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(12px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    border-radius: calc(12px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(38,52,74,0.35);
+    background: rgba(38,52,74,0.06);
+    color: #26344A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .diffBtn:active { background: rgba(38,52,74,0.16); }
+  .diffBtn .bestTime {
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 600;
+    color: #8A8370;
+  }
+  #backToArcade {
+    display: inline-block;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    color: #26344A;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.8;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+
+  /* ---------- tutorial ---------- */
+  #tutorialOverlay {
+    background: rgba(5,6,13,0.55);
+    pointer-events: auto;
+  }
+  .tutorialCard {
+    background: #EFEAD9;
+    border-radius: calc(16px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(38,52,74,0.3);
+    padding: calc(18px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    width: calc(300px * var(--game-scale, 1));
+    box-sizing: border-box;
+    max-height: 86%;
+    overflow-y: auto;
+  }
+  .tutorialCard h2 {
+    margin: 0 0 calc(12px * var(--game-scale, 1));
+    font-size: calc(19px * var(--game-scale, 1));
+    color: #2E2B22;
+  }
+  .tutStep {
+    display: flex;
+    align-items: center;
+    gap: calc(12px * var(--game-scale, 1));
+    margin-bottom: calc(14px * var(--game-scale, 1));
+    text-align: left;
+  }
+  .tutStep p {
+    margin: 0;
+    font-size: calc(13px * var(--game-scale, 1));
+    color: #4A4638;
+    line-height: 1.4;
+  }
+  .tutStep canvas {
+    flex: none;
+    border-radius: calc(6px * var(--game-scale, 1));
+  }
+  #tutorialCloseBtn {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: none;
+    background: #26344A;
+    color: #EFEAD9;
+    cursor: pointer;
+    display: block;
+    margin: calc(4px * var(--game-scale, 1)) auto 0;
+  }
+  #tutorialCloseBtn:active { background: #1b2536; }
+
+  /* ---------- in-game HUD controls (DOM, positioned to match canvas HUD) ---------- */
+  #hudControls { display: none; }
+  #hudControls.visible { display: block; }
+  .iconBtn {
+    position: absolute;
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(38,52,74,0.35);
+    background: rgba(38,52,74,0.10);
+    color: #26344A;
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    padding: 0;
+  }
+  .iconBtn:active { background: rgba(38,52,74,0.22); }
+  #muteBtn {
+    left: calc(168px * var(--game-scale, 1));
+    top: calc(4px * var(--game-scale, 1));
+    width: calc(24px * var(--game-scale, 1));
+    height: calc(24px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+  }
+  #helpBtn {
+    left: calc(20px * var(--game-scale, 1));
+    top: calc(44px * var(--game-scale, 1));
+    width: calc(28px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+  }
+  #togglePill {
+    position: absolute;
+    left: calc(106px * var(--game-scale, 1));
+    top: calc(44px * var(--game-scale, 1));
+    width: calc(148px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    background: rgba(38,52,74,0.08);
+    border: calc(1px * var(--game-scale, 1)) solid rgba(38,52,74,0.18);
+    display: flex;
+    pointer-events: auto;
+    overflow: hidden;
+  }
+  .pillSeg {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #6b6552;
+    font-family: inherit;
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: calc(12px * var(--game-scale, 1));
+    margin: calc(2px * var(--game-scale, 1));
+  }
+  .pillSeg.active {
+    background: #26344A;
+    color: #EFEAD9;
+  }
+
+  /* ---------- win screen ---------- */
+  /* Uses a class (not the #winOverlay ID) for its layout overrides so that
+     specificity never beats the shared .overlay.hidden{display:none} rule
+     above — an ID-selector display rule here would always win over the
+     two-class .hidden rule and keep this overlay's click-catching bands on
+     top even while "hidden". */
+  .overlay.winLayout {
+    align-items: stretch;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .winBanner {
+    pointer-events: auto;
+    background: rgba(239,234,217,0.94);
+    border-bottom: calc(1.5px * var(--game-scale, 1)) solid rgba(38,52,74,0.2);
+    padding: calc(14px * var(--game-scale, 1)) 0 calc(10px * var(--game-scale, 1));
+  }
+  .winBanner h2 {
+    margin: 0 0 calc(4px * var(--game-scale, 1));
+    font-size: calc(22px * var(--game-scale, 1));
+    color: #26344A;
+  }
+  .winBanner p {
+    margin: 0;
+    font-size: calc(13px * var(--game-scale, 1));
+    color: #4A4638;
+    font-weight: 600;
+  }
+  .winBanner .winBest {
+    color: #b8722c;
+    margin-top: calc(2px * var(--game-scale, 1));
+  }
+  .winButtons {
+    pointer-events: auto;
+    background: rgba(239,234,217,0.94);
+    border-top: calc(1.5px * var(--game-scale, 1)) solid rgba(38,52,74,0.2);
+    padding: calc(12px * var(--game-scale, 1)) 0;
+    display: flex;
+    justify-content: center;
+    gap: calc(10px * var(--game-scale, 1));
+  }
+  .winButtons button {
+    font-family: inherit;
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(10px * var(--game-scale, 1)) calc(16px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid #26344A;
+    cursor: pointer;
+  }
+  #playAgainBtn { background: #26344A; color: #EFEAD9; }
+  #playAgainBtn:active { background: #1b2536; }
+  #changeDiffBtn { background: transparent; color: #26344A; }
+  #changeDiffBtn:active { background: rgba(38,52,74,0.12); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+
+  <div id="selectOverlay" class="overlay">
+    <h1>Inkgrid</h1>
+    <p class="tagline">Fill the grid, reveal the picture.</p>
+    <div class="diffList">
+      <button class="diffBtn" type="button" data-diff="easy" data-kb-play>Easy <span class="bestTime" id="bestEasy">—</span></button>
+      <button class="diffBtn" type="button" data-diff="medium" data-kb-play>Medium <span class="bestTime" id="bestMedium">—</span></button>
+      <button class="diffBtn" type="button" data-diff="hard" data-kb-play>Hard <span class="bestTime" id="bestHard">—</span></button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+
+  <div id="tutorialOverlay" class="overlay hidden">
+    <div class="tutorialCard">
+      <h2>How to play</h2>
+      <div class="tutStep">
+        <canvas id="tutEx1" width="1" height="1"></canvas>
+        <p>Numbers along the top and side tell you how many filled squares are in that row or column, and in what order.</p>
+      </div>
+      <div class="tutStep">
+        <p>Tap <strong>Fill</strong> to paint a square, <strong>Mark</strong> to note a square you're sure is empty — marking helps you keep track while you work out the rest.</p>
+      </div>
+      <div class="tutStep">
+        <canvas id="tutEx3" width="1" height="1"></canvas>
+        <p>When a row or column is fully solved, its clue dims and gets crossed out.</p>
+      </div>
+      <button id="tutorialCloseBtn" type="button">Got it</button>
+    </div>
+  </div>
+
+  <div id="hudControls">
+    <button id="helpBtn" class="iconBtn" type="button" aria-label="How to play">?</button>
+    <div id="togglePill">
+      <button class="pillSeg active" type="button" data-mode="fill">&#9998; Fill</button>
+      <button class="pillSeg" type="button" data-mode="mark">&#10005; Mark</button>
+    </div>
+    <button id="muteBtn" class="iconBtn" type="button">&#128266;</button>
+  </div>
+
+  <div id="winOverlay" class="overlay winLayout hidden">
+    <div class="winBanner">
+      <h2>Solved!</h2>
+      <p id="winTime"></p>
+      <p id="winBest" class="winBest" style="display:none;">New best time!</p>
+    </div>
+    <div class="winButtons">
+      <button id="playAgainBtn" type="button" data-kb-play>Play Again</button>
+      <button id="changeDiffBtn" type="button">Change Difficulty</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+// ============================================================
+// Layout constants (logical/CSS-pixel drawing space, always
+// 360x540 regardless of scale/DPR — see fitCanvas()).
+// ============================================================
+const LOGICAL_W = 360, LOGICAL_H = 540;
+const HUD_H = 72;
+const FOOTER_TOP = 516;
+const RW = 52, CH = 52; // row-clue width / col-clue height
+const CLUE_FONT = "600 14px -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
+const CLUE_SPACING = 17;
+
+const DIFFS = {
+  easy:   { N: 8,  cell: 32, label: 'EASY' },
+  medium: { N: 10, cell: 26, label: 'MEDIUM' },
+  hard:   { N: 12, cell: 21, label: 'HARD' },
+};
+
+const PAL = {
+  bg: '#EFEAD9',
+  gridLine: '#CFC5AC',
+  gridLineBold: '#B3A780',
+  ink: '#26344A',
+  markDot: '#B9AF95',
+  clueText: '#4A4638',
+  clueDone: '#B7AF98',
+  hudText: '#2E2B22',
+  hudSub: '#8A8370',
+};
+
+function computeLayout(diffKey) {
+  const { N, cell } = DIFFS[diffKey];
+  const gridW = N * cell, gridH = N * cell;
+  const blockW = RW + gridW, blockH = CH + gridH;
+  const GX = (LOGICAL_W - blockW) / 2 + RW;
+  const bandTop = HUD_H, bandH = FOOTER_TOP - HUD_H;
+  const blockTop = bandTop + (bandH - blockH) / 2;
+  const GY = blockTop + CH;
+  return { N, cell, gridW, gridH, GX, GY };
+}
+
+// ============================================================
+// Curated bitmap bank. Each bitmap is verified (see the solver
+// below) to produce a nonogram with exactly one solution before
+// shipping. Rotations/reflections of a verified bitmap preserve
+// that uniqueness, so pickPuzzle() picks a random dihedral variant
+// of a random bitmap for extra apparent variety.
+// ============================================================
+const BANK = {
+  easy: {
+    heart: ['01100110','11111111','11111111','11111111','01111110','00111100','00011000','00000000'],
+    star:  ['00011000','00011000','00111100','11111111','11111111','00111100','01100110','10000001'],
+    mug:   ['01111000','01111110','01111010','01111110','01111000','01111000','00111000','00000000'],
+    boat:  ['00010000','00010000','00111000','00111000','01111100','11111111','01111110','00000000'],
+    tree:  ['00111000','01111100','11111110','01111100','00111000','00011000','00011000','00000000'],
+    house: ['00011000','00111100','01111110','11111111','11100111','11100111','11100111','00000000'],
+    cat:   ['01000010','11100111','11111111','01111110','00111100','00111100','01111110','00000000'],
+    fish:  ['00000000','00011000','00111110','01111111','00111110','00011000','00000000','00000000'],
+    arrow: ['00011000','00111100','01111110','11111111','00011000','00011000','00011000','00011000'],
+  },
+  medium: {
+    heart:    ['0110000110','1111011111','1111111111','1111111111','0111111110','0011111100','0001111000','0000110000','0000000000','0000000000'],
+    star:     ['0000110000','0000110000','0001111000','0001111000','1111111111','0111111110','0011111100','0110000110','1100000011','0000000000'],
+    mug:      ['0011110000','0111111000','0111111011','0111110111','0111111011','0111111000','0111110000','0111110000','0011100000','0000000000'],
+    boat:     ['0000100000','0000100000','0001110000','0001110000','0011111000','0111111100','1111111110','0111111100','0000000000','0000000000'],
+    tree:     ['0001110000','0011111000','0111111100','1111111110','0111111100','0011111000','0001110000','0000100000','0000100000','0000000000'],
+    house:    ['0000110000','0001111000','0011111100','0111111110','1111111111','1110001111','1110001111','1110001111','1111111111','0000000000'],
+    cat:      ['0110000110','1111001111','0111111110','0111111110','1111111111','0111111110','0011111100','0011111100','0111111110','0000000000'],
+    fish:     ['0000000000','0001100000','0011111000','0111111100','1111111111','0111111100','0011111000','0001100000','0000000000','0000000000'],
+    umbrella: ['0001111000','0111111100','1111111110','1111111111','0000110000','0000110000','0000110000','0000111000','0000011000','0000000000'],
+    balloon:  ['0011111000','0111111100','1111111110','1111111110','0111111100','0011111000','0001110000','0000100000','0000100000','0000000000'],
+  },
+  hard: {
+    heart:    ['011000000110','111100001111','111111111111','111111111111','111111111111','011111111110','001111111100','000111111000','000011110000','000001100000','000000000000','000000000000'],
+    star:     ['000011000000','000011000000','000111100000','000111100000','011111111110','011111111110','111111111111','011111111110','001111111100','011000000110','110000000011','000000000000'],
+    mug:      ['001111100000','011111100000','011111100000','011111101111','011111100001','011111101111','011111100000','011111100000','011111100000','001111100000','000000000000','000000000000'],
+    boat:     ['000001000000','000001000000','000001000000','000011100000','000111110000','001111111000','011111111100','111111111110','011111111100','000000000000','000000000000','000000000000'],
+    tree:     ['000011000000','000111100000','001111110000','011111111000','111111111100','011111111000','001111110000','000111100000','000011000000','000011000000','000011000000','000000000000'],
+    house:    ['000001100000','000011110000','000111111000','001111111100','011111111110','111111111111','111100011111','111100011111','111100011111','111100011111','111111111111','000000000000'],
+    cat:      ['011000000110','111100001111','011111111110','011111111110','111111111111','111100001111','011111111110','001111111100','001111111100','011111111110','000000000000','000000000000'],
+    fish:     ['000000000000','000011100000','000111111000','001111111100','011111111110','111111111111','011111111110','001111111100','000111111000','000011100000','000000000000','000000000000'],
+    umbrella: ['000011110000','000111111000','001111111100','011111111110','111111111111','000000000000','000001100000','000001100000','000001100000','000001110000','000000110000','000000000000'],
+    anchor:   ['000001100000','000011110000','000001100000','000001100000','001111111100','000001100000','100001100001','110001100011','011001100110','001111111100','000011110000','000000000000'],
+  },
+};
+
+function lineClues(line) {
+  const clues = [];
+  let run = 0;
+  for (const v of line) {
+    if (v) run++;
+    else { if (run) clues.push(run); run = 0; }
+  }
+  if (run) clues.push(run);
+  return clues.length ? clues : [0];
+}
+
+function rotate90(g) {
+  const N = g.length;
+  const r = Array.from({ length: N }, () => Array(N).fill(0));
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) r[j][N - 1 - i] = g[i][j];
+  return r;
+}
+function flipH(g) { return g.map(row => row.slice().reverse()); }
+function applyVariant(g, v) {
+  let out = g;
+  for (let i = 0; i < v % 4; i++) out = rotate90(out);
+  if (v >= 4) out = flipH(out);
+  return out;
+}
+
+function pickPuzzle(diffKey) {
+  const bank = BANK[diffKey];
+  const names = Object.keys(bank);
+  const name = names[Math.floor(Math.random() * names.length)];
+  const base = bank[name].map(row => row.split('').map(Number));
+  const variant = Math.floor(Math.random() * 8);
+  const grid = applyVariant(base, variant);
+  const N = grid.length;
+  const rowClues = grid.map(lineClues);
+  const colClues = [];
+  for (let c = 0; c < N; c++) colClues.push(lineClues(grid.map(row => row[c])));
+  return { name, grid, rowClues, colClues, N };
+}
+
+// ---------- unique-solution solver (adapted from the build brief) ----------
+// Used only as a background self-check that the shipped bank is sound;
+// never gates gameplay, and runs once at idle time, logging to console.
+function possibleLines(clues, length) {
+  if (clues.length === 1 && clues[0] === 0) return [Array(length).fill(0)];
+  const results = [];
+  const k = clues.length;
+  function place(pos, idx, current) {
+    if (idx === k) {
+      results.push(current.slice().concat(Array(length - current.length).fill(0)));
+      return;
+    }
+    const remaining = clues.slice(idx + 1).reduce((a, b) => a + b + 1, 0) - (idx + 1 < k ? 1 : 0);
+    for (let start = pos; start + clues[idx] <= length - remaining; start++) {
+      const next = current.slice();
+      while (next.length < start) next.push(0);
+      for (let i = 0; i < clues[idx]; i++) next.push(1);
+      if (idx + 1 < k) next.push(0);
+      place(next.length, idx + 1, next);
+    }
+  }
+  place(0, 0, []);
+  return results.map(r => { while (r.length < length) r.push(0); return r.slice(0, length); });
+}
+function countSolutions(rowClues, colClues, N, cap = 2) {
+  const rowOptions = rowClues.map(c => possibleLines(c, N));
+  let solutions = 0;
+  const grid = Array.from({ length: N }, () => Array(N).fill(-1));
+  function colsConsistent(uptoRow) {
+    for (let c = 0; c < N; c++) {
+      const partial = [];
+      for (let r = 0; r <= uptoRow; r++) partial.push(grid[r][c]);
+      const ok = possibleLines(colClues[c], N).some(opt => partial.every((v, i) => opt[i] === v));
+      if (!ok) return false;
+    }
+    return true;
+  }
+  function backtrack(r) {
+    if (solutions >= cap) return;
+    if (r === N) { solutions++; return; }
+    for (const option of rowOptions[r]) {
+      grid[r] = option;
+      if (colsConsistent(r)) backtrack(r + 1);
+      if (solutions >= cap) return;
+    }
+  }
+  backtrack(0);
+  return solutions;
+}
+function verifyBankOnce() {
+  let total = 0, ok = 0;
+  const failures = [];
+  for (const diffKey of Object.keys(BANK)) {
+    for (const [name, bmp] of Object.entries(BANK[diffKey])) {
+      total++;
+      const grid = bmp.map(row => row.split('').map(Number));
+      const N = grid.length;
+      const rowClues = grid.map(lineClues);
+      const colClues = [];
+      for (let c = 0; c < N; c++) colClues.push(lineClues(grid.map(row => row[c])));
+      const count = countSolutions(rowClues, colClues, N);
+      if (count === 1) ok++; else failures.push(diffKey + '/' + name + ' (' + count + ' solutions)');
+    }
+  }
+  if (failures.length) console.warn('Inkgrid bank verification: ' + ok + '/' + total + ' unique. Failing:', failures);
+  else console.log('Inkgrid bank verification: ' + ok + '/' + total + ' bitmaps confirmed uniquely solvable.');
+}
+(window.requestIdleCallback || function (fn) { setTimeout(fn, 600); })(verifyBankOnce);
+
+// ============================================================
+// DOM refs
+// ============================================================
+const wrap = document.getElementById('wrap');
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+const selectOverlay = document.getElementById('selectOverlay');
+const tutorialOverlay = document.getElementById('tutorialOverlay');
+const winOverlay = document.getElementById('winOverlay');
+const hudControls = document.getElementById('hudControls');
+const helpBtn = document.getElementById('helpBtn');
+const muteBtn = document.getElementById('muteBtn');
+const togglePill = document.getElementById('togglePill');
+const tutorialCloseBtn = document.getElementById('tutorialCloseBtn');
+const playAgainBtn = document.getElementById('playAgainBtn');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
+const winTimeEl = document.getElementById('winTime');
+const winBestEl = document.getElementById('winBest');
+
+// ============================================================
+// Canvas fit — DPR-aware. Folds both the responsive fit-scale
+// AND devicePixelRatio into one ctx.scale() so all draw code can
+// stay in the fixed 360x540 logical coordinate space, while the
+// actual pixel buffer matches the device's real resolution
+// (otherwise clue-number text renders noticeably softer on
+// high-DPR phones).
+// ============================================================
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / LOGICAL_W, availH / LOGICAL_H);
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = LOGICAL_W * scale, cssH = LOGICAL_H * scale;
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  canvas.width = Math.max(1, Math.round(cssW * dpr));
+  canvas.height = Math.max(1, Math.round(cssH * dpr));
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(scale * dpr, scale * dpr);
+  wrap.style.setProperty('--game-scale', scale);
+  draw();
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+
+// ============================================================
+// Audio (procedural Web Audio only)
+// ============================================================
+let audioCtx = null;
+let muted = sessionStorage.getItem('inkgridMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTone(freq, dur, delay, type, peak) {
+  if (muted) return;
+  const ac = ensureAudio();
+  if (!ac) return;
+  const t0 = ac.currentTime + delay;
+  const osc = ac.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.02);
+}
+function playFillTick() { playTone(520, 0.07, 0, 'triangle', 0.16); }
+function playMarkTick() { playTone(880, 0.05, 0, 'triangle', 0.12); }
+function playLineChime() { playTone(660, 0.12, 0, 'sine', 0.16); playTone(880, 0.16, 0.09, 'sine', 0.14); }
+function playWinFanfare() {
+  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => playTone(f, 0.2, i * 0.11, 'triangle', 0.18));
+}
+function updateMuteBtn() { muteBtn.innerHTML = muted ? '&#128263;' : '&#128266;'; }
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('inkgridMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+updateMuteBtn();
+
+// ============================================================
+// Best-time storage
+// ============================================================
+function bestKey(diffKey) { return 'inkgrid_best_' + diffKey; }
+function getBest(diffKey) {
+  const v = sessionStorage.getItem(bestKey(diffKey));
+  return v ? parseInt(v, 10) : null;
+}
+function setBestIfBetter(diffKey, ms) {
+  const prev = getBest(diffKey);
+  if (prev === null || ms < prev) { sessionStorage.setItem(bestKey(diffKey), String(ms)); return true; }
+  return false;
+}
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+function refreshBestLabels() {
+  document.getElementById('bestEasy').textContent = getBest('easy') !== null ? formatTime(getBest('easy')) : '—';
+  document.getElementById('bestMedium').textContent = getBest('medium') !== null ? formatTime(getBest('medium')) : '—';
+  document.getElementById('bestHard').textContent = getBest('hard') !== null ? formatTime(getBest('hard')) : '—';
+}
+
+// ============================================================
+// Game state
+// ============================================================
+let screen = 'select'; // 'select' | 'tutorial' | 'playing' | 'won'
+let difficulty = 'easy';
+let layout = null;
+let puzzle = null;
+let board = null;       // N x N: 0 empty, 1 filled, 2 marked
+let rowComplete = [];
+let colComplete = [];
+let mode = 'fill';      // 'fill' | 'mark'
+let timerStarted = false;
+let startTime = 0;
+let pausedMs = 0;
+let pauseStart = 0;
+let winElapsed = 0;
+
+let dragging = false;
+let dragAction = null;  // 'fill' | 'clearFill' | 'mark' | 'clearMark'
+let lastCell = null;
+
+const cellAnim = new Map();       // 'r,c' -> timestamp of last state change
+const lineAnim = new Map();       // 'row0' / 'col3' -> timestamp completed
+let particles = [];
+let particleSpawnAt = 0;
+
+function fullyCovered(cells) { return cells.every(v => v !== 0); }
+function arraysEqual(a, b) { return a.length === b.length && a.every((v, i) => v === b[i]); }
+function filledRunClues(cells) { return lineClues(cells.map(v => (v === 1 ? 1 : 0))); }
+
+function newGame(diffKey) {
+  difficulty = diffKey;
+  layout = computeLayout(diffKey);
+  puzzle = pickPuzzle(diffKey);
+  board = Array.from({ length: puzzle.N }, () => Array(puzzle.N).fill(0));
+  rowComplete = Array(puzzle.N).fill(false);
+  colComplete = Array(puzzle.N).fill(false);
+  mode = 'fill';
+  setModeUI('fill');
+  timerStarted = false;
+  startTime = 0;
+  pausedMs = 0;
+  pauseStart = 0;
+  cellAnim.clear();
+  lineAnim.clear();
+  particles = [];
+  screen = 'playing';
+  showScreen();
+}
+
+function startTimer() { timerStarted = true; startTime = performance.now(); }
+function getElapsedMs(now) {
+  if (!timerStarted) return 0;
+  const pauseAdj = pauseStart ? (now - pauseStart) : 0;
+  return now - startTime - pausedMs - pauseAdj;
+}
+function pauseTimer(now) { if (timerStarted && !pauseStart) pauseStart = now; }
+function resumeTimer(now) { if (pauseStart) { pausedMs += now - pauseStart; pauseStart = 0; } }
+
+function recheckLine(r, c) {
+  const now = performance.now();
+  const rowCells = board[r];
+  const rowDone = fullyCovered(rowCells) && arraysEqual(filledRunClues(rowCells), puzzle.rowClues[r]);
+  if (rowDone && !rowComplete[r]) { lineAnim.set('row' + r, now); playLineChime(); }
+  rowComplete[r] = rowDone;
+
+  const colCells = board.map(row => row[c]);
+  const colDone = fullyCovered(colCells) && arraysEqual(filledRunClues(colCells), puzzle.colClues[c]);
+  if (colDone && !colComplete[c]) { lineAnim.set('col' + c, now); playLineChime(); }
+  colComplete[c] = colDone;
+}
+
+function checkWin() {
+  for (let r = 0; r < puzzle.N; r++) {
+    for (let c = 0; c < puzzle.N; c++) {
+      if ((board[r][c] === 1) !== (puzzle.grid[r][c] === 1)) return;
+    }
+  }
+  win();
+}
+
+function win() {
+  const now = performance.now();
+  winElapsed = getElapsedMs(now);
+  screen = 'won';
+  const isBest = setBestIfBetter(difficulty, Math.round(winElapsed));
+  winTimeEl.textContent = 'Time: ' + formatTime(winElapsed);
+  winBestEl.style.display = isBest ? 'block' : 'none';
+  particleSpawnAt = now;
+  particles = spawnParticles();
+  playWinFanfare();
+  showScreen();
+}
+
+function spawnParticles() {
+  const cx = LOGICAL_W / 2, cy = layout.GY + layout.gridH / 2;
+  const list = [];
+  for (let i = 0; i < 26; i++) {
+    const angle = (Math.PI * 2 * i) / 26 + Math.random() * 0.4;
+    const speed = 60 + Math.random() * 90;
+    list.push({
+      x0: cx, y0: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 40,
+      size: 3 + Math.random() * 3,
+    });
+  }
+  return list;
+}
+
+// ============================================================
+// Input — Fill/Mark toggle pill drives the interpretation of taps.
+// A drag locks in one of four actions at pointerdown and applies
+// it consistently to every cell it passes over, skipping cells
+// where that action doesn't apply (Section 5 of the build brief).
+// ============================================================
+function setModeUI(m) {
+  mode = m;
+  togglePill.querySelectorAll('.pillSeg').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === m);
+  });
+}
+togglePill.querySelectorAll('.pillSeg').forEach(btn => {
+  btn.addEventListener('click', () => setModeUI(btn.dataset.mode));
+});
+
+function getLogicalPos(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left) * (LOGICAL_W / rect.width),
+    y: (clientY - rect.top) * (LOGICAL_H / rect.height),
+  };
+}
+function cellAt(x, y) {
+  const L = layout;
+  if (x < L.GX || y < L.GY) return null;
+  const c = Math.floor((x - L.GX) / L.cell);
+  const r = Math.floor((y - L.GY) / L.cell);
+  if (r < 0 || r >= L.N || c < 0 || c >= L.N) return null;
+  return { r, c };
+}
+
+function applyDragCell(r, c) {
+  if (!dragAction) return;
+  const cur = board[r][c];
+  let changed = false;
+  if (dragAction === 'fill' && cur === 0) { board[r][c] = 1; changed = true; playFillTick(); }
+  else if (dragAction === 'clearFill' && cur === 1) { board[r][c] = 0; changed = true; playFillTick(); }
+  else if (dragAction === 'mark' && cur === 0) { board[r][c] = 2; changed = true; playMarkTick(); }
+  else if (dragAction === 'clearMark' && cur === 2) { board[r][c] = 0; changed = true; playMarkTick(); }
+  if (changed) {
+    cellAnim.set(r + ',' + c, performance.now());
+    if (!timerStarted) startTimer();
+    recheckLine(r, c);
+    checkWin();
+  }
+}
+function startDrag(r, c) {
+  dragging = true;
+  lastCell = { r, c };
+  const cur = board[r][c];
+  if (mode === 'fill') {
+    if (cur === 0) dragAction = 'fill';
+    else if (cur === 1) dragAction = 'clearFill';
+    else dragAction = null;
+  } else {
+    if (cur === 0) dragAction = 'mark';
+    else if (cur === 2) dragAction = 'clearMark';
+    else dragAction = null;
+  }
+  applyDragCell(r, c);
+}
+function endDrag() { dragging = false; dragAction = null; lastCell = null; }
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (screen !== 'playing') return;
+  ensureAudio();
+  const pos = getLogicalPos(e.clientX, e.clientY);
+  const cell = cellAt(pos.x, pos.y);
+  if (!cell) return;
+  canvas.setPointerCapture(e.pointerId);
+  startDrag(cell.r, cell.c);
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const pos = getLogicalPos(e.clientX, e.clientY);
+  const cell = cellAt(pos.x, pos.y);
+  if (!cell || (lastCell && cell.r === lastCell.r && cell.c === lastCell.c)) return;
+  lastCell = cell;
+  applyDragCell(cell.r, cell.c);
+});
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+// ============================================================
+// Screen / overlay wiring
+// ============================================================
+function showScreen() {
+  selectOverlay.classList.toggle('hidden', screen !== 'select');
+  tutorialOverlay.classList.toggle('hidden', screen !== 'tutorial');
+  winOverlay.classList.toggle('hidden', screen !== 'won');
+  hudControls.classList.toggle('visible', screen === 'playing');
+  if (screen === 'select') refreshBestLabels();
+}
+
+document.querySelectorAll('.diffBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    ensureAudio();
+    newGame(btn.dataset.diff);
+  });
+});
+
+let tutorialReturnScreen = 'select';
+function openTutorial() {
+  tutorialReturnScreen = screen === 'tutorial' ? 'select' : screen;
+  if (screen === 'playing') pauseTimer(performance.now());
+  screen = 'tutorial';
+  showScreen();
+}
+function closeTutorial() {
+  screen = tutorialReturnScreen;
+  if (screen === 'playing') resumeTimer(performance.now());
+  showScreen();
+}
+helpBtn.addEventListener('click', openTutorial);
+tutorialCloseBtn.addEventListener('click', closeTutorial);
+
+playAgainBtn.addEventListener('click', () => { ensureAudio(); newGame(difficulty); });
+changeDiffBtn.addEventListener('click', () => { screen = 'select'; showScreen(); });
+
+// First-ever open: show the tutorial automatically before difficulty select.
+if (sessionStorage.getItem('inkgrid_seen_tutorial') !== '1') {
+  sessionStorage.setItem('inkgrid_seen_tutorial', '1');
+  tutorialReturnScreen = 'select';
+  screen = 'tutorial';
+} else {
+  screen = 'select';
+}
+
+// ============================================================
+// Drawing
+// ============================================================
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawBackground() {
+  ctx.fillStyle = PAL.bg;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+}
+
+function drawHUD(now) {
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = "10px -apple-system, sans-serif";
+  ctx.textAlign = 'left';
+  ctx.fillText(DIFFS[difficulty].label, 16, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = "bold 15px -apple-system, sans-serif";
+  ctx.fillText('Inkgrid', 16, 34);
+
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = "10px -apple-system, sans-serif";
+  ctx.textAlign = 'right';
+  ctx.fillText('TIME', 344, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = "bold 17px -apple-system, sans-serif";
+  const elapsed = screen === 'won' ? winElapsed : getElapsedMs(now);
+  ctx.fillText(formatTime(elapsed), 344, 34);
+  ctx.textAlign = 'left';
+}
+
+function drawGridLines() {
+  const L = layout;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= L.N; i++) {
+    const bold = i % 5 === 0;
+    ctx.strokeStyle = bold ? PAL.gridLineBold : PAL.gridLine;
+    ctx.lineWidth = bold ? 1.6 : 1;
+    ctx.beginPath();
+    ctx.moveTo(L.GX + i * L.cell, L.GY);
+    ctx.lineTo(L.GX + i * L.cell, L.GY + L.gridH);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(L.GX, L.GY + i * L.cell);
+    ctx.lineTo(L.GX + L.gridW, L.GY + i * L.cell);
+    ctx.stroke();
+  }
+}
+
+function drawCells(now) {
+  const L = layout;
+  for (let r = 0; r < L.N; r++) {
+    for (let c = 0; c < L.N; c++) {
+      const v = board[r][c];
+      if (v === 0) continue;
+      const x = L.GX + c * L.cell, y = L.GY + r * L.cell;
+      const anim = cellAnim.get(r + ',' + c) || 0;
+      const t = Math.min(1, (now - anim) / 150);
+      const eased = anim ? (1 - Math.pow(1 - t, 3)) : 1;
+      const cx = x + L.cell / 2, cy = y + L.cell / 2;
+      if (v === 1) {
+        const size = (L.cell - 4) * eased;
+        ctx.fillStyle = PAL.ink;
+        roundRect(cx - size / 2, cy - size / 2, size, size, 3);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = PAL.markDot;
+        ctx.beginPath();
+        ctx.arc(cx, cy, Math.max(2, L.cell * 0.09) * eased, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+}
+
+function drawRowClues() {
+  const L = layout;
+  ctx.font = CLUE_FONT;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  for (let r = 0; r < L.N; r++) {
+    const clues = puzzle.rowClues[r];
+    const y = L.GY + r * L.cell + L.cell / 2;
+    ctx.fillStyle = rowComplete[r] ? PAL.clueDone : PAL.clueText;
+    let x = L.GX - 8;
+    for (let i = clues.length - 1; i >= 0; i--) {
+      ctx.fillText(String(clues[i]), x, y + 1);
+      x -= CLUE_SPACING;
+    }
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawColClues() {
+  const L = layout;
+  ctx.font = CLUE_FONT;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  for (let c = 0; c < L.N; c++) {
+    const clues = puzzle.colClues[c];
+    const x = L.GX + c * L.cell + L.cell / 2;
+    ctx.fillStyle = colComplete[c] ? PAL.clueDone : PAL.clueText;
+    let y = L.GY - 8;
+    for (let i = clues.length - 1; i >= 0; i--) {
+      ctx.fillText(String(clues[i]), x, y + 1);
+      y -= CLUE_SPACING;
+    }
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawStrikethroughs(now) {
+  const L = layout;
+  ctx.lineWidth = 1.2;
+  for (let r = 0; r < L.N; r++) {
+    if (!rowComplete[r]) continue;
+    const anim = lineAnim.get('row' + r) || now;
+    const frac = Math.min(1, (now - anim) / 220);
+    const clues = puzzle.rowClues[r];
+    const y = L.GY + r * L.cell + L.cell / 2;
+    const rightX = L.GX - 6;
+    const leftX = rightX - clues.length * CLUE_SPACING + 4;
+    const curLeftX = rightX - (rightX - leftX) * frac;
+    ctx.strokeStyle = PAL.clueDone;
+    ctx.beginPath();
+    ctx.moveTo(curLeftX, y);
+    ctx.lineTo(rightX, y);
+    ctx.stroke();
+  }
+  for (let c = 0; c < L.N; c++) {
+    if (!colComplete[c]) continue;
+    const anim = lineAnim.get('col' + c) || now;
+    const frac = Math.min(1, (now - anim) / 220);
+    const clues = puzzle.colClues[c];
+    const x = L.GX + c * L.cell + L.cell / 2;
+    const bottomY = L.GY - 6;
+    const topY = bottomY - clues.length * CLUE_SPACING + 4;
+    const curTopY = bottomY - (bottomY - topY) * frac;
+    ctx.strokeStyle = PAL.clueDone;
+    ctx.beginPath();
+    ctx.moveTo(x, curTopY);
+    ctx.lineTo(x, bottomY);
+    ctx.stroke();
+  }
+}
+
+function drawFooter() {
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = "11px -apple-system, sans-serif";
+  const L = layout;
+  ctx.fillText(DIFFS[difficulty].label + ' · ' + L.N + '×' + L.N, LOGICAL_W / 2, FOOTER_TOP + 12);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawWinPicture() {
+  const L = layout;
+  ctx.fillStyle = 'rgba(38,52,74,0.06)';
+  roundRect(L.GX - 10, L.GY - 10, L.gridW + 20, L.gridH + 20, 10);
+  ctx.fill();
+  for (let r = 0; r < L.N; r++) {
+    for (let c = 0; c < L.N; c++) {
+      if (puzzle.grid[r][c] !== 1) continue;
+      const x = L.GX + c * L.cell, y = L.GY + r * L.cell;
+      ctx.fillStyle = PAL.ink;
+      roundRect(x + 2, y + 2, L.cell - 4, L.cell - 4, 3);
+      ctx.fill();
+    }
+  }
+}
+
+function drawParticles(now) {
+  const t = (now - particleSpawnAt) / 1000;
+  if (t > 1.4) return;
+  const g = 140;
+  for (const p of particles) {
+    const x = p.x0 + p.vx * t;
+    const y = p.y0 + p.vy * t + 0.5 * g * t * t;
+    const alpha = Math.max(0, 1 - t / 1.4);
+    ctx.fillStyle = 'rgba(38,52,74,' + alpha.toFixed(3) + ')';
+    ctx.fillRect(x - p.size / 2, y - p.size / 2, p.size, p.size);
+  }
+}
+
+function draw() {
+  const now = performance.now();
+  drawBackground();
+  if (screen === 'playing') {
+    drawHUD(now);
+    drawGridLines();
+    drawCells(now);
+    drawRowClues();
+    drawColClues();
+    drawStrikethroughs(now);
+    drawFooter();
+  } else if (screen === 'won') {
+    drawHUD(now);
+    drawWinPicture();
+    drawParticles(now);
+  }
+}
+
+function loop() {
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// Tutorial mini-illustrations
+// ============================================================
+function setupMiniCanvas(cv, cssW, cssH) {
+  const dpr = window.devicePixelRatio || 1;
+  cv.style.width = cssW + 'px';
+  cv.style.height = cssH + 'px';
+  cv.width = Math.round(cssW * dpr);
+  cv.height = Math.round(cssH * dpr);
+  const c = cv.getContext('2d');
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.scale(dpr, dpr);
+  return c;
+}
+
+function drawTutExample1() {
+  const cv = document.getElementById('tutEx1');
+  const cell = 14, rw = 18, ch = 16;
+  const cssW = rw + cell * 4, cssH = ch + cell * 4;
+  const c = setupMiniCanvas(cv, cssW, cssH);
+  const demo = ['0000', '0110', '0110', '0000'].map(r => r.split('').map(Number));
+  const N = 4;
+  const rowClues = demo.map(lineClues);
+  const colClues = [];
+  for (let x = 0; x < N; x++) colClues.push(lineClues(demo.map(row => row[x])));
+  c.fillStyle = PAL.bg;
+  c.fillRect(0, 0, cssW, cssH);
+  c.strokeStyle = PAL.gridLine;
+  c.lineWidth = 1;
+  for (let i = 0; i <= N; i++) {
+    c.beginPath(); c.moveTo(rw + i * cell, ch); c.lineTo(rw + i * cell, ch + N * cell); c.stroke();
+    c.beginPath(); c.moveTo(rw, ch + i * cell); c.lineTo(rw + N * cell, ch + i * cell); c.stroke();
+  }
+  c.font = "600 10px -apple-system, sans-serif";
+  c.fillStyle = PAL.clueText;
+  c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let r = 0; r < N; r++) c.fillText(String(rowClues[r][rowClues[r].length - 1]), rw - 4, ch + r * cell + cell / 2 + 1);
+  c.textAlign = 'center';
+  for (let x = 0; x < N; x++) c.fillText(String(colClues[x][colClues[x].length - 1]), rw + x * cell + cell / 2, ch - 8);
+  for (let r = 0; r < N; r++) {
+    for (let x = 0; x < N; x++) {
+      if (!demo[r][x]) continue;
+      c.fillStyle = PAL.ink;
+      const cx = rw + x * cell + cell / 2, cy = ch + r * cell + cell / 2;
+      roundRectOn(c, cx - (cell - 4) / 2, cy - (cell - 4) / 2, cell - 4, cell - 4, 2);
+      c.fill();
+    }
+  }
+}
+function roundRectOn(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.arcTo(x + w, y, x + w, y + h, r);
+  c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r);
+  c.arcTo(x, y, x + w, y, r);
+  c.closePath();
+}
+function drawTutExample3() {
+  const cv = document.getElementById('tutEx3');
+  const cell = 16, cssW = 30 + cell * 4, cssH = 30;
+  const c = setupMiniCanvas(cv, cssW, cssH);
+  c.fillStyle = PAL.bg;
+  c.fillRect(0, 0, cssW, cssH);
+  c.font = "600 14px -apple-system, sans-serif";
+  c.fillStyle = PAL.clueDone;
+  c.textAlign = 'right'; c.textBaseline = 'middle';
+  c.fillText('3', 22, cssH / 2 + 1);
+  c.strokeStyle = PAL.clueDone;
+  c.lineWidth = 1.2;
+  c.beginPath(); c.moveTo(4, cssH / 2); c.lineTo(24, cssH / 2); c.stroke();
+  const pattern = [0, 1, 1, 1];
+  for (let i = 0; i < 4; i++) {
+    if (!pattern[i]) continue;
+    const x = 30 + i * cell, y = (cssH - cell) / 2 + 2;
+    c.fillStyle = PAL.ink;
+    roundRectOn(c, x, y, cell - 4, cell - 4, 2);
+    c.fill();
+  }
+}
+drawTutExample1();
+drawTutExample3();
+
+// ============================================================
+// Boot
+// ============================================================
+fitCanvas();
+showScreen();
+requestAnimationFrame(loop);
+})();
+</script>
+
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
