@@ -292,7 +292,7 @@
       <h2>How to play</h2>
       <div class="tutStep">
         <canvas id="tutEx1" width="1" height="1"></canvas>
-        <p>Numbers along the top and side tell you how many filled squares are in that row or column, and in what order.</p>
+        <p>Numbers along the top and side tell you the blocks of filled squares in that row or column, in order. Each number is one unbroken block, with at least one empty square before the next — e.g. "1 2" means a single filled square, a gap, then two filled squares in a row.</p>
       </div>
       <div class="tutStep">
         <p>Tap <strong>Fill</strong> to paint a square, <strong>Mark</strong> to note a square you're sure is empty — marking helps you keep track while you work out the rest.</p>
@@ -1134,10 +1134,14 @@ function setupMiniCanvas(cv, cssW, cssH) {
 
 function drawTutExample1() {
   const cv = document.getElementById('tutEx1');
-  const cell = 14, rw = 18, ch = 16;
+  const cell = 14, rw = 24, ch = 30;
+  const miniH = 11, miniV = 13; // mini row (horizontal) / column (vertical) clue spacing
   const cssW = rw + cell * 4, cssH = ch + cell * 4;
   const c = setupMiniCanvas(cv, cssW, cssH);
-  const demo = ['0000', '0110', '0110', '0000'].map(r => r.split('').map(Number));
+  // Row 0 is "1 2" (a lone filled square, a gap, then a block of 2) - the
+  // exact multi-block example named in the instructions text, so the demo
+  // backs up what the words say instead of only ever showing single digits.
+  const demo = ['1011', '0000', '1111', '0000'].map(r => r.split('').map(Number));
   const N = 4;
   const rowClues = demo.map(lineClues);
   const colClues = [];
@@ -1152,10 +1156,38 @@ function drawTutExample1() {
   }
   c.font = "600 10px -apple-system, sans-serif";
   c.fillStyle = PAL.clueText;
+  // Row clues: draw every stacked number (previously only the last one was
+  // drawn, silently dropping the rest of any multi-block clue).
   c.textAlign = 'right'; c.textBaseline = 'middle';
-  for (let r = 0; r < N; r++) c.fillText(String(rowClues[r][rowClues[r].length - 1]), rw - 4, ch + r * cell + cell / 2 + 1);
+  for (let r = 0; r < N; r++) {
+    const clues = rowClues[r];
+    const y = ch + r * cell + cell / 2 + 1;
+    let x = rw - 4;
+    for (let i = clues.length - 1; i >= 0; i--) {
+      c.fillText(String(clues[i]), x, y);
+      x -= miniH;
+    }
+  }
+  // Column clues: same fix, plus a thin divider between stacked numbers so
+  // e.g. two "1"s stacked don't read as one merged number.
   c.textAlign = 'center';
-  for (let x = 0; x < N; x++) c.fillText(String(colClues[x][colClues[x].length - 1]), rw + x * cell + cell / 2, ch - 8);
+  for (let x = 0; x < N; x++) {
+    const clues = colClues[x];
+    let y = ch - 8;
+    for (let i = clues.length - 1; i >= 0; i--) {
+      c.fillText(String(clues[i]), rw + x * cell + cell / 2, y);
+      if (i > 0) {
+        const dividerY = y - miniV / 2;
+        c.strokeStyle = PAL.gridLine;
+        c.lineWidth = 1;
+        c.beginPath();
+        c.moveTo(rw + x * cell + cell / 2 - 5, dividerY);
+        c.lineTo(rw + x * cell + cell / 2 + 5, dividerY);
+        c.stroke();
+      }
+      y -= miniV;
+    }
+  }
   for (let r = 0; r < N; r++) {
     for (let x = 0; x < N; x++) {
       if (!demo[r][x]) continue;
