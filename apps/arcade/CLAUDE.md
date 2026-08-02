@@ -68,8 +68,23 @@ games/<slug>/index.html       — next game goes here
    attribute a game's plays silently never get counted (page-load alone
    isn't a reliable proxy: it only ever caught the first attempt, missing
    every replay via the same reused button).
+5. **Merge the branch into `master` and push before considering the game
+   done — a feature branch alone is not a finished game.** Cloudflare
+   Pages only deploys pushes to `master`; a game left sitting on its own
+   branch is invisible on the live site and easy to lose track of. This
+   bit real: six built-and-working games (Sudoku, Shard Rush, Mosaica,
+   Comet Watch, Word Search, and an earlier Inkgrid push) ended up stuck
+   on unmerged branches at once, simply because each build session ended
+   at "pushed the branch" instead of "merged to master." Don't stop at
+   `git push -u origin <branch>` — follow it with a merge into `master`
+   (resolving the near-certain conflict where two branches both touched
+   the end of the `GAMES` array and `assets/version.js`, by keeping both
+   games and the newer version number) and push that. If a game is built
+   on a branch for review first, treat "merge to master" as an explicit
+   remaining task, not implied by the branch existing.
 
-That's the whole process for a new game — no other files need to change.
+That's the whole process for a new game — no other files need to change,
+beyond the master merge above.
 
 ## The nav-bar/game-area space contract (applies to canvas AND DOM games)
 
