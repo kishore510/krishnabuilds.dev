@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Search</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #05060d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas#game {
+    background: #F6F5F0;
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #2B2E3A;
+    pointer-events: none;
+  }
+  .overlay.hidden { display: none; }
+
+  /* ---------- difficulty select ---------- */
+  #selectOverlay {
+    background: rgba(246,245,240,0.98);
+    border-radius: 14px;
+    pointer-events: auto;
+  }
+  #selectOverlay h1 {
+    margin: 0 0 4px;
+    font-size: calc(30px * var(--game-scale, 1));
+    color: #2B2E3A;
+  }
+  #selectOverlay .tagline {
+    margin: 0 0 calc(18px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    color: rgba(43,46,58,0.55);
+  }
+  .diffList {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10px * var(--game-scale, 1));
+    width: calc(220px * var(--game-scale, 1));
+  }
+  .diffBtn {
+    font-family: inherit;
+    font-size: calc(16px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(12px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    border-radius: calc(12px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(43,46,58,0.35);
+    background: rgba(43,46,58,0.06);
+    color: #2B2E3A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .diffBtn:active { background: rgba(43,46,58,0.16); }
+  .diffBtn .bestTime {
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 600;
+    color: rgba(43,46,58,0.55);
+  }
+  #backToArcade {
+    display: inline-block;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    color: #2B2E3A;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.8;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+
+  /* ---------- mute button ---------- */
+  #muteBtn {
+    display: none;
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(28px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.25);
+    background: #2B2E3A;
+    color: #F6F5F0;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 5;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  #muteBtn.visible { display: flex; }
+  #muteBtn:active { background: #1A1C24; }
+
+  /* ---------- win screen ---------- */
+  .overlay.winLayout {
+    align-items: stretch;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .winBanner {
+    pointer-events: auto;
+    background: rgba(246,245,240,0.94);
+    border-bottom: calc(1.5px * var(--game-scale, 1)) solid rgba(43,46,58,0.2);
+    padding: calc(14px * var(--game-scale, 1)) 0 calc(10px * var(--game-scale, 1));
+  }
+  .winBanner h2 {
+    margin: 0 0 calc(4px * var(--game-scale, 1));
+    font-size: calc(22px * var(--game-scale, 1));
+    color: #2B2E3A;
+  }
+  .winBanner p {
+    margin: 0;
+    font-size: calc(13px * var(--game-scale, 1));
+    color: #2B2E3A;
+    font-weight: 600;
+  }
+  .winBanner .winBest {
+    color: #b8722c;
+    margin-top: calc(2px * var(--game-scale, 1));
+  }
+  .winButtons {
+    pointer-events: auto;
+    background: rgba(246,245,240,0.94);
+    border-top: calc(1.5px * var(--game-scale, 1)) solid rgba(43,46,58,0.2);
+    padding: calc(12px * var(--game-scale, 1)) 0;
+    display: flex;
+    justify-content: center;
+    gap: calc(10px * var(--game-scale, 1));
+  }
+  .winButtons button {
+    font-family: inherit;
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(10px * var(--game-scale, 1)) calc(16px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid #2B2E3A;
+    cursor: pointer;
+  }
+  #playAgainBtn { background: #2B2E3A; color: #F6F5F0; }
+  #playAgainBtn:active { background: #1A1C24; }
+  #changeDiffBtn { background: transparent; color: #2B2E3A; }
+  #changeDiffBtn:active { background: rgba(43,46,58,0.12); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">&#128266;</button>
+
+  <div id="selectOverlay" class="overlay">
+    <h1>Word Search</h1>
+    <p class="tagline">Find every word, one sweep at a time.</p>
+    <div class="diffList">
+      <button class="diffBtn" type="button" data-diff="easy" data-kb-play>Easy <span class="bestTime" id="bestEasy">—</span></button>
+      <button class="diffBtn" type="button" data-diff="medium" data-kb-play>Medium <span class="bestTime" id="bestMedium">—</span></button>
+      <button class="diffBtn" type="button" data-diff="hard" data-kb-play>Hard <span class="bestTime" id="bestHard">—</span></button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+
+  <div id="winOverlay" class="overlay winLayout hidden">
+    <div class="winBanner">
+      <h2>Solved!</h2>
+      <p id="winTime"></p>
+      <p id="winBest" class="winBest" style="display:none;">New best time!</p>
+    </div>
+    <div class="winButtons">
+      <button id="playAgainBtn" type="button" data-kb-play>Play Again</button>
+      <button id="changeDiffBtn" type="button">Change Difficulty</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+// ============================================================
+// Layout constants (logical/CSS-pixel drawing space, always
+// 360x540 regardless of scale/DPR — see fitCanvas()).
+// ============================================================
+const LOGICAL_W = 360, LOGICAL_H = 540;
+
+const DIFFS = {
+  easy:   { N: 10, cell: 30, dirs: [[0,1],[1,0]], countMin: 6, countMax: 8, label: 'EASY' },
+  medium: { N: 12, cell: 24, dirs: [[0,1],[1,0],[1,1],[1,-1]], countMin: 8, countMax: 10, label: 'MEDIUM' },
+  hard:   { N: 14, cell: 20, dirs: [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]], countMin: 10, countMax: 12, label: 'HARD' },
+};
+
+const PAL = {
+  bg: '#F6F5F0',
+  letter: '#2B2E3A',
+  hudText: '#2B2E3A',
+  hudSub: 'rgba(43,46,58,0.55)',
+  chipBg: 'rgba(43,46,58,0.06)',
+  chipText: '#2B2E3A',
+  chipFoundText: 'rgba(43,46,58,0.4)',
+  selection: 'rgba(43,46,58,0.35)',
+};
+const HIGHLIGHT_COLORS = ['#FFE066', '#FFADC6', '#A8E6B0', '#A8D8FF', '#D8B8FF'];
+
+const CATEGORIES = {
+  ANIMALS: ['LION','TIGER','ZEBRA','GIRAFFE','PANDA','KOALA','WOLF','BEAR','HORSE','ELEPHANT','MONKEY','RABBIT','OTTER','EAGLE','SHARK'],
+  SPACE: ['STAR','MOON','COMET','PLANET','GALAXY','ORBIT','ROCKET','NEBULA','METEOR','SATURN','VENUS','MARS','PULSAR','ASTEROID','COSMOS'],
+  OCEAN: ['WAVE','CORAL','WHALE','OCTOPUS','DOLPHIN','TURTLE','STARFISH','CRAB','ANCHOR','TIDE','REEF','SEAWEED','LAGOON','CURRENT','ISLAND'],
+  FOOD: ['PIZZA','BREAD','APPLE','CHEESE','PASTA','BACON','MANGO','COCONUT','PEPPER','BANANA','COOKIE','BUTTER','ONION','GARLIC','HONEY'],
+  SPORTS: ['SOCCER','TENNIS','HOCKEY','BOXING','RUGBY','GOLF','CRICKET','SKATING','ROWING','ARCHERY','CYCLING','SPRINT','RELAY','DIVING','SURFING'],
+  WEATHER: ['STORM','CLOUD','RAINBOW','THUNDER','BREEZE','DROUGHT','BLIZZARD','FROST','HUMID','SUNSHINE','DRIZZLE','TORNADO','HAIL','MIST','GALE'],
+};
+
+// ============================================================
+// Generation algorithm (adapted from the build brief, Section 5)
+// ============================================================
+function isInBounds(r, c, N) { return r >= 0 && r < N && c >= 0 && c < N; }
+
+function generateWordSearch(N, words, allowedDirs, rng) {
+  const grid = Array.from({ length: N }, () => Array(N).fill(null));
+  const placements = [];
+  const sorted = [...words].sort((a, b) => b.length - a.length);
+
+  for (const word of sorted) {
+    let placed = false;
+    for (let attempt = 0; attempt < 400 && !placed; attempt++) {
+      const r = Math.floor(rng() * N), c = Math.floor(rng() * N);
+      const [dr, dc] = allowedDirs[Math.floor(rng() * allowedDirs.length)];
+      const endR = r + dr * (word.length - 1), endC = c + dc * (word.length - 1);
+      if (!isInBounds(endR, endC, N)) continue;
+      let ok = true;
+      for (let i = 0; i < word.length; i++) {
+        const rr = r + dr*i, cc = c + dc*i;
+        const existing = grid[rr][cc];
+        if (existing !== null && existing !== word[i]) { ok = false; break; }
+      }
+      if (!ok) continue;
+      for (let i = 0; i < word.length; i++) {
+        const rr = r + dr*i, cc = c + dc*i;
+        grid[rr][cc] = word[i];
+      }
+      placements.push({ word, r, c, dr, dc });
+      placed = true;
+    }
+  }
+
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++)
+    if (grid[r][c] === null) grid[r][c] = letters[Math.floor(rng() * 26)];
+
+  return { grid, placements };
+}
+
+function shuffle(arr, rng) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function pickWordCount(diffKey) {
+  const d = DIFFS[diffKey];
+  return d.countMin + Math.floor(Math.random() * (d.countMax - d.countMin + 1));
+}
+
+function newPuzzle(diffKey) {
+  const d = DIFFS[diffKey];
+  const categoryNames = Object.keys(CATEGORIES);
+  const category = categoryNames[Math.floor(Math.random() * categoryNames.length)];
+  const pool = CATEGORIES[category];
+  const target = pickWordCount(diffKey);
+  const chosen = shuffle(pool.slice(), Math.random).slice(0, Math.min(pool.length, target + 2));
+
+  const { grid, placements: rawPlacements } = generateWordSearch(d.N, chosen, d.dirs, Math.random);
+  const placedSet = new Set(rawPlacements.map(p => p.word));
+  let successWords = chosen.filter(w => placedSet.has(w));
+  let placements = rawPlacements;
+  if (successWords.length > target) {
+    const shuffledExtra = shuffle(successWords.slice(), Math.random);
+    const keep = new Set(shuffledExtra.slice(0, target));
+    successWords = chosen.filter(w => keep.has(w));
+    placements = rawPlacements.filter(p => keep.has(p.word));
+  }
+
+  return { grid, placements, displayWords: successWords, category, N: d.N };
+}
+
+function computeLayout(diffKey) {
+  const d = DIFFS[diffKey];
+  const gridW = d.N * d.cell, gridH = d.N * d.cell;
+  const GX = (LOGICAL_W - gridW) / 2;
+  const GY = 52;
+  return { N: d.N, cell: d.cell, gridW, gridH, GX, GY };
+}
+
+// ============================================================
+// Straight-line selection helper — a selection is valid if it's
+// the same row, same column, or an equal-magnitude diagonal
+// (Section 6). Works in any of the 8 general directions; matching
+// against placed words separately checks both reading directions.
+// ============================================================
+function pathCells(a, b) {
+  const dR = b.r - a.r, dC = b.c - a.c;
+  if (dR === 0 && dC === 0) return null;
+  if (dR !== 0 && dC !== 0 && Math.abs(dR) !== Math.abs(dC)) return null;
+  const steps = Math.max(Math.abs(dR), Math.abs(dC));
+  const stepR = dR === 0 ? 0 : dR / Math.abs(dR);
+  const stepC = dC === 0 ? 0 : dC / Math.abs(dC);
+  const cells = [];
+  for (let i = 0; i <= steps; i++) cells.push({ r: a.r + stepR * i, c: a.c + stepC * i });
+  return cells;
+}
+
+// ============================================================
+// DOM refs
+// ============================================================
+const wrap = document.getElementById('wrap');
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+const selectOverlay = document.getElementById('selectOverlay');
+const winOverlay = document.getElementById('winOverlay');
+const muteBtn = document.getElementById('muteBtn');
+const playAgainBtn = document.getElementById('playAgainBtn');
+const changeDiffBtn = document.getElementById('changeDiffBtn');
+const winTimeEl = document.getElementById('winTime');
+const winBestEl = document.getElementById('winBest');
+
+// ============================================================
+// Canvas fit — DPR-aware, same pattern as Inkgrid/Sudoku.
+// ============================================================
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / LOGICAL_W, availH / LOGICAL_H);
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = LOGICAL_W * scale, cssH = LOGICAL_H * scale;
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  canvas.width = Math.max(1, Math.round(cssW * dpr));
+  canvas.height = Math.max(1, Math.round(cssH * dpr));
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(scale * dpr, scale * dpr);
+  wrap.style.setProperty('--game-scale', scale);
+  draw();
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+
+// ============================================================
+// Audio (procedural Web Audio only)
+// ============================================================
+let audioCtx = null;
+let muted = sessionStorage.getItem('wordsearchMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTone(freq, dur, delay, type, peak) {
+  if (muted) return;
+  const ac = ensureAudio();
+  if (!ac) return;
+  const t0 = ac.currentTime + delay;
+  const osc = ac.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.02);
+}
+function playTick() { playTone(720, 0.035, 0, 'sine', 0.05); }
+function playFound(n) { playTone(520 + n * 30, 0.14, 0, 'triangle', 0.18); playTone(780 + n * 30, 0.16, 0.08, 'sine', 0.14); }
+function playInvalid() { playTone(240, 0.14, 0, 'sine', 0.08); }
+function playWinFanfare() {
+  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => playTone(f, 0.2, i * 0.11, 'triangle', 0.18));
+}
+function updateMuteBtn() { muteBtn.innerHTML = muted ? '&#128263;' : '&#128266;'; }
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('wordsearchMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+updateMuteBtn();
+
+// ============================================================
+// Best-time storage
+// ============================================================
+function bestKey(diffKey) { return 'wordsearch_best_' + diffKey; }
+function getBest(diffKey) {
+  const v = sessionStorage.getItem(bestKey(diffKey));
+  return v ? parseInt(v, 10) : null;
+}
+function setBestIfBetter(diffKey, ms) {
+  const prev = getBest(diffKey);
+  if (prev === null || ms < prev) { sessionStorage.setItem(bestKey(diffKey), String(ms)); return true; }
+  return false;
+}
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+function refreshBestLabels() {
+  document.getElementById('bestEasy').textContent = getBest('easy') !== null ? formatTime(getBest('easy')) : '—';
+  document.getElementById('bestMedium').textContent = getBest('medium') !== null ? formatTime(getBest('medium')) : '—';
+  document.getElementById('bestHard').textContent = getBest('hard') !== null ? formatTime(getBest('hard')) : '—';
+}
+
+// ============================================================
+// Game state
+// ============================================================
+let screen = 'select'; // 'select' | 'playing' | 'won'
+let difficulty = 'easy';
+let layout = null;
+let grid = null;
+let placements = [];
+let placementByWord = new Map();
+let displayWords = [];
+let category = '';
+let foundSet = new Set();
+let foundOrder = [];
+const highlightAnim = new Map(); // word -> timestamp found
+
+let timerStarted = false;
+let startTime = 0;
+let winElapsed = 0;
+
+let dragStart = null;
+let dragCurEnd = null;
+let dragMoved = false;
+let pendingStart = null;
+let transientSelection = null; // { cells, at }
+
+function newGame(diffKey) {
+  difficulty = diffKey;
+  layout = computeLayout(diffKey);
+  const p = newPuzzle(diffKey);
+  grid = p.grid;
+  placements = p.placements;
+  placementByWord = new Map(placements.map(pl => [pl.word, pl]));
+  displayWords = p.displayWords;
+  category = p.category;
+  foundSet = new Set();
+  foundOrder = [];
+  highlightAnim.clear();
+  dragStart = null; dragCurEnd = null; dragMoved = false; pendingStart = null; transientSelection = null;
+  timerStarted = false;
+  startTime = 0;
+  screen = 'playing';
+  showScreen();
+}
+
+function startTimer() { timerStarted = true; startTime = performance.now(); }
+function getElapsedMs(now) { return timerStarted ? now - startTime : 0; }
+
+function finalizeSelection(cells) {
+  if (!cells || cells.length < 2) return;
+  const forward = cells.map(({ r, c }) => grid[r][c]).join('');
+  const backward = forward.split('').reverse().join('');
+  let match = null;
+  for (const p of placements) {
+    if (foundSet.has(p.word)) continue;
+    if (p.word === forward || p.word === backward) { match = p; break; }
+  }
+  if (match) {
+    foundSet.add(match.word);
+    foundOrder.push(match.word);
+    highlightAnim.set(match.word, performance.now());
+    playFound(foundOrder.length);
+    checkWin();
+  } else {
+    transientSelection = { cells, at: performance.now() };
+    playInvalid();
+  }
+}
+
+function checkWin() {
+  if (placements.length > 0 && foundSet.size === placements.length) win();
+}
+
+function win() {
+  const now = performance.now();
+  winElapsed = getElapsedMs(now);
+  screen = 'won';
+  const isBest = setBestIfBetter(difficulty, Math.round(winElapsed));
+  winTimeEl.textContent = 'Time: ' + formatTime(winElapsed);
+  winBestEl.style.display = isBest ? 'block' : 'none';
+  playWinFanfare();
+  showScreen();
+}
+
+// ============================================================
+// Input
+// ============================================================
+function getLogicalPos(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left) * (LOGICAL_W / rect.width),
+    y: (clientY - rect.top) * (LOGICAL_H / rect.height),
+  };
+}
+function cellAt(x, y) {
+  const L = layout;
+  if (!L) return null;
+  const c = Math.floor((x - L.GX) / L.cell);
+  const r = Math.floor((y - L.GY) / L.cell);
+  if (r < 0 || r >= L.N || c < 0 || c >= L.N) return null;
+  return { r, c };
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (screen !== 'playing') return;
+  ensureAudio();
+  const pos = getLogicalPos(e.clientX, e.clientY);
+  const cell = cellAt(pos.x, pos.y);
+  if (!cell) return;
+  if (!timerStarted) startTimer();
+  canvas.setPointerCapture(e.pointerId);
+
+  if (pendingStart) {
+    if (cell.r === pendingStart.r && cell.c === pendingStart.c) {
+      pendingStart = null;
+      return;
+    }
+    finalizeSelection(pathCells(pendingStart, cell));
+    pendingStart = null;
+    return;
+  }
+
+  dragStart = cell;
+  dragCurEnd = cell;
+  dragMoved = false;
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!dragStart) return;
+  const pos = getLogicalPos(e.clientX, e.clientY);
+  const cell = cellAt(pos.x, pos.y);
+  if (!cell || (cell.r === dragCurEnd.r && cell.c === dragCurEnd.c)) return;
+  const cells = pathCells(dragStart, cell);
+  if (cells) { dragCurEnd = cell; dragMoved = true; playTick(); }
+});
+canvas.addEventListener('pointerup', () => {
+  if (!dragStart) return;
+  if (dragMoved) {
+    finalizeSelection(pathCells(dragStart, dragCurEnd));
+  } else {
+    pendingStart = dragStart;
+  }
+  dragStart = null; dragCurEnd = null; dragMoved = false;
+});
+canvas.addEventListener('pointercancel', () => { dragStart = null; dragCurEnd = null; dragMoved = false; });
+
+// ============================================================
+// Screen wiring
+// ============================================================
+function showScreen() {
+  selectOverlay.classList.toggle('hidden', screen !== 'select');
+  winOverlay.classList.toggle('hidden', screen !== 'won');
+  muteBtn.classList.toggle('visible', screen !== 'select');
+  if (screen === 'select') refreshBestLabels();
+}
+
+document.querySelectorAll('.diffBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    ensureAudio();
+    newGame(btn.dataset.diff);
+  });
+});
+playAgainBtn.addEventListener('click', () => { ensureAudio(); newGame(difficulty); });
+changeDiffBtn.addEventListener('click', () => { screen = 'select'; showScreen(); });
+
+screen = 'select';
+
+// ============================================================
+// Drawing
+// ============================================================
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawBackground() {
+  ctx.fillStyle = PAL.bg;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+}
+
+function drawHUD(now) {
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(DIFFS[difficulty].label, 16, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 15px -apple-system, sans-serif';
+  ctx.fillText('Word Search', 16, 34);
+
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('TIME', 344, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 17px -apple-system, sans-serif';
+  const elapsed = screen === 'won' ? winElapsed : getElapsedMs(now);
+  ctx.fillText(formatTime(elapsed), 344, 34);
+  ctx.textAlign = 'left';
+}
+
+function cellCenter(r, c) {
+  const L = layout;
+  return [L.GX + c * L.cell + L.cell / 2, L.GY + r * L.cell + L.cell / 2];
+}
+
+function strokeCellPath(cells, color, alpha) {
+  const L = layout;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = L.cell * 0.82;
+  ctx.lineCap = 'round';
+  if (cells.length === 1) {
+    const [x, y] = cellCenter(cells[0].r, cells[0].c);
+    ctx.beginPath();
+    ctx.arc(x, y, L.cell * 0.41, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  } else {
+    const [x0, y0] = cellCenter(cells[0].r, cells[0].c);
+    const [x1, y1] = cellCenter(cells[cells.length - 1].r, cells[cells.length - 1].c);
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawLiveSelection(now) {
+  if (dragStart) {
+    const cells = pathCells(dragStart, dragCurEnd) || [dragStart];
+    strokeCellPath(cells, PAL.selection, 0.9);
+  } else if (pendingStart) {
+    strokeCellPath([pendingStart], PAL.selection, 0.9);
+  }
+  if (transientSelection) {
+    const elapsed = now - transientSelection.at;
+    if (elapsed < 300) {
+      const alpha = 0.5 * (1 - elapsed / 300);
+      strokeCellPath(transientSelection.cells, PAL.selection, alpha);
+    }
+  }
+}
+
+function drawFoundHighlights(now) {
+  foundOrder.forEach((word, i) => {
+    const p = placementByWord.get(word);
+    if (!p) return;
+    const color = HIGHLIGHT_COLORS[i % HIGHLIGHT_COLORS.length];
+    const anim = highlightAnim.get(word) || 0;
+    const t = anim ? Math.min(1, (now - anim) / 260) : 1;
+    const eased = 1 - Math.pow(1 - t, 3);
+    const [x0, y0] = cellCenter(p.r, p.c);
+    const [x1f, y1f] = cellCenter(p.r + p.dr * (p.word.length - 1), p.c + p.dc * (p.word.length - 1));
+    const x1 = x0 + (x1f - x0) * eased;
+    const y1 = y0 + (y1f - y0) * eased;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = 0.75;
+    ctx.lineWidth = layout.cell * 0.82;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function drawLetters() {
+  const L = layout;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '700 ' + (L.cell * 0.5) + 'px -apple-system, sans-serif';
+  for (let r = 0; r < L.N; r++) {
+    for (let c = 0; c < L.N; c++) {
+      const [x, y] = cellCenter(r, c);
+      ctx.fillStyle = PAL.letter;
+      ctx.fillText(grid[r][c], x, y + 1);
+    }
+  }
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawWordList(now) {
+  const L = layout;
+  const startY = L.GY + L.gridH + 22;
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '600 11px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(category, 180, startY);
+  ctx.textAlign = 'left';
+
+  let x = 20, y = startY + 22;
+  const rowH = 26, gap = 6, maxW = 320;
+  ctx.font = '600 12px -apple-system, sans-serif';
+  for (const word of displayWords) {
+    const found = foundSet.has(word);
+    const label = word[0] + word.slice(1).toLowerCase();
+    const textW = ctx.measureText(label).width;
+    const chipW = textW + 20;
+    if (x + chipW > 20 + maxW) { x = 20; y += rowH + gap; }
+    roundRect(x, y, chipW, rowH - 4, (rowH - 4) / 2);
+    ctx.fillStyle = PAL.chipBg;
+    ctx.fill();
+    ctx.fillStyle = found ? PAL.chipFoundText : PAL.chipText;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x + 10, y + (rowH - 4) / 2 + 1);
+    if (found) {
+      const anim = highlightAnim.get(word) || 0;
+      const t = anim ? Math.min(1, (now - anim) / 220) : 1;
+      const tw = ctx.measureText(label).width;
+      ctx.strokeStyle = PAL.chipFoundText;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(x + 10, y + (rowH - 4) / 2);
+      ctx.lineTo(x + 10 + tw * t, y + (rowH - 4) / 2);
+      ctx.stroke();
+    }
+    x += chipW + gap;
+  }
+}
+
+function draw() {
+  const now = performance.now();
+  drawBackground();
+  if (screen === 'playing' || screen === 'won') {
+    drawHUD(now);
+    drawFoundHighlights(now);
+    if (screen === 'playing') drawLiveSelection(now);
+    drawLetters();
+    drawWordList(now);
+  }
+}
+
+function loop() {
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// Boot
+// ============================================================
+fitCanvas();
+showScreen();
+requestAnimationFrame(loop);
+})();
+</script>
+
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
