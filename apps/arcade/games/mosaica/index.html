@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mosaica</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1a1210;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #231611;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(35,22,17,0.92);
+    border-radius: 14px;
+    color: #f5e9d6;
+    text-align: center;
+    pointer-events: none;
+  }
+  #overlay h1 {
+    margin: 0 0 6px;
+    font-family: Georgia, serif;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-size: calc(32px * var(--game-scale, 1));
+    color: #f5e9d6;
+  }
+  #overlay p { margin: 4px 0; font-size: calc(14px * var(--game-scale, 1)); }
+  #subtitle { color: #d9c3a3; max-width: 78%; }
+  #bestLine { color: #d4af37; font-weight: 600; }
+  #scoreLine { color: #f5e9d6; font-weight: 600; }
+  #playBtn {
+    pointer-events: auto;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-family: inherit;
+    font-size: calc(16px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(28px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #8c6239;
+    background: rgba(140,98,57,0.28);
+    color: #f5e9d6;
+    cursor: pointer;
+  }
+  #playBtn:active { background: rgba(212,175,55,0.35); border-color: #d4af37; }
+  #backToArcade {
+    pointer-events: auto;
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: #f5e9d6;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(14px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid #8c6239;
+    background: rgba(35,22,17,0.6);
+    color: #f5e9d6;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">MOSAICA</h1>
+    <p id="subtitle">Stack, rotate, and clear before the kiln overflows.</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <p id="bestLine"></p>
+    <button id="playBtn" type="button" data-kb-play>Play</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const playBtn = document.getElementById('playBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// ---- Palette: fired-ceramic / Mediterranean tile kiln (matches concept render) ----
+const P = {
+  kilnShadow:  '#231611',
+  boardBack:   '#2a1a10',
+  grout:       '#4a2c1a',
+  trimBronze:  '#8c6239',
+  trimBronzeLo:'#5f4023',
+  textCream:   '#f5e9d6',
+  textMuted:   '#d9c3a3',
+  glazeBlue:   '#2c6e8a',   glazeBlueHi:'#3f8dad',
+  glazeGreen:  '#5e8a52',   glazeGreenHi:'#78a86a',
+  glazeOchre:  '#d9a227',   glazeOchreHi:'#efc158',
+  glazeSienna: '#c1440e',   glazeSiennaHi:'#e0642c',
+  glazeTeal:   '#2f8577',   glazeTealHi:'#48a696',
+  glazeIvory:  '#ede0c8',   glazeIvoryHi:'#fff7e6',
+  gold:        '#d4af37',   goldHi:'#f0d670',
+  danger:      '#e0432a'
+};
+const GLAZE = {
+  Blue: [P.glazeBlue, P.glazeBlueHi],
+  Green: [P.glazeGreen, P.glazeGreenHi],
+  Ochre: [P.glazeOchre, P.glazeOchreHi],
+  Sienna: [P.glazeSienna, P.glazeSiennaHi],
+  Teal: [P.glazeTeal, P.glazeTealHi],
+  Ivory: [P.glazeIvory, P.glazeIvoryHi]
+};
+const GLAZE_KEYS = Object.keys(GLAZE);
+
+function rr(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function tile(x, y, w, h, base, hi, alpha) {
+  ctx.save();
+  if (alpha !== undefined) ctx.globalAlpha = alpha;
+  rr(x, y, w, h, 4);
+  const g = ctx.createLinearGradient(x, y, x, y + h);
+  g.addColorStop(0, hi); g.addColorStop(0.5, base); g.addColorStop(1, base);
+  ctx.fillStyle = g; ctx.fill();
+  ctx.save(); rr(x, y, w, h, 4); ctx.clip();
+  ctx.fillStyle = 'rgba(255,255,255,0.14)';
+  ctx.beginPath();
+  ctx.ellipse(x + w * 0.28, y + h * 0.28, w * 0.32, h * 0.2, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  ctx.lineWidth = 1.2;
+  rr(x + 0.6, y + 0.6, w - 1.2, h - 1.2, 3.5);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ---- Board / HUD / tray geometry, matching the concept render exactly ----
+const HUD_H = 70;
+const COLS = 8, ROWS = 12, CELL = 32;
+const GX = Math.round((W - COLS * CELL) / 2); // 52
+const GY = HUD_H + 8; // 78
+const BOARD_W = COLS * CELL, BOARD_H = ROWS * CELL;
+const DANGER_ROWS = 3; // rows 0,1,2
+const PAD = 2.5;
+const TRAY_Y = 470, TRAY_H = 62;
+const SLOT_W = 104, SLOT_GAP = 12, SLOT_Y = TRAY_Y + 6, SLOT_H = TRAY_H - 12;
+const SLOT_XS = [16, 16 + SLOT_W + SLOT_GAP, 16 + 2 * (SLOT_W + SLOT_GAP)];
+
+// ---- Tetromino shapes: base orientation + generated 90deg-CW rotations, deduped ----
+function rotateCW(shape) {
+  const cells = shape.cells.map(([r, c]) => [c, shape.h - 1 - r]);
+  return { cells, w: shape.h, h: shape.w };
+}
+function canonical(shape) {
+  return shape.cells.map(([r, c]) => r + ',' + c).sort().join('|') + '#' + shape.w + 'x' + shape.h;
+}
+function buildOrientations(cells, w, h) {
+  let cur = { cells, w, h };
+  const list = [], seen = new Set();
+  for (let i = 0; i < 4; i++) {
+    const key = canonical(cur);
+    if (!seen.has(key)) { seen.add(key); list.push(cur); }
+    cur = rotateCW(cur);
+  }
+  return list;
+}
+const SHAPES = {
+  I: buildOrientations([[0,0],[0,1],[0,2],[0,3]], 4, 1),
+  O: buildOrientations([[0,0],[0,1],[1,0],[1,1]], 2, 2),
+  T: buildOrientations([[0,0],[0,1],[0,2],[1,1]], 3, 2),
+  S: buildOrientations([[0,1],[0,2],[1,0],[1,1]], 3, 2),
+  Z: buildOrientations([[0,0],[0,1],[1,1],[1,2]], 3, 2),
+  J: buildOrientations([[0,0],[1,0],[1,1],[1,2]], 3, 2),
+  L: buildOrientations([[0,2],[1,0],[1,1],[1,2]], 3, 2)
+};
+const SHAPE_TYPES = Object.keys(SHAPES);
+
+function spawnPiece() {
+  return {
+    type: SHAPE_TYPES[Math.floor(Math.random() * SHAPE_TYPES.length)],
+    orientIdx: 0,
+    colorKey: GLAZE_KEYS[Math.floor(Math.random() * GLAZE_KEYS.length)]
+  };
+}
+function getShape(piece) { return SHAPES[piece.type][piece.orientIdx]; }
+
+// --- Audio: procedural Web Audio only ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('mosaicaMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playRotateClick() { tone(720, 0.045, 'square', 0.05); }
+function playThunk(rowOffset) {
+  const pitch = 190 - rowOffset * 3;
+  tone(pitch, 0.12, 'sine', 0.16);
+  tone(pitch * 0.6, 0.09, 'triangle', 0.08, 0.01);
+}
+const CHIME_CHORDS = {
+  1: [880],
+  2: [880, 1108],
+  3: [880, 1108, 1318],
+  4: [880, 1108, 1318, 1760]
+};
+function playChime(n) {
+  const notes = CHIME_CHORDS[Math.min(n, 4)];
+  notes.forEach((f, i) => tone(f, 0.35, 'triangle', 0.11, i * 0.03));
+}
+function playGameOver() {
+  tone(340, 0.22, 'sawtooth', 0.13, 0);
+  tone(260, 0.22, 'sawtooth', 0.12, 0.15);
+  tone(180, 0.32, 'sawtooth', 0.13, 0.3);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('mosaicaMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+// ---- Game state ----
+let board, traySlots, score, best, state;
+let dragCandidate = null;
+let activePiece = null;
+let landingAnim = null;
+let clearAnim = null;
+let inputLocked = false;
+
+function loadBest() { return parseInt(sessionStorage.getItem('mosaica_best') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('mosaica_best', v); } catch (e) {} }
+function updateBestIfNeeded() { if (score > best) { best = score; saveBest(best); } }
+
+function newBoard() {
+  const b = [];
+  for (let r = 0; r < ROWS; r++) b.push(new Array(COLS).fill(null));
+  return b;
+}
+
+function reset() {
+  board = newBoard();
+  traySlots = [spawnPiece(), spawnPiece(), spawnPiece()];
+  score = 0;
+  best = loadBest();
+  state = 'ready';
+  dragCandidate = null;
+  activePiece = null;
+  landingAnim = null;
+  clearAnim = null;
+  inputLocked = false;
+  title.textContent = 'MOSAICA';
+  subtitle.style.display = 'block';
+  subtitle.textContent = 'Stack, rotate, and clear before the kiln overflows.';
+  scoreLine.style.display = 'none';
+  bestLine.textContent = 'Best: ' + best;
+  playBtn.textContent = 'Play';
+  backToArcade.style.display = 'none';
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  board = newBoard();
+  traySlots = [spawnPiece(), spawnPiece(), spawnPiece()];
+  score = 0;
+  best = loadBest();
+  state = 'playing';
+  dragCandidate = null;
+  activePiece = null;
+  landingAnim = null;
+  clearAnim = null;
+  inputLocked = false;
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+playBtn.addEventListener('click', startGame);
+
+function endGame() {
+  state = 'over';
+  inputLocked = true;
+  playGameOver();
+  updateBestIfNeeded();
+  title.textContent = 'Kiln overflowed!';
+  subtitle.style.display = 'none';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score;
+  bestLine.textContent = 'Best: ' + best;
+  playBtn.textContent = 'Play Again';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+// ---- Landing / clear logic ----
+function stackTopRow(col) {
+  for (let r = 0; r < ROWS; r++) if (board[r][col]) return r;
+  return ROWS;
+}
+function computeLanding(shape, colOffset) {
+  const bottomByCol = {};
+  for (const [r, c] of shape.cells) {
+    if (bottomByCol[c] === undefined || r > bottomByCol[c]) bottomByCol[c] = r;
+  }
+  let minOffset = Infinity;
+  for (const cStr in bottomByCol) {
+    const c = +cStr;
+    const top = stackTopRow(colOffset + c);
+    const maxOffset = top - 1 - bottomByCol[c];
+    if (maxOffset < minOffset) minOffset = maxOffset;
+  }
+  return minOffset;
+}
+function topByColOf(shape) {
+  const topByCol = {};
+  for (const [r, c] of shape.cells) {
+    if (topByCol[c] === undefined || r < topByCol[c]) topByCol[c] = r;
+  }
+  return topByCol;
+}
+function findFullRows() {
+  const rows = [];
+  for (let r = 0; r < ROWS; r++) if (board[r].every(cell => cell)) rows.push(r);
+  return rows;
+}
+function clearRowsAndCascade(fullRows) {
+  const fullSet = new Set(fullRows);
+  const survivors = [];
+  for (let r = 0; r < ROWS; r++) if (!fullSet.has(r)) survivors.push(board[r]);
+  const newBoard = [];
+  for (let i = 0; i < fullRows.length; i++) newBoard.push(new Array(COLS).fill(null));
+  for (const row of survivors) newBoard.push(row);
+  board = newBoard;
+}
+function dangerFilled() {
+  for (let r = 0; r < DANGER_ROWS; r++) if (board[r].some(cell => cell)) return true;
+  return false;
+}
+const CLEAR_SCORE = { 1: 100, 2: 300, 3: 600, 4: 1000 };
+
+// ---- Input ----
+function canvasPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+function slotHit(x, y) {
+  for (let i = 0; i < 3; i++) {
+    const sx = SLOT_XS[i];
+    if (x >= sx && x <= sx + SLOT_W && y >= SLOT_Y && y <= SLOT_Y + SLOT_H) return i;
+  }
+  return -1;
+}
+function rotateIconHit(x, y, slotIndex) {
+  const cx = SLOT_XS[slotIndex] + SLOT_W - 18, cy = SLOT_Y + 18;
+  const dx = x - cx, dy = y - cy;
+  return dx * dx + dy * dy <= 13 * 13;
+}
+function rotatePieceInSlot(i) {
+  const p = traySlots[i];
+  p.orientIdx = (p.orientIdx + 1) % SHAPES[p.type].length;
+}
+function updateActiveColFromX(x) {
+  const shape = getShape(activePiece);
+  const rawCol = Math.round((x - GX - (shape.w * CELL) / 2) / CELL);
+  activePiece.colOffset = Math.max(0, Math.min(COLS - shape.w, rawCol));
+}
+function isOverTray(y) { return y >= TRAY_Y; }
+function commitDrop() {
+  const shape = getShape(activePiece);
+  const rowOffset = computeLanding(shape, activePiece.colOffset);
+  landingAnim = {
+    type: activePiece.type,
+    orientIdx: activePiece.orientIdx,
+    colorKey: activePiece.colorKey,
+    colOffset: activePiece.colOffset,
+    rowOffset,
+    slotIndex: activePiece.slotIndex,
+    startTime: performance.now(),
+    duration: 150
+  };
+  activePiece = null;
+  inputLocked = true;
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing' || inputLocked || activePiece) return;
+  const { x, y } = canvasPos(e);
+  const slotIdx = slotHit(x, y);
+  if (slotIdx === -1 || !traySlots[slotIdx]) return;
+  if (rotateIconHit(x, y, slotIdx)) {
+    rotatePieceInSlot(slotIdx);
+    playRotateClick();
+    return;
+  }
+  canvas.setPointerCapture(e.pointerId);
+  dragCandidate = { slotIndex: slotIdx, startX: x, startY: y };
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!dragCandidate && !activePiece) return;
+  const { x, y } = canvasPos(e);
+  if (dragCandidate && !activePiece) {
+    const dx = x - dragCandidate.startX, dy = y - dragCandidate.startY;
+    if (Math.hypot(dx, dy) > 6) {
+      const slotIdx = dragCandidate.slotIndex;
+      const pieceData = traySlots[slotIdx];
+      activePiece = {
+        type: pieceData.type, orientIdx: pieceData.orientIdx, colorKey: pieceData.colorKey,
+        colOffset: 0, slotIndex: slotIdx, overTray: isOverTray(y)
+      };
+      traySlots[slotIdx] = null;
+      if (!activePiece.overTray) updateActiveColFromX(x);
+    }
+    return;
+  }
+  if (activePiece) {
+    activePiece.overTray = isOverTray(y);
+    if (!activePiece.overTray) updateActiveColFromX(x);
+  }
+});
+function onPointerUp() {
+  if (activePiece) {
+    if (activePiece.overTray) {
+      traySlots[activePiece.slotIndex] = {
+        type: activePiece.type, orientIdx: activePiece.orientIdx, colorKey: activePiece.colorKey
+      };
+      activePiece = null;
+    } else {
+      commitDrop();
+    }
+    dragCandidate = null;
+    return;
+  }
+  if (dragCandidate) {
+    const slotIdx = dragCandidate.slotIndex;
+    if (traySlots[slotIdx]) { rotatePieceInSlot(slotIdx); playRotateClick(); }
+    dragCandidate = null;
+  }
+}
+canvas.addEventListener('pointerup', onPointerUp);
+canvas.addEventListener('pointercancel', onPointerUp);
+
+// ---- Update ----
+function update() {
+  if (landingAnim) {
+    const elapsed = performance.now() - landingAnim.startTime;
+    if (elapsed >= landingAnim.duration) {
+      const shape = SHAPES[landingAnim.type][landingAnim.orientIdx];
+      for (const [r, c] of shape.cells) {
+        const br = landingAnim.rowOffset + r, bc = landingAnim.colOffset + c;
+        if (br >= 0 && br < ROWS) board[br][bc] = landingAnim.colorKey;
+      }
+      playThunk(landingAnim.rowOffset);
+      traySlots[landingAnim.slotIndex] = spawnPiece();
+      const fullRows = findFullRows();
+      landingAnim = null;
+      if (fullRows.length) {
+        clearAnim = {
+          rows: fullRows,
+          startTime: performance.now(),
+          duration: 220,
+          scoreAward: CLEAR_SCORE[Math.min(fullRows.length, 4)] || 1000
+        };
+        playChime(fullRows.length);
+      } else {
+        inputLocked = false;
+        if (dangerFilled()) endGame();
+      }
+    }
+  } else if (clearAnim) {
+    const elapsed = performance.now() - clearAnim.startTime;
+    if (elapsed >= clearAnim.duration) {
+      clearRowsAndCascade(clearAnim.rows);
+      score += clearAnim.scoreAward;
+      updateBestIfNeeded();
+      clearAnim = null;
+      if (dangerFilled()) endGame();
+      else inputLocked = false;
+    }
+  }
+}
+
+// ---- Drawing ----
+function drawHud() {
+  const hg = ctx.createLinearGradient(0, 0, 0, HUD_H);
+  hg.addColorStop(0, '#402a1c'); hg.addColorStop(1, '#2b1c12');
+  ctx.fillStyle = hg; ctx.fillRect(0, 0, W, HUD_H);
+  ctx.strokeStyle = P.trimBronze; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, HUD_H); ctx.lineTo(W, HUD_H); ctx.stroke();
+
+  ctx.fillStyle = P.textCream;
+  ctx.font = '700 24px Georgia, serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('MOSAICA', 16, 30);
+  ctx.fillStyle = P.gold;
+  ctx.font = '400 10px Georgia, serif';
+  ctx.fillText('S T A C K   &   C L E A R', 18, 44);
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '600 10px -apple-system, sans-serif';
+  ctx.fillText('SCORE', 342, 22);
+  ctx.fillStyle = P.textCream;
+  ctx.font = '700 19px Georgia, serif';
+  ctx.fillText(score.toLocaleString(), 342, 42);
+  ctx.textAlign = 'left';
+}
+
+function drawBoardFrame() {
+  rr(GX - 6, GY - 6, BOARD_W + 12, BOARD_H + 12, 8);
+  ctx.fillStyle = '#1c1109'; ctx.fill();
+  rr(GX - 3, GY - 3, BOARD_W + 6, BOARD_H + 6, 7);
+  ctx.fillStyle = P.boardBack; ctx.fill();
+
+  ctx.fillStyle = 'rgba(224,67,42,0.10)';
+  ctx.fillRect(GX, GY, BOARD_W, DANGER_ROWS * CELL);
+
+  ctx.strokeStyle = P.grout; ctx.lineWidth = 1.5;
+  for (let i = 0; i <= COLS; i++) { ctx.beginPath(); ctx.moveTo(GX + i * CELL, GY); ctx.lineTo(GX + i * CELL, GY + BOARD_H); ctx.stroke(); }
+  for (let i = 0; i <= ROWS; i++) { ctx.beginPath(); ctx.moveTo(GX, GY + i * CELL); ctx.lineTo(GX + BOARD_W, GY + i * CELL); ctx.stroke(); }
+
+  ctx.save();
+  ctx.strokeStyle = P.danger; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(GX - 4, GY + DANGER_ROWS * CELL); ctx.lineTo(GX + BOARD_W + 4, GY + DANGER_ROWS * CELL);
+  ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle = P.danger;
+  ctx.font = '700 8px -apple-system, sans-serif';
+  ctx.fillText('TOP LINE — TOPPING OUT HERE ENDS THE RUN', GX - 2, GY + DANGER_ROWS * CELL - 4);
+}
+
+function drawBoardTiles() {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const key = board[r][c];
+      if (!key) continue;
+      const [base, hi] = GLAZE[key];
+      tile(GX + c * CELL + PAD, GY + r * CELL + PAD, CELL - PAD * 2, CELL - PAD * 2, base, hi);
+    }
+  }
+}
+
+function drawLandingAnim() {
+  if (!landingAnim) return;
+  const shape = SHAPES[landingAnim.type][landingAnim.orientIdx];
+  const [base, hi] = GLAZE[landingAnim.colorKey];
+  const t = Math.min(1, (performance.now() - landingAnim.startTime) / landingAnim.duration);
+  const ease = 1 - (1 - t) * (1 - t);
+  for (const [r, c] of shape.cells) {
+    const fromY = GY + r * CELL;
+    const toY = GY + (landingAnim.rowOffset + r) * CELL;
+    const y = fromY + (toY - fromY) * ease;
+    const x = GX + (landingAnim.colOffset + c) * CELL;
+    tile(x + PAD, y + PAD, CELL - PAD * 2, CELL - PAD * 2, base, hi);
+  }
+}
+
+function drawClearFlash() {
+  if (!clearAnim) return;
+  const t = Math.min(1, (performance.now() - clearAnim.startTime) / clearAnim.duration);
+  const alpha = 1 - t;
+  ctx.save();
+  ctx.globalAlpha = alpha * 0.85;
+  ctx.fillStyle = '#fff7e6';
+  for (const r of clearAnim.rows) ctx.fillRect(GX, GY + r * CELL, BOARD_W, CELL);
+  ctx.restore();
+}
+
+function drawActivePieceAndGuides() {
+  if (!activePiece || activePiece.overTray) return;
+  const shape = getShape(activePiece);
+  const rowOffset = computeLanding(shape, activePiece.colOffset);
+  const topByCol = topByColOf(shape);
+  const [base, hi] = GLAZE[activePiece.colorKey];
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(245,233,214,0.35)';
+  ctx.lineWidth = 2; ctx.setLineDash([3, 4]);
+  for (const cStr in topByCol) {
+    const c = +cStr;
+    const colX = GX + (activePiece.colOffset + c) * CELL + CELL / 2;
+    const yTop = GY + shape.h * CELL;
+    const yBot = GY + (rowOffset + topByCol[c]) * CELL;
+    if (yBot > yTop) {
+      ctx.beginPath(); ctx.moveTo(colX, yTop); ctx.lineTo(colX, yBot); ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(245,233,214,0.85)';
+  ctx.lineWidth = 2; ctx.setLineDash([4, 3]);
+  for (const [r, c] of shape.cells) {
+    rr(GX + (activePiece.colOffset + c) * CELL + PAD, GY + (rowOffset + r) * CELL + PAD, CELL - PAD * 2, CELL - PAD * 2, 4);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  for (const [r, c] of shape.cells) {
+    tile(GX + (activePiece.colOffset + c) * CELL + PAD, GY + r * CELL + PAD, CELL - PAD * 2, CELL - PAD * 2, base, hi, 0.9);
+  }
+}
+
+function drawRotateIcon(cx, cy, r) {
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(95,64,35,0.65)'; ctx.fill();
+  ctx.strokeStyle = P.trimBronze; ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.translate(cx, cy);
+  ctx.strokeStyle = P.textCream; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(0, 0, r * 0.55, 0.3 * Math.PI, 1.7 * Math.PI); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(r * 0.4, -r * 0.2); ctx.lineTo(r * 0.62, -r * 0.05); ctx.lineTo(r * 0.34, r * 0.18);
+  ctx.closePath();
+  ctx.fillStyle = P.textCream; ctx.fill();
+  ctx.restore();
+}
+
+function drawPiecePreview(piece, boxX, boxY, boxW, boxH, sMini) {
+  const shape = SHAPES[piece.type][piece.orientIdx];
+  const gap = 2;
+  const pw = shape.w * sMini + (shape.w - 1) * gap;
+  const ph = shape.h * sMini + (shape.h - 1) * gap;
+  const startX = boxX + (boxW - pw) / 2;
+  const startY = boxY + (boxH - ph) / 2;
+  const [base, hi] = GLAZE[piece.colorKey];
+  for (const [r, c] of shape.cells) {
+    tile(startX + c * (sMini + gap), startY + r * (sMini + gap), sMini, sMini, base, hi);
+  }
+}
+
+function drawTray() {
+  const tg = ctx.createLinearGradient(0, TRAY_Y, 0, H);
+  tg.addColorStop(0, '#402a1c'); tg.addColorStop(1, '#2b1c12');
+  ctx.fillStyle = tg; ctx.fillRect(0, TRAY_Y, W, TRAY_H);
+  ctx.strokeStyle = P.trimBronze; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(0, TRAY_Y); ctx.lineTo(W, TRAY_Y); ctx.stroke();
+
+  for (let i = 0; i < 3; i++) {
+    const sx = SLOT_XS[i];
+    rr(sx, SLOT_Y, SLOT_W, SLOT_H, 8);
+    ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fill();
+    let piece = traySlots[i];
+    if (!piece && activePiece && activePiece.slotIndex === i && activePiece.overTray) {
+      piece = { type: activePiece.type, orientIdx: activePiece.orientIdx, colorKey: activePiece.colorKey };
+    }
+    if (piece) {
+      drawPiecePreview(piece, sx, SLOT_Y, SLOT_W - 26, SLOT_H, 15);
+      drawRotateIcon(sx + SLOT_W - 18, SLOT_Y + 18, 12);
+    } else {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(245,233,214,0.25)';
+      ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+      rr(sx + 6, SLOT_Y + 6, SLOT_W - 12, SLOT_H - 12, 6);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  ctx.fillStyle = P.trimBronzeLo;
+  [[10, TRAY_Y + 6], [W - 10, TRAY_Y + 6], [10, H - 8], [W - 10, H - 8]].forEach(([x, y]) => {
+    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fill();
+  });
+}
+
+function draw() {
+  ctx.fillStyle = P.kilnShadow;
+  ctx.fillRect(0, 0, W, H);
+  drawHud();
+  drawBoardFrame();
+  drawBoardTiles();
+  drawLandingAnim();
+  drawClearFlash();
+  drawActivePieceAndGuides();
+  drawTray();
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+reset();
+loop();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>
