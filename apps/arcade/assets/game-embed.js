@@ -3,11 +3,12 @@
 // (with a "back to games" link) and a support link, with no per-game
 // CSS or markup needed:
 //
-//   <script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+//   <script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
 //
 // Optional data attributes on the <script> tag:
 //   data-games-url  - where "All games" points (default: ../../index.html)
-//   data-coffee-url - your Buy Me a Coffee (or similar) link
+//   data-coffee-url - the "get the guide" link (see CLAUDE.md "Adding a new
+//     game" - copy the URL above verbatim, don't invent a new one per game)
 //   data-fullscreen - set to "landscape" to opt a game into fullscreen mode:
 //     no navbar at all (replaced by a small floating circular back button,
 //     top-left), and kbNavbarHeight/kbBottomReserve both report ~0. Pair
