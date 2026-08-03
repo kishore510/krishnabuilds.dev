@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexigrid</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1F2430;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #1F2430;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    pointer-events: none;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlayPanel {
+    background: rgba(8, 10, 20, 0.82);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: calc(18px * var(--game-scale, 1));
+    padding: calc(20px * var(--game-scale, 1)) calc(24px * var(--game-scale, 1));
+    max-width: 88%;
+    max-height: 92%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(24px * var(--game-scale, 1)); }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
+  #resultSub { font-weight: bold; letter-spacing: 0.08em; color: #4C9F70; }
+  #streakLine { opacity: 0.85; color: #D9A441; font-weight: bold; }
+  #closeOverlay {
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-family: inherit;
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(8px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+  }
+  #closeOverlay:active { background: rgba(255,255,255,0.25); }
+  #backToArcade {
+    display: inline-block;
+    margin-top: calc(10px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <button id="playPing" type="button" data-kb-play style="display:none;"></button>
+  <div id="overlay">
+    <div id="overlayPanel">
+      <h1 id="resultTitle">Solved in 4!</h1>
+      <p id="resultSub">STORM</p>
+      <p id="streakLine">Current streak: 3 · Best: 5</p>
+      <button id="closeOverlay" type="button">View grid</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const overlay = document.getElementById('overlay');
+const overlayPanel = document.getElementById('overlayPanel');
+const resultTitle = document.getElementById('resultTitle');
+const resultSub = document.getElementById('resultSub');
+const streakLine = document.getElementById('streakLine');
+const closeOverlay = document.getElementById('closeOverlay');
+const muteBtn = document.getElementById('muteBtn');
+const playPingBtn = document.getElementById('playPing');
+
+// ---------- logical canvas size (fixed 360x540, DPR-aware backing store) ----------
+const LOGICAL_W = 360, LOGICAL_H = 540;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / LOGICAL_W, availH / LOGICAL_H);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.style.width = (LOGICAL_W * scale) + 'px';
+  canvas.style.height = (LOGICAL_H * scale) + 'px';
+  canvas.width = Math.max(1, Math.round(LOGICAL_W * scale * dpr));
+  canvas.height = Math.max(1, Math.round(LOGICAL_H * scale * dpr));
+  ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+  wrap.style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// ---------- palette (from concept render / build brief section 7 — use exactly) ----------
+const PAL = {
+  bg: '#1F2430',
+  tileEmptyBorder: 'rgba(255,255,255,0.18)',
+  tileFilledBorder: 'rgba(255,255,255,0.4)',
+  green: '#4C9F70',
+  yellow: '#D9A441',
+  gray: '#6B7280',
+  tileText: '#F4F1EA',
+  hudText: '#F4F1EA',
+  hudSub: 'rgba(244,241,234,0.55)',
+  keyBg: 'rgba(255,255,255,0.08)',
+  keyText: '#F4F1EA',
+  toastBg: 'rgba(8,10,20,0.92)'
+};
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// ---------- word list (505 words: 5-letter, alphabetic, unique) ----------
+const WORDS = [
+  'ABOUT', 'ABOVE', 'ADULT', 'AFTER', 'AGAIN', 'AGENT', 'AGREE', 'AHEAD', 'ALARM', 'ALBUM',
+  'ALERT', 'ALIKE', 'ALIVE', 'ALLOW', 'ALONE', 'ALONG', 'ALTER', 'AMONG', 'ANGER', 'ANGLE',
+  'ANGRY', 'APART', 'APPLE', 'APPLY', 'ARENA', 'ARGUE', 'ARISE', 'ARROW', 'ASIDE', 'ASSET',
+  'AUDIO', 'AUDIT', 'AVOID', 'AWAKE', 'AWARD', 'AWARE', 'BADLY', 'BAKER', 'BASIC', 'BEACH',
+  'BEGAN', 'BEGIN', 'BEING', 'BELOW', 'BENCH', 'BIRTH', 'BLACK', 'BLAME', 'BLANK', 'BLAST',
+  'BLIND', 'BLOCK', 'BLOOD', 'BOARD', 'BOAST', 'BONUS', 'BOOST', 'BOOTH', 'BOUND', 'BRAIN',
+  'BRAND', 'BREAD', 'BREAK', 'BREED', 'BRICK', 'BRIEF', 'BRING', 'BROAD', 'BROKE', 'BROWN',
+  'BUILD', 'BUNCH', 'BURST', 'CABIN', 'CABLE', 'CAMEL', 'CANDY', 'CARGO', 'CARRY', 'CATCH',
+  'CAUSE', 'CHAIN', 'CHAIR', 'CHALK', 'CHARM', 'CHART', 'CHASE', 'CHEAP', 'CHECK', 'CHESS',
+  'CHEST', 'CHIEF', 'CHILD', 'CHOSE', 'CIVIC', 'CIVIL', 'CLAIM', 'CLASS', 'CLEAN', 'CLEAR',
+  'CLICK', 'CLIFF', 'CLIMB', 'CLOCK', 'CLOSE', 'CLOUD', 'COACH', 'COAST', 'COULD', 'COUNT',
+  'COURT', 'COVER', 'CRAFT', 'CRASH', 'CRAZY', 'CREAM', 'CRIME', 'CROSS', 'CROWD', 'CROWN',
+  'CRUDE', 'CURVE', 'CYCLE', 'DAILY', 'DANCE', 'DEATH', 'DEBUT', 'DELAY', 'DEPTH', 'DOING',
+  'DOUBT', 'DOZEN', 'DRAFT', 'DRAMA', 'DRANK', 'DREAM', 'DRESS', 'DRIED', 'DRIVE', 'DROVE',
+  'DRUNK', 'EARLY', 'EARTH', 'EIGHT', 'ELECT', 'EMPTY', 'ENJOY', 'ENTER', 'ENTRY', 'EQUAL',
+  'ERROR', 'EVENT', 'EVERY', 'EXACT', 'EXIST', 'EXTRA', 'FAITH', 'FALSE', 'FAULT', 'FENCE',
+  'FEWER', 'FIELD', 'FIFTH', 'FIFTY', 'FIGHT', 'FINAL', 'FIRST', 'FIXED', 'FLAME', 'FLASH',
+  'FLEET', 'FLOOR', 'FLUID', 'FOCUS', 'FORCE', 'FORTH', 'FORTY', 'FORUM', 'FOUND', 'FRAME',
+  'FRESH', 'FRONT', 'FROST', 'FRUIT', 'FUNNY', 'GIANT', 'GLASS', 'GLOBE', 'GOING', 'GRACE',
+  'GRADE', 'GRAND', 'GRANT', 'GRASS', 'GREAT', 'GREEN', 'GREET', 'GRIEF', 'GROSS', 'GROUP',
+  'GROWN', 'GUARD', 'GUESS', 'GUEST', 'GUIDE', 'HAPPY', 'HARSH', 'HEART', 'HEAVY', 'HELLO',
+  'HENCE', 'HONEY', 'HONOR', 'HORSE', 'HOTEL', 'HOUSE', 'HUMAN', 'IDEAL', 'IMAGE', 'INDEX',
+  'INNER', 'INPUT', 'ISSUE', 'IVORY', 'JOINT', 'JUDGE', 'JUICE', 'KNOWN', 'LABEL', 'LARGE',
+  'LASER', 'LATER', 'LAUGH', 'LAYER', 'LEARN', 'LEAST', 'LEAVE', 'LEGAL', 'LEMON', 'LEVEL',
+  'LIGHT', 'LIMIT', 'LOCAL', 'LOGIC', 'LOOSE', 'LOWER', 'LUCKY', 'LUNCH', 'MAGIC', 'MAJOR',
+  'MAKER', 'MARCH', 'MATCH', 'MAYBE', 'MEANT', 'MEDAL', 'MEDIA', 'MERIT', 'METAL', 'MIGHT',
+  'MINOR', 'MINUS', 'MODEL', 'MONEY', 'MONTH', 'MORAL', 'MOTOR', 'MOUNT', 'MOUSE', 'MOUTH',
+  'MOVIE', 'MUSIC', 'NEEDY', 'NERVE', 'NEVER', 'NEWLY', 'NIGHT', 'NOBLE', 'NOISE', 'NORTH',
+  'NOVEL', 'NURSE', 'OCCUR', 'OCEAN', 'OFFER', 'OFTEN', 'ORDER', 'OTHER', 'OUGHT', 'OUTER',
+  'OWNER', 'PAINT', 'PANEL', 'PAPER', 'PARTY', 'PEACE', 'PHASE', 'PHONE', 'PIANO', 'PIZZA',
+  'PLACE', 'PLAIN', 'PLANE', 'PLANT', 'PLATE', 'POINT', 'POUND', 'POWER', 'PRESS', 'PRICE',
+  'PRIDE', 'PRIME', 'PRINT', 'PRIOR', 'PRIZE', 'PROOF', 'PROUD', 'PROVE', 'QUEEN', 'QUERY',
+  'QUICK', 'QUIET', 'QUITE', 'RADIO', 'RAISE', 'RANGE', 'RAPID', 'REACH', 'READY', 'REFER',
+  'RELAX', 'REPLY', 'RIGHT', 'RIVAL', 'RIVER', 'ROAST', 'ROBOT', 'ROUGH', 'ROUND', 'ROUTE',
+  'ROYAL', 'RURAL', 'SAFER', 'SALAD', 'SAUCE', 'SCALE', 'SCENE', 'SCOPE', 'SCORE', 'SENSE',
+  'SERVE', 'SEVEN', 'SHADE', 'SHAKE', 'SHAPE', 'SHARE', 'SHARP', 'SHEEP', 'SHEET', 'SHELF',
+  'SHELL', 'SHIFT', 'SHINE', 'SHIRT', 'SHOCK', 'SHOOT', 'SHORE', 'SHORT', 'SIGHT', 'SILLY',
+  'SINCE', 'SIXTH', 'SIXTY', 'SIZED', 'SKILL', 'SLEEP', 'SLICE', 'SLIDE', 'SMALL', 'SMART',
+  'SMELL', 'SMILE', 'SMOKE', 'SNAKE', 'SOLAR', 'SOLID', 'SOLVE', 'SORRY', 'SOUND', 'SOUTH',
+  'SPACE', 'SPARE', 'SPEAK', 'SPEED', 'SPEND', 'SPENT', 'SPICE', 'SPLIT', 'SPOON', 'SPORT',
+  'STACK', 'STAFF', 'STAGE', 'STAIR', 'STAMP', 'STAND', 'START', 'STATE', 'STEAM', 'STEEL',
+  'STEEP', 'STEER', 'STICK', 'STOCK', 'STONE', 'STORE', 'STORM', 'STORY', 'STOVE', 'STUDY',
+  'STUFF', 'STYLE', 'SUGAR', 'SUPER', 'SWEET', 'SWIFT', 'SWING', 'TABLE', 'TAKEN', 'TALKS',
+  'TASTE', 'TEACH', 'TEETH', 'THANK', 'THEIR', 'THEME', 'THERE', 'THICK', 'THING', 'THINK',
+  'THIRD', 'THOSE', 'THREE', 'THROW', 'TIGER', 'TIGHT', 'TIMER', 'TITLE', 'TODAY', 'TOTAL',
+  'TOUCH', 'TOWER', 'TRACE', 'TRACK', 'TRADE', 'TRAIL', 'TRAIN', 'TREAT', 'TREND', 'TRIAL',
+  'TRIBE', 'TRICK', 'TRIED', 'TRUCK', 'TRULY', 'TRUST', 'TRUTH', 'TWICE', 'UNCLE', 'UNDER',
+  'UNION', 'UNTIL', 'UPPER', 'UPSET', 'URBAN', 'USAGE', 'USUAL', 'VALID', 'VALUE', 'VIDEO',
+  'VIRUS', 'VISIT', 'VITAL', 'VOICE', 'WASTE', 'WATCH', 'WATER', 'WHEEL', 'WHERE', 'WHICH',
+  'WHILE', 'WHITE', 'WHOLE', 'WHOSE', 'WOMAN', 'WORLD', 'WORRY', 'WORSE', 'WORTH', 'WOULD',
+  'WRITE', 'WRONG', 'YIELD', 'YOUNG', 'YOUTH'
+];
+const WORD_SET = new Set(WORDS);
+
+// ---------- daily selection ----------
+function getTodayIndex(wordCount) {
+  const epoch = new Date(2024, 0, 1); // fixed reference date
+  const today = new Date();
+  const daysSince = Math.floor((today.setHours(0,0,0,0) - epoch.setHours(0,0,0,0)) / 86400000);
+  return { index: ((daysSince % wordCount) + wordCount) % wordCount, dayNumber: daysSince + 1 };
+}
+const TODAY = getTodayIndex(WORDS.length);
+const TARGET = WORDS[TODAY.index];
+
+// ---------- scoring (tested standalone against known tricky duplicate-letter
+// cases before use — adapted directly from the verified concept render, not
+// reimplemented from a description) ----------
+function scoreGuess(guess, target) {
+  const result = Array(5).fill('gray');
+  const pool = {};
+  for (let i = 0; i < 5; i++) {
+    if (guess[i] === target[i]) result[i] = 'green';
+    else pool[target[i]] = (pool[target[i]] || 0) + 1;
+  }
+  for (let i = 0; i < 5; i++) {
+    if (result[i] === 'green') continue;
+    const c = guess[i];
+    if (pool[c] > 0) { result[i] = 'yellow'; pool[c]--; }
+  }
+  return result;
+}
+
+const KEY_PRIORITY = { green: 3, yellow: 2, gray: 1 };
+function buildKeyState(guesses) {
+  const keyState = {};
+  for (const { word, result } of guesses) {
+    for (let i = 0; i < 5; i++) {
+      const c = word[i], state = result[i];
+      if (!keyState[c] || KEY_PRIORITY[state] > KEY_PRIORITY[keyState[c]]) keyState[c] = state;
+    }
+  }
+  return keyState;
+}
+
+// ---------- layout ----------
+const TILE = 48, GAP = 6;
+const GRID_W = 5 * TILE + 4 * GAP, GRID_H = 6 * TILE + 5 * GAP;
+const GX = (LOGICAL_W - GRID_W) / 2, GY = 44;
+
+const ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+function computeKeyboardLayout() {
+  const startY = GY + GRID_H + 16;
+  const keyH = 38, gap = 5, unitW = 30;
+  const layout = [];
+  ROWS.forEach((row, ri) => {
+    let keys = row.split('');
+    if (ri === 2) keys = ['ENTER', ...keys, 'DEL'];
+    const totalW = keys.reduce((sum, k) => sum + (k.length > 1 ? unitW * 1.6 : unitW), 0) + gap * (keys.length - 1);
+    let x = (LOGICAL_W - totalW) / 2;
+    const y = startY + ri * (keyH + gap);
+    for (const k of keys) {
+      const w = k.length > 1 ? unitW * 1.6 : unitW;
+      layout.push({ key: k, x, y, w, h: keyH });
+      x += w + gap;
+    }
+  });
+  return layout;
+}
+const KEYBOARD_LAYOUT = computeKeyboardLayout();
+
+// ---------- audio (procedural Web Audio, no files) ----------
+let audioCtx = null;
+let muted = sessionStorage.getItem('lexigridMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playKeyClick() { tone(520, 0.035, 'sine', 0.05); }
+function playInvalidBuzz() { tone(140, 0.25, 'sawtooth', 0.12); }
+function playFlipTick(i) { tone(420 + i * 45, 0.05, 'square', 0.06); }
+function playWinFanfare() {
+  tone(523, 0.12, 'triangle', 0.14);
+  tone(659, 0.12, 'triangle', 0.13, 0.1);
+  tone(784, 0.14, 'triangle', 0.12, 0.2);
+  tone(1047, 0.22, 'triangle', 0.13, 0.32);
+}
+function playLossTone() {
+  tone(300, 0.18, 'sine', 0.08);
+  tone(220, 0.35, 'sine', 0.07, 0.15);
+}
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('lexigridMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+// ---------- persistence ----------
+// Deliberate deviation from the shelf's sessionStorage convention: this must
+// survive tab close, or a player could just reopen the tab to replay today's
+// word, defeating the daily-puzzle premise.
+const PROGRESS_KEY = 'lexigrid_progress';
+const STATS_KEY = 'lexigrid_stats';
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (p.dayNumber !== TODAY.dayNumber) return null;
+    return p;
+  } catch (e) { return null; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); } catch (e) {}
+}
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STATS_KEY);
+    if (!raw) return { currentStreak: 0, maxStreak: 0, lastPlayedDayNumber: null };
+    return JSON.parse(raw);
+  } catch (e) { return { currentStreak: 0, maxStreak: 0, lastPlayedDayNumber: null }; }
+}
+function saveStats(s) {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch (e) {}
+}
+
+// ---------- game state ----------
+let guesses = [];       // [{ word, result }]
+let currentGuess = '';
+let currentRow = 0;
+let state = 'playing';  // playing | revealing | finished
+let finalStatus = null; // 'won' | 'lost'
+let keyState = {};
+let revealAnim = null;  // { row, t0 }
+let shakeAnim = null;   // { row, t0 }
+let toast = null;       // { text, t0 }
+let winBounce = null;   // { row, t0 }
+let freshGameStarted = false;
+
+const FLIP_DUR = 300, FLIP_STAGGER = 120;
+
+function rowRevealTotalMs() { return FLIP_STAGGER * 4 + FLIP_DUR; }
+
+function showToast(text) { toast = { text, t0: performance.now() }; }
+
+function finalizeStats(won) {
+  const stats = loadStats();
+  if (won) {
+    if (stats.lastPlayedDayNumber === TODAY.dayNumber - 1) stats.currentStreak++;
+    else stats.currentStreak = 1;
+    stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
+  } else {
+    stats.currentStreak = 0;
+  }
+  stats.lastPlayedDayNumber = TODAY.dayNumber;
+  saveStats(stats);
+  return stats;
+}
+
+function showResultOverlay(status, stats) {
+  const stat = stats || loadStats();
+  if (status === 'won') {
+    resultTitle.textContent = 'Solved in ' + guesses.length + '!';
+  } else {
+    resultTitle.textContent = 'Next word tomorrow';
+  }
+  resultSub.textContent = TARGET;
+  resultSub.style.color = status === 'won' ? PAL.green : PAL.yellow;
+  streakLine.textContent = 'Current streak: ' + stat.currentStreak + ' · Best: ' + stat.maxStreak;
+  overlay.style.display = 'flex';
+}
+
+closeOverlay.addEventListener('click', () => { overlay.style.display = 'none'; });
+
+function finishGame(status) {
+  finalStatus = status;
+  state = 'finished';
+  saveProgress({ dayNumber: TODAY.dayNumber, guesses, status });
+  const stats = finalizeStats(status === 'won');
+  if (status === 'won') playWinFanfare(); else playLossTone();
+  setTimeout(() => showResultOverlay(status, stats), 400);
+}
+
+function submitGuess() {
+  if (state !== 'playing') return;
+  if (currentGuess.length < 5) {
+    showToast('Not enough letters');
+    shakeAnim = { row: currentRow, t0: performance.now() };
+    playInvalidBuzz();
+    return;
+  }
+  if (!WORD_SET.has(currentGuess)) {
+    showToast('Not in word list');
+    shakeAnim = { row: currentRow, t0: performance.now() };
+    playInvalidBuzz();
+    return;
+  }
+  if (!freshGameStarted) { freshGameStarted = true; playPingBtn.click(); }
+  const result = scoreGuess(currentGuess, TARGET);
+  guesses.push({ word: currentGuess, result });
+  saveProgress({ dayNumber: TODAY.dayNumber, guesses, status: 'playing' });
+  state = 'revealing';
+  revealAnim = { row: currentRow, t0: performance.now(), played: [false, false, false, false, false] };
+}
+
+function completeReveal() {
+  keyState = buildKeyState(guesses);
+  const last = guesses[guesses.length - 1];
+  const won = last.result.every(r => r === 'green');
+  if (won) {
+    winBounce = { row: currentRow, t0: performance.now() };
+    setTimeout(() => finishGame('won'), 350);
+    state = 'finished-pending';
+  } else if (currentRow >= 5) {
+    setTimeout(() => finishGame('lost'), 150);
+    state = 'finished-pending';
+  } else {
+    currentRow++;
+    currentGuess = '';
+    state = 'playing';
+  }
+  revealAnim = null;
+}
+
+// ---------- input ----------
+function inputLetter(c) {
+  if (state !== 'playing') return;
+  if (currentGuess.length >= 5) return;
+  currentGuess += c;
+  playKeyClick();
+}
+function inputDel() {
+  if (state !== 'playing') return;
+  if (currentGuess.length === 0) return;
+  currentGuess = currentGuess.slice(0, -1);
+  playKeyClick();
+}
+function handleKey(k) {
+  if (k === 'ENTER') submitGuess();
+  else if (k === 'DEL') inputDel();
+  else inputLetter(k);
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (LOGICAL_W / rect.width);
+  const y = (e.clientY - rect.top) * (LOGICAL_H / rect.height);
+  for (const k of KEYBOARD_LAYOUT) {
+    if (x >= k.x && x <= k.x + k.w && y >= k.y && y <= k.y + k.h) { handleKey(k.key); return; }
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { submitGuess(); return; }
+  if (e.key === 'Backspace') { inputDel(); return; }
+  if (/^[a-zA-Z]$/.test(e.key)) { inputLetter(e.key.toUpperCase()); }
+});
+
+// ---------- drawing ----------
+function drawBackground() {
+  ctx.fillStyle = PAL.bg;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+}
+
+function drawHUD() {
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 18px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('LEXIGRID', 180, 18);
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '11px -apple-system, sans-serif';
+  ctx.fillText('Day #' + TODAY.dayNumber, 180, 34);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
+function tileColor(s) {
+  if (s === 'green') return PAL.green;
+  if (s === 'yellow') return PAL.yellow;
+  if (s === 'gray') return PAL.gray;
+  return null;
+}
+
+function drawGrid(now) {
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 5; c++) {
+      let x = GX + c * (TILE + GAP), y = GY + r * (TILE + GAP);
+
+      if (shakeAnim && shakeAnim.row === r) {
+        const age = now - shakeAnim.t0;
+        if (age < 300) x += Math.sin(age / 30) * 5 * (1 - age / 300);
+        else shakeAnim = null;
+      }
+
+      const submitted = r < guesses.length;
+      const isRevealingRow = revealAnim && revealAnim.row === r;
+      const isCurrentRow = r === currentRow && !submitted && !isRevealingRow;
+
+      let letter = '', fill = null, flipScaleX = 1;
+
+      if (submitted) {
+        letter = guesses[r].word[c];
+        fill = tileColor(guesses[r].result[c]);
+      } else if (isRevealingRow) {
+        const gr = guesses[r];
+        letter = gr.word[c];
+        const tileStart = c * FLIP_STAGGER;
+        const age = now - revealAnim.t0 - tileStart;
+        if (age < 0) {
+          fill = null; // not flipped yet - show as typed tile
+        } else if (age < FLIP_DUR) {
+          if (!revealAnim.played[c]) { revealAnim.played[c] = true; playFlipTick(c); }
+          const progress = age / FLIP_DUR;
+          flipScaleX = Math.abs(Math.cos(progress * Math.PI));
+          fill = progress < 0.5 ? null : tileColor(gr.result[c]);
+        } else {
+          fill = tileColor(gr.result[c]);
+        }
+      } else if (isCurrentRow) {
+        letter = currentGuess[c] || '';
+      }
+
+      let scaleY = 1;
+      if (winBounce && winBounce.row === r && submitted) {
+        const age = now - winBounce.t0 - c * 60;
+        if (age > 0 && age < 260) scaleY = 1 - 0.18 * Math.sin((age / 260) * Math.PI);
+      }
+
+      ctx.save();
+      ctx.translate(x + TILE / 2, y + TILE / 2);
+      ctx.scale(flipScaleX, scaleY);
+      ctx.translate(-(x + TILE / 2), -(y + TILE / 2));
+
+      if (fill) {
+        roundRect(x, y, TILE, TILE, 6);
+        ctx.fillStyle = fill;
+        ctx.fill();
+      } else {
+        roundRect(x, y, TILE, TILE, 6);
+        ctx.strokeStyle = letter ? PAL.tileFilledBorder : PAL.tileEmptyBorder;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      if (letter) {
+        ctx.fillStyle = PAL.tileText;
+        ctx.font = '700 ' + (TILE * 0.5) + 'px -apple-system, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(letter, x + TILE / 2, y + TILE / 2 + 2);
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      }
+      ctx.restore();
+    }
+  }
+}
+
+function drawKeyboard() {
+  for (const k of KEYBOARD_LAYOUT) {
+    roundRect(k.x, k.y, k.w, k.h, 5);
+    const st = keyState[k.key];
+    ctx.fillStyle = st === 'green' ? PAL.green : st === 'yellow' ? PAL.yellow : st === 'gray' ? PAL.gray : PAL.keyBg;
+    ctx.fill();
+    ctx.fillStyle = PAL.keyText;
+    ctx.font = '600 ' + (k.key.length > 1 ? 9 : 13) + 'px -apple-system, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(k.key, k.x + k.w / 2, k.y + k.h / 2 + 1);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+}
+
+function drawToast(now) {
+  if (!toast) return;
+  const age = now - toast.t0;
+  const visibleFor = 1000, fadeFor = 350;
+  if (age > visibleFor + fadeFor) { toast = null; return; }
+  const alpha = age < visibleFor ? 1 : Math.max(0, 1 - (age - visibleFor) / fadeFor);
+  ctx.font = '600 12px -apple-system, sans-serif';
+  const textW = ctx.measureText(toast.text).width;
+  const padX = 14, padY = 8;
+  const w = textW + padX * 2, h = 14 + padY * 2;
+  const x = LOGICAL_W / 2 - w / 2, y = GY + 26;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  roundRect(x, y, w, h, h / 2);
+  ctx.fillStyle = PAL.toastBg;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = PAL.tileText;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(toast.text, LOGICAL_W / 2, y + h / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.restore();
+}
+
+function draw(now) {
+  ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+  drawBackground();
+  drawHUD();
+  drawGrid(now);
+  drawKeyboard();
+  drawToast(now);
+
+  if (revealAnim && now - revealAnim.t0 >= rowRevealTotalMs()) {
+    completeReveal();
+  }
+}
+
+function loop(now) {
+  draw(now);
+  requestAnimationFrame(loop);
+}
+
+// A guess that finishes the game (win, or the 6th guess) is pushed into
+// `guesses` synchronously in submitGuess(), before the flip-reveal animation
+// or finishGame() ever run. If the tab closes mid-animation, the saved
+// progress can still say status: 'playing' even though the stored guesses
+// already decide the outcome — so resuming must derive the true status from
+// the guesses themselves, not trust the stored label.
+function deriveStatus(gs) {
+  if (gs.length === 0) return 'playing';
+  const last = gs[gs.length - 1];
+  if (last.result.every(r => r === 'green')) return 'won';
+  if (gs.length >= 6) return 'lost';
+  return 'playing';
+}
+
+// ---------- init: resume/restore today's progress if present ----------
+(function init() {
+  const progress = loadProgress();
+  if (progress) {
+    guesses = progress.guesses || [];
+    currentRow = guesses.length;
+    keyState = buildKeyState(guesses);
+    const derived = deriveStatus(guesses);
+    if (derived === 'won' || derived === 'lost') {
+      finalStatus = derived;
+      state = 'finished';
+      // Only run streak accounting once per completed game: if the stored
+      // status already matches, a previous session already finalized it.
+      const stats = progress.status === derived ? loadStats() : finalizeStats(derived === 'won');
+      if (progress.status !== derived) saveProgress({ dayNumber: TODAY.dayNumber, guesses, status: derived });
+      showResultOverlay(derived, stats);
+    } else {
+      freshGameStarted = true;
+      state = 'playing';
+    }
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+</body>
+</html>
