@@ -33,61 +33,6 @@
     height: auto;
     touch-action: none;
   }
-  #overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    pointer-events: none;
-    text-align: center;
-    padding: calc(10px * var(--game-scale, 1));
-    box-sizing: border-box;
-  }
-  #overlayPanel {
-    background: rgba(8, 10, 20, 0.82);
-    border: 1.5px solid rgba(255,255,255,0.14);
-    border-radius: calc(18px * var(--game-scale, 1));
-    padding: calc(20px * var(--game-scale, 1)) calc(24px * var(--game-scale, 1));
-    max-width: 88%;
-    max-height: 92%;
-    overflow-y: auto;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: auto;
-  }
-  #overlay h1 { margin: 0 0 6px; font-size: calc(24px * var(--game-scale, 1)); }
-  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
-  #resultSub { font-weight: bold; letter-spacing: 0.08em; color: #4C9F70; }
-  #streakLine { opacity: 0.85; color: #D9A441; font-weight: bold; }
-  #closeOverlay {
-    margin-top: calc(14px * var(--game-scale, 1));
-    font-family: inherit;
-    font-size: calc(13px * var(--game-scale, 1));
-    font-weight: bold;
-    padding: calc(8px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
-    border-radius: calc(20px * var(--game-scale, 1));
-    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.5);
-    background: rgba(255,255,255,0.1);
-    color: white;
-    cursor: pointer;
-  }
-  #closeOverlay:active { background: rgba(255,255,255,0.25); }
-  #backToArcade {
-    display: inline-block;
-    margin-top: calc(10px * var(--game-scale, 1));
-    font-size: calc(12px * var(--game-scale, 1));
-    font-weight: bold;
-    color: white;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    opacity: 0.85;
-  }
-  #backToArcade:active { opacity: 1; }
   #muteBtn {
     position: absolute;
     top: calc(8px * var(--game-scale, 1));
@@ -109,27 +54,12 @@
   <canvas id="game"></canvas>
   <button id="muteBtn" type="button">🔊</button>
   <button id="playPing" type="button" data-kb-play style="display:none;"></button>
-  <div id="overlay">
-    <div id="overlayPanel">
-      <h1 id="resultTitle">Solved in 4!</h1>
-      <p id="resultSub">STORM</p>
-      <p id="streakLine">Current streak: 3 · Best: 5</p>
-      <button id="closeOverlay" type="button">View grid</button>
-      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
-    </div>
-  </div>
 </div>
 
 <script>
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const wrap = document.getElementById('wrap');
-const overlay = document.getElementById('overlay');
-const overlayPanel = document.getElementById('overlayPanel');
-const resultTitle = document.getElementById('resultTitle');
-const resultSub = document.getElementById('resultSub');
-const streakLine = document.getElementById('streakLine');
-const closeOverlay = document.getElementById('closeOverlay');
 const muteBtn = document.getElementById('muteBtn');
 const playPingBtn = document.getElementById('playPing');
 
@@ -165,7 +95,12 @@ const PAL = {
   hudSub: 'rgba(244,241,234,0.55)',
   keyBg: 'rgba(255,255,255,0.08)',
   keyText: '#F4F1EA',
-  toastBg: 'rgba(8,10,20,0.92)'
+  toastBg: 'rgba(8,10,20,0.92)',
+  resultBackdrop: 'rgba(10,12,18,0.75)',
+  resultPanelBg: 'rgba(31,36,48,0.97)',
+  resultPanelBorder: 'rgba(255,255,255,0.14)',
+  resultDivider: 'rgba(255,255,255,0.12)',
+  resultMuted: 'rgba(244,241,234,0.4)'
 };
 
 function roundRect(x, y, w, h, r) {
@@ -859,10 +794,26 @@ let shakeAnim = null;   // { row, t0 }
 let toast = null;       // { text, t0 }
 let winBounce = null;   // { row, t0 }
 let freshGameStarted = false;
+let resultAnim = null;      // { t0, dismissed } - drives the win/loss panel's pop-in
+let resultHeadline = '';
+let resultStreakText = '';
+const RESULT_BUTTONS = {}; // populated by drawResultOverlay each frame it draws, for hit-testing
 
 const FLIP_DUR = 300, FLIP_STAGGER = 120;
+const RESULT_ANIM_DUR = 380;
 
 function rowRevealTotalMs() { return FLIP_STAGGER * 4 + FLIP_DUR; }
+
+// ease-out-back: overshoots past 1.0 slightly then settles - gives the
+// result panel a quick "pop" rather than a flat fade-in.
+function easeOutBack(t) {
+  const c1 = 1.70158, c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+
+function hitTest(r, x, y) {
+  return !!r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+}
 
 function showToast(text) { toast = { text, t0: performance.now() }; }
 
@@ -880,20 +831,13 @@ function finalizeStats(won) {
   return stats;
 }
 
-function showResultOverlay(status, stats) {
+function enterResult(status, stats) {
   const stat = stats || loadStats();
-  if (status === 'won') {
-    resultTitle.textContent = 'Solved in ' + guesses.length + '!';
-  } else {
-    resultTitle.textContent = 'Next word tomorrow';
-  }
-  resultSub.textContent = TARGET;
-  resultSub.style.color = status === 'won' ? PAL.green : PAL.yellow;
-  streakLine.textContent = 'Current streak: ' + stat.currentStreak + ' · Best: ' + stat.maxStreak;
-  overlay.style.display = 'flex';
+  finalStatus = status;
+  resultHeadline = status === 'won' ? ('Solved in ' + guesses.length + '!') : 'Next word tomorrow';
+  resultStreakText = 'Current streak: ' + stat.currentStreak + ' · Best: ' + stat.maxStreak;
+  resultAnim = { t0: performance.now(), dismissed: false };
 }
-
-closeOverlay.addEventListener('click', () => { overlay.style.display = 'none'; });
 
 function finishGame(status) {
   finalStatus = status;
@@ -901,7 +845,7 @@ function finishGame(status) {
   saveProgress({ dayNumber: TODAY.dayNumber, guesses, status });
   const stats = finalizeStats(status === 'won');
   if (status === 'won') playWinFanfare(); else playLossTone();
-  setTimeout(() => showResultOverlay(status, stats), 400);
+  setTimeout(() => enterResult(status, stats), 400);
 }
 
 function submitGuess() {
@@ -968,6 +912,16 @@ canvas.addEventListener('pointerdown', (e) => {
   const rect = canvas.getBoundingClientRect();
   const x = (e.clientX - rect.left) * (LOGICAL_W / rect.width);
   const y = (e.clientY - rect.top) * (LOGICAL_H / rect.height);
+
+  if (resultAnim && !resultAnim.dismissed) {
+    if (hitTest(RESULT_BUTTONS.viewGrid, x, y)) { resultAnim.dismissed = true; return; }
+    if (hitTest(RESULT_BUTTONS.backToArcade, x, y)) { location.href = '../../index.html'; return; }
+    return; // swallow all other input while the result panel is up
+  }
+  if (resultAnim && resultAnim.dismissed) {
+    if (hitTest(RESULT_BUTTONS.reopen, x, y)) { resultAnim.dismissed = false; resultAnim.t0 = performance.now(); return; }
+  }
+
   for (const k of KEYBOARD_LAYOUT) {
     if (x >= k.x && x <= k.x + k.w && y >= k.y && y <= k.y + k.h) { handleKey(k.key); return; }
   }
@@ -1117,6 +1071,131 @@ function drawToast(now) {
   ctx.restore();
 }
 
+// Win: checkmark badge in the green accent. Loss: a crescent moon in a
+// muted neutral tone (ties to "come back tomorrow" rather than reading as
+// failure/alarm, matching the non-punishing loss tone specified for audio).
+function drawResultIcon(cx, cy, won) {
+  if (won) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+    ctx.fillStyle = PAL.green;
+    ctx.fill();
+    ctx.strokeStyle = PAL.tileText;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, cy);
+    ctx.lineTo(cx - 2, cy + 7);
+    ctx.lineTo(cx + 9, cy - 8);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+    ctx.fillStyle = PAL.resultMuted;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 7, cy - 4, 14, 0, Math.PI * 2);
+    ctx.fillStyle = PAL.resultPanelBg;
+    ctx.fill();
+  }
+}
+
+const RESULT_PANEL_W = 280, RESULT_PANEL_H = 258;
+
+function drawResultOverlay(now) {
+  if (!resultAnim || resultAnim.dismissed) return;
+  const age = now - resultAnim.t0;
+  const t = Math.min(1, age / RESULT_ANIM_DUR);
+  const scale = 0.85 + easeOutBack(t) * 0.15;
+  const won = finalStatus === 'won';
+
+  ctx.fillStyle = PAL.resultBackdrop;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+  const cx = LOGICAL_W / 2, cy = LOGICAL_H / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+  ctx.translate(-cx, -cy);
+
+  const px = cx - RESULT_PANEL_W / 2, py = cy - RESULT_PANEL_H / 2;
+  roundRect(px, py, RESULT_PANEL_W, RESULT_PANEL_H, 18);
+  ctx.fillStyle = PAL.resultPanelBg;
+  ctx.fill();
+  ctx.strokeStyle = PAL.resultPanelBorder;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+  let y = py + 40;
+  drawResultIcon(cx, y, won);
+
+  y += 40;
+  ctx.font = '800 24px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.hudText;
+  ctx.fillText(resultHeadline, cx, y);
+
+  y += 32;
+  ctx.font = '700 16px -apple-system, sans-serif';
+  ctx.fillStyle = won ? PAL.green : PAL.yellow;
+  ctx.fillText(TARGET, cx, y);
+
+  y += 22;
+  ctx.strokeStyle = PAL.resultDivider;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(px + 30, y);
+  ctx.lineTo(px + RESULT_PANEL_W - 30, y);
+  ctx.stroke();
+
+  y += 22;
+  ctx.font = '700 14px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.yellow;
+  ctx.fillText('🔥 ' + resultStreakText, cx, y);
+
+  y += 36;
+  const btnW = 140, btnH = 34;
+  const btnX = cx - btnW / 2, btnY = y - btnH / 2;
+  roundRect(btnX, btnY, btnW, btnH, 17);
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.font = '700 13px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.tileText;
+  ctx.fillText('View grid', cx, btnY + btnH / 2 + 1);
+  RESULT_BUTTONS.viewGrid = { x: btnX, y: btnY, w: btnW, h: btnH };
+
+  y += 34;
+  ctx.font = '600 12px -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(244,241,234,0.7)';
+  ctx.fillText('← Back to Arcade', cx, y);
+  RESULT_BUTTONS.backToArcade = { x: cx - 60, y: y - 10, w: 120, h: 20 };
+
+  ctx.restore();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawResultReopenTag() {
+  if (!(resultAnim && resultAnim.dismissed)) return;
+  const w = 64, h = 26, x = LOGICAL_W - 16 - w, y = 8;
+  roundRect(x, y, w, h, 13);
+  ctx.fillStyle = PAL.resultBackdrop;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.font = '700 11px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.tileText;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Result', x + w / 2, y + h / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  RESULT_BUTTONS.reopen = { x, y, w, h };
+}
+
 function draw(now) {
   ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
   drawBackground();
@@ -1124,6 +1203,8 @@ function draw(now) {
   drawGrid(now);
   drawKeyboard();
   drawToast(now);
+  drawResultOverlay(now);
+  drawResultReopenTag();
 
   if (revealAnim && now - revealAnim.t0 >= rowRevealTotalMs()) {
     completeReveal();
@@ -1164,7 +1245,7 @@ function deriveStatus(gs) {
       // status already matches, a previous session already finalized it.
       const stats = progress.status === derived ? loadStats() : finalizeStats(derived === 'won');
       if (progress.status !== derived) saveProgress({ dayNumber: TODAY.dayNumber, guesses, status: derived });
-      showResultOverlay(derived, stats);
+      enterResult(derived, stats);
     } else {
       freshGameStarted = true;
       state = 'playing';
