@@ -52,10 +52,21 @@ games/<slug>/index.html       — next game goes here
 2. Before `</body>`, include the shared chrome:
    ```html
    <script src="../../assets/version.js"></script>
-   <script src="../../assets/game-embed.js" data-coffee-url="https://buymeacoffee.com/Krishnabuilds"></script>
+   <script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
    ```
    This injects a top nav bar ("← All games" + brand/version text) and a
-   floating "☕ Support" link — no per-game CSS/markup needed.
+   floating "Want to build your own? Get the guide" link — no per-game
+   CSS/markup needed. **Always copy the `data-coffee-url` value verbatim
+   from an existing game (e.g. `games/sudoku/index.html`) — do not use
+   `https://buymeacoffee.com/Krishnabuilds`.** That URL is stale (an early
+   placeholder from before the support link became "get the guide"); five
+   games (Comet Watch, Inkgrid, Lexigrid, Shard Rush, Word Search) got
+   built with it copied from an outdated version of this instruction
+   before the mismatch was caught and fixed. Every current game uses the
+   gumroad URL above — `grep -rh data-coffee-url games/*/index.html | sort
+   -u` should show exactly one URL (aside from the unrelated
+   `data-fullscreen` attribute some games also carry) before you commit a
+   new game.
 3. Add one entry to the `GAMES` array near the bottom of `index.html`'s
    inline script (name, tagline, emoji, gradient `color`, `tags`, `path`).
    The card on the landing page is generated entirely from this array.
