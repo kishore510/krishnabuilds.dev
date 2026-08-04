@@ -184,6 +184,262 @@ const WORD_CIRCLE_PUZZLES = {
   },
 };
 
+// One-line clue per required word, shown alongside the revealed letter
+// when a hint is used. Covers every required word across all 29 puzzles.
+const HINT_CLUES = {
+  ABLY: 'in a skillful manner',
+  ACED: 'passed with a perfect score',
+  ACME: 'the highest point; peak',
+  ACNE: 'a skin condition with pimples',
+  ACRE: 'a unit of land area',
+  ADMIN: 'short for administrator',
+  ADORN: 'to decorate',
+  AEON: 'an extremely long span of time',
+  AHEM: 'a sound made to clear one’s throat',
+  AHOY: 'a sailor’s greeting or call',
+  AIRY: 'light and breezy',
+  AMID: 'in the middle of',
+  AMINO: 'type of acid that builds proteins',
+  ANAL: 'extremely fussy about details, informally',
+  ANIMAL: 'a living creature, not a plant',
+  ANTI: 'opposed to',
+  ANTIC: 'a playful, mischievous act',
+  ARCH: 'a curved structure',
+  AREA: 'a region or space',
+  ARGON: 'a noble gas',
+  AVER: 'to state as fact',
+  AXON: 'part of a nerve cell that sends signals',
+  AXONS: 'plural of a nerve cell’s signal-sending part',
+  BAIL: 'to leave suddenly, or money paid for release',
+  BAND: 'a group of musicians',
+  BANDS: 'plural of a musical group',
+  BANS: 'forbids',
+  BARE: 'uncovered',
+  BARN: 'a farm building',
+  BARON: 'a noble title',
+  BEAR: 'a large forest animal',
+  BOAR: 'a wild male pig',
+  BOAS: 'snakes, or feathery scarves, plural',
+  BOND: 'a close connection',
+  BONDS: 'plural of a close connection',
+  BORN: 'brought into life',
+  BRAIN: 'the organ you think with',
+  BRAN: 'the outer layer of a grain',
+  BRAVE: 'showing courage',
+  BRAWN: 'muscular strength',
+  BRAY: 'the sound a donkey makes',
+  BRIAR: 'a thorny bush',
+  BROW: 'the ridge above the eye',
+  BROWN: 'a warm, earthy color',
+  CAME: 'past tense of come',
+  CAMERA: 'a device for taking photos',
+  CANE: 'a walking stick',
+  CANED: 'struck with a stick',
+  CANOE: 'a narrow, paddled boat',
+  CANT: 'insincere talk, or a slant',
+  CAPTAIN: 'the leader of a ship or team',
+  CARE: 'concern or attention',
+  CATNAP: 'a short sleep',
+  CATNIP: 'a plant cats love',
+  CHAIR: 'a seat with a back',
+  CHAR: 'to burn slightly',
+  CHECK: 'to verify',
+  CHIC: 'stylish',
+  CHICK: 'a baby chicken',
+  CHICKEN: 'a common farm bird',
+  CHIN: 'the point of the jaw',
+  CHINK: 'a narrow opening',
+  CINCH: 'something very easy',
+  CLIP: 'to fasten or trim',
+  CLOD: 'a lump of earth',
+  CLOUD: 'a mass of vapor in the sky',
+  COIN: 'a piece of metal money',
+  COLD: 'low in temperature',
+  CONE: 'an ice cream holder’s shape',
+  CORN: 'a cereal crop',
+  COULD: 'past tense of can',
+  CRAM: 'to study intensively at the last minute',
+  CREAM: 'the fatty part of milk',
+  CURIO: 'a rare or unusual object',
+  DABS: 'light taps',
+  DADO: 'a decorative wall panel section',
+  DAILY: 'happening every day',
+  DAMN: 'a mild curse',
+  DANCE: 'rhythmic movement to music',
+  DARN: 'to mend, or a mild curse',
+  DEAN: 'a university official',
+  DIAL: 'a clock or phone face',
+  DIAMOND: 'a precious gemstone',
+  DOILY: 'a decorative lace mat',
+  DOMAIN: 'an area of control, or a website’s address',
+  DONS: 'puts on (clothing)',
+  DRAG: 'to pull along',
+  DRAGON: 'a mythical fire-breathing creature',
+  EMUS: 'large flightless Australian birds',
+  EPIC: 'a grand, heroic tale',
+  FAME: 'being widely known',
+  FIGHT: 'a physical struggle',
+  FILTH: 'dirt or grime',
+  FLAME: 'a tongue of fire',
+  FLEA: 'a tiny jumping bug',
+  FLIGHT: 'travel through the air',
+  FLIT: 'to move quickly and lightly',
+  GIFT: 'a present',
+  GILT: 'covered in gold',
+  GIRT: 'encircled or bound (archaic)',
+  GOAD: 'to provoke into action',
+  GRAD: 'short for graduate',
+  GRAND: 'impressively large',
+  GRIT: 'determination, or coarse sand',
+  GROAN: 'a low sound of pain',
+  HAIL: 'to greet, or icy rain',
+  HAIR: 'what grows on your head',
+  HALE: 'healthy and strong',
+  HALO: 'a ring of light',
+  HAMMER: 'a tool for driving nails',
+  HARE: 'a fast, long-eared animal like a rabbit',
+  HAREM: 'historically, a household’s women’s quarters',
+  HARM: 'to injure',
+  HEAL: 'to make well again',
+  HEAR: 'to perceive sound',
+  HECK: 'a mild exclamation',
+  HICK: 'an unsophisticated rural person, informally',
+  HIKE: 'a long walk, or to raise (prices)',
+  HILT: 'a sword’s handle',
+  HOES: 'garden tools, plural',
+  HOLD: 'to grasp',
+  HOLIDAY: 'a day of celebration or rest',
+  HOLY: 'sacred',
+  HOSE: 'a flexible tube',
+  HOUSE: 'a place to live',
+  HUES: 'shades of color',
+  ICON: 'a symbol or image',
+  IDLY: 'without purpose',
+  IDOL: 'an object of worship or admiration',
+  INAPT: 'not suitable',
+  INCH: 'a small unit of length',
+  INCUR: 'to bring upon oneself',
+  IRON: 'a metal, or a pressing appliance',
+  KITE: 'a flying toy on a string',
+  KITTEN: 'a baby cat',
+  KNIT: 'to weave yarn into fabric',
+  LADY: 'a woman, especially a refined one',
+  LAID: 'past tense of lay',
+  LAIN: 'past participle of lie (down)',
+  LAIR: 'an animal’s den',
+  LAMA: 'a Buddhist spiritual teacher',
+  LAME: 'unable to walk properly, or weak and uncool',
+  LEAF: 'part of a plant',
+  LEMON: 'a sour yellow fruit',
+  LIAR: 'someone who doesn’t tell the truth',
+  LIBRARY: 'a place full of books',
+  LICE: 'tiny parasitic insects, plural',
+  LIEN: 'a legal claim on property',
+  LIFT: 'to raise, or a British elevator',
+  LIGHT: 'illumination, or not heavy',
+  LINE: 'a long, thin mark',
+  LIRA: 'old Italian or Turkish currency',
+  LOAD: 'a burden or cargo',
+  LONE: 'solitary',
+  LOUD: 'making a lot of noise',
+  MACE: 'a spice, or a medieval weapon',
+  MAID: 'a female servant',
+  MAIL: 'letters and packages',
+  MAIN: 'most important',
+  MALE: 'a man or boy',
+  MANIA: 'an obsessive enthusiasm',
+  MARE: 'a female horse',
+  MEAL: 'food eaten at one sitting',
+  MEET: 'to come together with someone',
+  MELON: 'a sweet, round fruit',
+  MELT: 'to turn from solid to liquid',
+  METE: 'to deal out or distribute, as in "mete out"',
+  MIND: 'the seat of thought',
+  MOAN: 'a low sound of pain or pleasure',
+  MOLE: 'a small burrowing mammal, or a skin spot',
+  MOUSE: 'a small rodent, or a computer pointer',
+  MUSE: 'to ponder, or a source of inspiration',
+  NABS: 'catches or seizes',
+  NAIL: 'a metal fastener, or a fingertip covering',
+  NECK: 'the part connecting head and body',
+  NICE: 'pleasant',
+  NICHE: 'a specialized position or role',
+  NICK: 'a small cut, or to steal, informally',
+  NITE: 'informal spelling of night',
+  NODS: 'tilts the head in agreement',
+  NOEL: 'a Christmas carol or greeting',
+  NOMAD: 'a person who moves from place to place',
+  NOUN: 'a naming word in grammar',
+  OCEAN: 'a vast body of salt water',
+  OILY: 'covered in or resembling oil',
+  OMEN: 'a sign of things to come',
+  ONCE: 'a single time',
+  ORGAN: 'a body part with a function, or an instrument',
+  PACT: 'a formal agreement',
+  PAIN: 'physical suffering',
+  PAINT: 'colored liquid for coating surfaces',
+  PANIC: 'sudden, overwhelming fear',
+  PANT: 'to breathe quickly',
+  PATINA: 'a surface sheen that develops with age',
+  PEEL: 'to strip off the skin',
+  PELT: 'an animal’s skin, or to throw at',
+  PENCIL: 'a writing tool with graphite',
+  PILE: 'a stack',
+  PINE: 'an evergreen tree, or to long for something',
+  PINT: 'a unit of liquid volume',
+  PITA: 'a round flatbread',
+  RACE: 'a competition of speed',
+  RADON: 'a radioactive gas',
+  RAIL: 'a bar track, or to complain loudly',
+  RAIN: 'water falling from clouds',
+  RAINBOW: 'an arc of colors after rain',
+  RANG: 'past tense of ring',
+  RATE: 'a measure of speed or cost',
+  RAVE: 'to speak enthusiastically, or a dance party',
+  REAM: 'a large quantity of paper',
+  RHEA: 'a large flightless South American bird',
+  RICH: 'having a lot of money',
+  RITE: 'a ceremonial act',
+  ROAD: 'a paved route for vehicles',
+  ROAN: 'a horse coat color mixed with white',
+  ROBIN: 'a red-breasted songbird',
+  RUIN: 'to destroy or spoil',
+  SAND: 'fine grains on a beach',
+  SANDBOX: 'a play area with sand, or a safe testing space',
+  SHOE: 'footwear',
+  SNOB: 'someone who looks down on others',
+  SODA: 'a fizzy drink',
+  SOME: 'an unspecified amount',
+  SUMO: 'a Japanese wrestling sport',
+  TARE: 'the weight of empty packaging',
+  TEAR: 'to rip, or a drop from crying',
+  TEEM: 'to be full of something',
+  TEMP: 'a temporary worker',
+  TEMPLE: 'a place of worship',
+  TENT: 'a portable fabric shelter',
+  TIER: 'a level or layer',
+  TIGER: 'a large striped big cat',
+  TIKE: 'a small child (variant of "tyke")',
+  TINE: 'a prong on a fork',
+  TINT: 'a shade of color',
+  TIRE: 'to grow weary, or a wheel’s rubber covering',
+  TRIG: 'short for trigonometry',
+  UNICORN: 'a mythical horned horse',
+  UNION: 'a joining together, or a labor group',
+  URIC: 'relating to urine, as in uric acid',
+  VERB: 'an action word in grammar',
+  WALE: 'a ridge in fabric like corduroy',
+  WARE: 'goods for sale',
+  WARN: 'to alert of danger',
+  WART: 'a small skin growth',
+  WATER: 'the liquid you drink',
+  WEAL: 'well-being, or a welt on skin',
+  WEAR: 'to have on your body',
+  WHALE: 'a giant sea mammal',
+  WINO: 'a heavy drinker, informally',
+  WORN: 'showing signs of use',
+};
+
 (function () {
 'use strict';
 
@@ -309,6 +565,8 @@ function playInvalid() { playTone(260, 0.16, 0, 'sine', 0.07); }
 function playWinFanfare() {
   [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => playTone(f, 0.2, i * 0.11, 'triangle', 0.18));
 }
+function playHintChime() { playTone(660, 0.1, 0, 'sine', 0.09); playTone(880, 0.12, 0.09, 'sine', 0.08); }
+function playLossTone() { playTone(300, 0.18, 0, 'sine', 0.08); playTone(220, 0.35, 0.12, 'sine', 0.07); }
 function updateMuteBtn() { muteBtn.innerHTML = muted ? '&#128263;' : '&#128266;'; }
 muteBtn.addEventListener('click', () => {
   muted = !muted;
@@ -345,7 +603,7 @@ function refreshBestLabels() {
 // ============================================================
 // Game state
 // ============================================================
-let screen = 'select'; // 'select' | 'playing' | 'won'
+let screen = 'select'; // 'select' | 'playing' | 'won' | 'lost'
 let difficulty = 'easy';
 let anchor = '';
 let circleLetters = [];
@@ -367,13 +625,20 @@ let timerStarted = false;
 let startTime = 0;
 let winElapsed = 0;
 
-let resultAnim = null; // { t0 } drives the win panel's scale-in pop
+const MAX_HINTS = 3;
+let hintsUsed = 0;
+let hintedLetters = new Map(); // word -> Set of revealed letter indices
+let revealedWords = new Set(); // words shown via Give Up (loss only)
+let hintToast = null; // { text, at } - transient clue banner
+let HINT_PILL_RECT = null;
+
+let resultAnim = null; // { t0, dismissed, kind: 'won'|'lost' } drives the result panel's scale-in pop
 const RESULT_ANIM_DUR = 380;
 function easeOutBack(t) {
   const c1 = 1.70158, c3 = c1 + 1;
   return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
 }
-const WIN_BUTTONS = {};
+const RESULT_BUTTONS = {};
 
 function newGame(diffKey) {
   playPingBtn.click();
@@ -402,6 +667,11 @@ function newGame(diffKey) {
   timerStarted = false;
   startTime = 0;
   resultAnim = null;
+
+  hintsUsed = 0;
+  hintedLetters = new Map();
+  revealedWords = new Set();
+  hintToast = null;
 
   screen = 'playing';
   showScreen();
@@ -445,8 +715,46 @@ function win() {
   winElapsed = getElapsedMs(now);
   screen = 'won';
   setBestIfBetter(difficulty, Math.round(winElapsed));
-  resultAnim = { t0: now };
+  resultAnim = { t0: now, dismissed: false, kind: 'won' };
   playWinFanfare();
+}
+
+// Picks the unfound required word closest to completion (fewest hidden
+// letters left), so 3 hints concentrate on finishing one word rather than
+// sprinkling single letters across many - min word length is 4, so hints
+// alone can never fully spell a word out; the player always has to
+// actually swipe it.
+function useHint() {
+  if (screen !== 'playing') return;
+  if (hintsUsed >= MAX_HINTS) { giveUp(); return; }
+  const candidates = required.filter(w => !foundRequired.has(w));
+  if (candidates.length === 0) return;
+  candidates.sort((a, b) => {
+    const aHidden = a.length - (hintedLetters.get(a) ? hintedLetters.get(a).size : 0);
+    const bHidden = b.length - (hintedLetters.get(b) ? hintedLetters.get(b).size : 0);
+    if (aHidden !== bHidden) return aHidden - bHidden;
+    if (a.length !== b.length) return a.length - b.length;
+    return 0;
+  });
+  const target = candidates[0];
+  let set = hintedLetters.get(target);
+  if (!set) { set = new Set(); hintedLetters.set(target, set); }
+  let idx = -1;
+  for (let i = 0; i < target.length; i++) { if (!set.has(i)) { idx = i; break; } }
+  if (idx === -1) return;
+  set.add(idx);
+  hintsUsed++;
+  hintToast = { text: HINT_CLUES[target] || 'a puzzle word', at: performance.now() };
+  playHintChime();
+}
+
+function giveUp() {
+  if (screen !== 'playing') return;
+  for (const w of required) { if (!foundRequired.has(w)) revealedWords.add(w); }
+  clearSelection();
+  screen = 'lost';
+  resultAnim = { t0: performance.now(), dismissed: false, kind: 'lost' };
+  playLossTone();
 }
 
 // ============================================================
@@ -473,13 +781,21 @@ function hitTest(rect, x, y) {
 canvas.addEventListener('pointerdown', (e) => {
   const pos = getLogicalPos(e.clientX, e.clientY);
 
-  if (screen === 'won') {
-    if (hitTest(WIN_BUTTONS.playAgain, pos.x, pos.y)) { ensureAudio(); newGame(difficulty); }
-    else if (hitTest(WIN_BUTTONS.changeDiff, pos.x, pos.y)) { screen = 'select'; showScreen(); }
+  if (screen === 'won' || screen === 'lost') {
+    if (resultAnim && resultAnim.dismissed) {
+      if (hitTest(RESULT_BUTTONS.reopen, pos.x, pos.y)) { resultAnim.dismissed = false; resultAnim.t0 = performance.now(); }
+      return;
+    }
+    if (!resultAnim) return;
+    if (hitTest(RESULT_BUTTONS.playAgain, pos.x, pos.y)) { ensureAudio(); newGame(difficulty); }
+    else if (hitTest(RESULT_BUTTONS.viewBoard, pos.x, pos.y)) { resultAnim.dismissed = true; }
+    else if (hitTest(RESULT_BUTTONS.changeDiff, pos.x, pos.y)) { screen = 'select'; showScreen(); }
     return;
   }
   if (screen !== 'playing') return;
   ensureAudio();
+
+  if (hitTest(HINT_PILL_RECT, pos.x, pos.y)) { useHint(); return; }
 
   const idx = tileAt(pos.x, pos.y);
   if (idx === -1) {
@@ -624,6 +940,62 @@ function drawHUD() {
   ctx.textAlign = 'left';
 }
 
+function drawHintPill() {
+  const hasHints = hintsUsed < MAX_HINTS;
+  const label = hasHints ? ('💡 Hint (' + (MAX_HINTS - hintsUsed) + ')') : '🏳 Give Up';
+  ctx.font = '600 11px -apple-system, sans-serif';
+  const w = ctx.measureText(label).width + 20;
+  const x = 344 - w, y = 40, h = 22;
+  roundRect(x, y, w, h, 11);
+  ctx.fillStyle = hasHints ? 'rgba(232,162,74,0.16)' : 'rgba(255,255,255,0.1)';
+  ctx.fill();
+  ctx.strokeStyle = hasHints ? 'rgba(232,162,74,0.45)' : 'rgba(244,237,226,0.35)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = hasHints ? PAL.bonusText : PAL.hudText;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(label, x + w / 2, y + h / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  HINT_PILL_RECT = { x, y, w, h };
+}
+
+function drawHintToast(now) {
+  if (!hintToast) return;
+  const DURATION = 3800, FADE = 700;
+  const age = now - hintToast.at;
+  if (age > DURATION) { hintToast = null; return; }
+  const alpha = age > DURATION - FADE ? 1 - (age - (DURATION - FADE)) / FADE : 1;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.font = '600 11px -apple-system, sans-serif';
+  const maxW = 300;
+  const words = ('Hint: ' + hintToast.text).split(' ');
+  const lines = [];
+  let cur = '';
+  for (const word of words) {
+    const test = cur ? cur + ' ' + word : word;
+    if (cur && ctx.measureText(test).width > maxW) { lines.push(cur); cur = word; }
+    else cur = test;
+  }
+  if (cur) lines.push(cur);
+
+  const lineH = 15;
+  const panelW = maxW + 24, panelH = lines.length * lineH + 16;
+  const px = (LOGICAL_W - panelW) / 2, py = 42;
+  roundRect(px, py, panelW, panelH, 10);
+  ctx.fillStyle = 'rgba(20,14,32,0.92)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(232,162,74,0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  ctx.fillStyle = '#F4EDE2';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  lines.forEach((line, i) => ctx.fillText(line, LOGICAL_W / 2, py + 8 + i * lineH + lineH / 2));
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.restore();
+}
+
 function shakeOffset(now) {
   const age = now - invalidShakeAt;
   if (invalidShakeAt === 0 || age > 260) return 0;
@@ -730,6 +1102,8 @@ function drawWordBlanks(now) {
     for (const word of words) {
       if (x + rowWidth > 340) { x = 20; y += boxSize + rowGap; }
       const found = foundRequired.has(word);
+      const revealed = revealedWords.has(word);
+      const hintSet = hintedLetters.get(word);
       const animAt = foundAnimAt.get(word) || 0;
       const t = animAt ? Math.min(1, (now - animAt) / 220) : 1;
       for (let i = 0; i < word.length; i++) {
@@ -756,6 +1130,30 @@ function drawWordBlanks(now) {
           ctx.fillText(word[i], bx + boxSize / 2, y + (1 - t) * 6 + boxSize / 2 + 1);
           ctx.restore();
           ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        } else if (revealed) {
+          roundRect(bx, y, boxSize, boxSize, 5);
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(244,237,226,0.28)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(244,237,226,0.75)';
+          ctx.font = 'bold 13px -apple-system, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(word[i], bx + boxSize / 2, y + boxSize / 2 + 1);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        } else if (hintSet && hintSet.has(i)) {
+          roundRect(bx, y, boxSize, boxSize, 5);
+          ctx.fillStyle = 'rgba(232,162,74,0.16)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(232,162,74,0.55)';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+          ctx.fillStyle = '#E8A24A';
+          ctx.font = 'bold 13px -apple-system, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(word[i], bx + boxSize / 2, y + boxSize / 2 + 1);
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
         } else {
           roundRect(bx, y, boxSize, boxSize, 5);
           ctx.fillStyle = 'rgba(255,255,255,0.05)';
@@ -771,12 +1169,17 @@ function drawWordBlanks(now) {
   }
 }
 
-const RESULT_PANEL_W = 280, RESULT_PANEL_H = 240;
-function drawWinOverlay(now) {
-  if (!resultAnim) return;
+const RESULT_PANEL_W = 280, RESULT_PANEL_H = 300;
+// Result panel covers the word blanks, so both win and loss support the
+// same dismiss/reopen pattern Lexigrid uses for its result overlay - a
+// "View Board" tap hides the panel to reveal the (found or given-up)
+// board underneath, and a small reopen tag brings it back.
+function drawResultOverlay(now) {
+  if (!resultAnim || resultAnim.dismissed) return;
   const age = now - resultAnim.t0;
   const t = Math.min(1, age / RESULT_ANIM_DUR);
   const scale = 0.85 + easeOutBack(t) * 0.15;
+  const won = resultAnim.kind === 'won';
 
   ctx.fillStyle = 'rgba(10,7,16,0.75)';
   ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
@@ -791,7 +1194,7 @@ function drawWinOverlay(now) {
   roundRect(px, py, RESULT_PANEL_W, RESULT_PANEL_H, 18);
   ctx.fillStyle = 'rgba(43,31,64,0.97)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(232,162,74,0.5)';
+  ctx.strokeStyle = won ? 'rgba(232,162,74,0.5)' : 'rgba(244,237,226,0.3)';
   ctx.lineWidth = 1.5;
   ctx.stroke();
 
@@ -800,50 +1203,78 @@ function drawWinOverlay(now) {
   let y = py + 40;
   ctx.font = '800 24px -apple-system, sans-serif';
   ctx.fillStyle = PAL.hudText;
-  ctx.fillText('Solved!', cx, y);
+  ctx.fillText(won ? 'Solved!' : 'Out of Hints', cx, y);
 
   y += 34;
   ctx.font = '700 16px -apple-system, sans-serif';
-  ctx.fillStyle = PAL.bonusText;
-  ctx.fillText('Time: ' + formatTime(winElapsed), cx, y);
+  if (won) {
+    ctx.fillStyle = PAL.bonusText;
+    ctx.fillText('Time: ' + formatTime(winElapsed), cx, y);
+  } else {
+    ctx.fillStyle = PAL.hudText;
+    ctx.fillText(foundRequired.size + ' of ' + required.length + ' words found', cx, y);
+  }
 
   y += 24;
-  const best = getBest(difficulty);
   ctx.font = '600 12px -apple-system, sans-serif';
   ctx.fillStyle = PAL.hudSub;
-  ctx.fillText(best === Math.round(winElapsed) ? 'New best time!' : ('Best: ' + formatTime(best)), cx, y);
+  if (won) {
+    const best = getBest(difficulty);
+    ctx.fillText(best === Math.round(winElapsed) ? 'New best time!' : ('Best: ' + formatTime(best)), cx, y);
+  } else {
+    ctx.fillText('The missed words are revealed below', cx, y);
+  }
 
   y += 24;
   ctx.font = '600 13px -apple-system, sans-serif';
   ctx.fillStyle = PAL.bonusText;
   ctx.fillText('✨ ' + foundBonusSet.size + ' bonus word' + (foundBonusSet.size === 1 ? '' : 's') + ' found', cx, y);
 
-  y += 30;
+  y += 34;
   const btnW = 160, btnH = 34;
-  let btnX = cx - btnW / 2, btnY = y - btnH / 2;
-  roundRect(btnX, btnY, btnW, btnH, 17);
-  ctx.fillStyle = '#E8A24A';
-  ctx.fill();
-  ctx.font = '700 13px -apple-system, sans-serif';
-  ctx.fillStyle = '#2B1F3D';
-  ctx.fillText('Play Again', cx, btnY + btnH / 2 + 1);
-  WIN_BUTTONS.playAgain = pxRectToLogical(px, py, scale, cx, cy, btnX, btnY, btnW, btnH);
-
+  function drawResultBtn(label, yCenter, primary) {
+    const bx = cx - btnW / 2, by = yCenter - btnH / 2;
+    roundRect(bx, by, btnW, btnH, 17);
+    if (primary) {
+      ctx.fillStyle = '#E8A24A';
+      ctx.fill();
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(244,237,226,0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    ctx.font = '700 13px -apple-system, sans-serif';
+    ctx.fillStyle = primary ? '#2B1F3D' : PAL.hudText;
+    ctx.fillText(label, cx, by + btnH / 2 + 1);
+    return pxRectToLogical(px, py, scale, cx, cy, bx, by, btnW, btnH);
+  }
+  RESULT_BUTTONS.playAgain = drawResultBtn('Play Again', y, true);
   y += 44;
-  btnX = cx - btnW / 2; btnY = y - btnH / 2;
-  roundRect(btnX, btnY, btnW, btnH, 17);
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(244,237,226,0.5)';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.font = '700 13px -apple-system, sans-serif';
-  ctx.fillStyle = PAL.hudText;
-  ctx.fillText('Change Difficulty', cx, btnY + btnH / 2 + 1);
-  WIN_BUTTONS.changeDiff = pxRectToLogical(px, py, scale, cx, cy, btnX, btnY, btnW, btnH);
+  RESULT_BUTTONS.viewBoard = drawResultBtn('View Board', y, false);
+  y += 44;
+  RESULT_BUTTONS.changeDiff = drawResultBtn('Change Difficulty', y, false);
 
   ctx.restore();
   ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawResultReopenTag() {
+  if (!(resultAnim && resultAnim.dismissed)) { RESULT_BUTTONS.reopen = null; return; }
+  const w = 84, h = 22, x = 344 - w, y = 40;
+  roundRect(x, y, w, h, 11);
+  ctx.fillStyle = 'rgba(20,14,32,0.92)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(232,162,74,0.5)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.font = '700 11px -apple-system, sans-serif';
+  ctx.fillStyle = '#F4EDE2';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('▲ Result', x + w / 2, y + h / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  RESULT_BUTTONS.reopen = { x, y, w, h };
 }
 // Buttons are drawn inside a scaled/translated context (the pop-in
 // animation); convert their rect back to un-scaled logical canvas
@@ -858,12 +1289,17 @@ function pxRectToLogical(px, py, scale, cx, cy, x, y, w, h) {
 function draw() {
   const now = performance.now();
   drawBackground();
-  if (screen === 'playing' || screen === 'won') {
+  if (screen === 'playing' || screen === 'won' || screen === 'lost') {
     drawHUD();
+    if (screen === 'playing') drawHintPill();
     drawCircleArea(now);
     drawWordBlanks(now);
+    if (screen === 'playing') drawHintToast(now);
   }
-  if (screen === 'won') drawWinOverlay(now);
+  if (screen === 'won' || screen === 'lost') {
+    drawResultOverlay(now);
+    drawResultReopenTag();
+  }
 }
 
 function loop() {
