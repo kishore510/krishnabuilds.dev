@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Circle</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #05060d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas#game {
+    background: #2B1F3D;
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #F4EDE2;
+    pointer-events: none;
+  }
+  .overlay.hidden { display: none; }
+
+  /* ---------- difficulty select ---------- */
+  #selectOverlay {
+    background: linear-gradient(180deg, #2B1F3D, #1E1530);
+    border-radius: 14px;
+    pointer-events: auto;
+  }
+  #selectOverlay h1 {
+    margin: 0 0 4px;
+    font-size: calc(30px * var(--game-scale, 1));
+    color: #F4EDE2;
+  }
+  #selectOverlay .tagline {
+    margin: 0 0 calc(18px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    color: rgba(244,237,226,0.55);
+  }
+  .diffList {
+    display: flex;
+    flex-direction: column;
+    gap: calc(10px * var(--game-scale, 1));
+    width: calc(220px * var(--game-scale, 1));
+  }
+  .diffBtn {
+    font-family: inherit;
+    font-size: calc(16px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(12px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    border-radius: calc(12px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(232,162,74,0.55);
+    background: rgba(232,162,74,0.1);
+    color: #F4EDE2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .diffBtn:active { background: rgba(232,162,74,0.22); }
+  .diffBtn .bestTime {
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 600;
+    color: #E8A24A;
+  }
+  #backToArcade {
+    display: inline-block;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    color: #F4EDE2;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.8;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+
+  /* ---------- mute button ---------- */
+  #muteBtn {
+    display: none;
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(28px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(232,162,74,0.5);
+    background: #2B1F3D;
+    color: #F4EDE2;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 5;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  #muteBtn.visible { display: flex; }
+  #muteBtn:active { background: #1E1530; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">&#128266;</button>
+
+  <div id="selectOverlay" class="overlay">
+    <h1>Word Circle</h1>
+    <p class="tagline">Swipe the circle, spell every word.</p>
+    <div class="diffList">
+      <button class="diffBtn" type="button" data-diff="easy">Easy <span class="bestTime" id="bestEasy">—</span></button>
+      <button class="diffBtn" type="button" data-diff="medium">Medium <span class="bestTime" id="bestMedium">—</span></button>
+      <button class="diffBtn" type="button" data-diff="hard">Hard <span class="bestTime" id="bestHard">—</span></button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+  <button id="playPing" type="button" data-kb-play style="display:none;"></button>
+</div>
+
+<script>
+const WORD_CIRCLE_PUZZLES = {
+  5: {
+    HOUSE: { required: ["HOES", "HOSE", "HOUSE", "HUES", "SHOE"], bonus: ["HOE", "HUE", "SHE", "SUE", "USE"] },
+    BRAVE: { required: ["AVER", "BARE", "BEAR", "BRAVE", "RAVE", "VERB"], bonus: ["ARE", "BAR", "BRA", "EAR", "ERA", "REV", "VAR"] },
+    CHAIR: { required: ["ARCH", "CHAIR", "CHAR", "HAIR", "RICH"], bonus: ["AIR", "ARC", "CAR", "CHI"] },
+    WATER: { required: ["RATE", "TARE", "TEAR", "WARE", "WART", "WATER", "WEAR"], bonus: ["ARE", "ART", "ATE", "AWE", "EAR", "EAT", "ERA", "ETA", "RAT", "RAW", "TAR", "TEA", "WAR", "WET"] },
+    CLOUD: { required: ["CLOD", "CLOUD", "COLD", "COULD", "LOUD"], bonus: ["COD", "CUD", "DOC", "DUO", "OLD"] },
+    DANCE: { required: ["ACED", "ACNE", "CANE", "CANED", "DANCE", "DEAN"], bonus: ["ACE", "AND", "CAD", "CAN", "DEN", "END"] },
+    FLAME: { required: ["FAME", "FLAME", "FLEA", "LAME", "LEAF", "MALE", "MEAL"], bonus: ["ALE", "ELF", "ELM", "FEM", "LAM", "LEA"] },
+    LEMON: { required: ["LEMON", "LONE", "MELON", "MOLE", "NOEL", "OMEN"], bonus: ["ELM", "EMO", "EON", "MEN", "ONE"] },
+    MOUSE: { required: ["EMUS", "MOUSE", "MUSE", "SOME", "SUMO"], bonus: ["EMO", "EMU", "SUE", "SUM", "USE"] },
+    OCEAN: { required: ["ACNE", "AEON", "CANE", "CANOE", "CONE", "OCEAN", "ONCE"], bonus: ["ACE", "CAN", "CON", "EON", "ONE"] },
+    PAINT: { required: ["ANTI", "INAPT", "PAIN", "PAINT", "PANT", "PINT", "PITA"], bonus: ["ANT", "APT", "NAP", "NIP", "NIT", "PAN", "PAT", "PIN", "PIT", "TAN", "TAP", "TIN", "TIP"] },
+    TIGER: { required: ["GIRT", "GRIT", "RITE", "TIER", "TIGER", "TIRE", "TRIG"], bonus: ["ERG", "GET", "IRE", "RIG", "TIE"] },
+    WHALE: { required: ["HALE", "HEAL", "WALE", "WEAL", "WHALE"], bonus: ["ALE", "AWE", "AWL", "HAW", "HEW", "LAW", "LEA"] },
+  },
+  6: {
+    FLIGHT: { required: ["FIGHT", "FILTH", "FLIGHT", "FLIT", "GIFT", "GILT", "HILT", "LIFT", "LIGHT"], bonus: ["FIG", "FIT", "HIT", "LIT"] },
+    ANIMAL: { required: ["ANAL", "ANIMAL", "LAIN", "LAMA", "MAIL", "MAIN", "MANIA", "NAIL"], bonus: ["AIL", "AIM", "LAM", "MAN", "MIL", "MIN", "NIL"] },
+    CAMERA: { required: ["ACME", "ACRE", "AREA", "CAME", "CAMERA", "CARE", "CRAM", "CREAM", "MACE", "MARE", "RACE", "REAM"], bonus: ["ACE", "ARC", "ARE", "ARM", "CAM", "CAR", "EAR", "ERA", "MAR", "RAM"] },
+    DRAGON: { required: ["ADORN", "ARGON", "DARN", "DRAG", "DRAGON", "GOAD", "GRAD", "GRAND", "GROAN", "ORGAN", "RADON", "RANG", "ROAD", "ROAN"], bonus: ["ADO", "AGO", "AND", "DOG", "DON", "GAD", "GOD", "NAG", "NOD", "NOR", "OAR", "RAG", "RAN", "ROD"] },
+    HAMMER: { required: ["AHEM", "HAMMER", "HARE", "HAREM", "HARM", "HEAR", "MARE", "REAM", "RHEA"], bonus: ["ARE", "ARM", "EAR", "ERA", "HAM", "HEM", "HER", "MAR", "MEH", "RAM"] },
+    KITTEN: { required: ["KITE", "KITTEN", "KNIT", "NITE", "TENT", "TIKE", "TINE", "TINT"], bonus: ["INK", "KEN", "KIN", "KIT", "NET", "NIT", "TEN", "TIE", "TIN", "TIT"] },
+    PENCIL: { required: ["CLIP", "EPIC", "LICE", "LIEN", "LINE", "NICE", "PENCIL", "PILE", "PINE"], bonus: ["ICE", "LEI", "LIE", "LIP", "NIL", "NIP", "PEN", "PIE", "PIN"] },
+    TEMPLE: { required: ["MEET", "MELT", "METE", "PEEL", "PELT", "TEEM", "TEMP", "TEMPLE"], bonus: ["EEL", "ELM", "LEE", "LET", "MET", "PEE", "PET", "TEE"] },
+  },
+  7: {
+    CAPTAIN: { required: ["ANTI", "ANTIC", "CANT", "CAPTAIN", "CATNAP", "CATNIP", "INAPT", "PACT", "PAIN", "PAINT", "PANIC", "PANT", "PATINA", "PINT", "PITA"], bonus: ["ACT", "ANT", "APT", "CAN", "CAP", "CAT", "NAP", "NIP", "NIT", "PAN", "PAT", "PIN", "PIT", "TAN", "TAP", "TIC", "TIN", "TIP"] },
+    CHICKEN: { required: ["CHECK", "CHIC", "CHICK", "CHICKEN", "CHIN", "CHINK", "CINCH", "HECK", "HICK", "HIKE", "INCH", "NECK", "NICE", "NICHE", "NICK"], bonus: ["CHI", "HEN", "HIE", "ICE", "INK", "KEN", "KIN"] },
+    DIAMOND: { required: ["ADMIN", "AMID", "AMINO", "DADO", "DAMN", "DIAMOND", "DOMAIN", "MAID", "MAIN", "MIND", "MOAN", "NOMAD"], bonus: ["ADD", "ADO", "AID", "AIM", "AND", "DAD", "DAM", "DID", "DIM", "DIN", "DON", "ION", "MAD", "MAN", "MID", "MIN", "MOD", "NOD", "ODD"] },
+    HOLIDAY: { required: ["AHOY", "DAILY", "DIAL", "DOILY", "HAIL", "HALO", "HOLD", "HOLIDAY", "HOLY", "IDLY", "IDOL", "LADY", "LAID", "LOAD", "OILY"], bonus: ["ADO", "AID", "AIL", "DAY", "HAD", "HAY", "HID", "HOD", "LAD", "LAY", "LID", "OIL", "OLD"] },
+    LIBRARY: { required: ["ABLY", "AIRY", "BAIL", "BRAY", "BRIAR", "LAIR", "LIAR", "LIBRARY", "LIRA", "RAIL"], bonus: ["AIL", "AIR", "BAR", "BAY", "BRA", "LAB", "LAY", "LIB", "RAY", "RIB"] },
+    RAINBOW: { required: ["BARN", "BARON", "BOAR", "BORN", "BRAIN", "BRAN", "BRAWN", "BROW", "BROWN", "IRON", "RAIN", "RAINBOW", "ROAN", "ROBIN", "WARN", "WINO", "WORN"], bonus: ["AIR", "BAN", "BAR", "BIN", "BOA", "BOW", "BRA", "ION", "NAB", "NIB", "NOR", "NOW", "OAR", "ORB", "OWN", "RAN", "RAW", "RIB", "ROB", "ROW", "WAN", "WAR", "WIN", "WON"] },
+    SANDBOX: { required: ["AXON", "AXONS", "BAND", "BANDS", "BANS", "BOAS", "BOND", "BONDS", "DABS", "DONS", "NABS", "NODS", "SAND", "SANDBOX", "SNOB", "SODA"], bonus: ["ADO", "ADS", "AND", "BAD", "BAN", "BOA", "BOX", "DAB", "DON", "NAB", "NOD", "SAD", "SAX", "SOB", "SOD", "SON", "SOX"] },
+    UNICORN: { required: ["COIN", "CORN", "CURIO", "ICON", "INCUR", "IRON", "NOUN", "RUIN", "UNICORN", "UNION", "URIC"], bonus: ["CON", "CUR", "INN", "ION", "NON", "NOR", "NUN", "ORC", "OUR", "RUN", "URN"] },
+  },
+};
+
+(function () {
+'use strict';
+
+// ============================================================
+// Layout constants (logical/CSS-pixel drawing space, always
+// 360x540 regardless of scale/DPR — see fitCanvas()).
+// ============================================================
+const LOGICAL_W = 360, LOGICAL_H = 540;
+
+const DIFFS = {
+  easy:   { n: 5, label: 'EASY' },
+  medium: { n: 6, label: 'MEDIUM' },
+  hard:   { n: 7, label: 'HARD' },
+};
+
+const PAL = {
+  bg: '#2B1F3D',
+  bgLow: '#1E1530',
+  ringTrack: 'rgba(255,255,255,0.12)',
+  tileText: '#2B1F3D',
+  tileSelectedText: '#2B1F3D',
+  swipeLine: 'rgba(232,162,74,0.85)',
+  hudText: '#F4EDE2',
+  hudSub: 'rgba(244,237,226,0.55)',
+  bonusPill: 'rgba(232,162,74,0.16)',
+  bonusText: '#E8A24A',
+  blankEmpty: 'rgba(255,255,255,0.14)',
+  centerPreview: '#F4EDE2',
+};
+
+const CX = 180, CY = 148, RADIUS = 78, TILE_R = 24, TILE_HIT_R = 30;
+
+function tilePos(i, n) {
+  const angle = -Math.PI / 2 + (i / n) * Math.PI * 2;
+  return [CX + Math.cos(angle) * RADIUS, CY + Math.sin(angle) * RADIUS];
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function shuffle(arr, rng) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ============================================================
+// DOM refs
+// ============================================================
+const wrap = document.getElementById('wrap');
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+const selectOverlay = document.getElementById('selectOverlay');
+const muteBtn = document.getElementById('muteBtn');
+const playPingBtn = document.getElementById('playPing');
+
+// ============================================================
+// Canvas fit — DPR-aware, same pattern as Word Search/Lexigrid.
+// ============================================================
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / LOGICAL_W, availH / LOGICAL_H);
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = LOGICAL_W * scale, cssH = LOGICAL_H * scale;
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  canvas.width = Math.max(1, Math.round(cssW * dpr));
+  canvas.height = Math.max(1, Math.round(cssH * dpr));
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(scale * dpr, scale * dpr);
+  wrap.style.setProperty('--game-scale', scale);
+  draw();
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+
+// ============================================================
+// Audio (procedural Web Audio only)
+// ============================================================
+let audioCtx = null;
+let muted = sessionStorage.getItem('wordcircleMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    audioCtx = new AC();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTone(freq, dur, delay, type, peak) {
+  if (muted) return;
+  const ac = ensureAudio();
+  if (!ac) return;
+  const t0 = ac.currentTime + delay;
+  const osc = ac.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.0001, t0);
+  gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain);
+  gain.connect(ac.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.02);
+}
+function playTick() { playTone(680, 0.03, 0, 'sine', 0.045); }
+function playFound(n) { playTone(520 + Math.min(n, 10) * 24, 0.15, 0, 'triangle', 0.18); playTone(780 + Math.min(n, 10) * 24, 0.17, 0.08, 'sine', 0.14); }
+function playBonus() { playTone(900, 0.1, 0, 'sine', 0.13); playTone(1200, 0.14, 0.06, 'triangle', 0.12); playTone(1500, 0.12, 0.12, 'sine', 0.09); }
+function playInvalid() { playTone(260, 0.16, 0, 'sine', 0.07); }
+function playWinFanfare() {
+  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => playTone(f, 0.2, i * 0.11, 'triangle', 0.18));
+}
+function updateMuteBtn() { muteBtn.innerHTML = muted ? '&#128263;' : '&#128266;'; }
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('wordcircleMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+updateMuteBtn();
+
+// ============================================================
+// Best-time storage
+// ============================================================
+function bestKey(diffKey) { return 'wordcircle_best_' + diffKey; }
+function getBest(diffKey) {
+  const v = sessionStorage.getItem(bestKey(diffKey));
+  return v ? parseInt(v, 10) : null;
+}
+function setBestIfBetter(diffKey, ms) {
+  const prev = getBest(diffKey);
+  if (prev === null || ms < prev) { sessionStorage.setItem(bestKey(diffKey), String(ms)); return true; }
+  return false;
+}
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+function refreshBestLabels() {
+  document.getElementById('bestEasy').textContent = getBest('easy') !== null ? formatTime(getBest('easy')) : '—';
+  document.getElementById('bestMedium').textContent = getBest('medium') !== null ? formatTime(getBest('medium')) : '—';
+  document.getElementById('bestHard').textContent = getBest('hard') !== null ? formatTime(getBest('hard')) : '—';
+}
+
+// ============================================================
+// Game state
+// ============================================================
+let screen = 'select'; // 'select' | 'playing' | 'won'
+let difficulty = 'easy';
+let anchor = '';
+let circleLetters = [];
+let required = [];
+let bonus = [];
+let foundRequired = new Set();
+let foundRequiredOrder = [];
+let foundBonusSet = new Set();
+const foundAnimAt = new Map(); // word -> timestamp, drives blank fill-in pop
+
+let selectionOrder = []; // indices into circleLetters, in pick order
+let usedTiles = new Set();
+let pointerActive = false;
+let dragMoved = false;
+let dragPos = null; // live logical pointer pos while dragging, for the live connector line
+let invalidShakeAt = 0;
+
+let timerStarted = false;
+let startTime = 0;
+let winElapsed = 0;
+
+let resultAnim = null; // { t0 } drives the win panel's scale-in pop
+const RESULT_ANIM_DUR = 380;
+function easeOutBack(t) {
+  const c1 = 1.70158, c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+const WIN_BUTTONS = {};
+
+function newGame(diffKey) {
+  playPingBtn.click();
+  difficulty = diffKey;
+  const n = DIFFS[diffKey].n;
+  const bank = WORD_CIRCLE_PUZZLES[n];
+  const keys = Object.keys(bank);
+  anchor = keys[Math.floor(Math.random() * keys.length)];
+  const data = bank[anchor];
+  required = data.required.slice();
+  bonus = data.bonus.slice();
+  circleLetters = shuffle(anchor.split(''), Math.random);
+
+  foundRequired = new Set();
+  foundRequiredOrder = [];
+  foundBonusSet = new Set();
+  foundAnimAt.clear();
+
+  selectionOrder = [];
+  usedTiles = new Set();
+  pointerActive = false;
+  dragMoved = false;
+  dragPos = null;
+  invalidShakeAt = 0;
+
+  timerStarted = false;
+  startTime = 0;
+  resultAnim = null;
+
+  screen = 'playing';
+  showScreen();
+}
+
+function startTimer() { timerStarted = true; startTime = performance.now(); }
+function getElapsedMs(now) { return timerStarted ? now - startTime : 0; }
+
+function clearSelection() {
+  selectionOrder = [];
+  usedTiles = new Set();
+}
+
+function finalizeSelection() {
+  if (selectionOrder.length === 0) return;
+  const word = selectionOrder.map(i => circleLetters[i]).join('');
+  if (required.includes(word) && !foundRequired.has(word)) {
+    foundRequired.add(word);
+    foundRequiredOrder.push(word);
+    foundAnimAt.set(word, performance.now());
+    playFound(foundRequiredOrder.length);
+    clearSelection();
+    checkWin();
+  } else if (bonus.includes(word) && !foundBonusSet.has(word)) {
+    foundBonusSet.add(word);
+    playBonus();
+    clearSelection();
+  } else {
+    invalidShakeAt = performance.now();
+    playInvalid();
+    clearSelection();
+  }
+}
+
+function checkWin() {
+  if (required.length > 0 && foundRequired.size === required.length) win();
+}
+
+function win() {
+  const now = performance.now();
+  winElapsed = getElapsedMs(now);
+  screen = 'won';
+  setBestIfBetter(difficulty, Math.round(winElapsed));
+  resultAnim = { t0: now };
+  playWinFanfare();
+}
+
+// ============================================================
+// Input
+// ============================================================
+function getLogicalPos(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (clientX - rect.left) * (LOGICAL_W / rect.width),
+    y: (clientY - rect.top) * (LOGICAL_H / rect.height),
+  };
+}
+function tileAt(x, y) {
+  for (let i = 0; i < circleLetters.length; i++) {
+    const [tx, ty] = tilePos(i, circleLetters.length);
+    if (Math.hypot(x - tx, y - ty) <= TILE_HIT_R) return i;
+  }
+  return -1;
+}
+function hitTest(rect, x, y) {
+  return rect && x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  const pos = getLogicalPos(e.clientX, e.clientY);
+
+  if (screen === 'won') {
+    if (hitTest(WIN_BUTTONS.playAgain, pos.x, pos.y)) { ensureAudio(); newGame(difficulty); }
+    else if (hitTest(WIN_BUTTONS.changeDiff, pos.x, pos.y)) { screen = 'select'; showScreen(); }
+    return;
+  }
+  if (screen !== 'playing') return;
+  ensureAudio();
+
+  const idx = tileAt(pos.x, pos.y);
+  if (idx === -1) {
+    // background tap: finalize whatever is currently selected
+    finalizeSelection();
+    return;
+  }
+
+  if (!timerStarted) startTimer();
+
+  if (selectionOrder.length > 0 && selectionOrder[selectionOrder.length - 1] === idx) {
+    // tap on last-selected tile again: backtrack
+    selectionOrder.pop();
+    usedTiles.delete(idx);
+    return;
+  }
+  if (usedTiles.has(idx)) return; // already used earlier in this selection, ignore
+
+  selectionOrder.push(idx);
+  usedTiles.add(idx);
+  playTick();
+  canvas.setPointerCapture(e.pointerId);
+  pointerActive = true;
+  dragMoved = false;
+  dragPos = pos;
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (!pointerActive) return;
+  const pos = getLogicalPos(e.clientX, e.clientY);
+  dragPos = pos;
+  const idx = tileAt(pos.x, pos.y);
+  if (idx !== -1 && !usedTiles.has(idx)) {
+    selectionOrder.push(idx);
+    usedTiles.add(idx);
+    playTick();
+    dragMoved = true;
+  }
+});
+canvas.addEventListener('pointerup', () => {
+  if (!pointerActive) return;
+  pointerActive = false;
+  if (dragMoved) finalizeSelection();
+  dragMoved = false;
+  dragPos = null;
+});
+canvas.addEventListener('pointercancel', () => {
+  pointerActive = false;
+  dragMoved = false;
+  dragPos = null;
+  clearSelection();
+});
+
+// ============================================================
+// Screen wiring
+// ============================================================
+function showScreen() {
+  selectOverlay.classList.toggle('hidden', screen !== 'select');
+  muteBtn.classList.toggle('visible', screen !== 'select');
+  if (screen === 'select') refreshBestLabels();
+}
+
+document.querySelectorAll('.diffBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    ensureAudio();
+    newGame(btn.dataset.diff);
+  });
+});
+
+screen = 'select';
+
+// ============================================================
+// Drawing
+// ============================================================
+let bgGradCache = null, glowGradCache = null, vigGradCache = null;
+function cachedBackgroundGradients() {
+  if (!bgGradCache) {
+    bgGradCache = ctx.createLinearGradient(0, 0, 0, LOGICAL_H);
+    bgGradCache.addColorStop(0, PAL.bg);
+    bgGradCache.addColorStop(1, PAL.bgLow);
+  }
+  if (!glowGradCache) {
+    glowGradCache = ctx.createRadialGradient(CX, CY, 20, CX, CY, 220);
+    glowGradCache.addColorStop(0, 'rgba(232,162,74,0.16)');
+    glowGradCache.addColorStop(0.5, 'rgba(232,162,74,0.05)');
+    glowGradCache.addColorStop(1, 'rgba(232,162,74,0)');
+  }
+  if (!vigGradCache) {
+    vigGradCache = ctx.createRadialGradient(180, 270, 200, 180, 270, 420);
+    vigGradCache.addColorStop(0, 'rgba(0,0,0,0)');
+    vigGradCache.addColorStop(1, 'rgba(0,0,0,0.28)');
+  }
+  return [bgGradCache, glowGradCache, vigGradCache];
+}
+let sparklePts = null;
+function sparklePoints() {
+  if (sparklePts) return sparklePts;
+  sparklePts = [];
+  let seed = 7;
+  function rand() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return (seed % 1000) / 1000; }
+  for (let i = 0; i < 40; i++) {
+    sparklePts.push({ x: rand() * LOGICAL_W, y: rand() * LOGICAL_H, r: rand() * 1.1 + 0.3, a: 0.15 + rand() * 0.25 });
+  }
+  return sparklePts;
+}
+function drawBackground() {
+  const [bgGrad, glowGrad, vigGrad] = cachedBackgroundGradients();
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+  ctx.fillStyle = glowGrad;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+  for (const p of sparklePoints()) {
+    ctx.globalAlpha = p.a;
+    ctx.fillStyle = '#F4EDE2';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = vigGrad;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+}
+
+function drawHUD() {
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(DIFFS[difficulty].label, 16, 16);
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 15px -apple-system, sans-serif';
+  ctx.fillText('Word Circle', 16, 34);
+
+  const label = '✨ Bonus: ' + foundBonusSet.size + '/' + bonus.length;
+  ctx.font = '600 11px -apple-system, sans-serif';
+  const w = ctx.measureText(label).width + 20;
+  roundRect(344 - w, 12, w, 24, 12);
+  ctx.fillStyle = PAL.bonusPill;
+  ctx.fill();
+  ctx.fillStyle = PAL.bonusText;
+  ctx.textAlign = 'center';
+  ctx.fillText(label, 344 - w / 2, 24);
+  ctx.textAlign = 'left';
+}
+
+function shakeOffset(now) {
+  const age = now - invalidShakeAt;
+  if (invalidShakeAt === 0 || age > 260) return 0;
+  const t = age / 260;
+  return Math.sin(t * Math.PI * 4) * 6 * (1 - t);
+}
+
+function drawCircleArea(now) {
+  ctx.beginPath();
+  ctx.arc(CX, CY, RADIUS, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(232,162,74,0.15)';
+  ctx.lineWidth = 8;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(CX, CY, RADIUS, 0, Math.PI * 2);
+  ctx.strokeStyle = PAL.ringTrack;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  const shake = shakeOffset(now);
+
+  if (selectionOrder.length > 0) {
+    ctx.save();
+    ctx.translate(shake, 0);
+    ctx.shadowColor = 'rgba(232,162,74,0.7)';
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    selectionOrder.forEach((idx, i) => {
+      const [x, y] = tilePos(idx, circleLetters.length);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    if (pointerActive && dragMoved && dragPos) ctx.lineTo(dragPos.x, dragPos.y);
+    ctx.strokeStyle = PAL.swipeLine;
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  const previewText = selectionOrder.map(i => circleLetters[i]).join('');
+  if (previewText) {
+    ctx.save();
+    ctx.translate(shake, 0);
+    ctx.shadowColor = 'rgba(244,237,226,0.5)';
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = PAL.centerPreview;
+    const fontSize = previewText.length > 6 ? 18 : 24;
+    ctx.font = 'bold ' + fontSize + 'px -apple-system, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(previewText, CX, CY);
+    ctx.restore();
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  circleLetters.forEach((letter, i) => {
+    const [x, y] = tilePos(i, circleLetters.length);
+    const isSelected = usedTiles.has(i);
+
+    ctx.save();
+    ctx.shadowColor = isSelected ? 'rgba(232,162,74,0.55)' : 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur = isSelected ? 16 : 8;
+    ctx.shadowOffsetY = isSelected ? 0 : 3;
+    ctx.beginPath();
+    ctx.arc(x, y, TILE_R, 0, Math.PI * 2);
+    const grad = ctx.createLinearGradient(x, y - TILE_R, x, y + TILE_R);
+    if (isSelected) {
+      grad.addColorStop(0, '#F0B968');
+      grad.addColorStop(1, '#DB8F2E');
+    } else {
+      grad.addColorStop(0, '#FFFBF4');
+      grad.addColorStop(1, '#E8DFD0');
+    }
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(x, y, TILE_R, 0, Math.PI * 2);
+    ctx.strokeStyle = isSelected ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = isSelected ? PAL.tileSelectedText : PAL.tileText;
+    ctx.font = 'bold 20px -apple-system, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(letter, x, y + 1);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  });
+}
+
+function drawWordBlanks(now) {
+  const byLength = {};
+  for (const w of required) (byLength[w.length] = byLength[w.length] || []).push(w);
+  const lengths = Object.keys(byLength).map(Number).sort((a, b) => a - b);
+
+  let y = CY + RADIUS + 40;
+  const boxSize = 22, boxGap = 3, rowGap = 10, groupGap = 14;
+
+  for (const len of lengths) {
+    const words = byLength[len];
+    let x = 20;
+    const rowWidth = len * (boxSize + boxGap) - boxGap;
+    for (const word of words) {
+      if (x + rowWidth > 340) { x = 20; y += boxSize + rowGap; }
+      const found = foundRequired.has(word);
+      const animAt = foundAnimAt.get(word) || 0;
+      const t = animAt ? Math.min(1, (now - animAt) / 220) : 1;
+      for (let i = 0; i < word.length; i++) {
+        const bx = x + i * (boxSize + boxGap);
+        if (found) {
+          ctx.save();
+          ctx.globalAlpha = t;
+          const ty = y + (1 - t) * 6;
+          ctx.shadowColor = 'rgba(111,191,139,0.45)';
+          ctx.shadowBlur = 6;
+          ctx.shadowOffsetY = 2;
+          roundRect(bx, ty, boxSize, boxSize, 5);
+          const g = ctx.createLinearGradient(bx, ty, bx, ty + boxSize);
+          g.addColorStop(0, '#7FCB99');
+          g.addColorStop(1, '#5CAE79');
+          ctx.fillStyle = g;
+          ctx.fill();
+          ctx.restore();
+          ctx.save();
+          ctx.globalAlpha = t;
+          ctx.fillStyle = '#132018';
+          ctx.font = 'bold 13px -apple-system, sans-serif';
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(word[i], bx + boxSize / 2, y + (1 - t) * 6 + boxSize / 2 + 1);
+          ctx.restore();
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        } else {
+          roundRect(bx, y, boxSize, boxSize, 5);
+          ctx.fillStyle = 'rgba(255,255,255,0.05)';
+          ctx.fill();
+          ctx.strokeStyle = PAL.blankEmpty;
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+        }
+      }
+      x += rowWidth + 14;
+    }
+    y += boxSize + groupGap;
+  }
+}
+
+const RESULT_PANEL_W = 280, RESULT_PANEL_H = 240;
+function drawWinOverlay(now) {
+  if (!resultAnim) return;
+  const age = now - resultAnim.t0;
+  const t = Math.min(1, age / RESULT_ANIM_DUR);
+  const scale = 0.85 + easeOutBack(t) * 0.15;
+
+  ctx.fillStyle = 'rgba(10,7,16,0.75)';
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+  const cx = LOGICAL_W / 2, cy = LOGICAL_H / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+  ctx.translate(-cx, -cy);
+
+  const px = cx - RESULT_PANEL_W / 2, py = cy - RESULT_PANEL_H / 2;
+  roundRect(px, py, RESULT_PANEL_W, RESULT_PANEL_H, 18);
+  ctx.fillStyle = 'rgba(43,31,64,0.97)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(232,162,74,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+  let y = py + 40;
+  ctx.font = '800 24px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.hudText;
+  ctx.fillText('Solved!', cx, y);
+
+  y += 34;
+  ctx.font = '700 16px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.bonusText;
+  ctx.fillText('Time: ' + formatTime(winElapsed), cx, y);
+
+  y += 24;
+  const best = getBest(difficulty);
+  ctx.font = '600 12px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.hudSub;
+  ctx.fillText(best === Math.round(winElapsed) ? 'New best time!' : ('Best: ' + formatTime(best)), cx, y);
+
+  y += 24;
+  ctx.font = '600 13px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.bonusText;
+  ctx.fillText('✨ ' + foundBonusSet.size + ' bonus word' + (foundBonusSet.size === 1 ? '' : 's') + ' found', cx, y);
+
+  y += 30;
+  const btnW = 160, btnH = 34;
+  let btnX = cx - btnW / 2, btnY = y - btnH / 2;
+  roundRect(btnX, btnY, btnW, btnH, 17);
+  ctx.fillStyle = '#E8A24A';
+  ctx.fill();
+  ctx.font = '700 13px -apple-system, sans-serif';
+  ctx.fillStyle = '#2B1F3D';
+  ctx.fillText('Play Again', cx, btnY + btnH / 2 + 1);
+  WIN_BUTTONS.playAgain = pxRectToLogical(px, py, scale, cx, cy, btnX, btnY, btnW, btnH);
+
+  y += 44;
+  btnX = cx - btnW / 2; btnY = y - btnH / 2;
+  roundRect(btnX, btnY, btnW, btnH, 17);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(244,237,226,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.font = '700 13px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.hudText;
+  ctx.fillText('Change Difficulty', cx, btnY + btnH / 2 + 1);
+  WIN_BUTTONS.changeDiff = pxRectToLogical(px, py, scale, cx, cy, btnX, btnY, btnW, btnH);
+
+  ctx.restore();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+// Buttons are drawn inside a scaled/translated context (the pop-in
+// animation); convert their rect back to un-scaled logical canvas
+// coordinates so pointer hit-testing (which reads raw logical coords)
+// lines up once the panel has settled at scale 1.
+function pxRectToLogical(px, py, scale, cx, cy, x, y, w, h) {
+  const lx = cx + (x - cx) * scale;
+  const ly = cy + (y - cy) * scale;
+  return { x: lx, y: ly, w: w * scale, h: h * scale };
+}
+
+function draw() {
+  const now = performance.now();
+  drawBackground();
+  if (screen === 'playing' || screen === 'won') {
+    drawHUD();
+    drawCircleArea(now);
+    drawWordBlanks(now);
+  }
+  if (screen === 'won') drawWinOverlay(now);
+}
+
+function loop() {
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// Boot
+// ============================================================
+fitCanvas();
+showScreen();
+requestAnimationFrame(loop);
+})();
+</script>
+
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>
