@@ -8,9 +8,10 @@
 - [x] CI workflow (lint, typecheck, build)
 - [x] `CLAUDE.md`, plan and decision log
 - [x] Shared tooling config (`packages/config`)
-- [ ] Design tokens (`packages/tokens`)
+- [x] Design tokens (`packages/tokens`)
 - [ ] Portal app shell (`apps/portal`)
 - [ ] Portal landing page
+- [ ] Theme toggle (light / dark / system) in Portal, persisted per visitor
 - [ ] Cloudflare deploy for Portal
 - [ ] Path-filtered deploy workflow
 
