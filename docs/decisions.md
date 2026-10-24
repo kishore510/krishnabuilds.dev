@@ -33,3 +33,7 @@ PRs are squash merged to keep `main` history linear and one commit per change.
 ## 2026-10-24 — Two-layer tokens with CSS-variable theming via data-theme
 
 `packages/tokens` has primitives (raw palette, spacing, type, radii) and semantic tokens (bg, surface, text, accent, etc.), each semantic token with a light and dark value pointing at primitives. A plain Node script generates `dist/tokens.css`. With no `data-theme` on `<html>` the page follows the OS setting; `data-theme="light"` or `"dark"` overrides it. The Portal toggle will only set that attribute, so adding it needs no token changes. No Style Dictionary or other new tooling.
+
+## 2026-10-24 — Portal is Vite + React + TypeScript
+
+The Portal uses the same stack as the other apps (React 19, TypeScript strict, Vite 8) so the whole monorepo shares one toolchain and shared components can later live in `packages/ui`. Astro and other static-site frameworks were rejected as an extra framework for a single landing page.
