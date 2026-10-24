@@ -9,7 +9,7 @@
 - [x] `CLAUDE.md`, plan and decision log
 - [x] Shared tooling config (`packages/config`)
 - [x] Design tokens (`packages/tokens`)
-- [ ] Portal app shell (`apps/portal`)
+- [x] Portal app shell (`apps/portal`)
 - [ ] Portal landing page
 - [ ] Theme toggle (light / dark / system) in Portal, persisted per visitor
 - [ ] Cloudflare deploy for Portal
