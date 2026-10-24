@@ -12,8 +12,8 @@
 - [x] Portal app shell (`apps/portal`)
 - [ ] Portal landing page
 - [ ] Theme toggle (light / dark / system) in Portal, persisted per visitor
-- [ ] Cloudflare deploy for Portal
-- [ ] Path-filtered deploy workflow
+- [x] Cloudflare deploy for Portal
+- [x] Path-filtered deploy workflow
 
 ## Week 2 — Migrate three simple apps (preserving history)
 
