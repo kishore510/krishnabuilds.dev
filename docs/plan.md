@@ -7,7 +7,7 @@
 - [x] Root scripts, `.nvmrc`, `.gitignore`
 - [x] CI workflow (lint, typecheck, build)
 - [x] `CLAUDE.md`, plan and decision log
-- [ ] Shared tooling config (`packages/config`)
+- [x] Shared tooling config (`packages/config`)
 - [ ] Design tokens (`packages/tokens`)
 - [ ] Portal app shell (`apps/portal`)
 - [ ] Portal landing page
