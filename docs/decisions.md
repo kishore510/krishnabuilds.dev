@@ -41,3 +41,15 @@ The Portal uses the same stack as the other apps (React 19, TypeScript strict, V
 ## 2026-10-24 — Portal deploys as a Worker with static assets, via GitHub Actions
 
 The Portal deploys with `wrangler deploy` from a path-filtered GitHub Actions workflow on pushes to `main`, as a Cloudflare Worker serving static assets (not Pages or dashboard Git integration). Same tooling as Stonks will use later. Credentials live in GitHub Secrets only. API token is scoped to one account and zone, with a 1-year expiry.
+
+## 2026-10-24 — Portal landing page: plain React + CSS, one app list
+
+The landing page is plain React and CSS. A single typed array in `apps/portal/src/apps.ts` drives both the header menu and the app cards. No router, UI library or CSS framework. The header and app list stay local to `apps/portal` until a second app needs them. Stonks is intentionally left off the list until it goes live.
+
+## 2026-10-24 — Cross-app consistency via shared tokens and header
+
+All apps are migrated into this repo and share `@krishnabuilds/tokens`, plus a shared site header and app list in `packages/ui` (extracted when the first migrated app needs them). Each app lives on its own subdomain, so moving between apps is a full page load; the shared header is what makes it feel like one product.
+
+## 2026-10-24 — Theme preference stored in a cookie on `.krishnabuilds.dev`
+
+The theme preference is stored in a cookie scoped to `.krishnabuilds.dev`, not `localStorage`. `localStorage` is per subdomain, so a choice made in one app would not carry over to the others.

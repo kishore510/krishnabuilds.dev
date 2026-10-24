@@ -1,6 +1,91 @@
+/* Mobile first. Breakpoints are literals: custom properties can't be used in media queries. */
+
 body {
   margin: 0;
   background: var(--kb-color-bg);
   color: var(--kb-color-text);
   font-family: var(--kb-font-family-sans);
+  line-height: var(--kb-font-line-height-normal);
+}
+
+.page {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--kb-space-8) var(--kb-space-4);
+}
+
+.hero h1 {
+  margin: 0 0 var(--kb-space-3);
+  font-size: var(--kb-font-size-3xl);
+  line-height: var(--kb-font-line-height-tight);
+}
+
+.hero p {
+  margin: 0;
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-lg);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--kb-space-4);
+  margin: var(--kb-space-8) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  padding: var(--kb-space-4);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-lg);
+  background: var(--kb-color-surface);
+}
+
+.card__title {
+  margin: 0 0 var(--kb-space-2);
+  font-size: var(--kb-font-size-xl);
+}
+
+.card__title a {
+  color: var(--kb-color-accent);
+  text-decoration: none;
+  border-radius: var(--kb-radius-sm);
+}
+
+.card__title a:hover {
+  text-decoration: underline;
+}
+
+.card__title a:focus-visible {
+  outline: 2px solid var(--kb-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.card__blurb {
+  margin: 0;
+  color: var(--kb-color-text-muted);
+}
+
+.card__badge {
+  display: inline-block;
+  margin: var(--kb-space-3) 0 0;
+  padding: var(--kb-space-1) var(--kb-space-2);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-full);
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-xs);
+  font-weight: var(--kb-font-weight-medium);
+}
+
+@media (min-width: 40em) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64em) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
