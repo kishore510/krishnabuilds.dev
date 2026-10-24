@@ -37,3 +37,7 @@ PRs are squash merged to keep `main` history linear and one commit per change.
 ## 2026-10-24 — Portal is Vite + React + TypeScript
 
 The Portal uses the same stack as the other apps (React 19, TypeScript strict, Vite 8) so the whole monorepo shares one toolchain and shared components can later live in `packages/ui`. Astro and other static-site frameworks were rejected as an extra framework for a single landing page.
+
+## 2026-10-24 — Portal deploys as a Worker with static assets, via GitHub Actions
+
+The Portal deploys with `wrangler deploy` from a path-filtered GitHub Actions workflow on pushes to `main`, as a Cloudflare Worker serving static assets (not Pages or dashboard Git integration). Same tooling as Stonks will use later. Credentials live in GitHub Secrets only. API token is scoped to one account and zone, with a 1-year expiry.
