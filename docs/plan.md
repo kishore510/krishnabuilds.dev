@@ -11,7 +11,7 @@
 - [x] Design tokens (`packages/tokens`)
 - [x] Portal app shell (`apps/portal`)
 - [x] Portal landing page
-- [ ] Theme toggle (light / dark / system) in Portal, persisted in a cookie scoped to `.krishnabuilds.dev` so all subdomains share it
+- [x] Theme toggle (light / dark / system) in Portal, persisted in a cookie scoped to `.krishnabuilds.dev` so all subdomains share it
 - [x] Cloudflare deploy for Portal
 - [x] Path-filtered deploy workflow
 

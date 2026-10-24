@@ -53,3 +53,7 @@ All apps are migrated into this repo and share `@krishnabuilds/tokens`, plus a s
 ## 2026-10-24 — Theme preference stored in a cookie on `.krishnabuilds.dev`
 
 The theme preference is stored in a cookie scoped to `.krishnabuilds.dev`, not `localStorage`. `localStorage` is per subdomain, so a choice made in one app would not carry over to the others.
+
+## 2026-10-24 — Inline head script applies the theme before first paint
+
+`apps/portal/index.html` has a few lines of inline script that read the `kb-theme` cookie and set `data-theme` on `<html>` before the stylesheet paints, so a saved light/dark choice never flashes the OS theme first. It duplicates the cookie name and values in `src/theme.ts`, so the two must stay in sync. "System" is not stored: choosing it expires the cookie. The cookie gets `Secure` only on https, because browsers drop `Secure` cookies over plain http (for example a phone testing the dev server on the LAN).
