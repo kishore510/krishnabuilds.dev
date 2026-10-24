@@ -10,8 +10,8 @@
 - [x] Shared tooling config (`packages/config`)
 - [x] Design tokens (`packages/tokens`)
 - [x] Portal app shell (`apps/portal`)
-- [ ] Portal landing page
-- [ ] Theme toggle (light / dark / system) in Portal, persisted per visitor
+- [x] Portal landing page
+- [ ] Theme toggle (light / dark / system) in Portal, persisted in a cookie scoped to `.krishnabuilds.dev` so all subdomains share it
 - [x] Cloudflare deploy for Portal
 - [x] Path-filtered deploy workflow
 
@@ -23,6 +23,8 @@ For each app: scan history for secrets and report before importing, import with 
 - [ ] Stickyard
 - [ ] Sumyard
 - [ ] Extract shared components into `packages/ui` only where duplicated in two apps
+- [ ] Extract shared site header and app list into `packages/ui` when the first migrated app needs them, so every app has the same nav bar
+- [ ] For each migrated app: adopt `@krishnabuilds/tokens` and the shared header, and add its subdomain via wrangler `custom_domain`
 
 ## Week 3 — Stonks, then switch off the Pi
 
@@ -30,5 +32,6 @@ For each app: scan history for secrets and report before importing, import with 
 - [ ] Migrate Stonks
 - [ ] Data refresh on GitHub Actions cron writing to D1
 - [ ] Read-only Worker dashboard
+- [ ] Decide whether the Stonks dashboard is public or behind Cloudflare Access before going live; add Stonks to the app list when live
 - [ ] Run new setup alongside the Pi and confirm parity
 - [ ] Switch off the Pi

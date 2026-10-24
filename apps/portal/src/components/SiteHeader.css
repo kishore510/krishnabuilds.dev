@@ -1,0 +1,99 @@
+/* Mobile first. Breakpoint is a literal: custom properties can't be used in media queries. */
+
+.kb-site-header {
+  position: relative;
+  background: var(--kb-color-surface);
+  border-bottom: 1px solid var(--kb-color-border);
+}
+
+.kb-site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--kb-space-2);
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--kb-space-3) var(--kb-space-4);
+}
+
+.kb-site-header__brand {
+  color: var(--kb-color-text);
+  font-size: var(--kb-font-size-lg);
+  font-weight: var(--kb-font-weight-bold);
+  text-decoration: none;
+}
+
+.kb-site-header__toggle {
+  padding: var(--kb-space-2) var(--kb-space-3);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-md);
+  background: var(--kb-color-bg);
+  color: var(--kb-color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.kb-site-header__list {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  margin: 0;
+  padding: var(--kb-space-2) var(--kb-space-4) var(--kb-space-3);
+  background: var(--kb-color-surface);
+  border-bottom: 1px solid var(--kb-color-border);
+  list-style: none;
+}
+
+.kb-site-header__list[data-open="true"] {
+  display: block;
+}
+
+.kb-site-header__link,
+.kb-site-header__soon {
+  display: block;
+  padding: var(--kb-space-2) var(--kb-space-1);
+  border-radius: var(--kb-radius-sm);
+}
+
+.kb-site-header__link {
+  color: var(--kb-color-accent);
+  font-weight: var(--kb-font-weight-medium);
+  text-decoration: none;
+}
+
+.kb-site-header__link:hover {
+  text-decoration: underline;
+}
+
+.kb-site-header__soon {
+  color: var(--kb-color-text-muted);
+}
+
+.kb-site-header__soon small {
+  font-size: var(--kb-font-size-xs);
+}
+
+.kb-site-header__brand:focus-visible,
+.kb-site-header__toggle:focus-visible,
+.kb-site-header__link:focus-visible {
+  outline: 2px solid var(--kb-color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (min-width: 48em) {
+  .kb-site-header__toggle {
+    display: none;
+  }
+
+  .kb-site-header__list,
+  .kb-site-header__list[data-open="true"] {
+    display: flex;
+    position: static;
+    gap: var(--kb-space-4);
+    padding: 0;
+    border: 0;
+  }
+}
