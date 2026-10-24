@@ -1,0 +1,24 @@
+{
+  "name": "@krishnabuilds/config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint": "./eslint.config.js"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.72.0"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0",
+    "typescript": "~6.0.0"
+  },
+  "devDependencies": {
+    "eslint": "10.13.0",
+    "typescript": "6.0.3"
+  }
+}
