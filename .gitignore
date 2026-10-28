@@ -4,3 +4,10 @@ node_modules
 .dev.vars
 .wrangler
 dist
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
