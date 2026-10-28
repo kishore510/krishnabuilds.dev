@@ -40,7 +40,8 @@ Nothing is uploaded: files are made in the browser (a Blob and a download link) 
 The build scan (`scripts/checks/externalUrls.ts`, run by `npm run build`) fails on any external URL except:
 
 1. **Plain https GOV.UK links** (`https://www.gov.uk/...` or `https://gov.uk/...`), and never where the browser would fetch them (script, stylesheet, image, CSS `url()`). Help can link only there: the Markdown parser shows any other link as text.
-2. **Exact inert strings** in `INERT_URLS`, each allowed only in one kind of file and never fetched:
+2. **Plain https krishnabuilds.dev links** (`https://krishnabuilds.dev` or one subdomain, such as `https://chalkline.krishnabuilds.dev`), with the same rule: links someone follows, never fetched. They are the home link and the other apps in the main menu.
+3. **Exact inert strings** in `INERT_URLS`, each allowed only in one kind of file and never fetched:
 
 | String | File type | Why it is in the build |
 |---|---|---|

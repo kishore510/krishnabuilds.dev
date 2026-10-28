@@ -50,4 +50,5 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Sumyard: add to the Portal app list
 - [ ] Sumyard: About's credits miss transitive dependencies (e.g. `scheduler`) under pnpm, because they are looked up in `apps/sumyard/node_modules`; resolve them properly
 - [ ] Chalkline: adopt shared tokens (site links done)
-- [ ] Sumyard: adopt shared header and tokens
+- [ ] Sumyard: adopt shared tokens (site links done)
+- [ ] packages/ui: make the home link in SiteLinks look like a link and improve spacing/layout (affects all apps)

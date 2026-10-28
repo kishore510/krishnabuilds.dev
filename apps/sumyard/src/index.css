@@ -2,6 +2,9 @@
 @import '@fontsource-variable/inter';
 @import './styles/tokens.css';
 
+/* The current app in the site links (aria-current="page"), as Chalkline. */
+@custom-variant current (&[aria-current='page']);
+
 @layer base {
   html,
   body,

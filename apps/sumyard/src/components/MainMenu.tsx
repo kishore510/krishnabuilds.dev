@@ -1,6 +1,7 @@
+import { SiteLinks } from '@krishnabuilds/ui'
 import { CircleHelp, FolderOpen, House, Info, Menu, Settings } from 'lucide-react'
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Panel } from '@/components/ui/panel'
 import { unseenStore } from '@/help/whatsNew'
 import { useStore } from '@/lib/store'
@@ -12,7 +13,12 @@ import type { SheetRoute } from '@/sheets/route'
  * The main menu off the top bar (generalised from Chalkline's FileMenu: its
  * diagram file actions are replaced by the app's sheets). A WAI-ARIA menu
  * button: Up, Down, Home and End move between items, Escape closes and
- * returns focus to the button, Tab or a click outside closes.
+ * returns focus to the button, Shift+Tab or a click outside closes.
+ *
+ * Below the menu, outside its role, are the site links (krishnabuilds.dev
+ * and the other apps): plain links, not menu commands. Tab from the menu
+ * moves into them; Escape there closes as in the menu, and focus moving
+ * anywhere outside the panel closes it.
  */
 
 function Item({
@@ -57,6 +63,23 @@ function UnseenDot({ className }: { className?: string }) {
 
 const menuItems = (menu: HTMLElement | null) => Array.from(menu?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])
 
+const siteLink = cn(buttonVariants({ variant: 'ghost' }), 'w-full justify-start')
+
+/** Link home and to the other krishnabuilds.dev apps, styled like the menu items. */
+function SiteSection() {
+  return (
+    <SiteLinks
+      current="Sumyard"
+      classNames={{
+        root: 'flex shrink-0 flex-col',
+        home: cn(siteLink, 'font-semibold'),
+        list: 'flex flex-col',
+        link: cn(siteLink, 'current:bg-accent-subtle current:font-semibold'),
+      }}
+    />
+  )
+}
+
 export function MainMenu() {
   const [open, setOpen] = useState(false)
   const unseen = useStore(unseenStore)
@@ -66,13 +89,30 @@ export function MainMenu() {
 
   useEffect(() => {
     if (!open) return
+    const outside = (target: EventTarget | null) =>
+      !menuRef.current?.contains(target as Node) && !buttonRef.current?.contains(target as Node)
     const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as Node
-      if (!menuRef.current?.contains(target) && !buttonRef.current?.contains(target)) setOpen(false)
+      if (outside(e.target)) setOpen(false)
+    }
+    const onFocusIn = (e: FocusEvent) => {
+      if (outside(e.target)) setOpen(false)
+    }
+    // Escape from the site links (the menu's own handler takes it inside the menu).
+    const onKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key !== 'Escape' || e.defaultPrevented || outside(e.target)) return
+      e.preventDefault()
+      setOpen(false)
+      buttonRef.current?.focus()
     }
     document.addEventListener('pointerdown', onPointerDown, true)
+    document.addEventListener('focusin', onFocusIn)
+    document.addEventListener('keydown', onKeyDown)
     menuItems(menuRef.current)[0]?.focus()
-    return () => document.removeEventListener('pointerdown', onPointerDown, true)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown, true)
+      document.removeEventListener('focusin', onFocusIn)
+      document.removeEventListener('keydown', onKeyDown)
+    }
   }, [open])
 
   const onMenuKeyDown = (e: KeyboardEvent) => {
@@ -90,7 +130,7 @@ export function MainMenu() {
       e.preventDefault()
       setOpen(false)
       buttonRef.current?.focus()
-    } else if (e.key === 'Tab') setOpen(false)
+    } else if (e.key === 'Tab' && e.shiftKey) setOpen(false)
   }
 
   const go = (route: SheetRoute) => () => {
@@ -152,6 +192,8 @@ export function MainMenu() {
               Scenarios
             </Item>
           </div>
+          <hr className="my-1 h-px shrink-0 border-0 bg-border" />
+          <SiteSection />
           <p className="px-3 pt-1 pb-2 text-xs text-text-muted">Changes are saved in this browser. Export to keep a copy.</p>
         </Panel>
       )}
