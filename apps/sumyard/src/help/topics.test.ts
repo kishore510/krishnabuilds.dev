@@ -1,0 +1,240 @@
+import { describe, expect, it } from 'vitest'
+import { parseHash } from '@/sheets/route'
+import { HELP_TOPICS, topicById } from './content'
+import { linksIn } from './markdown'
+import { buildTopics, parseFrontMatter } from './topics'
+
+describe('parseFrontMatter', () => {
+  it('reads title, order and summary', () => {
+    expect(parseFrontMatter('---\ntitle: Quick start\norder: 1\nsummary: Start here.\n---\nBody')).toEqual({
+      meta: { title: 'Quick start', order: 1, summary: 'Start here.' },
+      body: 'Body',
+    })
+  })
+
+  it.each([
+    ['no front matter', 'Body'],
+    ['no title', '---\norder: 1\nsummary: s\n---\n'],
+    ['no summary', '---\ntitle: t\norder: 1\n---\n'],
+    ['bad order', '---\ntitle: t\norder: first\nsummary: s\n---\n'],
+    ['unknown field', '---\ntitle: t\norder: 1\nsummary: s\nkeywords: a\n---\n'],
+    ['bad line', '---\ntitle t\n---\n'],
+  ])('rejects %s', (_label, source) => {
+    expect(() => parseFrontMatter(source)).toThrow()
+  })
+})
+
+describe('buildTopics', () => {
+  it('sorts by order and names topics after their files', () => {
+    const topics = buildTopics({
+      'content/help/b.md': '---\ntitle: B\norder: 2\nsummary: s\n---\n',
+      'content/help/a.md': '---\ntitle: A\norder: 1\nsummary: s\n---\n',
+    })
+    expect(topics.map((t) => t.id)).toEqual(['a', 'b'])
+  })
+
+  it('names the file when one is bad', () => {
+    expect(() => buildTopics({ 'content/help/x.md': 'no front matter' })).toThrow(/x\.md/)
+  })
+})
+
+describe('content/help', () => {
+  it('has Quick start first, then the take-home topic (1b-i), the optimiser topic (1b-ii-b), compound interest (2b), the car decision (3c-1), the household budget, the mortgage (M2) and the next pound (C2), then the slice 0 topics', () => {
+    expect(HELP_TOPICS.map((t) => t.id)).toEqual([
+      'quick-start',
+      'take-home-pay',
+      'pension-optimiser',
+      'compound-interest',
+      'car-decision',
+      'budget',
+      'mortgage',
+      'next-pound',
+      'scenarios-and-saving',
+      'tax-data-and-last-verified',
+      'troubleshooting',
+    ])
+  })
+
+  it('the compound interest topic covers the conventions, both views, fee drag, the table and chart, and what is not modelled', () => {
+    const text = JSON.stringify(topicById('compound-interest')!.blocks)
+    for (const word of [
+      /nominal/i,
+      /effective annual rate/i,
+      /after .*growth/i,
+      /start/i,
+      /today.s money/i,
+      /fee drag/i,
+      /yearly table/i,
+      /not a forecast/i,
+      /uses no tax rules/i,
+      /not modelled/i,
+    ])
+      expect(text).toMatch(word)
+  })
+
+  it('the budget topic covers income, the kinds, periods, shares, double counting, what if and what is not modelled', () => {
+    const text = JSON.stringify(topicById('budget')!.blocks)
+    for (const word of [
+      /your pay/i,
+      /after tax/i,
+      /spending/i,
+      /joint account/i,
+      /debt/i,
+      /savings and investing/i,
+      /weekly/i,
+      /of your income/i,
+      /savings rate/i,
+      /not both/i,
+      /what if/i,
+      /apply/i,
+      /never saved/i,
+      /penny/i,
+      /uses no tax rules/i,
+      /not modelled/i,
+    ])
+      expect(text).toMatch(word)
+  })
+
+  it('the mortgage topic covers the inputs, the fixed rate, both effects, the charge and allowance, the answers, the returns, what if, warnings and what is not modelled', () => {
+    const text = JSON.stringify(topicById('mortgage')!.blocks)
+    for (const word of [
+      /start date/i,
+      /fixed rate/i,
+      /lump sum/i,
+      /shorten the term/i,
+      /lower the payment/i,
+      /interest-only/i,
+      /penalty-free limit/i,
+      /allowance used/i,
+      /payments until it resets/i,
+      /net saving/i,
+      /break-even/i,
+      /measured against/i,
+      /what if/i,
+      /never saved/i,
+      /drifts under daily interest/i,
+      /uses no tax rules/i,
+      /not modelled/i,
+      /offer documents/i,
+    ])
+      expect(text).toMatch(word)
+  })
+
+  it('the next pound topic covers the three inputs, where pay and the mortgage come from, each leg, not accessible, the age note, guaranteed, break-even, warnings and what is not modelled', () => {
+    const text = JSON.stringify(topicById('next-pound')!.blocks)
+    for (const word of [
+      /pension/i,
+      /mortgage overpayment/i,
+      /ISA/,
+      /today's money/i,
+      /not accessible at that horizon/i,
+      /access age not checked: add your age/i,
+      /no mortgage/i,
+      /only reads/i,
+      /guaranteed/i,
+      /above the highest rate modelled/i,
+      /below the lowest rate modelled/i,
+      /enter your pay on the take-home page first/i,
+      /saved last/i,
+      /employer National Insurance/i,
+      /transitional age/i,
+      /stocks and shares ISA/i,
+      /scan step/i,
+      /not advice/i,
+      /not modelled/i,
+    ])
+      expect(text).toMatch(word)
+  })
+
+  it('the car decision topic covers the options, the verdict, average cost per month owned, money in and out, coverage, the cases, flip points, rates and what is not modelled', () => {
+    const text = JSON.stringify(topicById('car-decision')!.blocks)
+    for (const word of [
+      /keep/i,
+      /PCP/,
+      /hire purchase/i,
+      /average cost per month owned/i,
+      /no verdict/i,
+      /bottom line/i,
+      /money in and out/i,
+      /switching/i,
+      /coverage/i,
+      /low, expected (and|or) high/i,
+      /opportunity cost/i,
+      /equity/i,
+      /negative equity/i,
+      /lowest net cost under these assumptions/i,
+      /what changes the answer/i,
+      /as one driver/i,
+      /effective interest rate, not the lender’s APR/i,
+      /VED/,
+      /uses no tax rules/i,
+      /not modelled/i,
+    ])
+      expect(text).toMatch(word)
+    expect(text).not.toMatch(/coming/i)
+  })
+
+  it('the take-home topic covers the payslip caveat, flex cash, benefits and deductions, and links to the optimiser topic', () => {
+    const text = JSON.stringify(topicById('take-home-pay')!.blocks)
+    for (const word of [/payslip/i, /flex/i, /benefits in kind/i, /post-tax deductions/i, /salary/i]) expect(text).toMatch(word)
+    expect(text).not.toMatch(/coming/i)
+    expect(linksIn(topicById('take-home-pay')!.blocks)).toContain('help:pension-optimiser')
+  })
+
+  it('the optimiser topic covers the compare: choosing, the cards, % change and pts, cost, milestones, warnings, childcare, what is not modelled', () => {
+    const text = JSON.stringify(topicById('pension-optimiser')!.blocks)
+    for (const word of [
+      /slider/i,
+      /Now.*New.*Change/,
+      /% change/,
+      /pts/,
+      /total paid into your pension/i,
+      /on average from no contribution/i,
+      /last step/i,
+      /already under/i,
+      /out of reach/i,
+      /a penny below/i,
+      /warnings/i,
+      /never a cap|not capped|no contribution is stopped/i,
+      /childcare/i,
+      /not checked/i,
+      /compare/i,
+      /not modelled/i,
+      /nothing is called the best/i,
+    ])
+      expect(text).toMatch(word)
+    expect(text).not.toMatch(/coming/i)
+  })
+
+  it('no topic mentions the removed Hello calculator', () => {
+    for (const topic of HELP_TOPICS) expect(JSON.stringify(topic.blocks), topic.id).not.toMatch(/Hello/)
+  })
+
+  it('links only to topics and sheets that exist (no external links)', () => {
+    const ids = new Set(HELP_TOPICS.map((t) => t.id))
+    for (const topic of HELP_TOPICS) {
+      for (const href of linksIn(topic.blocks)) {
+        expect(href, `${topic.id} links to ${href}`).toMatch(/^(?:help|sheet):/)
+        if (href.startsWith('help:')) expect(ids.has(href.slice(5)), `${topic.id} links to ${href}`).toBe(true)
+        else expect(parseHash(`#/${href.slice(6)}`), `${topic.id} links to ${href}`).not.toBeNull()
+      }
+    }
+  })
+
+  it('the tax data topic links to the Tax data screen', () => {
+    expect(linksIn(topicById('tax-data-and-last-verified')!.blocks)).toContain('sheet:tax-data')
+  })
+
+  it('describes saving as it is now: scenarios, export, import, backup and restore exist', () => {
+    const text = JSON.stringify(topicById('scenarios-and-saving')!.blocks)
+    for (const word of [/export/i, /import/i, /backup/i, /restore/i, /compare/i, /undo/i]) expect(text).toMatch(word)
+    for (const topic of HELP_TOPICS) expect(JSON.stringify(topic.blocks), topic.id).not.toMatch(/not built yet|Coming soon/i)
+  })
+
+  it('states no money amounts or percentages (tax figures belong in config, not Help)', () => {
+    for (const topic of HELP_TOPICS) {
+      const text = JSON.stringify(topic.blocks)
+      expect(text, topic.id).not.toMatch(/£\s?\d|\d\s?%|\d+\s?(?:per ?cent|pence|p\b)/i)
+    }
+  })
+})
