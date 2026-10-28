@@ -1,7 +1,5 @@
-// The list of apps on krishnabuilds.dev. Drives both the site header menu and
-// the landing page cards.
-//
-// Keep this file free of imports so it can move into packages/ui as-is.
+// The list of apps on krishnabuilds.dev. The single source for both the site
+// header menu and the Portal's landing page cards.
 
 export type AppGroup = "create" | "calculate" | "play" | "tinker";
 

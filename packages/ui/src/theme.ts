@@ -1,10 +1,9 @@
 // Theme preference: light, dark, or follow the OS ("system").
 //
 // Stored in a cookie on .krishnabuilds.dev so every subdomain shares it.
-// The inline script in index.html applies it before first paint; keep the
-// cookie name and values in sync with that script.
-//
-// No portal-specific imports, so this can move into packages/ui as-is.
+// Must stay in sync with the inline head script in apps/portal/index.html,
+// which applies it before first paint: cookie name `kb-theme`, stored values
+// "light" and "dark" ("system" is never stored; it clears the cookie).
 
 export type Theme = "light" | "dark" | "system";
 
