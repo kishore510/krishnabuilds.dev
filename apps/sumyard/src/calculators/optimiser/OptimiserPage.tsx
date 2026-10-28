@@ -1,0 +1,1589 @@
+import { Plus } from 'lucide-react'
+import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { AssumptionsPanel } from '@/components/AssumptionsPanel'
+import { Chart } from '@/components/Chart/Chart'
+import { CurrencyInput } from '@/components/inputs/CurrencyInput'
+import { NumberInput } from '@/components/inputs/NumberInput'
+import { PercentInput } from '@/components/inputs/PercentInput'
+import { Segmented } from '@/components/inputs/Segmented'
+import { Select } from '@/components/inputs/Select'
+import { TextInput } from '@/components/inputs/TextInput'
+import { TextValueInput } from '@/components/inputs/TextValueInput'
+import { Toggle } from '@/components/inputs/Toggle'
+import { RefusalNotice } from '@/components/RefusalNotice'
+import { ResultCard, StatRow } from '@/components/ResultCard'
+import { ScenarioBar } from '@/components/ScenarioBar'
+import { Section } from '@/components/Section'
+import { SplitBar } from '@/components/SplitBar'
+import { StickyResult } from '@/components/StickyResult'
+import { InlineNotice } from '@/components/states'
+import { Button } from '@/components/ui/button'
+import { VerifiedBadge } from '@/components/VerifiedBadge'
+import { listTaxYears, taxYearLabel } from '@/config/tax/index'
+import { useItemKeys } from '@/hooks/useItemKeys'
+import { formatGBP, formatGBPChange, formatGBPCompact, formatPence } from '@/lib/format'
+import { add, compare, fromPence, type Money, mulRound, type Ratio, ratio, subtract, subtractRatio, toPence, ZERO } from '@/lib/money'
+import type { Parsed } from '@/lib/parse'
+import { useStore } from '@/lib/store'
+import { MAX_SWEEP_POINTS } from '@/lib/sweep'
+import { type AmountStyle, settingsStore } from '@/settings/settings'
+import { DISCLAIMER } from '@/sheets/parts'
+import { toasts } from '@/toast/toasts'
+import { configFor, sessionFor } from '../session'
+import { BREAKDOWN_PERIODS, type Breakdown, type BreakdownPeriod, breakdown } from './breakdown'
+import { ChangeSummary } from './ChangeSummary'
+import { ContributionPicker } from './ContributionPicker'
+import { benefitTaxable } from './calc'
+import { COST_LABEL, CURVE_NOTE, costChartData, X_LABEL } from './chartData'
+import { type ContributionComparison, comparePoints, pointAt } from './compare'
+import {
+  type ContributionField,
+  calculatePaye,
+  calculateTakeHome,
+  INPUT_LIMITS,
+  type InputWarning,
+  ITEM_NOUNS,
+  inputWarnings,
+  isInputProblem,
+  itemLabel,
+  type ListField,
+  METHOD_LABELS,
+  MODE_LABELS,
+  MONEY_LABELS,
+  type OptimiserPageInputs,
+  optimiserCalculator,
+  PAYMENT_LABELS,
+  type PageResult,
+  PERIOD_LABELS,
+  PLAN_LABELS,
+  REGION_LABELS,
+  type ResolvedInputs,
+  resolveInputs,
+  usesPensionablePay,
+  yearsAgoLabel,
+} from './definition'
+import { calculateOptimise, carryForwardYears, type OptimiserPageResult, toOptimiserInputs } from './optimiserInputs'
+import { annualAmount, annualBenefit, type BenefitItem, CONTRIBUTION_MODES, ITEM_PERIODS, type ListItem } from './pageInputs'
+import { parseTaxCode } from './paye'
+import { CHILDCARE_NOT_CHECKED, childcareRuns, currentPoint, ONE_POUND, THRESHOLD_NAMES, thresholdWords, warningRuns } from './reading'
+import { payslipNet, splitSegments } from './results'
+import { NEEDS_FIXING, SECTION_IDS, SECTION_TITLES, type SectionId, sectionForField, sectionSummary, sectionsSet } from './sections'
+import { changeSentence, clampTarget, defaultTarget, milestoneWords, runWords, warningSplit } from './targetWords'
+import {
+  BENEFIT_PAYMENTS,
+  CHILD_BENEFIT_PAYMENTS,
+  type ChildcareScheme,
+  DEFAULT_POLICY,
+  type EngineWarning,
+  type OptimiseResult,
+  type OptimiserPoint,
+  type PayeEstimate,
+  PENSION_METHODS,
+  REGIONS,
+  STUDENT_LOAN_PLANS,
+  type TakeHomeResult,
+} from './types'
+
+/*
+ * The take-home page (slice 1b, session 1b-i; part 1b-i.1 added percentage
+ * contributions and itemised lists; 0.11.0 benefits taken from pay, the tax
+ * code and PAYE estimate, and the monthly breakdown; 0.12.0 the layout in
+ * docs/ui-patterns.md) at #/c/optimiser: "Your pay" always visible, the other
+ * inputs in sections with live summaries, and results first (StickyResult):
+ * take-home for the chosen period, a split bar of where gross pay goes, the
+ * breakdown by year or month, the PAYE card, warnings, assumptions and
+ * scenarios, all from shared components and the engine's takeHome and
+ * payeEstimate. Part 1b-ii-a adds the pension allowances section and,
+ * below the split bar, the chart of candidate contributions from optimise()
+ * (./optimiserInputs.ts, ./chartData.ts). No figure is written here.
+ */
+
+const session = sessionFor(optimiserCalculator)
+
+const TAX_YEARS = listTaxYears().map((y) => ({ value: y.id as string, label: taxYearLabel(y.id) }))
+const REGION_OPTIONS = REGIONS.map((value) => ({ value, label: value === 'rUK' ? 'England, Wales, NI' : REGION_LABELS[value] }))
+const METHOD_OPTIONS = PENSION_METHODS.map((value) => ({ value, label: METHOD_LABELS[value] }))
+const PAYMENT_OPTIONS = CHILD_BENEFIT_PAYMENTS.map((value) => ({ value, label: value === 'claimed' ? 'Claimed' : 'Opted out' }))
+const MODE_OPTIONS = CONTRIBUTION_MODES.map((value) => ({ value, label: value === 'amount' ? MODE_LABELS.amount : 'Percentage' }))
+const PERIOD_OPTIONS = ITEM_PERIODS.map((value) => ({ value, label: PERIOD_LABELS[value] }))
+const PAYMENT_OPTIONS_BENEFIT = BENEFIT_PAYMENTS.map((value) => ({ value, label: value === 'beforeTax' ? 'Before tax' : 'After tax' }))
+const BREAKDOWN_OPTIONS = BREAKDOWN_PERIODS.map((value) => ({ value, label: value === 'year' ? 'Year' : 'Month' }))
+const PERCENT_MIN = ratio(0, 1)
+
+const METHOD_HINTS: Record<OptimiserPageInputs['pensionMethod'], string> = {
+  salarySacrifice: 'Salary you give up for an employer contribution: less tax, National Insurance and student loan.',
+  netPay: 'Taken from your pay before tax: less tax, but not less National Insurance.',
+  reliefAtSource: 'Paid from your take-home pay; your provider adds basic rate relief. Enter what you pay.',
+}
+
+/** Assumptions the page adds to the engine's: what this page does and doesn't model. No figures except the policy's week count. */
+const PAGE_ASSUMPTIONS = [
+  `Child Benefit is counted for ${DEFAULT_POLICY.childBenefitWeeks} weeks of the year (the modelling policy), for every child entered.`,
+  'Pension is counted as contributions only: what goes in this year. Growth and tax on withdrawals are not modelled; the annual allowance is checked only in the contribution chart.',
+  'Taxable benefits in kind are taken as entered: they are not checked against your employer’s annual statement of benefits or your tax code.',
+  'The year’s tax (the liability) is the headline figure, worked out on the year’s figures however it is collected. A tax code is optional: with one, a PAYE estimate shows what payroll would take, assuming level monthly pay all year.',
+  'With a tax code, estimated payslip net pay is take-home with the PAYE estimate in place of the year’s income tax; everything else, including the Child Benefit charge, is as in take-home. Take-home after the year-end adjustment is the take-home figure itself.',
+  'Tax codes modelled: a number and a letter (L, M, N or T), with S or C in front if you have one. K, BR, D, NT, emergency and no-allowance codes get a notice and no estimate.',
+  'Benefits taken before tax (salary sacrifice) follow the general rule: the salary given up comes off your pay before tax, National Insurance and student loan, and the benefit is taxed on the higher of its value and the salary given up. Benefits that keep an exemption (such as cycle to work or pension contributions) are not modelled: enter pension contributions as pension.',
+  'Benefits paid for after tax: what you pay comes off take-home and takes the benefit’s taxable value down, not below nothing.',
+  'The monthly breakdown divides each yearly row by the months in a year, to the nearest penny; take-home per month is those rows added up, so it can differ by a penny or two from the year’s take-home divided evenly.',
+  'Take-home leaves out costs the employer pays: Class 1A National Insurance on benefits, employer National Insurance and the employer’s pension contribution.',
+  'Flexible-benefit cash is entered as salary.',
+  'A contribution entered as a percentage is that share of pensionable pay (your salary, or your own figure, with the bonus only if you include it), rounded to the nearest penny. Your scheme may round differently.',
+  'Benefits in kind and post-tax deductions are each added up from your items into one figure for the year.',
+  'Monthly amounts are assumed level through the year.',
+]
+
+const LIST_IDS: Record<ListField, string> = { taxableBenefits: 'opt-benefits', postTaxDeductions: 'opt-deductions' }
+
+const LIST_HINTS: Record<ListField, string> = {
+  taxableBenefits:
+    'Benefits from your job, such as medical cover: their value, and anything taken from your pay for them, before tax (salary sacrifice) or after tax. Add one item for each.',
+  postTaxDeductions:
+    'Amounts taken from your pay after tax with no tax effect, such as medical or dental cover you pay for. Add one item for each.',
+}
+
+const CONTRIBUTION_HINTS: Record<ContributionField, string> = {
+  employeeContribution: 'What you put in by this method. Zero for none.',
+  employerContribution: 'Your employer’s own contribution. It doesn’t change your take-home.',
+}
+
+/** What the contribution chart leaves out, beside optimise()'s own assumptions. */
+const CHART_ASSUMPTIONS = [
+  'Contribution chart, not modelled: defined benefit pension savings, income other than this job, relief claimed through Self Assessment, who pays an annual allowance charge (Scheme Pays), the value of childcare support, investment growth and tax on withdrawals.',
+  'Contribution chart: each point changes only your own contribution, by the method chosen, from nothing up to the most the engine models (into the pension, gross, all of your pay), whatever the annual allowance; the chart is always the whole range, in amounts a year.',
+]
+
+/** How the page compares a target with now (the compare redesign). No figures. */
+const READING_ASSUMPTIONS = [
+  'Compare: your contribution now against the target you choose, each worked out by the engine. A month is each year’s figure divided by the months in a year, to the nearest penny, and a month’s change is the difference of the two month figures shown, so each row adds up.',
+  'Compare: the total paid into your pension is your contribution, any relief your provider adds and your employer’s own contribution, as the engine counts them; % change is on the figure now; pts is the change in your share of pensionable pay.',
+  'Cost chart: the take-home (with any Child Benefit, less any annual allowance charge) given up for each pound paid into your pension in total, an average from no contribution, not the cost of the next pound.',
+  'Milestones are measured from your contribution now; each extra a month is rounded up to the penny, so that much a month is enough. Each limit is a year’s figure.',
+  'The target opens on the nearest threshold ahead of your contribution now (or on now, when there is none); it is not saved.',
+]
+
+/** What the optimiser leaves out, gathered from optimise()'s assumptions and the chart's own. */
+const NOT_MODELLED = /not modelled|not checked|not valued/i
+
+/** The engine lists the taper rounding with its results; without results the page says it. */
+const TAPER_ASSUMPTION = 'Personal allowance taper: the reduction is worked out exactly, with nothing rounded until the result.'
+
+const sameAmount = (a: Money, b: Money) => compare(a, b) === 0
+
+const PERIOD_LABELS_HEADLINE: Record<BreakdownPeriod, string> = { year: 'Take-home for the year', month: 'Take-home a month' }
+
+export default function OptimiserPage() {
+  const state = useStore(session)
+  const amounts = useStore(settingsStore, (s) => s.amounts)
+  const inputs = state.inputs
+  const config = configFor(state.taxYear)
+  const invalid = state.invalid.length > 0
+  const result = invalid ? null : calculateTakeHome(inputs, config)
+  const resolved = resolveInputs(inputs)
+  const warnings = invalid ? [] : inputWarnings(inputs)
+  const [period, setPeriod] = useState<BreakdownPeriod>('year')
+  const gbp = (amount: Money) => formatGBP(amount, amounts)
+  const ok = result && !isInputProblem(result) && result.ok ? result : null
+  const label = PERIOD_LABELS_HEADLINE[period]
+  const value = ok ? gbp(breakdown(ok.annual, period).takeHome) : null
+  // The sweep needs pay and a take-home result; it is the slowest part of the page, so only redone when inputs change.
+  const hasPay = compare(add(inputs.salary, inputs.bonus), ZERO) > 0
+  // The sweep is always a year's (U23): the Year / Month choice is for the take-home figure and the breakdown only.
+  const sweep = useMemo(() => (!invalid && hasPay ? calculateOptimise(inputs, config) : null), [invalid, hasPay, inputs, config])
+  // The target to compare (U24): the page's state only, never stored; forgotten on a load or a fresh start.
+  const [picked, setPicked] = useState<{ readonly revision: number; readonly amount: Money } | null>(null)
+  const sweepOk = sweep && !isInputProblem(sweep) && sweep.ok ? sweep : null
+  const requested = sweepOk ? (picked?.revision === state.revision ? picked.amount : defaultTarget(sweepOk)) : null
+  const compareState = useCompare(sweepOk, requested, inputs, resolved, config, gbp, (amount) =>
+    setPicked({ revision: state.revision, amount }),
+  )
+  const style = amounts
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
+          {optimiserCalculator.name}
+        </h1>
+        <p className="text-text-muted">{optimiserCalculator.summary}</p>
+        {/* On a phone the badge is in the sticky bar instead. */}
+        <div className="hidden md:flex">
+          <VerifiedBadge config={config} />
+        </div>
+      </div>
+
+      <StickyResult
+        label={label}
+        value={value}
+        emptyText={invalid ? 'Fix the highlighted inputs' : 'No result for these inputs'}
+        announcement={value === null ? null : `${label}: ${value}`}
+        controls={
+          <>
+            {ok && compareState && (
+              <p data-sticky-sentence className="text-sm text-text [overflow-wrap:anywhere]">
+                {compareState.sentence}
+              </p>
+            )}
+            <Segmented id="opt-period" label="Show take-home for a" value={period} options={BREAKDOWN_OPTIONS} onChange={setPeriod} />
+            <div className="flex">
+              <VerifiedBadge config={config} />
+            </div>
+          </>
+        }
+        results={
+          <>
+            <InputWarnings warnings={warnings} />
+            <ResultsOrNotice
+              result={result}
+              sweep={sweep}
+              compareState={compareState}
+              inputs={inputs}
+              resolved={resolved}
+              gbp={gbp}
+              style={style}
+              period={period}
+              setPeriod={setPeriod}
+            />
+          </>
+        }
+      >
+        <ScenarioBar calculator={optimiserCalculator} session={session} />
+        {/* Keyed by revision: a loaded scenario or a fresh start resets every box and which sections are open. */}
+        <Inputs key={state.revision} taxYear={state.taxYear} inputs={inputs} resolved={resolved} invalidFields={state.invalid} gbp={gbp} />
+      </StickyResult>
+
+      <AssumptionsPanel
+        items={[
+          ...new Set([
+            ...(result?.ok ? result.assumptions : [TAPER_ASSUMPTION]),
+            ...payeAssumptions(inputs, result),
+            ...PAGE_ASSUMPTIONS,
+            ...(ok && sweep?.ok ? [...sweep.assumptions, ...CHART_ASSUMPTIONS, ...READING_ASSUMPTIONS] : []),
+          ]),
+        ]}
+      >
+        {ok && sweep?.ok && (
+          <div data-not-modelled className="flex flex-col gap-1.5">
+            <h3 className="font-semibold">Not modelled by the optimiser</h3>
+            <ul className="flex list-disc flex-col gap-1.5 pl-5">
+              {[...new Set([...sweep.assumptions, ...CHART_ASSUMPTIONS].filter((line) => NOT_MODELLED.test(line)))].map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <p className="text-text-muted">Illustrative only, not financial advice. {DISCLAIMER}</p>
+      </AssumptionsPanel>
+    </div>
+  )
+}
+
+const valid = (field: string) => (ok: boolean) => session.setFieldValid(field, ok)
+const set = (patch: Partial<OptimiserPageInputs>) => session.setInputs(patch)
+
+/**
+ * The inputs: "Your pay" always visible, then a section each (U1 to U3), open on mount when its inputs differ from the
+ * defaults. Remounted (by key) on a load or a fresh start, so the open sections follow the inputs; never stored.
+ */
+function Inputs({
+  taxYear,
+  inputs,
+  resolved,
+  invalidFields,
+  gbp,
+}: {
+  taxYear: string
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  invalidFields: readonly string[]
+  gbp: Gbp
+}) {
+  const [openOnMount] = useState(() => sectionsSet(inputs))
+  const togglePlan = (plan: (typeof STUDENT_LOAN_PLANS)[number], on: boolean) =>
+    set({ studentLoans: STUDENT_LOAN_PLANS.filter((p) => (p === plan ? on : inputs.studentLoans.includes(p))) })
+  const amountInput = (id: string, field: 'salary' | 'bonus', hint?: string) => (
+    <CurrencyInput
+      id={id}
+      label={MONEY_LABELS[field]}
+      hint={hint}
+      value={inputs[field]}
+      min={ZERO}
+      max={INPUT_LIMITS.maxAmount}
+      onChange={(value) => set({ [field]: value })}
+      onValidityChange={valid(field)}
+    />
+  )
+  const section = (id: SectionId, children: ReactNode) => (
+    <Section
+      id={`opt-section-${id}`}
+      title={SECTION_TITLES[id]}
+      summary={invalidFields.some((f) => sectionForField(f) === id) ? NEEDS_FIXING : sectionSummary(id, inputs, resolved, gbp)}
+      defaultOpen={openOnMount.has(id)}
+    >
+      {children}
+    </Section>
+  )
+  const content: Record<SectionId, ReactNode> = {
+    pension: (
+      <>
+        <Select
+          id="opt-method"
+          label="Pension method"
+          hint={METHOD_HINTS[inputs.pensionMethod]}
+          value={inputs.pensionMethod}
+          options={METHOD_OPTIONS}
+          onChange={(pensionMethod) => set({ pensionMethod })}
+        />
+        <ContributionInputs id="opt-employee" field="employeeContribution" inputs={inputs} resolved={resolved} gbp={gbp} />
+        <ContributionInputs id="opt-employer" field="employerContribution" inputs={inputs} resolved={resolved} gbp={gbp} />
+        {usesPensionablePay(inputs) && <PensionablePayInputs inputs={inputs} resolved={resolved} gbp={gbp} />}
+      </>
+    ),
+    allowances: <AllowanceInputs taxYear={taxYear} inputs={inputs} />,
+    benefits: (
+      <>
+        <ItemList
+          field="taxableBenefits"
+          items={inputs.taxableBenefits}
+          invalidFields={invalidFields}
+          blank={{ name: '', period: 'month', value: ZERO, taken: ZERO, payment: 'beforeTax' }}
+          invalidParts={['name', 'value', 'taken']}
+          fields={(item, itemId, update, part) => <BenefitFields item={item} itemId={itemId} update={update} part={part} />}
+          resolved={(item) => <BenefitResolved item={item} gbp={gbp} />}
+          total={<BenefitTotals resolved={resolved} gbp={gbp} empty={inputs.taxableBenefits.length === 0} />}
+        />
+        <ItemList
+          field="postTaxDeductions"
+          items={inputs.postTaxDeductions}
+          invalidFields={invalidFields}
+          blank={{ name: '', amount: ZERO, period: 'month' }}
+          invalidParts={['name', 'amount']}
+          fields={(item, itemId, update, part) => (
+            <CurrencyInput
+              id={`${itemId}-amount`}
+              label="Amount"
+              value={item.amount}
+              min={ZERO}
+              max={INPUT_LIMITS.maxAmount}
+              onChange={(amount) => update({ amount })}
+              onValidityChange={(ok) => session.setFieldValid(part('amount'), ok)}
+            />
+          )}
+          resolved={(item) => (
+            <>
+              <span className="tabular-nums">{gbp(annualAmount(item))}</span> for the year
+            </>
+          )}
+          total={
+            <>
+              Total for the year: <span className="font-semibold tabular-nums">{gbp(resolved.postTaxDeductions)}</span>
+              {inputs.postTaxDeductions.length === 0 ? ' (none added)' : ''}
+            </>
+          }
+        />
+      </>
+    ),
+    studentLoans: (
+      <fieldset className="flex min-w-0 flex-col gap-1">
+        <legend className="pb-1.5 text-sm font-medium text-text">Plans you repay</legend>
+        {STUDENT_LOAN_PLANS.map((plan) => (
+          <Toggle
+            key={plan}
+            id={`opt-loan-${plan}`}
+            label={PLAN_LABELS[plan]}
+            checked={inputs.studentLoans.includes(plan)}
+            onChange={(on) => togglePlan(plan, on)}
+          />
+        ))}
+      </fieldset>
+    ),
+    childBenefit: (
+      <>
+        <NumberInput
+          id="opt-children"
+          label="Children you get Child Benefit for"
+          value={inputs.children}
+          min={0}
+          max={INPUT_LIMITS.maxChildren}
+          onChange={(children) => set({ children })}
+          onValidityChange={valid('children')}
+        />
+        {inputs.children > 0 && (
+          <Segmented
+            id="opt-child-benefit"
+            label="Child Benefit payments"
+            hint={inputs.childBenefit === 'optedOut' ? PAYMENT_LABELS.optedOut : 'Paid to you; a charge applies on higher incomes.'}
+            value={inputs.childBenefit}
+            options={PAYMENT_OPTIONS}
+            onChange={(childBenefit) => set({ childBenefit })}
+          />
+        )}
+      </>
+    ),
+    taxCode: (
+      <TextValueInput<string>
+        id="opt-tax-code"
+        label="Tax code (optional)"
+        hint="As on your payslip: a number then a letter, with S or C in front if yours has one. Leave it empty for no PAYE estimate."
+        value={inputs.taxCode}
+        inputMode="text"
+        parse={parseCodeText}
+        format={(code) => code}
+        onChange={(taxCode) => set({ taxCode })}
+        onValidityChange={valid('taxCode')}
+      />
+    ),
+  }
+
+  return (
+    <>
+      <section
+        aria-labelledby="opt-your-pay"
+        className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm"
+      >
+        <h2 id="opt-your-pay" className="text-base font-semibold">
+          Your pay
+        </h2>
+        {amountInput('opt-salary', 'salary', 'Your annual salary before tax. Include any flexible-benefit cash.')}
+        {amountInput('opt-bonus', 'bonus', 'Any bonus for the year, added to salary.')}
+        <Segmented
+          id="opt-region"
+          label="Where you live"
+          value={inputs.region}
+          options={REGION_OPTIONS}
+          onChange={(region) => set({ region })}
+        />
+        <Select
+          id="opt-tax-year"
+          label="Tax year"
+          value={taxYear}
+          options={TAX_YEARS}
+          onChange={(taxYear) => session.setTaxYear(taxYear)}
+        />
+      </section>
+      {SECTION_IDS.map((id) => (
+        <Fragment key={id}>{section(id, content[id])}</Fragment>
+      ))}
+    </>
+  )
+}
+
+/** The results column: a notice when there are no results, else the results. */
+function ResultsOrNotice({
+  result,
+  ...props
+}: {
+  result: PageResult | null
+  sweep: OptimiserPageResult | null
+  compareState: PensionCompareState | null
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  gbp: Gbp
+  style: AmountStyle
+  period: BreakdownPeriod
+  setPeriod: (period: BreakdownPeriod) => void
+}) {
+  if (!result)
+    return (
+      <InlineNotice tone="warning" title="No results until the inputs are fixed">
+        <p>Fix the highlighted inputs to see results.</p>
+      </InlineNotice>
+    )
+  if (isInputProblem(result))
+    return (
+      <div data-input-problem>
+        <InlineNotice tone="warning" title="These inputs can’t be worked out">
+          <p>{result.problem}</p>
+        </InlineNotice>
+      </div>
+    )
+  if (!result.ok) return <RefusalNotice refusal={result} />
+  return <Results result={result} {...props} />
+}
+
+type Gbp = (amount: Money) => string
+
+/** Marks fields valid when their box leaves the page (a mode switch, a removed item), so results don't wait on them. */
+const forget = (...fields: string[]) => {
+  for (const field of fields) session.setFieldValid(field, true)
+}
+
+/** One pension contribution: how it is entered, the box for that, and the amount it comes to when it is a percentage. */
+function ContributionInputs({
+  id,
+  field,
+  inputs,
+  resolved,
+  gbp,
+}: {
+  id: string
+  field: ContributionField
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  gbp: Gbp
+}) {
+  const entry = inputs[field]
+  const set = (patch: Partial<OptimiserPageInputs[ContributionField]>) => session.setInputs({ [field]: { ...entry, ...patch } })
+  const valid = (name: string) => (ok: boolean) => session.setFieldValid(name, ok)
+  return (
+    <div className="flex min-w-0 flex-col gap-3">
+      <Segmented
+        id={`${id}-mode`}
+        label={`${MONEY_LABELS[field]}: enter as`}
+        value={entry.mode}
+        options={MODE_OPTIONS}
+        onChange={(mode) => {
+          forget(mode === 'amount' ? `${field}-pct` : field)
+          // Pensionable pay leaves the page when neither contribution is a percentage any more.
+          if (!usesPensionablePay({ ...inputs, [field]: { ...entry, mode } })) forget('pensionablePay')
+          set({ mode })
+        }}
+      />
+      {entry.mode === 'amount' ? (
+        <CurrencyInput
+          id={id}
+          label={MONEY_LABELS[field]}
+          hint={`${CONTRIBUTION_HINTS[field]} For the year.`}
+          value={entry.amount}
+          min={ZERO}
+          max={INPUT_LIMITS.maxAmount}
+          onChange={(amount) => set({ amount })}
+          onValidityChange={valid(field)}
+        />
+      ) : (
+        <>
+          <PercentInput
+            id={`${id}-pct`}
+            label={`${MONEY_LABELS[field]} (percentage of pensionable pay)`}
+            hint={CONTRIBUTION_HINTS[field]}
+            value={entry.percentOfPay}
+            min={PERCENT_MIN}
+            max={INPUT_LIMITS.maxPercent}
+            onChange={(percentOfPay) => set({ percentOfPay })}
+            onValidityChange={valid(`${field}-pct`)}
+          />
+          <p id={`${id}-resolved`} className="text-sm text-text">
+            Comes to <span className="font-semibold tabular-nums">{gbp(resolved[field])}</span> for the year.
+          </p>
+        </>
+      )}
+    </div>
+  )
+}
+
+/** What a percentage contribution applies to: the salary, or the person's own figure, with the bonus only if included. */
+function PensionablePayInputs({ inputs, resolved, gbp }: { inputs: OptimiserPageInputs; resolved: ResolvedInputs; gbp: Gbp }) {
+  const entry = inputs.pensionablePay
+  const set = (patch: Partial<OptimiserPageInputs['pensionablePay']>) => session.setInputs({ pensionablePay: { ...entry, ...patch } })
+  return (
+    <fieldset className="flex min-w-0 flex-col gap-2 rounded-md border border-border p-3">
+      <legend className="px-1 text-sm font-medium text-text">Pensionable pay</legend>
+      <Toggle
+        id="opt-pensionable-own"
+        label="Enter my own pensionable pay"
+        hint="Off: your salary. Your scheme may use a different figure."
+        checked={entry.own}
+        onChange={(own) => {
+          if (!own) forget('pensionablePay')
+          set({ own })
+        }}
+      />
+      {entry.own && (
+        <CurrencyInput
+          id="opt-pensionable"
+          label="Pensionable pay for the year"
+          value={entry.amount}
+          min={ZERO}
+          max={INPUT_LIMITS.maxAmount}
+          onChange={(amount) => set({ amount })}
+          onValidityChange={(ok) => session.setFieldValid('pensionablePay', ok)}
+        />
+      )}
+      <Toggle
+        id="opt-pensionable-bonus"
+        label="Include the bonus"
+        checked={entry.includeBonus}
+        onChange={(includeBonus) => set({ includeBonus })}
+      />
+      <p id="opt-pensionable-resolved" className="text-sm text-text">
+        Percentages apply to <span className="font-semibold tabular-nums">{gbp(resolved.pensionablePay)}</span> a year.
+      </p>
+    </fieldset>
+  )
+}
+
+type Item = { readonly name: string; readonly period: ListItem['period'] }
+
+const capitalised = (text: string) => text.replace(/^./, (c) => c.toUpperCase())
+
+/**
+ * A list of named items (benefits in kind or post-tax deductions), each per month or per year, with its total for the
+ * year (U9): each item a compact card with its name and resolved amounts, edited in place (Edit, Done) and removed with
+ * Undo. A new item opens for editing with its name focused; an item with an input to fix stays open. `fields` renders an
+ * item's own boxes between its name and its period; `part` names a box for the session's validity.
+ */
+function ItemList<T extends Item>({
+  field,
+  items,
+  invalidFields,
+  blank,
+  invalidParts,
+  fields,
+  resolved,
+  total,
+}: {
+  field: ListField
+  items: readonly T[]
+  invalidFields: readonly string[]
+  blank: T
+  invalidParts: readonly string[]
+  fields: (item: T, itemId: string, update: (patch: Partial<T>) => void, part: (name: string) => string) => ReactNode
+  resolved: (item: T) => ReactNode
+  total: ReactNode
+}) {
+  const id = LIST_IDS[field]
+  const noun = ITEM_NOUNS[field]
+  const { keys, inserted, removed } = useItemKeys(items.length)
+  const [editing, setEditing] = useState<ReadonlySet<number>>(() => new Set())
+  // What takes focus after the next render: a new item's name, a restored item's Edit, or Add after a removal.
+  const [focus, setFocus] = useState<string | null>(null)
+  const latest = useRef({ inserted, setEditing, setFocus })
+  latest.current = { inserted, setEditing, setFocus }
+  useEffect(() => {
+    if (focus === null) return
+    document.getElementById(focus)?.focus()
+    setFocus(null)
+  }, [focus])
+  const full = items.length >= INPUT_LIMITS.maxItems
+  const setItems = (next: readonly T[]) => session.setInputs({ [field]: next })
+  const update = (index: number, patch: Partial<T>) => setItems(items.map((item, i) => (i === index ? { ...item, ...patch } : item)))
+  const fieldName = (key: number, part: string) => `${field}-${key}-${part}`
+  const toggle = (key: number, on: boolean) =>
+    setEditing((s) => {
+      const next = new Set(s)
+      if (on) next.add(key)
+      else next.delete(key)
+      return next
+    })
+
+  const remove = (index: number, key: number, label: string) => {
+    const item = items[index]!
+    const revision = session.get().revision
+    forget(...invalidParts.map((part) => fieldName(key, part)))
+    removed(index)
+    setItems(items.filter((_, i) => i !== index))
+    setFocus(`${id}-add`)
+    toasts.show({
+      message: `Removed “${label}”.`,
+      undo: {
+        blocked: () =>
+          session.get().revision !== revision
+            ? 'Couldn’t undo: other inputs have been loaded since.'
+            : session.get().inputs[field].length >= INPUT_LIMITS.maxItems
+              ? 'Couldn’t undo: the list is full.'
+              : undefined,
+        run: () => {
+          const now = session.get().inputs[field] as unknown as readonly T[]
+          const at = Math.min(index, now.length)
+          const restored = latest.current.inserted(at)
+          session.setInputs({ [field]: [...now.slice(0, at), item, ...now.slice(at)] })
+          latest.current.setFocus(`${id}-${restored}-edit`)
+        },
+        done: `Restored “${label}”.`,
+      },
+    })
+  }
+
+  return (
+    <fieldset aria-describedby={`${id}-hint`} className="flex min-w-0 flex-col gap-3" data-list={field}>
+      <legend className="pb-1.5 text-sm font-medium text-text">{MONEY_LABELS[field]}</legend>
+      <p id={`${id}-hint`} className="-mt-1.5 text-xs text-text-muted">
+        {LIST_HINTS[field]}
+      </p>
+      {items.map((item, index) => {
+        const key = keys[index] ?? index
+        const itemId = `${id}-${key}`
+        const label = itemLabel(field, item, index)
+        const numbered = `${capitalised(noun)} ${index + 1}`
+        const needsFixing = invalidFields.some((f) => f.startsWith(`${field}-${key}-`))
+        const open = editing.has(key) || needsFixing
+        return (
+          <fieldset key={key} id={itemId} data-item className="flex min-w-0 flex-col rounded-md border border-border">
+            <legend className="sr-only">{numbered}</legend>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 py-1 pr-1 pl-3">
+              <p id={`${itemId}-summary`} className="flex min-w-0 flex-1 basis-40 flex-col py-1 text-sm">
+                <span className="font-medium text-text [overflow-wrap:anywhere]">{item.name || numbered}</span>
+                <span className="text-xs text-text-muted">{resolved(item)}</span>
+              </p>
+              <div className="flex min-w-0 flex-wrap gap-1">
+                <Button
+                  id={`${itemId}-edit`}
+                  variant="ghost"
+                  aria-expanded={open}
+                  aria-controls={`${itemId}-fields`}
+                  onClick={() => toggle(key, !open)}
+                >
+                  {open ? 'Done' : 'Edit'}
+                  <span className="sr-only"> {label}</span>
+                </Button>
+                <Button id={`${itemId}-remove`} variant="ghost" aria-label={`Remove ${label}`} onClick={() => remove(index, key, label)}>
+                  Remove
+                </Button>
+              </div>
+            </div>
+            <div id={`${itemId}-fields`} hidden={!open} className="flex flex-col gap-3 border-t border-border p-3">
+              <TextInput
+                id={`${itemId}-name`}
+                label="Name"
+                value={item.name}
+                maxLength={INPUT_LIMITS.maxNameLength}
+                onChange={(name) => update(index, { name } as Partial<T>)}
+                onValidityChange={(ok) => session.setFieldValid(fieldName(key, 'name'), ok)}
+              />
+              {fields(
+                item,
+                itemId,
+                (patch) => update(index, patch),
+                (part) => fieldName(key, part),
+              )}
+              <Segmented
+                id={`${itemId}-period`}
+                label="How often"
+                value={item.period}
+                options={PERIOD_OPTIONS}
+                onChange={(period) => update(index, { period } as Partial<T>)}
+              />
+            </div>
+          </fieldset>
+        )
+      })}
+      <p id={`${id}-total`} className="text-sm text-text">
+        {total}
+      </p>
+      <div className="flex flex-col gap-1.5">
+        <Button
+          id={`${id}-add`}
+          disabled={full}
+          aria-describedby={full ? `${id}-full` : undefined}
+          onClick={() => {
+            const key = inserted(items.length)
+            toggle(key, true)
+            setItems([...items, blank])
+            setFocus(`${id}-${key}-name`)
+          }}
+          className="h-auto min-h-touch max-w-full self-start py-2 text-left whitespace-normal"
+        >
+          <Plus />
+          Add a {noun}
+        </Button>
+        {full && (
+          <p id={`${id}-full`} className="text-xs text-text-muted">
+            That’s the most this list holds ({INPUT_LIMITS.maxItems}). Combine items to add more.
+          </p>
+        )}
+      </div>
+    </fieldset>
+  )
+}
+
+const PAYMENT_HINTS: Record<BenefitItem['payment'], string> = {
+  beforeTax:
+    'Salary you give up for it: less tax, National Insurance and student loan on your pay, but it is taxed on the higher of its value and the salary given up.',
+  afterTax: 'Paid from your take-home pay: it lowers the benefit’s taxable value.',
+}
+
+/** A benefit item's own boxes: its value, what is taken from pay, and how (B10). */
+function BenefitFields({
+  item,
+  itemId,
+  update,
+  part,
+}: {
+  item: BenefitItem
+  itemId: string
+  update: (patch: Partial<BenefitItem>) => void
+  part: (name: string) => string
+}) {
+  return (
+    <>
+      <CurrencyInput
+        id={`${itemId}-value`}
+        label="Value of the benefit"
+        hint="As your employer works it out, before anything you pay towards it."
+        value={item.value}
+        min={ZERO}
+        max={INPUT_LIMITS.maxAmount}
+        onChange={(value) => update({ value })}
+        onValidityChange={(ok) => session.setFieldValid(part('value'), ok)}
+      />
+      <CurrencyInput
+        id={`${itemId}-taken`}
+        label="Taken from your pay for it"
+        hint="Nothing if your employer pays for it all."
+        value={item.taken}
+        min={ZERO}
+        max={INPUT_LIMITS.maxAmount}
+        onChange={(taken) => update({ taken })}
+        onValidityChange={(ok) => session.setFieldValid(part('taken'), ok)}
+      />
+      <Segmented
+        id={`${itemId}-payment`}
+        label="Taken from pay"
+        hint={PAYMENT_HINTS[item.payment]}
+        value={item.payment}
+        options={PAYMENT_OPTIONS_BENEFIT}
+        onChange={(payment) => update({ payment })}
+      />
+    </>
+  )
+}
+
+/** What a benefit item comes to for the year: taxable, and taken from pay (and how). */
+function BenefitResolved({ item, gbp }: { item: BenefitItem; gbp: Gbp }) {
+  const year = annualBenefit(item)
+  return (
+    <>
+      Taxable: <span className="tabular-nums">{gbp(benefitTaxable(year))}</span> for the year
+      {compare(year.taken, ZERO) > 0 && (
+        <>
+          {' '}
+          · taken from pay: <span className="tabular-nums">{gbp(year.taken)}</span>{' '}
+          {item.payment === 'beforeTax' ? 'before tax' : 'after tax'}
+        </>
+      )}
+    </>
+  )
+}
+
+/** The benefit items' running totals for the year. */
+function BenefitTotals({ resolved, gbp, empty }: { resolved: ResolvedInputs; gbp: Gbp; empty: boolean }) {
+  return (
+    <>
+      Taxable for the year: <span className="font-semibold tabular-nums">{gbp(resolved.taxableBenefits)}</span>
+      {empty ? ' (none added)' : ''}
+      {compare(resolved.benefitSacrifice, ZERO) > 0 && (
+        <>
+          . Salary given up: <span className="font-semibold tabular-nums">{gbp(resolved.benefitSacrifice)}</span>
+        </>
+      )}
+      {compare(resolved.benefitPaidAfterTax, ZERO) > 0 && (
+        <>
+          . Paid after tax: <span className="font-semibold tabular-nums">{gbp(resolved.benefitPaidAfterTax)}</span>
+        </>
+      )}
+    </>
+  )
+}
+
+/** The tax code box's text: empty for none, or a code GOV.UK defines, kept in its canonical form (B12). */
+function parseCodeText(text: string): Parsed<string> {
+  if (text.trim() === '') return { ok: true, value: '' }
+  if (Array.from(text.trim()).length > INPUT_LIMITS.maxTaxCodeLength)
+    return { ok: false, error: `Use at most ${INPUT_LIMITS.maxTaxCodeLength} characters.` }
+  const parsed = parseTaxCode(text)
+  if (parsed.ok) return { ok: true, value: parsed.code.text }
+  if (parsed.reason === 'unsupported') return { ok: true, value: parsed.text }
+  return { ok: false, error: 'Not a tax code Sumyard recognises: a number then a letter, with S or C in front if yours has one.' }
+}
+
+/** The PAYE estimate's assumptions, when a supported code gives one. */
+function payeAssumptions(inputs: OptimiserPageInputs, result: ReturnType<typeof calculateTakeHome> | null): readonly string[] {
+  if (!result?.ok || isInputProblem(result)) return []
+  const paye = calculatePaye(inputs, result, configFor(session.get().taxYear))
+  return paye?.ok ? paye.paye.assumptions : []
+}
+
+/** Warnings about the inputs themselves, shown above the results and never a cap. */
+function InputWarnings({ warnings }: { warnings: readonly InputWarning[] }) {
+  return warnings.map((warning) => (
+    <div key={warning.key} data-input-warning={warning.code} className="[overflow-wrap:anywhere]">
+      <InlineNotice tone="warning">
+        <p>{warning.message}</p>
+      </InlineNotice>
+    </div>
+  ))
+}
+
+/** Breakdown row labels, in order; the benefit rows show only when they hold something. */
+const ROW_LABELS = {
+  benefitSacrifice: 'Salary given up for benefits',
+  incomeTax: 'Income tax',
+  nationalInsurance: 'National Insurance',
+  studentLoan: 'Student loan',
+  pension: 'Employee pension',
+  hicbc: 'High Income Child Benefit Charge',
+  benefitPayments: 'Benefit payments after tax',
+  postTaxDeductions: 'Post-tax deductions',
+} as const
+
+const OPTIONAL_ROWS = new Set<keyof typeof ROW_LABELS>(['benefitSacrifice', 'benefitPayments'])
+
+/** The pennies a month's take-home moves from an even division of the year's, in words. */
+function pennyNote(month: Breakdown, gbp: Gbp): string | undefined {
+  const moved = compare(month.difference, ZERO)
+  if (moved === 0) return undefined
+  const by = gbp(moved > 0 ? month.difference : subtract(ZERO, month.difference))
+  return `The rows added up: ${by} ${moved > 0 ? 'more' : 'less'} than the year’s take-home divided evenly (${gbp(month.evenShare)}), from rounding each row.`
+}
+
+function Results({
+  result,
+  sweep,
+  compareState,
+  inputs,
+  resolved,
+  gbp,
+  style,
+  period,
+  setPeriod,
+}: {
+  result: TakeHomeResult
+  sweep: OptimiserPageResult | null
+  compareState: PensionCompareState | null
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  gbp: Gbp
+  style: AmountStyle
+  period: BreakdownPeriod
+  setPeriod: (period: BreakdownPeriod) => void
+}) {
+  const { annual, weekly } = result
+  const month = breakdown(annual, 'month')
+  const shown = breakdown(annual, period)
+  const paye = calculatePaye(inputs, result, configFor(result.taxYear))
+  const intoPension = add(result.pension?.grossContribution ?? ZERO, resolved.employerContribution)
+  const hasChildren = inputs.children > 0
+  const periodWords = period === 'year' ? 'for the year' : 'a month'
+  return (
+    <>
+      {result.warnings.map((warning) => (
+        <div key={warning.code} data-warning={warning.code}>
+          <InlineNotice tone="warning">
+            <p>{warning.message}</p>
+          </InlineNotice>
+        </div>
+      ))}
+
+      {compareState && <PensionCompare state={compareState} inputs={inputs} resolved={resolved} gbp={gbp} style={style} />}
+
+      <div className="flex flex-col gap-3" data-headline>
+        <ResultCard title="Take-home pay" headlineLabel={PERIOD_LABELS_HEADLINE[period]} headline={gbp(shown.takeHome)}>
+          {paye?.ok && (
+            <>
+              <StatRow
+                label="Estimated payslip net pay"
+                value={gbp(payslipNet(shown, paye))}
+                detail={`Income tax as the PAYE estimate on your code, ${periodWords}`}
+              />
+              <StatRow
+                label="Take-home after the year-end adjustment"
+                value={gbp(shown.takeHome)}
+                detail={`Income tax as the year’s tax, ${periodWords}`}
+              />
+            </>
+          )}
+          <StatRow label="Year" value={gbp(annual.net)} detail={annual.label} />
+          <StatRow
+            label="Month"
+            value={gbp(month.takeHome)}
+            detail="Each yearly row divided by the months in a year, to the nearest penny, then added up"
+          />
+          <StatRow label="Week" value={gbp(weekly.net)} detail={weekly.label} />
+        </ResultCard>
+        {paye?.ok && (
+          <p data-net-pay-note className="text-xs text-text-muted">
+            Your payslips take income tax on your tax code; the year’s tax is settled after the year ends, so a difference is refunded or
+            collected then, or through a new code.
+          </p>
+        )}
+        <InlineNotice>
+          <p>
+            Worked out for the whole tax year. Monthly and weekly are the annual figures divided evenly, so your payslips may differ,
+            especially in a month with a bonus.
+          </p>
+        </InlineNotice>
+      </div>
+
+      <section data-split aria-label="Where your gross pay goes" className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+        <SplitBar
+          title={`Where your gross pay goes, ${periodWords}`}
+          segments={splitSegments(shown).map((s) => ({ id: s.id, label: s.label, value: s.amount }))}
+          total={shown.gross}
+          totalLabel="Gross pay"
+          formatValue={(pence) => gbp(pence as Money)}
+          highlight="takeHome"
+        />
+      </section>
+      {sweep && <CostChart sweep={sweep} state={compareState} inputs={inputs} resolved={resolved} gbp={gbp} style={style} />}
+
+      <div className="flex flex-col gap-3" data-breakdown={period}>
+        <Segmented
+          id="opt-breakdown-period"
+          label="Show the breakdown for a"
+          value={period}
+          options={BREAKDOWN_OPTIONS}
+          onChange={setPeriod}
+        />
+        <ResultCard title="Breakdown">
+          <StatRow label="Gross pay" value={gbp(shown.gross)} detail="Salary plus bonus" />
+          {(Object.keys(ROW_LABELS) as (keyof typeof ROW_LABELS)[])
+            .filter((row) => !OPTIONAL_ROWS.has(row) || compare(annual[row], ZERO) !== 0)
+            .map((row) => (
+              <StatRow
+                key={row}
+                label={ROW_LABELS[row]}
+                value={gbp(shown.rows[row])}
+                detail={row === 'pension' && result.pension ? METHOD_LABELS[result.pension.method] : undefined}
+              />
+            ))}
+          <StatRow
+            label="Take-home"
+            value={gbp(shown.takeHome)}
+            detail={period === 'year' ? 'Gross pay less every row above' : (pennyNote(shown, gbp) ?? 'Gross pay less every row above')}
+          />
+          {period === 'month' && paye?.ok && (
+            <StatRow
+              label="Income tax through PAYE"
+              value={gbp(paye.paye.months[0]!.tax)}
+              detail="Estimate for a month on your tax code; not in the sum above"
+            />
+          )}
+        </ResultCard>
+        <p className="text-xs text-text-muted">
+          {period === 'year'
+            ? 'The tax year’s figures.'
+            : 'Each yearly row divided by the months in a year, to the nearest penny; take-home is those rows added up. Not a payslip.'}
+        </p>
+      </div>
+
+      {paye && !paye.ok && 'reason' in paye && (
+        <div data-paye-notice={paye.kind ?? paye.reason}>
+          <InlineNotice tone="info" title="No PAYE estimate for this tax code">
+            <p>{paye.message}</p>
+          </InlineNotice>
+        </div>
+      )}
+      {paye && !paye.ok && !('reason' in paye) && <RefusalNotice refusal={paye} />}
+      {paye?.ok && <PayeCard estimate={paye} gbp={gbp} />}
+
+      <ResultCard title="Alongside your pay">
+        {hasChildren && <StatRow label="Child Benefit received" value={gbp(annual.childBenefit)} />}
+        {hasChildren && <StatRow label="Take-home with Child Benefit" value={gbp(annual.netIncludingChildBenefit)} />}
+        <StatRow
+          label="Into your pension"
+          value={gbp(intoPension)}
+          detail={
+            sameAmount(intoPension, ZERO)
+              ? undefined
+              : 'Your contribution (with any relief your provider adds) plus your employer’s own contribution'
+          }
+        />
+        <StatRow label="Taxable benefits in kind" value={gbp(resolved.taxableBenefits)} detail="Taxed as pay, but not paid in cash" />
+        <StatRow label="Adjusted net income" value={gbp(result.adjustedNetIncome.adjustedNetIncome)} />
+      </ResultCard>
+    </>
+  )
+}
+
+/** The PAYE estimate beside the year's tax (B11): the estimate, a month, the liability and the difference, in words. */
+function PayeCard({ estimate, gbp }: { estimate: PayeEstimate; gbp: Gbp }) {
+  const { paye, liability, difference } = estimate
+  const taxes = paye.months.map((m) => m.tax)
+  const level = taxes.every((tax) => tax === taxes[0])
+  const sign = compare(difference, ZERO)
+  return (
+    <div className="flex flex-col gap-3" data-paye>
+      <ResultCard title="PAYE estimate" headlineLabel={`PAYE for the year on tax code ${paye.code.text}`} headline={gbp(paye.total)}>
+        <StatRow
+          label="PAYE a month"
+          value={gbp(taxes[0]!)}
+          detail={level ? 'Level monthly pay' : 'Level monthly pay; some months differ by a penny, and the year adds up exactly'}
+        />
+        <StatRow label="Income tax for the year" value={gbp(liability)} detail="The headline figure: the year’s tax on these inputs" />
+        <StatRow
+          label="Difference"
+          value={gbp(sign < 0 ? subtract(ZERO, difference) : difference)}
+          detail={
+            sign > 0
+              ? 'PAYE would take more than the year’s tax'
+              : sign < 0
+                ? 'PAYE would take less than the year’s tax'
+                : 'PAYE would take the year’s tax exactly'
+          }
+        />
+      </ResultCard>
+      <InlineNotice>
+        <p>
+          A difference may be refunded or collected later: HMRC can change your tax code, or settle it after the year ends, by letter or
+          through Self Assessment if you send a return.
+        </p>
+      </InlineNotice>
+    </div>
+  )
+}
+
+/**
+ * The pension allowances section (1b-ii-a): unused allowance for each earlier year carry forward looks back (from the
+ * year's config, plus any stored year beyond it), the money purchase annual allowance and the childcare check. Change
+ * no take-home figure; they are optimise()'s.
+ */
+function AllowanceInputs({ taxYear, inputs }: { taxYear: string; inputs: OptimiserPageInputs }) {
+  const lookBack = carryForwardYears(configFor(taxYear))
+  const years = [
+    ...new Set([...Array.from({ length: lookBack ?? 0 }, (_, i) => i + 1), ...inputs.carryForward.map((y) => y.yearsAgo)]),
+  ].sort((a, b) => a - b)
+  const amountFor = (yearsAgo: number) => inputs.carryForward.find((y) => y.yearsAgo === yearsAgo)?.amount ?? ZERO
+  const setYear = (yearsAgo: number, amount: Money) =>
+    set({
+      carryForward: years.flatMap((year) => {
+        const value = year === yearsAgo ? amount : amountFor(year)
+        return compare(value, ZERO) > 0 ? [{ yearsAgo: year, amount: value }] : []
+      }),
+    })
+  return (
+    <>
+      <fieldset className="flex min-w-0 flex-col gap-3">
+        <legend className="pb-1.5 text-sm font-medium text-text">Unused annual allowance (carry forward)</legend>
+        <p className="text-sm text-text-muted">
+          From your pension statements or provider: allowance an earlier year’s pension savings did not use. Taken as entered, not checked.
+          Leave a year at nothing if there is none.
+        </p>
+        {lookBack === null && (
+          <p className="text-sm text-text-muted">The carry forward period for this tax year is not verified yet, so no years are listed.</p>
+        )}
+        {years.map((yearsAgo) => (
+          <CurrencyInput
+            key={yearsAgo}
+            id={`opt-carry-${yearsAgo}`}
+            label={`Unused allowance from ${yearsAgoLabel(yearsAgo)}`}
+            value={amountFor(yearsAgo)}
+            min={ZERO}
+            max={INPUT_LIMITS.maxAmount}
+            onChange={(amount) => setYear(yearsAgo, amount)}
+            onValidityChange={valid(`carryForward-${yearsAgo}`)}
+          />
+        ))}
+      </fieldset>
+      <Toggle
+        id="opt-mpaa"
+        label="The money purchase annual allowance applies to me"
+        hint="If you have taken money from a defined contribution pension flexibly in an earlier tax year. Carry forward can’t be added to it."
+        checked={inputs.moneyPurchaseAnnualAllowance}
+        onChange={(moneyPurchaseAnnualAllowance) => set({ moneyPurchaseAnnualAllowance })}
+      />
+      <Toggle
+        id="opt-childcare"
+        label="Check the childcare support income limits"
+        hint="Tax-Free Childcare and Free Childcare for Working Parents: your adjusted net income against each limit, marked on the chart. Other conditions are not checked."
+        checked={inputs.checkChildcare}
+        onChange={(checkChildcare) => set({ checkChildcare })}
+      />
+    </>
+  )
+}
+
+/** What the page reads from the sweep for the compare: the target, the engine's point there, and the comparison. */
+export interface PensionCompareState {
+  readonly sweep: OptimiseResult
+  readonly requested: Money
+  readonly target: Money
+  readonly clamped: boolean
+  readonly now: OptimiserPoint
+  readonly targetPoint: OptimiserPoint
+  readonly comparison: ContributionComparison
+  readonly sentence: string
+  readonly setRequested: (amount: Money) => void
+}
+
+const POUND = formatGBP(ONE_POUND, 'pounds')
+
+/**
+ * The compare for a sweep and a requested target: the target within the maximum, the engine's point there (optimise()
+ * at that contribution, at the sweep's step) and the comparison with now. The point is worked out again only when the
+ * inputs or the target change.
+ */
+function useCompare(
+  sweep: OptimiseResult | null,
+  requested: Money | null,
+  inputs: OptimiserPageInputs,
+  resolved: ResolvedInputs,
+  config: ReturnType<typeof configFor>,
+  gbp: Gbp,
+  setRequested: (amount: Money) => void,
+): PensionCompareState | null {
+  const clamp = sweep && requested !== null ? clampTarget(requested, sweep.maximumContribution) : null
+  const target = clamp?.target ?? null
+  const targetPoint = useMemo(() => {
+    if (!sweep || target === null) return null
+    if (compare(target, sweep.currentContribution) === 0) return currentPoint(sweep)
+    const point = pointAt(toOptimiserInputs(inputs), config, DEFAULT_POLICY, target, { step: sweep.step, maxPoints: MAX_SWEEP_POINTS })
+    return 'contribution' in point ? point : null
+  }, [sweep, target, inputs, config])
+  if (!sweep || !clamp || !targetPoint || requested === null) return null
+  const now = currentPoint(sweep)
+  const comparison = comparePoints(now, targetPoint, resolved.pensionablePay)
+  return {
+    sweep,
+    requested,
+    target: clamp.target,
+    clamped: clamp.clamped,
+    now,
+    targetPoint,
+    comparison,
+    sentence: changeSentence(comparison, gbp),
+    setRequested,
+  }
+}
+
+/**
+ * The compare (U23, U24, U26, U27), first in the results: the picker, the one-sentence summary and three cards, the
+ * milestones and the warnings at the target. Nothing here is stored.
+ */
+function PensionCompare({
+  state,
+  inputs,
+  resolved,
+  gbp,
+  style,
+}: {
+  state: PensionCompareState
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  gbp: Gbp
+  style: AmountStyle
+}) {
+  const { sweep } = state
+  return (
+    <section
+      data-pension-compare
+      aria-labelledby="opt-compare-heading"
+      className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm sm:p-5"
+    >
+      <h2 id="opt-compare-heading" className="text-base font-semibold">
+        Compare a pension contribution
+      </h2>
+      <ContributionPicker
+        sweep={sweep}
+        requested={state.requested}
+        target={state.target}
+        clamped={state.clamped}
+        onChange={state.setRequested}
+        mode={inputs.employeeContribution.mode}
+        pensionablePay={resolved.pensionablePay}
+        gbp={gbp}
+      />
+      <ChangeSummary comparison={state.comparison} sentence={state.sentence} gbp={gbp} style={style} />
+      <TargetWarnings state={state} gbp={gbp} />
+      <Milestones sweep={sweep} gbp={gbp} />
+    </section>
+  )
+}
+
+const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`
+
+/**
+ * Warnings (U27): a line with the count at the target and elsewhere; the target's in full, never collapsed; the rest
+ * in a Section whose summary counts them, each with the contributions it applies at. With the childcare check, the
+ * target's eligibility on income. Never a cap.
+ */
+function TargetWarnings({ state, gbp }: { state: PensionCompareState; gbp: Gbp }) {
+  const { sweep, targetPoint } = state
+  const { atTarget, elsewhere } = warningSplit(sweep.points, targetPoint)
+  const runs = warningRuns(sweep.points)
+  const where = (code: EngineWarning['code']) => {
+    const run = runs.find((r) => r.code === code)
+    return run ? `Across the range it applies ${runWords(run.runs, sweep.maximumContribution, gbp)}.` : ''
+  }
+  const childcare = childcareRuns(sweep.points)
+  const line =
+    atTarget.length === 0 && elsewhere.length === 0
+      ? 'No warnings at this contribution, or anywhere from nothing to the most modelled.'
+      : `${atTarget.length === 0 ? 'No warnings' : count(atTarget.length, 'warning')} at this contribution; ${
+          elsewhere.length === 0 ? 'none' : count(elsewhere.length, 'other warning')
+        } elsewhere in the range. Warnings never stop or cap a contribution.`
+  return (
+    <div data-target-warnings className="flex min-w-0 flex-col gap-2">
+      <p data-warning-count className="text-sm text-text">
+        {line}
+      </p>
+      {atTarget.map((warning) => (
+        <div key={warning.code} data-target-warning={warning.code} className="[overflow-wrap:anywhere]">
+          <InlineNotice tone="warning">
+            <p>{warning.message}</p>
+            <p className="text-xs">{where(warning.code)}</p>
+          </InlineNotice>
+        </div>
+      ))}
+      {childcare.length > 0 && (
+        <div data-childcare className="flex flex-col gap-1 text-sm">
+          {childcare.map((scheme) => {
+            const eligible = targetPoint.childcare.some((c) => c.scheme === scheme.scheme && c.eligibleOnIncome)
+            return (
+              <p key={scheme.scheme} className="text-text">
+                {SCHEME_LABELS[scheme.scheme]}: {eligible ? 'eligible on income' : 'over the income limit'} at this contribution.{' '}
+                <span className="text-text-muted">
+                  {scheme.eligible.length === 0
+                    ? 'Over the limit at every contribution.'
+                    : `Eligible on income ${runWords(scheme.eligible, sweep.maximumContribution, gbp)}.`}
+                </span>
+              </p>
+            )
+          })}
+          <p className="text-xs text-text-muted">{CHILDCARE_NOT_CHECKED}</p>
+        </div>
+      )}
+      <Section
+        id="opt-other-warnings"
+        title="Warnings at other contributions"
+        summary={elsewhere.length === 0 ? 'None elsewhere in the range' : `${count(elsewhere.length, 'warning')} elsewhere in the range`}
+      >
+        {elsewhere.length === 0 ? (
+          <p className="text-sm text-text-muted">No other contribution, from nothing to the most modelled, carries a warning.</p>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {elsewhere.map((warning) => (
+              <li key={warning.code} data-sweep-warning={warning.code} className="[overflow-wrap:anywhere]">
+                <InlineNotice tone="warning">
+                  <p>{warning.message}</p>
+                  <p className="text-xs">Applies {runWords(warning.runs, sweep.maximumContribution, gbp)}.</p>
+                </InlineNotice>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Section>
+    </div>
+  )
+}
+
+/** Milestones (U26): each threshold from the contribution now, in plain words, always visible. */
+function Milestones({ sweep, gbp }: { sweep: OptimiseResult; gbp: Gbp }) {
+  return (
+    <div data-milestones className="flex min-w-0 flex-col gap-2">
+      <h3 className="text-sm font-semibold text-text">Milestones from your contribution now</h3>
+      <ul className="flex flex-col">
+        {sweep.thresholds.map((threshold) => {
+          const words = milestoneWords(threshold, sweep.method, gbp)
+          return (
+            <li
+              key={threshold.threshold}
+              data-threshold={threshold.threshold}
+              data-status={words.status}
+              className="flex flex-col gap-0.5 border-t border-border py-2 text-sm first:border-t-0 first:pt-0"
+            >
+              <span className="flex flex-wrap items-baseline justify-between gap-x-3">
+                <span className="font-medium text-text">{words.name}</span>
+                <span className="text-xs text-text-muted">{words.label}</span>
+              </span>
+              <span className="text-text-muted [overflow-wrap:anywhere]">{words.text}</span>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
+
+/**
+ * The cost chart (U25), below the split bar: the engine's net cost per pound over the whole sweep, now and the target
+ * marked, cliffs as lettered ranges; then the detail Sections (U28). A refusal takes its place; an input problem is
+ * already shown above.
+ */
+function CostChart({
+  sweep,
+  state,
+  inputs,
+  resolved,
+  gbp,
+  style,
+}: {
+  sweep: OptimiserPageResult
+  state: PensionCompareState | null
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  gbp: Gbp
+  style: AmountStyle
+}) {
+  if (isInputProblem(sweep)) return null
+  return (
+    <>
+      <section
+        data-optimiser
+        aria-labelledby="opt-chart-heading"
+        className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm sm:p-5"
+      >
+        <h2 id="opt-chart-heading" className="text-base font-semibold">
+          What each {POUND} into your pension costs
+        </h2>
+        {!sweep.ok ? (
+          <RefusalNotice refusal={sweep} />
+        ) : (
+          state && <CostChartBody state={state} inputs={inputs} resolved={resolved} gbp={gbp} />
+        )}
+      </section>
+      {sweep.ok && state && <CostDetail state={state} gbp={gbp} />}
+      {sweep.ok && state && <MilestoneDetail sweep={state.sweep} gbp={gbp} />}
+      {sweep.ok && state && <SpendableDetail state={state} gbp={gbp} style={style} />}
+    </>
+  )
+}
+
+const pence = (value: number) => formatPence({ numerator: BigInt(value), denominator: 1n })
+
+function CostChartBody({
+  state,
+  inputs,
+  resolved,
+  gbp,
+}: {
+  state: PensionCompareState
+  inputs: OptimiserPageInputs
+  resolved: ResolvedInputs
+  gbp: Gbp
+}) {
+  const { sweep, target } = state
+  const percentBase = inputs.employeeContribution.mode === 'percentOfPay' ? resolved.pensionablePay : null
+  const data = costChartData(sweep, { gbp, percentBase, target })
+  const selected = data.xValues.indexOf(toPence(target))
+  return (
+    <>
+      <p className="text-sm text-text-muted">
+        For each contribution by {METHOD_LABELS[sweep.method].toLowerCase()}, from nothing to the most modelled: the take-home (with any
+        Child Benefit, less any annual allowance charge) given up for each {POUND} paid into your pension in total, on average from no
+        contribution. It is not the cost of the next {POUND}, and no point is a recommendation.
+      </p>
+      <Chart
+        title={`${COST_LABEL}, from no contribution, by your contribution`}
+        categories={data.categories}
+        series={[{ id: 'cost', label: COST_LABEL, kind: 'line', values: data.values }]}
+        xValues={data.xValues}
+        formatXTick={(x) => formatGBPCompact(fromPence(x))}
+        markers={data.markers}
+        spans={data.spans}
+        pointMarkers={false}
+        selectedX={selected >= 0 ? data.xValues[selected] : undefined}
+        columns={[{ label: 'Marked', values: data.rowNotes }]}
+        xLabel={X_LABEL}
+        yLabel={COST_LABEL}
+        formatTick={pence}
+        formatValue={pence}
+        includeZero
+        integer
+      />
+      <div className="flex flex-col gap-1 text-xs text-text-muted">
+        {data.notes.map((note) => (
+          <p key={note}>{note}</p>
+        ))}
+        <p>{CURVE_NOTE}</p>
+      </div>
+    </>
+  )
+}
+
+/** Pence of a pound, to the nearest penny, from an exact ratio; a dash for none. */
+const perPound = (r: Ratio | null) => (r === null ? '–' : formatGBP(mulRound(ONE_POUND, r, 'nearest'), 'pence'))
+
+/** The cost of each pound in, three ways, each with what it is measured on (U28). */
+function CostDetail({ state, gbp }: { state: PensionCompareState; gbp: Gbp }) {
+  const { comparison: c, target } = state
+  const kept = c.marginalAtTarget
+  const lastStep = kept === null ? null : subtractRatio(ratio(1, 1), kept)
+  return (
+    <Section
+      id="opt-cost-detail"
+      title="Cost detail"
+      summary={
+        c.costPerPound === null
+          ? 'No change in what goes in between now and your target'
+          : `On average ${perPound(c.costPerPound)} of take-home for each ${POUND} more in, now to your target`
+      }
+    >
+      <div data-cost>
+        <ResultCard title={`Cost of each ${POUND} in`}>
+          <StatRow
+            label="Average, now to your target"
+            value={perPound(c.costPerPound)}
+            detail={
+              c.costPerPound === null
+                ? 'The total paid into your pension is the same at both, so there is nothing to measure.'
+                : `Take-home given up for each ${POUND} more paid into your pension in total, from ${gbp(state.now.contribution)} to ${gbp(target)} a year`
+            }
+          />
+          <StatRow
+            label="At your target, from no contribution"
+            value={perPound(c.netCostPerPoundAtTarget)}
+            detail={`Take-home with any Child Benefit, less any annual allowance charge, given up for each ${POUND} in, on average from no contribution (the chart’s figure)`}
+          />
+          <StatRow
+            label="At your target, the last step"
+            value={perPound(lastStep)}
+            detail={`Of each extra ${POUND} in since the chart’s point before your target, what came out of take-home (with any Child Benefit, less any annual allowance charge)`}
+          />
+        </ResultCard>
+        <p className="mt-2 text-xs text-text-muted">
+          Near a lettered range on the chart any of these can be very different from its neighbours’. Paid in means your contribution, any
+          relief your provider adds and your employer’s own contribution.
+        </p>
+      </div>
+    </Section>
+  )
+}
+
+/** The threshold audit: each limit and what it is measured on, from now (kept out of the main answer, U26). */
+function MilestoneDetail({ sweep, gbp }: { sweep: OptimiseResult; gbp: Gbp }) {
+  return (
+    <Section
+      id="opt-milestone-detail"
+      title="Milestones in detail"
+      summary={`${count(sweep.thresholds.length, 'threshold')}, each limit and what it is measured on, from your contribution now`}
+    >
+      <ul data-thresholds className="flex flex-col">
+        {sweep.thresholds.map((threshold) => (
+          <li
+            key={threshold.threshold}
+            data-threshold={threshold.threshold}
+            className="flex flex-col gap-0.5 border-t border-border py-2 text-sm first:border-t-0 first:pt-0"
+          >
+            <span className="font-medium text-text">{THRESHOLD_NAMES[threshold.threshold]}</span>
+            <span className="text-text-muted [overflow-wrap:anywhere]">{thresholdWords(threshold, sweep.method, 'year', gbp).text}</span>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+const SCHEME_LABELS: Record<ChildcareScheme, string> = {
+  taxFreeChildcare: 'Tax-Free Childcare',
+  thirtyHours: 'Free Childcare for Working Parents',
+}
+
+/** Spendable beside take-home, only where it differs (Child Benefit or an annual allowance charge; U28). */
+function SpendableDetail({ state, gbp, style }: { state: PensionCompareState; gbp: Gbp; style: AmountStyle }) {
+  const { now, targetPoint: next } = state
+  const differs = (p: OptimiserPoint) => compare(p.spendable, p.takeHome) !== 0
+  if (!differs(now) && !differs(next)) return null
+  const rows: { label: string; pick: (p: OptimiserPoint) => Money }[] = [
+    { label: 'Take-home', pick: (p) => p.takeHome },
+    { label: 'Child Benefit received', pick: (p) => p.childBenefit },
+    { label: 'Annual allowance charge', pick: (p) => p.annualAllowanceCharge },
+    { label: 'Spendable', pick: (p) => p.spendable },
+  ]
+  return (
+    <Section id="opt-spendable" title="Spendable income" summary={`Spendable at your target: ${gbp(next.spendable)} a year`}>
+      <div data-spendable>
+        <ResultCard title="Spendable: take-home with Child Benefit, less any annual allowance charge">
+          {rows.map((row) => (
+            <StatRow
+              key={row.label}
+              label={`${row.label}, a year`}
+              value={gbp(row.pick(next))}
+              detail={`Now ${gbp(row.pick(now))} · change ${formatGBPChange(subtract(row.pick(next), row.pick(now)), style)}`}
+            />
+          ))}
+        </ResultCard>
+      </div>
+    </Section>
+  )
+}
