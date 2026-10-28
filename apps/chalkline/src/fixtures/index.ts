@@ -1,0 +1,85 @@
+import allShapes from './all-shapes.json'
+import architecture from './architecture.json'
+import container from './container.json'
+import empty from './empty.json'
+import everyShape from './every-shape.json'
+import invalidDanglingEdge from './invalid-dangling-edge.json'
+import labelCases from './label-cases.json'
+import layers from './layers.json'
+import legacyV1 from './legacy-v1.json'
+import legacyV2 from './legacy-v2.json'
+import legacyV3 from './legacy-v3.json'
+import legacyV4 from './legacy-v4.json'
+import mermaidSample from './mermaid-sample.json'
+import processFlow from './process-flow.json'
+import stencilCurrent from './stencil-current.json'
+import stencilLibrary from './stencil-library.json'
+import stencilUnknownShape from './stencil-unknown-shape.json'
+import stencilV1 from './stencil-v1.json'
+import swimlanePool from './swimlane-pool.json'
+import templateSwimlane from './template-swimlane.json'
+import textStyles from './text-styles.json'
+import unknownShape from './unknown-shape.json'
+import webArchitecture from './web-architecture.json'
+
+/** Raw fixtures, exactly as they would be read from a saved file. All must be valid. */
+export const fixtures: Record<string, unknown> = {
+  empty,
+  'all-shapes': allShapes,
+  'web-architecture': webArchitecture,
+  /** Every shape with short, one-word, multi-word, long and single-long-word labels. */
+  'label-cases': labelCases,
+  /** A container holding three nodes, plus one outside. */
+  container,
+  /** A horizontal pool with three lanes and connectors across them. */
+  'swimlane-pool': swimlanePool,
+  /** A node whose shape this version doesn't know; it must load, draw as a rectangle and save unchanged. */
+  'unknown-shape': unknownShape,
+  /** Every registry shape once, labelled with its name. */
+  'every-shape': everyShape,
+  /** Start, input, decision with two branches, and end. */
+  'process-flow': processFlow,
+  /** User group, cloud, servers, queue and database. */
+  architecture,
+  /** Base, "Security overlay" and a hidden "Notes" layer, with items and connectors crossing layers. */
+  layers,
+  /** Every font, bold, italic, underline, strikethrough and alignment, diagram text defaults, and a font id this version doesn't know. */
+  'text-styles': textStyles,
+}
+
+/** Documents saved by older versions, exactly as written then; they must load through migration. */
+export const legacyFixtures: Record<string, unknown> = {
+  'v1-web-architecture': legacyV1,
+  'v2-container': legacyV2,
+  'v3-process-flow': legacyV3,
+  /** Three layers, one hidden; saved at v4, before text styling. */
+  'v4-layers': legacyV4,
+}
+
+/** Deliberately broken documents, used to check loading fails cleanly. */
+export const invalidFixtures: Record<string, unknown> = {
+  'invalid-dangling-edge': invalidDanglingEdge,
+}
+
+/** Stencil and template files (src/stencils). */
+export const stencilFixtures = {
+  /** A container with two nodes, a pinned, labelled, styled connector and notes; saved at the current version. */
+  current: stencilCurrent as unknown,
+  /** Saved at schema v1 (no kinds, no locks, no layers); must load through migration. */
+  v1: stencilV1 as unknown,
+  /** A library bundle holding three stencils (one of them v1). */
+  library: stencilLibrary as unknown,
+  /** A node whose shape this version doesn't know. */
+  unknownShape: stencilUnknownShape as unknown,
+  /** A template with a swimlane pool and a container. */
+  template: templateSwimlane as unknown,
+}
+
+/**
+ * Fixtures for text exports, kept apart from `fixtures` so the SVG golden
+ * hashes don't change. Each must be valid; a golden `.mmd` sits beside it.
+ */
+export const exportFixtures: Record<string, unknown> = {
+  /** A few shapes, a group, a swimlane pool, mixed connector styles, a hidden layer and awkward labels. */
+  'mermaid-sample': mermaidSample,
+}
