@@ -7,7 +7,7 @@ import "./SiteHeader.css";
 
 import { useEffect, useId, useRef, useState } from "react";
 
-import type { AppEntry } from "../apps";
+import { type AppEntry, isOpen } from "../apps";
 import { ThemeToggle } from "./ThemeToggle";
 
 type SiteHeaderProps = {
@@ -52,7 +52,7 @@ export function SiteHeader({ apps }: SiteHeaderProps) {
             <ul className="kb-site-header__list">
               {apps.map((app) => (
                 <li key={app.name}>
-                  {app.status === "live" ? (
+                  {isOpen(app) ? (
                     <a
                       className="kb-site-header__link"
                       href={app.url}

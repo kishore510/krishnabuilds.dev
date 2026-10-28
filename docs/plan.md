@@ -19,7 +19,7 @@
 
 For each app: scan history for secrets and report before importing, import with history, wire up build + deploy.
 
-- [ ] Chalkline
+- [x] Chalkline
 - [ ] Stickyard
 - [ ] Sumyard
 - [ ] Extract shared components into `packages/ui` only where duplicated in two apps
@@ -38,7 +38,7 @@ For each app: scan history for secrets and report before importing, import with 
 
 ## Backlog
 
-- [ ] Portal: add group, status, stack to apps.ts and group the cards (can ride along with the first migrated app)
+- [x] Portal: add group, status, stack to apps.ts and group the cards (can ride along with the first migrated app)
 - [ ] Portal: story page template, then one page per app as each migrates
 - [ ] Portal: "How this is built" page
 - [ ] Chalkline: pnpm conversion, remove the workspace exclusion, wire Cloudflare deploy to chalkline.krishnabuilds.dev, retire the GitHub Pages workflow

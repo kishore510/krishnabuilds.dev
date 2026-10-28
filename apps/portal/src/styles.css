@@ -26,11 +26,21 @@ body {
   font-size: var(--kb-font-size-lg);
 }
 
+.group {
+  margin: var(--kb-space-8) 0 0;
+}
+
+.group__title {
+  margin: 0 0 var(--kb-space-4);
+  font-size: var(--kb-font-size-2xl);
+  line-height: var(--kb-font-line-height-tight);
+}
+
 .cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--kb-space-4);
-  margin: var(--kb-space-8) 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -42,8 +52,16 @@ body {
   background: var(--kb-color-surface);
 }
 
-.card__title {
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--kb-space-2);
   margin: 0 0 var(--kb-space-2);
+}
+
+.card__title {
+  margin: 0;
   font-size: var(--kb-font-size-xl);
 }
 
@@ -68,14 +86,37 @@ body {
 }
 
 .card__badge {
-  display: inline-block;
-  margin: var(--kb-space-3) 0 0;
+  flex-shrink: 0;
   padding: var(--kb-space-1) var(--kb-space-2);
   border: 1px solid var(--kb-color-border);
   border-radius: var(--kb-radius-full);
   color: var(--kb-color-text-muted);
   font-size: var(--kb-font-size-xs);
   font-weight: var(--kb-font-weight-medium);
+}
+
+/* accent / accent-fg is checked for AA contrast in both themes by the tokens build. */
+.card__badge[data-status="live"] {
+  border-color: var(--kb-color-accent);
+  background: var(--kb-color-accent);
+  color: var(--kb-color-accent-fg);
+}
+
+.card__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-2);
+  margin: var(--kb-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card__tag {
+  padding: var(--kb-space-1) var(--kb-space-2);
+  border-radius: var(--kb-radius-sm);
+  background: var(--kb-color-bg);
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-xs);
 }
 
 @media (min-width: 40em) {
