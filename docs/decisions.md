@@ -93,3 +93,7 @@ Chalkline and Sumyard are both migrated, so the "extract once duplicated in two 
 ## 2026-10-28 — Chalkline gets site links inside its menu, not a header bar
 
 Chalkline is a full-screen canvas tool and phone screen space is scarce, so it gets a link home and an app switcher inside its existing toolbar menu instead of an always-visible header. packages/ui provides an unstyled SiteLinks component that each app styles itself until the app adopts the shared tokens.
+
+## 2026-10-28 — packages/ui components import only their own CSS
+
+An app that uses one component should not ship another component's styles. packages/ui declares only its CSS files as side effects (`"sideEffects": ["**/*.css"]`), so importing SiteLinks from the package entry no longer pulls in SiteHeader's or ThemeToggle's CSS.
