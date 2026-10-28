@@ -65,3 +65,7 @@ The Portal organises apps into four groups named by verb: Create (Chalkline, Sti
 Each app gets a short story page in addition to its launch link: why it was built, what it does, architecture, key decisions and trade-offs, how AI helped, and what would change. A "How this is built" page covers the platform (monorepo, tokens, independent deploys, CI, decision log, AI guardrails). The aim is a portfolio that shows how things are built, not just links.
 
 The app list in apps/portal/src/apps.ts will gain group, status (live, beta, building, idea) and stack fields. No filtering, search or tags until there are around 10 apps. Content stays strictly about personal projects and generic lessons; no employer detail.
+
+## 2026-10-28 — History imports use a merge commit
+
+PRs are squash merged by default. The exception is importing an existing repo into the monorepo (for example Chalkline into apps/chalkline): that PR must use a merge commit so the original commit history is preserved. Squash and rebase merges are not allowed for imports.
