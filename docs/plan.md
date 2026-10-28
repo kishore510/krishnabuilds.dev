@@ -21,7 +21,7 @@ For each app: scan history for secrets and report before importing, import with 
 
 - [x] Chalkline
 - [ ] Stickyard
-- [ ] Sumyard
+- [x] Sumyard
 - [ ] Extract shared components into `packages/ui` only where duplicated in two apps
 - [ ] Extract shared site header and app list into `packages/ui` when the first migrated app needs them, so every app has the same nav bar
 - [ ] For each migrated app: adopt `@krishnabuilds/tokens` and the shared header, and add its subdomain via wrangler `custom_domain`
@@ -42,8 +42,8 @@ For each app: scan history for secrets and report before importing, import with 
 - [ ] Portal: story page template, then one page per app as each migrates
 - [ ] Portal: "How this is built" page
 - [ ] Chalkline: pnpm conversion, remove the workspace exclusion, wire Cloudflare deploy to chalkline.krishnabuilds.dev, retire the GitHub Pages workflow
-- [ ] Chalkline: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
+- [x] Chalkline: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
 - [ ] Align Chalkline's ESLint with the shared config when typescript-eslint supports TypeScript 7
-- [ ] Sumyard: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
-- [ ] Sumyard: add to the Portal app list
+- [x] Sumyard: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
+- [x] Sumyard: add to the Portal app list
 - [ ] Sumyard: About's credits miss transitive dependencies (e.g. `scheduler`) under pnpm, because they are looked up in `apps/sumyard/node_modules`; resolve them properly
