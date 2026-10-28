@@ -63,10 +63,10 @@ export const apps: AppEntry[] = [
   },
   {
     name: "Sumyard",
-    blurb: "Quick sums and simple calculations.",
+    blurb: "Personal finance calculators for UK tax, pensions and mortgages.",
     url: "https://sumyard.krishnabuilds.dev",
     group: "calculate",
-    status: "building",
-    stack: ["React", "TypeScript"],
+    status: "live",
+    stack: ["React", "TypeScript", "Cloudflare"],
   },
 ];
