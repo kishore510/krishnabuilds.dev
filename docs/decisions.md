@@ -77,3 +77,7 @@ Same pattern as the Portal: a Worker serving static assets, deployed by a path-f
 ## 2026-10-28 — Chalkline lint placeholder and TypeScript 7
 
 Chalkline is on TypeScript 7 while the rest of the repo is on 6, and the shared ESLint config does not support 7 yet. Chalkline's lint script runs tsc --noEmit as a placeholder until typescript-eslint supports TypeScript 7.
+
+## 2026-10-28 — No real personal financial data in the public repo
+
+Sumyard's mortgage cross-check file must never contain figures from real statements, and no real balances, salaries or account details go into any file in this public repo. Real-figure checking is done locally and not committed.
