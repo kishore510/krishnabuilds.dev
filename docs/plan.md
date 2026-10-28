@@ -35,3 +35,9 @@ For each app: scan history for secrets and report before importing, import with 
 - [ ] Decide whether the Stonks dashboard is public or behind Cloudflare Access before going live; add Stonks to the app list when live
 - [ ] Run new setup alongside the Pi and confirm parity
 - [ ] Switch off the Pi
+
+## Backlog
+
+- [ ] Portal: add group, status, stack to apps.ts and group the cards (can ride along with the first migrated app)
+- [ ] Portal: story page template, then one page per app as each migrates
+- [ ] Portal: "How this is built" page

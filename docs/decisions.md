@@ -57,3 +57,11 @@ The theme preference is stored in a cookie scoped to `.krishnabuilds.dev`, not `
 ## 2026-10-24 — Inline head script applies the theme before first paint
 
 `apps/portal/index.html` has a few lines of inline script that read the `kb-theme` cookie and set `data-theme` on `<html>` before the stylesheet paints, so a saved light/dark choice never flashes the OS theme first. It duplicates the cookie name and values in `src/theme.ts`, so the two must stay in sync. "System" is not stored: choosing it expires the cookie. The cookie gets `Secure` only on https, because browsers drop `Secure` cookies over plain http (for example a phone testing the dev server on the LAN).
+
+## 2026-10-25 — Portal structure: grouped apps with story pages
+
+The Portal organises apps into four groups named by verb: Create (Chalkline, Stickyard), Calculate (Sumyard, Stonks), Play (Arcade) and Tinker (hardware and experiments, e.g. the rover). Groups are kept to four or five; a new app must fit one, or adding a group is a deliberate decision. Names can change later.
+
+Each app gets a short story page in addition to its launch link: why it was built, what it does, architecture, key decisions and trade-offs, how AI helped, and what would change. A "How this is built" page covers the platform (monorepo, tokens, independent deploys, CI, decision log, AI guardrails). The aim is a portfolio that shows how things are built, not just links.
+
+The app list in apps/portal/src/apps.ts will gain group, status (live, beta, building, idea) and stack fields. No filtering, search or tags until there are around 10 apps. Content stays strictly about personal projects and generic lessons; no employer detail.
