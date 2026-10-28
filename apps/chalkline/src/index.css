@@ -3,6 +3,9 @@
 @import '@xyflow/react/dist/style.css';
 @import './styles/tokens.css';
 
+/* The current app in the site links (aria-current="page"). */
+@custom-variant current (&[aria-current='page']);
+
 @layer base {
   html,
   body,

@@ -89,3 +89,7 @@ Sumyard deploys as a Worker with static assets, same pattern as Chalkline and th
 ## 2026-10-28 — packages/ui starts with the site header and app list
 
 Chalkline and Sumyard are both migrated, so the "extract once duplicated in two apps" rule is met for the header and the app list. packages/ui is source-only (each app's Vite compiles it) with plain CSS on the shared tokens. The Portal adopts it first; Chalkline gets a slim header with a link home and an app switcher, and Sumyard adopts it after, in separate PRs.
+
+## 2026-10-28 — Chalkline gets site links inside its menu, not a header bar
+
+Chalkline is a full-screen canvas tool and phone screen space is scarce, so it gets a link home and an app switcher inside its existing toolbar menu instead of an always-visible header. packages/ui provides an unstyled SiteLinks component that each app styles itself until the app adopts the shared tokens.
