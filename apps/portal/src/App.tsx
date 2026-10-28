@@ -27,7 +27,10 @@ export function App() {
               </h2>
               <ul className="cards">
                 {groupApps.map((app) => (
-                  <li key={app.name} className="card">
+                  <li
+                    key={app.name}
+                    className={isOpen(app) ? "card card--link" : "card"}
+                  >
                     <div className="card__head">
                       <h3 className="card__title">
                         {isOpen(app) ? (

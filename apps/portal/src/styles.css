@@ -52,6 +52,17 @@ body {
   background: var(--kb-color-surface);
 }
 
+/* Stretched link: the title link's ::after covers the whole card. A second link
+   in a card (e.g. "Read the story") must sit above it with position: relative
+   and a higher z-index. */
+.card--link {
+  position: relative;
+}
+
+.card--link:hover {
+  border-color: var(--kb-color-accent);
+}
+
 .card__head {
   display: flex;
   align-items: center;
@@ -71,11 +82,23 @@ body {
   border-radius: var(--kb-radius-sm);
 }
 
-.card__title a:hover {
+.card--link:hover .card__title a {
   text-decoration: underline;
 }
 
+.card__title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--kb-radius-lg);
+}
+
+/* Draw the focus ring around the whole card, not just the title. */
 .card__title a:focus-visible {
+  outline: none;
+}
+
+.card__title a:focus-visible::after {
   outline: 2px solid var(--kb-color-focus-ring);
   outline-offset: 2px;
 }
