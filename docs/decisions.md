@@ -69,3 +69,11 @@ The app list in apps/portal/src/apps.ts will gain group, status (live, beta, bui
 ## 2026-10-28 — History imports use a merge commit
 
 PRs are squash merged by default. The exception is importing an existing repo into the monorepo (for example Chalkline into apps/chalkline): that PR must use a merge commit so the original commit history is preserved. Squash and rebase merges are not allowed for imports.
+
+## 2026-10-28 — Chalkline deploys to chalkline.krishnabuilds.dev as a Worker
+
+Same pattern as the Portal: a Worker serving static assets, deployed by a path-filtered GitHub Actions workflow on pushes to main. Chalkline's tests run in CI and before each deploy.
+
+## 2026-10-28 — Chalkline lint placeholder and TypeScript 7
+
+Chalkline is on TypeScript 7 while the rest of the repo is on 6, and the shared ESLint config does not support 7 yet. Chalkline's lint script runs tsc --noEmit as a placeholder until typescript-eslint supports TypeScript 7.
