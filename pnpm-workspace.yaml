@@ -1,3 +1,5 @@
 packages:
   - "apps/*"
   - "packages/*"
+  # TEMPORARY: Chalkline is excluded until its pnpm conversion. Remove this line in that PR.
+  - "!apps/chalkline"
