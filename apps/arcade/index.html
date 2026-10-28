@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krishnabuilds Arcade — small games, built one weekend at a time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="assets/version.js"></script>
+<style>
+  :root {
+    --bg: #0a0f1a;
+    --surface: #121a2a;
+    --surface-2: #17233a;
+    --teal: #22b8a0;
+    --amber: #ffb703;
+    --text: #eef2f5;
+    --muted: #8a97ab;
+    --wood: #7a5c3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    line-height: 1.5;
+  }
+  a { color: inherit; }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero {
+    padding: 72px 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  header.hero::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34,184,160,0.20), transparent 70%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.08;
+    margin: 0 0 18px;
+    max-width: 14ch;
+  }
+  .lede {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  section.shelf { padding: 8px 0 56px; }
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .shelf-head h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin: 0;
+  }
+  .shelf-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .layout-toggle, .sort-toggle {
+    display: flex;
+    gap: 3px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 3px;
+    border-radius: 9px;
+    flex: none;
+  }
+  .layout-btn, .sort-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .layout-btn { width: 30px; height: 26px; }
+  .sort-btn {
+    height: 26px;
+    padding: 0 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .layout-btn:hover, .sort-btn:hover { color: var(--text); }
+  .layout-btn.active, .sort-btn.active { background: var(--surface-2); color: var(--teal); }
+
+  .category-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 20px;
+  }
+  .cat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .cat-btn .cat-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    opacity: 0.7;
+  }
+  .cat-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+  .cat-btn.active {
+    background: rgba(34,184,160,0.16);
+    border-color: rgba(34,184,160,0.55);
+    color: var(--teal);
+  }
+
+  .cartridges {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .cartridges.layout-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 22px;
+  }
+  @media (max-width: 480px) {
+    .cartridges.layout-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .cartridges.layout-grid .cartridge .label {
+      height: 64px;
+      font-size: 26px;
+    }
+    .cartridges.layout-grid .cartridge .info {
+      padding: 10px 12px 14px;
+    }
+    .cartridges.layout-grid .cartridge .name {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .cartridges.layout-grid .cartridge .tagline {
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .cartridges.layout-grid .cartridge .play-hint {
+      font-size: 10.5px;
+      padding: 5px 10px;
+      margin-top: 8px;
+      gap: 4px;
+    }
+    .cartridges.layout-grid .tag {
+      font-size: 9px;
+      padding: 2px 6px;
+    }
+    .cartridges.layout-grid .cartridge .meta {
+      font-size: 9.5px;
+    }
+  }
+
+  .cartridge {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    text-decoration: none;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1.5px solid rgba(34,184,160,0.35);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+  }
+  .cartridges.layout-grid .cartridge {
+    flex-direction: column;
+    border-radius: 14px 14px 6px 6px;
+  }
+  .cartridge:hover {
+    transform: translateY(-4px);
+    border-color: var(--teal);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(34,184,160,0.3);
+  }
+  .cartridge:hover .play-hint { background: rgba(34,184,160,0.3); transform: translateX(2px); }
+  .cartridge:hover .label span { transform: scale(1.08); }
+  .cartridge:active { transform: translateY(-1px); }
+
+  .cartridge .label {
+    flex: 0 0 118px;
+    width: 118px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    position: relative;
+  }
+  .cartridges.layout-grid .cartridge .label {
+    flex: none;
+    width: auto;
+    height: 92px;
+    font-size: 40px;
+  }
+  .cartridge .label span { display: inline-block; transition: transform 0.18s ease; }
+  .cartridge .play-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--teal);
+    color: #04121c;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  }
+  .cartridge .new-badge {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: var(--amber);
+    color: #2a1a00;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  }
+  .cartridge .notch {
+    display: none;
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 46px; height: 14px;
+    background: var(--bg);
+    border-radius: 0 0 8px 8px;
+  }
+  .cartridges.layout-grid .cartridge .notch { display: block; }
+
+  .cartridge .info {
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .cartridges.layout-grid .cartridge .info {
+    padding: 16px 18px 20px;
+    justify-content: flex-start;
+  }
+  .cartridge .name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin: 0 0 6px;
+  }
+  .cartridge .tagline {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .cartridge .tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .cartridge .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .cartridge .play-hint {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: rgba(34,184,160,0.16);
+    border: 1px solid rgba(34,184,160,0.4);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--teal);
+    transition: background 0.18s ease, transform 0.18s ease;
+  }
+  .cartridge .play-hint svg { flex: none; }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+  }
+
+  .shelf-bar {
+    height: 8px;
+    margin-top: 26px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--wood), #5a4229);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+  }
+
+  .coming-soon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px dashed rgba(255,255,255,0.16);
+    border-radius: 14px;
+    color: var(--muted);
+    font-size: 13.5px;
+    min-height: 178px;
+  }
+
+  footer {
+    padding: 40px 0 60px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .support {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .support p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 40ch;
+  }
+  .coffee-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    color: #0a0f1a;
+    background: var(--amber);
+    padding: 11px 22px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: filter 0.15s ease;
+  }
+  .coffee-btn:hover { filter: brightness(1.08); }
+  .version-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(138,151,171,0.55);
+    text-align: center;
+    padding: 18px 0 0;
+  }
+  .version-tag a {
+    color: var(--teal);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Krishnabuilds Arcade</p>
+    <h1>Small games, built one weekend at a time.</h1>
+    <p class="lede">No accounts, no downloads, no data collection — just pick one and play in the browser. New ones get added when they're ready, not on a schedule.</p>
+  </header>
+
+  <section class="shelf">
+    <div class="category-filter" role="group" aria-label="Filter by category" id="categoryFilter"></div>
+    <div class="shelf-head">
+      <h2>On the shelf</h2>
+      <div class="shelf-controls">
+        <div class="sort-toggle" role="group" aria-label="Sort">
+          <button type="button" class="sort-btn" data-sort="newest">Newest</button>
+          <button type="button" class="sort-btn" data-sort="popular">Popular</button>
+        </div>
+        <div class="layout-toggle" role="group" aria-label="Layout">
+          <button type="button" class="layout-btn" data-layout="single" aria-label="Single column view" title="Single column">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2.5" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="6.9" width="12" height="3.2" rx="1" fill="currentColor"/><rect x="2" y="10.3" width="12" height="3.2" rx="1" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="layout-btn" data-layout="grid" aria-label="Grid view" title="Grid">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="2" width="5" height="5" rx="1" fill="currentColor"/><rect x="2" y="9" width="5" height="5" rx="1" fill="currentColor"/><rect x="9" y="9" width="5" height="5" rx="1" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cartridges" id="cartridges"></div>
+    <div class="shelf-bar"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap support">
+    <p>Everything here is free to play. If you're curious how these games get made, there's a guide for that — no obligation either way.</p>
+    <a class="coffee-btn" href="https://kishorecraft88.gumroad.com/l/abuoox" target="_blank" rel="noopener">Want to build your own? Get the guide</a>
+  </div>
+  <p class="version-tag" id="versionTag"></p>
+</footer>
+
+<script>
+  // Add a new game here and it appears above automatically — no other
+  // changes needed. `path` should point at that game's index.html.
+  const GAMES = [
+    {
+      name: 'Fin Dash',
+      tagline: 'Swim a fish through coral, rock, and kelp. Easy or Hard.',
+      emoji: '🐟',
+      color: 'linear-gradient(135deg, #0a3d62, #2a9d8f)',
+      category: 'arcade',
+      tags: ['arcade', 'endless', '1 min'],
+      path: 'games/fin-dash/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Burrow Bash',
+      tagline: 'Whack the moles before they duck back down. Easy or Hard.',
+      emoji: '🐹',
+      color: 'linear-gradient(135deg, #2f5f28, #5b9a4a)',
+      category: 'arcade',
+      tags: ['arcade', 'reflex', '30 sec'],
+      path: 'games/burrow-bash/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Air Hockey',
+      tagline: 'Best of 7 against the CPU. Easy or Hard.',
+      emoji: '🏒',
+      color: 'linear-gradient(135deg, #0d3450, #2aa9c9)',
+      category: 'sports',
+      tags: ['sports', 'vs CPU', '2 min'],
+      path: 'games/air-hockey/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Jungle Runner',
+      tagline: 'Jump logs, gaps, and vines as the pace ramps up. Easy or Hard.',
+      emoji: '🐒',
+      color: 'linear-gradient(135deg, #1a3324, #2d5a3d)',
+      category: 'arcade',
+      tags: ['endless', 'reflex', '1 min'],
+      path: 'games/jungle-runner/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Koala Climb',
+      tagline: 'Auto-climbing koala — dodge branches, grab acorns for bonus points. Easy or Hard.',
+      emoji: '🐨',
+      color: 'linear-gradient(135deg, #8fd3e8, #c9ecd8)',
+      category: 'arcade',
+      tags: ['endless', 'reflex', '1 min'],
+      path: 'games/koala-climb/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Brick Breaker',
+      tagline: 'Clear every brick with a paddle and ball. 3 lives. Easy or Hard.',
+      emoji: '🧱',
+      color: 'linear-gradient(135deg, #10152a, #5a8ce8)',
+      category: 'arcade',
+      tags: ['arcade', 'classic', '2 min'],
+      path: 'games/brick-breaker/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Safari Rescue',
+      tagline: 'Switch lanes to dodge rocks and rescue 10 stranded animals in time. Easy or Hard.',
+      emoji: '🚙',
+      color: 'linear-gradient(135deg, #c9853a, #e8b96b)',
+      category: 'arcade',
+      tags: ['lanes', 'reflex', '45 sec'],
+      path: 'games/safari-rescue/index.html',
+      published: '2026-07-06'
+    },
+    {
+      name: 'Lane Racer',
+      tagline: 'Race the clock, manage your fuel, brake before the oil. Easy or Hard.',
+      emoji: '🏎️',
+      color: 'linear-gradient(135deg, #33383f, #e63946)',
+      category: 'racing',
+      tags: ['lanes', 'racing', '40 sec'],
+      path: 'games/lane-racer/index.html',
+      published: '2026-07-07'
+    },
+    {
+      name: 'Globe Quiz',
+      tagline: 'Capitals or flags — 15 quick questions, 10 seconds each.',
+      emoji: '🌍',
+      color: 'linear-gradient(135deg, #16213e, #22b8a0)',
+      category: 'trivia',
+      tags: ['trivia', 'quiz', '3 min'],
+      path: 'games/globe-quiz/index.html',
+      published: '2026-07-07'
+    },
+    {
+      name: 'Garden Snake',
+      tagline: 'Glide a caterpillar around the allotment, munching leaves. Easy or Hard.',
+      emoji: '🐛',
+      color: 'linear-gradient(135deg, #2b1e12, #7cb342)',
+      category: 'arcade',
+      tags: ['classic', 'reflex', '1 min'],
+      path: 'games/garden-snake/index.html',
+      published: '2026-07-08'
+    },
+    {
+      name: 'Veg Merge',
+      tagline: 'Slide and merge veg from seed to giant pumpkin, 2048-style.',
+      emoji: '🎃',
+      color: 'linear-gradient(135deg, #2b1e12, #e8891a)',
+      category: 'puzzle',
+      tags: ['puzzle', 'merge', '5 min'],
+      path: 'games/veg-merge/index.html',
+      published: '2026-07-08'
+    },
+    {
+      name: 'Crate Stack',
+      tagline: 'Time each drop to keep the tower aligned as it climbs. Easy or Hard.',
+      emoji: '📦',
+      color: 'linear-gradient(135deg, #1c2a1f, #c9853a)',
+      category: 'arcade',
+      tags: ['timing', 'arcade', '1 min'],
+      path: 'games/crate-stack/index.html',
+      published: '2026-07-08'
+    },
+    {
+      name: 'Plot Defender',
+      tagline: 'Place, match, and upgrade defences to hold the veg patch through 10 waves. Easy or Hard.',
+      emoji: '🛡️',
+      color: 'linear-gradient(135deg, #1c2a1f, #4a7a2e)',
+      category: 'strategy',
+      tags: ['strategy', 'tower defense', '8 min'],
+      path: 'games/plot-defender/index.html',
+      published: '2026-07-09'
+    },
+    {
+      name: 'Slide',
+      tagline: 'Classic sliding tile puzzle — numbers or a picture. 3×3 to 5×5.',
+      emoji: '🧩',
+      color: 'linear-gradient(135deg, #0a0e1c, #3fc6d1)',
+      category: 'puzzle',
+      tags: ['puzzle', 'classic', '5 min'],
+      path: 'games/slide/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Regatta',
+      tagline: 'Ride the drift through a buoy course. Easy or Hard, 3 courses.',
+      emoji: '⛵',
+      color: 'linear-gradient(135deg, #041420, #2aa9c9)',
+      category: 'racing',
+      tags: ['racing', 'sailing', '3 min'],
+      path: 'games/regatta/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Losing the Plot',
+      tagline: 'Grow it, sell it, restock — run a real farm economy. Easy or Hard.',
+      emoji: '🌱',
+      color: 'linear-gradient(135deg, #12200f, #4a7a2e)',
+      category: 'strategy',
+      tags: ['strategy', 'management', '2 min'],
+      path: 'games/losing-the-plot/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Trebuchet',
+      tagline: 'Archers, cannons, catapults and trebuchets — build the right defence for each threat.',
+      emoji: '🏰',
+      color: 'linear-gradient(135deg, #1a1710, #c9853a)',
+      category: 'strategy',
+      tags: ['strategy', 'tower defense', '8 min'],
+      path: 'games/trebuchet/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Hoops',
+      tagline: 'Flick to shoot real arc physics — nail the angle and power as the hoop starts drifting.',
+      emoji: '🏀',
+      color: 'linear-gradient(135deg, #ff9a4d, #e8483a)',
+      category: 'sports',
+      tags: ['sports', 'arcade', '1 min'],
+      path: 'games/hoops/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Salvo',
+      tagline: 'Freely rearrange your fleet, then the enemy board takes over the screen. A CPU that actually targets back.',
+      emoji: '⚓',
+      color: 'linear-gradient(135deg, #4db6e0, #ffb703)',
+      category: 'strategy',
+      tags: ['strategy', 'naval', '6 min'],
+      path: 'games/salvo/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Castle Hold',
+      tagline: 'A siege you never leave the walls for. Place archers, hold the gate, don’t let a single enemy through.',
+      emoji: '🏰',
+      color: 'linear-gradient(135deg, #6b7078, #c0392b)',
+      category: 'strategy',
+      tags: ['strategy', 'defense', 'landscape'],
+      path: 'games/castle-hold/index.html',
+      published: '2026-07-12'
+    },
+    {
+      name: 'Star Salvo',
+      tagline: 'Waves of divers sweep in from the stars. Easy or Hard.',
+      emoji: '🚀',
+      color: 'linear-gradient(135deg, #03050c, #2aa9c9)',
+      category: 'arcade',
+      tags: ['arcade', 'shooter', '5 min'],
+      path: 'games/star-salvo/index.html',
+      published: '2026-07-11'
+    },
+    {
+      name: 'Fuseblock',
+      tagline: 'Plant bombs, crack the arena open, dodge your own blast, find the door.',
+      emoji: '💣',
+      color: 'linear-gradient(135deg, #1c140f, #ff6b35)',
+      category: 'arcade',
+      tags: ['arcade', 'grid', '2 min'],
+      path: 'games/fuseblock/index.html',
+      published: '2026-07-15'
+    },
+    {
+      name: 'Chomp Alley',
+      tagline: 'Gobble every pellet while Ember hunts you through the maze.',
+      emoji: '👻',
+      color: 'linear-gradient(135deg, #2c1a5c, #5b3aa8)',
+      category: 'arcade',
+      tags: ['arcade', 'maze', '2 min'],
+      path: 'games/chomp-alley/index.html',
+      published: '2026-07-15'
+    },
+    {
+      name: 'Drumfront',
+      tagline: 'Tap two drums in rhythm to command your squad\'s Attack. (Phase 1 preview)',
+      emoji: '🥁',
+      color: 'linear-gradient(135deg, #2b1f4a, #dd8752)',
+      category: 'arcade',
+      tags: ['rhythm', 'reflex', '2 min'],
+      path: 'games/drumfront/index.html',
+      published: '2026-07-17'
+    },
+    {
+      name: 'Shard Rush',
+      tagline: 'Swap faceted shards to chain matches — cascades keep climbing until the board runs dry.',
+      emoji: '💎',
+      color: 'linear-gradient(135deg, #241a42, #e8c468)',
+      category: 'puzzle',
+      tags: ['puzzle', 'match-3', 'endless'],
+      path: 'games/shard-rush/index.html',
+      published: '2026-07-19'
+    },
+    {
+      name: 'Mosaica',
+      tagline: 'Stack, rotate, and clear before the kiln overflows.',
+      emoji: '🏺',
+      color: 'linear-gradient(135deg, #c1440e, #8c6239)',
+      category: 'puzzle',
+      tags: ['puzzle', 'stacking'],
+      path: 'games/mosaica/index.html',
+      published: '2026-07-26'
+    },
+    {
+      name: 'Comet Watch',
+      tagline: 'Clear the night sky, one patch at a time.',
+      emoji: '☄️',
+      color: 'linear-gradient(135deg, #333F7E, #1B1440)',
+      category: 'puzzle',
+      tags: ['puzzle', 'logic'],
+      path: 'games/comet-watch/index.html',
+      published: '2026-07-30'
+    },
+    {
+      name: 'Solitaire',
+      tagline: 'Classic Klondike, one card at a time.',
+      emoji: '🃏',
+      color: 'linear-gradient(135deg, #0F3D2E, #1a5c43)',
+      category: 'puzzle',
+      tags: ['puzzle', 'cards'],
+      path: 'games/solitaire/index.html',
+      published: '2026-07-30'
+    },
+    {
+      name: 'Sudoku',
+      tagline: 'Classic number logic, one grid at a time.',
+      emoji: '🔢',
+      color: 'linear-gradient(135deg, #4A5568, #2B6CB0)',
+      category: 'puzzle',
+      tags: ['puzzle', 'logic'],
+      path: 'games/sudoku/index.html',
+      published: '2026-07-31'
+    },
+    {
+      name: 'Inkgrid',
+      tagline: 'Fill the grid, reveal the picture.',
+      emoji: '🖊️',
+      color: '#26344A',
+      category: 'puzzle',
+      tags: ['puzzle', 'logic'],
+      path: 'games/inkgrid/index.html',
+      published: '2026-07-31'
+    },
+    {
+      name: 'Word Search',
+      tagline: 'Find every word, one sweep at a time.',
+      emoji: '🔍',
+      color: '#FFADC6',
+      category: 'puzzle',
+      tags: ['puzzle', 'words'],
+      path: 'games/word-search/index.html',
+      published: '2026-08-01'
+    },
+    {
+      name: 'Lexigrid',
+      tagline: 'One word a day. Six guesses to find it.',
+      emoji: '🟩',
+      color: '#4C9F70',
+      category: 'puzzle',
+      tags: ['puzzle', 'words'],
+      path: 'games/lexigrid/index.html',
+      published: '2026-08-03'
+    },
+    {
+      name: 'Word Circle',
+      tagline: 'Swipe the circle, spell every word.',
+      emoji: '🔤',
+      color: '#E8A24A',
+      category: 'puzzle',
+      tags: ['puzzle', 'words'],
+      path: 'games/word-circle/index.html',
+      published: '2026-08-04'
+    },
+    {
+      name: 'Slice Master',
+      tagline: 'Tap to keep the knife airborne, slice fruit, then gamble it on the multiplier tower.',
+      emoji: '🔪',
+      color: 'linear-gradient(135deg, #7f1d1d, #f77f00)',
+      category: 'arcade',
+      tags: ['arcade', 'reflex'],
+      path: 'games/slice-master/index.html',
+      published: '2026-09-13'
+    }
+    // Next game:
+    // {
+    //   name: 'Game Name',
+    //   tagline: 'One short line about it.',
+    //   emoji: '🎮',
+    //   color: 'linear-gradient(135deg, #hex1, #hex2)',
+    //   category: 'arcade', // one of CATEGORIES below - drives the filter tiles
+    //   tags: ['genre', 'length'],
+    //   path: 'games/game-slug/index.html',
+    //   published: 'YYYY-MM-DD'
+    // },
+  ];
+
+  // Every game's `category` above must be one of these ids - the filter
+  // tiles are generated from this list, not hand-written per category.
+  const CATEGORIES = [
+    { id: 'arcade', label: 'Arcade', emoji: '🕹️' },
+    { id: 'racing', label: 'Racing', emoji: '🏁' },
+    { id: 'puzzle', label: 'Puzzle', emoji: '🧩' },
+    { id: 'strategy', label: 'Strategy', emoji: '🛡️' },
+    { id: 'sports', label: 'Sports', emoji: '🏒' },
+    { id: 'trivia', label: 'Trivia', emoji: '🌍' }
+  ];
+
+  const container = document.getElementById('cartridges');
+  const slugOf = g => g.path.split('/')[1]; // 'games/<slug>/index.html' -> '<slug>'
+  let playCounts = {};
+
+  function formatPublished(iso) {
+    const d = new Date(iso + 'T00:00:00Z');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  }
+  // "For a day" = still showing on the calendar day it went live, checked
+  // against the visitor's local clock - simple rather than perfectly
+  // timezone-exact, which doesn't matter for a fun badge.
+  function isNew(iso) {
+    const days = (Date.now() - new Date(iso + 'T00:00:00Z').getTime()) / 86400000;
+    return days >= 0 && days < 1;
+  }
+
+  function cardHtml(g) {
+    const slug = slugOf(g);
+    const n = playCounts[slug];
+    const metaText = 'Published ' + formatPublished(g.published)
+      + (n ? ' \u00b7 Played ' + n.toLocaleString() + (n === 1 ? ' time' : ' times') : '');
+    return `
+      <a class="cartridge" href="${g.path}">
+        <div class="label" style="background:${g.color}">
+          <div class="notch"></div>
+          <span>${g.emoji}</span>
+          ${isNew(g.published) ? '<div class="new-badge">New</div>' : ''}
+          <div class="play-badge">
+            <svg width="8" height="9" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
+            Play
+          </div>
+        </div>
+        <div class="info">
+          <p class="name">${g.name}</p>
+          <p class="tagline">${g.tagline}</p>
+          <div class="tags">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          <p class="meta">${metaText}</p>
+          <div class="play-hint">
+            <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
+            Play now
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  // Category filter: one tile per genre plus "All", remembered per browser.
+  // Tiles are generated (with live counts) rather than hand-written so a
+  // new game's `category` just needs to match an id in CATEGORIES above.
+  const CATEGORY_KEY = 'kbArcadeCategory';
+  const categoryFilterEl = document.getElementById('categoryFilter');
+  let categoryFilter = localStorage.getItem(CATEGORY_KEY) || 'all';
+
+  function renderCategoryFilter() {
+    const counts = {};
+    GAMES.forEach(g => { counts[g.category] = (counts[g.category] || 0) + 1; });
+    const tiles = [{ id: 'all', label: 'All', emoji: '\ud83c\udfae' }, ...CATEGORIES.filter(c => counts[c.id])];
+    categoryFilterEl.innerHTML = tiles.map(c => `
+      <button type="button" class="cat-btn${c.id === categoryFilter ? ' active' : ''}" data-cat="${c.id}">
+        <span>${c.emoji}</span>${c.label}
+        <span class="cat-count">${c.id === 'all' ? GAMES.length : counts[c.id]}</span>
+      </button>
+    `).join('');
+    categoryFilterEl.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        categoryFilter = btn.dataset.cat;
+        localStorage.setItem(CATEGORY_KEY, categoryFilter);
+        renderCategoryFilter();
+        renderCards();
+      });
+    });
+  }
+
+  // Sort toggle: newest-first (by published date) or most-played,
+  // remembered per browser. Re-renders (rather than reordering DOM nodes
+  // in place) since it's simplest and this list is tiny.
+  const SORT_KEY = 'kbArcadeSort';
+  const sortButtons = document.querySelectorAll('.sort-btn');
+  let sortMode = localStorage.getItem(SORT_KEY) || 'newest';
+
+  function sortedGames() {
+    const list = GAMES.filter(g => categoryFilter === 'all' || g.category === categoryFilter);
+    if (sortMode === 'popular') {
+      list.sort((a, b) => (playCounts[slugOf(b)] || 0) - (playCounts[slugOf(a)] || 0));
+    } else {
+      list.sort((a, b) => b.published.localeCompare(a.published));
+    }
+    return list;
+  }
+
+  function renderCards() {
+    const games = sortedGames();
+    container.innerHTML = games.map(cardHtml).join('')
+      // A quiet placeholder so the shelf doesn't look empty/finished -
+      // skipped when a filter narrows things down to a genuinely short list,
+      // since it'd read as "more Trivia coming" rather than "more games coming".
+      + (games.length >= 4 ? '<div class="coming-soon">next one\u2019s in progress</div>' : '');
+  }
+
+  renderCategoryFilter();
+
+  function updateSortButtonStyles() {
+    sortButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.sort === sortMode));
+  }
+  sortButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sortMode = btn.dataset.sort;
+      localStorage.setItem(SORT_KEY, sortMode);
+      updateSortButtonStyles();
+      renderCards();
+    });
+  });
+  updateSortButtonStyles();
+  renderCards();
+
+  // Best-effort play counts - the API only exists once the KV-backed
+  // worker route is deployed, so a fetch failure (404/network) just
+  // means counts/popular-sort silently stay unavailable rather than the
+  // page breaking.
+  fetch('/api/plays').then(r => r.ok ? r.json() : {}).then(counts => {
+    playCounts = counts;
+    renderCards();
+  }).catch(() => {});
+
+  if (window.KB_VERSION) {
+    document.getElementById('versionTag').innerHTML =
+      'v' + window.KB_VERSION + (window.KB_UPDATED ? ' \u00b7 updated ' + window.KB_UPDATED : '') +
+      ' \u00b7 <a href="changelog.html">Changelog</a>';
+  }
+
+  // Layout toggle: single column (default) or multi-column grid, remembered per browser
+  const LAYOUT_KEY = 'kbArcadeLayout';
+  const layoutButtons = document.querySelectorAll('.layout-btn');
+  function applyLayout(mode) {
+    container.classList.toggle('layout-grid', mode === 'grid');
+    layoutButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.layout === mode));
+  }
+  let layout = localStorage.getItem(LAYOUT_KEY) || 'single';
+  applyLayout(layout);
+  layoutButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      layout = btn.dataset.layout;
+      localStorage.setItem(LAYOUT_KEY, layout);
+      applyLayout(layout);
+    });
+  });
+</script>
+
+</body>
+</html>

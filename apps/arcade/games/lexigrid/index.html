@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexigrid</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1F2430;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #1F2430;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #helpBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    right: calc(8px * var(--game-scale, 1));
+    width: calc(26px * var(--game-scale, 1));
+    height: calc(26px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    line-height: 1;
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #helpOverlay {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(10,12,18,0.82);
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    padding: calc(14px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #helpOverlay.visible { display: flex; }
+  #helpPanel {
+    position: relative;
+    width: min(300px, 100%);
+    background: #1F2430;
+    border: 1.5px solid rgba(255,255,255,0.16);
+    border-radius: calc(16px * var(--game-scale, 1));
+    padding: calc(18px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    max-height: 100%;
+    overflow-y: auto;
+    color: #F4F1EA;
+    font-size: calc(13px * var(--game-scale, 1));
+    line-height: 1.4;
+    box-sizing: border-box;
+  }
+  #helpPanel h2 { margin: 0 0 calc(10px * var(--game-scale, 1)); font-size: calc(18px * var(--game-scale, 1)); }
+  #helpPanel p { margin: 0 0 calc(10px * var(--game-scale, 1)); text-align: left; }
+  #helpCloseBtn {
+    position: absolute;
+    top: calc(10px * var(--game-scale, 1));
+    right: calc(12px * var(--game-scale, 1));
+    background: none;
+    border: none;
+    color: #F4F1EA;
+    font-size: calc(20px * var(--game-scale, 1));
+    cursor: pointer;
+    line-height: 1;
+  }
+  .exampleRow { display: flex; align-items: center; gap: calc(3px * var(--game-scale, 1)); margin-bottom: calc(6px * var(--game-scale, 1)); }
+  .miniTile {
+    width: calc(24px * var(--game-scale, 1));
+    height: calc(24px * var(--game-scale, 1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: calc(13px * var(--game-scale, 1));
+    border-radius: calc(4px * var(--game-scale, 1));
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    color: #F4F1EA;
+    flex: none;
+  }
+  .miniTile.green { background: #4C9F70; border-color: #4C9F70; }
+  .miniTile.yellow { background: #D9A441; border-color: #D9A441; }
+  .miniTile.gray { background: #6B7280; border-color: #6B7280; }
+  .exampleText { margin: 0 0 calc(12px * var(--game-scale, 1)); font-size: calc(12.5px * var(--game-scale, 1)); }
+  #helpGotItBtn {
+    display: block;
+    margin: calc(8px * var(--game-scale, 1)) auto 0;
+    font-family: inherit;
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(9px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(22px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.1);
+    color: #F4F1EA;
+    cursor: pointer;
+  }
+  #helpGotItBtn:active { background: rgba(255,255,255,0.22); }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <button id="helpBtn" type="button" aria-label="How to play">?</button>
+  <button id="playPing" type="button" data-kb-play style="display:none;"></button>
+
+  <div id="helpOverlay">
+    <div id="helpPanel">
+      <button id="helpCloseBtn" type="button" aria-label="Close">&times;</button>
+      <h2>How to play</h2>
+      <p>Guess the LEXIGRID word in 6 tries. Each guess must be a real 5-letter word.</p>
+      <div class="exampleRow">
+        <span class="miniTile green">G</span><span class="miniTile">R</span><span class="miniTile">A</span><span class="miniTile">N</span><span class="miniTile">D</span>
+      </div>
+      <p class="exampleText"><strong>Green</strong> — the letter is in the word, in the right spot.</p>
+      <div class="exampleRow">
+        <span class="miniTile">P</span><span class="miniTile yellow">L</span><span class="miniTile">A</span><span class="miniTile">N</span><span class="miniTile">T</span>
+      </div>
+      <p class="exampleText"><strong>Yellow</strong> — the letter is in the word, wrong spot.</p>
+      <div class="exampleRow">
+        <span class="miniTile">M</span><span class="miniTile">O</span><span class="miniTile gray">N</span><span class="miniTile">E</span><span class="miniTile">Y</span>
+      </div>
+      <p class="exampleText"><strong>Gray</strong> — the letter isn't in the word.</p>
+      <p>A new word unlocks every day — keep the streak going by coming back tomorrow.</p>
+      <button id="helpGotItBtn" type="button">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const muteBtn = document.getElementById('muteBtn');
+const playPingBtn = document.getElementById('playPing');
+const helpBtn = document.getElementById('helpBtn');
+const helpOverlay = document.getElementById('helpOverlay');
+const helpCloseBtn = document.getElementById('helpCloseBtn');
+const helpGotItBtn = document.getElementById('helpGotItBtn');
+
+// ---------- logical canvas size (fixed 360x540, DPR-aware backing store) ----------
+const LOGICAL_W = 360, LOGICAL_H = 540;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / LOGICAL_W, availH / LOGICAL_H);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.style.width = (LOGICAL_W * scale) + 'px';
+  canvas.style.height = (LOGICAL_H * scale) + 'px';
+  canvas.width = Math.max(1, Math.round(LOGICAL_W * scale * dpr));
+  canvas.height = Math.max(1, Math.round(LOGICAL_H * scale * dpr));
+  ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+  wrap.style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// ---------- palette (from concept render / build brief section 7 — use exactly) ----------
+const PAL = {
+  bg: '#1F2430',
+  tileEmptyBorder: 'rgba(255,255,255,0.18)',
+  tileFilledBorder: 'rgba(255,255,255,0.4)',
+  green: '#4C9F70',
+  yellow: '#D9A441',
+  gray: '#6B7280',
+  tileText: '#F4F1EA',
+  hudText: '#F4F1EA',
+  hudSub: 'rgba(244,241,234,0.55)',
+  keyBg: 'rgba(255,255,255,0.08)',
+  keyText: '#F4F1EA',
+  toastBg: 'rgba(8,10,20,0.92)',
+  resultBackdrop: 'rgba(10,12,18,0.75)',
+  resultPanelBg: 'rgba(31,36,48,0.97)',
+  resultPanelBorder: 'rgba(255,255,255,0.14)',
+  resultDivider: 'rgba(255,255,255,0.12)',
+  resultMuted: 'rgba(244,241,234,0.4)'
+};
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// ---------- word list (505 words: 5-letter, alphabetic, unique) ----------
+const WORDS = [
+  'ABOUT', 'ABOVE', 'ADULT', 'AFTER', 'AGAIN', 'AGENT', 'AGREE', 'AHEAD', 'ALARM', 'ALBUM',
+  'ALERT', 'ALIKE', 'ALIVE', 'ALLOW', 'ALONE', 'ALONG', 'ALTER', 'AMONG', 'ANGER', 'ANGLE',
+  'ANGRY', 'APART', 'APPLE', 'APPLY', 'ARENA', 'ARGUE', 'ARISE', 'ARROW', 'ASIDE', 'ASSET',
+  'AUDIO', 'AUDIT', 'AVOID', 'AWAKE', 'AWARD', 'AWARE', 'BADLY', 'BAKER', 'BASIC', 'BEACH',
+  'BEGAN', 'BEGIN', 'BEING', 'BELOW', 'BENCH', 'BIRTH', 'BLACK', 'BLAME', 'BLANK', 'BLAST',
+  'BLIND', 'BLOCK', 'BLOOD', 'BOARD', 'BOAST', 'BONUS', 'BOOST', 'BOOTH', 'BOUND', 'BRAIN',
+  'BRAND', 'BREAD', 'BREAK', 'BREED', 'BRICK', 'BRIEF', 'BRING', 'BROAD', 'BROKE', 'BROWN',
+  'BUILD', 'BUNCH', 'BURST', 'CABIN', 'CABLE', 'CAMEL', 'CANDY', 'CARGO', 'CARRY', 'CATCH',
+  'CAUSE', 'CHAIN', 'CHAIR', 'CHALK', 'CHARM', 'CHART', 'CHASE', 'CHEAP', 'CHECK', 'CHESS',
+  'CHEST', 'CHIEF', 'CHILD', 'CHOSE', 'CIVIC', 'CIVIL', 'CLAIM', 'CLASS', 'CLEAN', 'CLEAR',
+  'CLICK', 'CLIFF', 'CLIMB', 'CLOCK', 'CLOSE', 'CLOUD', 'COACH', 'COAST', 'COULD', 'COUNT',
+  'COURT', 'COVER', 'CRAFT', 'CRASH', 'CRAZY', 'CREAM', 'CRIME', 'CROSS', 'CROWD', 'CROWN',
+  'CRUDE', 'CURVE', 'CYCLE', 'DAILY', 'DANCE', 'DEATH', 'DEBUT', 'DELAY', 'DEPTH', 'DOING',
+  'DOUBT', 'DOZEN', 'DRAFT', 'DRAMA', 'DRANK', 'DREAM', 'DRESS', 'DRIED', 'DRIVE', 'DROVE',
+  'DRUNK', 'EARLY', 'EARTH', 'EIGHT', 'ELECT', 'EMPTY', 'ENJOY', 'ENTER', 'ENTRY', 'EQUAL',
+  'ERROR', 'EVENT', 'EVERY', 'EXACT', 'EXIST', 'EXTRA', 'FAITH', 'FALSE', 'FAULT', 'FENCE',
+  'FEWER', 'FIELD', 'FIFTH', 'FIFTY', 'FIGHT', 'FINAL', 'FIRST', 'FIXED', 'FLAME', 'FLASH',
+  'FLEET', 'FLOOR', 'FLUID', 'FOCUS', 'FORCE', 'FORTH', 'FORTY', 'FORUM', 'FOUND', 'FRAME',
+  'FRESH', 'FRONT', 'FROST', 'FRUIT', 'FUNNY', 'GIANT', 'GLASS', 'GLOBE', 'GOING', 'GRACE',
+  'GRADE', 'GRAND', 'GRANT', 'GRASS', 'GREAT', 'GREEN', 'GREET', 'GRIEF', 'GROSS', 'GROUP',
+  'GROWN', 'GUARD', 'GUESS', 'GUEST', 'GUIDE', 'HAPPY', 'HARSH', 'HEART', 'HEAVY', 'HELLO',
+  'HENCE', 'HONEY', 'HONOR', 'HORSE', 'HOTEL', 'HOUSE', 'HUMAN', 'IDEAL', 'IMAGE', 'INDEX',
+  'INNER', 'INPUT', 'ISSUE', 'IVORY', 'JOINT', 'JUDGE', 'JUICE', 'KNOWN', 'LABEL', 'LARGE',
+  'LASER', 'LATER', 'LAUGH', 'LAYER', 'LEARN', 'LEAST', 'LEAVE', 'LEGAL', 'LEMON', 'LEVEL',
+  'LIGHT', 'LIMIT', 'LOCAL', 'LOGIC', 'LOOSE', 'LOWER', 'LUCKY', 'LUNCH', 'MAGIC', 'MAJOR',
+  'MAKER', 'MARCH', 'MATCH', 'MAYBE', 'MEANT', 'MEDAL', 'MEDIA', 'MERIT', 'METAL', 'MIGHT',
+  'MINOR', 'MINUS', 'MODEL', 'MONEY', 'MONTH', 'MORAL', 'MOTOR', 'MOUNT', 'MOUSE', 'MOUTH',
+  'MOVIE', 'MUSIC', 'NEEDY', 'NERVE', 'NEVER', 'NEWLY', 'NIGHT', 'NOBLE', 'NOISE', 'NORTH',
+  'NOVEL', 'NURSE', 'OCCUR', 'OCEAN', 'OFFER', 'OFTEN', 'ORDER', 'OTHER', 'OUGHT', 'OUTER',
+  'OWNER', 'PAINT', 'PANEL', 'PAPER', 'PARTY', 'PEACE', 'PHASE', 'PHONE', 'PIANO', 'PIZZA',
+  'PLACE', 'PLAIN', 'PLANE', 'PLANT', 'PLATE', 'POINT', 'POUND', 'POWER', 'PRESS', 'PRICE',
+  'PRIDE', 'PRIME', 'PRINT', 'PRIOR', 'PRIZE', 'PROOF', 'PROUD', 'PROVE', 'QUEEN', 'QUERY',
+  'QUICK', 'QUIET', 'QUITE', 'RADIO', 'RAISE', 'RANGE', 'RAPID', 'REACH', 'READY', 'REFER',
+  'RELAX', 'REPLY', 'RIGHT', 'RIVAL', 'RIVER', 'ROAST', 'ROBOT', 'ROUGH', 'ROUND', 'ROUTE',
+  'ROYAL', 'RURAL', 'SAFER', 'SALAD', 'SAUCE', 'SCALE', 'SCENE', 'SCOPE', 'SCORE', 'SENSE',
+  'SERVE', 'SEVEN', 'SHADE', 'SHAKE', 'SHAPE', 'SHARE', 'SHARP', 'SHEEP', 'SHEET', 'SHELF',
+  'SHELL', 'SHIFT', 'SHINE', 'SHIRT', 'SHOCK', 'SHOOT', 'SHORE', 'SHORT', 'SIGHT', 'SILLY',
+  'SINCE', 'SIXTH', 'SIXTY', 'SIZED', 'SKILL', 'SLEEP', 'SLICE', 'SLIDE', 'SMALL', 'SMART',
+  'SMELL', 'SMILE', 'SMOKE', 'SNAKE', 'SOLAR', 'SOLID', 'SOLVE', 'SORRY', 'SOUND', 'SOUTH',
+  'SPACE', 'SPARE', 'SPEAK', 'SPEED', 'SPEND', 'SPENT', 'SPICE', 'SPLIT', 'SPOON', 'SPORT',
+  'STACK', 'STAFF', 'STAGE', 'STAIR', 'STAMP', 'STAND', 'START', 'STATE', 'STEAM', 'STEEL',
+  'STEEP', 'STEER', 'STICK', 'STOCK', 'STONE', 'STORE', 'STORM', 'STORY', 'STOVE', 'STUDY',
+  'STUFF', 'STYLE', 'SUGAR', 'SUPER', 'SWEET', 'SWIFT', 'SWING', 'TABLE', 'TAKEN', 'TALKS',
+  'TASTE', 'TEACH', 'TEETH', 'THANK', 'THEIR', 'THEME', 'THERE', 'THICK', 'THING', 'THINK',
+  'THIRD', 'THOSE', 'THREE', 'THROW', 'TIGER', 'TIGHT', 'TIMER', 'TITLE', 'TODAY', 'TOTAL',
+  'TOUCH', 'TOWER', 'TRACE', 'TRACK', 'TRADE', 'TRAIL', 'TRAIN', 'TREAT', 'TREND', 'TRIAL',
+  'TRIBE', 'TRICK', 'TRIED', 'TRUCK', 'TRULY', 'TRUST', 'TRUTH', 'TWICE', 'UNCLE', 'UNDER',
+  'UNION', 'UNTIL', 'UPPER', 'UPSET', 'URBAN', 'USAGE', 'USUAL', 'VALID', 'VALUE', 'VIDEO',
+  'VIRUS', 'VISIT', 'VITAL', 'VOICE', 'WASTE', 'WATCH', 'WATER', 'WHEEL', 'WHERE', 'WHICH',
+  'WHILE', 'WHITE', 'WHOLE', 'WHOSE', 'WOMAN', 'WORLD', 'WORRY', 'WORSE', 'WORTH', 'WOULD',
+  'WRITE', 'WRONG', 'YIELD', 'YOUNG', 'YOUTH'
+];
+// 4,667 5-letter dictionary words (Ubuntu wamerican / SCOWL-derived,
+// public domain) used to validate submitted guesses. Independent of, and
+// much larger than, the WORDS answer pool above — every WORDS entry is
+// already present here, so the daily answer is always guessable.
+const LEXIGRID_VALID_GUESSES = [
+  'ABACI', 'ABACK', 'ABAFT', 'ABASE', 'ABASH', 'ABATE', 'ABBEY', 'ABBOT', 'ABEAM', 'ABETS',
+  'ABHOR', 'ABIDE', 'ABLER', 'ABODE', 'ABORT', 'ABOUT', 'ABOVE', 'ABUSE', 'ABUTS', 'ABUZZ',
+  'ABYSS', 'ACHED', 'ACHES', 'ACHOO', 'ACIDS', 'ACING', 'ACMES', 'ACORN', 'ACRES', 'ACRID',
+  'ACTED', 'ACTOR', 'ACUTE', 'ADAGE', 'ADAPT', 'ADDED', 'ADDER', 'ADDLE', 'ADEPT', 'ADIEU',
+  'ADMAN', 'ADMEN', 'ADMIN', 'ADMIT', 'ADOBE', 'ADOPT', 'ADORE', 'ADORN', 'ADULT', 'ADZES',
+  'AEGIS', 'AEONS', 'AERIE', 'AFFIX', 'AFIRE', 'AFOOT', 'AFOUL', 'AFTER', 'AGAIN', 'AGAPE',
+  'AGATE', 'AGAVE', 'AGENT', 'AGILE', 'AGING', 'AGISM', 'AGLOW', 'AGONY', 'AGREE', 'AHEAD',
+  'AIDED', 'AIDES', 'AILED', 'AIMED', 'AIRED', 'AISLE', 'ALARM', 'ALBUM', 'ALDER', 'ALERT',
+  'ALGAE', 'ALIAS', 'ALIBI', 'ALIEN', 'ALIGN', 'ALIKE', 'ALINE', 'ALIVE', 'ALLAY', 'ALLEY',
+  'ALLOT', 'ALLOW', 'ALLOY', 'ALOES', 'ALOFT', 'ALOHA', 'ALONE', 'ALONG', 'ALOOF', 'ALOUD',
+  'ALPHA', 'ALTAR', 'ALTER', 'ALTHO', 'ALTOS', 'ALUMS', 'AMASS', 'AMAZE', 'AMBER', 'AMBLE',
+  'AMEBA', 'AMEER', 'AMEND', 'AMIGO', 'AMINO', 'AMIRS', 'AMISS', 'AMITY', 'AMONG', 'AMOUR',
+  'AMPLE', 'AMPLY', 'AMPUL', 'AMUCK', 'AMUSE', 'ANGEL', 'ANGER', 'ANGLE', 'ANGRY', 'ANGST',
+  'ANIME', 'ANION', 'ANISE', 'ANKHS', 'ANKLE', 'ANNEX', 'ANNOY', 'ANNUL', 'ANODE', 'ANONS',
+  'ANTED', 'ANTES', 'ANTIC', 'ANTIS', 'ANVIL', 'AORTA', 'APACE', 'APART', 'APHID', 'APING',
+  'APPAL', 'APPLE', 'APPLY', 'APRON', 'APSES', 'APTER', 'APTLY', 'AQUAE', 'AQUAS', 'ARBOR',
+  'ARCED', 'ARDOR', 'AREAS', 'ARENA', 'ARGON', 'ARGOT', 'ARGUE', 'ARIAS', 'ARISE', 'ARMED',
+  'ARMOR', 'AROMA', 'AROSE', 'ARRAY', 'ARROW', 'ARSON', 'ARTSY', 'ASCOT', 'ASHED', 'ASHEN',
+  'ASHES', 'ASIDE', 'ASKED', 'ASKEW', 'ASPEN', 'ASPIC', 'ASSAY', 'ASSES', 'ASSET', 'ASSOC',
+  'ASTER', 'ASTIR', 'ATLAS', 'ATOLL', 'ATOMS', 'ATONE', 'ATRIA', 'ATTAR', 'ATTIC', 'AUDIO',
+  'AUDIT', 'AUGER', 'AUGHT', 'AUGUR', 'AUNTS', 'AURAE', 'AURAL', 'AURAS', 'AUTOS', 'AVAIL',
+  'AVAST', 'AVERS', 'AVERT', 'AVIAN', 'AVOID', 'AVOWS', 'AWAIT', 'AWAKE', 'AWARD', 'AWARE',
+  'AWASH', 'AWFUL', 'AWING', 'AWOKE', 'AXIAL', 'AXING', 'AXIOM', 'AXLES', 'AXONS', 'AZURE',
+  'BAAED', 'BABEL', 'BABES', 'BACKS', 'BACON', 'BADGE', 'BADLY', 'BAGEL', 'BAGGY', 'BAILS',
+  'BAITS', 'BAIZE', 'BAKED', 'BAKER', 'BAKES', 'BALDS', 'BALED', 'BALES', 'BALKS', 'BALKY',
+  'BALLS', 'BALMS', 'BALMY', 'BALSA', 'BANAL', 'BANDS', 'BANDY', 'BANES', 'BANGS', 'BANJO',
+  'BANKS', 'BANNS', 'BARBS', 'BARDS', 'BARED', 'BARER', 'BARES', 'BARFS', 'BARGE', 'BARKS',
+  'BARNS', 'BARON', 'BASAL', 'BASED', 'BASER', 'BASES', 'BASIC', 'BASIL', 'BASIN', 'BASIS',
+  'BASKS', 'BASSI', 'BASSO', 'BASTE', 'BATCH', 'BATED', 'BATES', 'BATHE', 'BATHS', 'BATIK',
+  'BATON', 'BATTY', 'BAUDS', 'BAWDY', 'BAWLS', 'BAYED', 'BAYOU', 'BEACH', 'BEADS', 'BEADY',
+  'BEAKS', 'BEAMS', 'BEANS', 'BEARD', 'BEARS', 'BEAST', 'BEATS', 'BEAUS', 'BEAUX', 'BEBOP',
+  'BECKS', 'BEECH', 'BEEFS', 'BEEFY', 'BEEPS', 'BEERS', 'BEETS', 'BEFIT', 'BEFOG', 'BEGAN',
+  'BEGAT', 'BEGET', 'BEGIN', 'BEGOT', 'BEGUN', 'BEIGE', 'BEING', 'BELAY', 'BELCH', 'BELIE',
+  'BELLE', 'BELLS', 'BELLY', 'BELOW', 'BELTS', 'BENCH', 'BENDS', 'BENTS', 'BERET', 'BERGS',
+  'BERMS', 'BERRY', 'BERTH', 'BERYL', 'BESET', 'BESOM', 'BESOT', 'BESTS', 'BETAS', 'BEVEL',
+  'BIBLE', 'BICEP', 'BIDDY', 'BIDED', 'BIDES', 'BIDET', 'BIERS', 'BIFFS', 'BIGHT', 'BIGOT',
+  'BIKED', 'BIKER', 'BIKES', 'BILGE', 'BILKS', 'BILLS', 'BILLY', 'BIMBO', 'BINDS', 'BINGE',
+  'BINGO', 'BIPED', 'BIRCH', 'BIRDS', 'BIRTH', 'BISON', 'BITCH', 'BITES', 'BLABS', 'BLACK',
+  'BLADE', 'BLAME', 'BLAND', 'BLANK', 'BLARE', 'BLAST', 'BLATS', 'BLAZE', 'BLEAK', 'BLEAT',
+  'BLEED', 'BLEEP', 'BLEND', 'BLENT', 'BLESS', 'BLEST', 'BLIMP', 'BLIND', 'BLING', 'BLINK',
+  'BLIPS', 'BLISS', 'BLITZ', 'BLOAT', 'BLOBS', 'BLOCK', 'BLOCS', 'BLOGS', 'BLOND', 'BLOOD',
+  'BLOOM', 'BLOTS', 'BLOWN', 'BLOWS', 'BLUED', 'BLUER', 'BLUES', 'BLUFF', 'BLUNT', 'BLURB',
+  'BLURS', 'BLURT', 'BLUSH', 'BOARD', 'BOARS', 'BOAST', 'BOATS', 'BOBBY', 'BODED', 'BODES',
+  'BOGEY', 'BOGGY', 'BOGIE', 'BOGON', 'BOGUS', 'BOILS', 'BOINK', 'BOLAS', 'BOLES', 'BOLLS',
+  'BOLTS', 'BOMBS', 'BONDS', 'BONED', 'BONER', 'BONES', 'BONEY', 'BONGO', 'BONGS', 'BONNY',
+  'BONUS', 'BOOBS', 'BOOBY', 'BOOED', 'BOOKS', 'BOOMS', 'BOONS', 'BOORS', 'BOOST', 'BOOTH',
+  'BOOTS', 'BOOTY', 'BOOZE', 'BOOZY', 'BORAX', 'BORED', 'BORER', 'BORES', 'BORNE', 'BORON',
+  'BOSOM', 'BOSSY', 'BOSUN', 'BOTCH', 'BOUGH', 'BOUND', 'BOUTS', 'BOWED', 'BOWEL', 'BOWER',
+  'BOWLS', 'BOXED', 'BOXEN', 'BOXER', 'BOXES', 'BOZOS', 'BRACE', 'BRACT', 'BRADS', 'BRAGS',
+  'BRAID', 'BRAIN', 'BRAKE', 'BRAND', 'BRASH', 'BRASS', 'BRATS', 'BRAVE', 'BRAVO', 'BRAWL',
+  'BRAWN', 'BRAYS', 'BREAD', 'BREAK', 'BREED', 'BREWS', 'BRIAR', 'BRIBE', 'BRICK', 'BRIDE',
+  'BRIEF', 'BRIER', 'BRIGS', 'BRIMS', 'BRINE', 'BRING', 'BRINK', 'BRINY', 'BRISK', 'BROAD',
+  'BROIL', 'BROKE', 'BROOD', 'BROOK', 'BROOM', 'BROTH', 'BROWN', 'BROWS', 'BRUIN', 'BRUNT',
+  'BRUSH', 'BRUSK', 'BRUTE', 'BUCKS', 'BUDDY', 'BUDGE', 'BUFFS', 'BUGGY', 'BUGLE', 'BUILD',
+  'BUILT', 'BULBS', 'BULGE', 'BULGY', 'BULKS', 'BULKY', 'BULLS', 'BULLY', 'BUMPS', 'BUMPY',
+  'BUNCH', 'BUNGS', 'BUNKS', 'BUNNY', 'BUNTS', 'BUOYS', 'BURGS', 'BURKA', 'BURLY', 'BURNS',
+  'BURNT', 'BURPS', 'BURRO', 'BURRS', 'BURST', 'BUSBY', 'BUSED', 'BUSES', 'BUSHY', 'BUSTS',
+  'BUTCH', 'BUTTE', 'BUTTS', 'BUXOM', 'BUYER', 'BYLAW', 'BYTES', 'BYWAY', 'CABAL', 'CABBY',
+  'CABIN', 'CABLE', 'CACAO', 'CACHE', 'CACTI', 'CADDY', 'CADET', 'CADGE', 'CADRE', 'CAGED',
+  'CAGES', 'CAGEY', 'CAIRN', 'CAKED', 'CAKES', 'CALFS', 'CALIF', 'CALKS', 'CALLS', 'CALMS',
+  'CALVE', 'CALYX', 'CAMEL', 'CAMEO', 'CAMPS', 'CAMPY', 'CANAL', 'CANDY', 'CANED', 'CANES',
+  'CANNY', 'CANOE', 'CANON', 'CANTO', 'CANTS', 'CAPED', 'CAPER', 'CAPES', 'CAPON', 'CARAT',
+  'CARBS', 'CARDS', 'CARED', 'CARES', 'CARET', 'CARGO', 'CAROL', 'CAROM', 'CARPI', 'CARPS',
+  'CARRY', 'CARTS', 'CARVE', 'CASED', 'CASES', 'CASKS', 'CASTE', 'CASTS', 'CATCH', 'CATER',
+  'CATTY', 'CAULK', 'CAUSE', 'CAVED', 'CAVES', 'CAVIL', 'CAWED', 'CEASE', 'CEDAR', 'CEDED',
+  'CEDES', 'CELLI', 'CELLO', 'CELLS', 'CENTS', 'CHADS', 'CHAFE', 'CHAFF', 'CHAIN', 'CHAIR',
+  'CHALK', 'CHAMP', 'CHANT', 'CHAOS', 'CHAPS', 'CHAPT', 'CHARM', 'CHARS', 'CHART', 'CHARY',
+  'CHASE', 'CHASM', 'CHATS', 'CHEAP', 'CHEAT', 'CHECK', 'CHEEK', 'CHEEP', 'CHEER', 'CHEFS',
+  'CHESS', 'CHEST', 'CHEWS', 'CHEWY', 'CHICK', 'CHIDE', 'CHIEF', 'CHILD', 'CHILE', 'CHILI',
+  'CHILL', 'CHIME', 'CHIMP', 'CHINA', 'CHINK', 'CHINO', 'CHINS', 'CHIPS', 'CHIRP', 'CHITS',
+  'CHIVE', 'CHOCK', 'CHOIR', 'CHOKE', 'CHOMP', 'CHOPS', 'CHORD', 'CHORE', 'CHOSE', 'CHOWS',
+  'CHUCK', 'CHUGS', 'CHUMP', 'CHUMS', 'CHUNK', 'CHURL', 'CHURN', 'CHUTE', 'CIDER', 'CIGAR',
+  'CILIA', 'CINCH', 'CIRCA', 'CITED', 'CITES', 'CIVET', 'CIVIC', 'CIVIL', 'CLACK', 'CLAIM',
+  'CLAMP', 'CLAMS', 'CLANG', 'CLANK', 'CLANS', 'CLAPS', 'CLASH', 'CLASP', 'CLASS', 'CLAWS',
+  'CLEAN', 'CLEAR', 'CLEAT', 'CLEFS', 'CLEFT', 'CLERK', 'CLEWS', 'CLICK', 'CLIFF', 'CLIMB',
+  'CLIME', 'CLING', 'CLINK', 'CLIPS', 'CLIPT', 'CLITS', 'CLOAK', 'CLOCK', 'CLODS', 'CLOGS',
+  'CLOMP', 'CLONE', 'CLOPS', 'CLOSE', 'CLOTH', 'CLOTS', 'CLOUD', 'CLOUT', 'CLOVE', 'CLOWN',
+  'CLOYS', 'CLUBS', 'CLUCK', 'CLUED', 'CLUES', 'CLUMP', 'CLUNG', 'CLUNK', 'CLVII', 'CLXII',
+  'CLXIV', 'CLXIX', 'CLXVI', 'COACH', 'COALS', 'COAST', 'COATS', 'COBRA', 'COCCI', 'COCKS',
+  'COCKY', 'COCOA', 'CODAS', 'CODED', 'CODES', 'CODEX', 'COEDS', 'COIFS', 'COILS', 'COINS',
+  'COKED', 'COKES', 'COLAS', 'COLDS', 'COLIC', 'COLON', 'COLOR', 'COLTS', 'COMAS', 'COMBO',
+  'COMBS', 'COMER', 'COMES', 'COMET', 'COMFY', 'COMIC', 'COMMA', 'COMPO', 'CONCH', 'CONDO',
+  'CONES', 'CONGA', 'CONIC', 'CONKS', 'CONTD', 'COOED', 'COOKS', 'COOKY', 'COOLS', 'COONS',
+  'COOPS', 'COOTS', 'COPED', 'COPES', 'COPRA', 'COPSE', 'CORAL', 'CORDS', 'CORED', 'CORES',
+  'CORKS', 'CORMS', 'CORNS', 'CORNY', 'CORPS', 'COSTS', 'COTES', 'COUCH', 'COUGH', 'COULD',
+  'COUNT', 'COUPE', 'COUPS', 'COURT', 'COVEN', 'COVER', 'COVES', 'COVET', 'COVEY', 'COWED',
+  'COWER', 'COWLS', 'COYER', 'COYLY', 'COZEN', 'CRABS', 'CRACK', 'CRAFT', 'CRAGS', 'CRAMP',
+  'CRAMS', 'CRANE', 'CRANK', 'CRAPE', 'CRAPS', 'CRASH', 'CRASS', 'CRATE', 'CRAVE', 'CRAWL',
+  'CRAWS', 'CRAYS', 'CRAZE', 'CRAZY', 'CREAK', 'CREAM', 'CREDO', 'CREED', 'CREEK', 'CREEL',
+  'CREEP', 'CREPE', 'CREPT', 'CRESS', 'CREST', 'CREWS', 'CRIBS', 'CRICK', 'CRIED', 'CRIER',
+  'CRIES', 'CRIME', 'CRIMP', 'CRISP', 'CROAK', 'CROCI', 'CROCK', 'CRONE', 'CRONY', 'CROOK',
+  'CROON', 'CROPS', 'CROSS', 'CROUP', 'CROWD', 'CROWN', 'CROWS', 'CRUDE', 'CRUEL', 'CRUET',
+  'CRUFT', 'CRUMB', 'CRUSH', 'CRUST', 'CRYPT', 'CUBED', 'CUBES', 'CUBIC', 'CUBIT', 'CUFFS',
+  'CUING', 'CULLS', 'CULTS', 'CUMIN', 'CUNTS', 'CUPID', 'CURBS', 'CURDS', 'CURED', 'CURER',
+  'CURES', 'CURIE', 'CURIO', 'CURLS', 'CURLY', 'CURRY', 'CURSE', 'CURST', 'CURVE', 'CURVY',
+  'CUSHY', 'CUSPS', 'CUTER', 'CUTUP', 'CYCLE', 'CYNIC', 'CYSTS', 'CZARS', 'DACHA', 'DADDY',
+  'DADOS', 'DAFFY', 'DAILY', 'DAIRY', 'DAISY', 'DALES', 'DALLY', 'DAMES', 'DAMNS', 'DAMPS',
+  'DANCE', 'DANDY', 'DARED', 'DARES', 'DARNS', 'DARTS', 'DATED', 'DATES', 'DATUM', 'DAUBS',
+  'DAUNT', 'DAVIT', 'DAWNS', 'DAZED', 'DAZES', 'DDING', 'DEALS', 'DEALT', 'DEANS', 'DEARS',
+  'DEATH', 'DEBAR', 'DEBIT', 'DEBTS', 'DEBUG', 'DEBUT', 'DECAF', 'DECAL', 'DECAY', 'DECKS',
+  'DECOR', 'DECOY', 'DECRY', 'DEEDS', 'DEEMS', 'DEEPS', 'DEERS', 'DEFER', 'DEICE', 'DEIFY',
+  'DEIGN', 'DEISM', 'DEITY', 'DELAY', 'DELIS', 'DELLS', 'DELTA', 'DELVE', 'DEMON', 'DEMOS',
+  'DEMUR', 'DENIM', 'DENSE', 'DENTS', 'DEPOT', 'DEPTH', 'DERBY', 'DESKS', 'DETER', 'DETOX',
+  'DEUCE', 'DEVIL', 'DHOTI', 'DIALS', 'DIARY', 'DICED', 'DICES', 'DICEY', 'DICKS', 'DICKY',
+  'DICTA', 'DIETS', 'DIFFS', 'DIGIT', 'DIKED', 'DIKES', 'DILLS', 'DILLY', 'DIMER', 'DIMES',
+  'DIMLY', 'DINED', 'DINER', 'DINES', 'DINGO', 'DINGS', 'DINGY', 'DINKY', 'DIODE', 'DIRER',
+  'DIRGE', 'DIRKS', 'DIRTY', 'DISCO', 'DISCS', 'DISKS', 'DITCH', 'DITTO', 'DITTY', 'DIVAN',
+  'DIVAS', 'DIVED', 'DIVER', 'DIVES', 'DIVOT', 'DIVVY', 'DIZZY', 'DJINN', 'DOCKS', 'DODGE',
+  'DODGY', 'DODOS', 'DOERS', 'DOFFS', 'DOGGY', 'DOGIE', 'DOGMA', 'DOILY', 'DOING', 'DOLED',
+  'DOLES', 'DOLLS', 'DOLLY', 'DOLTS', 'DOMED', 'DOMES', 'DONOR', 'DONUT', 'DOOMS', 'DOORS',
+  'DOPED', 'DOPES', 'DOPEY', 'DORKS', 'DORKY', 'DORMS', 'DOSED', 'DOSES', 'DOTED', 'DOTES',
+  'DOTTY', 'DOUBT', 'DOUGH', 'DOUSE', 'DOVES', 'DOWDY', 'DOWEL', 'DOWNS', 'DOWNY', 'DOWRY',
+  'DOWSE', 'DOYEN', 'DOZED', 'DOZEN', 'DOZES', 'DRABS', 'DRAFT', 'DRAGS', 'DRAIN', 'DRAKE',
+  'DRAMA', 'DRAMS', 'DRANK', 'DRAPE', 'DRAWL', 'DRAWN', 'DRAWS', 'DRAYS', 'DREAD', 'DREAM',
+  'DREGS', 'DRESS', 'DRIED', 'DRIER', 'DRIES', 'DRIFT', 'DRILL', 'DRILY', 'DRINK', 'DRIPS',
+  'DRIVE', 'DROID', 'DROLL', 'DRONE', 'DROOL', 'DROOP', 'DROPS', 'DROSS', 'DROVE', 'DROWN',
+  'DRUBS', 'DRUGS', 'DRUID', 'DRUMS', 'DRUNK', 'DRYAD', 'DRYER', 'DRYLY', 'DUCAL', 'DUCAT',
+  'DUCHY', 'DUCKS', 'DUCTS', 'DUDED', 'DUDES', 'DUELS', 'DUETS', 'DUKES', 'DULLS', 'DULLY',
+  'DUMMY', 'DUMPS', 'DUMPY', 'DUNCE', 'DUNES', 'DUNGS', 'DUNKS', 'DUNNO', 'DUPED', 'DUPES',
+  'DUSKY', 'DUSTS', 'DUSTY', 'DUVET', 'DWARF', 'DWEEB', 'DWELL', 'DWELT', 'DYERS', 'DYING',
+  'DYKED', 'DYKES', 'EAGER', 'EAGLE', 'EARLS', 'EARLY', 'EARNS', 'EARTH', 'EASED', 'EASEL',
+  'EASES', 'EATEN', 'EATER', 'EAVES', 'EBBED', 'EBONY', 'ECHOS', 'EDEMA', 'EDGED', 'EDGER',
+  'EDGES', 'EDICT', 'EDIFY', 'EDITS', 'EERIE', 'EGGED', 'EGRET', 'EIDER', 'EIGHT', 'EJECT',
+  'EKING', 'ELATE', 'ELBOW', 'ELDER', 'ELECT', 'ELEGY', 'ELFIN', 'ELIDE', 'ELITE', 'ELOPE',
+  'ELUDE', 'ELVES', 'EMAIL', 'EMBED', 'EMBER', 'EMCEE', 'EMEND', 'EMERY', 'EMIRS', 'EMITS',
+  'EMOJI', 'EMOTE', 'EMPTY', 'ENACT', 'ENDED', 'ENDOW', 'ENDUE', 'ENEMA', 'ENEMY', 'ENJOY',
+  'ENNUI', 'ENROL', 'ENSUE', 'ENTER', 'ENTRY', 'ENURE', 'ENVOY', 'EPICS', 'EPOCH', 'EPOXY',
+  'EQUAL', 'EQUIP', 'ERASE', 'ERECT', 'ERODE', 'ERRED', 'ERROR', 'ERUPT', 'ESSAY', 'ESTER',
+  'ETHER', 'ETHIC', 'ETHOS', 'EUROS', 'EVADE', 'EVENS', 'EVENT', 'EVERY', 'EVICT', 'EVILS',
+  'EVOKE', 'EWERS', 'EXACT', 'EXALT', 'EXAMS', 'EXCEL', 'EXECS', 'EXERT', 'EXILE', 'EXIST',
+  'EXITS', 'EXPEL', 'EXPOS', 'EXTOL', 'EXTRA', 'EXUDE', 'EXULT', 'EYING', 'FABLE', 'FACED',
+  'FACES', 'FACET', 'FACTS', 'FADED', 'FADES', 'FAGOT', 'FAILS', 'FAINT', 'FAIRS', 'FAIRY',
+  'FAITH', 'FAKED', 'FAKER', 'FAKES', 'FAKIR', 'FALLS', 'FALSE', 'FAMED', 'FANCY', 'FANGS',
+  'FANNY', 'FARCE', 'FARED', 'FARES', 'FARMS', 'FARTS', 'FASTS', 'FATAL', 'FATED', 'FATES',
+  'FATTY', 'FAULT', 'FAUNA', 'FAUNS', 'FAVOR', 'FAWNS', 'FAXED', 'FAXES', 'FAZED', 'FAZES',
+  'FEARS', 'FEAST', 'FEATS', 'FECAL', 'FECES', 'FEEDS', 'FEELS', 'FEIGN', 'FEINT', 'FELLS',
+  'FELON', 'FELTS', 'FEMUR', 'FENCE', 'FENDS', 'FERAL', 'FERNS', 'FERRY', 'FESTS', 'FETAL',
+  'FETCH', 'FETED', 'FETID', 'FETUS', 'FEUDS', 'FEVER', 'FEWER', 'FEZES', 'FIATS', 'FIBER',
+  'FICHE', 'FIEFS', 'FIELD', 'FIEND', 'FIERY', 'FIFES', 'FIFTH', 'FIFTY', 'FIGHT', 'FILCH',
+  'FILED', 'FILES', 'FILET', 'FILLS', 'FILLY', 'FILMS', 'FILMY', 'FILTH', 'FINAL', 'FINCH',
+  'FINDS', 'FINED', 'FINER', 'FINES', 'FINIS', 'FINKS', 'FINNY', 'FIORD', 'FIRED', 'FIRES',
+  'FIRMS', 'FIRST', 'FIRTH', 'FISHY', 'FISTS', 'FITLY', 'FIVER', 'FIVES', 'FIXED', 'FIXER',
+  'FIXES', 'FIZZY', 'FJORD', 'FLACK', 'FLAGS', 'FLAIL', 'FLAIR', 'FLAKE', 'FLAKY', 'FLAME',
+  'FLANK', 'FLAPS', 'FLARE', 'FLASH', 'FLASK', 'FLATS', 'FLAWS', 'FLAYS', 'FLEAS', 'FLECK',
+  'FLEES', 'FLEET', 'FLESH', 'FLICK', 'FLIED', 'FLIER', 'FLIES', 'FLING', 'FLINT', 'FLIPS',
+  'FLIRT', 'FLITS', 'FLOAT', 'FLOCK', 'FLOES', 'FLOGS', 'FLOOD', 'FLOOR', 'FLOPS', 'FLORA',
+  'FLOSS', 'FLOUR', 'FLOUT', 'FLOWN', 'FLOWS', 'FLUBS', 'FLUES', 'FLUFF', 'FLUID', 'FLUKE',
+  'FLUKY', 'FLUME', 'FLUNG', 'FLUNK', 'FLUSH', 'FLUTE', 'FLYBY', 'FLYER', 'FOALS', 'FOAMS',
+  'FOAMY', 'FOCAL', 'FOCUS', 'FOGEY', 'FOGGY', 'FOILS', 'FOIST', 'FOLDS', 'FOLIO', 'FOLKS',
+  'FOLLY', 'FONDU', 'FONTS', 'FOODS', 'FOOLS', 'FOOTS', 'FORAY', 'FORCE', 'FORDS', 'FORES',
+  'FORGE', 'FORGO', 'FORKS', 'FORMS', 'FORTE', 'FORTH', 'FORTS', 'FORTY', 'FORUM', 'FOULS',
+  'FOUND', 'FOUNT', 'FOURS', 'FOWLS', 'FOXED', 'FOXES', 'FOYER', 'FRACK', 'FRAGS', 'FRAIL',
+  'FRAME', 'FRANC', 'FRANK', 'FRATS', 'FRAUD', 'FRAYS', 'FREAK', 'FREED', 'FREER', 'FREES',
+  'FRESH', 'FRETS', 'FRIAR', 'FRIED', 'FRIER', 'FRIES', 'FRILL', 'FRISK', 'FRIZZ', 'FROCK',
+  'FROGS', 'FROND', 'FRONT', 'FROST', 'FROTH', 'FROWN', 'FROZE', 'FRUIT', 'FRUMP', 'FRYER',
+  'FUCKS', 'FUDGE', 'FUELS', 'FUGUE', 'FULLS', 'FULLY', 'FUMED', 'FUMES', 'FUNDS', 'FUNGI',
+  'FUNKS', 'FUNKY', 'FUNNY', 'FURLS', 'FUROR', 'FURRY', 'FURZE', 'FUSED', 'FUSES', 'FUSSY',
+  'FUSTY', 'FUTON', 'FUZED', 'FUZES', 'FUZZY', 'GABBY', 'GABLE', 'GAFFE', 'GAFFS', 'GAGED',
+  'GAGES', 'GAILY', 'GAINS', 'GAITS', 'GALAS', 'GALES', 'GALLS', 'GAMED', 'GAMER', 'GAMES',
+  'GAMEY', 'GAMIN', 'GAMMA', 'GAMUT', 'GANGS', 'GAPED', 'GAPES', 'GARBS', 'GASES', 'GASPS',
+  'GASSY', 'GATED', 'GATES', 'GAUDY', 'GAUGE', 'GAUNT', 'GAUZE', 'GAUZY', 'GAVEL', 'GAWKS',
+  'GAWKY', 'GAYER', 'GAYLY', 'GAZED', 'GAZER', 'GAZES', 'GEARS', 'GECKO', 'GEEKS', 'GEEKY',
+  'GEESE', 'GELDS', 'GELID', 'GENES', 'GENIE', 'GENII', 'GENRE', 'GENTS', 'GENUS', 'GEODE',
+  'GERMS', 'GETUP', 'GHOST', 'GHOUL', 'GIANT', 'GIBED', 'GIBES', 'GIDDY', 'GIFTS', 'GILDS',
+  'GILLS', 'GILTS', 'GIMME', 'GIMPY', 'GIPSY', 'GIRDS', 'GIRLS', 'GIRTH', 'GIRTS', 'GISMO',
+  'GIVEN', 'GIVES', 'GIZMO', 'GLADE', 'GLADS', 'GLAND', 'GLARE', 'GLASS', 'GLAZE', 'GLEAM',
+  'GLEAN', 'GLENS', 'GLIDE', 'GLINT', 'GLITZ', 'GLOAT', 'GLOBE', 'GLOBS', 'GLOOM', 'GLORY',
+  'GLOSS', 'GLOVE', 'GLOWS', 'GLUED', 'GLUES', 'GLUEY', 'GLUTS', 'GLYPH', 'GNARL', 'GNASH',
+  'GNATS', 'GNAWN', 'GNAWS', 'GNOME', 'GOADS', 'GOALS', 'GOATS', 'GODLY', 'GOFER', 'GOING',
+  'GOLDS', 'GOLFS', 'GOLLY', 'GONAD', 'GONER', 'GONGS', 'GONKS', 'GONNA', 'GONZO', 'GOODS',
+  'GOODY', 'GOOEY', 'GOOFS', 'GOOFY', 'GOOKS', 'GOONS', 'GOOSE', 'GORED', 'GORES', 'GORGE',
+  'GORPS', 'GORSE', 'GOTTA', 'GOUGE', 'GOURD', 'GOUTY', 'GOWNS', 'GRABS', 'GRACE', 'GRADE',
+  'GRADS', 'GRAFT', 'GRAIL', 'GRAIN', 'GRAMS', 'GRAND', 'GRANT', 'GRAPE', 'GRAPH', 'GRASP',
+  'GRASS', 'GRATE', 'GRAVE', 'GRAVY', 'GRAYS', 'GRAZE', 'GREAT', 'GREBE', 'GREED', 'GREEN',
+  'GREET', 'GREPS', 'GREYS', 'GRIDS', 'GRIEF', 'GRILL', 'GRIME', 'GRIMY', 'GRIND', 'GRINS',
+  'GRIPE', 'GRIPS', 'GRIST', 'GRITS', 'GROAN', 'GROIN', 'GROKS', 'GROOM', 'GROPE', 'GROSS',
+  'GROUP', 'GROUT', 'GROVE', 'GROWL', 'GROWN', 'GROWS', 'GRUBS', 'GRUEL', 'GRUES', 'GRUFF',
+  'GRUNT', 'GUANO', 'GUARD', 'GUAVA', 'GUESS', 'GUEST', 'GUIDE', 'GUILD', 'GUILE', 'GUILT',
+  'GUISE', 'GULAG', 'GULCH', 'GULFS', 'GULLS', 'GULLY', 'GULPS', 'GUMBO', 'GUMMY', 'GUNNY',
+  'GUPPY', 'GURUS', 'GUSHY', 'GUSTO', 'GUSTS', 'GUSTY', 'GUTSY', 'GUYED', 'GYBED', 'GYBES',
+  'GYPSY', 'GYROS', 'HABIT', 'HACKS', 'HAFTS', 'HAIKU', 'HAILS', 'HAIRS', 'HAIRY', 'HAKES',
+  'HALED', 'HALER', 'HALES', 'HALLS', 'HALON', 'HALOS', 'HALTS', 'HALVE', 'HANDS', 'HANDY',
+  'HANGS', 'HANKS', 'HANKY', 'HAPPY', 'HARDY', 'HARED', 'HAREM', 'HARES', 'HARKS', 'HARMS',
+  'HARPS', 'HARPY', 'HARRY', 'HARSH', 'HARTS', 'HASPS', 'HASTE', 'HASTY', 'HATCH', 'HATED',
+  'HATER', 'HATES', 'HAULS', 'HAUNT', 'HAVEN', 'HAVES', 'HAVOC', 'HAWED', 'HAWKS', 'HAYED',
+  'HAZED', 'HAZEL', 'HAZES', 'HEADS', 'HEADY', 'HEALS', 'HEAPS', 'HEARD', 'HEARS', 'HEART',
+  'HEATH', 'HEATS', 'HEAVE', 'HEAVY', 'HEDGE', 'HEEDS', 'HEELS', 'HEFTS', 'HEFTY', 'HEIRS',
+  'HEIST', 'HELIX', 'HELLO', 'HELMS', 'HELOT', 'HELPS', 'HENCE', 'HENNA', 'HERBS', 'HERDS',
+  'HERON', 'HEROS', 'HERTZ', 'HEWED', 'HEWER', 'HEXED', 'HEXES', 'HICKS', 'HIDED', 'HIDES',
+  'HIGHS', 'HIKED', 'HIKER', 'HIKES', 'HILLS', 'HILLY', 'HILTS', 'HINDS', 'HINGE', 'HINGS',
+  'HINTS', 'HIPPO', 'HIPPY', 'HIRED', 'HIRES', 'HITCH', 'HIVED', 'HIVES', 'HOAGY', 'HOARD',
+  'HOARY', 'HOBBY', 'HOBOS', 'HOCKS', 'HOGAN', 'HOIST', 'HOKEY', 'HOKUM', 'HOLDS', 'HOLED',
+  'HOLES', 'HOLLY', 'HOMED', 'HOMER', 'HOMES', 'HOMEY', 'HOMIE', 'HONED', 'HONES', 'HONEY',
+  'HONKS', 'HONOR', 'HOOCH', 'HOODS', 'HOOEY', 'HOOFS', 'HOOKS', 'HOOKY', 'HOOPS', 'HOOTS',
+  'HOPED', 'HOPES', 'HORDE', 'HORNS', 'HORNY', 'HORSE', 'HORSY', 'HOSED', 'HOSES', 'HOSTS',
+  'HOTEL', 'HOTLY', 'HOUND', 'HOURS', 'HOUSE', 'HOVEL', 'HOVER', 'HOWDY', 'HOWLS', 'HUBBY',
+  'HUFFS', 'HUFFY', 'HUGER', 'HULAS', 'HULKS', 'HULLS', 'HUMAN', 'HUMID', 'HUMOR', 'HUMPS',
+  'HUMUS', 'HUNCH', 'HUNKS', 'HUNTS', 'HURLS', 'HURRY', 'HURTS', 'HUSKS', 'HUSKY', 'HUSSY',
+  'HUTCH', 'HYDRA', 'HYENA', 'HYING', 'HYMEN', 'HYMNS', 'HYPED', 'HYPER', 'HYPES', 'HYPOS',
+  'IAMBS', 'ICIER', 'ICILY', 'ICING', 'ICONS', 'IDEAL', 'IDEAS', 'IDIOM', 'IDIOT', 'IDLED',
+  'IDLER', 'IDLES', 'IDOLS', 'IDYLL', 'IDYLS', 'IGLOO', 'IKONS', 'ILLUS', 'IMAGE', 'IMAMS',
+  'IMBED', 'IMBUE', 'IMPEL', 'IMPLY', 'INANE', 'INAPT', 'INBOX', 'INCED', 'INCUR', 'INDEX',
+  'INDUE', 'INEPT', 'INERT', 'INFER', 'INFIX', 'INGOT', 'INKED', 'INLAY', 'INLET', 'INNER',
+  'INPUT', 'INSET', 'INTEL', 'INTER', 'INTRO', 'INURE', 'IOCTL', 'IOTAS', 'IRATE', 'IRKED',
+  'IRONS', 'IRONY', 'ISLES', 'ISLET', 'ISSUE', 'ITCHY', 'ITEMS', 'IVIES', 'IVORY', 'JABOT',
+  'JACKS', 'JADED', 'JADES', 'JAILS', 'JAMBS', 'JAPAN', 'JAPED', 'JAPES', 'JAUNT', 'JAWED',
+  'JAZZY', 'JEANS', 'JEEPS', 'JEERS', 'JEHAD', 'JELLO', 'JELLS', 'JELLY', 'JERKS', 'JERKY',
+  'JESTS', 'JETTY', 'JEWEL', 'JIBED', 'JIBES', 'JIFFY', 'JIHAD', 'JILTS', 'JIMMY', 'JINNI',
+  'JINNS', 'JIVED', 'JIVES', 'JOCKS', 'JOHNS', 'JOINS', 'JOINT', 'JOIST', 'JOKED', 'JOKER',
+  'JOKES', 'JOLLY', 'JOLTS', 'JOULE', 'JOUST', 'JOWLS', 'JOYED', 'JUDGE', 'JUICE', 'JUICY',
+  'JULEP', 'JUMBO', 'JUMPS', 'JUMPY', 'JUNCO', 'JUNKS', 'JUNKY', 'JUNTA', 'JUROR', 'KABOB',
+  'KAPOK', 'KAPUT', 'KARAT', 'KARMA', 'KAYAK', 'KAZOO', 'KEBAB', 'KEBOB', 'KEELS', 'KEENS',
+  'KEEPS', 'KETCH', 'KEYED', 'KHAKI', 'KHANS', 'KICKS', 'KICKY', 'KIDDO', 'KIDDY', 'KILLS',
+  'KILNS', 'KILOS', 'KILTS', 'KINDA', 'KINDS', 'KINGS', 'KINKS', 'KINKY', 'KIOSK', 'KITED',
+  'KITES', 'KITTY', 'KIWIS', 'KLUGE', 'KLUTZ', 'KNACK', 'KNAVE', 'KNEAD', 'KNEED', 'KNEEL',
+  'KNEES', 'KNELL', 'KNELT', 'KNIFE', 'KNITS', 'KNOBS', 'KNOCK', 'KNOLL', 'KNOTS', 'KNOWN',
+  'KNOWS', 'KOALA', 'KOANS', 'KOOKS', 'KOOKY', 'KOPEK', 'KRONE', 'KUDOS', 'KUDZU', 'LABEL',
+  'LABIA', 'LABOR', 'LACED', 'LACES', 'LACKS', 'LADED', 'LADEN', 'LADES', 'LADLE', 'LAGER',
+  'LAIRS', 'LAITY', 'LAKES', 'LAMAS', 'LAMBS', 'LAMED', 'LAMER', 'LAMES', 'LAMPS', 'LANCE',
+  'LANDS', 'LANES', 'LANKY', 'LAPEL', 'LAPSE', 'LARCH', 'LARDS', 'LARGE', 'LARGO', 'LARKS',
+  'LARVA', 'LASED', 'LASER', 'LASES', 'LASSO', 'LASTS', 'LATCH', 'LATER', 'LATEX', 'LATHE',
+  'LATHS', 'LATTE', 'LAUDS', 'LAUGH', 'LAWNS', 'LAXER', 'LAXLY', 'LAYER', 'LAZED', 'LAZES',
+  'LEACH', 'LEADS', 'LEAFS', 'LEAFY', 'LEAKS', 'LEAKY', 'LEANS', 'LEAPS', 'LEAPT', 'LEARN',
+  'LEASE', 'LEASH', 'LEAST', 'LEAVE', 'LEDGE', 'LEECH', 'LEEKS', 'LEERS', 'LEERY', 'LEFTS',
+  'LEFTY', 'LEGAL', 'LEGGY', 'LEGIT', 'LEMMA', 'LEMME', 'LEMON', 'LEMUR', 'LENDS', 'LEPER',
+  'LETUP', 'LEVEE', 'LEVEL', 'LEVER', 'LEXER', 'LIARS', 'LIBEL', 'LICIT', 'LICKS', 'LIEGE',
+  'LIENS', 'LIFER', 'LIFTS', 'LIGHT', 'LIKED', 'LIKEN', 'LIKER', 'LIKES', 'LILAC', 'LILTS',
+  'LIMBO', 'LIMBS', 'LIMED', 'LIMES', 'LIMIT', 'LIMNS', 'LIMOS', 'LIMPS', 'LINED', 'LINEN',
+  'LINER', 'LINES', 'LINGO', 'LINKS', 'LINTS', 'LIONS', 'LIPID', 'LIRAS', 'LISLE', 'LISPS',
+  'LISTS', 'LITER', 'LITHE', 'LIVED', 'LIVEN', 'LIVER', 'LIVES', 'LIVID', 'LLAMA', 'LLANO',
+  'LOADS', 'LOAFS', 'LOAMY', 'LOANS', 'LOATH', 'LOBBY', 'LOBED', 'LOBES', 'LOCAL', 'LOCKS',
+  'LOCUS', 'LODES', 'LODGE', 'LOFTS', 'LOFTY', 'LOGES', 'LOGIC', 'LOGIN', 'LOGON', 'LOGOS',
+  'LOINS', 'LOLLS', 'LONER', 'LONGS', 'LOOKS', 'LOOMS', 'LOONS', 'LOONY', 'LOOPS', 'LOOPY',
+  'LOOSE', 'LOOTS', 'LOPED', 'LOPES', 'LORDS', 'LORRY', 'LOSER', 'LOSES', 'LOTTO', 'LOTUS',
+  'LOUSE', 'LOUSY', 'LOUTS', 'LOVED', 'LOVER', 'LOVES', 'LOWED', 'LOWER', 'LOWLY', 'LOXES',
+  'LOYAL', 'LUAUS', 'LUBED', 'LUBES', 'LUCID', 'LUCKS', 'LUCKY', 'LUCRE', 'LULLS', 'LUMPS',
+  'LUMPY', 'LUNAR', 'LUNCH', 'LUNGE', 'LUNGS', 'LUPIN', 'LUPUS', 'LURCH', 'LURED', 'LURES',
+  'LURID', 'LURKS', 'LUSTS', 'LUSTY', 'LUTES', 'LXVII', 'LYING', 'LYMPH', 'LYNCH', 'LYRES',
+  'LYRIC', 'MACAW', 'MACED', 'MACES', 'MACHO', 'MACRO', 'MADAM', 'MADLY', 'MAGIC', 'MAGMA',
+  'MAIDS', 'MAILS', 'MAIMS', 'MAINS', 'MAIZE', 'MAJOR', 'MAKER', 'MAKES', 'MALES', 'MALLS',
+  'MALTS', 'MAMAS', 'MAMBO', 'MAMMA', 'MANES', 'MANGA', 'MANGE', 'MANGO', 'MANGY', 'MANIA',
+  'MANIC', 'MANLY', 'MANNA', 'MANOR', 'MANSE', 'MAPLE', 'MARCH', 'MARES', 'MARIA', 'MARKS',
+  'MARRY', 'MARSH', 'MARTS', 'MASKS', 'MASON', 'MASTS', 'MATCH', 'MATED', 'MATES', 'MATTE',
+  'MATTS', 'MATZO', 'MAULS', 'MAUVE', 'MAVEN', 'MAVIN', 'MAXED', 'MAXES', 'MAXIM', 'MAYBE',
+  'MAYOR', 'MAZES', 'MEALS', 'MEALY', 'MEANS', 'MEANT', 'MEATS', 'MEATY', 'MECCA', 'MEDAL',
+  'MEDIA', 'MEDIC', 'MEETS', 'MELDS', 'MELON', 'MELTS', 'MEMES', 'MEMOS', 'MENDS', 'MENUS',
+  'MEOWS', 'MERCY', 'MERES', 'MERGE', 'MERIT', 'MERRY', 'MESAS', 'MESSY', 'METAL', 'METED',
+  'METER', 'METES', 'METRO', 'MEWED', 'MEWLS', 'MIAOW', 'MICRA', 'MIDDY', 'MIDGE', 'MIDST',
+  'MIENS', 'MIFFS', 'MIGHT', 'MIKED', 'MIKES', 'MILCH', 'MILER', 'MILES', 'MILFS', 'MILKS',
+  'MILKY', 'MILLS', 'MIMED', 'MIMES', 'MIMIC', 'MINCE', 'MINDS', 'MINED', 'MINER', 'MINES',
+  'MINIM', 'MINIS', 'MINKS', 'MINOR', 'MINTS', 'MINTY', 'MINUS', 'MIRED', 'MIRES', 'MIRTH',
+  'MISDO', 'MISER', 'MISTS', 'MISTY', 'MITER', 'MITES', 'MITTS', 'MIXED', 'MIXER', 'MIXES',
+  'MOANS', 'MOATS', 'MOCHA', 'MOCKS', 'MODAL', 'MODEL', 'MODEM', 'MODES', 'MOGUL', 'MOIRE',
+  'MOIST', 'MOLAR', 'MOLDS', 'MOLDY', 'MOLES', 'MOLLS', 'MOLTS', 'MOMMA', 'MOMMY', 'MONEY',
+  'MONKS', 'MONTH', 'MOOCH', 'MOODS', 'MOODY', 'MOOED', 'MOONS', 'MOORS', 'MOOSE', 'MOOTS',
+  'MOPED', 'MOPES', 'MORAL', 'MORAY', 'MORES', 'MORNS', 'MORON', 'MOSEY', 'MOSSY', 'MOTEL',
+  'MOTES', 'MOTHS', 'MOTIF', 'MOTOR', 'MOTTO', 'MOUND', 'MOUNT', 'MOURN', 'MOUSE', 'MOUSY',
+  'MOUTH', 'MOVED', 'MOVER', 'MOVES', 'MOVIE', 'MOWED', 'MOWER', 'MUCKS', 'MUCKY', 'MUCUS',
+  'MUDDY', 'MUFFS', 'MUFTI', 'MUGGY', 'MULCH', 'MULES', 'MULLS', 'MULTI', 'MUMMY', 'MUMPS',
+  'MUNCH', 'MUNGS', 'MURAL', 'MURKS', 'MURKY', 'MUSED', 'MUSES', 'MUSHY', 'MUSIC', 'MUSKY',
+  'MUSSY', 'MUSTS', 'MUSTY', 'MUTED', 'MUTER', 'MUTES', 'MUTTS', 'MYNAH', 'MYNAS', 'MYRRH',
+  'MYTHS', 'NABOB', 'NACHO', 'NACRE', 'NADIR', 'NAIAD', 'NAILS', 'NAIVE', 'NAKED', 'NAMED',
+  'NAMES', 'NANNY', 'NAPES', 'NAPPY', 'NARCS', 'NARKS', 'NASAL', 'NASTY', 'NATAL', 'NATTY',
+  'NAVAL', 'NAVEL', 'NAVES', 'NEARS', 'NEATH', 'NECKS', 'NEEDS', 'NEEDY', 'NEIGH', 'NERDS',
+  'NERDY', 'NERVE', 'NERVY', 'NESTS', 'NEVER', 'NEWEL', 'NEWER', 'NEWLY', 'NEWSY', 'NEWTS',
+  'NEXUS', 'NICER', 'NICHE', 'NICKS', 'NIECE', 'NIFTY', 'NIGGA', 'NIGHT', 'NIMBI', 'NINES',
+  'NINJA', 'NINNY', 'NINTH', 'NIPPY', 'NITER', 'NITES', 'NIXED', 'NIXES', 'NOBLE', 'NOBLY',
+  'NODAL', 'NODDY', 'NODES', 'NOELS', 'NOISE', 'NOISY', 'NOMAD', 'NONCE', 'NOOKS', 'NOOSE',
+  'NORMS', 'NORTH', 'NOSED', 'NOSES', 'NOSEY', 'NOTCH', 'NOTED', 'NOTES', 'NOUNS', 'NOVAE',
+  'NOVAS', 'NOVEL', 'NOWAY', 'NUDER', 'NUDES', 'NUDGE', 'NUKED', 'NUKES', 'NULLS', 'NUMBS',
+  'NURSE', 'NUTTY', 'NYLON', 'NYMPH', 'OAKEN', 'OAKUM', 'OARED', 'OASES', 'OASIS', 'OATEN',
+  'OATHS', 'OBESE', 'OBEYS', 'OBITS', 'OBOES', 'OCCUR', 'OCEAN', 'OCHER', 'OCHRE', 'OCTAL',
+  'OCTET', 'ODDER', 'ODDLY', 'ODIUM', 'ODORS', 'OFFAL', 'OFFED', 'OFFER', 'OFTEN', 'OGLED',
+  'OGLES', 'OGRES', 'OILED', 'OINKS', 'OKAYS', 'OKRAS', 'OLDEN', 'OLDER', 'OLDIE', 'OLIVE',
+  'OMEGA', 'OMENS', 'OMITS', 'ONION', 'ONSET', 'OOZED', 'OOZES', 'OPALS', 'OPENS', 'OPERA',
+  'OPINE', 'OPIUM', 'OPTED', 'OPTIC', 'ORALS', 'ORATE', 'ORBIT', 'ORDER', 'ORGAN', 'OSIER',
+  'OTHER', 'OTTER', 'OUGHT', 'OUNCE', 'OUSTS', 'OUTDO', 'OUTED', 'OUTER', 'OUTGO', 'OVALS',
+  'OVARY', 'OVENS', 'OVERS', 'OVERT', 'OVOID', 'OVULE', 'OWING', 'OWLET', 'OWNED', 'OWNER',
+  'OXBOW', 'OXIDE', 'OZONE', 'PACED', 'PACES', 'PACKS', 'PACTS', 'PADDY', 'PADRE', 'PAEAN',
+  'PAGAN', 'PAGED', 'PAGER', 'PAGES', 'PAILS', 'PAINS', 'PAINT', 'PAIRS', 'PALED', 'PALER',
+  'PALES', 'PALLS', 'PALMS', 'PALMY', 'PALSY', 'PANDA', 'PANEL', 'PANES', 'PANGS', 'PANIC',
+  'PANSY', 'PANTS', 'PANTY', 'PAPAL', 'PAPAS', 'PAPAW', 'PAPER', 'PARCH', 'PARED', 'PARES',
+  'PARKA', 'PARKS', 'PARRY', 'PARSE', 'PARTS', 'PARTY', 'PASHA', 'PASTA', 'PASTE', 'PASTS',
+  'PASTY', 'PATCH', 'PATES', 'PATHS', 'PATIO', 'PATSY', 'PATTY', 'PAUSE', 'PAVED', 'PAVES',
+  'PAWED', 'PAWLS', 'PAWNS', 'PAYED', 'PAYEE', 'PAYER', 'PEACE', 'PEACH', 'PEAKS', 'PEALS',
+  'PEARL', 'PEARS', 'PEASE', 'PECAN', 'PECKS', 'PEDAL', 'PEEKS', 'PEELS', 'PEEPS', 'PEERS',
+  'PEEVE', 'PEKOE', 'PELTS', 'PENAL', 'PENCE', 'PENDS', 'PENES', 'PENIS', 'PENNY', 'PEONS',
+  'PEONY', 'PEPPY', 'PERCH', 'PERIL', 'PERKS', 'PERKY', 'PERMS', 'PESKY', 'PESOS', 'PESTS',
+  'PETAL', 'PETER', 'PETTY', 'PEWEE', 'PHAGE', 'PHASE', 'PHIAL', 'PHISH', 'PHLOX', 'PHONE',
+  'PHONY', 'PHOTO', 'PHYLA', 'PIANO', 'PICKS', 'PICKY', 'PIECE', 'PIERS', 'PIETY', 'PIGGY',
+  'PIGMY', 'PIING', 'PIKED', 'PIKER', 'PIKES', 'PILAF', 'PILAU', 'PILAW', 'PILED', 'PILES',
+  'PILLS', 'PILOT', 'PIMPS', 'PINCH', 'PINED', 'PINES', 'PINGS', 'PINKS', 'PINKY', 'PINTO',
+  'PINTS', 'PINUP', 'PIOUS', 'PIPED', 'PIPER', 'PIPES', 'PIPIT', 'PIQUE', 'PITCH', 'PITHY',
+  'PITON', 'PIVOT', 'PIXEL', 'PIXIE', 'PIZZA', 'PLACE', 'PLAID', 'PLAIN', 'PLAIT', 'PLANE',
+  'PLANK', 'PLANS', 'PLANT', 'PLATE', 'PLAYS', 'PLAZA', 'PLEAD', 'PLEAS', 'PLEAT', 'PLIED',
+  'PLIES', 'PLODS', 'PLONK', 'PLOPS', 'PLOTS', 'PLOWS', 'PLOYS', 'PLUCK', 'PLUGS', 'PLUMB',
+  'PLUME', 'PLUMP', 'PLUMS', 'PLUNK', 'PLUSH', 'POACH', 'POCKS', 'PODIA', 'POEMS', 'POESY',
+  'POETS', 'POINT', 'POISE', 'POKED', 'POKER', 'POKES', 'POKEY', 'POLAR', 'POLED', 'POLES',
+  'POLIO', 'POLKA', 'POLLS', 'POLYP', 'PONDS', 'PONES', 'POOCH', 'POOHS', 'POOLS', 'POOPS',
+  'POPES', 'POPPA', 'POPPY', 'PORCH', 'PORED', 'PORES', 'PORNO', 'PORTS', 'POSED', 'POSER',
+  'POSES', 'POSIT', 'POSSE', 'POSTS', 'POTTY', 'POUCH', 'POUND', 'POURS', 'POUTS', 'POWER',
+  'POXES', 'PRANK', 'PRATE', 'PRAWN', 'PRAYS', 'PREEN', 'PREPS', 'PRESS', 'PREYS', 'PRICE',
+  'PRICK', 'PRICY', 'PRIDE', 'PRIED', 'PRIES', 'PRIGS', 'PRIME', 'PRIMP', 'PRINT', 'PRIOR',
+  'PRISM', 'PRIVY', 'PRIZE', 'PROBE', 'PRODS', 'PROFS', 'PROMO', 'PROMS', 'PRONE', 'PRONG',
+  'PROOF', 'PROPS', 'PROSE', 'PROSY', 'PROUD', 'PROVE', 'PROWL', 'PROWS', 'PROXY', 'PRUDE',
+  'PRUNE', 'PSALM', 'PSHAW', 'PSYCH', 'PUBIC', 'PUCKS', 'PUDGY', 'PUFFS', 'PUFFY', 'PUKED',
+  'PUKES', 'PULLS', 'PULPS', 'PULPY', 'PULSE', 'PUMAS', 'PUMPS', 'PUNCH', 'PUNKS', 'PUNTS',
+  'PUPAE', 'PUPAL', 'PUPAS', 'PUPIL', 'PUPPY', 'PUREE', 'PURER', 'PURGE', 'PURLS', 'PURRS',
+  'PURSE', 'PUSHY', 'PUSSY', 'PUTTS', 'PUTTY', 'PWNED', 'PYGMY', 'PYLON', 'PYRES', 'PYXES',
+  'QUACK', 'QUADS', 'QUAFF', 'QUAIL', 'QUAKE', 'QUALM', 'QUARK', 'QUART', 'QUASH', 'QUASI',
+  'QUAYS', 'QUEEN', 'QUEER', 'QUELL', 'QUERY', 'QUEST', 'QUEUE', 'QUICK', 'QUIDS', 'QUIET',
+  'QUILL', 'QUILT', 'QUINE', 'QUIPS', 'QUIRE', 'QUIRK', 'QUITE', 'QUITS', 'QUOIT', 'QUOTA',
+  'QUOTE', 'QUOTH', 'RABBI', 'RABID', 'RACED', 'RACER', 'RACES', 'RACKS', 'RADAR', 'RADII',
+  'RADIO', 'RADON', 'RAFTS', 'RAGAS', 'RAGED', 'RAGES', 'RAIDS', 'RAILS', 'RAINS', 'RAINY',
+  'RAISE', 'RAJAH', 'RAJAS', 'RAKED', 'RAKES', 'RALLY', 'RAMPS', 'RANCH', 'RANDY', 'RANGE',
+  'RANGY', 'RANKS', 'RANTS', 'RAPED', 'RAPES', 'RAPID', 'RARED', 'RARER', 'RARES', 'RASPS',
+  'RASPY', 'RATED', 'RATES', 'RATIO', 'RATTY', 'RAVED', 'RAVEL', 'RAVEN', 'RAVES', 'RAWER',
+  'RAYON', 'RAZED', 'RAZES', 'RAZOR', 'REACH', 'REACT', 'READS', 'READY', 'REALM', 'REALS',
+  'REAMS', 'REAPS', 'REARM', 'REARS', 'REBEL', 'REBUS', 'REBUT', 'RECAP', 'RECTA', 'RECUR',
+  'REDID', 'REEDS', 'REEDY', 'REEFS', 'REEKS', 'REELS', 'REEVE', 'REFER', 'REFIT', 'REGAL',
+  'REHAB', 'REIGN', 'REINS', 'RELAX', 'RELAY', 'RELIC', 'REMIT', 'RENAL', 'RENDS', 'RENEW',
+  'RENTS', 'REORG', 'REPAY', 'REPEL', 'REPLY', 'RERAN', 'RERUN', 'RESET', 'RESIN', 'RESTS',
+  'RETCH', 'RETRY', 'REUSE', 'REVEL', 'REVUE', 'RHEAS', 'RHEUM', 'RHINO', 'RHYME', 'RICED',
+  'RICES', 'RICKS', 'RIDER', 'RIDES', 'RIDGE', 'RIFER', 'RIFFS', 'RIFLE', 'RIFTS', 'RIGHT',
+  'RIGID', 'RIGOR', 'RILED', 'RILES', 'RILLS', 'RIMED', 'RIMES', 'RINDS', 'RINGS', 'RINKS',
+  'RINSE', 'RIOTS', 'RIPEN', 'RIPER', 'RISEN', 'RISER', 'RISES', 'RISKS', 'RISKY', 'RITES',
+  'RITZY', 'RIVAL', 'RIVEN', 'RIVER', 'RIVET', 'ROACH', 'ROADS', 'ROAMS', 'ROANS', 'ROARS',
+  'ROAST', 'ROBED', 'ROBES', 'ROBIN', 'ROBOT', 'ROCKS', 'ROCKY', 'RODEO', 'ROGER', 'ROGUE',
+  'ROILS', 'ROLES', 'ROLLS', 'ROMAN', 'ROMPS', 'ROODS', 'ROOFS', 'ROOKS', 'ROOMS', 'ROOMY',
+  'ROOST', 'ROOTS', 'ROPED', 'ROPES', 'ROSES', 'ROSIN', 'ROTOR', 'ROUGE', 'ROUGH', 'ROUND',
+  'ROUSE', 'ROUTE', 'ROUTS', 'ROVED', 'ROVER', 'ROVES', 'ROWDY', 'ROWED', 'ROWEL', 'ROWER',
+  'ROYAL', 'RUBES', 'RUBLE', 'RUDDY', 'RUDER', 'RUFFS', 'RUGBY', 'RUING', 'RUINS', 'RULED',
+  'RULER', 'RULES', 'RUMBA', 'RUMMY', 'RUMOR', 'RUMPS', 'RUNES', 'RUNGS', 'RUNIC', 'RUNNY',
+  'RUNTS', 'RUPEE', 'RURAL', 'RUSES', 'RUSKS', 'RUSTS', 'RUSTY', 'SABER', 'SABLE', 'SABRE',
+  'SACKS', 'SADES', 'SADLY', 'SAFER', 'SAFES', 'SAGAS', 'SAGER', 'SAGES', 'SAHIB', 'SAILS',
+  'SAINT', 'SAITH', 'SALAD', 'SALES', 'SALLY', 'SALON', 'SALSA', 'SALTS', 'SALTY', 'SALVE',
+  'SALVO', 'SAMBA', 'SAMES', 'SANDS', 'SANDY', 'SANER', 'SAPPY', 'SAREE', 'SARIS', 'SASSY',
+  'SATAY', 'SATED', 'SATES', 'SATIN', 'SATYR', 'SAUCE', 'SAUCY', 'SAUNA', 'SAVED', 'SAVER',
+  'SAVES', 'SAVOR', 'SAVVY', 'SAWED', 'SAXES', 'SCABS', 'SCADS', 'SCAGS', 'SCALD', 'SCALE',
+  'SCALP', 'SCALY', 'SCAMP', 'SCAMS', 'SCANS', 'SCANT', 'SCARE', 'SCARF', 'SCARS', 'SCARY',
+  'SCATS', 'SCENE', 'SCENT', 'SCHWA', 'SCION', 'SCOFF', 'SCOLD', 'SCONE', 'SCOOP', 'SCOOT',
+  'SCOPE', 'SCORE', 'SCORN', 'SCOUR', 'SCOUT', 'SCOWL', 'SCOWS', 'SCRAM', 'SCRAP', 'SCREW',
+  'SCRIP', 'SCROD', 'SCROG', 'SCRUB', 'SCUBA', 'SCUDS', 'SCUFF', 'SCULL', 'SCUMS', 'SCURF',
+  'SEALS', 'SEAMS', 'SEAMY', 'SEARS', 'SEATS', 'SECTS', 'SEDAN', 'SEDGE', 'SEEDS', 'SEEDY',
+  'SEEKS', 'SEEMS', 'SEEPS', 'SEERS', 'SEGUE', 'SEIZE', 'SELLS', 'SEMEN', 'SEMIS', 'SENDS',
+  'SENNA', 'SENSE', 'SEPAL', 'SEPIA', 'SEPTA', 'SERER', 'SERFS', 'SERGE', 'SERUM', 'SERVE',
+  'SERVO', 'SETUP', 'SEVEN', 'SEVER', 'SEWED', 'SEWER', 'SEXED', 'SEXES', 'SHACK', 'SHADE',
+  'SHADS', 'SHADY', 'SHAFT', 'SHAGS', 'SHAHS', 'SHAKE', 'SHAKY', 'SHALE', 'SHALL', 'SHALT',
+  'SHAME', 'SHAMS', 'SHANK', 'SHAPE', 'SHARD', 'SHARE', 'SHARK', 'SHARP', 'SHAVE', 'SHAWL',
+  'SHEAF', 'SHEAR', 'SHEDS', 'SHEEN', 'SHEEP', 'SHEER', 'SHEET', 'SHEIK', 'SHELF', 'SHELL',
+  'SHERD', 'SHIED', 'SHIES', 'SHIFT', 'SHILL', 'SHIMS', 'SHINE', 'SHINS', 'SHINY', 'SHIPS',
+  'SHIRE', 'SHIRK', 'SHIRR', 'SHIRT', 'SHITS', 'SHLEP', 'SHOAL', 'SHOCK', 'SHOED', 'SHOES',
+  'SHONE', 'SHOOK', 'SHOON', 'SHOOS', 'SHOOT', 'SHOPS', 'SHORE', 'SHORN', 'SHORT', 'SHOTS',
+  'SHOUT', 'SHOVE', 'SHOWN', 'SHOWS', 'SHOWY', 'SHRED', 'SHREW', 'SHRUB', 'SHRUG', 'SHTIK',
+  'SHUCK', 'SHUNS', 'SHUNT', 'SHUSH', 'SHUTS', 'SHYER', 'SHYLY', 'SIBYL', 'SICKS', 'SIDED',
+  'SIDES', 'SIDLE', 'SIEGE', 'SIEVE', 'SIFTS', 'SIGHS', 'SIGHT', 'SIGMA', 'SIGNS', 'SILKS',
+  'SILKY', 'SILLS', 'SILLY', 'SILOS', 'SILTS', 'SINCE', 'SINEW', 'SINGE', 'SINGS', 'SINKS',
+  'SINUS', 'SIRED', 'SIREN', 'SIRES', 'SIRUP', 'SISAL', 'SISES', 'SISSY', 'SITAR', 'SITED',
+  'SITES', 'SIXES', 'SIXTH', 'SIXTY', 'SIZED', 'SIZER', 'SIZES', 'SKATE', 'SKEET', 'SKEIN',
+  'SKEWS', 'SKIDS', 'SKIED', 'SKIER', 'SKIES', 'SKIFF', 'SKILL', 'SKIMP', 'SKIMS', 'SKINS',
+  'SKIPS', 'SKIRT', 'SKITS', 'SKULK', 'SKULL', 'SKUNK', 'SKYED', 'SLABS', 'SLACK', 'SLAGS',
+  'SLAIN', 'SLAKE', 'SLAMS', 'SLANG', 'SLANT', 'SLAPS', 'SLASH', 'SLATE', 'SLATS', 'SLAVE',
+  'SLAYS', 'SLEDS', 'SLEEK', 'SLEEP', 'SLEET', 'SLEPT', 'SLEWS', 'SLICE', 'SLICK', 'SLIDE',
+  'SLIER', 'SLILY', 'SLIME', 'SLIMS', 'SLIMY', 'SLING', 'SLINK', 'SLIPS', 'SLITS', 'SLOBS',
+  'SLOES', 'SLOGS', 'SLOOP', 'SLOPE', 'SLOPS', 'SLOSH', 'SLOTH', 'SLOTS', 'SLOWS', 'SLUED',
+  'SLUES', 'SLUGS', 'SLUMP', 'SLUMS', 'SLUNG', 'SLUNK', 'SLURP', 'SLURS', 'SLUSH', 'SLUTS',
+  'SLYER', 'SLYLY', 'SMACK', 'SMALL', 'SMART', 'SMASH', 'SMEAR', 'SMELL', 'SMELT', 'SMILE',
+  'SMIRK', 'SMITE', 'SMITH', 'SMOCK', 'SMOKE', 'SMOKY', 'SMOTE', 'SMURF', 'SMUTS', 'SNACK',
+  'SNAFU', 'SNAGS', 'SNAIL', 'SNAKE', 'SNAKY', 'SNAPS', 'SNARE', 'SNARF', 'SNARK', 'SNARL',
+  'SNEAK', 'SNEER', 'SNIDE', 'SNIFF', 'SNIPE', 'SNIPS', 'SNITS', 'SNOBS', 'SNOOP', 'SNOOT',
+  'SNORE', 'SNORT', 'SNOTS', 'SNOUT', 'SNOWS', 'SNOWY', 'SNUBS', 'SNUCK', 'SNUFF', 'SNUGS',
+  'SOAKS', 'SOAPS', 'SOAPY', 'SOARS', 'SOBER', 'SOCKS', 'SODAS', 'SOFAS', 'SOFTY', 'SOGGY',
+  'SOILS', 'SOLAR', 'SOLED', 'SOLES', 'SOLID', 'SOLOS', 'SOLVE', 'SONAR', 'SONGS', 'SONIC',
+  'SONNY', 'SOOTH', 'SOOTY', 'SOPPY', 'SORER', 'SORES', 'SORRY', 'SORTA', 'SORTS', 'SOUGH',
+  'SOULS', 'SOUND', 'SOUPS', 'SOUPY', 'SOURS', 'SOUSE', 'SOUTH', 'SOWED', 'SOWER', 'SPACE',
+  'SPACY', 'SPADE', 'SPAKE', 'SPAMS', 'SPANK', 'SPANS', 'SPARE', 'SPARK', 'SPARS', 'SPASM',
+  'SPATE', 'SPATS', 'SPAWN', 'SPAYS', 'SPEAK', 'SPEAR', 'SPECK', 'SPECS', 'SPEED', 'SPELL',
+  'SPELT', 'SPEND', 'SPENT', 'SPERM', 'SPEWS', 'SPICE', 'SPICY', 'SPIED', 'SPIEL', 'SPIES',
+  'SPIKE', 'SPIKY', 'SPILL', 'SPILT', 'SPINE', 'SPINS', 'SPINY', 'SPIRE', 'SPITE', 'SPITS',
+  'SPLAT', 'SPLAY', 'SPLIT', 'SPOIL', 'SPOKE', 'SPOOF', 'SPOOK', 'SPOOL', 'SPOON', 'SPOOR',
+  'SPORE', 'SPORT', 'SPOTS', 'SPOUT', 'SPRAT', 'SPRAY', 'SPREE', 'SPRIG', 'SPUDS', 'SPUME',
+  'SPUNK', 'SPURN', 'SPURS', 'SPURT', 'SQUAB', 'SQUAD', 'SQUAT', 'SQUAW', 'SQUID', 'STABS',
+  'STACK', 'STAFF', 'STAGE', 'STAGS', 'STAID', 'STAIN', 'STAIR', 'STAKE', 'STALE', 'STALK',
+  'STALL', 'STAMP', 'STAND', 'STANK', 'STAPH', 'STARE', 'STARK', 'STARS', 'START', 'STASH',
+  'STATE', 'STATS', 'STAVE', 'STAYS', 'STDIO', 'STEAD', 'STEAK', 'STEAL', 'STEAM', 'STEED',
+  'STEEL', 'STEEP', 'STEER', 'STEIN', 'STEMS', 'STENT', 'STEPS', 'STERN', 'STEWS', 'STICK',
+  'STIES', 'STIFF', 'STILE', 'STILL', 'STILT', 'STING', 'STINK', 'STINT', 'STIRS', 'STOAT',
+  'STOCK', 'STOIC', 'STOKE', 'STOLE', 'STOMP', 'STONE', 'STONY', 'STOOD', 'STOOL', 'STOOP',
+  'STOPS', 'STORE', 'STORK', 'STORM', 'STORY', 'STOUT', 'STOVE', 'STOWS', 'STRAP', 'STRAW',
+  'STRAY', 'STREP', 'STREW', 'STRIP', 'STROP', 'STRUM', 'STRUT', 'STUBS', 'STUCK', 'STUDS',
+  'STUDY', 'STUFF', 'STUMP', 'STUNG', 'STUNK', 'STUNS', 'STUNT', 'STYES', 'STYLE', 'STYLI',
+  'SUAVE', 'SUCKS', 'SUDSY', 'SUEDE', 'SUGAR', 'SUING', 'SUITE', 'SUITS', 'SULKS', 'SULKY',
+  'SULLY', 'SUMAC', 'SUMPS', 'SUNNY', 'SUNUP', 'SUPER', 'SURER', 'SURFS', 'SURGE', 'SURLY',
+  'SUSHI', 'SWABS', 'SWAGS', 'SWAIN', 'SWAMI', 'SWAMP', 'SWANK', 'SWANS', 'SWAPS', 'SWARD',
+  'SWARM', 'SWASH', 'SWATH', 'SWATS', 'SWAYS', 'SWEAR', 'SWEAT', 'SWEEP', 'SWEET', 'SWELL',
+  'SWEPT', 'SWIFT', 'SWIGS', 'SWILL', 'SWIMS', 'SWINE', 'SWING', 'SWIPE', 'SWIRL', 'SWISH',
+  'SWOON', 'SWOOP', 'SWOPS', 'SWORD', 'SWORE', 'SWORN', 'SWUNG', 'SYLPH', 'SYNCH', 'SYNCS',
+  'SYNOD', 'SYRUP', 'SYSOP', 'TABBY', 'TABLE', 'TABOO', 'TABUS', 'TACIT', 'TACKS', 'TACKY',
+  'TACOS', 'TAFFY', 'TAILS', 'TAINT', 'TAKEN', 'TAKER', 'TAKES', 'TALES', 'TALKS', 'TALLY',
+  'TALON', 'TAMED', 'TAMER', 'TAMES', 'TAMPS', 'TANGO', 'TANGS', 'TANGY', 'TANKS', 'TANSY',
+  'TAPED', 'TAPER', 'TAPES', 'TAPIR', 'TARDY', 'TARED', 'TARES', 'TAROS', 'TAROT', 'TARPS',
+  'TARRY', 'TARTS', 'TASER', 'TASKS', 'TASTE', 'TASTY', 'TATTY', 'TAUNT', 'TAUPE', 'TAWNY',
+  'TAXED', 'TAXES', 'TAXIS', 'TEACH', 'TEAKS', 'TEALS', 'TEAMS', 'TEARS', 'TEARY', 'TEASE',
+  'TEATS', 'TECHS', 'TEEMS', 'TEENS', 'TEENY', 'TEETH', 'TELEX', 'TELLS', 'TEMPI', 'TEMPO',
+  'TEMPS', 'TEMPT', 'TENDS', 'TENET', 'TENON', 'TENOR', 'TENSE', 'TENTH', 'TENTS', 'TEPEE',
+  'TEPID', 'TERMS', 'TERNS', 'TERRY', 'TERSE', 'TESTS', 'TESTY', 'TEXTS', 'THANK', 'THAWS',
+  'THEES', 'THEFT', 'THEIR', 'THEME', 'THERE', 'THESE', 'THETA', 'THICK', 'THIEF', 'THIGH',
+  'THINE', 'THING', 'THINK', 'THINS', 'THIRD', 'THONG', 'THORN', 'THOSE', 'THOUS', 'THREE',
+  'THREW', 'THROB', 'THROE', 'THROW', 'THRUM', 'THUDS', 'THUGS', 'THUMB', 'THUMP', 'THUNK',
+  'THYME', 'THYMI', 'TIARA', 'TIBIA', 'TICKS', 'TIDAL', 'TIDED', 'TIDES', 'TIERS', 'TIFFS',
+  'TIGER', 'TIGHT', 'TIKES', 'TILDE', 'TILED', 'TILES', 'TILLS', 'TILTS', 'TIMED', 'TIMER',
+  'TIMES', 'TIMID', 'TINES', 'TINGE', 'TINGS', 'TINNY', 'TINTS', 'TIPIS', 'TIPSY', 'TIRED',
+  'TIRES', 'TIROS', 'TITAN', 'TITHE', 'TITLE', 'TIZZY', 'TOADS', 'TOADY', 'TOAST', 'TODAY',
+  'TODDY', 'TOFFY', 'TOGAE', 'TOGAS', 'TOILS', 'TOKED', 'TOKEN', 'TOKES', 'TOLLS', 'TOMBS',
+  'TOMES', 'TONAL', 'TONED', 'TONER', 'TONES', 'TONGS', 'TONIC', 'TONNE', 'TOOLS', 'TOOTH',
+  'TOOTS', 'TOPAZ', 'TOPIC', 'TOQUE', 'TORCH', 'TORSI', 'TORSO', 'TORTE', 'TORTS', 'TORUS',
+  'TOTAL', 'TOTED', 'TOTEM', 'TOTES', 'TOUCH', 'TOUGH', 'TOURS', 'TOUTS', 'TOWED', 'TOWEL',
+  'TOWER', 'TOWNS', 'TOXIC', 'TOXIN', 'TOYED', 'TRACE', 'TRACK', 'TRACT', 'TRADE', 'TRAIL',
+  'TRAIN', 'TRAIT', 'TRAMP', 'TRAMS', 'TRANS', 'TRAPS', 'TRASH', 'TRAWL', 'TRAYS', 'TREAD',
+  'TREAS', 'TREAT', 'TREED', 'TREES', 'TREKS', 'TREND', 'TRESS', 'TRIAD', 'TRIAL', 'TRIBE',
+  'TRICE', 'TRICK', 'TRIED', 'TRIES', 'TRIKE', 'TRILL', 'TRIMS', 'TRIOS', 'TRIPE', 'TRIPS',
+  'TRITE', 'TROLL', 'TROMP', 'TRONS', 'TROOP', 'TROPE', 'TROTH', 'TROTS', 'TROUT', 'TROYS',
+  'TRUCE', 'TRUCK', 'TRUED', 'TRUER', 'TRUES', 'TRULY', 'TRUMP', 'TRUNK', 'TRUSS', 'TRUST',
+  'TRUTH', 'TRYST', 'TSARS', 'TUBAS', 'TUBBY', 'TUBED', 'TUBER', 'TUBES', 'TUCKS', 'TUFTS',
+  'TULIP', 'TULLE', 'TUMID', 'TUMMY', 'TUMOR', 'TUNAS', 'TUNED', 'TUNER', 'TUNES', 'TUNIC',
+  'TUNNY', 'TURDS', 'TURFS', 'TURNS', 'TUSKS', 'TUTOR', 'TUTUS', 'TUXES', 'TWAIN', 'TWANG',
+  'TWEAK', 'TWEED', 'TWEET', 'TWERK', 'TWERP', 'TWICE', 'TWIGS', 'TWILL', 'TWINE', 'TWINK',
+  'TWINS', 'TWIRL', 'TWIST', 'TWITS', 'TYING', 'TYKES', 'TYPED', 'TYPES', 'TYPOS', 'TYROS',
+  'TZARS', 'UDDER', 'ULCER', 'ULNAE', 'ULNAS', 'ULTRA', 'UMBEL', 'UMBER', 'UMIAK', 'UMPED',
+  'UNBAR', 'UNCLE', 'UNCUT', 'UNDER', 'UNDID', 'UNDUE', 'UNFIT', 'UNIFY', 'UNION', 'UNITE',
+  'UNITS', 'UNITY', 'UNMAN', 'UNPIN', 'UNSAY', 'UNSET', 'UNTIE', 'UNTIL', 'UNWED', 'UNZIP',
+  'UPEND', 'UPPED', 'UPPER', 'UPSET', 'URBAN', 'URGED', 'URGES', 'URINE', 'USAGE', 'USERS',
+  'USHER', 'USING', 'USUAL', 'USURP', 'USURY', 'UTERI', 'UTTER', 'UVULA', 'VACUA', 'VAGUE',
+  'VALES', 'VALET', 'VALID', 'VALOR', 'VALUE', 'VALVE', 'VAMPS', 'VANES', 'VAPED', 'VAPES',
+  'VAPID', 'VAPOR', 'VASES', 'VASTS', 'VAULT', 'VAUNT', 'VEEPS', 'VEERS', 'VEGAN', 'VEILS',
+  'VEINS', 'VELDS', 'VELDT', 'VENAL', 'VENDS', 'VENOM', 'VENTS', 'VENUE', 'VERBS', 'VERGE',
+  'VERSE', 'VERVE', 'VESTS', 'VETCH', 'VEXED', 'VEXES', 'VIALS', 'VIAND', 'VIBES', 'VICAR',
+  'VICED', 'VICES', 'VIDEO', 'VIEWS', 'VIGIL', 'VIGOR', 'VILER', 'VILLA', 'VINES', 'VINYL',
+  'VIOLA', 'VIOLS', 'VIPER', 'VIRAL', 'VIREO', 'VIRUS', 'VISAS', 'VISED', 'VISES', 'VISIT',
+  'VISOR', 'VISTA', 'VITAL', 'VIVAS', 'VIVID', 'VIXEN', 'VIZOR', 'VOCAL', 'VODKA', 'VOGUE',
+  'VOICE', 'VOIDS', 'VOILE', 'VOLES', 'VOLTS', 'VOMIT', 'VOTED', 'VOTER', 'VOTES', 'VOUCH',
+  'VOWED', 'VOWEL', 'VULVA', 'VYING', 'WACKO', 'WACKS', 'WACKY', 'WADED', 'WADER', 'WADES',
+  'WADIS', 'WAFER', 'WAFTS', 'WAGED', 'WAGER', 'WAGES', 'WAGON', 'WAIFS', 'WAILS', 'WAIST',
+  'WAITS', 'WAIVE', 'WAKED', 'WAKEN', 'WAKES', 'WALDO', 'WALED', 'WALES', 'WALKS', 'WALLS',
+  'WALTZ', 'WANDS', 'WANED', 'WANES', 'WANKS', 'WANLY', 'WANNA', 'WANTS', 'WARDS', 'WARES',
+  'WAREZ', 'WARMS', 'WARNS', 'WARPS', 'WARTS', 'WARTY', 'WASPS', 'WASTE', 'WATCH', 'WATER',
+  'WATTS', 'WAVED', 'WAVER', 'WAVES', 'WAXED', 'WAXEN', 'WAXES', 'WEALS', 'WEANS', 'WEARS',
+  'WEARY', 'WEAVE', 'WEDGE', 'WEEDS', 'WEEDY', 'WEEKS', 'WEEPS', 'WEEPY', 'WEEST', 'WEFTS',
+  'WEIGH', 'WEIRD', 'WEIRS', 'WELCH', 'WELDS', 'WELLS', 'WELSH', 'WELTS', 'WENCH', 'WENDS',
+  'WETLY', 'WHACK', 'WHALE', 'WHAMS', 'WHARF', 'WHATS', 'WHEAL', 'WHEAT', 'WHEEL', 'WHELK',
+  'WHELP', 'WHENS', 'WHERE', 'WHETS', 'WHICH', 'WHIFF', 'WHILE', 'WHIMS', 'WHINE', 'WHINY',
+  'WHIPS', 'WHIRL', 'WHIRR', 'WHIRS', 'WHISK', 'WHIST', 'WHITE', 'WHITS', 'WHIZZ', 'WHOLE',
+  'WHOOP', 'WHORE', 'WHORL', 'WHOSE', 'WICKS', 'WIDEN', 'WIDER', 'WIDOW', 'WIDTH', 'WIELD',
+  'WIGHT', 'WIKIS', 'WILDS', 'WILED', 'WILES', 'WILLS', 'WILTS', 'WIMPS', 'WIMPY', 'WINCE',
+  'WINCH', 'WINDS', 'WINDY', 'WINED', 'WINES', 'WINGS', 'WINKS', 'WINOS', 'WIPED', 'WIPER',
+  'WIPES', 'WIRED', 'WIRES', 'WISER', 'WISES', 'WISPS', 'WISPY', 'WITCH', 'WITTY', 'WIVES',
+  'WIZES', 'WOKEN', 'WOLFS', 'WOMAN', 'WOMBS', 'WOMEN', 'WONKY', 'WOODS', 'WOODY', 'WOOED',
+  'WOOER', 'WOOFS', 'WOOLY', 'WOOZY', 'WORDS', 'WORDY', 'WORKS', 'WORLD', 'WORMS', 'WORMY',
+  'WORRY', 'WORSE', 'WORST', 'WORTH', 'WOULD', 'WOUND', 'WOVEN', 'WOWED', 'WRACK', 'WRAPS',
+  'WRAPT', 'WRATH', 'WREAK', 'WRECK', 'WRENS', 'WREST', 'WRIER', 'WRING', 'WRIST', 'WRITE',
+  'WRITS', 'WRONG', 'WROTE', 'WROTH', 'WRUNG', 'WRYER', 'WRYLY', 'XCVII', 'XENON', 'XREFS',
+  'XTERM', 'XVIII', 'XXIII', 'XXVII', 'XXXII', 'XXXIV', 'XXXIX', 'XXXVI', 'XYLEM', 'YACHT',
+  'YACKS', 'YAHOO', 'YANKS', 'YARDS', 'YARNS', 'YAWED', 'YAWLS', 'YAWNS', 'YEAHS', 'YEARN',
+  'YEARS', 'YEAST', 'YELLS', 'YELPS', 'YESES', 'YIELD', 'YOCKS', 'YODEL', 'YOGIN', 'YOGIS',
+  'YOKED', 'YOKEL', 'YOKES', 'YOLKS', 'YOUNG', 'YOURS', 'YOUTH', 'YOWLS', 'YUCCA', 'YUCKS',
+  'YUCKY', 'YUMMY', 'YUPPY', 'ZEBRA', 'ZEBUS', 'ZEROS', 'ZESTS', 'ZILCH', 'ZINCS', 'ZINGS',
+  'ZIPPY', 'ZOMBI', 'ZONAL', 'ZONED', 'ZONES', 'ZOOMS', 'ZORCH'
+];
+
+const VALID_GUESS_SET = new Set(LEXIGRID_VALID_GUESSES);
+
+// ---------- daily selection ----------
+function getTodayIndex(wordCount) {
+  const epoch = new Date(2024, 0, 1); // fixed reference date
+  const today = new Date();
+  const daysSince = Math.floor((today.setHours(0,0,0,0) - epoch.setHours(0,0,0,0)) / 86400000);
+  return { index: ((daysSince % wordCount) + wordCount) % wordCount, dayNumber: daysSince + 1 };
+}
+const TODAY = getTodayIndex(WORDS.length);
+const TARGET = WORDS[TODAY.index];
+
+// ---------- scoring (tested standalone against known tricky duplicate-letter
+// cases before use — adapted directly from the verified concept render, not
+// reimplemented from a description) ----------
+function scoreGuess(guess, target) {
+  const result = Array(5).fill('gray');
+  const pool = {};
+  for (let i = 0; i < 5; i++) {
+    if (guess[i] === target[i]) result[i] = 'green';
+    else pool[target[i]] = (pool[target[i]] || 0) + 1;
+  }
+  for (let i = 0; i < 5; i++) {
+    if (result[i] === 'green') continue;
+    const c = guess[i];
+    if (pool[c] > 0) { result[i] = 'yellow'; pool[c]--; }
+  }
+  return result;
+}
+
+const KEY_PRIORITY = { green: 3, yellow: 2, gray: 1 };
+function buildKeyState(guesses) {
+  const keyState = {};
+  for (const { word, result } of guesses) {
+    for (let i = 0; i < 5; i++) {
+      const c = word[i], state = result[i];
+      if (!keyState[c] || KEY_PRIORITY[state] > KEY_PRIORITY[keyState[c]]) keyState[c] = state;
+    }
+  }
+  return keyState;
+}
+
+// ---------- layout ----------
+const TILE = 48, GAP = 6;
+const GRID_W = 5 * TILE + 4 * GAP, GRID_H = 6 * TILE + 5 * GAP;
+const GX = (LOGICAL_W - GRID_W) / 2, GY = 44;
+
+const ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+function computeKeyboardLayout() {
+  const startY = GY + GRID_H + 16;
+  const keyH = 38, gap = 5, unitW = 30;
+  const layout = [];
+  ROWS.forEach((row, ri) => {
+    let keys = row.split('');
+    if (ri === 2) keys = ['ENTER', ...keys, 'DEL'];
+    const totalW = keys.reduce((sum, k) => sum + (k.length > 1 ? unitW * 1.6 : unitW), 0) + gap * (keys.length - 1);
+    let x = (LOGICAL_W - totalW) / 2;
+    const y = startY + ri * (keyH + gap);
+    for (const k of keys) {
+      const w = k.length > 1 ? unitW * 1.6 : unitW;
+      layout.push({ key: k, x, y, w, h: keyH });
+      x += w + gap;
+    }
+  });
+  return layout;
+}
+const KEYBOARD_LAYOUT = computeKeyboardLayout();
+
+// ---------- audio (procedural Web Audio, no files) ----------
+let audioCtx = null;
+let muted = sessionStorage.getItem('lexigridMuted') === '1';
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playKeyClick() { tone(520, 0.035, 'sine', 0.05); }
+function playInvalidBuzz() { tone(140, 0.25, 'sawtooth', 0.12); }
+function playFlipTick(i) { tone(420 + i * 45, 0.05, 'square', 0.06); }
+function playWinFanfare() {
+  tone(523, 0.12, 'triangle', 0.14);
+  tone(659, 0.12, 'triangle', 0.13, 0.1);
+  tone(784, 0.14, 'triangle', 0.12, 0.2);
+  tone(1047, 0.22, 'triangle', 0.13, 0.32);
+}
+function playLossTone() {
+  tone(300, 0.18, 'sine', 0.08);
+  tone(220, 0.35, 'sine', 0.07, 0.15);
+}
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('lexigridMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+// ---------- help overlay ----------
+// Matches the shelf's "?" help-button convention (see e.g. Plot Defender,
+// Trebuchet): sessionStorage-gated so it auto-shows once per tab, and stays
+// reachable any time via the button. Guessing input is blocked while it's
+// open so a player reading it doesn't accidentally type into their guess.
+let helpVisible = false;
+function showHelp() { helpVisible = true; helpOverlay.classList.add('visible'); }
+function hideHelp() { helpVisible = false; helpOverlay.classList.remove('visible'); }
+helpBtn.addEventListener('click', showHelp);
+helpCloseBtn.addEventListener('click', hideHelp);
+helpGotItBtn.addEventListener('click', hideHelp);
+
+// ---------- persistence ----------
+// Deliberate deviation from the shelf's sessionStorage convention: this must
+// survive tab close, or a player could just reopen the tab to replay today's
+// word, defeating the daily-puzzle premise.
+const PROGRESS_KEY = 'lexigrid_progress';
+const STATS_KEY = 'lexigrid_stats';
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (p.dayNumber !== TODAY.dayNumber) return null;
+    return p;
+  } catch (e) { return null; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); } catch (e) {}
+}
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STATS_KEY);
+    if (!raw) return { currentStreak: 0, maxStreak: 0, lastPlayedDayNumber: null };
+    return JSON.parse(raw);
+  } catch (e) { return { currentStreak: 0, maxStreak: 0, lastPlayedDayNumber: null }; }
+}
+function saveStats(s) {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch (e) {}
+}
+
+// ---------- game state ----------
+let guesses = [];       // [{ word, result }]
+let currentGuess = '';
+let currentRow = 0;
+let state = 'playing';  // playing | revealing | finished
+let finalStatus = null; // 'won' | 'lost'
+let keyState = {};
+let revealAnim = null;  // { row, t0 }
+let shakeAnim = null;   // { row, t0 }
+let toast = null;       // { text, t0 }
+let winBounce = null;   // { row, t0 }
+let freshGameStarted = false;
+let resultAnim = null;      // { t0, dismissed } - drives the win/loss panel's pop-in
+let resultHeadline = '';
+let resultStreakText = '';
+const RESULT_BUTTONS = {}; // populated by drawResultOverlay each frame it draws, for hit-testing
+
+const FLIP_DUR = 300, FLIP_STAGGER = 120;
+const RESULT_ANIM_DUR = 380;
+
+function rowRevealTotalMs() { return FLIP_STAGGER * 4 + FLIP_DUR; }
+
+// ease-out-back: overshoots past 1.0 slightly then settles - gives the
+// result panel a quick "pop" rather than a flat fade-in.
+function easeOutBack(t) {
+  const c1 = 1.70158, c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+
+function hitTest(r, x, y) {
+  return !!r && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h;
+}
+
+function showToast(text) { toast = { text, t0: performance.now() }; }
+
+function finalizeStats(won) {
+  const stats = loadStats();
+  if (won) {
+    if (stats.lastPlayedDayNumber === TODAY.dayNumber - 1) stats.currentStreak++;
+    else stats.currentStreak = 1;
+    stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
+  } else {
+    stats.currentStreak = 0;
+  }
+  stats.lastPlayedDayNumber = TODAY.dayNumber;
+  saveStats(stats);
+  return stats;
+}
+
+function enterResult(status, stats) {
+  const stat = stats || loadStats();
+  finalStatus = status;
+  resultHeadline = status === 'won' ? ('Solved in ' + guesses.length + '!') : 'Next word tomorrow';
+  resultStreakText = 'Current streak: ' + stat.currentStreak + ' · Best: ' + stat.maxStreak;
+  resultAnim = { t0: performance.now(), dismissed: false };
+}
+
+function finishGame(status) {
+  finalStatus = status;
+  state = 'finished';
+  saveProgress({ dayNumber: TODAY.dayNumber, guesses, status });
+  const stats = finalizeStats(status === 'won');
+  if (status === 'won') playWinFanfare(); else playLossTone();
+  setTimeout(() => enterResult(status, stats), 400);
+}
+
+function submitGuess() {
+  if (state !== 'playing' || helpVisible) return;
+  if (currentGuess.length < 5) {
+    showToast('Not enough letters');
+    shakeAnim = { row: currentRow, t0: performance.now() };
+    playInvalidBuzz();
+    return;
+  }
+  if (!VALID_GUESS_SET.has(currentGuess)) {
+    showToast('Not in word list');
+    shakeAnim = { row: currentRow, t0: performance.now() };
+    playInvalidBuzz();
+    return;
+  }
+  if (!freshGameStarted) { freshGameStarted = true; playPingBtn.click(); }
+  const result = scoreGuess(currentGuess, TARGET);
+  guesses.push({ word: currentGuess, result });
+  saveProgress({ dayNumber: TODAY.dayNumber, guesses, status: 'playing' });
+  state = 'revealing';
+  revealAnim = { row: currentRow, t0: performance.now(), played: [false, false, false, false, false] };
+}
+
+function completeReveal() {
+  keyState = buildKeyState(guesses);
+  const last = guesses[guesses.length - 1];
+  const won = last.result.every(r => r === 'green');
+  if (won) {
+    winBounce = { row: currentRow, t0: performance.now() };
+    setTimeout(() => finishGame('won'), 350);
+    state = 'finished-pending';
+  } else if (currentRow >= 5) {
+    setTimeout(() => finishGame('lost'), 150);
+    state = 'finished-pending';
+  } else {
+    currentRow++;
+    currentGuess = '';
+    state = 'playing';
+  }
+  revealAnim = null;
+}
+
+// ---------- input ----------
+function inputLetter(c) {
+  if (state !== 'playing' || helpVisible) return;
+  if (currentGuess.length >= 5) return;
+  currentGuess += c;
+  playKeyClick();
+}
+function inputDel() {
+  if (state !== 'playing' || helpVisible) return;
+  if (currentGuess.length === 0) return;
+  currentGuess = currentGuess.slice(0, -1);
+  playKeyClick();
+}
+function handleKey(k) {
+  if (k === 'ENTER') submitGuess();
+  else if (k === 'DEL') inputDel();
+  else inputLetter(k);
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (LOGICAL_W / rect.width);
+  const y = (e.clientY - rect.top) * (LOGICAL_H / rect.height);
+
+  if (resultAnim && !resultAnim.dismissed) {
+    if (hitTest(RESULT_BUTTONS.viewGrid, x, y)) { resultAnim.dismissed = true; return; }
+    if (hitTest(RESULT_BUTTONS.backToArcade, x, y)) { location.href = '../../index.html'; return; }
+    return; // swallow all other input while the result panel is up
+  }
+  if (resultAnim && resultAnim.dismissed) {
+    if (hitTest(RESULT_BUTTONS.reopen, x, y)) { resultAnim.dismissed = false; resultAnim.t0 = performance.now(); return; }
+  }
+
+  for (const k of KEYBOARD_LAYOUT) {
+    if (x >= k.x && x <= k.x + k.w && y >= k.y && y <= k.y + k.h) { handleKey(k.key); return; }
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (helpVisible) { if (e.key === 'Escape') hideHelp(); return; }
+  if (e.key === 'Enter') { submitGuess(); return; }
+  if (e.key === 'Backspace') { inputDel(); return; }
+  if (/^[a-zA-Z]$/.test(e.key)) { inputLetter(e.key.toUpperCase()); }
+});
+
+// ---------- drawing ----------
+function drawBackground() {
+  ctx.fillStyle = PAL.bg;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+}
+
+function drawHUD() {
+  ctx.fillStyle = PAL.hudText;
+  ctx.font = 'bold 18px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('LEXIGRID', 180, 18);
+  ctx.fillStyle = PAL.hudSub;
+  ctx.font = '11px -apple-system, sans-serif';
+  ctx.fillText('Day #' + TODAY.dayNumber, 180, 34);
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
+function tileColor(s) {
+  if (s === 'green') return PAL.green;
+  if (s === 'yellow') return PAL.yellow;
+  if (s === 'gray') return PAL.gray;
+  return null;
+}
+
+function drawGrid(now) {
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 5; c++) {
+      let x = GX + c * (TILE + GAP), y = GY + r * (TILE + GAP);
+
+      if (shakeAnim && shakeAnim.row === r) {
+        const age = now - shakeAnim.t0;
+        if (age < 300) x += Math.sin(age / 30) * 5 * (1 - age / 300);
+        else shakeAnim = null;
+      }
+
+      const submitted = r < guesses.length;
+      const isRevealingRow = revealAnim && revealAnim.row === r;
+      const isCurrentRow = r === currentRow && !submitted && !isRevealingRow;
+
+      let letter = '', fill = null, flipScaleX = 1;
+
+      if (submitted) {
+        letter = guesses[r].word[c];
+        fill = tileColor(guesses[r].result[c]);
+      } else if (isRevealingRow) {
+        const gr = guesses[r];
+        letter = gr.word[c];
+        const tileStart = c * FLIP_STAGGER;
+        const age = now - revealAnim.t0 - tileStart;
+        if (age < 0) {
+          fill = null; // not flipped yet - show as typed tile
+        } else if (age < FLIP_DUR) {
+          if (!revealAnim.played[c]) { revealAnim.played[c] = true; playFlipTick(c); }
+          const progress = age / FLIP_DUR;
+          flipScaleX = Math.abs(Math.cos(progress * Math.PI));
+          fill = progress < 0.5 ? null : tileColor(gr.result[c]);
+        } else {
+          fill = tileColor(gr.result[c]);
+        }
+      } else if (isCurrentRow) {
+        letter = currentGuess[c] || '';
+      }
+
+      let scaleY = 1;
+      if (winBounce && winBounce.row === r && submitted) {
+        const age = now - winBounce.t0 - c * 60;
+        if (age > 0 && age < 260) scaleY = 1 - 0.18 * Math.sin((age / 260) * Math.PI);
+      }
+
+      ctx.save();
+      ctx.translate(x + TILE / 2, y + TILE / 2);
+      ctx.scale(flipScaleX, scaleY);
+      ctx.translate(-(x + TILE / 2), -(y + TILE / 2));
+
+      if (fill) {
+        roundRect(x, y, TILE, TILE, 6);
+        ctx.fillStyle = fill;
+        ctx.fill();
+      } else {
+        roundRect(x, y, TILE, TILE, 6);
+        ctx.strokeStyle = letter ? PAL.tileFilledBorder : PAL.tileEmptyBorder;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      if (letter) {
+        ctx.fillStyle = PAL.tileText;
+        ctx.font = '700 ' + (TILE * 0.5) + 'px -apple-system, sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(letter, x + TILE / 2, y + TILE / 2 + 2);
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      }
+      ctx.restore();
+    }
+  }
+}
+
+function drawKeyboard() {
+  for (const k of KEYBOARD_LAYOUT) {
+    roundRect(k.x, k.y, k.w, k.h, 5);
+    const st = keyState[k.key];
+    ctx.fillStyle = st === 'green' ? PAL.green : st === 'yellow' ? PAL.yellow : st === 'gray' ? PAL.gray : PAL.keyBg;
+    ctx.fill();
+    ctx.fillStyle = PAL.keyText;
+    ctx.font = '600 ' + (k.key.length > 1 ? 9 : 13) + 'px -apple-system, sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(k.key, k.x + k.w / 2, k.y + k.h / 2 + 1);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+}
+
+function drawToast(now) {
+  if (!toast) return;
+  const age = now - toast.t0;
+  const visibleFor = 1000, fadeFor = 350;
+  if (age > visibleFor + fadeFor) { toast = null; return; }
+  const alpha = age < visibleFor ? 1 : Math.max(0, 1 - (age - visibleFor) / fadeFor);
+  ctx.font = '600 12px -apple-system, sans-serif';
+  const textW = ctx.measureText(toast.text).width;
+  const padX = 14, padY = 8;
+  const w = textW + padX * 2, h = 14 + padY * 2;
+  const x = LOGICAL_W / 2 - w / 2, y = GY + 26;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  roundRect(x, y, w, h, h / 2);
+  ctx.fillStyle = PAL.toastBg;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = PAL.tileText;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(toast.text, LOGICAL_W / 2, y + h / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.restore();
+}
+
+// Win: checkmark badge in the green accent. Loss: a crescent moon in a
+// muted neutral tone (ties to "come back tomorrow" rather than reading as
+// failure/alarm, matching the non-punishing loss tone specified for audio).
+function drawResultIcon(cx, cy, won) {
+  if (won) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+    ctx.fillStyle = PAL.green;
+    ctx.fill();
+    ctx.strokeStyle = PAL.tileText;
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, cy);
+    ctx.lineTo(cx - 2, cy + 7);
+    ctx.lineTo(cx + 9, cy - 8);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+    ctx.fillStyle = PAL.resultMuted;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 7, cy - 4, 14, 0, Math.PI * 2);
+    ctx.fillStyle = PAL.resultPanelBg;
+    ctx.fill();
+  }
+}
+
+const RESULT_PANEL_W = 280, RESULT_PANEL_H = 258;
+
+function drawResultOverlay(now) {
+  if (!resultAnim || resultAnim.dismissed) return;
+  const age = now - resultAnim.t0;
+  const t = Math.min(1, age / RESULT_ANIM_DUR);
+  const scale = 0.85 + easeOutBack(t) * 0.15;
+  const won = finalStatus === 'won';
+
+  ctx.fillStyle = PAL.resultBackdrop;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+  const cx = LOGICAL_W / 2, cy = LOGICAL_H / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+  ctx.translate(-cx, -cy);
+
+  const px = cx - RESULT_PANEL_W / 2, py = cy - RESULT_PANEL_H / 2;
+  roundRect(px, py, RESULT_PANEL_W, RESULT_PANEL_H, 18);
+  ctx.fillStyle = PAL.resultPanelBg;
+  ctx.fill();
+  ctx.strokeStyle = PAL.resultPanelBorder;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+
+  let y = py + 40;
+  drawResultIcon(cx, y, won);
+
+  y += 40;
+  ctx.font = '800 24px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.hudText;
+  ctx.fillText(resultHeadline, cx, y);
+
+  y += 32;
+  ctx.font = '700 16px -apple-system, sans-serif';
+  ctx.fillStyle = won ? PAL.green : PAL.yellow;
+  ctx.fillText(TARGET, cx, y);
+
+  y += 22;
+  ctx.strokeStyle = PAL.resultDivider;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(px + 30, y);
+  ctx.lineTo(px + RESULT_PANEL_W - 30, y);
+  ctx.stroke();
+
+  y += 22;
+  ctx.font = '700 14px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.yellow;
+  ctx.fillText('🔥 ' + resultStreakText, cx, y);
+
+  y += 36;
+  const btnW = 140, btnH = 34;
+  const btnX = cx - btnW / 2, btnY = y - btnH / 2;
+  roundRect(btnX, btnY, btnW, btnH, 17);
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.font = '700 13px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.tileText;
+  ctx.fillText('View grid', cx, btnY + btnH / 2 + 1);
+  RESULT_BUTTONS.viewGrid = { x: btnX, y: btnY, w: btnW, h: btnH };
+
+  y += 34;
+  ctx.font = '600 12px -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(244,241,234,0.7)';
+  ctx.fillText('← Back to Arcade', cx, y);
+  RESULT_BUTTONS.backToArcade = { x: cx - 60, y: y - 10, w: 120, h: 20 };
+
+  ctx.restore();
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+}
+
+function drawResultReopenTag() {
+  if (!(resultAnim && resultAnim.dismissed)) return;
+  const w = 64, h = 26, x = LOGICAL_W - 16 - w, y = 8;
+  roundRect(x, y, w, h, 13);
+  ctx.fillStyle = PAL.resultBackdrop;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.font = '700 11px -apple-system, sans-serif';
+  ctx.fillStyle = PAL.tileText;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('Result', x + w / 2, y + h / 2 + 1);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  RESULT_BUTTONS.reopen = { x, y, w, h };
+}
+
+function draw(now) {
+  ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+  drawBackground();
+  drawHUD();
+  drawGrid(now);
+  drawKeyboard();
+  drawToast(now);
+  drawResultOverlay(now);
+  drawResultReopenTag();
+
+  if (revealAnim && now - revealAnim.t0 >= rowRevealTotalMs()) {
+    completeReveal();
+  }
+}
+
+function loop(now) {
+  draw(now);
+  requestAnimationFrame(loop);
+}
+
+// A guess that finishes the game (win, or the 6th guess) is pushed into
+// `guesses` synchronously in submitGuess(), before the flip-reveal animation
+// or finishGame() ever run. If the tab closes mid-animation, the saved
+// progress can still say status: 'playing' even though the stored guesses
+// already decide the outcome — so resuming must derive the true status from
+// the guesses themselves, not trust the stored label.
+function deriveStatus(gs) {
+  if (gs.length === 0) return 'playing';
+  const last = gs[gs.length - 1];
+  if (last.result.every(r => r === 'green')) return 'won';
+  if (gs.length >= 6) return 'lost';
+  return 'playing';
+}
+
+// ---------- init: resume/restore today's progress if present ----------
+(function init() {
+  const progress = loadProgress();
+  if (progress) {
+    guesses = progress.guesses || [];
+    currentRow = guesses.length;
+    keyState = buildKeyState(guesses);
+    const derived = deriveStatus(guesses);
+    if (derived === 'won' || derived === 'lost') {
+      finalStatus = derived;
+      state = 'finished';
+      // Only run streak accounting once per completed game: if the stored
+      // status already matches, a previous session already finalized it.
+      const stats = progress.status === derived ? loadStats() : finalizeStats(derived === 'won');
+      if (progress.status !== derived) saveProgress({ dayNumber: TODAY.dayNumber, guesses, status: derived });
+      enterResult(derived, stats);
+    } else {
+      freshGameStarted = true;
+      state = 'playing';
+    }
+  }
+  // Auto-show the how-to-play overlay once per session, but only when the
+  // player is actually about to start guessing - not over an already-
+  // finished (read-only or freshly-won/lost) grid, where it'd just be
+  // clutter stacked on top of the result panel.
+  if (state === 'playing' && sessionStorage.getItem('lexigridSeenHelp') !== '1') {
+    sessionStorage.setItem('lexigridSeenHelp', '1');
+    showHelp();
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>
