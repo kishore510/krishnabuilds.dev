@@ -44,3 +44,6 @@ For each app: scan history for secrets and report before importing, import with 
 - [ ] Chalkline: pnpm conversion, remove the workspace exclusion, wire Cloudflare deploy to chalkline.krishnabuilds.dev, retire the GitHub Pages workflow
 - [ ] Chalkline: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
 - [ ] Align Chalkline's ESLint with the shared config when typescript-eslint supports TypeScript 7
+- [ ] Sumyard: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
+- [ ] Sumyard: add to the Portal app list
+- [ ] Sumyard: About's credits miss transitive dependencies (e.g. `scheduler`) under pnpm, because they are looked up in `apps/sumyard/node_modules`; resolve them properly

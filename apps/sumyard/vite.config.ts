@@ -43,7 +43,6 @@ const docsGuard: Plugin = {
       plan: read('./PLAN.md'),
       changelog: read('./CHANGELOG.md'),
       packageJson: read('./package.json'),
-      packageLock: read('./package-lock.json'),
     })
   },
 }

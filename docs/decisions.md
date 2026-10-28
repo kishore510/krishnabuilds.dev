@@ -81,3 +81,7 @@ Chalkline is on TypeScript 7 while the rest of the repo is on 6, and the shared 
 ## 2026-10-28 — No real personal financial data in the public repo
 
 Sumyard's mortgage cross-check file must never contain figures from real statements, and no real balances, salaries or account details go into any file in this public repo. Real-figure checking is done locally and not committed.
+
+## 2026-10-28 — Sumyard keeps Biome and deploys to sumyard.krishnabuilds.dev
+
+Sumyard deploys as a Worker with static assets, same pattern as Chalkline and the Portal. It keeps Biome for linting, because the shared ESLint config is for the other apps and Sumyard is on TypeScript 7. Revisit when typescript-eslint supports TypeScript 7.
