@@ -6,6 +6,7 @@ Small set of shared React components for krishnabuilds.dev apps.
 
 - **App list** (`apps`, `groups`, `statusLabels`, `isOpen`, `AppEntry`): the typed list of apps. The single source for the site header menu and the Portal's cards.
 - **`SiteHeader`**: site name, app links and theme toggle; collapses behind a menu button on narrow screens.
+- **`SiteLinks`**: unstyled home link plus links to the apps that can be opened, with the `current` app marked `aria-current="page"`. No CSS and no token variables: the app styles the `kb-site-links__*` class hooks or passes its own classes via `classNames`. For apps that put site links in their own menu (Chalkline).
 - **`ThemeToggle`** and `getTheme` / `setTheme`: Light / Dark / System, stored in the `kb-theme` cookie on `.krishnabuilds.dev` so every subdomain shares it.
 
 ## Use

@@ -1,8 +1,9 @@
 import { Blocks, CircleHelp, Download, EyeOff, FileCode, FileImage, FilePlus, FileText, FolderOpen, Info, ListChecks, Menu, NotebookPen, PenTool, ScrollText, Search, Settings, Sparkles, WandSparkles } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { SiteLinks } from '@krishnabuilds/ui'
 import { openGenerate, openNotes, openRefine, openReview, openSummarise } from '@/ai/GenerateEntry'
 import { useCanvasActions } from '@/canvas/useCanvasActions'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Panel } from '@/components/ui/panel'
 import { loadSample } from '@/fixtures/load'
 import type { Layout } from '@/hooks/useMediaQuery'
@@ -49,6 +50,27 @@ function Item({ icon, children, onClick, hint, pressed }: { icon: ReactNode; chi
 }
 
 const Divider = () => <div role="separator" className="my-1 h-px bg-border" />
+
+const siteLink = cn(buttonVariants({ variant: 'ghost' }), 'w-full justify-start')
+
+/** Link home and to the other krishnabuilds.dev apps, styled like the menu items. */
+function SiteSection() {
+  return (
+    // shrink-0: the panel scrolls, so its children must keep their height.
+    <div className="flex shrink-0 flex-col">
+      <SiteLinks
+        current="Chalkline"
+        classNames={{
+          root: 'flex flex-col',
+          home: cn(siteLink, 'font-semibold'),
+          list: 'flex flex-col',
+          link: cn(siteLink, 'current:bg-accent-subtle current:font-semibold'),
+        }}
+      />
+      <Divider />
+    </div>
+  )
+}
 
 function SaveStatusLine() {
   const status = useUiStore((s) => s.saveStatus)
@@ -149,81 +171,85 @@ export function FileMenu({ layout }: { layout: Layout }) {
         }}
       />
       {open && (
-        <Panel ref={menuRef} role="menu" aria-label="File" className="absolute top-full right-0 z-40 mt-1 flex max-h-(--cl-drawer-max-height) w-72 flex-col overflow-y-auto p-1 shadow-lg">
-          <Item icon={<FilePlus />} onClick={run(() => useStencilStore.getState().openDialog({ kind: 'templates' }))}>
-            New diagram…
-          </Item>
-          <Item icon={<FolderOpen />} onClick={run(() => fileRef.current?.click())}>
-            Open JSON…
-          </Item>
-          <Item icon={<Download />} hint={layout === 'desktop' ? 'Ctrl S' : undefined} onClick={run(() => void saveJson())}>
-            Save as JSON
-          </Item>
-          <Divider />
-          <Item icon={<FileImage />} onClick={run(() => void exportAs('png', includeHidden))}>
-            Export PNG
-          </Item>
-          <Item icon={<PenTool />} onClick={run(() => void exportAs('svg', includeHidden))}>
-            Export SVG
-          </Item>
-          <Item icon={<FileText />} onClick={run(() => void exportAs('pdf', includeHidden))}>
-            Export PDF
-          </Item>
-          <Item icon={<FileCode />} onClick={run(() => setMermaidOf(useDiagramStore.getState().diagram))}>
-            Mermaid (.mmd)…
-          </Item>
-          {anyHidden && (
-            <Item icon={<EyeOff />} pressed={includeHidden} onClick={() => setIncludeHidden((v) => !v)}>
-              Include hidden layers
+        <Panel ref={menuRef} className="absolute top-full right-0 z-40 mt-1 flex max-h-(--cl-drawer-max-height) w-72 flex-col overflow-y-auto p-1 shadow-lg">
+          {/* Site links sit outside the menu role: they're links, not menu commands. */}
+          <SiteSection />
+          <div role="menu" aria-label="File" className="flex shrink-0 flex-col">
+            <Item icon={<FilePlus />} onClick={run(() => useStencilStore.getState().openDialog({ kind: 'templates' }))}>
+              New diagram…
             </Item>
-          )}
-          <Divider />
-          {layout === 'phone' && (
-            <>
-              <Item icon={<WandSparkles />} onClick={run(openGenerate)}>
-                Generate with AI…
+            <Item icon={<FolderOpen />} onClick={run(() => fileRef.current?.click())}>
+              Open JSON…
+            </Item>
+            <Item icon={<Download />} hint={layout === 'desktop' ? 'Ctrl S' : undefined} onClick={run(() => void saveJson())}>
+              Save as JSON
+            </Item>
+            <Divider />
+            <Item icon={<FileImage />} onClick={run(() => void exportAs('png', includeHidden))}>
+              Export PNG
+            </Item>
+            <Item icon={<PenTool />} onClick={run(() => void exportAs('svg', includeHidden))}>
+              Export SVG
+            </Item>
+            <Item icon={<FileText />} onClick={run(() => void exportAs('pdf', includeHidden))}>
+              Export PDF
+            </Item>
+            <Item icon={<FileCode />} onClick={run(() => setMermaidOf(useDiagramStore.getState().diagram))}>
+              Mermaid (.mmd)…
+            </Item>
+            {anyHidden && (
+              <Item icon={<EyeOff />} pressed={includeHidden} onClick={() => setIncludeHidden((v) => !v)}>
+                Include hidden layers
               </Item>
-              <Item icon={<ScrollText />} onClick={run(openSummarise)}>
-                Summarise with AI…
-              </Item>
-              <Item icon={<ListChecks />} onClick={run(openReview)}>
-                Review with AI…
-              </Item>
-              <Item icon={<NotebookPen />} onClick={run(openNotes)}>
-                Suggest notes with AI…
-              </Item>
-              <Item icon={<Blocks />} onClick={run(openRefine)}>
-                Refine with AI…
-              </Item>
-              <Item icon={<Search />} onClick={run(() => useSearchStore.getState().openSearch())}>
-                Find in diagram
-              </Item>
-              <Divider />
-              <section aria-label="View">
-                <h3 className="px-3 pt-2 text-xs font-semibold tracking-wide text-text-muted uppercase">View</h3>
-                <ViewOptions layout={layout} />
-              </section>
-              <Divider />
-            </>
-          )}
-          <Item icon={<Sparkles />} onClick={run(() => void loadSample('web-architecture').then((d) => d && actions.load(d)))}>
-            Load example
-          </Item>
-          {layout === 'phone' && (
-            <>
-              <Divider />
-              <Item icon={<Settings />} onClick={run(() => openSettings())}>
-                Settings
-              </Item>
-              <Item icon={<CircleHelp />} hint={unseen ? 'New' : undefined} onClick={run(() => openHelp())}>
-                Help and what’s new
-              </Item>
-              <Item icon={<Info />} onClick={run(() => openHelp({ kind: 'about' }))}>
-                About Chalkline
-              </Item>
-            </>
-          )}
-          <SaveStatusLine />
+            )}
+            <Divider />
+            {layout === 'phone' && (
+              <>
+                <Item icon={<WandSparkles />} onClick={run(openGenerate)}>
+                  Generate with AI…
+                </Item>
+                <Item icon={<ScrollText />} onClick={run(openSummarise)}>
+                  Summarise with AI…
+                </Item>
+                <Item icon={<ListChecks />} onClick={run(openReview)}>
+                  Review with AI…
+                </Item>
+                <Item icon={<NotebookPen />} onClick={run(openNotes)}>
+                  Suggest notes with AI…
+                </Item>
+                <Item icon={<Blocks />} onClick={run(openRefine)}>
+                  Refine with AI…
+                </Item>
+                <Item icon={<Search />} onClick={run(() => useSearchStore.getState().openSearch())}>
+                  Find in diagram
+                </Item>
+                <Divider />
+                <section aria-label="View">
+                  <h3 className="px-3 pt-2 text-xs font-semibold tracking-wide text-text-muted uppercase">View</h3>
+                  <ViewOptions layout={layout} />
+                </section>
+                <Divider />
+              </>
+            )}
+            <Item icon={<Sparkles />} onClick={run(() => void loadSample('web-architecture').then((d) => d && actions.load(d)))}>
+              Load example
+            </Item>
+            {layout === 'phone' && (
+              <>
+                <Divider />
+                <Item icon={<Settings />} onClick={run(() => openSettings())}>
+                  Settings
+                </Item>
+                <Item icon={<CircleHelp />} hint={unseen ? 'New' : undefined} onClick={run(() => openHelp())}>
+                  Help and what’s new
+                </Item>
+                <Item icon={<Info />} onClick={run(() => openHelp({ kind: 'about' }))}>
+                  About Chalkline
+                </Item>
+              </>
+            )}
+            <SaveStatusLine />
+          </div>
         </Panel>
       )}
       {mermaidOf && (

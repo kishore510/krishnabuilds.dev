@@ -49,5 +49,5 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Sumyard: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
 - [x] Sumyard: add to the Portal app list
 - [ ] Sumyard: About's credits miss transitive dependencies (e.g. `scheduler`) under pnpm, because they are looked up in `apps/sumyard/node_modules`; resolve them properly
-- [ ] Chalkline: adopt shared header (slim variant) and tokens
+- [ ] Chalkline: adopt shared tokens (site links done)
 - [ ] Sumyard: adopt shared header and tokens
