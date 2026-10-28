@@ -1,0 +1,350 @@
+/*
+ * Chalkline design tokens: the ONLY place colours, radii, spacing, type sizes,
+ * shadows and motion values are defined. Everything else references these,
+ * usually through the Tailwind utilities mapped in the @theme blocks below.
+ *
+ * Colours are plain 6-digit hex so src/styles/tokens.test.ts can parse them
+ * and check contrast. Translucent colours use 8-digit hex.
+ */
+
+/* ── Light: clean paper ─────────────────────────────────────────────── */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+
+  --cl-bg: #f4f3ef;
+  --cl-canvas: #fbfaf7;
+  --cl-grid: #d6d2c6;
+  /* Line grid: fainter than dots, since lines cover far more of the canvas. */
+  --cl-grid-line: #ebe8e1;
+  /* Smart guides while dragging or resizing, and the outline on aligned shapes. */
+  --cl-guide: #c2185b;
+  --cl-guide-subtle: #c2185b66;
+  /* Find in diagram: the current result (strong) and the other matches (subtle). View only, never exported. */
+  --cl-found: #985700;
+  --cl-found-subtle: #e8a33d38;
+  --cl-surface: #ffffff;
+  --cl-surface-muted: #efeee9;
+  --cl-border: #dcd9d0;
+  --cl-border-strong: #81888d;
+
+  --cl-text: #1d2327;
+  --cl-text-muted: #5a6368;
+
+  --cl-accent: #1f6aa5;
+  --cl-accent-hover: #185686;
+  --cl-accent-subtle: #1f6aa51f;
+  --cl-on-accent: #ffffff;
+  --cl-focus: #1f6aa5;
+  /* Band over a focused connector (translucent, 3:1 on the canvas). */
+  --cl-focus-halo: #1f6aa5b3;
+
+  --cl-danger: #b3261e;
+  --cl-on-danger: #ffffff;
+
+  --cl-node-fill: #ffffff;
+  --cl-node-stroke: #3b454b;
+  --cl-node-text: #1d2327;
+  --cl-edge: #4f5a60;
+
+  --cl-shadow-color: #1d23271a;
+  --cl-shadow-color-strong: #1d232729;
+  --cl-overlay: #1d232766;
+  --cl-minimap-mask: #1d23271f;
+  --cl-group-fill: #1d23270a;
+  --cl-group-border: #b9b4a7;
+  --cl-group-header: #ebe8e0;
+
+  /* Diagram colour presets: strong for lines and text, soft for fills. */
+  --cl-swatch-slate: #4f5a60;
+  --cl-swatch-slate-soft: #e6e8e9;
+  --cl-swatch-blue: #1f6aa5;
+  --cl-swatch-blue-soft: #dbe9f5;
+  --cl-swatch-teal: #0f766e;
+  --cl-swatch-teal-soft: #d5efec;
+  --cl-swatch-green: #35701a;
+  --cl-swatch-green-soft: #e1efd8;
+  --cl-swatch-amber: #955406;
+  --cl-swatch-amber-soft: #fbeccf;
+  --cl-swatch-red: #b3261e;
+  --cl-swatch-red-soft: #f8dcda;
+  --cl-swatch-purple: #6b46c1;
+  --cl-swatch-purple-soft: #e9e1f8;
+  --cl-swatch-yellow: #6f5f00;
+  --cl-swatch-yellow-soft: #f7f0b6;
+  --cl-swatch-steel: #4a5d80;
+  --cl-swatch-steel-soft: #e0e4ee;
+  --cl-swatch-tan: #74583a;
+  --cl-swatch-tan-soft: #ece2d2;
+  --cl-swatch-pink: #a82f6a;
+  --cl-swatch-pink-soft: #f9dcea;
+}
+
+/* ── Dark: slate blackboard with chalk lines ────────────────────────── */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --cl-bg: #12181b;
+  --cl-canvas: #1b2327;
+  --cl-grid: #2f3b41;
+  --cl-grid-line: #252f34;
+  --cl-guide: #f48fbe;
+  --cl-guide-subtle: #f48fbe66;
+  --cl-found: #f0b45c;
+  --cl-found-subtle: #f0b45c33;
+  --cl-surface: #1f282d;
+  --cl-surface-muted: #28333a;
+  --cl-border: #334047;
+  --cl-border-strong: #6f7e86;
+
+  --cl-text: #ebede6;
+  --cl-text-muted: #a5afb3;
+
+  --cl-accent: #7cc0e6;
+  --cl-accent-hover: #9dd0ee;
+  --cl-accent-subtle: #7cc0e626;
+  --cl-on-accent: #0d1a22;
+  --cl-focus: #7cc0e6;
+  --cl-focus-halo: #7cc0e699;
+
+  --cl-danger: #f2877d;
+  --cl-on-danger: #1a0b09;
+
+  --cl-node-fill: #232d33;
+  --cl-node-stroke: #dfe3dc;
+  --cl-node-text: #ebede6;
+  --cl-edge: #c9cfc9;
+
+  --cl-shadow-color: #00000059;
+  --cl-shadow-color-strong: #00000080;
+  --cl-overlay: #00000099;
+  --cl-minimap-mask: #0000004d;
+  --cl-group-fill: #ebede60d;
+  --cl-group-border: #4a5960;
+  --cl-group-header: #253137;
+
+  /* Diagram colour presets: strong for lines and text, soft for fills. */
+  --cl-swatch-slate: #b4bec3;
+  --cl-swatch-slate-soft: #2c363b;
+  --cl-swatch-blue: #7cc0e6;
+  --cl-swatch-blue-soft: #1d3a4d;
+  --cl-swatch-teal: #5fd0c2;
+  --cl-swatch-teal-soft: #16403c;
+  --cl-swatch-green: #9bd27a;
+  --cl-swatch-green-soft: #26402a;
+  --cl-swatch-amber: #f0b45c;
+  --cl-swatch-amber-soft: #4a3718;
+  --cl-swatch-red: #f2877d;
+  --cl-swatch-red-soft: #4d2522;
+  --cl-swatch-purple: #b9a1f0;
+  --cl-swatch-purple-soft: #362c52;
+  --cl-swatch-yellow: #e3d36b;
+  --cl-swatch-yellow-soft: #3d3a17;
+  --cl-swatch-steel: #aab8d8;
+  --cl-swatch-steel-soft: #2a3247;
+  --cl-swatch-tan: #d9bc94;
+  --cl-swatch-tan-soft: #3d3328;
+  --cl-swatch-pink: #f292c4;
+  --cl-swatch-pink-soft: #4d2239;
+}
+
+/* ── Theme-independent tokens ───────────────────────────────────────── */
+:root {
+  /* Diagram rendering */
+  --cl-node-stroke-width: 1.5px;
+  --cl-edge-width: 1.5px;
+  --cl-node-padding: 8px;
+  --cl-grid-gap: 20px;
+  --cl-grid-dot: 1px;
+  --cl-grid-dot-fade: 1.5px;
+  --cl-grid-line-width: 1px;
+  /* Smart guides (screen px): line width, marker end ticks, how far size markers sit off the edge, label halo. */
+  --cl-guide-width: 1px;
+  --cl-guide-tick: 6px;
+  --cl-guide-offset: 10px;
+  --cl-guide-halo: 3px;
+
+  /* Touch and focus */
+  --cl-touch-target: 44px;
+  /* Connection/resize handles: small visible dot, larger invisible hit area. */
+  --cl-handle-dot: 10px;
+  --cl-handle-hit-fine: 24px;
+  /* Connector end grips and docking points while re-attaching a connector. */
+  --cl-dock-dot: 16px;
+  /* Invisible grab strip along a group's border (the body lets clicks through). */
+  --cl-group-edge-hit: 12px;
+  --cl-dock-radius: 40px;
+  --cl-long-press: 500ms;
+  --cl-toast-duration: 5000ms;
+  --cl-focus-ring-width: 2px;
+  --cl-focus-ring-offset: 2px;
+  /* Keyboard focus around a shape on the canvas sits further out than elsewhere. */
+  --cl-canvas-focus-offset: 6px;
+
+  /* Motion */
+  --cl-duration-fast: 120ms;
+  --cl-duration-base: 200ms;
+  --cl-duration-slow: 400ms;
+  --cl-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Node labels */
+  --cl-node-font-min: 0px;
+  /* Actor and free-text labels may spread up to this wide, even past the node. */
+  --cl-label-free-max: 200px;
+
+  /* Layout */
+  --cl-header-height: 56px;
+  /* Toolbars and the top bar: fixed in px so text zoom (200%) can't push them past a 360px screen. */
+  --cl-toolbar-gap: 4px;
+  --cl-logo-size: 28px;
+  --cl-gutter: 16px;
+  --cl-palette-width: 224px;
+  /* Desktop palette: resizable between these; shape tiles never narrower than item-min. */
+  --cl-palette-min-width: 200px;
+  --cl-palette-max-width: 480px;
+  --cl-palette-item-min: 88px;
+  /* Invisible grab strip on the palette's edge (touch screens get the full touch target). */
+  --cl-palette-resize-hit: 12px;
+  --cl-rail-width: 64px;
+  --cl-properties-width: 288px;
+  /* AI change log (tablet and desktop): resizable between these. */
+  --cl-log-width: 320px;
+  --cl-log-min-width: 240px;
+  --cl-log-max-width: 560px;
+  --cl-minimap-width: 160px;
+  --cl-minimap-height: 112px;
+  --cl-sheet-max-height: 45dvh;
+  --cl-drawer-max-height: 80dvh;
+  --cl-dialog-max-height: 90dvh;
+  /* Help: a full-height sheet on phones (a sliver of the page shows above), a side panel from tablet up. */
+  --cl-full-sheet-height: calc(100dvh - max(var(--cl-gutter), env(safe-area-inset-top)));
+  --cl-help-width: 400px;
+  /* Settings: same shape as help. */
+  --cl-settings-width: var(--cl-help-width);
+  /* Problem banner at the top of the canvas (autosave failures). */
+  --cl-banner-width: 560px;
+  /* The tour's step card, and the ring around the part of the screen it points at. */
+  --cl-tour-width: 320px;
+  --cl-tour-max-width: calc(100vw - 2 * var(--cl-gutter));
+  --cl-tour-ring-width: 3px;
+  --cl-tour-ring-offset: 4px;
+  /* Find in diagram: the compact bar on tablet and desktop (narrow enough to clear the tablet minimap). */
+  --cl-search-bar-width: 340px;
+  /* "What's new" dot on the help button. */
+  --cl-badge-dot: 8px;
+  /* Stencil and template previews in the palette and pickers. */
+  --cl-stencil-thumb-width: 64px;
+  --cl-stencil-thumb-height: 48px;
+  --cl-template-thumb-height: 112px;
+  /* Generate diagram (AI): same shape as settings; the preview's height range and the description box. */
+  --cl-ai-sheet-width: var(--cl-help-width);
+  /* AI sheet mode buttons (five): three on the first row and two on the second, each a third of the row to start
+     with and growing to fill it. A button never shrinks below its word, so with large text they wrap to fewer per row
+     (one per row at 200% on a phone) instead of being cut off. */
+  --cl-ai-mode-basis: calc((100% - 3 * var(--spacing)) / 3);
+  /* Refine preview: the existing shapes new connectors attach to are drawn faded, as read-only context. */
+  --cl-ai-anchor-opacity: 0.4;
+  --cl-ai-preview-min-height: 160px;
+  --cl-ai-preview-max-height: 45dvh;
+  --cl-ai-description-height: 160px;
+  /* Mermaid export preview: scrolls inside itself, so long diagrams never stretch the sheet. */
+  --cl-code-preview-max-height: 35dvh;
+  --cl-content-max: 1200px;
+}
+
+/* Reduce motion: every animation length is 0 (JS reads these through src/lib/motion.ts). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --cl-duration-fast: 0ms;
+    --cl-duration-base: 0ms;
+    --cl-duration-slow: 0ms;
+  }
+}
+
+/* Touch screens: never render node labels below a readable size. */
+@media (pointer: coarse) {
+  :root {
+    --cl-node-font-min: 14px;
+    --cl-palette-resize-hit: var(--cl-touch-target);
+  }
+}
+
+/* ── Tailwind mapping: only token-backed utilities exist ────────────── */
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--cl-bg);
+  --color-canvas: var(--cl-canvas);
+  --color-grid: var(--cl-grid);
+  --color-surface: var(--cl-surface);
+  --color-surface-muted: var(--cl-surface-muted);
+  --color-border: var(--cl-border);
+  --color-border-strong: var(--cl-border-strong);
+  --color-text: var(--cl-text);
+  --color-text-muted: var(--cl-text-muted);
+  --color-accent: var(--cl-accent);
+  --color-accent-hover: var(--cl-accent-hover);
+  --color-accent-subtle: var(--cl-accent-subtle);
+  --color-on-accent: var(--cl-on-accent);
+  --color-focus: var(--cl-focus);
+  --color-danger: var(--cl-danger);
+  --color-on-danger: var(--cl-on-danger);
+  --color-node-fill: var(--cl-node-fill);
+  --color-node-stroke: var(--cl-node-stroke);
+  --color-node-text: var(--cl-node-text);
+  --color-edge: var(--cl-edge);
+  --color-overlay: var(--cl-overlay);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --shadow-*: initial;
+  --shadow-sm: 0 1px 2px var(--cl-shadow-color);
+  --shadow-md: 0 2px 8px var(--cl-shadow-color), 0 1px 2px var(--cl-shadow-color);
+  --shadow-lg: 0 12px 32px var(--cl-shadow-color-strong), 0 2px 6px var(--cl-shadow-color);
+
+  --spacing-touch: var(--cl-touch-target);
+  --spacing-header: var(--cl-header-height);
+  --spacing-palette: var(--cl-palette-width);
+  --spacing-rail: var(--cl-rail-width);
+  --spacing-properties: var(--cl-properties-width);
+  --container-content: var(--cl-content-max);
+
+  --ease-standard: var(--cl-ease);
+  --default-transition-duration: var(--cl-duration-fast);
+  --default-transition-timing-function: var(--cl-ease);
+}
+
+@theme {
+  --font-*: initial;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-node: 0.9375rem;
+  --text-node--line-height: 1.35;
+
+  --radius-*: initial;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --spacing: 0.25rem;
+
+  --breakpoint-*: initial;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
