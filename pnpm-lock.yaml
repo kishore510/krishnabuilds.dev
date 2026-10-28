@@ -109,6 +109,9 @@ importers:
       '@krishnabuilds/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
+      '@krishnabuilds/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@types/react':
         specifier: 19.3.0
         version: 19.3.0
@@ -219,6 +222,24 @@ importers:
       eslint:
         specifier: 10.13.0
         version: 10.13.0(jiti@2.7.0)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
+  packages/ui:
+    devDependencies:
+      '@krishnabuilds/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/react':
+        specifier: 19.3.0
+        version: 19.3.0
+      eslint:
+        specifier: 10.13.0
+        version: 10.13.0(jiti@2.7.0)
+      react:
+        specifier: 19.3.1
+        version: 19.3.1
       typescript:
         specifier: 6.0.3
         version: 6.0.3

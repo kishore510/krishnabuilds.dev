@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       // Apply the saved theme before first paint to avoid a flash.
-      // Must stay in sync with src/theme.ts (cookie name and values).
+      // Must stay in sync with packages/ui/src/theme.ts: cookie name `kb-theme`,
+      // stored values "light" and "dark" ("system" is never stored).
       var kbTheme = document.cookie.match(/(?:^|; )kb-theme=(light|dark)(?:;|$)/);
       if (kbTheme) document.documentElement.setAttribute("data-theme", kbTheme[1]);
     </script>

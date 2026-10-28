@@ -1,13 +1,10 @@
 // Three-way theme control: Light / Dark / System.
-//
-// Self-contained so it can move into packages/ui along with theme.ts and
-// the site header.
 
 import "./ThemeToggle.css";
 
 import { useId, useState } from "react";
 
-import { getTheme, setTheme, type Theme } from "../theme";
+import { getTheme, setTheme, type Theme } from "./theme";
 
 const OPTIONS: { value: Theme; label: string }[] = [
   { value: "light", label: "Light" },

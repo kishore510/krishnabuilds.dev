@@ -1,13 +1,11 @@
 // Shared site header: site name on the left, app links and theme toggle on
 // the right. Collapses behind a menu button on narrow screens.
-//
-// Self-contained so it can move into packages/ui along with apps.ts.
 
 import "./SiteHeader.css";
 
 import { useEffect, useId, useRef, useState } from "react";
 
-import { type AppEntry, isOpen } from "../apps";
+import { type AppEntry, isOpen } from "./apps";
 import { ThemeToggle } from "./ThemeToggle";
 
 type SiteHeaderProps = {

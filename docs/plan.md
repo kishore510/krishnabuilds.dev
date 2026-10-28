@@ -38,6 +38,8 @@ For each app: scan history for secrets and report before importing, import with 
 
 ## Backlog
 
+The app list in `packages/ui` (`src/apps.ts`) is the single source for the site header nav and the Portal cards.
+
 - [x] Portal: add group, status, stack to apps.ts and group the cards (can ride along with the first migrated app)
 - [ ] Portal: story page template, then one page per app as each migrates
 - [ ] Portal: "How this is built" page
@@ -47,3 +49,5 @@ For each app: scan history for secrets and report before importing, import with 
 - [x] Sumyard: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
 - [x] Sumyard: add to the Portal app list
 - [ ] Sumyard: About's credits miss transitive dependencies (e.g. `scheduler`) under pnpm, because they are looked up in `apps/sumyard/node_modules`; resolve them properly
+- [ ] Chalkline: adopt shared header (slim variant) and tokens
+- [ ] Sumyard: adopt shared header and tokens

@@ -1,5 +1,10 @@
-import { apps, groups, isOpen, statusLabels } from "./apps";
-import { SiteHeader } from "./components/SiteHeader";
+import {
+  apps,
+  groups,
+  isOpen,
+  SiteHeader,
+  statusLabels,
+} from "@krishnabuilds/ui";
 
 export function App() {
   return (

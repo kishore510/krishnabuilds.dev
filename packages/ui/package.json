@@ -1,0 +1,22 @@
+{
+  "name": "@krishnabuilds/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  },
+  "devDependencies": {
+    "@krishnabuilds/config": "workspace:*",
+    "@types/react": "19.3.0",
+    "eslint": "10.13.0",
+    "react": "19.3.1",
+    "typescript": "6.0.3"
+  }
+}

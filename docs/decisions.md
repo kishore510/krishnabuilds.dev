@@ -85,3 +85,7 @@ Sumyard's mortgage cross-check file must never contain figures from real stateme
 ## 2026-10-28 — Sumyard keeps Biome and deploys to sumyard.krishnabuilds.dev
 
 Sumyard deploys as a Worker with static assets, same pattern as Chalkline and the Portal. It keeps Biome for linting, because the shared ESLint config is for the other apps and Sumyard is on TypeScript 7. Revisit when typescript-eslint supports TypeScript 7.
+
+## 2026-10-28 — packages/ui starts with the site header and app list
+
+Chalkline and Sumyard are both migrated, so the "extract once duplicated in two apps" rule is met for the header and the app list. packages/ui is source-only (each app's Vite compiles it) with plain CSS on the shared tokens. The Portal adopts it first; Chalkline gets a slim header with a link home and an app switcher, and Sumyard adopts it after, in separate PRs.
