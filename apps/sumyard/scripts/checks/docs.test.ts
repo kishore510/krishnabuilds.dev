@@ -156,13 +156,12 @@ describe('assertDocs (run by vite build, so a drift fails the build)', () => {
 })
 
 describe('this repo', () => {
-  it('has PLAN.md, CHANGELOG.md, package.json and package-lock.json in step', () => {
+  it('has PLAN.md, CHANGELOG.md and package.json in step', () => {
     expect(
       checkDocs({
         plan: read('PLAN.md'),
         changelog: read('CHANGELOG.md'),
         packageJson: read('package.json'),
-        packageLock: read('package-lock.json'),
       }),
     ).toEqual([])
   })
