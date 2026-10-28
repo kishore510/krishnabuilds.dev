@@ -3,6 +3,8 @@
  * network requests, so the build may contain no external URL except:
  * - plain https gov.uk links (www.gov.uk or gov.uk), and never where the
  *   browser would fetch them (script src, stylesheet, image, CSS url());
+ * - plain https links to krishnabuilds.dev or one of its subdomains (the
+ *   home link and app switcher in the menu), with the same rule;
  * - the exact inert identifiers in INERT_URLS, which are never requested.
  * Anything else fails the build.
  */
@@ -54,6 +56,9 @@ const URL_PATTERN = /\b(?:https?|wss?|ftp):\/\/[^\s"'`()<>\\]+|(?<=["'(=]\s*)\/\
 
 const GOV_UK = /^https:\/\/(?:www\.)?gov\.uk(?:[/?#][^\s]*)?$/i
 
+// The other krishnabuilds.dev apps and the home page: links someone follows, never fetched.
+const KRISHNABUILDS = /^https:\/\/(?:[a-z0-9-]+\.)?krishnabuilds\.dev(?:[/?#][^\s]*)?$/i
+
 /** Places where the browser fetches a URL by itself (not a link someone follows). */
 const REQUEST_CONTEXTS = [
   /<(?:script|img|iframe|source|audio|video|embed|track|input)\b[^>]*\b(?:src|srcset|poster|data)\s*=\s*["']?\s*$/i,
@@ -78,8 +83,8 @@ export function scanText(file: string, text: string): Finding[] {
       findings.push({ file, url, reason: 'External URL in a place the browser fetches it' })
       continue
     }
-    if (GOV_UK.test(url) || INERT_URLS[url]?.fileType === extname(file)) continue
-    findings.push({ file, url, reason: 'External URL not on the allowlist (plain https gov.uk links only)' })
+    if (GOV_UK.test(url) || KRISHNABUILDS.test(url) || INERT_URLS[url]?.fileType === extname(file)) continue
+    findings.push({ file, url, reason: 'External URL not on the allowlist (plain https gov.uk and krishnabuilds.dev links only)' })
   }
   return findings
 }

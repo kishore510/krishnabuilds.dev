@@ -4,6 +4,9 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+### Added
+- The menu now links to krishnabuilds.dev and the other apps (Arcade, Chalkline), with Sumyard marked as the one you're in.
+
 ## [0.31.0] - 2026-10-23
 
 ### Changed

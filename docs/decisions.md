@@ -97,3 +97,7 @@ Chalkline is a full-screen canvas tool and phone screen space is scarce, so it g
 ## 2026-10-28 — packages/ui components import only their own CSS
 
 An app that uses one component should not ship another component's styles. packages/ui declares only its CSS files as side effects (`"sideEffects": ["**/*.css"]`), so importing SiteLinks from the package entry no longer pulls in SiteHeader's or ThemeToggle's CSS.
+
+## 2026-10-28 — Sumyard gets site links; external-URL guard allows only the krishnabuilds.dev origins
+
+Sumyard adopts the shared SiteLinks (home link and app switcher) in its existing chrome. Its build guard against external URLs now allows only https://krishnabuilds.dev and its subdomains, so links within the platform work while any other external URL still fails the build.
