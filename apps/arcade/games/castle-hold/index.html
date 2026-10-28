@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Castle Hold</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1c1408;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #cfe3f2;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    /* The canvas behind this (sky/castle art) is light, so a soft
+       text-shadow alone isn't enough contrast for white text - unlike
+       most other arcade games, Castle Hold's backdrop is bright. */
+    background: rgba(10, 8, 4, 0.55);
+    pointer-events: none;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(320px * var(--game-scale, 1)); }
+  #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
+  #bestLine { opacity: 0.8; }
+  #startBtn {
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #ffd76a;
+    color: #3a2400;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #startBtn:active { background: #ffe28a; }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #rotateHint {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #1c1408;
+    color: white;
+    z-index: 50;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  #rotateHint .icon { font-size: 48px; margin-bottom: 12px; animation: rotateWiggle 1.6s ease-in-out infinite; }
+  #rotateHint p { font-size: 16px; font-weight: bold; max-width: 260px; }
+  @keyframes rotateWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+  .rowLabel {
+    font-size: calc(10.5px * var(--game-scale, 1));
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+    margin-top: calc(8px * var(--game-scale, 1));
+  }
+  .btnRow {
+    display: flex;
+    gap: calc(8px * var(--game-scale, 1));
+    margin-top: calc(5px * var(--game-scale, 1));
+    pointer-events: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btnRow button {
+    font-family: inherit;
+    font-size: calc(12.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(7px * var(--game-scale, 1)) calc(15px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  .btnRow button.selected { background: #ffd76a; border-color: #ffd76a; color: #3a2400; }
+  #helpBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    right: calc(8px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    width: calc(28px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+    border-radius: 50%;
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  #introOverlay, #helpPanel {
+    display: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 40;
+    background: rgba(10, 8, 4, 0.82);
+    align-items: center;
+    justify-content: center;
+    padding: calc(14px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  .introBox, .helpBox {
+    background: #241a0d;
+    border: 2px solid rgba(255,215,106,0.4);
+    border-radius: 14px;
+    padding: calc(18px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    max-width: calc(420px * var(--game-scale, 1));
+    max-height: 90%;
+    overflow-y: auto;
+    color: #f0e8d8;
+    text-align: left;
+  }
+  .introBox h2, .helpBox h2 { margin: 0 0 calc(10px * var(--game-scale, 1)); color: #ffd76a; font-size: calc(19px * var(--game-scale, 1)); }
+  .introBox ul { margin: 0 0 calc(14px * var(--game-scale, 1)); padding-left: calc(18px * var(--game-scale, 1)); font-size: calc(13px * var(--game-scale, 1)); line-height: 1.5; }
+  .introBox li { margin-bottom: calc(6px * var(--game-scale, 1)); }
+  .introBox b, .helpBox b { color: #ffd76a; }
+  .introBox button, .helpBox button {
+    font-family: inherit;
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(9px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: none;
+    background: #ffd76a;
+    color: #3a2400;
+    cursor: pointer;
+    margin-top: calc(6px * var(--game-scale, 1));
+    margin-right: calc(8px * var(--game-scale, 1));
+  }
+  .helpBox #helpCloseBtn { background: rgba(255,255,255,0.15); color: #f0e8d8; }
+  #matchupTableWrap { overflow-x: auto; margin-bottom: calc(10px * var(--game-scale, 1)); }
+  #matchupTableWrap table { border-collapse: collapse; font-size: calc(11px * var(--game-scale, 1)); white-space: nowrap; }
+  #matchupTableWrap th, #matchupTableWrap td { padding: calc(4px * var(--game-scale, 1)) calc(7px * var(--game-scale, 1)); text-align: center; border: 1px solid rgba(255,255,255,0.12); }
+  #matchupTableWrap th { color: #ffd76a; font-weight: bold; }
+  #matchupTableWrap td.strong { background: rgba(92,200,92,0.28); color: #bdf0bd; }
+  #matchupTableWrap td.weak { background: rgba(224,90,74,0.28); color: #f5c5be; }
+  .costList { font-size: calc(12px * var(--game-scale, 1)); line-height: 1.6; margin-bottom: calc(12px * var(--game-scale, 1)); }
+</style>
+</head>
+<body>
+<div id="rotateHint">
+  <div class="icon">📱</div>
+  <p>Rotate your device to landscape to play Castle Hold</p>
+</div>
+<div id="wrap">
+  <canvas id="game" width="640" height="360"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <button id="helpBtn" type="button">?</button>
+  <div id="overlay">
+    <h1 id="title">Castle Hold</h1>
+    <p id="subtitle">Hold the line. Man the tiers with archers, gunmen and cannon, and deploy spearmen or cavalry at the gate.</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <p id="bestLine"></p>
+    <div class="rowLabel">Difficulty</div>
+    <div class="btnRow" id="diffButtons">
+      <button data-d="easy" type="button">Easy</button>
+      <button data-d="hard" type="button">Hard</button>
+    </div>
+    <button id="startBtn" type="button" data-kb-play>Start</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+  <div id="introOverlay">
+    <div class="introBox">
+      <h2>How to hold the line</h2>
+      <ul>
+        <li><b>Tiers 3 &amp; 2</b> on the wall hold ranged units (archer, gunman, cannon) - tap a glowing circle to place one.</li>
+        <li><b>Ground slots</b> by the gate hold melee units (spearman, cavalry) - they actively chase down anything that gets close, and cavalry will even sortie out after long-range bombards.</li>
+        <li>Tap an already-placed unit to <b>upgrade or sell</b> it.</li>
+        <li>Enemies that reach the wall (or a bombard firing from range) damage your <b>Castle HP</b> at the top - if it hits 0, you lose.</li>
+        <li>Earn <b>gold</b> per kill. Survive all the waves with the castle standing to win!</li>
+      </ul>
+      <button id="introStartBtn" type="button">Got it - let's go!</button>
+    </div>
+  </div>
+  <div id="helpPanel">
+    <div class="helpBox">
+      <h2>Defenders &amp; Matchups</h2>
+      <div class="costList" id="costListWrap"></div>
+      <div id="matchupTableWrap"></div>
+      <button id="tutorialAgainBtn" type="button">Show tutorial again</button>
+      <button id="helpCloseBtn" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const rotateHint = document.getElementById('rotateHint');
+const helpBtn = document.getElementById('helpBtn');
+const diffButtons = document.getElementById('diffButtons');
+const introOverlay = document.getElementById('introOverlay');
+const introStartBtn = document.getElementById('introStartBtn');
+const helpPanel = document.getElementById('helpPanel');
+const helpCloseBtn = document.getElementById('helpCloseBtn');
+const tutorialAgainBtn = document.getElementById('tutorialAgainBtn');
+const costListWrap = document.getElementById('costListWrap');
+const matchupTableWrap = document.getElementById('matchupTableWrap');
+
+// H is a fixed "world height" (360 logical units) so the castle/HUD never
+// change size - W is deliberately mutable and re-derived from the device's
+// actual aspect ratio on every fit, so the canvas fills the WHOLE landscape
+// viewport instead of being letterboxed inside a fixed 640x360 rectangle.
+// Everything the castle needs (wall, tiers, gate) is anchored near x=0, so
+// widening W just reveals more open battlefield on the right - exactly the
+// side a wider screen should get more of. Clamped so a pathological window
+// shape doesn't produce a degenerate battlefield.
+let W = canvas.width;
+const H = canvas.height;
+const GROUND_Y = H - 70;
+const MIN_WORLD_W = 480, MAX_WORLD_W = 960;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availW = window.innerWidth;
+  const availH = window.innerHeight - reserved;
+  const targetW = clamp(Math.round(H * (availW / availH)), MIN_WORLD_W, MAX_WORLD_W);
+  if (targetW !== W) {
+    W = targetW;
+    canvas.width = W;
+  }
+  const scale = Math.min(availW / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+function checkOrientation() {
+  const portrait = window.innerWidth < window.innerHeight;
+  rotateHint.style.display = portrait ? 'flex' : 'none';
+}
+function handleResize() { fitCanvas(); checkOrientation(); }
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleResize);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+handleResize();
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// --- Audio ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('castleHoldMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playBowFire() { tone(700, 0.05, 'triangle', 0.07); }
+function playArrowHit() { tone(240, 0.07, 'square', 0.09); }
+function playCannonFire() { tone(80, 0.1, 'square', 0.16); }
+function playCannonHit() { tone(70, 0.22, 'square', 0.18); tone(50, 0.28, 'sawtooth', 0.15, 0.04); }
+function playMeleeClash() { tone(320, 0.05, 'square', 0.08); }
+function playUnitFall() { tone(150, 0.16, 'sawtooth', 0.12); }
+function playWaveClear() { tone(660, 0.1, 'triangle', 0.12); tone(880, 0.14, 'triangle', 0.12, 0.1); }
+function playBombardFire() { tone(65, 0.3, 'sawtooth', 0.2); tone(45, 0.35, 'square', 0.16, 0.06); }
+function playEnemyDie() { tone(180, 0.12, 'sawtooth', 0.1); }
+function playWallThud() { tone(90, 0.18, 'square', 0.16); tone(60, 0.22, 'sine', 0.14, 0.05); }
+function playGold() { tone(880, 0.06, 'triangle', 0.07); }
+function playInvalid() { tone(160, 0.08, 'square', 0.08); }
+function playWin() {
+  tone(523, 0.14, 'triangle', 0.14);
+  tone(659, 0.14, 'triangle', 0.13, 0.13);
+  tone(784, 0.18, 'triangle', 0.13, 0.26);
+  tone(1047, 0.28, 'triangle', 0.14, 0.4);
+}
+function playLose() { tone(200, 0.3, 'sawtooth', 0.14); tone(140, 0.4, 'sawtooth', 0.12, 0.15); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('castleHoldMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest() { return parseInt(sessionStorage.getItem('castleHoldBest') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('castleHoldBest', v); } catch (e) {} }
+
+// --- Castle geometry (matches the concept art) ---
+const WALL_X = 0, WALL_W = 165, WALL_TOP = 40;
+const TOWER_X = WALL_W - 46, TOWER_W = 54, TOWER_TOP = 8;
+const MID_Y = WALL_TOP + 70;
+const WALL_FRONT_X = WALL_W; // enemies are "at the wall" once they reach this x
+
+// Tier 3 (top battlement): archers only - long range, thins enemies out early.
+const TIER3_SLOTS = [
+  { x: 22, y: 30, unit: null, cooldown: 0 },
+  { x: 58, y: 30, unit: null, cooldown: 0 },
+  { x: 132, y: 22, unit: null, cooldown: 0 }
+];
+// Tier 2 (mid gallery): gunman OR cannon, player's choice per slot.
+const TIER2_SLOTS = [
+  { x: 40, y: 100, unit: null, cooldown: 0 },
+  { x: 100, y: 98, unit: null, cooldown: 0 }
+];
+// Ground, just outside the gate: spearman OR cavalry, player's choice per
+// slot. Each is an active skirmisher, not a static wall segment: `x` is its
+// fixed home/leash anchor (also where the empty-slot marker draws), `ux` is
+// its CURRENT position, which moves out toward a target within `range` (up
+// to `maxAdvance` past home) and back - see updateGroundUnits.
+const GROUND_SLOTS = [
+  { x: 210, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 210, state: 'home', target: null, hunting: false },
+  { x: 178, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 178, state: 'home', target: null, hunting: false },
+  { x: 146, y: GROUND_Y, unit: null, hp: 0, maxHp: 0, atkCooldown: 0, ux: 146, state: 'home', target: null, hunting: false }
+];
+const TOUCH_DIST = 14;
+const PROJECTILE_SPEED = 620; // px/s
+
+// Ranged units share the same targeting (nearest enemy in range) and
+// projectile-travel logic - only these numbers differ. Melee units instead
+// actively chase/engage anything within `range` of their home position (see
+// updateGroundUnits) rather than waiting for it to walk into them.
+const UNIT_DEFS = {
+  archer:   { cost: 40, kind: 'ranged', range: 430, fireInterval: 0.9, damage: 14, color: '#3a5a8a' },
+  gunman:   { cost: 60, kind: 'ranged', range: 320, fireInterval: 1.1, damage: 20, color: '#6a5a3a' },
+  cannon:   { cost: 90, kind: 'ranged', range: 260, fireInterval: 1.8, damage: 24, color: '#3a3f48', splash: 34 },
+  spearman: { cost: 50, kind: 'melee', hp: 40, damage: 8, attackInterval: 0.8, color: '#5a6a3a', range: 70, maxAdvance: 45, speed: 55 },
+  // Cavalry also gets a huntRange/huntMaxAdvance: far beyond its normal
+  // short leash, but ONLY to chase the types listed in huntTypes (bombards)
+  // - those sit past every ranged defender's reach by design, so only an
+  // active sortie can stop them. Ordinary melee threats still only pull it
+  // out to maxAdvance, per the original "doesn't run off" design.
+  cavalry:  { cost: 70, kind: 'melee', hp: 55, damage: 14, attackInterval: 0.7, color: '#6b4a2f', range: 100, maxAdvance: 70, speed: 100, huntRange: 560, huntMaxAdvance: 480, huntTypes: ['bombard'] }
+};
+
+const ENEMY_DEFS = {
+  footman:  { hp: 30, speed: 44, wallDamage: 9, meleeDamage: 6, atkInterval: 1.0, goldReward: 8 },
+  horseman: { hp: 45, speed: 95, wallDamage: 14, meleeDamage: 10, atkInterval: 0.9, goldReward: 14 },
+  pikeman:  { hp: 55, speed: 40, wallDamage: 11, meleeDamage: 9, atkInterval: 1.0, goldReward: 12 },
+  elephant: { hp: 160, speed: 22, wallDamage: 30, meleeDamage: 18, atkInterval: 1.3, goldReward: 30 },
+  ram:      { hp: 90, speed: 26, wallDamage: 40, meleeDamage: 6, atkInterval: 1.5, goldReward: 22 },
+  // Stops well short of the wall - past every ranged defender's reach - and
+  // bombards the castle from range instead of closing in. Only a melee
+  // unit that actively sorties out (cavalry, via huntRange) can silence it.
+  bombard:  { hp: 60, speed: 26, wallDamage: 0, rangedDamage: 14, fireInterval: 2.4, meleeDamage: 7, atkInterval: 1.0, goldReward: 25 }
+};
+
+// Type-matchup multipliers applied to damage a defender deals to a given
+// enemy type - archers shred footmen but struggle vs armored elephants,
+// cannon splash wrecks elephants/rams, spearmen brace well vs cavalry-style
+// charges (horsemen), cavalry runs down footmen but bogs down vs pikemen,
+// and a cavalry charge (or cannon shell) makes short work of a bombard crew.
+// Elephant and ram are both "the answer is cannon" enemies per design, so
+// their resistance to non-cannon ranged fire is kept symmetric (0.4x vs
+// archer, 0.75x vs gunman) rather than the old table where a ram was
+// actually LESS resistant to archers (0.6x) than an elephant (0.5x) -
+// that let a couple of archers solo-kill a ram well before it reached the
+// wall, which defeats the "you need a cannon for heavies" design intent.
+const MATCHUPS = {
+  archer:   { footman: 1.4, horseman: 1.0, pikeman: 0.9, elephant: 0.4, ram: 0.4, bombard: 0.7 },
+  gunman:   { footman: 1.1, horseman: 1.1, pikeman: 1.1, elephant: 0.75, ram: 0.75, bombard: 0.9 },
+  cannon:   { footman: 0.8, horseman: 0.8, pikeman: 0.9, elephant: 1.7, ram: 1.7, bombard: 1.4 },
+  spearman: { footman: 1.0, horseman: 1.6, pikeman: 0.9, elephant: 0.6, ram: 0.7, bombard: 1.1 },
+  cavalry:  { footman: 1.4, horseman: 1.0, pikeman: 0.55, elephant: 0.7, ram: 0.9, bombard: 1.3 }
+};
+function matchupMult(attackerType, enemyType) { return (MATCHUPS[attackerType] && MATCHUPS[attackerType][enemyType]) || 1; }
+
+// How far out a bombard stops and starts firing - past archer's max reach
+// plus a margin, but clamped so it never sits off the visible battlefield
+// on a narrower canvas.
+const BOMBARD_STOP_MARGIN = 80;
+function bombardStopX() { return Math.min(WALL_FRONT_X + UNIT_DEFS.archer.range + BOMBARD_STOP_MARGIN, W - 40); }
+
+// Full scripted wave system: each wave is a composition (counts per enemy
+// type), flattened and shuffled into a spawn queue so types are mixed
+// rather than arriving in blocks. Difficulty ramps by introducing pikeman
+// (wave 3), elephants (wave 5), rams (wave 6), and bombards (wave 7), not
+// just raising counts.
+const WAVES = [
+  { footman: 5 },
+  { footman: 6, horseman: 2 },
+  { footman: 6, horseman: 3, pikeman: 2 },
+  { footman: 5, horseman: 3, pikeman: 3 },
+  { footman: 6, horseman: 4, pikeman: 3, elephant: 1 },
+  { footman: 5, horseman: 4, pikeman: 4, elephant: 1, ram: 1 },
+  { footman: 6, horseman: 5, pikeman: 4, elephant: 2, bombard: 1 },
+  { footman: 6, horseman: 5, pikeman: 5, elephant: 1, ram: 2, bombard: 1 },
+  { footman: 7, horseman: 6, pikeman: 5, elephant: 2, ram: 1, bombard: 2 },
+  { footman: 7, horseman: 6, pikeman: 6, elephant: 2, ram: 2, bombard: 2 },
+  { footman: 8, horseman: 7, pikeman: 6, elephant: 3, ram: 2, bombard: 3 }
+];
+const PRE_WAVE_COUNTDOWN = 3;
+const CASTLE_MAX_HP = 100;
+
+// Hard doesn't just scale enemy stats up - it also tightens the economy
+// (less starting/per-kill gold) and shortens breathers/spawn gaps, so the
+// player has less time and less money to react. hpMult/dmgMult make
+// enemies individually tougher; goldMult makes the economy tighter.
+const DIFFICULTY_PRESETS = {
+  easy: { startGold: 130, spawnInterval: 1.5, waveBreather: 6, hpMult: 1, dmgMult: 1, goldMult: 1.15 },
+  hard: { startGold: 90, spawnInterval: 1.05, waveBreather: 3.5, hpMult: 1.35, dmgMult: 1.25, goldMult: 0.85 }
+};
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS[difficulty];
+
+function buildWaveQueue(wave) {
+  const queue = [];
+  for (const type in wave) for (let i = 0; i < wave[type]; i++) queue.push(type);
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  return queue;
+}
+
+let castleHP = CASTLE_MAX_HP;
+let gold = preset.startGold;
+let enemies = [];
+let projectiles = [];
+let shells = []; // bombard mortar shells - separate from `projectiles` since they arc toward a fixed wall point, not a tracked enemy
+let particles = [];
+let popups = [];
+let killCount = 0;
+let shake = 0;
+let flashTimer = 0;
+let waveIndex = 0;
+let waveQueue = [];
+let waveQueuePos = 0;
+let waveState = 'countdown'; // 'countdown' | 'active' | 'breather'
+let waveTimer = 0;
+let spawnTimer = 0;
+let activeMenu = null; // { slot, kind: 'tier2'|'ground', options, x, y, _rects }
+let activeUnitPanel = null; // { slot, kind: 'ranged'|'melee', x, y, _rects }
+let state = 'menu'; // menu | playing | over
+let paused = false;
+let seenTutorial = sessionStorage.getItem('castleHoldSeenTutorial') === '1';
+
+function updateDiffButtonStyles() {
+  diffButtons.querySelectorAll('button').forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty));
+}
+diffButtons.querySelectorAll('button').forEach((btn) => {
+  btn.addEventListener('click', () => { difficulty = btn.dataset.d; updateDiffButtonStyles(); });
+});
+updateDiffButtonStyles();
+
+function showMenu() {
+  state = 'menu';
+  title.textContent = 'Castle Hold';
+  subtitle.textContent = 'Hold the line. Man the tiers with archers, gunmen and cannon, and deploy spearmen or cavalry at the gate.';
+  scoreLine.style.display = 'none';
+  const best = loadBest();
+  bestLine.textContent = best > 0 ? 'Best score: ' + best : '';
+  startBtn.textContent = 'Start';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'none';
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  preset = DIFFICULTY_PRESETS[difficulty];
+  castleHP = CASTLE_MAX_HP;
+  gold = preset.startGold;
+  enemies = [];
+  projectiles = [];
+  shells = [];
+  particles = [];
+  popups = [];
+  killCount = 0;
+  shake = 0;
+  flashTimer = 0;
+  activeMenu = null;
+  activeUnitPanel = null;
+  waveIndex = 0;
+  waveQueue = buildWaveQueue(WAVES[0]);
+  waveQueuePos = 0;
+  waveState = 'countdown';
+  waveTimer = PRE_WAVE_COUNTDOWN;
+  spawnTimer = 0;
+  TIER3_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.fireAnim = 0; s.stats = null; });
+  TIER2_SLOTS.forEach((s) => { s.unit = null; s.cooldown = 0; s.fireAnim = 0; s.stats = null; });
+  GROUND_SLOTS.forEach((s) => { s.unit = null; s.hp = 0; s.maxHp = 0; s.atkCooldown = 0; s.atkAnim = 0; s.ux = s.x; s.state = 'home'; s.target = null; s.hunting = false; s.stats = null; });
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+startBtn.addEventListener('click', () => {
+  if (state !== 'menu' && state !== 'over') return;
+  // Must be called synchronously from this user-gesture handler, before
+  // anything async, or Fullscreen/orientation-lock requests get rejected.
+  window.kbEnterFullscreen?.(document.documentElement);
+  startGame();
+  if (!seenTutorial) {
+    seenTutorial = true;
+    try { sessionStorage.setItem('castleHoldSeenTutorial', '1'); } catch (e) {}
+    paused = true;
+    introOverlay.style.display = 'flex';
+  }
+});
+backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+
+introStartBtn.addEventListener('click', () => {
+  introOverlay.style.display = 'none';
+  paused = false;
+  lastFrameTime = null;
+});
+
+helpBtn.addEventListener('click', () => {
+  if (state === 'playing') paused = true;
+  helpPanel.style.display = 'flex';
+});
+helpCloseBtn.addEventListener('click', () => {
+  helpPanel.style.display = 'none';
+  if (state === 'playing') { paused = false; lastFrameTime = null; }
+});
+tutorialAgainBtn.addEventListener('click', () => {
+  helpPanel.style.display = 'none';
+  paused = true;
+  introOverlay.style.display = 'flex';
+});
+
+function pointerToCanvas(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+
+function slotHit(p, slot, radius) { return Math.hypot(p.x - slot.x, p.y - slot.y) <= radius; }
+
+function openMenuForSlot(slot, kind) {
+  const options = kind === 'tier2'
+    ? [{ type: 'gunman' }, { type: 'cannon' }]
+    : [{ type: 'spearman' }, { type: 'cavalry' }];
+  activeMenu = { slot, kind, options, x: slot.x, y: slot.y, _rects: null };
+}
+
+// Upgrading raises damage on every unit, plus range/fire-speed for ranged
+// units or max HP (with a full heal) for melee - a level-3 unit hits
+// noticeably harder without needing a second copy of the unit's numbers.
+const MAX_LEVEL = 3;
+const UPGRADE_COST_MULT = [0.7, 1.3]; // level 1->2, level 2->3
+function statsForLevel(type, level) {
+  const base = UNIT_DEFS[type];
+  const dmgMult = 1 + 0.18 * (level - 1);
+  if (base.kind === 'ranged') {
+    return {
+      damage: base.damage * dmgMult,
+      range: base.range * (1 + 0.12 * (level - 1)),
+      fireInterval: Math.max(0.35, base.fireInterval * (1 - 0.1 * (level - 1)))
+    };
+  }
+  return { damage: base.damage * dmgMult, hp: Math.round(base.hp * (1 + 0.22 * (level - 1))) };
+}
+function upgradeCost(type, level) { return Math.round(UNIT_DEFS[type].cost * UPGRADE_COST_MULT[level - 1]); }
+
+function placeUnit(slot, kind, type) {
+  const def = UNIT_DEFS[type];
+  if (gold < def.cost) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + def.cost + 'g', '#ff8a4a'); return; }
+  gold -= def.cost;
+  slot.unit = { type, level: 1, spent: def.cost };
+  slot.stats = statsForLevel(type, 1);
+  if (kind === 'ranged-slot') {
+    slot.cooldown = 0.2;
+    slot.fireAnim = 0;
+  } else {
+    slot.hp = slot.stats.hp;
+    slot.maxHp = slot.stats.hp;
+    slot.atkCooldown = 0.2;
+    slot.atkAnim = 0;
+    slot.ux = slot.x;
+    slot.state = 'home';
+    slot.target = null;
+    slot.hunting = false;
+  }
+  playGold();
+}
+
+function openUnitPanel(slot, kind) {
+  activeUnitPanel = { slot, kind, x: slot.x, y: slot.y, _rects: null };
+}
+
+function upgradeSlot(slot, kind) {
+  const level = slot.unit.level;
+  if (level >= MAX_LEVEL) { playInvalid(); return; }
+  const cost = upgradeCost(slot.unit.type, level);
+  if (gold < cost) { playInvalid(); addPopup(slot.x, slot.y - 20, 'Need ' + cost + 'g', '#ff8a4a'); return; }
+  gold -= cost;
+  slot.unit.level = level + 1;
+  slot.unit.spent += cost;
+  slot.stats = statsForLevel(slot.unit.type, slot.unit.level);
+  if (kind === 'melee') { slot.maxHp = slot.stats.hp; slot.hp = slot.stats.hp; }
+  playGold();
+  addBurst(kind === 'melee' ? slot.ux : slot.x, slot.y - 10, '#ffd76a', 10);
+}
+
+function sellSlot(slot, kind) {
+  const refund = Math.round(slot.unit.spent * 0.6);
+  gold += refund;
+  addPopup(slot.x, slot.y - 20, '+' + refund + 'g', '#ffd76a');
+  playGold();
+  slot.unit = null;
+  slot.stats = null;
+  if (kind === 'melee') {
+    slot.hp = 0; slot.maxHp = 0; slot.ux = slot.x; slot.state = 'home'; slot.target = null; slot.hunting = false; slot.atkCooldown = 0; slot.atkAnim = 0;
+  } else {
+    slot.cooldown = 0;
+  }
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing' || paused) return;
+  const p = pointerToCanvas(e);
+
+  if (activeUnitPanel) {
+    const hit = activeUnitPanel._rects && activeUnitPanel._rects.find((r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h);
+    if (hit && activeUnitPanel.slot.unit) {
+      if (hit.type === 'upgrade') upgradeSlot(activeUnitPanel.slot, activeUnitPanel.kind);
+      else if (hit.type === 'sell') sellSlot(activeUnitPanel.slot, activeUnitPanel.kind);
+    }
+    activeUnitPanel = null;
+    return;
+  }
+
+  if (activeMenu) {
+    const hit = activeMenu._rects && activeMenu._rects.find((r) => p.x >= r.x && p.x <= r.x + r.w && p.y >= r.y && p.y <= r.y + r.h);
+    if (hit) placeUnit(activeMenu.slot, activeMenu.kind === 'tier2' ? 'ranged-slot' : 'ground-slot', hit.type);
+    activeMenu = null;
+    return;
+  }
+
+  for (const slot of TIER3_SLOTS) {
+    if (slotHit(p, slot, 16)) {
+      if (slot.unit) openUnitPanel(slot, 'ranged'); else placeUnit(slot, 'ranged-slot', 'archer');
+      return;
+    }
+  }
+  for (const slot of TIER2_SLOTS) {
+    if (slotHit(p, slot, 16)) {
+      if (slot.unit) openUnitPanel(slot, 'ranged'); else openMenuForSlot(slot, 'tier2');
+      return;
+    }
+  }
+  for (const slot of GROUND_SLOTS) {
+    if (slotHit(p, { x: slot.x, y: slot.y - 12 }, 16)) {
+      if (slot.unit) openUnitPanel(slot, 'melee'); else openMenuForSlot(slot, 'ground');
+      return;
+    }
+  }
+});
+
+function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
+function addBurst(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = 30 + Math.random() * 70;
+    particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0, maxLife: 300 + Math.random() * 200, color, size: 2 + Math.random() * 2 });
+  }
+}
+
+function spawnEnemy(type) {
+  const def = ENEMY_DEFS[type];
+  const hp = Math.round(def.hp * preset.hpMult);
+  enemies.push({
+    type, x: W + 20, y: GROUND_Y, hp, maxHp: hp, speed: def.speed,
+    dead: false, bob: Math.random() * 10, meleeUnit: null, atkCooldown: 0.3, atkAnim: 0,
+    fireCooldown: 1.2, fireAnim: 0
+  });
+}
+
+function updateRangedSlots(slots, dt) {
+  for (const slot of slots) {
+    if (!slot.unit) continue;
+    if (slot.fireAnim > 0) slot.fireAnim -= dt;
+    const def = UNIT_DEFS[slot.unit.type];
+    const stats = slot.stats;
+    slot.cooldown -= dt;
+    if (slot.cooldown > 0) continue;
+    let target = null, bestDist = stats.range;
+    for (const en of enemies) {
+      if (en.dead || en.x > W) continue; // not yet on-screen - can't be targeted
+      const d = en.x - slot.x;
+      if (d >= 0 && d <= bestDist) { bestDist = d; target = en; }
+    }
+    if (target) {
+      slot.cooldown = stats.fireInterval;
+      slot.fireAnim = def.splash ? 0.4 : 0.25; // drives the recoil/muzzle-flash/bow-release draw animation
+      if (def.splash) playCannonFire(); else playBowFire();
+      projectiles.push({ x: slot.x, y: slot.y, targetRef: target, unitType: slot.unit.type, damage: stats.damage, spawnX: slot.x, spawnY: slot.y, splash: def.splash || 0 });
+    }
+  }
+}
+
+function updateProjectiles(dt) {
+  for (const p of projectiles) {
+    if (p.done) continue;
+    const en = p.targetRef;
+    if (!en || en.dead) { p.done = true; continue; }
+    const dx = en.x - p.x, dy = (en.y - 14) - p.y;
+    const dist = Math.hypot(dx, dy);
+    const step = PROJECTILE_SPEED * dt;
+    if (dist <= step) {
+      p.done = true;
+      if (p.splash > 0) {
+        for (const other of enemies) {
+          if (other.dead || Math.abs(other.x - en.x) > p.splash) continue;
+          other.hp -= p.damage * matchupMult(p.unitType, other.type);
+          if (other.hp <= 0 && !other.dead) killEnemy(other);
+        }
+        addBurst(en.x, en.y - 10, '#5a5f68', 16);
+        playCannonHit();
+      } else {
+        en.hp -= p.damage * matchupMult(p.unitType, en.type);
+        addBurst(en.x, en.y - 14, '#e8834a', 6);
+        playArrowHit();
+        if (en.hp <= 0 && !en.dead) killEnemy(en);
+      }
+    } else {
+      p.x += (dx / dist) * step;
+      p.y += (dy / dist) * step;
+      if (p.splash > 0) {
+        // Trailing smoke puffs behind the cannonball - spawned into the
+        // shared particle system so they fade/fall with everything else.
+        p.smokeTimer = (p.smokeTimer || 0) - dt;
+        if (p.smokeTimer <= 0) {
+          p.smokeTimer = 0.045;
+          const traveled = Math.hypot(p.x - p.spawnX, p.y - p.spawnY);
+          const dip = Math.sin(clamp(traveled / (traveled + dist || 1), 0, 1) * Math.PI) * 20;
+          particles.push({ x: p.x, y: p.y - dip, vx: (Math.random() - 0.5) * 6, vy: -4 - Math.random() * 5, life: 0, maxLife: 260, color: 'rgba(110,110,110,0.45)', size: 2 + Math.random() * 1.5 });
+        }
+      }
+    }
+  }
+  projectiles = projectiles.filter((p) => !p.done);
+}
+
+// A bombard's shot is a real lobbed shell rather than instant damage - it
+// arcs from the bombard to the wall over real travel time (telegraphed by
+// the "Bombard fires!" popup at launch), leaving a smoke trail, and only
+// applies castle damage/shake/flash on impact.
+function updateShells(dt) {
+  for (const s of shells) {
+    if (s.done) continue;
+    s.traveled += s.speed * dt;
+    const frac = clamp(s.traveled / s.dist, 0, 1);
+    s.x = lerp(s.startX, s.targetX, frac);
+    s.y = lerp(s.startY, s.targetY, frac);
+    s.smokeTimer -= dt;
+    if (s.smokeTimer <= 0) {
+      s.smokeTimer = 0.05;
+      const dip = Math.sin(frac * Math.PI) * 30;
+      particles.push({ x: s.x, y: s.y - dip, vx: (Math.random() - 0.5) * 6, vy: -3 - Math.random() * 4, life: 0, maxLife: 300, color: 'rgba(100,100,100,0.4)', size: 2 + Math.random() * 1.5 });
+    }
+    if (frac >= 1) {
+      s.done = true;
+      castleHP -= s.dmg;
+      shake = 0.2;
+      flashTimer = 0.2;
+      addPopup(s.targetX, s.targetY - 16, 'Direct hit!', '#e05a4a');
+      addBurst(s.targetX, s.targetY, '#c0392b', 8);
+      addBurst(s.targetX, s.targetY, '#5a5f68', 10);
+      playCannonHit();
+      if (castleHP <= 0) { castleHP = 0; shells = shells.filter((x) => !x.done); endGame(false); return; }
+    }
+  }
+  shells = shells.filter((s) => !s.done);
+}
+
+function killEnemy(en) {
+  en.dead = true;
+  killCount++;
+  const reward = Math.round(ENEMY_DEFS[en.type].goldReward * preset.goldMult);
+  gold += reward;
+  addBurst(en.x, en.y - 10, '#8a3a3a', 12);
+  addPopup(en.x, en.y - 24, '+' + reward + 'g', '#ffd76a');
+  playEnemyDie();
+  if (en.meleeUnit) {
+    if (en.meleeUnit.target === en) { en.meleeUnit.state = 'returning'; en.meleeUnit.target = null; }
+    en.meleeUnit = null;
+  }
+}
+
+// Ground units are active skirmishers: updateGroundUnits (below) moves them
+// out to meet anything in range and back again. An enemy just walks
+// straight for the wall UNLESS a melee unit has come out to engage it
+// (en.meleeUnit set), in which case it's paused fighting - see updateGroundUnits.
+function updateEnemies(dt) {
+  for (const en of enemies) {
+    if (en.dead) continue;
+    if (en.atkAnim > 0) en.atkAnim -= dt;
+    if (en.fireAnim > 0) en.fireAnim -= dt;
+    if (en.meleeUnit) continue;
+    const def = ENEMY_DEFS[en.type];
+
+    if (en.type === 'bombard') {
+      const stopX = bombardStopX();
+      if (en.x > stopX) {
+        en.x -= en.speed * dt;
+      } else {
+        en.fireCooldown -= dt;
+        if (en.fireCooldown <= 0) {
+          en.fireCooldown = def.fireInterval;
+          en.fireAnim = 0.35;
+          playBombardFire();
+          addPopup(en.x, en.y - 26, 'Bombard fires!', '#e05a4a');
+          const startX = en.x, startY = en.y - 20, targetX = WALL_FRONT_X + 10, targetY = GROUND_Y - 10;
+          shells.push({ x: startX, y: startY, startX, startY, targetX, targetY, dist: Math.hypot(targetX - startX, targetY - startY) || 1, traveled: 0, speed: 340, dmg: def.rangedDamage * preset.dmgMult, smokeTimer: 0 });
+        }
+      }
+      continue;
+    }
+
+    en.x -= en.speed * dt;
+    if (en.x <= WALL_FRONT_X + 14) {
+      castleHP -= def.wallDamage * preset.dmgMult;
+      en.dead = true;
+      shake = 0.25;
+      flashTimer = 0.25;
+      playWallThud();
+      addBurst(WALL_FRONT_X + 10, en.y - 10, '#c0392b', 10);
+      if (castleHP <= 0) { castleHP = 0; endGame(false); return; }
+    }
+  }
+  enemies = enemies.filter((en) => !en.dead);
+}
+
+// Melee units lunge out from their home position to meet the nearest enemy
+// within range (capped at maxAdvance past home, so cavalry doesn't run off
+// chasing something far away), fight it where they meet, then return home
+// and watch for the next threat.
+function updateGroundUnits(dt) {
+  for (const slot of GROUND_SLOTS) {
+    if (!slot.unit) continue;
+    if (slot.atkAnim > 0) slot.atkAnim -= dt;
+    const def = UNIT_DEFS[slot.unit.type];
+    const homeX = slot.x;
+
+    if (slot.state === 'fighting') {
+      const en = slot.target;
+      if (!en || en.dead) { slot.state = 'returning'; slot.target = null; continue; }
+      const edef = ENEMY_DEFS[en.type];
+
+      slot.atkCooldown -= dt;
+      if (slot.atkCooldown <= 0) {
+        slot.atkCooldown = def.attackInterval;
+        slot.atkAnim = 0.25;
+        en.hp -= slot.stats.damage * matchupMult(slot.unit.type, en.type);
+        playMeleeClash();
+        addBurst(en.x, en.y - 14, '#e8834a', 4);
+        if (en.hp <= 0 && !en.dead) { killEnemy(en); slot.state = 'returning'; slot.target = null; continue; }
+      }
+
+      en.atkCooldown -= dt;
+      if (en.atkCooldown <= 0) {
+        en.atkCooldown = edef.atkInterval;
+        en.atkAnim = 0.25;
+        slot.hp -= edef.meleeDamage * preset.dmgMult;
+        addBurst(slot.ux, slot.y - 14, '#c0392b', 4);
+        if (slot.hp <= 0) {
+          addPopup(slot.x, slot.y - 26, slot.unit.type + ' fell!', '#ff8a4a');
+          slot.unit = null; slot.stats = null; slot.hp = 0; slot.state = 'home'; slot.target = null;
+          en.meleeUnit = null;
+          playUnitFall();
+        }
+      }
+      continue;
+    }
+
+    if (slot.state === 'advancing') {
+      const en = slot.target;
+      if (!en || en.dead) { slot.state = 'returning'; slot.target = null; slot.hunting = false; continue; }
+      const cap = slot.hunting ? def.huntMaxAdvance : def.maxAdvance;
+      if (Math.abs(en.x - slot.ux) <= TOUCH_DIST || slot.ux >= homeX + cap) {
+        slot.state = 'fighting';
+        slot.atkCooldown = def.attackInterval * 0.4;
+        continue;
+      }
+      slot.ux = Math.min(slot.ux + def.speed * dt, homeX + cap);
+      continue;
+    }
+
+    if (slot.state === 'returning') {
+      if (slot.ux > homeX) slot.ux = Math.max(homeX, slot.ux - def.speed * dt);
+      else slot.state = 'home';
+    }
+
+    // 'home' or just arrived back - scan for the closest unclaimed enemy in
+    // range first. Only if nothing ordinary is nearby does a unit with a
+    // huntRange (cavalry) look much farther out for a high-priority target
+    // like a bombard - normal melee threats never trigger a sortie.
+    let best = null, bestDist = def.range;
+    for (const en of enemies) {
+      if (en.dead || en.meleeUnit || en.x > W) continue; // not yet on-screen - can't be targeted
+      const d = en.x - slot.ux;
+      if (d >= 0 && d <= bestDist) { bestDist = d; best = en; }
+    }
+    slot.hunting = false;
+    if (!best && def.huntRange) {
+      let huntBestDist = def.huntRange;
+      for (const en of enemies) {
+        if (en.dead || en.meleeUnit || en.x > W || !def.huntTypes.includes(en.type)) continue;
+        const d = en.x - slot.ux;
+        if (d >= 0 && d <= huntBestDist) { huntBestDist = d; best = en; }
+      }
+      if (best) slot.hunting = true;
+    }
+    if (best) {
+      slot.target = best;
+      slot.state = 'advancing';
+      best.meleeUnit = slot;
+    }
+  }
+}
+
+function endGame(won) {
+  state = 'over';
+  const finalScore = killCount + waveIndex * 20 + Math.round(castleHP);
+  const best = loadBest();
+  const isNewBest = finalScore > best;
+  if (isNewBest) saveBest(finalScore);
+  if (won) {
+    playWin();
+    title.textContent = 'The line held!';
+    subtitle.textContent = 'Every wave stopped before the gate.';
+    scoreLine.style.display = 'block';
+    scoreLine.textContent = 'Kills: ' + killCount + ' · Waves cleared: ' + WAVES.length + ' · Castle HP left: ' + Math.round(castleHP) + '%';
+  } else {
+    playLose();
+    title.textContent = 'The castle has fallen';
+    subtitle.textContent = 'Enemies broke through the gate.';
+    scoreLine.style.display = 'block';
+    scoreLine.textContent = 'Kills: ' + killCount + ' · Waves cleared: ' + waveIndex + ' / ' + WAVES.length;
+  }
+  bestLine.textContent = isNewBest ? '🏆 New best!' : 'Best score: ' + best;
+  startBtn.textContent = 'Play Again';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+function update(dt) {
+  particles.forEach((p) => { p.life += dt * 1000; p.vy += 160 * dt; p.x += p.vx * dt; p.y += p.vy * dt; });
+  particles = particles.filter((p) => p.life < p.maxLife);
+  popups.forEach((p) => { p.t += dt * 1000; });
+  popups = popups.filter((p) => p.t < 900);
+  if (shake > 0) shake -= dt;
+  if (flashTimer > 0) flashTimer -= dt;
+
+  if (state !== 'playing' || paused) return;
+
+  if (waveState === 'countdown') {
+    waveTimer -= dt;
+    if (waveTimer <= 0) { waveState = 'active'; spawnTimer = 0.3; }
+  } else if (waveState === 'active') {
+    if (waveQueuePos < waveQueue.length) {
+      spawnTimer -= dt;
+      if (spawnTimer <= 0) { spawnEnemy(waveQueue[waveQueuePos]); waveQueuePos++; spawnTimer = preset.spawnInterval; }
+    } else if (enemies.length === 0) {
+      waveIndex++;
+      if (waveIndex >= WAVES.length) {
+        endGame(true);
+        return;
+      }
+      waveState = 'breather';
+      waveTimer = preset.waveBreather;
+      addPopup(W / 2, 70, 'Wave ' + waveIndex + ' cleared!', '#5cc85c');
+      playWaveClear();
+    }
+  } else if (waveState === 'breather') {
+    waveTimer -= dt;
+    if (waveTimer <= 0) {
+      waveQueue = buildWaveQueue(WAVES[waveIndex]);
+      waveQueuePos = 0;
+      waveState = 'countdown';
+      waveTimer = PRE_WAVE_COUNTDOWN;
+    }
+  }
+
+  updateRangedSlots(TIER3_SLOTS, dt);
+  updateRangedSlots(TIER2_SLOTS, dt);
+  updateGroundUnits(dt);
+  updateEnemies(dt);
+  updateProjectiles(dt);
+  updateShells(dt);
+}
+
+// --- Rendering (matches the concept art's palette/silhouette) ---
+let skyGrad = null, groundGrad = null;
+function buildGradients() {
+  skyGrad = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  skyGrad.addColorStop(0, '#cfe3f2'); skyGrad.addColorStop(1, '#e8d9b0');
+  groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H);
+  groundGrad.addColorStop(0, '#c9a86a'); groundGrad.addColorStop(1, '#a8824a');
+}
+buildGradients();
+
+function drawBackdrop() {
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+  ctx.fillStyle = 'rgba(180,160,110,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y);
+  ctx.quadraticCurveTo(W * 0.3125, GROUND_Y - 50, W * 0.625, GROUND_Y);
+  ctx.quadraticCurveTo(W * 0.8125, GROUND_Y - 40, W, GROUND_Y);
+  ctx.fill();
+}
+
+function drawCastle() {
+  let stone = ctx.createLinearGradient(0, WALL_TOP, 0, GROUND_Y);
+  stone.addColorStop(0, '#9aa0a8'); stone.addColorStop(1, '#767b84');
+  ctx.fillStyle = stone;
+  ctx.fillRect(WALL_X, WALL_TOP, WALL_W, GROUND_Y - WALL_TOP);
+  ctx.strokeStyle = 'rgba(0,0,0,0.10)'; ctx.lineWidth = 1;
+  for (let y = WALL_TOP + 22; y < GROUND_Y; y += 22) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WALL_W, y); ctx.stroke(); }
+  for (let y = WALL_TOP; y < GROUND_Y; y += 22) {
+    const off = ((y - WALL_TOP) / 22) % 2 === 0 ? 0 : 20;
+    for (let x = off; x < WALL_W; x += 40) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + 22); ctx.stroke(); }
+  }
+
+  ctx.fillStyle = '#767b84'; ctx.fillRect(0, WALL_TOP, WALL_W, 8);
+  ctx.fillStyle = '#8a9098';
+  for (let x = 4; x < WALL_W; x += 24) ctx.fillRect(x, WALL_TOP - 14, 15, 16);
+
+  ctx.fillStyle = '#6b7078'; ctx.fillRect(0, MID_Y, WALL_W + 16, 12);
+  ctx.fillStyle = '#8a9098';
+  for (let x = 6; x < WALL_W + 16; x += 24) ctx.fillRect(x, MID_Y - 12, 14, 12);
+  ctx.fillStyle = '#2a2f36';
+  for (let x = 24; x < WALL_W; x += 42) ctx.fillRect(x, MID_Y + 26, 6, 16);
+
+  const towerTop = TOWER_TOP;
+  let tstone = ctx.createLinearGradient(0, towerTop, 0, GROUND_Y);
+  tstone.addColorStop(0, '#9aa0a8'); tstone.addColorStop(1, '#6b7078');
+  ctx.fillStyle = tstone; ctx.fillRect(TOWER_X, towerTop, TOWER_W, GROUND_Y - towerTop);
+  ctx.fillStyle = '#767b84'; ctx.fillRect(TOWER_X, towerTop, TOWER_W, 8);
+  ctx.fillStyle = '#8a9098';
+  for (let x = TOWER_X + 4; x < TOWER_X + TOWER_W; x += 18) ctx.fillRect(x, towerTop - 13, 12, 15);
+  ctx.fillStyle = '#2a2f36';
+  ctx.fillRect(TOWER_X + 16, towerTop + 26, 7, 18);
+  ctx.fillRect(TOWER_X + 16, towerTop + 60, 7, 18);
+  ctx.fillStyle = '#b0403a';
+  ctx.beginPath();
+  ctx.moveTo(TOWER_X - 4, towerTop - 12); ctx.lineTo(TOWER_X + TOWER_W + 4, towerTop - 12);
+  ctx.lineTo(TOWER_X + TOWER_W / 2, towerTop - 40); ctx.fill();
+  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(TOWER_X + TOWER_W / 2, towerTop - 40); ctx.lineTo(TOWER_X + TOWER_W / 2, towerTop - 58); ctx.stroke();
+  ctx.fillStyle = '#c0392b';
+  ctx.beginPath();
+  ctx.moveTo(TOWER_X + TOWER_W / 2, towerTop - 58);
+  ctx.lineTo(TOWER_X + TOWER_W / 2 + 24, towerTop - 51);
+  ctx.lineTo(TOWER_X + TOWER_W / 2, towerTop - 44);
+  ctx.fill();
+
+  ctx.fillStyle = '#3a2818';
+  ctx.beginPath();
+  ctx.moveTo(46, GROUND_Y); ctx.lineTo(46, GROUND_Y - 58);
+  ctx.arc(78, GROUND_Y - 58, 32, Math.PI, 0); ctx.lineTo(110, GROUND_Y); ctx.fill();
+  ctx.strokeStyle = '#6b5030'; ctx.lineWidth = 3;
+  for (let x = 54; x <= 102; x += 12) { ctx.beginPath(); ctx.moveTo(x, GROUND_Y); ctx.lineTo(x, GROUND_Y - 70); ctx.stroke(); }
+  ctx.beginPath(); ctx.moveTo(46, GROUND_Y - 52); ctx.lineTo(110, GROUND_Y - 52); ctx.stroke();
+}
+
+// fireAnim counts down from a fixed duration the instant a shot is loosed
+// (set in updateRangedSlots) - t goes 1 -> 0 across that window, driving
+// the bowstring snap / gun recoil+flash / cannon recoil+flash+smoke below.
+// Static (non-firing) units still hold their weapon at a real drawn angle
+// instead of a fixed decorative doodle.
+function drawArcherFigure(x, y, fireAnim) {
+  const firing = fireAnim > 0;
+  const t = firing ? fireAnim / 0.25 : 0;
+  ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#8a6a3a'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(x + 5, y, 7, -1, 1); ctx.stroke();
+  // string - bulges back toward the archer right after loosing an arrow,
+  // then relaxes to a straight resting string.
+  const draw = firing ? t * 5 : 0;
+  ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x + 5, y - 6.7);
+  ctx.lineTo(x + 5 - draw, y);
+  ctx.lineTo(x + 5, y + 6.7);
+  ctx.stroke();
+  if (firing) {
+    ctx.strokeStyle = 'rgba(255,255,255,' + t + ')';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x + 6, y); ctx.lineTo(x + 6 + (1 - t) * 14, y); ctx.stroke();
+  }
+}
+function drawGunmanFigure(x, y, fireAnim) {
+  const firing = fireAnim > 0;
+  const t = firing ? fireAnim / 0.25 : 0;
+  const recoil = firing ? t * 3 : 0;
+  ctx.fillStyle = '#6a5a3a'; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#222'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x - recoil, y); ctx.lineTo(x + 12 - recoil, y - 3); ctx.stroke();
+  if (firing) {
+    ctx.fillStyle = 'rgba(255,205,110,' + t + ')';
+    ctx.beginPath(); ctx.arc(x + 14 - recoil, y - 3.5, 3 * t + 1.5, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function drawCannonFigure(x, y, fireAnim) {
+  const firing = fireAnim > 0;
+  const t = firing ? fireAnim / 0.4 : 0;
+  const recoil = firing ? t * 6 : 0;
+  ctx.fillStyle = '#2a2f36';
+  ctx.beginPath(); ctx.arc(x - 1, y + 7, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#4a3f30'; ctx.lineWidth = 1.5;
+  for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) { ctx.beginPath(); ctx.moveTo(x - 1, y + 7); ctx.lineTo(x - 1 + Math.cos(a) * 5, y + 7 + Math.sin(a) * 5); ctx.stroke(); }
+  ctx.fillStyle = '#3a3f48'; ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(x - recoil, y - 4, 16, 7);
+  ctx.fillStyle = '#2a2f36'; ctx.beginPath(); ctx.arc(x + 16 - recoil, y - 0.5, 3.2, 0, Math.PI * 2); ctx.fill();
+  if (firing) {
+    ctx.fillStyle = 'rgba(255,195,90,' + t + ')';
+    ctx.beginPath(); ctx.arc(x + 18 - recoil, y - 0.5, 5 * t + 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(140,140,140,' + (t * 0.6) + ')';
+    ctx.beginPath(); ctx.arc(x + 23 - recoil, y - 0.5, 7 * (1 - t) + 3, 0, Math.PI * 2); ctx.fill();
+  }
+}
+// dir=1 faces right (out toward the battlefield - watching, advancing, or
+// fighting); dir=-1 faces left (heading home). moving=true swings the legs
+// through a marching cycle; false holds an idle stance. Drawn in a
+// translated + mirrored local space so the unit visibly turns around
+// instead of sliding backwards while still "looking" the wrong way.
+function drawSpearmanFigure(x, y, dir, moving) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(dir || 1, 1);
+  const stride = moving ? Math.sin(performance.now() / 120) * 3.5 : 0;
+  ctx.strokeStyle = '#2a1f14'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(-1, 6); ctx.lineTo(-1 + stride * 0.7, 14); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(2, 6); ctx.lineTo(2 - stride * 0.7, 14); ctx.stroke();
+  ctx.fillStyle = '#5a6a3a'; ctx.beginPath(); ctx.arc(0, -10, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(-2, -6, 4, 12);
+  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(6, -20); ctx.lineTo(6, 8); ctx.stroke();
+  ctx.fillStyle = '#c0c0c0';
+  ctx.beginPath(); ctx.moveTo(6, -20); ctx.lineTo(3, -15); ctx.lineTo(9, -15); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function drawCavalryFigure(x, y, dir, moving) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(dir || 1, 1);
+  const gallop = moving ? Math.sin(performance.now() / 85) * 4.5 : 0;
+  ctx.fillStyle = '#6b4a2f'; ctx.beginPath(); ctx.ellipse(0, 0, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(-12, 4, 3, 9 + gallop * 0.5); ctx.fillRect(9, 4, 3, 9 - gallop * 0.5);
+  ctx.beginPath(); ctx.ellipse(13, -6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#3a5a8a'; ctx.beginPath(); ctx.arc(0, -9, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#c0c0c0'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(16, -14); ctx.stroke();
+  ctx.fillStyle = '#c0c0c0';
+  ctx.beginPath(); ctx.moveTo(16, -14); ctx.lineTo(12, -12); ctx.lineTo(14, -17); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+const RANGED_FIGURE_DRAWERS = { archer: drawArcherFigure, gunman: drawGunmanFigure, cannon: drawCannonFigure };
+const MELEE_FIGURE_DRAWERS = { spearman: drawSpearmanFigure, cavalry: drawCavalryFigure };
+
+function drawEmptySlotMarker(x, y) {
+  ctx.strokeStyle = 'rgba(255,215,106,0.85)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,215,106,0.25)';
+  ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,215,106,0.95)';
+  ctx.font = 'bold 9px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('+', x, y + 3);
+}
+
+function drawLevelBadge(x, y, level) {
+  if (level <= 1) return;
+  ctx.fillStyle = '#ffd76a';
+  ctx.font = 'bold 8px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('★'.repeat(level - 1), x, y - 16);
+}
+
+function drawTier3Slots() {
+  for (const slot of TIER3_SLOTS) {
+    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y, slot.fireAnim || 0); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
+    else drawEmptySlotMarker(slot.x, slot.y);
+  }
+}
+function drawTier2Slots() {
+  for (const slot of TIER2_SLOTS) {
+    if (slot.unit) { RANGED_FIGURE_DRAWERS[slot.unit.type](slot.x, slot.y, slot.fireAnim || 0); drawLevelBadge(slot.x, slot.y, slot.unit.level); }
+    else drawEmptySlotMarker(slot.x, slot.y);
+  }
+}
+function drawMeleeAttackEffect(slot) {
+  if (slot.atkAnim <= 0) return;
+  const t = slot.atkAnim / 0.25;
+  const target = slot.target;
+  const tx = target ? target.x : slot.ux + 24, ty = target ? target.y - 10 : slot.y - 10;
+  if (slot.unit.type === 'spearman') {
+    // A quick bright thrust toward whatever it's fighting, tipped with a
+    // real spearhead so the point of contact reads clearly.
+    const ang = Math.atan2(ty - (slot.y - 12), tx - (slot.ux + 3));
+    ctx.strokeStyle = 'rgba(224,224,224,' + t + ')';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(slot.ux + 3, slot.y - 12); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.rotate(ang);
+    ctx.fillStyle = 'rgba(224,224,224,' + t + ')';
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-7, -3); ctx.lineTo(-7, 3); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  } else if (slot.unit.type === 'cavalry') {
+    // Blade rotates through a real slashing arc (same pivoted-swing
+    // technique as the enemy horseman) instead of snapping to one line.
+    const swing = 1 - t;
+    ctx.save();
+    ctx.translate(slot.ux, slot.y - 9);
+    ctx.rotate(lerp(-0.9, 0.6, swing));
+    ctx.strokeStyle = 'rgba(255,255,255,' + t + ')';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(22, -6); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,' + t + ')';
+    ctx.beginPath(); ctx.moveTo(22, -6); ctx.lineTo(17, -3); ctx.lineTo(19, -9); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawGroundSlots() {
+  for (const slot of GROUND_SLOTS) {
+    if (slot.unit) {
+      // Drawn at ux (current position), not x (home) - it actively moves
+      // out to meet enemies within range and back, not a fixed wall block.
+      // Faces left (-1) while retreating home so it visibly turns around
+      // instead of sliding backwards; every other state faces the field.
+      const facing = slot.state === 'returning' ? -1 : 1;
+      const moving = slot.state === 'advancing' || slot.state === 'returning';
+      MELEE_FIGURE_DRAWERS[slot.unit.type](slot.ux, slot.y, facing, moving);
+      drawMeleeAttackEffect(slot);
+      drawLevelBadge(slot.ux, slot.y, slot.unit.level);
+      if (slot.hp < slot.maxHp) {
+        const w = 26;
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(slot.ux - w / 2, slot.y - 32, w, 4);
+        ctx.fillStyle = '#5cc85c'; ctx.fillRect(slot.ux - w / 2, slot.y - 32, w * clamp(slot.hp / slot.maxHp, 0, 1), 4);
+      }
+    } else {
+      drawEmptySlotMarker(slot.x, slot.y - 12);
+    }
+  }
+}
+
+// Two-leg walking gait (alternating swing, weighted toward the leading
+// direction of travel) plus a weapon that swings through a real pivoted
+// arc while actively attacking (en.atkAnim, set in updateGroundUnits) and
+// otherwise just held at a carried-ready angle - not a fixed decoration.
+function drawFootSoldier(en, y, color, opts) {
+  opts = opts || {};
+  const x = en.x;
+  const stride = en.meleeUnit ? 0 : Math.sin(performance.now() / 130 + en.bob) * 4;
+  ctx.strokeStyle = '#2a1f14'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - 2, y + 4); ctx.lineTo(x - 2 + stride * 0.6, y + 13); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + 2, y + 4); ctx.lineTo(x + 2 - stride * 0.6, y + 13); ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.fillRect(x - 3, y - 6, 6, 12);
+  ctx.beginPath(); ctx.arc(x, y - 10, 5, 0, Math.PI * 2); ctx.fill();
+  if (opts.weapon !== false) {
+    const active = en.atkAnim > 0;
+    const swing = active ? 1 - en.atkAnim / 0.25 : 0;
+    ctx.save();
+    ctx.translate(x - 3, y - 12);
+    ctx.rotate(active ? lerp(-1.1, 0.5, swing) : -0.5);
+    ctx.strokeStyle = active ? '#fff' : '#c0c0c0';
+    ctx.lineWidth = active ? 2.5 : 2;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -6); ctx.stroke();
+    ctx.restore();
+  }
+}
+function drawFootman(en, y) { drawFootSoldier(en, y, '#8a3a3a'); }
+function drawPikeman(en, y) {
+  drawFootSoldier(en, y, '#7a4a2a', { weapon: false });
+  const x = en.x;
+  const active = en.atkAnim > 0;
+  // Pikes thrust straight forward-and-back rather than swinging, unlike a
+  // sword - punch the tip out on the attack then pull it back.
+  const thrust = active ? Math.sin((1 - en.atkAnim / 0.25) * Math.PI) * 7 : 0;
+  ctx.strokeStyle = active ? '#fff' : '#c0c0c0'; ctx.lineWidth = active ? 2.5 : 2;
+  ctx.beginPath(); ctx.moveTo(x - 6 - thrust, y - 28); ctx.lineTo(x - 6, y + 12); ctx.stroke();
+  ctx.fillStyle = active ? '#fff' : '#8a8f98';
+  ctx.beginPath(); ctx.moveTo(x - 6 - thrust, y - 28); ctx.lineTo(x - 10 - thrust, y - 21); ctx.lineTo(x - 2 - thrust, y - 21); ctx.closePath(); ctx.fill();
+}
+function drawHorseman(en, y) {
+  // Head leads on the LEFT - that's the direction of travel (enemies walk
+  // toward the castle, which is at lower x). It was drawn on the right
+  // before, so the horse looked like it was riding backwards.
+  const galloping = !en.meleeUnit;
+  const gallop = galloping ? Math.sin(performance.now() / 75 + en.bob) * 5 : 0;
+  ctx.fillStyle = '#5a3a2a'; ctx.beginPath(); ctx.ellipse(en.x, y, 15, 7, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(en.x - 12, y + 4, 3, 9 - gallop * 0.5); ctx.fillRect(en.x + 9, y + 4, 3, 9 + gallop * 0.5);
+  ctx.beginPath(); ctx.ellipse(en.x - 13, y - 6, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#8a3a3a'; ctx.beginPath(); ctx.arc(en.x, y - 9, 5, 0, Math.PI * 2); ctx.fill();
+  // Sword, resting near the head; swings through an arc while actively
+  // attacking (atkAnim set by updateGroundUnits whenever it lands a hit).
+  const active = en.atkAnim > 0;
+  const swing = active ? 1 - en.atkAnim / 0.25 : 0;
+  ctx.save();
+  ctx.translate(en.x - 16, y - 11);
+  ctx.rotate(active ? lerp(-0.9, 0.6, swing) : -0.3);
+  ctx.strokeStyle = active ? '#fff' : '#ddd';
+  ctx.lineWidth = active ? 3 : 2;
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-9, -3); ctx.stroke();
+  if (active) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-9, -3); ctx.lineTo(-6, -1); ctx.lineTo(-7, -5); ctx.closePath(); ctx.fill(); }
+  ctx.restore();
+}
+function drawElephant(en, y) {
+  const x = en.x;
+  // A real walk cycle: back/front leg pairs swing opposite each other, and
+  // legs are drawn both behind AND in front of the body so all four read
+  // clearly instead of two thin rects that blended into the silhouette.
+  const walk = Math.sin(performance.now() / 220 + en.bob) * 5;
+  ctx.fillStyle = '#4f535c';
+  ctx.fillRect(x - 19, y + 5, 7, 15 + walk * 0.4);
+  ctx.fillRect(x + 11, y + 5, 7, 15 - walk * 0.4);
+  ctx.fillStyle = '#7a7f88'; ctx.beginPath(); ctx.ellipse(x, y, 26, 17, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(x - 24, y - 4, 11, 10, 0, 0, Math.PI * 2); ctx.fill();
+  const trunkSway = Math.sin(performance.now() / 300 + en.bob) * 3;
+  ctx.strokeStyle = '#7a7f88'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - 32, y); ctx.lineTo(x - 40 + trunkSway, y + 14); ctx.stroke();
+  ctx.fillStyle = '#5a5f68';
+  ctx.fillRect(x - 16, y - 2, 6, 17 - walk * 0.4);
+  ctx.fillRect(x + 13, y - 2, 6, 17 + walk * 0.4);
+  ctx.fillStyle = '#8a3a3a'; ctx.fillRect(x - 6, y - 22, 12, 10);
+}
+function drawRam(en, y) {
+  const x = en.x;
+  const bob = Math.sin(performance.now() / 160 + en.bob) * 1.4;
+  // wheeled frame the log hangs from
+  ctx.strokeStyle = '#4a3320'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x - 30, y - 12); ctx.lineTo(x - 30, y + 6); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + 24, y - 12); ctx.lineTo(x + 24, y + 6); ctx.stroke();
+  ctx.fillStyle = '#2a2f36';
+  ctx.beginPath(); ctx.arc(x - 30, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 24, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  // canopy roof over the crew
+  ctx.fillStyle = 'rgba(90,60,40,0.7)'; ctx.fillRect(x - 24, y - 22, 44, 6);
+  // the log itself, metal-capped on the leading (left) end - hangs from the
+  // frame and rocks on its ropes as the crew marches it forward, so it
+  // already reads as "about to batter" before it ever reaches the wall.
+  const logSwing = Math.sin(performance.now() / 260 + en.bob) * 0.12;
+  ctx.save();
+  ctx.translate(x - 3, y - 12);
+  ctx.rotate(logSwing);
+  ctx.fillStyle = '#6b4a2f'; ctx.fillRect(-27, 3, 54, 10);
+  ctx.fillStyle = '#5a5f68'; ctx.beginPath(); ctx.arc(-27, 8, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  // a few crew dragging it, walking beneath the canopy
+  ctx.fillStyle = '#3a2a18';
+  for (const dx of [-8, 6, 20]) {
+    ctx.beginPath(); ctx.arc(x + dx, y + bob, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillRect(x + dx - 2, y + 3 + bob, 4, 9);
+  }
+}
+function drawBombard(en, y) {
+  const x = en.x;
+  const firing = en.fireAnim > 0;
+  const t = firing ? en.fireAnim / 0.35 : 0;
+  const recoil = firing ? t * 4 : 0;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-0.35);
+  ctx.translate(0, recoil); // barrel kicks back along its own angled axis on fire
+  ctx.fillStyle = '#3a3f48'; ctx.fillRect(-4, -22, 8, 26);
+  if (firing) {
+    ctx.fillStyle = 'rgba(255,150,60,' + t + ')';
+    ctx.beginPath(); ctx.arc(0, -22, 5 * t + 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(120,120,120,' + (t * 0.6) + ')';
+    ctx.beginPath(); ctx.arc(0, -27, 7 * (1 - t) + 3, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+  ctx.fillStyle = '#5a4a34'; ctx.fillRect(x - 10, y - 2, 20, 8);
+  ctx.fillStyle = '#2a2f36';
+  ctx.beginPath(); ctx.arc(x - 8, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 8, y + 8, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#6a5a3a'; ctx.beginPath(); ctx.arc(x + 16, y - 8, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillRect(x + 14, y - 5, 4, 10);
+}
+const ENEMY_DRAWERS = { footman: drawFootman, horseman: drawHorseman, pikeman: drawPikeman, elephant: drawElephant, ram: drawRam, bombard: drawBombard };
+
+function drawEnemy(en) {
+  const y = en.y + Math.sin((en.bob + performance.now() / 140)) * 1.4;
+  ENEMY_DRAWERS[en.type](en, y);
+  if (en.hp < en.maxHp) {
+    const w = 22;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(en.x - w / 2, y - 30, w, 4);
+    ctx.fillStyle = '#5cc85c'; ctx.fillRect(en.x - w / 2, y - 30, w * clamp(en.hp / en.maxHp, 0, 1), 4);
+  }
+}
+
+function drawMenu() {
+  if (!activeMenu) return;
+  const bw = 82, bh = 28, gap = 5;
+  const totalH = activeMenu.options.length * bh + (activeMenu.options.length - 1) * gap;
+  const mx = clamp(activeMenu.x - bw / 2, 6, W - bw - 6);
+  const my = clamp(activeMenu.y + 16, 6, H - totalH - 6);
+  activeMenu._rects = activeMenu.options.map((opt, i) => ({ x: mx, y: my + i * (bh + gap), w: bw, h: bh, type: opt.type }));
+  for (const r of activeMenu._rects) {
+    const def = UNIT_DEFS[r.type];
+    ctx.fillStyle = 'rgba(15,15,20,0.92)';
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.strokeStyle = gold >= def.cost ? 'rgba(255,215,106,0.9)' : 'rgba(180,80,80,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(r.x, r.y, r.w, r.h);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+    ctx.fillText(r.type[0].toUpperCase() + r.type.slice(1), r.x + r.w / 2, r.y + 12);
+    ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 10px Arial';
+    ctx.fillText(def.cost + 'g', r.x + r.w / 2, r.y + 24);
+  }
+}
+
+function drawUnitPanel() {
+  if (!activeUnitPanel) return;
+  const { slot, kind } = activeUnitPanel;
+  if (!slot.unit) { activeUnitPanel = null; return; }
+  const level = slot.unit.level;
+  const rows = [];
+  if (level < MAX_LEVEL) rows.push({ type: 'upgrade', label: 'Upgrade Lv' + (level + 1), cost: upgradeCost(slot.unit.type, level) });
+  const sellVal = Math.round(slot.unit.spent * 0.6);
+  rows.push({ type: 'sell', label: 'Sell', cost: sellVal });
+
+  const bw = 100, bh = 26, gap = 5, titleH = 16;
+  const totalH = titleH + rows.length * bh + (rows.length - 1) * gap;
+  const anchorX = kind === 'melee' ? slot.ux : slot.x;
+  const mx = clamp(anchorX - bw / 2, 6, W - bw - 6);
+  const my = clamp(slot.y - 12 - totalH, 6, H - totalH - 6);
+
+  ctx.fillStyle = 'rgba(15,15,20,0.92)';
+  ctx.fillRect(mx, my, bw, totalH);
+  ctx.strokeStyle = 'rgba(255,215,106,0.6)'; ctx.lineWidth = 1;
+  ctx.strokeRect(mx, my, bw, totalH);
+  ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'center';
+  ctx.fillText(slot.unit.type[0].toUpperCase() + slot.unit.type.slice(1) + ' Lv' + level, mx + bw / 2, my + 12);
+
+  activeUnitPanel._rects = [];
+  rows.forEach((r, i) => {
+    const ry = my + titleH + i * (bh + gap);
+    activeUnitPanel._rects.push({ x: mx, y: ry, w: bw, h: bh, type: r.type });
+    const affordable = r.type === 'sell' || gold >= r.cost;
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.fillRect(mx, ry, bw, bh);
+    ctx.strokeStyle = affordable ? 'rgba(255,215,106,0.9)' : 'rgba(180,80,80,0.9)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(mx, ry, bw, bh);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Arial';
+    ctx.fillText(r.label, mx + bw / 2, ry + 11);
+    ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 9px Arial';
+    ctx.fillText((r.type === 'sell' ? '+' : '') + r.cost + 'g', mx + bw / 2, ry + 22);
+  });
+}
+
+// A slight sine "lob" dip layered purely on top of the straight-line
+// homing position (which stays exact for hit detection) - just enough to
+// read as a real arced shot instead of a laser-straight dart.
+function projectileArcFrac(p, tx, ty) {
+  const traveled = Math.hypot(p.x - p.spawnX, p.y - p.spawnY);
+  const remaining = Math.hypot(tx - p.x, ty - p.y);
+  return clamp(traveled / (traveled + remaining || 1), 0, 1);
+}
+
+function drawCannonball(p) {
+  const en = p.targetRef;
+  const tx = en && !en.dead ? en.x : p.x, ty = en && !en.dead ? en.y - 10 : p.y;
+  const dip = Math.sin(projectileArcFrac(p, tx, ty) * Math.PI) * 20;
+  const dx = p.x, dy = p.y - dip;
+  const grad = ctx.createRadialGradient(dx - 1.5, dy - 1.5, 0.5, dx, dy, 4.5);
+  grad.addColorStop(0, '#6a6f78');
+  grad.addColorStop(1, '#15171a');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(dx, dy, 4.5, 0, Math.PI * 2); ctx.fill();
+}
+
+function drawProjectiles() {
+  for (const p of projectiles) {
+    if (p.splash > 0) { drawCannonball(p); continue; }
+    const en = p.targetRef;
+    const tx = en && !en.dead ? en.x : p.x, ty = en && !en.dead ? en.y - 14 : p.y;
+    const dx = tx - p.spawnX, dy = ty - p.spawnY;
+    const dist = Math.hypot(dx, dy) || 1;
+    const ux = dx / dist, uy = dy / dist;
+    const dip = Math.sin(projectileArcFrac(p, tx, ty) * Math.PI) * 8;
+    const px = p.x, py = p.y - dip;
+    const perpX = -uy, perpY = ux;
+    ctx.strokeStyle = '#4a3a20'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(px - ux * 12, py - uy * 12);
+    ctx.lineTo(px + ux * 4, py + uy * 4);
+    ctx.stroke();
+    // fletching - a small V near the tail end
+    const tailX = px - ux * 9, tailY = py - uy * 9;
+    ctx.strokeStyle = '#e8e0c0'; ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(tailX - ux * 3 + perpX * 3, tailY - uy * 3 + perpY * 3);
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(tailX - ux * 3 - perpX * 3, tailY - uy * 3 - perpY * 3);
+    ctx.stroke();
+  }
+}
+
+function drawShells() {
+  for (const s of shells) {
+    const frac = clamp(s.traveled / s.dist, 0, 1);
+    const dip = Math.sin(frac * Math.PI) * 30;
+    const dx = s.x, dy = s.y - dip;
+    const grad = ctx.createRadialGradient(dx - 1.5, dy - 1.5, 0.5, dx, dy, 5.5);
+    grad.addColorStop(0, '#ffb066');
+    grad.addColorStop(0.55, '#a03a1e');
+    grad.addColorStop(1, '#2a1008');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(dx, dy, 5.5, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    const t = p.life / p.maxLife;
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = 1 - t;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+function drawPopups() {
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+  ctx.lineWidth = 3;
+  for (const p of popups) {
+    const t = p.t / 900;
+    ctx.globalAlpha = 1 - t;
+    ctx.strokeText(p.text, p.x, p.y - t * 24);
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y - t * 24);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawHud() {
+  // Top-center, not top-left - top-left is where the tier-3 archer slots
+  // live on the wall, and an opaque HP bar there was sitting right on top
+  // of (and blocking taps on) the first two slots. Sits below y=32 so it
+  // also clears the floating mute button, which is centered at the very
+  // top of the canvas by its own CSS.
+  const hpBarW = 160, hpBarX = W / 2 - hpBarW / 2, hpBarY = 34;
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(hpBarX, hpBarY, hpBarW, 20);
+  ctx.fillStyle = castleHP > 40 ? '#5cc85c' : '#e05a4a';
+  ctx.fillRect(hpBarX + 2, hpBarY + 2, (hpBarW - 4) * clamp(castleHP / CASTLE_MAX_HP, 0, 1), 16);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+  ctx.fillText('CASTLE  ' + Math.round(castleHP) + '%', W / 2, hpBarY + 14);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(W - 170, 10, 160, 58);
+  ctx.fillStyle = '#ffd76a'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'left';
+  ctx.fillText('Gold: ' + gold, W - 160, 27);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Arial';
+  ctx.fillText('Wave ' + Math.min(waveIndex + 1, WAVES.length) + ' / ' + WAVES.length, W - 160, 43);
+  ctx.fillText('Kills: ' + killCount, W - 160, 58);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'center';
+  ctx.fillText('Tap a glowing wall or ground slot to place a defender', W / 2, H - 10);
+
+  if (waveState === 'countdown') {
+    drawWaveBanner('Wave ' + (waveIndex + 1) + ' incoming in ' + Math.ceil(waveTimer) + 's', '#fff');
+  } else if (waveState === 'breather') {
+    drawWaveBanner('Prepare! Next wave in ' + Math.ceil(waveTimer) + 's', '#7ee787');
+  }
+}
+
+// The sky backdrop is light (cream/pale blue), so light-colored banner text
+// needs an opaque dark plate behind it or it disappears - a text-shadow
+// alone isn't enough contrast against a bright background.
+function drawWaveBanner(text, color) {
+  ctx.font = 'bold 13px Arial';
+  ctx.textAlign = 'center';
+  const w = ctx.measureText(text).width + 24;
+  const bx = W / 2 - w / 2, by = 58, bh = 22;
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  ctx.fillRect(bx, by, w, bh);
+  ctx.fillStyle = color;
+  ctx.fillText(text, W / 2, by + 15);
+}
+
+function draw() {
+  ctx.save();
+  const mag = shake > 0 ? shake * 8 : 0;
+  if (mag > 0) ctx.translate((Math.random() * 2 - 1) * mag, (Math.random() * 2 - 1) * mag);
+  drawBackdrop();
+  drawCastle();
+  drawGroundSlots();
+  drawTier3Slots();
+  drawTier2Slots();
+  if (state !== 'menu') {
+    for (const en of enemies) drawEnemy(en);
+    drawProjectiles();
+    drawShells();
+    drawParticles();
+    drawPopups();
+    drawHud();
+    drawMenu();
+    drawUnitPanel();
+    if (flashTimer > 0) {
+      ctx.fillStyle = 'rgba(224,90,74,' + (flashTimer / 0.25 * 0.35) + ')';
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+  ctx.restore();
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+const UNIT_ORDER = ['archer', 'gunman', 'cannon', 'spearman', 'cavalry'];
+function buildCostList() {
+  costListWrap.innerHTML = UNIT_ORDER.map((t) => {
+    const d = UNIT_DEFS[t];
+    const where = t === 'archer' ? 'ranged, tier 3' : d.kind === 'ranged' ? 'ranged, tier 2' : 'melee, gate';
+    return '<div><b>' + t[0].toUpperCase() + t.slice(1) + '</b> - ' + d.cost + 'g (' + where + ')</div>';
+  }).join('');
+}
+function buildMatchupTable() {
+  const enemyKeys = Object.keys(ENEMY_DEFS);
+  let html = '<table><thead><tr><th></th>' + enemyKeys.map((k) => '<th>' + k[0].toUpperCase() + k.slice(1) + '</th>').join('') + '</tr></thead><tbody>';
+  for (const a of UNIT_ORDER) {
+    html += '<tr><th>' + a[0].toUpperCase() + a.slice(1) + '</th>';
+    for (const e of enemyKeys) {
+      const m = matchupMult(a, e);
+      const cls = m >= 1.3 ? 'strong' : m <= 0.7 ? 'weak' : '';
+      html += '<td class="' + cls + '">' + m.toFixed(1) + 'x</td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  matchupTableWrap.innerHTML = html;
+}
+buildCostList();
+buildMatchupTable();
+
+showMenu();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox" data-fullscreen="landscape"></script>
+</body>
+</html>

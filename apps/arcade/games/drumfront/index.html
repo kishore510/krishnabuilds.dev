@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drumfront</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1c231e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #1c231e;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    background: rgba(8, 10, 8, 0.68);
+    /* auto (not none like other games' overlays) - this one now scrolls
+       via overflow-y since the command legend can be taller than a short
+       landscape viewport, and there's nothing underneath worth reaching */
+    pointer-events: auto;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(28px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(440px * var(--game-scale, 1)); }
+  #bestLine { opacity: 0.85; font-weight: bold; }
+  #legend {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: calc(3px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    margin: calc(8px * var(--game-scale, 1)) 0;
+    font-size: calc(12px * var(--game-scale, 1));
+    background: rgba(255,255,255,0.07);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.25);
+    border-radius: calc(10px * var(--game-scale, 1));
+    padding: calc(8px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+  }
+  #legend b { color: #ffd76a; }
+  #legend span { opacity: 0.85; letter-spacing: 0.02em; }
+  #startBtn {
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #ffd76a;
+    color: #3a2400;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #startBtn:active { background: #ffe28a; }
+  #recalibBtn {
+    margin-top: calc(10px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    background: rgba(255,255,255,0.1);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.5);
+    border-radius: calc(16px * var(--game-scale, 1));
+    padding: calc(6px * var(--game-scale, 1)) calc(16px * var(--game-scale, 1));
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.4);
+    color: white;
+    cursor: pointer;
+    z-index: 6;
+  }
+  #rotateHint {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #1c231e;
+    color: white;
+    z-index: 50;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  #rotateHint .icon { font-size: 48px; margin-bottom: 12px; animation: rotateWiggle 1.6s ease-in-out infinite; }
+  #rotateHint p { font-size: 16px; font-weight: bold; max-width: 260px; }
+  @keyframes rotateWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+  .drumBtn {
+    position: absolute;
+    bottom: calc(14px * var(--game-scale, 1));
+    width: calc(128px * var(--game-scale, 1));
+    height: calc(64px * var(--game-scale, 1));
+    border-radius: calc(16px * var(--game-scale, 1));
+    font-family: inherit;
+    font-weight: bold;
+    font-size: calc(18px * var(--game-scale, 1));
+    letter-spacing: 0.04em;
+    color: #1a1020;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 calc(4px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1)) rgba(0,0,0,0.5);
+    display: none;
+  }
+  .drumBtn:active { transform: translateY(2px); }
+  #highBtn { left: calc(14px * var(--game-scale, 1)); background: #5ad1e6; border: calc(2.5px * var(--game-scale, 1)) solid #bdf0fa; }
+  #lowBtn { right: calc(14px * var(--game-scale, 1)); background: #ff8a5a; border: calc(2.5px * var(--game-scale, 1)) solid #ffd0b8; }
+</style>
+</head>
+<body>
+<div id="rotateHint">
+  <div class="icon">📱</div>
+  <p>Rotate your device to landscape to play Drumfront</p>
+</div>
+<div id="wrap">
+  <canvas id="game" width="800" height="450"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <button id="highBtn" class="drumBtn" type="button">PON</button>
+  <button id="lowBtn" class="drumBtn" type="button">PA</button>
+  <div id="overlay">
+    <h1 id="title">Drumfront</h1>
+    <p id="subtitle">Command your squad with two drums - PON (high) and PA (low). Play one of these four rhythms on the beat, from memory:</p>
+    <div id="legend">
+      <b>March</b><span>PA-PA-PA-PON</span>
+      <b>Attack</b><span>PON-PON-PON-PA</span>
+      <b>Guard</b><span>PA-PA-PON-PON</span>
+      <b>Retreat</b><span>PON-PON-PA-PA</span>
+    </div>
+    <p id="scoreLine" style="display:none;"></p>
+    <p id="bestLine"></p>
+    <button id="startBtn" type="button" data-kb-play>Start</button>
+    <button id="recalibBtn" type="button">🎯 Recalibrate timing</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const startBtn = document.getElementById('startBtn');
+const recalibBtn = document.getElementById('recalibBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const rotateHint = document.getElementById('rotateHint');
+const highBtn = document.getElementById('highBtn');
+const lowBtn = document.getElementById('lowBtn');
+
+const W = 800, H = 450;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availW = window.innerWidth;
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(availW / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  wrap.style.setProperty('--game-scale', scale);
+}
+function checkOrientation() {
+  const portrait = window.innerWidth < window.innerHeight;
+  rotateHint.style.display = portrait ? 'flex' : 'none';
+}
+function handleResize() { fitCanvas(); checkOrientation(); }
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleResize);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function easeOutCubic(p) { return 1 - Math.pow(1 - p, 3); }
+function roundRect(g, x, y, w, h, r) {
+  g.beginPath();
+  g.moveTo(x + r, y);
+  g.arcTo(x + w, y, x + w, y + h, r);
+  g.arcTo(x + w, y + h, x, y + h, r);
+  g.arcTo(x, y + h, x, y, r);
+  g.arcTo(x, y, x + w, y, r);
+  g.closePath();
+}
+
+// --- Audio: procedural, base drum hits + one-shot stingers ---
+let audioCtx = null;
+let audioTimeOrigin = 0; // performance.now() - audioCtx.currentTime*1000, fixed at creation
+let muted = sessionStorage.getItem('drumfrontMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioTimeOrigin = performance.now() - audioCtx.currentTime * 1000;
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function audioToPerf(t) { return audioTimeOrigin + t * 1000; }
+
+function playPA(when) {
+  if (muted) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(170, when);
+  osc.frequency.exponentialRampToValueAtTime(62, when + 0.095);
+  gain.gain.setValueAtTime(0.001, when);
+  gain.gain.exponentialRampToValueAtTime(0.34, when + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.001, when + 0.095);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(when); osc.stop(when + 0.1);
+}
+function playPON(when) {
+  if (muted) return;
+  const bufSize = Math.floor(audioCtx.sampleRate * 0.09);
+  const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buf;
+  const bp = audioCtx.createBiquadFilter();
+  bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 1.1;
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.001, when);
+  gain.gain.exponentialRampToValueAtTime(0.4, when + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.001, when + 0.09);
+  noise.connect(bp); bp.connect(gain); gain.connect(audioCtx.destination);
+  noise.start(when); noise.stop(when + 0.1);
+}
+function playClick(when) {
+  if (muted) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine'; osc.frequency.value = 1000;
+  gain.gain.setValueAtTime(0.001, when);
+  gain.gain.exponentialRampToValueAtTime(0.25, when + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.001, when + 0.06);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(when); osc.stop(when + 0.07);
+}
+// Constant background metronome (phase 2 fix): a quiet, very short tick on
+// every beat during play, regardless of whether the player taps - distinct
+// timbre/volume from PA (low triangle sweep), PON (bandpass noise), and the
+// command stingers, so it reads as a timing reference rather than an event.
+function playMetronomeTick(when) {
+  if (muted) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine'; osc.frequency.value = 1800;
+  gain.gain.setValueAtTime(0.0001, when);
+  gain.gain.exponentialRampToValueAtTime(0.06, when + 0.004);
+  gain.gain.exponentialRampToValueAtTime(0.0001, when + 0.035);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(when); osc.stop(when + 0.04);
+}
+function playHit() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(220, t);
+  osc.frequency.exponentialRampToValueAtTime(90, t + 0.15);
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.22);
+}
+function playClear() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  [523, 659, 784, 1047].forEach((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = f;
+    const st = t + i * 0.12;
+    gain.gain.setValueAtTime(0.001, st);
+    gain.gain.exponentialRampToValueAtTime(0.16, st + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, st + 0.24);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(st); osc.stop(st + 0.26);
+  });
+}
+// One-shot command stingers - layered on top of the base PA/PON taps, only
+// on a successfully-landed 4-tap sequence, each ~150-250ms so it clears
+// before the next beat's drum hit.
+function playMarchStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  [420, 560].forEach((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = f;
+    const st = t + i * 0.07;
+    gain.gain.setValueAtTime(0.001, st);
+    gain.gain.exponentialRampToValueAtTime(0.18, st + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, st + 0.14);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(st); osc.stop(st + 0.16);
+  });
+}
+function playAttackStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(900, t);
+  osc.frequency.exponentialRampToValueAtTime(120, t + 0.12);
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.3, t + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.18);
+}
+function playGuardStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const bp = audioCtx.createBiquadFilter();
+  osc.type = 'square'; osc.frequency.setValueAtTime(1200, t);
+  bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 6;
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.22, t + 0.006);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+  osc.connect(bp); bp.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.24);
+}
+function playRetreatStinger() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(300, t);
+  osc.frequency.exponentialRampToValueAtTime(90, t + 0.22);
+  gain.gain.setValueAtTime(0.001, t);
+  gain.gain.exponentialRampToValueAtTime(0.16, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.26);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(t); osc.stop(t + 0.28);
+}
+function playFeverFanfare() {
+  if (muted) return;
+  ensureAudio();
+  const t = audioCtx.currentTime;
+  [660, 880, 1100, 1320].forEach((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = f;
+    const st = t + i * 0.06;
+    gain.gain.setValueAtTime(0.001, st);
+    gain.gain.exponentialRampToValueAtTime(0.2, st + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, st + 0.2);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(st); osc.stop(st + 0.22);
+  });
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  try { sessionStorage.setItem('drumfrontMuted', muted ? '1' : '0'); } catch (e) {}
+  updateMuteBtn();
+});
+
+// --- Best score / calibration persistence ---
+function loadBestStreak() { return parseInt(sessionStorage.getItem('drumfrontBestStreak') || '0', 10); }
+function saveBestStreak(v) { try { sessionStorage.setItem('drumfrontBestStreak', v); } catch (e) {} }
+function loadCalibOffset() {
+  const v = sessionStorage.getItem('drumfrontCalibOffset');
+  return v === null ? null : parseFloat(v);
+}
+function saveCalibOffset(v) { try { sessionStorage.setItem('drumfrontCalibOffset', String(v)); } catch (e) {} }
+
+let calibOffset = loadCalibOffset();
+let bestStreak = loadBestStreak();
+
+// --- Beat clock: still runs continuously so taps have a timing reference
+// and the beat bar can pulse, but (per phase 2) no longer drives a note
+// preview or auto-plays PA/PON - the player's own taps trigger those sounds
+// immediately, since which drum plays is now the player's choice, not a
+// predetermined sequence the game already knows.
+const BPM = 100;
+const BEAT_SEC = 60 / BPM;
+const BEAT_GEN_LEAD_SEC = BEAT_SEC * 2;
+const AUDIO_SCHEDULE_AHEAD_SEC = 0.1;
+const TICK_MS = 25;
+const CALIB_BEATS = 4;
+
+let schedulerHandle = null;
+let schedulerMode = null; // 'calibrate' | 'play'
+let genTime = 0; // audioCtx-time seconds, next beat to generate
+let beatGlobalIndex = 0;
+let beatEvents = [];
+let calibFinishScheduled = false;
+
+function startScheduler(mode) {
+  ensureAudio();
+  schedulerMode = mode;
+  beatGlobalIndex = 0;
+  beatEvents = [];
+  calibFinishScheduled = false;
+  genTime = audioCtx.currentTime + (mode === 'calibrate' ? BEAT_SEC : BEAT_GEN_LEAD_SEC);
+  if (schedulerHandle) clearInterval(schedulerHandle);
+  schedulerHandle = setInterval(schedulerTick, TICK_MS);
+  schedulerTick();
+}
+function stopScheduler() {
+  if (schedulerHandle) clearInterval(schedulerHandle);
+  schedulerHandle = null;
+}
+function schedulerTick() {
+  const now = audioCtx.currentTime;
+  while (genTime < now + BEAT_GEN_LEAD_SEC) {
+    if (schedulerMode === 'calibrate') {
+      if (beatGlobalIndex >= CALIB_BEATS) break;
+      beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), type: 'click', claimed: false, diff: 0, soundScheduled: false });
+    } else {
+      beatEvents.push({ index: beatGlobalIndex, audioTime: genTime, time: audioToPerf(genTime), claimed: false, soundScheduled: false });
+    }
+    beatGlobalIndex++;
+    genTime += BEAT_SEC;
+  }
+  if (schedulerMode === 'play') {
+    for (const ev of beatEvents) {
+      if (!ev.soundScheduled && ev.audioTime <= now + AUDIO_SCHEDULE_AHEAD_SEC) {
+        playMetronomeTick(ev.audioTime);
+        ev.soundScheduled = true;
+      }
+    }
+  }
+  if (schedulerMode === 'calibrate') {
+    for (const ev of beatEvents) {
+      if (!ev.soundScheduled && ev.audioTime <= now + AUDIO_SCHEDULE_AHEAD_SEC) {
+        playClick(ev.audioTime);
+        ev.soundScheduled = true;
+      }
+    }
+    if (beatGlobalIndex >= CALIB_BEATS) {
+      const allDone = beatEvents.every((e) => e.soundScheduled);
+      if (allDone && !calibFinishScheduled) {
+        calibFinishScheduled = true;
+        stopScheduler();
+        setTimeout(finishCalibration, 700);
+      }
+    }
+  }
+  const cutoff = performance.now() - 4000;
+  while (beatEvents.length && beatEvents[0].time < cutoff) beatEvents.shift();
+}
+
+// --- Calibration ---
+let pendingAutoStart = false;
+
+function handleCalibTap() {
+  ensureAudio();
+  const now = performance.now();
+  let best = null, bestDist = Infinity;
+  for (const ev of beatEvents) {
+    if (ev.type !== 'click' || ev.claimed) continue;
+    const d = Math.abs(now - ev.time);
+    if (d < bestDist) { bestDist = d; best = ev; }
+  }
+  if (best && bestDist <= (BEAT_SEC * 1000) / 2) {
+    best.claimed = true;
+    best.diff = now - best.time;
+  }
+}
+function finishCalibration() {
+  const diffs = beatEvents.filter((e) => e.type === 'click' && e.claimed).map((e) => e.diff);
+  calibOffset = diffs.length ? diffs.reduce((a, b) => a + b, 0) / diffs.length : 0;
+  saveCalibOffset(calibOffset);
+  if (pendingAutoStart) { pendingAutoStart = false; startGame(); }
+  else { showMenu(); }
+}
+function beginCalibration(autoStartAfter) {
+  pendingAutoStart = autoStartAfter;
+  state = 'calibrating';
+  overlay.style.display = 'none';
+  startScheduler('calibrate');
+}
+
+// --- Command grammar (all four built from the same PA/PON vocabulary) ---
+const PATTERNS = {
+  march: ['low', 'low', 'low', 'high'],
+  attack: ['high', 'high', 'high', 'low'],
+  guard: ['low', 'low', 'high', 'high'],
+  retreat: ['high', 'high', 'low', 'low']
+};
+const COMMAND_COLOR = { march: '#8fd9a8', attack: '#ff6a4a', guard: '#8ad8ff', retreat: '#c9a8ff' };
+// Rolling prefix-filter: candidates are every pattern whose first
+// buffer.length beats match the buffer so far. A tap that doesn't extend
+// any candidate restarts the buffer as a fresh attempt on that same tap,
+// rather than waiting out a fixed 4-beat grid (see handleDrumTap).
+function getCandidates(buffer) {
+  return Object.keys(PATTERNS).filter((name) =>
+    PATTERNS[name].slice(0, buffer.length).every((v, i) => v === buffer[i])
+  );
+}
+
+// --- Game state ---
+let state = 'menu'; // menu | calibrating | playing | cleared
+const PERFECT_MS = 150;
+const GOOD_MS = 280;
+const CONSUME_MS = BEAT_SEC * 1000 * 0.75;
+
+let inputBuffer = []; // rolling buffer of drum types for the in-progress attempt
+let judgePopup = null; // { text, color, timer } - per-tap timing feedback
+let banner = null; // { text, color, timer } - per-command outcome feedback
+
+function showJudgePopup(text, color) { judgePopup = { text, color, timer: 0.55 }; }
+function announce(text, color, duration) { banner = { text, color, timer: duration }; }
+
+// --- Fever: 5 consecutive successfully-landed sequences, any command ---
+const FEVER_STREAK_THRESHOLD = 5;
+const FEVER_ATTACK_MULT = 1.5;
+let feverStreak = 0;
+let feverActive = false;
+
+function breakFever() {
+  feverStreak = 0;
+  feverActive = false;
+}
+function growFeverOnLanding() {
+  feverStreak++;
+  if (feverStreak > bestStreak) { bestStreak = feverStreak; saveBestStreak(bestStreak); }
+  if (feverStreak >= FEVER_STREAK_THRESHOLD && !feverActive) {
+    feverActive = true;
+    playFeverFanfare();
+  }
+}
+
+function handleDrumTap(type) {
+  if (state !== 'playing') return;
+  ensureAudio();
+  if (type === 'high') playPON(audioCtx.currentTime); else playPA(audioCtx.currentTime);
+  const now = performance.now();
+  let best = null, bestDist = Infinity;
+  for (const ev of beatEvents) {
+    if (ev.claimed) continue;
+    const d = Math.abs(now - ev.time);
+    if (d < bestDist) { bestDist = d; best = ev; }
+  }
+  let judged = 'miss';
+  if (best && bestDist <= CONSUME_MS) best.claimed = true;
+  if (best && bestDist <= GOOD_MS) judged = bestDist <= PERFECT_MS ? 'perfect' : 'good';
+  showJudgePopup(judged === 'perfect' ? 'PERFECT' : judged === 'good' ? 'GOOD' : 'MISS', judged === 'perfect' ? '#7cfc9a' : judged === 'good' ? '#ffd76a' : '#ff5a5a');
+
+  if (judged === 'miss') {
+    // Completely off-beat tap: doesn't extend or start anything. Clearing
+    // the buffer immediately (instead of waiting out a fixed 4-beat grid)
+    // means the very next correctly-timed tap can start a brand-new
+    // attempt right away.
+    breakFever();
+    inputBuffer = [];
+    return;
+  }
+
+  let candidates = getCandidates(inputBuffer.concat(type));
+  if (candidates.length === 0) {
+    // This tap doesn't continue any pattern from the current buffer -
+    // reset and try it as the start of a new attempt instead, immediately.
+    inputBuffer = [type];
+    candidates = getCandidates(inputBuffer);
+  } else {
+    inputBuffer = inputBuffer.concat(type);
+  }
+
+  if (inputBuffer.length === 4 && candidates.length === 1) {
+    executeCommand(candidates[0]);
+    growFeverOnLanding();
+    inputBuffer = [];
+  }
+}
+
+// --- Combat loop state ---
+const unitScale = 1.6;
+const enemyScale = unitScale * 1.4;
+const SQUAD_X = [90, 166, 242, 318];
+const SQUAD_PHASE = [0, 0.55, 1.1, 1.65];
+const SQUAD_COLORS = ['#8a5a24', '#96632a', '#7f521f', '#8e5e27'];
+const GROUND_Y = 320;
+const ENEMY_Y = GROUND_Y - 20;
+const ENEMY_COLOR = '#050505';
+
+// Fixed camera, scrolling world: the squad's screen X never moves - only
+// distanceMarched changes (via landed March/Retreat), and everything else
+// (enemy, decorations) is positioned in world space and converted to
+// screen space as worldX - distanceMarched * layerRatio. Each enemy sits
+// far enough down the path that it's fully off-screen until the squad
+// marches close - "hidden until encountered" falls out of this model for
+// free rather than needing a separate visibility flag, and chaining
+// encounters (see triggerEnemyDefeat/advanceToNextEnemy below) is just
+// reassigning enemyWorldX further down the same path.
+const SQUAD_FRONT_X = SQUAD_X[SQUAD_X.length - 1];
+const ENGAGE_RANGE_PX = 150;
+// Hardcoded chapter of 4 encounters at increasing distance - each enemy is
+// identical (same HP/timing, per brief: no difficulty scaling this pass).
+const ENEMY_WORLD_X_LIST = [900, 1400, 1900, 2400];
+const MARCH_STEP = 55;
+const SQUAD_MAX_HP = 100;
+const SQUAD_HIT_DAMAGE = 22;
+const SQUAD_REGEN_RATE = 3; // hp/sec while not in combat
+const ENEMY_MAX_HP = 8;
+const ATTACK_DAMAGE = 1;
+const ENEMY_IDLE_DURATION = 3.0;
+const ENEMY_TELEGRAPH_DURATION = 0.7;
+const ENEMY_DEFEAT_FADE_DURATION = 0.4;
+
+function computeMaxDistance() { return enemyWorldX - SQUAD_FRONT_X - ENGAGE_RANGE_PX; }
+
+let enemyIndex = 0;
+let enemyWorldX = ENEMY_WORLD_X_LIST[0];
+let maxDistanceMarched = computeMaxDistance(); // 0..this is the reachable range for the current enemy
+let enemiesDefeated = 0;
+let enemyDefeating = false; // true during the brief fade/collapse after a kill, before the next enemy is live
+let enemyDefeatElapsed = 0;
+let distanceMarched = 0; // 0..maxDistanceMarched, keeps growing across the whole chapter (never rewound)
+let squadAction = null; // { kind: 'march'|'retreat'|'guard', elapsed, duration, fromX, toX }
+let squadHP = SQUAD_MAX_HP;
+let squadHitFlash = 0;
+let enemyHP = ENEMY_MAX_HP;
+let combatActive = false;
+let wasCombatActive = false;
+let enemyCyclePhase = 'idle'; // 'idle' | 'telegraph'
+let enemyCycleTimer = ENEMY_IDLE_DURATION;
+let telegraphGuarded = false;
+
+function enemyScreenX() { return enemyWorldX - distanceMarched; }
+
+function executeCommand(name) {
+  if (name === 'march') doMarch();
+  else if (name === 'attack') doAttack();
+  else if (name === 'guard') doGuard();
+  else if (name === 'retreat') doRetreat();
+}
+function doMarch() {
+  const from = distanceMarched;
+  const to = Math.min(maxDistanceMarched, distanceMarched + MARCH_STEP);
+  squadAction = { kind: 'march', elapsed: 0, duration: 1.0, fromX: from, toX: to };
+  playMarchStinger();
+  announce('March', COMMAND_COLOR.march, 0.5);
+}
+function doRetreat() {
+  const from = distanceMarched;
+  squadAction = { kind: 'retreat', elapsed: 0, duration: 1.0, fromX: from, toX: 0 };
+  playRetreatStinger();
+  announce('Retreat', COMMAND_COLOR.retreat, 0.5);
+}
+function doGuard() {
+  squadAction = { kind: 'guard', elapsed: 0, duration: 0.9, fromX: distanceMarched, toX: distanceMarched };
+  playGuardStinger();
+  if (combatActive && enemyCyclePhase === 'telegraph' && !telegraphGuarded) {
+    telegraphGuarded = true;
+    announce('Blocked!', COMMAND_COLOR.guard, 0.7);
+  } else {
+    announce('Guard', COMMAND_COLOR.guard, 0.5);
+  }
+}
+function updateSquadActionStep(dt) {
+  if (!squadAction) return;
+  squadAction.elapsed += dt;
+  const p = clamp(squadAction.elapsed / squadAction.duration, 0, 1);
+  if (squadAction.kind === 'march' || squadAction.kind === 'retreat') {
+    distanceMarched = lerp(squadAction.fromX, squadAction.toX, easeOutCubic(p));
+  }
+  if (squadAction.elapsed >= squadAction.duration) squadAction = null;
+}
+function updateCombat(dt) {
+  // While the just-killed enemy is fading out, hold off on re-deriving
+  // combatActive from distance - the squad is still standing at the old
+  // enemy's engage point, and maxDistanceMarched/enemyWorldX don't move to
+  // the next encounter until the fade finishes (see advanceToNextEnemy),
+  // so recomputing here would immediately re-engage a dead enemy.
+  if (enemyDefeating) return;
+  combatActive = distanceMarched >= maxDistanceMarched - 0.5;
+  if (combatActive && !wasCombatActive) {
+    // Engaging (or re-engaging after a Retreat) never resets the enemy's
+    // HP or attack-cycle timer - per the encounter brief, disengaging is
+    // purely positional and the fight resumes exactly where it left off.
+    announce('Engaged!', '#ffd76a', 0.8);
+  }
+  if (!combatActive && wasCombatActive) {
+    announce('Disengaged', '#9ab0c9', 0.6);
+  }
+  wasCombatActive = combatActive;
+
+  if (combatActive) {
+    enemyCycleTimer -= dt;
+    if (enemyCyclePhase === 'idle' && enemyCycleTimer <= 0) {
+      enemyCyclePhase = 'telegraph';
+      enemyCycleTimer = ENEMY_TELEGRAPH_DURATION;
+      telegraphGuarded = false;
+    } else if (enemyCyclePhase === 'telegraph' && enemyCycleTimer <= 0) {
+      if (!telegraphGuarded) {
+        squadHP = Math.max(0, squadHP - SQUAD_HIT_DAMAGE);
+        squadHitFlash = 0.3;
+      }
+      enemyCyclePhase = 'idle';
+      enemyCycleTimer = ENEMY_IDLE_DURATION;
+    }
+  } else {
+    squadHP = Math.min(SQUAD_MAX_HP, squadHP + SQUAD_REGEN_RATE * dt);
+  }
+}
+
+// --- Attack throw animation: windup -> release -> flight -> impact -> recovery ---
+// Enemy health is decremented at the start of the impact phase (when the
+// spear actually lands), not the moment the sequence is judged.
+const THROW_WINDUP = 0.3;
+const THROW_RELEASE = 0.1;
+const THROW_FLIGHT = 0.4;
+const THROW_IMPACT = 0.2;
+const THROW_RECOVERY = 0.2;
+const THROW_FLIGHT_START = THROW_WINDUP + THROW_RELEASE;
+const THROW_IMPACT_START = THROW_FLIGHT_START + THROW_FLIGHT;
+const THROW_RECOVERY_START = THROW_IMPACT_START + THROW_IMPACT;
+const THROW_TOTAL = THROW_RECOVERY_START + THROW_RECOVERY;
+
+let throwActive = false;
+let throwElapsed = 0;
+let throwSpearSpawned = false;
+let throwStingerPlayed = false;
+let projectile = null; // { x0, y0, x1, y1 }
+let impactX = 0; // captured from projectile.x1 at spawn - projectile is null by impact time
+const SPEAR_TARGET_Y = ENEMY_Y - 75;
+
+function triggerAttack() {
+  throwActive = true;
+  throwElapsed = 0;
+  throwSpearSpawned = false;
+  throwStingerPlayed = false;
+  projectile = null;
+}
+function doAttack() {
+  triggerAttack();
+  announce('Attack', COMMAND_COLOR.attack, 0.5);
+}
+// One arm angle drives every squad member's throwing arm in sync so the
+// whole squad reads as throwing together, even though only one projectile
+// is ever spawned per landed sequence (see spawnProjectile).
+function armAngleForThrow(t) {
+  if (!throwActive) return Math.sin(t * 1.6) * 0.05;
+  const et = throwElapsed;
+  if (et < THROW_WINDUP) return lerp(0, -0.9, easeOutCubic(et / THROW_WINDUP));
+  if (et < THROW_FLIGHT_START) return lerp(-0.9, 0.6, (et - THROW_WINDUP) / THROW_RELEASE);
+  if (et < THROW_RECOVERY_START) return 0.6;
+  return lerp(0.6, 0, easeOutCubic(clamp((et - THROW_RECOVERY_START) / THROW_RECOVERY, 0, 1)));
+}
+function spawnProjectile() {
+  projectile = {
+    x0: SQUAD_FRONT_X + 14 * unitScale, y0: GROUND_Y - 46 * unitScale,
+    x1: enemyScreenX() - 20, y1: SPEAR_TARGET_Y
+  };
+  impactX = projectile.x1;
+}
+function projectilePos(p) {
+  const x = lerp(projectile.x0, projectile.x1, p);
+  const y = lerp(projectile.y0, projectile.y1, p) - 40 * Math.sin(Math.PI * p);
+  const dx = projectile.x1 - projectile.x0;
+  const dy = (projectile.y1 - projectile.y0) - 40 * Math.PI * Math.cos(Math.PI * p);
+  return { x, y, angle: Math.atan2(dy, dx) };
+}
+function resolveAttackImpact() {
+  playHit();
+  if (combatActive) {
+    const dmg = feverActive ? ATTACK_DAMAGE * FEVER_ATTACK_MULT : ATTACK_DAMAGE;
+    enemyHP = Math.max(0, enemyHP - dmg);
+    if (enemyHP <= 0) triggerEnemyDefeat();
+  }
+}
+// --- Enemy progression: defeat this enemy, fade/collapse it out, then
+// either bring in the next one further down the path or end the chapter.
+// distanceMarched is never rewound between encounters - the squad's
+// screen position stays fixed and the world keeps scrolling past exactly
+// like it does mid-encounter, so the next enemy is simply out of reach
+// (per enemyScreenX()) until the squad marches far enough forward.
+function triggerEnemyDefeat() {
+  enemiesDefeated++;
+  enemyDefeating = true;
+  enemyDefeatElapsed = 0;
+  combatActive = false;
+  wasCombatActive = false;
+}
+function advanceToNextEnemy() {
+  if (enemyIndex + 1 >= ENEMY_WORLD_X_LIST.length) {
+    triggerChapterCleared();
+    return;
+  }
+  enemyIndex++;
+  enemyWorldX = ENEMY_WORLD_X_LIST[enemyIndex];
+  maxDistanceMarched = computeMaxDistance();
+  enemyHP = ENEMY_MAX_HP;
+  enemyCyclePhase = 'idle';
+  enemyCycleTimer = ENEMY_IDLE_DURATION;
+  telegraphGuarded = false;
+}
+function updateAnimTimers(dt) {
+  if (throwActive) {
+    throwElapsed += dt;
+    if (!throwStingerPlayed && throwElapsed >= THROW_WINDUP) {
+      throwStingerPlayed = true;
+      playAttackStinger();
+    }
+    if (!throwSpearSpawned && throwElapsed >= THROW_WINDUP + THROW_RELEASE * 0.5) {
+      throwSpearSpawned = true;
+      spawnProjectile();
+    }
+    if (projectile && throwElapsed >= THROW_IMPACT_START) {
+      projectile = null;
+      resolveAttackImpact();
+    }
+    if (throwElapsed >= THROW_TOTAL) throwActive = false;
+  }
+  if (enemyDefeating) {
+    enemyDefeatElapsed += dt;
+    if (enemyDefeatElapsed >= ENEMY_DEFEAT_FADE_DURATION) {
+      enemyDefeating = false;
+      advanceToNextEnemy();
+    }
+  }
+  if (squadAction) updateSquadActionStep(dt);
+  if (squadHitFlash > 0) squadHitFlash = Math.max(0, squadHitFlash - dt);
+  if (banner) { banner.timer -= dt; if (banner.timer <= 0) banner = null; }
+  if (judgePopup) { judgePopup.timer -= dt; if (judgePopup.timer <= 0) judgePopup = null; }
+}
+function updateGame(dt) {
+  updateAnimTimers(dt);
+  updateCombat(dt);
+}
+
+function showMenu() {
+  state = 'menu';
+  stopScheduler();
+  title.textContent = 'Drumfront';
+  scoreLine.style.display = 'none';
+  bestLine.textContent = bestStreak > 0 ? 'Best streak: ' + bestStreak : '';
+  startBtn.textContent = calibOffset === null ? 'Calibrate & Start' : 'Start';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'none';
+  highBtn.style.display = 'none';
+  lowBtn.style.display = 'none';
+  overlay.style.display = 'flex';
+}
+function startGame() {
+  enemyIndex = 0;
+  enemyWorldX = ENEMY_WORLD_X_LIST[0];
+  maxDistanceMarched = computeMaxDistance();
+  enemiesDefeated = 0;
+  enemyDefeating = false;
+  enemyDefeatElapsed = 0;
+  distanceMarched = 0;
+  squadAction = null;
+  squadHP = SQUAD_MAX_HP;
+  squadHitFlash = 0;
+  enemyHP = ENEMY_MAX_HP;
+  combatActive = false;
+  wasCombatActive = false;
+  enemyCyclePhase = 'idle';
+  enemyCycleTimer = ENEMY_IDLE_DURATION;
+  telegraphGuarded = false;
+  inputBuffer = [];
+  feverStreak = 0;
+  feverActive = false;
+  throwActive = false;
+  throwElapsed = 0;
+  projectile = null;
+  banner = null;
+  judgePopup = null;
+  state = 'playing';
+  overlay.style.display = 'none';
+  highBtn.style.display = 'block';
+  lowBtn.style.display = 'block';
+  startScheduler('play');
+}
+function triggerChapterCleared() {
+  state = 'cleared';
+  stopScheduler();
+  playClear();
+  highBtn.style.display = 'none';
+  lowBtn.style.display = 'none';
+  title.textContent = 'Chapter Cleared!';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Enemies defeated: ' + enemiesDefeated + ' | Best streak: ' + bestStreak;
+  bestLine.textContent = '';
+  startBtn.textContent = 'Play Again';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+startBtn.addEventListener('click', () => {
+  if (state !== 'menu' && state !== 'cleared') return;
+  window.kbEnterFullscreen?.(document.documentElement);
+  ensureAudio();
+  if (calibOffset === null) beginCalibration(true);
+  else startGame();
+});
+recalibBtn.addEventListener('click', () => {
+  window.kbEnterFullscreen?.(document.documentElement);
+  ensureAudio();
+  beginCalibration(false);
+});
+backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state === 'calibrating') { e.preventDefault(); handleCalibTap(); }
+});
+highBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDrumTap('high'); });
+lowBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); handleDrumTap('low'); });
+
+// --- Forest scene: static cached backdrop (sky, light shafts, far
+// trunks, both mist bands, ground/path) - the exact approved background,
+// restored as-is rather than a simplified flat gradient. Cached once since
+// the gradients/paths here are expensive to redraw every frame.
+let forestBg = null;
+function buildForestBackground(W, H) {
+  const bg = document.createElement('canvas');
+  bg.width = W; bg.height = H;
+  const b = bg.getContext('2d');
+
+  let sky = b.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, '#0e1712');
+  sky.addColorStop(0.5, '#1c2b20');
+  sky.addColorStop(1, '#3a4a38');
+  b.fillStyle = sky;
+  b.fillRect(0, 0, W, GROUND_Y);
+
+  function lightShaft(x, w, alpha) {
+    let g = b.createLinearGradient(x, 0, x + w * 0.4, GROUND_Y);
+    g.addColorStop(0, `rgba(210,200,140,${alpha})`);
+    g.addColorStop(1, 'rgba(210,200,140,0)');
+    b.fillStyle = g;
+    b.beginPath();
+    b.moveTo(x, 0); b.lineTo(x + w, 0);
+    b.lineTo(x + w * 0.15, GROUND_Y); b.lineTo(x - w * 0.15, GROUND_Y);
+    b.closePath(); b.fill();
+  }
+  lightShaft(180, 70, 0.10);
+  lightShaft(430, 90, 0.14);
+  lightShaft(620, 60, 0.09);
+
+  b.globalAlpha = 0.55;
+  [60, 140, 230, 340, 460, 560, 660, 740].forEach((x, i) => {
+    const h = 70 + (i % 3) * 15;
+    b.fillStyle = '#1a241c';
+    b.fillRect(x - 2, GROUND_Y - h - 40, 4, h);
+  });
+  b.globalAlpha = 1;
+
+  let mist1 = b.createLinearGradient(0, GROUND_Y - 70, 0, GROUND_Y - 20);
+  mist1.addColorStop(0, 'rgba(200,215,190,0)');
+  mist1.addColorStop(0.5, 'rgba(200,215,190,0.16)');
+  mist1.addColorStop(1, 'rgba(200,215,190,0)');
+  b.fillStyle = mist1;
+  b.fillRect(0, GROUND_Y - 90, W, 90);
+
+  function midTree(x, trunkH, canopyR) {
+    b.save();
+    b.translate(x, GROUND_Y);
+    b.fillStyle = '#141d16';
+    b.fillRect(-5, -trunkH, 10, trunkH);
+    b.fillStyle = '#1e3324';
+    const top = -trunkH - 10;
+    b.beginPath();
+    b.arc(-canopyR * 0.5, top, canopyR, 0, Math.PI * 2);
+    b.arc(canopyR * 0.5, top - canopyR * 0.3, canopyR * 1.1, 0, Math.PI * 2);
+    b.arc(0, top - canopyR * 0.9, canopyR * 0.8, 0, Math.PI * 2);
+    b.fill();
+    b.restore();
+  }
+  midTree(40, 130, 55);
+  midTree(230, 150, 65);
+  midTree(470, 140, 60);
+  midTree(700, 155, 68);
+
+  let mist2 = b.createLinearGradient(0, GROUND_Y - 30, 0, GROUND_Y + 10);
+  mist2.addColorStop(0, 'rgba(220,230,210,0)');
+  mist2.addColorStop(0.6, 'rgba(220,230,210,0.22)');
+  mist2.addColorStop(1, 'rgba(220,230,210,0.05)');
+  b.fillStyle = mist2;
+  b.fillRect(0, GROUND_Y - 30, W, 60);
+
+  let ground = b.createLinearGradient(0, GROUND_Y, 0, H);
+  ground.addColorStop(0, '#1c2418');
+  ground.addColorStop(1, '#0d130d');
+  b.fillStyle = ground;
+  b.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+
+  b.fillStyle = 'rgba(120,110,80,0.3)';
+  b.fillRect(0, GROUND_Y + 4, W, 24);
+
+  return bg;
+}
+
+// --- Scrolling decoration layers: each instance has a fixed world-space X
+// and is drawn at worldX - distanceMarched * layerRatio. This is a finite
+// one-shot approach (not an infinite looping runner), so instances are just
+// scattered across the world range once rather than tiled/wrapped. Ratios
+// reuse the approved preview's speeds (18px/sec midground, 55px/sec
+// foreground) translated into distanceMarched terms: MARCH_STEP=55 covers
+// 55px over the ~1s march-step animation, i.e. an effective 55px/sec while
+// actually marching, so foreground scrolling 1:1 with distanceMarched
+// reproduces that same 55px/sec-equivalent, and midground at 18/55 of that.
+const MID_SCROLL_RATIO = 18 / 55;
+const FG_SCROLL_RATIO = 1;
+
+function midTreeAt(x, trunkH, canopyR) {
+  ctx.save();
+  ctx.translate(x, GROUND_Y);
+  ctx.fillStyle = '#141d16';
+  ctx.fillRect(-5, -trunkH, 10, trunkH);
+  ctx.fillStyle = '#1e3324';
+  const top = -trunkH - 10;
+  ctx.beginPath();
+  ctx.arc(-canopyR * 0.5, top, canopyR, 0, Math.PI * 2);
+  ctx.arc(canopyR * 0.5, top - canopyR * 0.3, canopyR * 1.1, 0, Math.PI * 2);
+  ctx.arc(0, top - canopyR * 0.9, canopyR * 0.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+// Hanging vine - thin curved line(s) dropping from the canopy, with a
+// small leaf cluster at the bottom. `sway` (+1/-1) offsets the curve so
+// instances don't all look identical.
+function drawVine(c, x, canopyY, length, sway) {
+  c.save();
+  c.translate(x, canopyY);
+  c.strokeStyle = '#141d16';
+  c.lineWidth = 2.5;
+  c.lineCap = 'round';
+  c.beginPath();
+  c.moveTo(0, 0);
+  c.quadraticCurveTo(sway * 8, length * 0.5, sway * 4, length);
+  c.stroke();
+  c.lineWidth = 1.5;
+  c.beginPath();
+  c.moveTo(sway * 3, length * 0.35);
+  c.quadraticCurveTo(sway * 3 + 10, length * 0.45, sway * 3 + 6, length * 0.6);
+  c.stroke();
+  c.fillStyle = '#1e3324';
+  const endX = sway * 4, endY = length;
+  c.beginPath();
+  c.arc(endX - 4, endY, 5, 0, Math.PI * 2);
+  c.arc(endX + 4, endY - 3, 5.5, 0, Math.PI * 2);
+  c.arc(endX, endY + 5, 4, 0, Math.PI * 2);
+  c.fill();
+  c.restore();
+}
+function drawFern(x, y) {
+  ctx.fillStyle = '#182417';
+  ctx.beginPath();
+  ctx.ellipse(x, y, 34, 18, 0, 0, Math.PI * 2);
+  ctx.ellipse(x - 22, y + 4, 22, 13, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + 22, y + 4, 22, 13, 0, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+const MID_TREES = [
+  { x: 120, trunkH: 110, canopyR: 48 }, { x: 340, trunkH: 135, canopyR: 58 },
+  { x: 520, trunkH: 120, canopyR: 52 }, { x: 700, trunkH: 145, canopyR: 62 },
+  { x: 880, trunkH: 125, canopyR: 54 }, { x: 1020, trunkH: 150, canopyR: 64 }
+];
+const VINES = [
+  { x: 200, canopyY: -90, length: 70, sway: 1 }, { x: 420, canopyY: -85, length: 55, sway: -1 },
+  { x: 610, canopyY: -92, length: 65, sway: 1 }, { x: 800, canopyY: -80, length: 50, sway: -1 },
+  { x: 950, canopyY: -88, length: 60, sway: 1 }
+];
+const FG_BUSHES = [80, 260, 460, 640, 820, 980, 1120];
+
+// The chapter now chains multiple encounters far down the path (see
+// ENEMY_WORLD_X_LIST), well past where the hand-placed decorations above
+// end - extend all three layers with the same spacing/variation pattern
+// so later encounters don't scroll into a bare backdrop.
+const WORLD_DECOR_END = ENEMY_WORLD_X_LIST[ENEMY_WORLD_X_LIST.length - 1] + 800;
+for (let x = 1220, i = 0; x < WORLD_DECOR_END; x += 190, i++) {
+  const base = MID_TREES[i % 6];
+  MID_TREES.push({ x, trunkH: base.trunkH, canopyR: base.canopyR });
+}
+for (let x = 1150, i = 0; x < WORLD_DECOR_END; x += 195, i++) {
+  const base = VINES[i % 5];
+  VINES.push({ x, canopyY: base.canopyY, length: base.length, sway: base.sway });
+}
+for (let x = 1300; x < WORLD_DECOR_END; x += 180) FG_BUSHES.push(x);
+
+function drawMidground() {
+  const off = distanceMarched * MID_SCROLL_RATIO;
+  for (const tr of MID_TREES) {
+    const x = tr.x - off;
+    if (x < -100 || x > W + 100) continue;
+    midTreeAt(x, tr.trunkH, tr.canopyR);
+  }
+  for (const v of VINES) {
+    const x = v.x - off;
+    if (x < -60 || x > W + 60) continue;
+    drawVine(ctx, x, GROUND_Y + v.canopyY, v.length, v.sway);
+  }
+}
+function drawForeground() {
+  const off = distanceMarched * FG_SCROLL_RATIO;
+  for (const bx of FG_BUSHES) {
+    const x = bx - off;
+    if (x < -60 || x > W + 60) continue;
+    drawFern(x, GROUND_Y + 16);
+  }
+}
+
+// --- Stick-figure creature rendering (shared by tribe + enemy) ---
+function drawEarNubs(cx, headY, headR, color, s) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(cx - headR * 0.95, headY, 2.6 * s, 0, Math.PI * 2);
+  ctx.arc(cx + headR * 0.95, headY, 2.6 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+function drawTuftHair(cx, headY, headR, color, s) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.6 * s;
+  ctx.lineCap = 'round';
+  [-0.9, -0.45, 0, 0.45, 0.9].forEach((a) => {
+    const x1 = cx + Math.sin(a) * headR * 0.6, y1 = headY - Math.cos(a) * headR * 0.6;
+    const x2 = cx + Math.sin(a) * headR * 1.9, y2 = headY - Math.cos(a) * headR * 1.9;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  });
+}
+// Slow ambient sway for the enemy's curl hair: each curl gets a distinct
+// phase offset so the strands ripple rather than moving as one rigid
+// block. Small amplitude/slow speed - a gentle breeze, not head-shaking.
+function hairSway(baseRot, phaseOffset, time) {
+  const swayAmount = 0.12; // radians of sway
+  const swaySpeed = 1.3; // radians/sec equivalent
+  return baseRot + Math.sin(time * swaySpeed + phaseOffset) * swayAmount;
+}
+function drawCurlHair(cx, headY, headR, color, s, time) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2 * s;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 4; i++) {
+    const a = hairSway(-0.7 + i * 0.45, i * 1.4, time || 0);
+    const sx = cx + Math.sin(a) * headR * 0.8, sy = headY - Math.cos(a) * headR * 0.6;
+    ctx.beginPath();
+    ctx.arc(sx, sy + headR * 0.9, headR * 0.7, Math.PI * 1.1, Math.PI * 2.1);
+    ctx.stroke();
+  }
+}
+function drawEnemyFace(cx, headY, headR, s) {
+  ctx.fillStyle = '#ff2a2a';
+  ctx.beginPath();
+  ctx.arc(cx - headR * 0.4, headY, 1.8 * s, 0, Math.PI * 2);
+  ctx.arc(cx + headR * 0.4, headY, 1.8 * s, 0, Math.PI * 2);
+  ctx.fill();
+}
+// pose = { legSpread, legBend, armIn, lean, crouch } for Idle/March/Guard/
+// Retreat, OR pose = { armThrow } for Attack - the whole body is driven by
+// one of these two vocabularies depending on which fields are present.
+// hairStyle/eyeStyle keep tribe vs. enemy visually distinct (brown tuft
+// hair + white-sclera eyes for tribe, dark curl hair + solid red eyes for
+// the enemy) the way the previous stick-figure renderer did.
+function drawCreature(x, y, scale, pose, color, hairStyle, eyeStyle, time) {
+  ctx.save();
+  ctx.translate(x, y + (pose.crouch || 0));
+  ctx.scale(scale, scale);
+  ctx.rotate(pose.lean || 0);
+
+  const ink = color;
+  ctx.strokeStyle = ink; ctx.fillStyle = ink; ctx.lineCap = 'round';
+
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath(); ctx.ellipse(0, 21, 13, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = ink;
+
+  const legSpread = pose.legSpread || 0, legBend = pose.legBend || 0;
+  ctx.lineWidth = 3.3;
+  ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(-9 - legSpread, 20 - legBend); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 7); ctx.lineTo(8 + legSpread, 20 - legBend); ctx.stroke();
+
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(0, 7); ctx.stroke();
+
+  ctx.lineWidth = 2.7;
+  let handX, handY;
+  if (pose.armThrow !== undefined) {
+    // ATTACK pose - throwing arm angle drives hand position
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(-13, -3, -11, 9); ctx.stroke();
+    handX = 13 * Math.cos(pose.armThrow - Math.PI / 2 + 0.3);
+    handY = -9 + 13 * Math.sin(pose.armThrow - Math.PI / 2 + 0.3) + 6;
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.lineTo(handX, handY); ctx.stroke();
+  } else {
+    // IDLE / MARCH / GUARD / RETREAT - arms pull toward center by armIn
+    const armIn = pose.armIn || 0;
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(-13 + armIn, -3, -11 + armIn * 1.5, 9 - legBend * 0.3); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(13 - armIn, -3, 12 - armIn * 1.5, 10 - legBend * 0.3); ctx.stroke();
+  }
+
+  ctx.beginPath(); ctx.arc(0, -20, 7, 0, Math.PI * 2); ctx.fill();
+  drawEarNubs(0, -20, 7, ink, 1);
+  if (hairStyle === 'curl') drawCurlHair(0, -20, 7, ink, 1, time);
+  else drawTuftHair(0, -20, 7, ink, 1);
+
+  if (eyeStyle === 'enemy') {
+    drawEnemyFace(0, -20, 7, 1);
+  } else {
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.beginPath(); ctx.arc(-2.6, -20.5, 1.9, 0, Math.PI * 2); ctx.arc(2.6, -20.5, 1.9, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#241610';
+    ctx.beginPath(); ctx.arc(-2.3, -20.3, 1.1, 0, Math.PI * 2); ctx.arc(2.9, -20.3, 1.1, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ink; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(-2.6, -23.5, 2, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+    ctx.beginPath(); ctx.arc(2.6, -23.5, 2, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, -19, 2.2, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+  }
+
+  ctx.restore();
+  if (pose.armThrow !== undefined) return { x: x + handX * scale, y: y + handY * scale };
+}
+
+// --- Squad ---
+// State -> pose mapping: legSpread/legBend/armIn driven by a sine wave
+// timed to the beat while March/Retreat is active; Idle uses a small-
+// amplitude sway; Guard eases into a fixed braced pose and holds it;
+// Attack hands off to armAngleForThrow's windup/release/flight/impact
+// timeline and ignores leg pose entirely (per the throw-pose vocabulary).
+function tribePoseFor(t, phase, throwAngle) {
+  if (throwActive) return { armThrow: throwAngle };
+  if (squadAction && squadAction.kind === 'guard') {
+    const inP = clamp(squadAction.elapsed / 0.2, 0, 1);
+    const outP = clamp((squadAction.duration - squadAction.elapsed) / 0.25, 0, 1);
+    const braceP = Math.min(inP, outP);
+    return {
+      legSpread: lerp(0, 4, braceP), legBend: lerp(0, 3, braceP),
+      armIn: lerp(0, 6, braceP), lean: 0, crouch: lerp(0, 1.5, braceP)
+    };
+  }
+  if (squadAction && (squadAction.kind === 'march' || squadAction.kind === 'retreat')) {
+    const legFreq = (Math.PI * 2) / BEAT_SEC;
+    const stride = Math.sin(t * legFreq + phase) * 7;
+    const legBend = Math.abs(stride) * 0.3;
+    if (squadAction.kind === 'march') {
+      return { legSpread: stride, legBend, armIn: -stride * 0.4, lean: 0, crouch: Math.abs(stride) * 0.2 };
+    }
+    return { legSpread: stride, legBend, armIn: stride * 0.3, lean: -0.06, crouch: 0 };
+  }
+  const sway = Math.sin(t * 1.3 + phase) * 3;
+  return { legSpread: sway * 0.3, legBend: 0, armIn: sway * 0.3, lean: 0, crouch: 0 };
+}
+function drawSquad(t) {
+  // Fixed camera: the squad's screen X never moves - only the world
+  // (enemy, decorations) scrolls past them as distanceMarched changes.
+  const throwAngle = armAngleForThrow(t);
+  SQUAD_X.forEach((x, i) => {
+    const phase = SQUAD_PHASE[i];
+    const pose = tribePoseFor(t, phase, throwAngle);
+    drawCreature(x, GROUND_Y, unitScale, pose, SQUAD_COLORS[i], 'tuft', 'tribe');
+  });
+}
+
+// --- Enemy ---
+// Same pose vocabulary as the squad; telegraph (wind-up before its hit
+// lands) eases arms outward/up and leans back slightly rather than using
+// a separate animation model.
+function enemyPoseFor(t) {
+  if (combatActive && enemyCyclePhase === 'telegraph') {
+    const p = clamp((ENEMY_TELEGRAPH_DURATION - enemyCycleTimer) / ENEMY_TELEGRAPH_DURATION, 0, 1);
+    return {
+      legSpread: lerp(0, 3, p), legBend: lerp(0, 2, p),
+      armIn: lerp(0, -8, p), lean: lerp(0, -0.08, p), crouch: lerp(0, -3, p)
+    };
+  }
+  const sway = Math.sin(t * 1.1) * 3;
+  return { legSpread: sway * 0.3, legBend: 0, armIn: sway * 0.3, lean: 0, crouch: Math.sin(t * 2) * 1.5 };
+}
+function drawEnemy(t) {
+  const ex0 = enemyScreenX();
+  // Hidden until encountered: the enemy simply isn't drawn while it's off
+  // the right edge of the canvas - no separate visibility flag needed,
+  // this falls straight out of the world-space position. Skip the cull
+  // while defeating so the fade-out plays out fully even at the edge.
+  if (!enemyDefeating && ex0 - enemyScale * 60 > W) return;
+  const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
+  const impactP = inImpact ? (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT : 0;
+  const shake = inImpact ? 6 * (1 - impactP) * Math.sin(impactP * Math.PI * 5) : 0;
+  const pose = enemyPoseFor(t);
+  const telegraphing = combatActive && enemyCyclePhase === 'telegraph';
+  if (telegraphing) {
+    const p = clamp((ENEMY_TELEGRAPH_DURATION - enemyCycleTimer) / ENEMY_TELEGRAPH_DURATION, 0, 1);
+    ctx.save();
+    ctx.globalAlpha = 0.15 + p * 0.35;
+    const r = 70 + p * 30;
+    const glow = ctx.createRadialGradient(ex0, ENEMY_Y - 90, 10, ex0, ENEMY_Y - 90, r);
+    glow.addColorStop(0, 'rgba(255,60,40,0.8)');
+    glow.addColorStop(1, 'rgba(255,60,40,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(ex0, ENEMY_Y - 90, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  // Defeat reaction: cheap fade + sink, rather than a whole new animation -
+  // reuses the existing pose.crouch/globalAlpha machinery.
+  const defeatP = enemyDefeating ? clamp(enemyDefeatElapsed / ENEMY_DEFEAT_FADE_DURATION, 0, 1) : 0;
+  if (enemyDefeating) pose.crouch = (pose.crouch || 0) + defeatP * 16;
+  ctx.save();
+  ctx.globalAlpha = 1 - defeatP;
+  drawCreature(ex0 + shake, ENEMY_Y, enemyScale, pose, inImpact ? '#8a2a2a' : ENEMY_COLOR, 'curl', 'enemy', t);
+  ctx.restore();
+  if (enemyDefeating) return; // no HP bar for a dying/dead enemy
+  const barW = 130, barH = 12;
+  const bx = ex0 - barW / 2, by = ENEMY_Y - 178;
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  roundRect(ctx, bx, by, barW, barH, 5); ctx.fill();
+  ctx.fillStyle = '#ff5a4a';
+  const pct = Math.max(0, enemyHP / ENEMY_MAX_HP);
+  roundRect(ctx, bx + 2, by + 2, (barW - 4) * pct, barH - 4, 4); ctx.fill();
+}
+
+// --- Attack FX: long spear + impact flash ---
+function drawSpearAt(x, y, angle, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.strokeStyle = '#d8c9a8';
+  ctx.lineWidth = 2.6;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-22, 0); ctx.lineTo(13, 0);
+  ctx.stroke();
+  ctx.fillStyle = '#9aa0aa';
+  ctx.beginPath();
+  ctx.moveTo(13, 0); ctx.lineTo(5, -4.5); ctx.lineTo(5, 4.5);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#b23a2a';
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(-15, -5); ctx.lineTo(-16, 0); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(-15, 5); ctx.lineTo(-16, 0); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function drawAttackFX() {
+  if (projectile) {
+    const p = clamp((throwElapsed - THROW_FLIGHT_START) / THROW_FLIGHT, 0, 1);
+    [0.18, 0.12, 0.06].forEach((back, i) => {
+      const pp = p - back;
+      if (pp < 0) return;
+      const pos = projectilePos(pp);
+      drawSpearAt(pos.x, pos.y, pos.angle, 0.12 * (i + 1));
+    });
+    const pos = projectilePos(p);
+    drawSpearAt(pos.x, pos.y, pos.angle, 1);
+  }
+  const inImpact = throwActive && throwElapsed >= THROW_IMPACT_START && throwElapsed < THROW_RECOVERY_START;
+  if (inImpact) {
+    const ip = (throwElapsed - THROW_IMPACT_START) / THROW_IMPACT;
+    const r = 14 + ip * 26;
+    ctx.save();
+    ctx.globalAlpha = (1 - ip) * 0.85;
+    const glow = ctx.createRadialGradient(impactX, SPEAR_TARGET_Y, 0, impactX, SPEAR_TARGET_Y, r);
+    glow.addColorStop(0, 'rgba(255,240,200,0.9)');
+    glow.addColorStop(1, 'rgba(255,240,200,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(impactX, SPEAR_TARGET_Y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+// --- Beat bar: pulse only (phase 2 removed the note-preview ticker - see
+// brief section 1b) - just tells the player WHEN the beat lands, no icons,
+// predicts nothing about which command is being attempted.
+const BAR_Y = 22, BAR_H = 54;
+const HIT_X = W / 2;
+function drawBeatBar(nowPerf) {
+  let pulse = 0;
+  for (const ev of beatEvents) {
+    const dt = nowPerf - ev.time;
+    if (dt >= 0 && dt < 200) pulse = Math.max(pulse, 1 - dt / 200);
+  }
+  ctx.save();
+  ctx.fillStyle = 'rgba(20,14,34,0.6)';
+  roundRect(ctx, 16, BAR_Y, W - 32, BAR_H, 14); ctx.fill();
+  const glowColor = feverActive ? '255,214,90' : '120,200,255';
+  ctx.lineWidth = feverActive ? 4 + pulse * 3 : 3 + pulse * 2;
+  ctx.strokeStyle = `rgba(${glowColor},${0.35 + pulse * 0.45})`;
+  roundRect(ctx, 16, BAR_Y, W - 32, BAR_H, 14); ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(HIT_X, BAR_Y + BAR_H / 2, 9 + pulse * 11, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${glowColor},${0.5 + pulse * 0.5})`;
+  ctx.fill();
+  if (banner) {
+    ctx.globalAlpha = clamp(banner.timer / 0.5, 0, 1) * 0.8;
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = banner.color;
+    roundRect(ctx, 12, BAR_Y - 4, W - 24, BAR_H + 8, 16); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+function drawHUD() {
+  // Squad HP (left)
+  drawHPBar(20, BAR_Y + BAR_H + 10, 170, 14, squadHP / SQUAD_MAX_HP, '#5fd88a', 'SQUAD');
+  // Fever streak (right)
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'top';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillStyle = feverActive ? '#ffd76a' : '#cfd6dc';
+  ctx.fillText(feverActive ? 'FEVER! x' + feverStreak : 'Streak x' + feverStreak, W - 20, BAR_Y + BAR_H + 12);
+  if (judgePopup) {
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.globalAlpha = clamp(judgePopup.timer / 0.55, 0, 1);
+    ctx.fillStyle = judgePopup.color;
+    ctx.fillText(judgePopup.text, HIT_X, BAR_Y + BAR_H + 32);
+    ctx.globalAlpha = 1;
+  }
+  if (banner) {
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.globalAlpha = clamp(banner.timer / 0.3, 0, 1);
+    ctx.fillStyle = banner.color;
+    ctx.fillText(banner.text, HIT_X, BAR_Y + BAR_H + 58);
+    ctx.globalAlpha = 1;
+  }
+}
+function drawHPBar(x, y, w, h, pct, color, label) {
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  roundRect(ctx, x, y, w, h, 5); ctx.fill();
+  ctx.fillStyle = color;
+  roundRect(ctx, x + 2, y + 2, (w - 4) * clamp(pct, 0, 1), h - 4, 4); ctx.fill();
+  ctx.fillStyle = '#cfd6dc';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.fillText(label, x, y - 3);
+}
+
+function drawCalibrate() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(forestBg, 0, 0);
+  ctx.fillStyle = 'rgba(10,8,20,0.55)';
+  ctx.fillRect(0, 0, W, H);
+  const now = performance.now();
+  let pulse = 0;
+  for (const ev of beatEvents) {
+    const dt = now - ev.time;
+    if (dt >= 0 && dt < 220) pulse = Math.max(pulse, 1 - dt / 220);
+  }
+  const r = 60 + pulse * 30;
+  ctx.beginPath();
+  ctx.arc(W / 2, H / 2 - 10, r, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(255,214,110,${0.25 + pulse * 0.5})`;
+  ctx.fill();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(255,214,110,0.9)';
+  ctx.stroke();
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 26px sans-serif';
+  ctx.fillText('Tap anywhere on the beat', W / 2, H / 2 - 110);
+  ctx.font = 'bold 18px sans-serif';
+  ctx.fillText('Beat ' + Math.min(beatGlobalIndex, CALIB_BEATS) + ' / ' + CALIB_BEATS, W / 2, H / 2 + 110);
+}
+
+function drawWorld(t) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(forestBg, 0, 0);
+  drawMidground();
+  drawSquad(t);
+  drawEnemy(t);
+  drawAttackFX();
+  drawForeground();
+  if (squadHitFlash > 0) {
+    ctx.fillStyle = `rgba(255,40,40,${squadHitFlash / 0.3 * 0.3})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+let animT = 0;
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  const dt = Math.min((now - lastFrameTime) / 1000, 0.05);
+  lastFrameTime = now;
+  animT += dt;
+  if (state === 'calibrating') {
+    drawCalibrate();
+  } else if (state === 'playing') {
+    updateGame(dt);
+    drawWorld(animT);
+    drawBeatBar(now);
+    drawHUD();
+  } else {
+    updateAnimTimers(dt);
+    drawWorld(animT);
+  }
+  requestAnimationFrame(loop);
+}
+
+forestBg = buildForestBackground(W, H);
+handleResize();
+showMenu();
+requestAnimationFrame(loop);
+</script>
+
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox" data-fullscreen="landscape"></script>
+</body>
+</html>

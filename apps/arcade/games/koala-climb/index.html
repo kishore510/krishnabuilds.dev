@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koala Climb</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #8fd3e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: linear-gradient(#8fd3e8, #c9ecd8);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    pointer-events: none;
+    text-align: center;
+  }
+  #overlay h1 { margin: 0 0 8px; font-size: calc(30px * var(--game-scale, 1)); }
+  #overlay p { margin: 4px 0; font-size: calc(15px * var(--game-scale, 1)); opacity: 0.9; }
+  #diffButtons {
+    display: flex;
+    gap: calc(14px * var(--game-scale, 1));
+    margin-top: calc(18px * var(--game-scale, 1));
+    pointer-events: auto;
+  }
+  #diffButtons button {
+    font-family: inherit;
+    font-size: calc(15px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  #diffButtons button:active { background: rgba(255,255,255,0.3); }
+  #diffButtons button.selected {
+    background: #ffb703;
+    border-color: #ffb703;
+    color: #04121c;
+  }
+  #backToArcade {
+    display: none;
+    margin-top: calc(18px * var(--game-scale, 1));
+    font-size: calc(14px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="overlay">
+    <h1 id="title">Koala Climb</h1>
+    <p id="subtitle">Climbs on its own — tap a side to dodge branches</p>
+    <p id="scoreLine" style="display:none;"></p>
+    <div id="diffButtons">
+      <button id="easyBtn" type="button" data-kb-play>Easy</button>
+      <button id="hardBtn" type="button" data-kb-play>Hard</button>
+    </div>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const easyBtn = document.getElementById('easyBtn');
+const hardBtn = document.getElementById('hardBtn');
+const diffButtons = document.getElementById('diffButtons');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+
+const W = canvas.width, H = canvas.height;
+const TRUNK_W = 140;
+const TRUNK_LEFT = W / 2 - TRUNK_W / 2, TRUNK_RIGHT = W / 2 + TRUNK_W / 2;
+const LANE_INSET = 1;
+const LANE_COUNT = 2;
+function laneX(i) { return i === 0 ? TRUNK_LEFT + LANE_INSET : TRUNK_RIGHT - LANE_INSET; }
+const KOALA_Y = H - 150;
+const KOALA_R = 21;
+const COLLIDE_WINDOW = 18;
+const HEIGHT_SCALE = 0.05;
+const ACORN_BONUS = 8;
+
+// The climb passes through a small day -> windy -> rainy -> night arc as
+// height increases, purely atmospheric (none of it changes collision).
+const WIND_HEIGHT = 60, RAIN_HEIGHT = 150, NIGHT_HEIGHT = 300;
+function weatherFor(h) {
+  if (h < WIND_HEIGHT) return 'day';
+  if (h < RAIN_HEIGHT) return 'wind';
+  if (h < NIGHT_HEIGHT) return 'rain';
+  return 'night';
+}
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+// --- Branch gap must give the lane-switch lerp (factor 0.22 below) time to
+// fully cross before a branch reaches the collide window, at the current
+// ramped scroll speed - otherwise a branch could be physically undodgeable.
+// speedMax is capped for the same reason: however long a run goes, reaction
+// time never drops below what a lane switch actually needs. ---
+const DIFFICULTY_PRESETS = {
+  easy: { speedStart: 2.4, speedMax: 5.0, ramp: 0.0006, gapMin: 170, gapMax: 280 },
+  hard: { speedStart: 3.4, speedMax: 6.6, ramp: 0.0010, gapMin: 130, gapMax: 215 }
+};
+
+let difficulty = 'easy';
+let preset = DIFFICULTY_PRESETS.easy;
+let koala, branches, acorns, heightScore, bonus, best, state, frame, scrollSpeed, climbPhase, trunkScroll, weather;
+let lastLane = 0;
+let clouds = [], stars = [], raindrops = [], gusts = [];
+
+// --- Audio: generated on the fly with the Web Audio API, no external files ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('koalaClimbMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playDodge() { tone(760, 0.07, 'triangle', 0.09); }
+function playAcorn() { tone(920, 0.09, 'triangle', 0.12); tone(1200, 0.1, 'triangle', 0.09, 0.05); }
+function playHit() { tone(180, 0.4, 'sawtooth', 0.15); }
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('koalaClimbMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest(diff) { return parseInt(sessionStorage.getItem('koalaClimbBest2_' + diff) || '0', 10); }
+function saveBest(diff, v) { try { sessionStorage.setItem('koalaClimbBest2_' + diff, v); } catch (e) {} }
+
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+
+function spawnBranch(y) {
+  // Mostly flip sides from the last branch so the player has to keep
+  // switching, but occasionally repeat one so it doesn't become a pure
+  // metronome of alternating taps.
+  const lane = Math.random() < 0.78 ? 1 - lastLane : lastLane;
+  lastLane = lane;
+  // Owls are purely decorative - they perch on a branch that's already
+  // spawning at night, they don't add a new hazard.
+  const owl = weather === 'night' && Math.random() < 0.35;
+  branches.push({ y, lane, resolved: false, owl });
+  // An acorn sits on the same lane as the branch it precedes, well above
+  // it - so grabbing it means ducking into the lane that's about to become
+  // dangerous, then having to switch back out before the branch itself
+  // arrives. That's the whole "tempting but risky" hook.
+  if (branches.length > 2 && Math.random() < 0.4) {
+    acorns.push({ x: laneX(lane), y: y - randRange(70, 100), lane, collected: false });
+  }
+}
+
+function ensureBranchesAbove() {
+  while (branches.length === 0 || branches[branches.length - 1].y > -60) {
+    const lastY = branches.length ? branches[branches.length - 1].y : -40;
+    spawnBranch(lastY - randRange(preset.gapMin, preset.gapMax));
+  }
+}
+
+function initClouds() {
+  clouds = [];
+  for (let i = 0; i < 4; i++) {
+    const side = Math.random() < 0.5 ? -1 : 1;
+    clouds.push({ x: W / 2 + side * randRange(70, 130), y: Math.random() * H, r: 16 + Math.random() * 12 });
+  }
+}
+
+function initSky() {
+  stars = [];
+  for (let i = 0; i < 26; i++) {
+    stars.push({ x: Math.random() * W, y: Math.random() * H, r: 0.6 + Math.random() * 1.4, tw: Math.random() * Math.PI * 2 });
+  }
+  raindrops = [];
+  for (let i = 0; i < 36; i++) {
+    raindrops.push({ x: Math.random() * W, y: Math.random() * H, len: 10 + Math.random() * 10, speed: 6 + Math.random() * 4 });
+  }
+  gusts = [];
+  for (let i = 0; i < 5; i++) {
+    gusts.push({ x: Math.random() * W, y: Math.random() * H, len: 30 + Math.random() * 30 });
+  }
+}
+
+function reset() {
+  koala = { lane: 0, x: laneX(0) };
+  branches = [];
+  acorns = [];
+  lastLane = 0;
+  heightScore = 0;
+  bonus = 0;
+  weather = 'day';
+  scrollSpeed = DIFFICULTY_PRESETS[difficulty].speedStart;
+  climbPhase = 0;
+  trunkScroll = 0;
+  frame = 0;
+  state = 'ready';
+  initClouds();
+  initSky();
+  title.textContent = 'Koala Climb';
+  subtitle.textContent = 'Climbs on its own — tap a side to dodge branches';
+  scoreLine.style.display = 'none';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'none';
+  best = loadBest(difficulty);
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function updateDiffButtonStyles() {
+  easyBtn.classList.toggle('selected', difficulty === 'easy');
+  hardBtn.classList.toggle('selected', difficulty === 'hard');
+}
+
+function startGame(diff) {
+  difficulty = diff;
+  preset = DIFFICULTY_PRESETS[diff];
+  best = loadBest(difficulty);
+  koala = { lane: 0, x: laneX(0) };
+  branches = [];
+  acorns = [];
+  lastLane = 0;
+  heightScore = 0;
+  bonus = 0;
+  weather = 'day';
+  scrollSpeed = preset.speedStart;
+  climbPhase = 0;
+  trunkScroll = 0;
+  frame = 0;
+  ensureBranchesAbove();
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+
+function setLane(lane) {
+  if (state !== 'playing') return;
+  koala.lane = lane;
+}
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  setLane(x < W / 2 ? 0 : 1);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'ArrowLeft') setLane(0);
+  if (e.code === 'ArrowRight') setLane(1);
+});
+
+function update() {
+  climbPhase += scrollSpeed * 0.15;
+  if (state !== 'playing') return;
+  frame++;
+  scrollSpeed = Math.min(preset.speedMax, scrollSpeed + preset.ramp);
+  koala.x += (laneX(koala.lane) - koala.x) * 0.22;
+  heightScore += scrollSpeed * HEIGHT_SCALE;
+  trunkScroll += scrollSpeed;
+  weather = weatherFor(heightScore);
+
+  for (const s of stars) {
+    s.y += scrollSpeed * 0.15;
+    if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
+  }
+  if (weather === 'rain') {
+    for (const r of raindrops) {
+      r.y += r.speed + scrollSpeed * 0.3;
+      r.x -= 1.2;
+      if (r.y > H) { r.y = -10; r.x = Math.random() * W; }
+      if (r.x < -10) { r.x = W + 10; }
+    }
+  }
+  if (weather === 'wind' || weather === 'rain') {
+    for (const g of gusts) {
+      g.x += 5 + scrollSpeed * 0.5;
+      if (g.x > W + 40) { g.x = -40; g.y = Math.random() * H; }
+    }
+  }
+
+  for (const b of branches) b.y += scrollSpeed;
+  for (const a of acorns) a.y += scrollSpeed;
+
+  for (const b of branches) {
+    if (b.resolved) continue;
+    if (Math.abs(b.y - KOALA_Y) < COLLIDE_WINDOW) {
+      b.resolved = true;
+      if (b.lane === koala.lane) { endGame(); return; }
+      playDodge();
+    }
+  }
+
+  for (const a of acorns) {
+    if (a.collected) continue;
+    if (a.lane === koala.lane && Math.abs(a.y - KOALA_Y) < COLLIDE_WINDOW) {
+      a.collected = true;
+      bonus += ACORN_BONUS;
+      playAcorn();
+    }
+  }
+
+  // Drop anything that has scrolled past the bottom of the view - without
+  // this the branch list only ever grows, and every earlier branch keeps
+  // getting redrawn every frame even though it's long off-screen.
+  branches = branches.filter(b => b.y < H + 40);
+  acorns = acorns.filter(a => a.y < H + 40);
+  ensureBranchesAbove();
+
+  for (const c of clouds) {
+    c.y += scrollSpeed * 0.4;
+    if (c.y > H + 20) {
+      c.y = -20;
+      const side = Math.random() < 0.5 ? -1 : 1;
+      c.x = W / 2 + side * randRange(70, 130);
+    }
+  }
+}
+
+function endGame() {
+  state = 'over';
+  playHit();
+  const total = Math.round(heightScore + bonus);
+  if (total > best) { best = total; saveBest(difficulty, best); }
+  title.textContent = 'Branch strike!';
+  subtitle.textContent = 'Choose a mode to climb again';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Height: ' + total + ' m   Best (' + (difficulty === 'easy' ? 'Easy' : 'Hard') + '): ' + best + ' m';
+  diffButtons.style.display = 'flex';
+  backToArcade.style.display = 'inline-block';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+easyBtn.addEventListener('click', () => startGame('easy'));
+hardBtn.addEventListener('click', () => startGame('hard'));
+
+const SKY_COLORS = {
+  day: ['#8fd3e8', '#c9ecd8'],
+  wind: ['#7fa3c2', '#b8cfc2'],
+  rain: ['#4d5b6b', '#6d7a86'],
+  night: ['#0a0f28', '#1b2748']
+};
+const TRUNK_COLORS = {
+  day: ['#5f3f22', '#7a5230'], wind: ['#5f3f22', '#7a5230'], rain: ['#4a3018', '#5f3f22'], night: ['#211408', '#372110']
+};
+
+function drawBg() {
+  const [top, bottom] = SKY_COLORS[weather];
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, top);
+  g.addColorStop(1, bottom);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  if (weather === 'night') {
+    ctx.fillStyle = 'rgba(245,240,220,0.95)';
+    ctx.beginPath(); ctx.arc(W - 58, 66, 22, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = top;
+    ctx.beginPath(); ctx.arc(W - 47, 58, 20, 0, Math.PI * 2); ctx.fill();
+    for (const s of stars) {
+      const alpha = 0.4 + 0.5 * Math.sin(frame * 0.05 + s.tw);
+      ctx.fillStyle = 'rgba(255,255,255,' + Math.max(0, alpha).toFixed(2) + ')';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+  } else {
+    ctx.fillStyle = weather === 'day' ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.5)';
+    for (const c of clouds) {
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, c.r, c.r * 0.6, 0, 0, Math.PI * 2);
+      ctx.ellipse(c.x + c.r * 0.7, c.y + c.r * 0.15, c.r * 0.6, c.r * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  if (weather === 'wind' || weather === 'rain') {
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    for (const gu of gusts) {
+      ctx.beginPath();
+      ctx.moveTo(gu.x, gu.y);
+      ctx.quadraticCurveTo(gu.x + gu.len * 0.5, gu.y - 6, gu.x + gu.len, gu.y);
+      ctx.stroke();
+    }
+  }
+  if (weather === 'rain') {
+    ctx.strokeStyle = 'rgba(210,225,255,0.55)';
+    ctx.lineWidth = 1.5;
+    for (const r of raindrops) {
+      ctx.beginPath();
+      ctx.moveTo(r.x, r.y);
+      ctx.lineTo(r.x - 3, r.y + r.len);
+      ctx.stroke();
+    }
+  }
+
+  const [trunkEdge, trunkMid] = TRUNK_COLORS[weather];
+  const tg = ctx.createLinearGradient(TRUNK_LEFT, 0, TRUNK_RIGHT, 0);
+  tg.addColorStop(0, trunkEdge);
+  tg.addColorStop(0.5, trunkMid);
+  tg.addColorStop(1, trunkEdge);
+  ctx.fillStyle = tg;
+  ctx.fillRect(TRUNK_LEFT, 0, TRUNK_W, H);
+
+  // Bark rings scroll with distance climbed so the trunk - the single
+  // biggest thing on screen - always visibly moves, even during long
+  // stretches with no branch nearby.
+  ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+  ctx.lineWidth = 3;
+  const barkSpacing = 46;
+  const offset = trunkScroll % barkSpacing;
+  for (let y = -barkSpacing + offset; y < H; y += barkSpacing) {
+    ctx.beginPath();
+    ctx.moveTo(TRUNK_LEFT, y);
+    ctx.quadraticCurveTo(W / 2, y + 10, TRUNK_RIGHT, y);
+    ctx.stroke();
+  }
+
+  // Faint lane guides so it's clear the koala can sit on either side of the trunk.
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 0);
+  ctx.lineTo(W / 2, H);
+  ctx.stroke();
+}
+
+function drawBranches() {
+  for (const b of branches) {
+    const onLeft = b.lane === 0;
+    const dir = onLeft ? -1 : 1;
+    const edgeX = onLeft ? TRUNK_LEFT : TRUNK_RIGHT;
+    const baseX = edgeX - dir * 16;
+    const len = 78, baseR = 19, tipR = 8;
+    const tilt = dir * 0.16;
+    const tipX = baseX + dir * len * Math.cos(tilt);
+    const tipY = b.y + dir * len * Math.sin(tilt);
+
+    // A tapered trapezoid (thick at the trunk, thin at the tip) reads as a
+    // real branch at trunk scale, unlike a thin uniform-width stick.
+    ctx.save();
+    ctx.translate(baseX, b.y);
+    ctx.rotate(tilt);
+    ctx.fillStyle = '#5a3d22';
+    ctx.beginPath();
+    ctx.moveTo(0, -baseR);
+    ctx.lineTo(dir * len, -tipR);
+    ctx.lineTo(dir * len, tipR);
+    ctx.lineTo(0, baseR);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(dir * len, 0);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i <= 2; i++) {
+      const px = dir * len * (i / 3);
+      ctx.beginPath();
+      ctx.moveTo(px, -baseR * 0.5);
+      ctx.lineTo(px + dir * 4, baseR * 0.5);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    const leafSpecs = weather === 'night'
+      ? [[-9, -5, 16, 12, '#1c3a24'], [8, -9, 15, 11, '#20421f'], [-2, 7, 17, 12, '#264b28']]
+      : [[-9, -5, 16, 12, '#3f7a45'], [8, -9, 15, 11, '#4a8a4f'], [-2, 7, 17, 12, '#5aa15c']];
+    for (const [dx, dy, rx, ry, color] of leafSpecs) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(tipX + dx, tipY + dy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (b.owl) {
+      const ox = tipX, oy = tipY - 15;
+      ctx.fillStyle = '#3c2f22';
+      ctx.beginPath();
+      ctx.moveTo(ox - 6, oy - 8); ctx.lineTo(ox - 3, oy - 15); ctx.lineTo(ox - 1, oy - 8); ctx.closePath(); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(ox + 6, oy - 8); ctx.lineTo(ox + 3, oy - 15); ctx.lineTo(ox + 1, oy - 8); ctx.closePath(); ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(ox, oy, 9, 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f5d76e';
+      ctx.beginPath();
+      ctx.arc(ox - 3, oy - 2, 3, 0, Math.PI * 2);
+      ctx.arc(ox + 3, oy - 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#1a1310';
+      ctx.beginPath();
+      ctx.arc(ox - 3, oy - 2, 1.3, 0, Math.PI * 2);
+      ctx.arc(ox + 3, oy - 2, 1.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e8a33d';
+      ctx.beginPath();
+      ctx.moveTo(ox - 1.5, oy + 2); ctx.lineTo(ox + 1.5, oy + 2); ctx.lineTo(ox, oy + 6); ctx.closePath(); ctx.fill();
+    }
+  }
+}
+
+function drawAcorns() {
+  for (const a of acorns) {
+    if (a.collected) continue;
+    // A warm, light acorn body with a pale outline and a shine spot reads
+    // clearly against the dark bark; a plain brown acorn didn't.
+    ctx.strokeStyle = '#f4e4c8';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = '#d99a4f';
+    ctx.beginPath();
+    ctx.ellipse(a.x, a.y + 1, 11, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.beginPath();
+    ctx.ellipse(a.x - 4, a.y - 3, 3, 4, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#f4e4c8';
+    ctx.fillStyle = '#6b4526';
+    ctx.beginPath();
+    ctx.ellipse(a.x, a.y - 9, 12, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 1;
+    for (const dx of [-6, 0, 6]) {
+      ctx.beginPath();
+      ctx.moveTo(a.x + dx, a.y - 13);
+      ctx.lineTo(a.x + dx, a.y - 5);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = '#4a8a4f';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y - 15);
+    ctx.lineTo(a.x + 2, a.y - 21);
+    ctx.stroke();
+    ctx.fillStyle = '#5aa15c';
+    ctx.beginPath();
+    ctx.ellipse(a.x + 7, a.y - 21, 6, 3.5, 0.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawKoala() {
+  const x = koala.x, y = KOALA_Y;
+  const phase = climbPhase;
+  const bob = Math.sin(phase * 2) * 1.5;
+
+  // Diagonal climbing gait: the near arm and far leg swing together, and
+  // the far arm and near leg together, like a real climb rather than both
+  // sides bobbing in sync.
+  const nearArm = Math.sin(phase) * 9;
+  const farArm = Math.sin(phase + Math.PI) * 7;
+  const nearLeg = Math.sin(phase + Math.PI) * 8;
+  const farLeg = Math.sin(phase) * 6;
+
+  ctx.save();
+  ctx.translate(x, y + bob);
+  // Canonical art assumes the trunk is on the +x side; mirror for the lane
+  // where the trunk is actually on the -x side, so the koala always grips
+  // toward the bark instead of toward open air.
+  if (koala.lane === 1) ctx.scale(-1, 1);
+
+  ctx.lineCap = 'round';
+  // Far limbs (partly behind the body, muted) drawn first for depth.
+  ctx.strokeStyle = '#7d6355';
+  ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(2, -14); ctx.lineTo(22, -14 + farArm); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 14); ctx.lineTo(20, 20 + farLeg); ctx.stroke();
+  ctx.fillStyle = '#3f2f26';
+  ctx.beginPath(); ctx.ellipse(22, -14 + farArm, 5, 5, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(20, 20 + farLeg, 5, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Body, leaning toward the trunk (+x), with a lighter chest visible on
+  // the side turned toward the viewer (-x).
+  ctx.fillStyle = '#9aa3a8';
+  ctx.beginPath();
+  ctx.ellipse(5, 2, 15, 21, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#eceff0';
+  ctx.beginPath();
+  ctx.ellipse(-4, 6, 9, 13, -0.05, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Near limbs (in front of the body), reaching further toward the trunk.
+  ctx.strokeStyle = '#8f7364';
+  ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.moveTo(6, -6); ctx.lineTo(27, -6 + nearArm); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(4, 20); ctx.lineTo(25, 27 + nearLeg); ctx.stroke();
+  ctx.fillStyle = '#241608';
+  ctx.beginPath(); ctx.ellipse(27, -6 + nearArm, 6, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(25, 27 + nearLeg, 6, 6, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Head, turned to face the viewer even though the body clings sideways.
+  ctx.fillStyle = '#9aa3a8';
+  ctx.beginPath();
+  ctx.ellipse(-2, -24, 15, 15, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(-14, -35, 8, 8, 0, 0, Math.PI * 2);
+  ctx.ellipse(9, -36, 8, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e7cfc9';
+  ctx.beginPath();
+  ctx.ellipse(-14, -35, 4, 4, 0, 0, Math.PI * 2);
+  ctx.ellipse(9, -36, 4, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#eceff0';
+  ctx.beginPath();
+  ctx.ellipse(-2, -18, 12, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#241608';
+  ctx.beginPath();
+  ctx.arc(-8, -26, 2.2, 0, Math.PI * 2);
+  ctx.arc(4, -26, 2.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(-2, -15, 6, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawHud() {
+  ctx.font = 'bold 20px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const heightText = 'Height: ' + Math.round(heightScore + bonus) + ' m';
+  ctx.strokeText(heightText, 12, 34);
+  ctx.fillText(heightText, 12, 34);
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 13px Arial';
+  const bestText = 'Best: ' + best + ' m';
+  ctx.strokeText(bestText, W - 12, 26);
+  ctx.fillText(bestText, W - 12, 26);
+}
+
+function loop() {
+  update();
+  drawBg();
+  drawBranches();
+  drawAcorns();
+  drawKoala();
+  drawHud();
+  requestAnimationFrame(loop);
+}
+
+reset();
+loop();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>

@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Losing the Plot</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #12200f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  body {
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    background: #3a2a18;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    touch-action: none;
+  }
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    pointer-events: none;
+    text-align: center;
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  #overlayPanel {
+    background: rgba(8, 10, 6, 0.68);
+    border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: calc(18px * var(--game-scale, 1));
+    padding: calc(18px * var(--game-scale, 1)) calc(22px * var(--game-scale, 1));
+    max-width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #overlay h1 { margin: 0 0 6px; font-size: calc(27px * var(--game-scale, 1)); }
+  #overlay p { margin: 3px 0; font-size: calc(13px * var(--game-scale, 1)); opacity: 0.9; }
+  #scoreLine { font-weight: bold; font-size: calc(15px * var(--game-scale, 1)) !important; }
+  #bestLine { opacity: 0.8; }
+  #startBtn {
+    margin-top: calc(16px * var(--game-scale, 1));
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(10px * var(--game-scale, 1)) calc(30px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #4a7a2e;
+    color: #f4fbe8;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #startBtn:active { background: #5f9a3c; }
+  #backToArcade {
+    display: none;
+    margin-top: calc(14px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  #backToArcade:active { opacity: 1; }
+  #muteBtn {
+    position: absolute;
+    top: calc(8px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(13px * var(--game-scale, 1));
+    padding: calc(4px * var(--game-scale, 1)) calc(10px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.35);
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+  }
+  .rowLabel {
+    font-size: calc(10.5px * var(--game-scale, 1));
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin-top: calc(8px * var(--game-scale, 1));
+  }
+  .btnRow {
+    display: flex;
+    gap: calc(8px * var(--game-scale, 1));
+    margin-top: calc(5px * var(--game-scale, 1));
+    pointer-events: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btnRow button {
+    font-family: inherit;
+    font-size: calc(12.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(7px * var(--game-scale, 1)) calc(15px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.12);
+    color: white;
+    cursor: pointer;
+  }
+  .btnRow button:active { background: rgba(255,255,255,0.3); }
+  .btnRow button.selected { background: #ffb703; border-color: #ffb703; color: #04121c; }
+  #shopBtn {
+    margin-top: calc(10px * var(--game-scale, 1));
+    font-size: calc(13.5px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(8px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    border-radius: calc(20px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #ffb703;
+    background: rgba(255,183,3,0.15);
+    color: #ffe28a;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  #shopBtn:active { background: rgba(255,183,3,0.35); }
+  #moneyLine { color: #ffe28a; font-weight: bold; }
+  .panelOverlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6,10,4,0.78);
+    z-index: 6;
+    padding: calc(14px * var(--game-scale, 1));
+    box-sizing: border-box;
+  }
+  .panelBox {
+    background: #1c2a1f;
+    border: calc(2px * var(--game-scale, 1)) solid rgba(255,183,3,0.5);
+    border-radius: calc(14px * var(--game-scale, 1));
+    padding: calc(16px * var(--game-scale, 1)) calc(18px * var(--game-scale, 1));
+    max-width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    color: white;
+    text-align: center;
+    font-size: calc(13px * var(--game-scale, 1));
+  }
+  .panelBox h2 { margin: 0 0 4px; font-size: calc(20px * var(--game-scale, 1)); }
+  .panelBox p { margin: 2px 0 10px; opacity: 0.85; }
+  .upgradeRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(10px * var(--game-scale, 1));
+    background: rgba(255,255,255,0.06);
+    border-radius: calc(10px * var(--game-scale, 1));
+    padding: calc(8px * var(--game-scale, 1)) calc(12px * var(--game-scale, 1));
+    margin-bottom: calc(8px * var(--game-scale, 1));
+    text-align: left;
+  }
+  .upgradeRow .info { flex: 1; min-width: 0; }
+  .upgradeRow .info strong { display: block; font-size: calc(13.5px * var(--game-scale, 1)); }
+  .upgradeRow .info span { display: block; font-size: calc(11px * var(--game-scale, 1)); opacity: 0.7; margin-top: 2px; }
+  .upgradeRow .level { font-size: calc(10.5px * var(--game-scale, 1)); opacity: 0.6; margin-top: 3px; }
+  .upgradeRow button {
+    font-family: inherit;
+    font-weight: bold;
+    font-size: calc(12px * var(--game-scale, 1));
+    padding: calc(7px * var(--game-scale, 1)) calc(12px * var(--game-scale, 1));
+    border-radius: calc(16px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid #4a7a2e;
+    background: #4a7a2e;
+    color: #f4fbe8;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .upgradeRow button:disabled { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.4); cursor: default; }
+  #shopCloseBtn {
+    margin-top: calc(6px * var(--game-scale, 1));
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(8px * var(--game-scale, 1)) calc(20px * var(--game-scale, 1));
+    border-radius: calc(18px * var(--game-scale, 1));
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+  }
+  #weatherBanner {
+    position: absolute;
+    top: calc(50px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: bold;
+    padding: calc(5px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    background: rgba(0,0,0,0.55);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.4);
+    color: white;
+    display: none;
+    z-index: 3;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game" width="360" height="540"></canvas>
+  <button id="muteBtn" type="button">🔊</button>
+  <div id="weatherBanner"></div>
+  <div id="overlay">
+    <div id="overlayPanel">
+      <h1 id="title">Losing the Plot</h1>
+      <p id="subtitle">Grow it, sell it, restock — run the whole farm</p>
+      <p id="scoreLine" style="display:none;"></p>
+      <p id="bestLine"></p>
+      <p id="moneyLine"></p>
+      <div class="rowLabel">Difficulty</div>
+      <div class="btnRow" id="diffButtons">
+        <button data-d="easy" type="button">Easy</button>
+        <button data-d="hard" type="button">Hard</button>
+      </div>
+      <button id="startBtn" type="button" data-kb-play>Start</button>
+      <button id="shopBtn" type="button">🛒 Shop</button>
+      <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    </div>
+  </div>
+  <div class="panelOverlay" id="shopOverlay">
+    <div class="panelBox">
+      <h2>Shop</h2>
+      <p id="shopMoney"></p>
+      <div id="shopList"></div>
+      <button id="shopCloseBtn" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('title');
+const subtitle = document.getElementById('subtitle');
+const scoreLine = document.getElementById('scoreLine');
+const bestLine = document.getElementById('bestLine');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const moneyLine = document.getElementById('moneyLine');
+const diffButtons = document.getElementById('diffButtons');
+const shopBtn = document.getElementById('shopBtn');
+const shopOverlay = document.getElementById('shopOverlay');
+const shopMoney = document.getElementById('shopMoney');
+const shopList = document.getElementById('shopList');
+const shopCloseBtn = document.getElementById('shopCloseBtn');
+const weatherBanner = document.getElementById('weatherBanner');
+
+const W = canvas.width, H = canvas.height;
+
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const availH = window.innerHeight - reserved;
+  const scale = Math.min(window.innerWidth / W, availH / H);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  document.getElementById('wrap').style.setProperty('--game-scale', scale);
+}
+window.addEventListener('resize', fitCanvas);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+fitCanvas();
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+
+// --- Audio ---
+let audioCtx = null;
+let muted = sessionStorage.getItem('losingThePlotMuted') === '1';
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function tone(freq, duration, type, volume, delay) {
+  if (muted) return;
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.value = volume || 0.12;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const startTime = audioCtx.currentTime + (delay || 0);
+  osc.start(startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.stop(startTime + duration + 0.03);
+}
+function playWater() { tone(560, 0.09, 'sine', 0.1); tone(760, 0.08, 'sine', 0.07, 0.05); }
+function playFeed() { tone(660, 0.1, 'triangle', 0.1); tone(880, 0.1, 'triangle', 0.08, 0.06); }
+function playWeed() { tone(300, 0.06, 'square', 0.09); }
+function playHarvest() { tone(660, 0.1, 'triangle', 0.12); tone(880, 0.12, 'triangle', 0.11, 0.08); tone(1100, 0.16, 'triangle', 0.1, 0.16); }
+function playBad() { tone(160, 0.28, 'sawtooth', 0.13); }
+function playSpread() { tone(220, 0.12, 'square', 0.1); tone(180, 0.14, 'square', 0.09, 0.07); }
+function playBuy() { tone(420, 0.06, 'square', 0.09); tone(600, 0.07, 'square', 0.07, 0.04); }
+function playDenied() { tone(160, 0.09, 'square', 0.08); }
+function playPlant() { tone(500, 0.05, 'triangle', 0.08); }
+function playSeasonEnd() {
+  tone(523, 0.14, 'triangle', 0.13);
+  tone(659, 0.14, 'triangle', 0.12, 0.13);
+  tone(784, 0.18, 'triangle', 0.12, 0.26);
+  tone(988, 0.26, 'triangle', 0.13, 0.4);
+}
+
+function updateMuteBtn() { muteBtn.textContent = muted ? '🔇' : '🔊'; }
+updateMuteBtn();
+muteBtn.addEventListener('click', () => {
+  muted = !muted;
+  sessionStorage.setItem('losingThePlotMuted', muted ? '1' : '0');
+  updateMuteBtn();
+});
+
+function loadBest() { return parseInt(sessionStorage.getItem('losingThePlotBest') || '0', 10); }
+function saveBest(v) { try { sessionStorage.setItem('losingThePlotBest', v); } catch (e) {} }
+
+// --- Economy: a single persistent money pool. It's your in-run spending
+// cash (seeds, water/fertilizer refills) AND your between-run upgrade
+// currency - whatever you don't spend on a season carries over, so saving
+// vs. reinvesting immediately is a real decision. Selling a harvest is the
+// only way money enters the loop; buying inputs is the only way it leaves. ---
+function loadMoney() { return parseInt(sessionStorage.getItem('losingThePlotMoney') || '0', 10); }
+function saveMoney(v) { try { sessionStorage.setItem('losingThePlotMoney', v); } catch (e) {} }
+function loadUpgrades() {
+  const fallback = { water: 0, fert: 0, plot: 0, seeds: 0, bulk: 0 };
+  try {
+    const raw = sessionStorage.getItem('losingThePlotUpgrades2');
+    return raw ? Object.assign(fallback, JSON.parse(raw)) : fallback;
+  } catch (e) { return fallback; }
+}
+function saveUpgrades(u) { try { sessionStorage.setItem('losingThePlotUpgrades2', JSON.stringify(u)); } catch (e) {} }
+function loadDifficulty() { return sessionStorage.getItem('losingThePlotDifficulty') || 'easy'; }
+function saveDifficulty(d) { try { sessionStorage.setItem('losingThePlotDifficulty', d); } catch (e) {} }
+
+const UPGRADES = {
+  water: { name: 'Water Reserves', desc: 'More water in the tank each season', maxLevel: 3, baseCost: 25, costMul: 1.8 },
+  fert: { name: 'Fertilizer Reserves', desc: 'More fertilizer each season', maxLevel: 3, baseCost: 30, costMul: 1.8 },
+  plot: { name: 'Bigger Plot', desc: 'Unlocks the third row of beds', maxLevel: 1, baseCost: 90, costMul: 1 },
+  seeds: { name: 'Better Seeds', desc: 'Harvests sell for more', maxLevel: 4, baseCost: 30, costMul: 1.7 },
+  bulk: { name: 'Bulk Buying', desc: 'Seeds and refills cost less', maxLevel: 3, baseCost: 35, costMul: 1.8 }
+};
+
+let money = loadMoney();
+let upgradeLevels = loadUpgrades();
+let difficulty = loadDifficulty();
+
+function upgradeCost(key) {
+  const u = UPGRADES[key];
+  const lvl = upgradeLevels[key];
+  if (lvl >= u.maxLevel) return null;
+  return Math.round(u.baseCost * Math.pow(u.costMul, lvl));
+}
+function startingWater() { return 15 + upgradeLevels.water * 10; }
+function startingFert() { return 6 + upgradeLevels.fert * 5; }
+function unlockedRows() { return upgradeLevels.plot >= 1 ? 3 : 2; }
+function harvestValueMul() { return 1 + upgradeLevels.seeds * 0.15; }
+function priceMul() { return Math.max(0.6, 1 - upgradeLevels.bulk * 0.1); }
+
+// --- Tuning ---
+const SEASON_LENGTH = 120000;
+const CALM_DURATION = 15000;
+
+const WATER_INTERVAL = [7000, 3600];
+const FEED_INTERVAL = [10000, 5000];
+const WEED_INTERVAL = [9000, 4200];
+const WATER_GRACE = [5200, 2900];
+const WEED_GRACE = [5000, 2700];
+const FEED_GRACE = [4600, 2600];
+const HARVEST_GRACE = [7500, 4200];
+
+const DIFFICULTY_PRESETS = {
+  easy: { intervalMul: 1.15, graceMul: 1.2 },
+  hard: { intervalMul: 0.85, graceMul: 0.82 }
+};
+
+// --- Crops: cost to buy the seed, time to grow, and payout on sale. Cheap
+// crops cycle fast for steady cashflow; expensive ones tie up a cell far
+// longer for a much bigger payout - the core planting decision. ---
+const CROPS = [
+  { id: 'lettuce', name: 'Lettuce', icon: 'lettuce', seedCost: 3, growDuration: 8000, value: 9, waterMul: 1.3, feedMul: 1, weedMul: 1, color1: '#4a7a2e', color2: '#7cb342' },
+  { id: 'tomato', name: 'Tomato', icon: 'tomato', seedCost: 5, growDuration: 13000, value: 16, waterMul: 1, feedMul: 1, weedMul: 1, color1: '#7a3d1a', color2: '#e8891a' },
+  { id: 'pumpkin', name: 'Pumpkin', icon: 'pumpkin', seedCost: 8, growDuration: 20000, value: 30, waterMul: 0.85, feedMul: 1.3, weedMul: 1, color1: '#7a4a10', color2: '#e07a1a' },
+  { id: 'garlic', name: 'Garlic', icon: 'garlic', seedCost: 12, growDuration: 30000, value: 52, waterMul: 0.6, feedMul: 0.7, weedMul: 0.7, color1: '#5b3d22', color2: '#e8e0d0' }
+];
+const CROPS_BY_ID = {};
+CROPS.forEach((c) => { CROPS_BY_ID[c.id] = c; });
+
+const SEASON_LABELS = [
+  { until: 30000, name: 'Spring', icon: '🌱' },
+  { until: 70000, name: 'Summer', icon: '☀️' },
+  { until: 100000, name: 'Autumn', icon: '🍂' },
+  { until: Infinity, name: 'Winter', icon: '❄️' }
+];
+function seasonLabel(elapsedMs) { return SEASON_LABELS.find((s) => elapsedMs < s.until); }
+
+// --- The garden: one grid of individual plant cells (rows x columns) rather
+// than a handful of beds each holding a single crop icon. Every cell grows,
+// needs, and sells independently, so "how many cells can I actually keep
+// resourced" is the real strategic question. ---
+const GRID_COLS = 4;
+const GRID_ROWS_MAX = 3;
+const CELL_W = 84, CELL_H = 118;
+const GRID_X = (W - GRID_COLS * CELL_W) / 2;
+const GRID_Y = 60;
+
+const NEED_ICON = { water: '💧', feed: '⭐', weed: '🌿', harvest: '🧺' };
+
+function rampT(elapsed) { return clamp((elapsed - CALM_DURATION) / (SEASON_LENGTH - CALM_DURATION), 0, 1); }
+function intervalFor(range, elapsed) { const v = lerp(range[0], range[1], rampT(elapsed)); return randRange(v * 0.85, v * 1.15); }
+function graceFor(range, elapsed) { return lerp(range[0], range[1], rampT(elapsed)); }
+
+let diffPreset = DIFFICULTY_PRESETS[difficulty];
+
+let weather = null; // null | 'heatwave' | 'rain'
+let weatherUntil = 0;
+let nextWeatherAt = 0;
+function scheduleNextWeather(fromTime) { nextWeatherAt = fromTime + randRange(22000, 34000); }
+function updateWeather(dt) {
+  if (weather && elapsed >= weatherUntil) {
+    weather = null;
+    scheduleNextWeather(elapsed);
+  } else if (!weather && elapsed >= nextWeatherAt && elapsed > CALM_DURATION) {
+    weather = Math.random() < 0.5 ? 'heatwave' : 'rain';
+    weatherUntil = elapsed + randRange(11000, 16000);
+  }
+  if (weather === 'rain') {
+    cells.forEach((cell) => {
+      if (cell.active && cell.needs.water) {
+        cell.rainClearAt = cell.rainClearAt || elapsed + 1000;
+        if (elapsed >= cell.rainClearAt) { cell.needs.water = false; cell.rainClearAt = 0; scheduleNext(cell, 'water'); }
+      } else {
+        cell.rainClearAt = 0;
+      }
+    });
+  }
+  weatherBanner.style.display = weather ? 'block' : 'none';
+  if (weather === 'heatwave') weatherBanner.textContent = '☀️ Heatwave — water needed fast!';
+  else if (weather === 'rain') weatherBanner.textContent = '🌧️ Rain — watering itself!';
+}
+
+function waterInterval(cell) {
+  let v = intervalFor(WATER_INTERVAL, elapsed) * diffPreset.intervalMul * cell.crop.waterMul;
+  if (weather === 'heatwave') v *= 0.5;
+  return v;
+}
+function waterGrace(cell) {
+  if (weather === 'rain') return Infinity;
+  let v = graceFor(WATER_GRACE, elapsed) * diffPreset.graceMul * cell.crop.waterMul;
+  if (weather === 'heatwave') v *= 0.5;
+  return v;
+}
+function feedInterval(cell) { return intervalFor(FEED_INTERVAL, elapsed) * diffPreset.intervalMul * cell.crop.feedMul; }
+function feedGrace(cell) { return graceFor(FEED_GRACE, elapsed) * diffPreset.graceMul * cell.crop.feedMul; }
+function weedInterval(cell) { return intervalFor(WEED_INTERVAL, elapsed) * diffPreset.intervalMul * cell.crop.weedMul; }
+function weedGrace(cell) { return graceFor(WEED_GRACE, elapsed) * diffPreset.graceMul * cell.crop.weedMul; }
+function harvestGrace() { return graceFor(HARVEST_GRACE, elapsed) * diffPreset.graceMul; }
+
+let cells = [];
+let waterStock = 0, fertStock = 0;
+let seedInventory = { lettuce: 0, tomato: 0, pumpkin: 0, garlic: 0 };
+let selectedCrop = 'lettuce';
+let score = 0, elapsed = 0;
+let popups = [];
+let state = 'menu'; // menu | playing | over
+
+function makeCell() {
+  return {
+    active: false,
+    stage: 'empty', // empty | growing | ripe
+    growStart: 0,
+    quality: 1,
+    crop: null,
+    rainClearAt: 0,
+    tendFlash: 0,
+    needs: { water: false, feed: false, weed: false },
+    activeSince: { water: 0, feed: 0, weed: 0, harvest: 0 },
+    nextDue: { water: Infinity, feed: Infinity, weed: Infinity },
+    weedSpread: false
+  };
+}
+
+function resetCell(cell) {
+  cell.active = false;
+  cell.stage = 'empty';
+  cell.crop = null;
+  cell.quality = 1;
+  cell.needs.water = false; cell.needs.feed = false; cell.needs.weed = false;
+  cell.weedSpread = false;
+  cell.rainClearAt = 0;
+}
+
+function plantCell(cell, cropId) {
+  if (seedInventory[cropId] <= 0) { playDenied(); return; }
+  seedInventory[cropId]--;
+  cell.active = true;
+  cell.stage = 'growing';
+  cell.growStart = elapsed;
+  cell.quality = 1;
+  cell.crop = CROPS_BY_ID[cropId];
+  cell.nextDue.water = elapsed + waterInterval(cell);
+  cell.nextDue.feed = elapsed + feedInterval(cell);
+  cell.nextDue.weed = elapsed + weedInterval(cell);
+  playPlant();
+}
+
+function reset() {
+  diffPreset = DIFFICULTY_PRESETS[difficulty];
+  cells = Array.from({ length: GRID_COLS * GRID_ROWS_MAX }, makeCell);
+  waterStock = startingWater();
+  fertStock = startingFert();
+  seedInventory = { lettuce: 3, tomato: 0, pumpkin: 0, garlic: 0 };
+  selectedCrop = 'lettuce';
+  score = 0;
+  elapsed = 0;
+  popups = [];
+  weather = null;
+  scheduleNextWeather(0);
+}
+
+function updateDiffButtonStyles() { [...diffButtons.children].forEach((b) => b.classList.toggle('selected', b.dataset.d === difficulty)); }
+diffButtons.addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  difficulty = b.dataset.d;
+  saveDifficulty(difficulty);
+  updateDiffButtonStyles();
+});
+updateDiffButtonStyles();
+
+function showMenu() {
+  state = 'menu';
+  title.textContent = 'Losing the Plot';
+  subtitle.textContent = 'Grow it, sell it, restock — run the whole farm';
+  scoreLine.style.display = 'none';
+  bestLine.textContent = 'Best score: ' + loadBest();
+  moneyLine.textContent = '💰 ' + money;
+  startBtn.textContent = 'Start';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'none';
+  weatherBanner.style.display = 'none';
+  updateDiffButtonStyles();
+  overlay.style.display = 'flex';
+}
+
+function startGame() {
+  reset();
+  state = 'playing';
+  overlay.style.display = 'none';
+  ensureAudio();
+}
+startBtn.addEventListener('click', () => { if (state === 'menu' || state === 'over') startGame(); });
+
+// --- Shop: permanent upgrades, spent between runs (or before starting one) ---
+function renderShop() {
+  shopMoney.textContent = '💰 ' + money;
+  shopList.innerHTML = Object.keys(UPGRADES).map((key) => {
+    const u = UPGRADES[key];
+    const lvl = upgradeLevels[key];
+    const cost = upgradeCost(key);
+    const maxed = cost === null;
+    const affordable = !maxed && money >= cost;
+    return `
+      <div class="upgradeRow">
+        <div class="info">
+          <strong>${u.name}</strong>
+          <span>${u.desc}</span>
+          <div class="level">Level ${lvl}/${u.maxLevel}</div>
+        </div>
+        <button type="button" data-key="${key}" ${maxed || !affordable ? 'disabled' : ''}>${maxed ? 'MAX' : cost + '💰'}</button>
+      </div>
+    `;
+  }).join('');
+}
+function openShop() { renderShop(); shopOverlay.style.display = 'flex'; }
+shopBtn.addEventListener('click', openShop);
+shopCloseBtn.addEventListener('click', () => { shopOverlay.style.display = 'none'; });
+shopList.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn || btn.disabled) return;
+  const key = btn.dataset.key;
+  const cost = upgradeCost(key);
+  if (cost === null || money < cost) return;
+  money -= cost;
+  upgradeLevels[key]++;
+  saveMoney(money);
+  saveUpgrades(upgradeLevels);
+  renderShop();
+  moneyLine.textContent = '💰 ' + money;
+});
+
+function addPopup(x, y, text, color) { popups.push({ x, y, text, color, t: 0 }); }
+
+function scheduleNext(cell, key) {
+  const fn = key === 'water' ? waterInterval : key === 'feed' ? feedInterval : weedInterval;
+  cell.nextDue[key] = elapsed + fn(cell);
+}
+
+function wiltCell(cell) {
+  score = Math.max(0, score - 3);
+  addPopup(cellCenterX(cells.indexOf(cell)), cellCenterY(cells.indexOf(cell)), 'Wilted!', '#ff6b5e');
+  playBad();
+  resetCell(cell);
+}
+function rotCell(cell) {
+  score = Math.max(0, score - 5);
+  addPopup(cellCenterX(cells.indexOf(cell)), cellCenterY(cells.indexOf(cell)), 'Rotted!', '#ff6b5e');
+  playBad();
+  resetCell(cell);
+}
+function spreadWeed(cell) {
+  const idx = cells.indexOf(cell);
+  const candidates = cells.filter((c, i) => i !== idx && c.active && i < unlockedRows() * GRID_COLS);
+  if (!candidates.length) return;
+  const target = candidates.find((c) => !c.needs.weed) || candidates[0];
+  if (!target.needs.weed) {
+    target.needs.weed = true;
+    target.activeSince.weed = elapsed;
+    target.weedSpread = false;
+    addPopup(cellCenterX(cells.indexOf(target)), cellCenterY(cells.indexOf(target)), 'Weeds spread!', '#e8891a');
+  }
+  playSpread();
+}
+
+function topNeed(cell) {
+  if (cell.stage === 'ripe') return 'harvest';
+  if (cell.needs.water) return 'water';
+  if (cell.needs.weed) return 'weed';
+  if (cell.needs.feed) return 'feed';
+  return null;
+}
+
+function resolveTend(cell, need) {
+  const idx = cells.indexOf(cell);
+  const cx = cellCenterX(idx), cy = cellCenterY(idx);
+  if (need === 'harvest') {
+    const points = Math.round(cell.crop.value * cell.quality * harvestValueMul());
+    score += points;
+    money += points;
+    saveMoney(money);
+    addPopup(cx, cy, '+$' + points, '#ffe28a');
+    playHarvest();
+    resetCell(cell);
+  } else if (need === 'water') {
+    if (waterStock <= 0) { playDenied(); addPopup(cx, cy, 'No water!', '#ff6b5e'); return; }
+    waterStock--;
+    cell.needs.water = false;
+    cell.tendFlash = 0.3;
+    scheduleNext(cell, 'water');
+    playWater();
+  } else if (need === 'weed') {
+    cell.needs.weed = false;
+    cell.weedSpread = false;
+    cell.tendFlash = 0.3;
+    scheduleNext(cell, 'weed');
+    playWeed();
+  } else if (need === 'feed') {
+    if (fertStock <= 0) { playDenied(); addPopup(cx, cy, 'No fertilizer!', '#ff6b5e'); return; }
+    fertStock--;
+    cell.needs.feed = false;
+    cell.quality = Math.min(1, cell.quality + 0.15);
+    cell.tendFlash = 0.3;
+    scheduleNext(cell, 'feed');
+    playFeed();
+  }
+}
+
+function tapCell(index) {
+  const row = Math.floor(index / GRID_COLS);
+  if (row >= unlockedRows()) return;
+  const cell = cells[index];
+  if (!cell.active) {
+    plantCell(cell, selectedCrop);
+    return;
+  }
+  const need = topNeed(cell);
+  if (!need) return;
+  resolveTend(cell, need);
+}
+
+// Need-icon badges live INSIDE the top of each cell rather than floating
+// above it - rows are contiguous (no gap between them like the old bed
+// layout had), so anything drawn above row N's cell would land on top of
+// row N-1's soil. Reserve the cell's own top band for icons instead.
+function cellTopY(index) { return GRID_Y + Math.floor(index / GRID_COLS) * CELL_H + 4; }
+function cellCenterX(index) { return GRID_X + (index % GRID_COLS) * CELL_W + CELL_W / 2; }
+function cellCenterY(index) { return cellTopY(index) + 58; }
+function cellCropCenterY(index) { return cellTopY(index) + 74; }
+function cellNeedIconY(index) { return cellTopY(index) + 15; }
+
+// --- Buying: tapping a seed in the tray buys one more of that type (if
+// affordable) and selects it for planting - one tap does both jobs. The
+// water/fertilizer readouts in the HUD are tap targets too. ---
+function seedCost(cropId) { return Math.max(1, Math.round(CROPS_BY_ID[cropId].seedCost * priceMul())); }
+function waterRefillCost() { return Math.round(8 * priceMul()); }
+function fertRefillCost() { return Math.round(14 * priceMul()); }
+
+function tapTraySeed(cropId) {
+  selectedCrop = cropId;
+  const cost = seedCost(cropId);
+  if (money >= cost) {
+    money -= cost;
+    seedInventory[cropId]++;
+    saveMoney(money);
+    playBuy();
+  } else {
+    playDenied();
+  }
+}
+function buyWater() {
+  const cost = waterRefillCost();
+  if (money < cost) { playDenied(); return; }
+  money -= cost; waterStock += 12;
+  saveMoney(money);
+  playBuy();
+}
+function buyFert() {
+  const cost = fertRefillCost();
+  if (money < cost) { playDenied(); return; }
+  money -= cost; fertStock += 6;
+  saveMoney(money);
+  playBuy();
+}
+
+// --- Layout: HUD tap targets + tray buttons ---
+const WATER_HUD_RECT = { x: 8, y: 27, w: 92, h: 27 };
+const FERT_HUD_RECT = { x: W - 100, y: 27, w: 92, h: 27 };
+const TRAY_H = 62;
+const TRAY_Y = H - TRAY_H;
+const TRAY_BTN_W = 82, TRAY_BTN_GAP = 6, TRAY_BTN_H = TRAY_H - 12;
+const TRAY_ROW_W = CROPS.length * TRAY_BTN_W + (CROPS.length - 1) * TRAY_BTN_GAP;
+const TRAY_ROW_X = (W - TRAY_ROW_W) / 2;
+const TRAY_BUTTONS = {};
+CROPS.forEach((c, i) => {
+  TRAY_BUTTONS[c.id] = { x: TRAY_ROW_X + i * (TRAY_BTN_W + TRAY_BTN_GAP), y: TRAY_Y + 6, w: TRAY_BTN_W, h: TRAY_BTN_H };
+});
+function pointInRect(x, y, r) { return x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h; }
+function trayButtonAt(x, y) {
+  for (const c of CROPS) if (pointInRect(x, y, TRAY_BUTTONS[c.id])) return c.id;
+  return null;
+}
+function cellIndexAt(x, y) {
+  if (x < GRID_X || x >= GRID_X + GRID_COLS * CELL_W) return null;
+  if (y < GRID_Y || y >= GRID_Y + GRID_ROWS_MAX * CELL_H) return null;
+  const col = Math.floor((x - GRID_X) / CELL_W);
+  const row = Math.floor((y - GRID_Y) / CELL_H);
+  if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS_MAX) return null;
+  return row * GRID_COLS + col;
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (state !== 'playing') return;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+  if (pointInRect(x, y, WATER_HUD_RECT)) { buyWater(); return; }
+  if (pointInRect(x, y, FERT_HUD_RECT)) { buyFert(); return; }
+  const trayCrop = trayButtonAt(x, y);
+  if (trayCrop) { tapTraySeed(trayCrop); return; }
+  const idx = cellIndexAt(x, y);
+  if (idx !== null) tapCell(idx);
+});
+
+function endSeason() {
+  state = 'over';
+  playSeasonEnd();
+  const best = loadBest();
+  const isNewBest = score > best;
+  if (isNewBest) saveBest(score);
+  title.textContent = 'Season Over';
+  subtitle.textContent = '💰 ' + money + ' banked — spend it before next season';
+  scoreLine.style.display = 'block';
+  scoreLine.textContent = 'Score: ' + score;
+  bestLine.textContent = isNewBest ? '🏆 New best score!' : 'Best score: ' + best;
+  moneyLine.textContent = '💰 ' + money;
+  weatherBanner.style.display = 'none';
+  updateDiffButtonStyles();
+  startBtn.textContent = 'Play Again';
+  startBtn.style.display = 'inline-block';
+  backToArcade.style.display = 'inline-block';
+  overlay.style.display = 'flex';
+}
+
+function updateCell(cell, dt) {
+  if (!cell.active) return;
+  if (cell.tendFlash > 0) cell.tendFlash -= dt;
+
+  if (cell.stage === 'growing' && elapsed >= cell.growStart + cell.crop.growDuration) {
+    cell.stage = 'ripe';
+    cell.activeSince.harvest = elapsed;
+  }
+
+  if (cell.stage === 'growing') {
+    ['water', 'feed', 'weed'].forEach((k) => {
+      if (!cell.needs[k] && elapsed >= cell.nextDue[k]) {
+        cell.needs[k] = true;
+        cell.activeSince[k] = elapsed;
+        if (k === 'weed') cell.weedSpread = false;
+      }
+    });
+  }
+
+  if (cell.needs.water && elapsed - cell.activeSince.water > waterGrace(cell)) wiltCell(cell);
+  else if (cell.needs.weed && !cell.weedSpread && elapsed - cell.activeSince.weed > weedGrace(cell)) {
+    spreadWeed(cell);
+    cell.weedSpread = true;
+  } else if (cell.needs.feed && elapsed - cell.activeSince.feed > feedGrace(cell)) {
+    cell.quality = Math.max(0.4, cell.quality - 0.3);
+    cell.needs.feed = false;
+    scheduleNext(cell, 'feed');
+  } else if (cell.stage === 'ripe' && elapsed - cell.activeSince.harvest > harvestGrace()) rotCell(cell);
+}
+
+function update(dt) {
+  if (state !== 'playing') return;
+  elapsed += dt * 1000;
+  if (elapsed >= SEASON_LENGTH) { endSeason(); return; }
+
+  cells.forEach((cell) => updateCell(cell, dt));
+  updateWeather(dt);
+
+  popups.forEach((p) => { p.t += dt * 1000; });
+  popups = popups.filter((p) => p.t < 900);
+}
+
+function drawCellSoil(index, locked) {
+  const col = index % GRID_COLS, row = Math.floor(index / GRID_COLS);
+  const x = GRID_X + col * CELL_W, y = GRID_Y + row * CELL_H;
+  const pad = 4;
+  ctx.fillStyle = locked ? '#2a2018' : '#5b3d22';
+  ctx.beginPath();
+  ctx.roundRect(x + pad, y + pad, CELL_W - pad * 2, CELL_H - pad * 2, 7);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  if (!locked) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 3; i++) {
+      const ly = y + pad + ((CELL_H - pad * 2) / 3) * i;
+      ctx.beginPath(); ctx.moveTo(x + pad + 3, ly); ctx.lineTo(x + CELL_W - pad - 3, ly); ctx.stroke();
+    }
+  }
+}
+
+function drawCellCrop(index) {
+  const cell = cells[index];
+  const cx = cellCenterX(index), cy = cellCropCenterY(index);
+  const crop = cell.crop;
+  if (cell.stage === 'growing') {
+    const growthFrac = clamp((elapsed - cell.growStart) / crop.growDuration, 0, 1);
+    const size = lerp(5, 18, growthFrac);
+    ctx.fillStyle = crop.color1;
+    ctx.beginPath(); ctx.ellipse(cx, cy - size * 0.6, size * 0.55, size, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = crop.color2;
+    ctx.beginPath(); ctx.ellipse(cx - size * 0.4, cy - size * 0.3, size * 0.35, size * 0.55, -0.4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + size * 0.4, cy - size * 0.3, size * 0.35, size * 0.55, 0.4, 0, Math.PI * 2); ctx.fill();
+  } else if (crop.id === 'garlic') {
+    const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
+    ctx.fillStyle = crop.color2;
+    for (const [ox, oy] of [[-5, -2], [5, -2], [0, -9]]) {
+      ctx.beginPath(); ctx.ellipse(cx + ox, cy + oy * pulse, 5, 7, 0, 0, Math.PI * 2); ctx.fill();
+    }
+  } else {
+    const pulse = 1 + 0.06 * Math.sin(performance.now() / 260);
+    ctx.fillStyle = crop.color2;
+    ctx.beginPath(); ctx.arc(cx, cy - 6, 13 * pulse, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = crop.color1;
+    ctx.beginPath(); ctx.ellipse(cx, cy - 17, 3.5, 7, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  if (cell.needs.weed) {
+    ctx.strokeStyle = '#8a6d3a';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 2; i++) {
+      const wx = cx - 14 + i * 22, wy = cy + 24;
+      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx - 3, wy - 10); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(wx, wy); ctx.lineTo(wx + 3, wy - 8); ctx.stroke();
+    }
+  }
+}
+
+function drawCellNeedIcons(index) {
+  const cell = cells[index];
+  const active = [];
+  if (cell.stage === 'ripe') active.push('harvest');
+  if (cell.needs.water) active.push('water');
+  if (cell.needs.weed) active.push('weed');
+  if (cell.needs.feed) active.push('feed');
+  if (!active.length) return;
+  const top = topNeed(cell);
+  const iconY = cellNeedIconY(index);
+  const totalW = active.length * 19;
+  let x = cellCenterX(index) - totalW / 2 + 9.5;
+  for (const need of active) {
+    const isTop = need === top;
+    const bob = isTop ? Math.sin(performance.now() / 180) * 2 : 0;
+    ctx.save();
+    ctx.font = (isTop ? 'bold 15px' : '12px') + ' Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (isTop) {
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.beginPath(); ctx.arc(x, iconY + bob, 11, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.fillText(NEED_ICON[need], x, iconY + bob + 1);
+    ctx.restore();
+    x += 19;
+  }
+}
+
+function drawCellTendFlash(index) {
+  const cell = cells[index];
+  if (cell.tendFlash <= 0) return;
+  const col = index % GRID_COLS, row = Math.floor(index / GRID_COLS);
+  const x = GRID_X + col * CELL_W + 4, y = GRID_Y + row * CELL_H + 4;
+  ctx.strokeStyle = 'rgba(255,226,138,' + (cell.tendFlash / 0.3) + ')';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.roundRect(x, y, CELL_W - 8, CELL_H - 8, 7);
+  ctx.stroke();
+}
+
+function drawLockedCell(index) {
+  drawCellSoil(index, true);
+  const cx = cellCenterX(index), cy = cellCenterY(index);
+  ctx.save();
+  ctx.globalAlpha = 0.75;
+  ctx.font = '20px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🔒', cx, cy - 8);
+  ctx.font = 'bold 9.5px Arial';
+  ctx.fillStyle = '#ffe28a';
+  ctx.fillText('Bigger Plot', cx, cy + 14);
+  ctx.fillText('upgrade', cx, cy + 26);
+  ctx.restore();
+}
+
+function drawGrid() {
+  const rows = unlockedRows();
+  for (let i = 0; i < GRID_COLS * GRID_ROWS_MAX; i++) {
+    const row = Math.floor(i / GRID_COLS);
+    if (row >= rows) { drawLockedCell(i); continue; }
+    drawCellSoil(i, false);
+    if (cells[i].active) {
+      drawCellCrop(i);
+      drawCellTendFlash(i);
+      drawCellNeedIcons(i);
+    }
+  }
+}
+
+function drawTray() {
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(0, TRAY_Y, W, TRAY_H);
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 9.5px Arial';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillText('🛒 TAP TO BUY A SEED, THEN TAP A BED TO PLANT', TRAY_ROW_X, TRAY_Y - 4);
+  for (const c of CROPS) {
+    const r = TRAY_BUTTONS[c.id];
+    const selected = selectedCrop === c.id;
+    const cost = seedCost(c.id);
+    const affordable = money >= cost;
+    ctx.fillStyle = selected ? 'rgba(255,183,3,0.22)' : 'rgba(255,255,255,0.08)';
+    ctx.strokeStyle = selected ? '#ffb703' : 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = selected ? 2 : 1.5;
+    ctx.beginPath(); ctx.roundRect(r.x, r.y, r.w, r.h, 8); ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = c.color2;
+    ctx.beginPath(); ctx.arc(r.x + 15, r.y + r.h / 2, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = c.color1;
+    ctx.beginPath(); ctx.arc(r.x + 15, r.y + r.h / 2 - 6, 3, 0, Math.PI * 2); ctx.fill();
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 10.5px Arial';
+    ctx.fillText(c.name, r.x + 28, r.y + 14);
+    ctx.font = '10px Arial';
+    ctx.fillStyle = affordable ? '#ffe28a' : 'rgba(255,255,255,0.5)';
+    ctx.fillText('$' + cost + ' buy', r.x + 28, r.y + 27);
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.font = 'bold 10px Arial';
+    ctx.fillText('x' + seedInventory[c.id], r.x + 28, r.y + 40);
+  }
+}
+
+function drawPopups() {
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  for (const p of popups) {
+    const t = p.t / 900;
+    ctx.globalAlpha = 1 - t;
+    ctx.fillStyle = p.color;
+    ctx.fillText(p.text, p.x, p.y - t * 26);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawHud() {
+  ctx.font = 'bold 16px Arial';
+  ctx.fillStyle = 'white';
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 3;
+  ctx.textAlign = 'left';
+  const scoreText = 'Score: ' + score;
+  ctx.strokeText(scoreText, 10, 18);
+  ctx.fillText(scoreText, 10, 18);
+  ctx.textAlign = 'right';
+  const remaining = Math.max(0, Math.ceil((SEASON_LENGTH - elapsed) / 1000));
+  const timeText = remaining + 's';
+  ctx.strokeText(timeText, W - 10, 18);
+  ctx.fillText(timeText, W - 10, 18);
+  const season = seasonLabel(elapsed);
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px Arial';
+  const seasonText = season.icon + ' ' + season.name;
+  ctx.strokeText(seasonText, W / 2, 40);
+  ctx.fillText(seasonText, W / 2, 40);
+
+  // Water/fertilizer readouts double as buy buttons - a dashed border marks
+  // them as tappable rather than just informational.
+  drawTapReadout(WATER_HUD_RECT, '💧 ' + waterStock, '+12 for $' + waterRefillCost(), waterStock < 5);
+  drawTapReadout(FERT_HUD_RECT, '🌾 ' + fertStock, '+6 for $' + fertRefillCost(), fertStock < 3);
+}
+
+function drawTapReadout(rect, mainText, subText, urgent) {
+  ctx.save();
+  ctx.setLineDash([3, 2]);
+  ctx.strokeStyle = urgent ? 'rgba(255,107,94,0.85)' : 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+  ctx.setLineDash([]);
+  ctx.restore();
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 11px Arial';
+  ctx.fillStyle = urgent ? '#ff9a8f' : 'white';
+  ctx.strokeStyle = 'black'; ctx.lineWidth = 2.5;
+  ctx.strokeText(mainText, rect.x + 4, rect.y + 11);
+  ctx.fillText(mainText, rect.x + 4, rect.y + 11);
+  // This is the part that was silently missing before - the refill cost
+  // is the whole point of the tap target being a "buy" button, not just a
+  // readout of the current stock.
+  ctx.font = '9.5px Arial';
+  ctx.fillStyle = 'rgba(255,230,138,0.9)';
+  ctx.strokeText(subText, rect.x + 4, rect.y + 22);
+  ctx.fillText(subText, rect.x + 4, rect.y + 22);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#3a2a18';
+  ctx.fillRect(0, 0, W, H);
+  if (state === 'menu') return;
+  drawGrid();
+  drawTray();
+  drawPopups();
+  drawHud();
+}
+
+let lastFrameTime = null;
+function loop(now) {
+  if (lastFrameTime === null) lastFrameTime = now;
+  let dt = (now - lastFrameTime) / 1000;
+  lastFrameTime = now;
+  dt = Math.min(dt, 0.05);
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+showMenu();
+requestAnimationFrame(loop);
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>
