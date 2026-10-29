@@ -1,0 +1,696 @@
+/*
+ * Design tokens: the ONLY place colours and sizes are defined.
+ * Tailwind's default palette, spacing, type scale, radii, shadows and breakpoints are
+ * cleared below, so utilities can only use these tokens (e.g. bg-surface, text-fg, p-md,
+ * min-h-touch, text-lg, w-menu, md:max-w-sheet).
+ *
+ * Colours are plain 6-digit hex (8-digit for translucent) so test/tokens.test.ts can
+ * parse them and check contrast. The theme is applied as <html data-theme="light|dark">
+ * (resolved from the light / dark / follow-system preference; see src/shell/theme.ts and
+ * the inline script in index.html).
+ */
+
+/* ── Light: warm paper ─────────────────────────────────────────────── */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --sy-bg: #f4f3ef;
+  --sy-surface: #ffffff;
+  --sy-surface-muted: #efeee9;
+  --sy-border: #dcd9d0;
+  --sy-border-strong: #81888d;
+  --sy-fg: #1d2327;
+  --sy-fg-muted: #566064;
+  --sy-accent: #1f6aa5;
+  --sy-accent-hover: #185686;
+  --sy-accent-subtle: #1f6aa51f;
+  --sy-accent-fg: #ffffff;
+  --sy-focus: #1f6aa5;
+  --sy-overlay: #1d232766;
+  --sy-shadow: #1d23271a;
+  --sy-shadow-strong: #1d232729;
+  --sy-status-pending: #8a6d00;
+  --sy-status-ok: #1e7a3a;
+  --sy-status-warn: #a14d00;
+  --sy-status-error: #b3261e;
+  /* Participant colours (dots next to names; never the only cue). 3:1 on bg and surface. */
+  --sy-participant-1: #c2410c;
+  --sy-participant-2: #1d4ed8;
+  --sy-participant-3: #15803d;
+  --sy-participant-4: #7e22ce;
+  --sy-participant-5: #be185d;
+  --sy-participant-6: #0f766e;
+  --sy-participant-7: #a16207;
+  --sy-participant-8: #57534e;
+  /* Live cursors: a dark outline under a light edge (one of them reads on every note, frame and
+     board colour, 3:1, tested), and the name's text on its participant colour (4.5:1, tested). */
+  --sy-cursor-outline: #1d2327;
+  --sy-cursor-halo: #ffffff;
+  --sy-cursor-label-fg: #ffffff;
+  /* The board and its notes. Note colours are keyed by the protocol's palette keys. */
+  --sy-board: #eae7df;
+  --sy-board-dot: #cdc9bd;
+  /* Outside the board's bounded area, and the minimap's mask over what's off screen. */
+  --sy-canvas: #dedbd2;
+  --sy-minimap-mask: #1d23271a;
+  --sy-note-fg: #1d2327;
+  --sy-note-yellow: #fff0a3;
+  --sy-note-pink: #ffd3e2;
+  --sy-note-blue: #cde4fb;
+  --sy-note-green: #d3f2c7;
+  --sy-note-orange: #ffd8b0;
+  --sy-note-purple: #e4d9fb;
+  /* Note text colours (protocol keys; "auto" is --sy-note-fg). Notes are light paper in both
+     themes, so these are dark inks: 4.5:1 on every note colour (test/noteStyle.test.ts). */
+  --sy-note-text-red: #a3201a;
+  --sy-note-text-orange: #8a4000;
+  --sy-note-text-green: #1d6b30;
+  --sy-note-text-blue: #1d4f9c;
+  --sy-note-text-purple: #6a2aa8;
+  --sy-note-text-grey: #4a5257;
+  /* Frames (protocol v9 keys): a translucent fill so the board shows through, a clear border,
+     and an opaque header strip the title sits on (4.5:1 for --sy-frame-title, tested). */
+  --sy-frame-title: #1d2327;
+  /* Frame title inks (protocol v10 keys; "auto" is --sy-frame-title). The note inks' values here;
+     4.5:1 on every frame header, tested. */
+  --sy-frame-text-red: #a3201a;
+  --sy-frame-text-orange: #8a4000;
+  --sy-frame-text-green: #1d6b30;
+  --sy-frame-text-blue: #1d4f9c;
+  --sy-frame-text-purple: #6a2aa8;
+  --sy-frame-text-grey: #4a5257;
+  --sy-frame-neutral-fill: #8a857a14;
+  --sy-frame-neutral-border: #a8a397;
+  --sy-frame-neutral-header: #e8e6df;
+  --sy-frame-yellow-fill: #e0b80024;
+  --sy-frame-yellow-border: #c9a82e;
+  --sy-frame-yellow-header: #fbefb0;
+  --sy-frame-pink-fill: #e0507e1c;
+  --sy-frame-pink-border: #d27c9c;
+  --sy-frame-pink-header: #f9d6e2;
+  --sy-frame-blue-fill: #3d7fd11c;
+  --sy-frame-blue-border: #7aa3d8;
+  --sy-frame-blue-header: #d5e4f8;
+  --sy-frame-green-fill: #3ea54e1c;
+  --sy-frame-green-border: #78b884;
+  --sy-frame-green-header: #d5efd8;
+  --sy-frame-orange-fill: #e8801c1f;
+  --sy-frame-orange-border: #dc9a5c;
+  --sy-frame-orange-header: #fbdfc4;
+  --sy-frame-purple-fill: #8a5cd61c;
+  --sy-frame-purple-border: #a88ad8;
+  --sy-frame-purple-header: #e5daf7;
+  /* Shapes (protocol v15 keys). Fills are opaque (the frame header shades); "none" shows the
+     board. Text "auto" is --sy-shape-fg; every ink is 4.5:1 on every fill and on the board, in
+     both themes (test/shapes.test.ts). Borders are deeper shades of each hue. */
+  --sy-shape-fg: #1d2327;
+  --sy-shape-text-red: #a3201a;
+  --sy-shape-text-orange: #8a4000;
+  --sy-shape-text-green: #1d6b30;
+  --sy-shape-text-blue: #1d4f9c;
+  --sy-shape-text-purple: #6a2aa8;
+  --sy-shape-text-grey: #4a5257;
+  --sy-shape-neutral-fill: #e8e6df;
+  --sy-shape-yellow-fill: #fbefb0;
+  --sy-shape-pink-fill: #f9d6e2;
+  --sy-shape-blue-fill: #d5e4f8;
+  --sy-shape-green-fill: #d5efd8;
+  --sy-shape-orange-fill: #fbdfc4;
+  --sy-shape-purple-fill: #e5daf7;
+  --sy-shape-neutral-stroke: #5a6368;
+  --sy-shape-yellow-stroke: #8a6d00;
+  --sy-shape-pink-stroke: #b03a66;
+  --sy-shape-blue-stroke: #2f68b0;
+  --sy-shape-green-stroke: #2f7a40;
+  --sy-shape-orange-stroke: #a85a14;
+  --sy-shape-purple-stroke: #7046b8;
+  /* An empty text label: a faint dashed outline and the placeholder word (3:1 on the board). */
+  --sy-shape-placeholder: #6b7378;
+}
+
+/* ── Dark: deep slate ──────────────────────────────────────────────── */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --sy-bg: #12181b;
+  --sy-surface: #1f282d;
+  --sy-surface-muted: #28333a;
+  --sy-border: #334047;
+  --sy-border-strong: #6f7e86;
+  --sy-fg: #ebede6;
+  --sy-fg-muted: #a5afb3;
+  --sy-accent: #7cc0e6;
+  --sy-accent-hover: #9dd0ee;
+  --sy-accent-subtle: #7cc0e626;
+  --sy-accent-fg: #0d1a22;
+  --sy-focus: #7cc0e6;
+  --sy-overlay: #00000099;
+  --sy-shadow: #00000059;
+  --sy-shadow-strong: #00000080;
+  --sy-status-pending: #e8c45a;
+  --sy-status-ok: #6fd68e;
+  --sy-status-warn: #ffab5e;
+  --sy-status-error: #ff8a80;
+  --sy-participant-1: #fb923c;
+  --sy-participant-2: #82aaff;
+  --sy-participant-3: #4ade80;
+  --sy-participant-4: #c79bff;
+  --sy-participant-5: #f78fc4;
+  --sy-participant-6: #2dd4bf;
+  --sy-participant-7: #facc15;
+  --sy-participant-8: #c8bfb6;
+  --sy-cursor-outline: #0b0f11;
+  --sy-cursor-halo: #ffffff;
+  --sy-cursor-label-fg: #12181b;
+  /* Notes stay paper-light in the dark theme, slightly muted, with dark text. */
+  --sy-board: #182024;
+  --sy-board-dot: #2e3a40;
+  --sy-canvas: #0c1113;
+  --sy-minimap-mask: #00000073;
+  --sy-note-fg: #14191c;
+  --sy-note-yellow: #e8d679;
+  --sy-note-pink: #e6a9bf;
+  --sy-note-blue: #9fc4e8;
+  --sy-note-green: #a9d69a;
+  --sy-note-orange: #e6b07c;
+  --sy-note-purple: #c0b0e6;
+  /* Darker inks for the muted dark-theme notes. */
+  --sy-note-text-red: #7f1712;
+  --sy-note-text-orange: #663000;
+  --sy-note-text-green: #124a21;
+  --sy-note-text-blue: #173e80;
+  --sy-note-text-purple: #55218a;
+  --sy-note-text-grey: #3a4045;
+  /* Frames: darker tints in dark mode, light title text. */
+  --sy-frame-title: #ebede6;
+  /* Frame headers are dark here (notes stay light paper), so frames get light inks. */
+  --sy-frame-text-red: #ffaaa3;
+  --sy-frame-text-orange: #f7bd80;
+  --sy-frame-text-green: #9ddca8;
+  --sy-frame-text-blue: #a8caff;
+  --sy-frame-text-purple: #d2b5ff;
+  --sy-frame-text-grey: #c3cacd;
+  --sy-frame-neutral-fill: #9aa7ad14;
+  --sy-frame-neutral-border: #5c6a70;
+  --sy-frame-neutral-header: #2c3539;
+  --sy-frame-yellow-fill: #e8d6791a;
+  --sy-frame-yellow-border: #8a7a35;
+  --sy-frame-yellow-header: #463f1e;
+  --sy-frame-pink-fill: #e88aaa1a;
+  --sy-frame-pink-border: #8a4a62;
+  --sy-frame-pink-header: #482a36;
+  --sy-frame-blue-fill: #7fa8e01a;
+  --sy-frame-blue-border: #46689a;
+  --sy-frame-blue-header: #22344c;
+  --sy-frame-green-fill: #7fcf8f1a;
+  --sy-frame-green-border: #4a7d56;
+  --sy-frame-green-header: #223e2a;
+  --sy-frame-orange-fill: #e8a76a1a;
+  --sy-frame-orange-border: #8a5f38;
+  --sy-frame-orange-header: #46301f;
+  --sy-frame-purple-fill: #b89ae81a;
+  --sy-frame-purple-border: #6a52a0;
+  --sy-frame-purple-header: #36294a;
+  --sy-shape-fg: #ebede6;
+  --sy-shape-text-red: #ffaaa3;
+  --sy-shape-text-orange: #f7bd80;
+  --sy-shape-text-green: #9ddca8;
+  --sy-shape-text-blue: #a8caff;
+  --sy-shape-text-purple: #d2b5ff;
+  --sy-shape-text-grey: #c3cacd;
+  --sy-shape-neutral-fill: #2c3539;
+  --sy-shape-yellow-fill: #463f1e;
+  --sy-shape-pink-fill: #482a36;
+  --sy-shape-blue-fill: #22344c;
+  --sy-shape-green-fill: #223e2a;
+  --sy-shape-orange-fill: #46301f;
+  --sy-shape-purple-fill: #36294a;
+  --sy-shape-neutral-stroke: #9aa7ad;
+  --sy-shape-yellow-stroke: #d9c060;
+  --sy-shape-pink-stroke: #e88aaa;
+  --sy-shape-blue-stroke: #7fa8e0;
+  --sy-shape-green-stroke: #7fcf8f;
+  --sy-shape-orange-stroke: #e8a76a;
+  --sy-shape-purple-stroke: #b89ae8;
+  --sy-shape-placeholder: #8d989d;
+}
+
+/* ── Theme-independent tokens ──────────────────────────────────────── */
+:root {
+  /* Spacing */
+  --sy-space-2xs: 0.125rem;
+  --sy-space-xs: 0.25rem;
+  --sy-space-sm: 0.5rem;
+  --sy-space-ms: 0.75rem;
+  --sy-space-md: 1rem;
+  --sy-space-lg: 1.5rem;
+  --sy-space-xl: 2.5rem;
+
+  /* Touch and focus */
+  --sy-touch-min: 44px;
+  --sy-focus-width: 2px;
+  /* Selected notes and frames: an accent outline, a check badge on each of several selected
+     notes, and a dashed box round the whole selection (index.css .sy-selected, .sy-select-badge,
+     .sy-selection-box). */
+  --sy-select-width: 3px;
+  --sy-select-offset: 3px;
+  --sy-select-badge: 22px;
+  --sy-selection-pad: 12px;
+  /* Dot voting (v0.18.0): the badges in a row just above a note (my dots, the total, Top voted;
+     index.css .sy-vote-badges), clear of the resize handles and the select tick, and how far
+     below the selected note its − / + controls sit (screen px, past the bottom handles). */
+  --sy-vote-badge: 22px;
+  --sy-vote-badge-gap: 8px;
+  --sy-vote-controls-offset: 16px;
+  /* Reactions on notes (v0.34.0): chips in a row just below a note (index.css .sy-reactions), in
+     board units: a touch target tall at 100% zoom, clear of the bottom resize handles. Mine have a
+     thicker accent outline (more than colour). The picker holds the six emoji in one row. */
+  --sy-reaction-chip: var(--sy-touch-min);
+  --sy-reaction-gap: 8px;
+  --sy-reaction-emoji: 1.125rem;
+  --sy-reaction-mine-width: 3px;
+  --sy-reaction-picker: calc(6 * var(--sy-touch-min) + 5 * var(--sy-space-xs) + 2 * var(--sy-space-xs) + 2 * var(--sy-border-width));
+  /* Gap between cells of Arrange > Grid, in board units (= GRID_GAP in canvas/arrange.ts, test checks). */
+  --sy-grid-gap: 24px;
+  /* How far Duplicate puts the copies from the originals, right and down, in board units
+     (= DUPLICATE_OFFSET in canvas/duplicate.ts, test checks). */
+  --sy-duplicate-offset: 24px;
+  /* Space round the items in an exported PNG, in board units (= EXPORT_MARGIN in export/png.ts,
+     test checks); room for the vote badges above a note. */
+  --sy-export-margin: 64px;
+  --sy-border-width: 1px;
+  /* Downward drag on a phone sheet's header that closes it. Read by src/shell/Sheet.tsx. */
+  --sy-swipe-close: 80px;
+
+  /* Icons and marks */
+  --sy-icon: 20px;
+  --sy-icon-sm: 16px;
+  --sy-icon-lg: 24px;
+  --sy-logo: 28px;
+  /* The welcome screen's mark (src/brand/StickyardMark.tsx): its width on phones and from md up. */
+  --sy-brand-mark: 7rem;
+  --sy-brand-mark-lg: 15rem;
+  --sy-dot: 0.75rem;
+  /* Live cursors: the arrow (smaller on phones) and the longest name beside it
+     (= CURSOR_LABEL_CHARS in cursors/cursors.ts, test checks). */
+  --sy-cursor-size: 20px;
+  --sy-cursor-size-sm: 16px;
+  --sy-cursor-label-max: 12ch;
+  /* A face in the top bar's avatar stack (md and up), inside a 44px button. */
+  --sy-avatar: 1.75rem;
+  /* "What's new" dot on the menu button. */
+  --sy-badge-dot: 8px;
+  --sy-badge-ring: 2px;
+  /* Grab handle at the top of a phone sheet. */
+  --sy-handle-width: 36px;
+  --sy-handle-height: 4px;
+
+  /* Layout */
+  --sy-gutter: 16px;
+  --sy-header-h: 56px;
+  --sy-toolbar-gap: 4px;
+  --sy-content-max: 36rem;
+  /* The welcome screen's column from md up (the two actions side by side). */
+  --sy-welcome-max: 52rem;
+  /* The board bar's Arrange panel (opened from the top bar, v0.15.1): wraps its rows within this. */
+  --sy-arrange-max: 24rem;
+  /* The emoji picker beside text edited in place (v0.21.0): eight 44px buttons a row, gaps and padding. */
+  --sy-emoji-panel: calc(8 * var(--sy-touch-min) + 7 * var(--sy-space-xs) + 2 * var(--sy-space-xs) + 2 * var(--sy-border-width));
+  /* Menu popover, and the label column in About's details. */
+  --sy-menu-width: 18rem;
+  --sy-menu-max-h: 80dvh;
+  --sy-term-width: 6.5rem;
+  /* Sheets: full height on phones (a sliver of the page shows above), a side panel from md up. */
+  --sy-sheet-width: 400px;
+  --sy-viewport-h: 100dvh;
+  --sy-full-sheet-h: calc(100dvh - max(var(--sy-gutter), env(safe-area-inset-top, 0px)));
+
+  /* Board and notes. Board units are CSS pixels; these must match BOARD_WIDTH, BOARD_HEIGHT,
+     NOTE_DEFAULT_W/H, NOTE_MIN_W/H and NOTE_MAX_W/H in shared/src/protocol.ts (tests check). */
+  --sy-board-width: 6400px;
+  --sy-board-height: 4000px;
+  --sy-note-size: 160px;
+  --sy-note-min: 96px;
+  --sy-note-max: 480px;
+  /* Frames: must match FRAME_* in shared/src/protocol.ts (tests check). */
+  --sy-frame-default-w: 640px;
+  --sy-frame-default-h: 400px;
+  --sy-frame-min-w: 240px;
+  --sy-frame-min-h: 160px;
+  --sy-frame-max-w: 2400px;
+  --sy-frame-max-h: 1600px;
+  /* The frame header strip (its title bar, where it's dragged from) and the draggable border. */
+  --sy-frame-header-h: 44px;
+  /* The header strip's height by title size (protocol v10 keys), never below --sy-touch-min. A
+     frame's node sets --sy-frame-header-h to its size's value, so the strips under it follow. */
+  --sy-frame-header-s: 44px;
+  --sy-frame-header-m: 44px;
+  --sy-frame-header-l: 48px;
+  --sy-frame-header-xl: 56px;
+  --sy-frame-edge: 12px;
+  /* Shapes (protocol v15): must match SHAPE_MIN/MAX_* and SHAPE_FONT_PX in shared/src/protocol.ts
+     (tests check). Border widths by key, the dash for a dashed border, the text's padding, and
+     how far the text area sits inside an oval or diamond (so text stays within the outline). */
+  --sy-shape-min-w: 40px;
+  --sy-shape-min-h: 24px;
+  --sy-shape-max-w: 2400px;
+  --sy-shape-max-h: 1600px;
+  --sy-shape-font-s: 12px;
+  --sy-shape-font-m: 14px;
+  --sy-shape-font-l: 18px;
+  --sy-shape-font-xl: 24px;
+  --sy-shape-font-2xl: 32px;
+  --sy-shape-font-3xl: 40px;
+  --sy-shape-font-4xl: 56px;
+  --sy-shape-stroke-thin: 2px;
+  --sy-shape-stroke-medium: 4px;
+  --sy-shape-stroke-thick: 6px;
+  --sy-shape-dash: 8px;
+  /* Arrows (v0.36.0): stroke widths and sizes in screen pixels at any zoom; inks are the shape borders (3:1 on the board, tested). */
+  --sy-connector-thin: 2px;
+  --sy-connector-medium: 3px;
+  --sy-connector-thick: 5px;
+  --sy-connector-head: 12px;
+  --sy-connector-dash: 10px;
+  --sy-connector-hit: 16px;
+  --sy-connector-dot: 10px;
+  /* Groups (v0.38.0): the padding round the members (board units, = groups/geometry.ts GROUP_PAD, test checks), the outline and its hit band in screen pixels; inks are the shape borders (3:1 on the board, tested). */
+  --sy-group-pad: 16px;
+  --sy-group-outline: 2px;
+  --sy-group-hit: 12px;
+  --sy-group-tint: 7%;
+  --sy-group-chip-max: 20rem;
+  --sy-group-edit-w: 16rem;
+  --sy-shape-pad: 8px;
+  --sy-shape-inset-oval: 15%;
+  --sy-shape-inset-diamond: 25%;
+  /* Note font sizes, one per protocol key (s, m, l, xl); m is the slice 2 size. */
+  --sy-note-font-s: 0.75rem;
+  --sy-note-font-m: 0.875rem;
+  --sy-note-font-l: 1.125rem;
+  --sy-note-font-xl: 1.5rem;
+  /* Resize handles (after Chalkline's): a small visible square; the hit area around it is a
+     full touch target on touch screens, smaller with a mouse. */
+  --sy-resize-handle: 10px;
+  --sy-resize-hit-fine: 24px;
+  --sy-board-grid: 32px;
+  --sy-board-dot-size: 1.5px;
+  /* Colour swatch inside its 44px touch target. */
+  --sy-swatch: 24px;
+  /* Canvas chrome (slice 2.5). Fit-to-notes keeps notes this far from the edges (clear of the
+     rail and the bottom bar). Floating bars sit max(gutter, safe area) from the screen edges. */
+  --sy-fit-padding: 32px;
+  --sy-minimap-width: 200px;
+  --sy-minimap-height: 125px;
+  --sy-chat-width: 22rem;
+  --sy-chat-height: min(30rem, 60dvh);
+  /* Resizing the chat panel: limits (mirrored in src/chat/chatSize.ts; a test checks). */
+  --sy-chat-min-w: 256px;
+  --sy-chat-min-h: 240px;
+  --sy-chat-max-w: 640px;
+  /* A floating bar's height: a touch target plus the bar's padding and border. */
+  --sy-bar-h: calc(var(--sy-touch-min) + 2 * var(--sy-space-xs) + 2 * var(--sy-border-width));
+  /* The view bar wrapped onto two rows (a narrow canvas, v0.24.0). */
+  --sy-bar-h-wrapped: calc(2 * var(--sy-touch-min) + var(--sy-toolbar-gap) + 2 * var(--sy-space-xs) + 2 * var(--sy-border-width));
+  --sy-edge-bottom: max(var(--sy-gutter), var(--sy-safe-bottom));
+  --sy-edge-left: max(var(--sy-gutter), var(--sy-safe-left));
+  --sy-edge-right: max(var(--sy-gutter), var(--sy-safe-right));
+  /* The chat button sits above the minimap when it's shown. */
+  --sy-chat-above-minimap: calc(var(--sy-edge-bottom) + var(--sy-minimap-height) + var(--sy-space-sm));
+  /* Above the view bar, when the free area is too narrow to put them side by side. */
+  --sy-above-bar: calc(var(--sy-edge-bottom) + var(--sy-bar-h) + var(--sy-space-sm));
+  --sy-chat-above-bar-minimap: calc(var(--sy-above-bar) + var(--sy-minimap-height) + var(--sy-space-sm));
+
+  /* Side panels (slice 2.6, md and up): the palette on the left, Properties on the right.
+     Mirrored in src/panels/layout.ts (a test checks). The canvas keeps --sy-canvas-min. */
+  --sy-palette-min: 152px;
+  --sy-palette-width: 216px;
+  --sy-palette-max: 360px;
+  --sy-properties-min: 232px;
+  --sy-properties-width: 272px;
+  --sy-properties-max: 400px;
+  --sy-panel-strip: 52px;
+  --sy-canvas-min: 360px;
+  /* Resize handle: the grab area (a full touch target on touch screens) and its visible line. */
+  --sy-panel-handle: 12px;
+  --sy-panel-line: 2px;
+  /* Palette tiles: narrowest tile, and the note preview inside it. */
+  --sy-tile-min: 72px;
+  --sy-tile-preview: 32px;
+  /* Phones: the add drawer (after Chalkline's palette drawer), its row tiles, and how long a
+     press must be held to pick a tile up and drag it onto the board. Read by palette/Palette.tsx. */
+  --sy-drawer-max-h: 80dvh;
+  --sy-row-tile: 80px;
+  --sy-long-press: 500ms;
+
+  /* Viewport and safe areas (notches, home indicator) */
+  --sy-safe-top: env(safe-area-inset-top, 0px);
+  --sy-safe-right: env(safe-area-inset-right, 0px);
+  --sy-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --sy-safe-left: env(safe-area-inset-left, 0px);
+
+  /* Shape */
+  --sy-radius-xs: 2px;
+  --sy-radius-sm: 8px;
+  --sy-radius-md: 10px;
+  --sy-radius-lg: 12px;
+
+  /* Type */
+  --sy-font: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sy-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sy-text-xs: 0.75rem;
+  --sy-text-sm: 0.875rem;
+  --sy-text-base: 1rem;
+  --sy-text-lg: 1.125rem;
+  --sy-text-xl: 1.25rem;
+  --sy-text-2xl: 1.5rem;
+  /* The welcome screen's wordmark. */
+  --sy-text-display: 2.25rem;
+
+  /* Motion */
+  --sy-duration-fast: 120ms;
+  --sy-duration-base: 200ms;
+  /* Remote notes ease towards each new drag position (sent about every 50ms). */
+  --sy-duration-move: 100ms;
+  /* Others' pointers ease to each new position (sent at most every 100ms), and fade when idle. */
+  --sy-duration-cursor: 100ms;
+  --sy-cursor-fade: 400ms;
+  --sy-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* From md up the view bar sits along the bottom, so fit keeps notes further from the edges. */
+@media (min-width: 48rem) {
+  :root {
+    --sy-fit-padding: 72px;
+  }
+}
+
+/* Touch screens: a panel's resize handle is a full touch target wide. */
+@media (pointer: coarse) {
+  :root {
+    --sy-panel-handle: var(--sy-touch-min);
+  }
+}
+
+/* ── Brand mark ────────────────────────────────────────────────────────
+   The welcome screen's mark (src/brand/StickyardMark.tsx). The same in light and dark: the
+   notes are their own paper, and the cursors use the deeper tag shades with a light edge and a
+   shadow, so they read on the light page and the dark one. */
+:root {
+  --sy-brand-amber-from: #fbbf24;
+  --sy-brand-amber-to: #f59e0b;
+  --sy-brand-amber-fold: #b45309;
+  --sy-brand-amber-line: #78350f;
+  --sy-brand-coral-from: #fb7185;
+  --sy-brand-coral-to: #f43f5e;
+  --sy-brand-coral-fold: #be123c;
+  --sy-brand-coral-tag: #be123c;
+  --sy-brand-cyan-from: #38bdf8;
+  --sy-brand-cyan-to: #0284c7;
+  --sy-brand-cyan-fold: #0369a1;
+  --sy-brand-cyan-tag: #0369a1;
+  --sy-brand-emerald-from: #34d399;
+  --sy-brand-emerald-to: #059669;
+  --sy-brand-emerald-fold: #047857;
+  --sy-brand-emerald-tag: #047857;
+  /* Lines on the notes, cursor edges and cursor label text. */
+  --sy-brand-ink: #ffffff;
+  --sy-brand-shadow: #0000004d;
+  --sy-brand-shadow-strong: #00000066;
+  /* The cursors' slow drift (off under reduced motion; see index.css). */
+  --sy-brand-drift: 3px;
+  --sy-brand-drift-duration: 7s;
+}
+
+/* Reduce motion: every animation length is 0. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --sy-duration-fast: 0ms;
+    --sy-duration-base: 0ms;
+    --sy-duration-move: 0ms;
+    --sy-duration-cursor: 0ms;
+    --sy-cursor-fade: 0ms;
+  }
+}
+
+/* ── Tailwind mapping: only token-backed utilities exist ────────────── */
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--sy-bg);
+  --color-surface: var(--sy-surface);
+  --color-surface-muted: var(--sy-surface-muted);
+  --color-border: var(--sy-border);
+  --color-border-strong: var(--sy-border-strong);
+  --color-fg: var(--sy-fg);
+  --color-fg-muted: var(--sy-fg-muted);
+  --color-accent: var(--sy-accent);
+  --color-accent-hover: var(--sy-accent-hover);
+  --color-accent-subtle: var(--sy-accent-subtle);
+  --color-accent-fg: var(--sy-accent-fg);
+  --color-focus: var(--sy-focus);
+  --color-overlay: var(--sy-overlay);
+  --color-status-pending: var(--sy-status-pending);
+  --color-status-ok: var(--sy-status-ok);
+  --color-status-warn: var(--sy-status-warn);
+  --color-status-error: var(--sy-status-error);
+  --color-participant-1: var(--sy-participant-1);
+  --color-participant-2: var(--sy-participant-2);
+  --color-participant-3: var(--sy-participant-3);
+  --color-participant-4: var(--sy-participant-4);
+  --color-participant-5: var(--sy-participant-5);
+  --color-participant-6: var(--sy-participant-6);
+  --color-participant-7: var(--sy-participant-7);
+  --color-participant-8: var(--sy-participant-8);
+  --color-board: var(--sy-board);
+  --color-canvas: var(--sy-canvas);
+  --color-note-fg: var(--sy-note-fg);
+  --color-note-yellow: var(--sy-note-yellow);
+  --color-note-pink: var(--sy-note-pink);
+  --color-note-blue: var(--sy-note-blue);
+  --color-note-green: var(--sy-note-green);
+  --color-note-orange: var(--sy-note-orange);
+  --color-note-purple: var(--sy-note-purple);
+  --color-note-text-red: var(--sy-note-text-red);
+  --color-note-text-orange: var(--sy-note-text-orange);
+  --color-note-text-green: var(--sy-note-text-green);
+  --color-note-text-blue: var(--sy-note-text-blue);
+  --color-note-text-purple: var(--sy-note-text-purple);
+  --color-note-text-grey: var(--sy-note-text-grey);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --spacing: initial;
+  --spacing-*: initial;
+  --spacing-0: 0;
+  --spacing-px: var(--sy-border-width);
+  --spacing-2xs: var(--sy-space-2xs);
+  --spacing-xs: var(--sy-space-xs);
+  --spacing-sm: var(--sy-space-sm);
+  --spacing-ms: var(--sy-space-ms);
+  --spacing-md: var(--sy-space-md);
+  --spacing-lg: var(--sy-space-lg);
+  --spacing-xl: var(--sy-space-xl);
+  --spacing-touch: var(--sy-touch-min);
+  --spacing-header: var(--sy-header-h);
+  --spacing-toolbar: var(--sy-toolbar-gap);
+  --spacing-gutter: var(--sy-gutter);
+  --spacing-icon: var(--sy-icon);
+  --spacing-icon-sm: var(--sy-icon-sm);
+  --spacing-icon-lg: var(--sy-icon-lg);
+  --spacing-logo: var(--sy-logo);
+  --spacing-brand-mark: var(--sy-brand-mark);
+  --spacing-brand-mark-lg: var(--sy-brand-mark-lg);
+  --spacing-dot: var(--sy-dot);
+  --spacing-avatar: var(--sy-avatar);
+  --spacing-badge: var(--sy-badge-dot);
+  --spacing-handle-w: var(--sy-handle-width);
+  --spacing-handle-h: var(--sy-handle-height);
+  --spacing-menu: var(--sy-menu-width);
+  --spacing-reaction-picker: var(--sy-reaction-picker);
+  --spacing-term: var(--sy-term-width);
+  --spacing-sheet: var(--sy-sheet-width);
+  --spacing-content: var(--sy-content-max);
+  --spacing-note: var(--sy-note-size);
+  --spacing-frame-header: var(--sy-frame-header-h);
+  --spacing-frame-edge: var(--sy-frame-edge);
+  --spacing-board-w: var(--sy-board-width);
+  --spacing-board-h: var(--sy-board-height);
+  --spacing-swatch: var(--sy-swatch);
+  --spacing-bar: var(--sy-bar-h);
+  --spacing-edge-b: var(--sy-edge-bottom);
+  --spacing-edge-l: var(--sy-edge-left);
+  --spacing-edge-r: var(--sy-edge-right);
+  --spacing-chat-w: var(--sy-chat-width);
+  --spacing-chat-h: var(--sy-chat-height);
+  --spacing-chat-b: var(--sy-chat-above-minimap);
+  --spacing-above-bar: var(--sy-above-bar);
+  --spacing-chat-bar-b: var(--sy-chat-above-bar-minimap);
+  --spacing-strip: var(--sy-panel-strip);
+  --spacing-handle: var(--sy-panel-handle);
+  --spacing-line: var(--sy-panel-line);
+  --spacing-tile-preview: var(--sy-tile-preview);
+  --spacing-row-tile: var(--sy-row-tile);
+
+  --container-*: initial;
+  --container-content: var(--sy-content-max);
+  --container-welcome: var(--sy-welcome-max);
+  --container-arrange: var(--sy-arrange-max);
+  --container-emoji: var(--sy-emoji-panel);
+  --container-sheet: var(--sy-sheet-width);
+
+  --radius-*: initial;
+  --radius-sm: var(--sy-radius-sm);
+  --radius-md: var(--sy-radius-md);
+  --radius-lg: var(--sy-radius-lg);
+  /* Kept for slice 0 markup: cards use the large radius. */
+  --radius-card: var(--sy-radius-lg);
+  --radius-full: 9999px;
+
+  --shadow-*: initial;
+  --shadow-sm: 0 1px 2px var(--sy-shadow);
+  --shadow-md: 0 2px 8px var(--sy-shadow), 0 1px 2px var(--sy-shadow);
+  --shadow-lg: 0 12px 32px var(--sy-shadow-strong), 0 2px 6px var(--sy-shadow);
+
+  --font-*: initial;
+  --font-sans: var(--sy-font);
+  --font-mono: var(--sy-font-mono);
+
+  --text-*: initial;
+  --text-xs: var(--sy-text-xs);
+  --text-xs--line-height: 1rem;
+  --text-sm: var(--sy-text-sm);
+  --text-sm--line-height: 1.25rem;
+  --text-base: var(--sy-text-base);
+  --text-base--line-height: 1.5rem;
+  --text-lg: var(--sy-text-lg);
+  --text-lg--line-height: 1.75rem;
+  --text-xl: var(--sy-text-xl);
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: var(--sy-text-2xl);
+  --text-2xl--line-height: 2rem;
+  --text-display: var(--sy-text-display);
+  --text-display--line-height: 2.5rem;
+  /* Note text, by font size key. */
+  --text-note-s: var(--sy-note-font-s);
+  --text-note-s--line-height: 1.35;
+  --text-note-m: var(--sy-note-font-m);
+  --text-note-m--line-height: 1.35;
+  --text-note-l: var(--sy-note-font-l);
+  --text-note-l--line-height: 1.3;
+  --text-note-xl: var(--sy-note-font-xl);
+  --text-note-xl--line-height: 1.25;
+
+  --ease-standard: var(--sy-ease);
+  --default-transition-duration: var(--sy-duration-fast);
+  --default-transition-timing-function: var(--sy-ease);
+}
+
+/* Breakpoints (Chalkline's). Must match src/styles/breakpoints.ts (a test checks). */
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
