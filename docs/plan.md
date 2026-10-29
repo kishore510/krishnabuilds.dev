@@ -58,3 +58,8 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [ ] Arcade: archive the old repo after the new deploy is verified
 - [ ] Arcade: consider moving the site into a public/ folder instead of using .assetsignore
 - [ ] Arcade: generate site-links app list from the shared list instead of duplicating it
+- [ ] Stickyard: deploy web to stickyard.krishnabuilds.dev and the Worker from Actions; add the new origin to ALLOWED_ORIGINS; port creation-switch.yml
+- [ ] Stickyard: add to the Portal list, adopt site links and tokens
+- [ ] Stickyard: rename @stickyard/* packages to @krishnabuilds/*
+- [ ] Stickyard: add a linter
+- [ ] Stickyard: archive the old repo after cutover

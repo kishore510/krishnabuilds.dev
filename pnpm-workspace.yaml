@@ -1,5 +1,6 @@
 packages:
   - "apps/*"
-  # TEMPORARY: Stickyard is excluded until its pnpm conversion. Remove this line in that PR.
-  - "!apps/stickyard"
+  - "apps/stickyard/shared"
+  - "apps/stickyard/web"
+  - "apps/stickyard/worker"
   - "packages/*"

@@ -109,3 +109,7 @@ Arcade moves from Cloudflare Workers Builds on its own repo to a path-filtered G
 ## 2026-10-28 — Arcade gets site links via a plain script, not packages/ui
 
 Arcade has no build step and 34 standalone HTML games, so it cannot use the React SiteLinks component. It gets a dependency-free assets/site-links.js with the same links. The app list is duplicated there until a layout and tokens pass; keep it in sync with packages/ui.
+
+## 2026-10-28 — Stickyard flattened into pnpm workspace members
+
+Stickyard was an npm workspace (shared, web, worker). pnpm cannot nest workspaces, so its three packages and its root tooling package are plain members of the monorepo workspace, built and tested by Turborepo. Package names stay @stickyard/* for now, and it keeps TypeScript 5.9 and has no linter; both are revisited later. This PR converts only. The Worker (name `stickyard`) and the GitHub Pages site keep deploying from the old repo until the deploy PR.
