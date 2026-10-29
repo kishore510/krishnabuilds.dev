@@ -18,6 +18,7 @@ concurrency:
 jobs:
   # The relay goes first, so the new web origin is allowed before the site that uses it.
   # Its secrets (create passcode, signing key, creation switch) live on the Worker and are never set here.
+  # CREATION_ENABLED is set by .github/workflows/creation-switch.yml.
   worker:
     runs-on: ubuntu-latest
     steps:
