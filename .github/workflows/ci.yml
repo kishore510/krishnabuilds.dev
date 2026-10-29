@@ -20,4 +20,4 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm turbo run lint typecheck build
-      - run: pnpm turbo run test
+      - run: pnpm turbo run test --concurrency=1
