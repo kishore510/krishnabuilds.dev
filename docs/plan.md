@@ -22,6 +22,7 @@ For each app: scan history for secrets and report before importing, import with 
 - [x] Chalkline
 - [ ] Stickyard
 - [x] Sumyard
+- [x] Arcade (migrated, deployed)
 - [ ] Extract shared components into `packages/ui` only where duplicated in two apps
 - [ ] Extract shared site header and app list into `packages/ui` when the first migrated app needs them, so every app has the same nav bar
 - [ ] For each migrated app: adopt `@krishnabuilds/tokens` and the shared header, and add its subdomain via wrangler `custom_domain`
@@ -56,3 +57,4 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [ ] Arcade: add to the Portal app list, adopt site links and tokens
 - [ ] Arcade: archive the old repo after the new deploy is verified
 - [ ] Arcade: consider moving the site into a public/ folder instead of using .assetsignore
+- [ ] Arcade: generate site-links app list from the shared list instead of duplicating it

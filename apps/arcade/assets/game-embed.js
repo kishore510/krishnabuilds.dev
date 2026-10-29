@@ -213,6 +213,32 @@
   coffee.textContent = 'Want to build your own? Get the guide';
   document.body.appendChild(coffee);
 
+  // Site links (home + app switcher) from site-links.js, as a collapsed
+  // pill. Normal games get it inside the navbar, which already has its own
+  // reserved space, so it can't cover the game. Fullscreen-mode games have
+  // no navbar and their corners are taken by game UI (Castle Hold's wall
+  // slots and gold HUD, Drumfront's drum buttons and HP bar) or by the back
+  // button and guide link, so they get it floating bottom-centre.
+  const PILL_SPOTS = {
+    'castle-hold': 'bottom-center',
+    'drumfront': 'bottom-center',
+  };
+  const slugMatch = location.pathname.match(/\/games\/([a-z0-9-]+)\//);
+  const pillSpot = (slugMatch && PILL_SPOTS[slugMatch[1]]) || (fullscreenMode ? 'bottom-center' : 'navbar');
+  const siteLinksScript = document.createElement('script');
+  siteLinksScript.src = new URL('site-links.js', script ? script.src : location.href).href;
+  siteLinksScript.onload = () => {
+    if (!window.kbSiteLinks) return;
+    if (pillSpot === 'navbar' && navbar) {
+      window.kbSiteLinks.pill(navbar);
+    } else {
+      const pill = window.kbSiteLinks.pill(document.body, { up: true, align: 'center' });
+      pill.style.cssText = 'position:fixed;z-index:999;left:50%;transform:translateX(-50%);' +
+        'bottom:calc(4px + env(safe-area-inset-bottom, 0px));';
+    }
+  };
+  document.head.appendChild(siteLinksScript);
+
   function publishChromeMetrics() {
     if (fullscreenMode) {
       // No navbar exists in this mode - just the small floating corner

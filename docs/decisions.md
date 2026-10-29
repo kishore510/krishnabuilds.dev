@@ -105,3 +105,7 @@ Sumyard adopts the shared SiteLinks (home link and app switcher) in its existing
 ## 2026-10-28 — Arcade deploys from GitHub Actions to the existing Worker
 
 Arcade moves from Cloudflare Workers Builds on its own repo to a path-filtered GitHub Actions deploy in the monorepo, to the same Worker (krishnabuilds-arcade) so the KV play counts and the domain carry over. Arcade stays plain static files plus one Worker with no build step; the assets upload uses an ignore list so only the site is published.
+
+## 2026-10-28 — Arcade gets site links via a plain script, not packages/ui
+
+Arcade has no build step and 34 standalone HTML games, so it cannot use the React SiteLinks component. It gets a dependency-free assets/site-links.js with the same links. The app list is duplicated there until a layout and tokens pass; keep it in sync with packages/ui.

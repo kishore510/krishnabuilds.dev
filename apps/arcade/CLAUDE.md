@@ -32,6 +32,7 @@ node -e "new Function(require('fs').readFileSync('index.html','utf8').match(/<sc
 ```
 index.html                    — landing page; lists every game as a "cartridge" card
 assets/game-embed.js          — shared chrome every game page includes (nav bar, support link)
+assets/site-links.js          — link home + app switcher (bar on the landing page, pill via game-embed.js); app list must match packages/ui
 assets/version.js             — single source of truth for the displayed version string
 games/fin-dash/index.html     — Fin Dash (canvas, single-tap flap physics)
 games/burrow-bash/index.html  — Burrow Bash (DOM/CSS game, no canvas)
