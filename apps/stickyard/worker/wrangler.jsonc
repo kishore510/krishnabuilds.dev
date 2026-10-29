@@ -23,5 +23,5 @@
   }
   // Secrets, never in this file: CREATE_PASSCODE and ROOM_SIGNING_KEY (pushed from GitHub
   // secrets by the deploy job), and CREATION_ENABLED (the kill switch, set by the
-  // "Room creation switch" workflow). Local dev reads them from .dev.vars.
+  // root .github/workflows/creation-switch.yml "Room creation switch" workflow). Local dev reads them from .dev.vars.
 }
