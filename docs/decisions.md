@@ -117,3 +117,7 @@ Stickyard was an npm workspace (shared, web, worker). pnpm cannot nest workspace
 ## 2026-10-28 — Stickyard deploys as two Workers from one Actions workflow
 
 The relay Worker keeps its name (stickyard) and workers.dev address so live rooms and the hardcoded web config keep working, and deploys with --keep-vars. The web app deploys as a Worker with static assets at stickyard.krishnabuilds.dev, after the relay so the new origin is allowed first. ALLOWED_ORIGINS lists both the new site and the old GitHub Pages origin until the old site is retired. Secrets (create passcode, signing key, creation switch) stay on the Worker and are never handled by this workflow.
+
+## 2026-10-28 — Stickyard is live on the Portal with site links
+
+Stickyard deploys from the monorepo as a relay Worker plus a web app Worker, is listed on the Portal as live in the Create group, and uses the shared SiteLinks inside its existing menu.

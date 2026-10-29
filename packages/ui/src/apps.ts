@@ -53,11 +53,11 @@ export const apps: AppEntry[] = [
   },
   {
     name: "Stickyard",
-    blurb: "Sticky notes for jotting things down and moving them around.",
+    blurb: "Collaborative sticky notes for working things out together.",
     url: "https://stickyard.krishnabuilds.dev",
     group: "create",
-    status: "building",
-    stack: ["React", "TypeScript"],
+    status: "live",
+    stack: ["React", "TypeScript", "Cloudflare", "Durable Objects"],
   },
   {
     name: "Sumyard",

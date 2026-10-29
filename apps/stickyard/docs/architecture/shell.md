@@ -58,3 +58,8 @@ Architecture notes, moved out of CLAUDE.md on 7 October 2026 so they load only w
 
 ## Summary and sentiment (v0.44.0)
 - Summary and sentiment (v0.44.0): menu items can be off with a reason (`MenuItem.reason`): `aria-disabled` (still focusable), the reason as the tooltip and as a second line in the item, and pressing it does nothing. Used by Summarise board (host only, not in a silent round). The join screen's names notice adds "The host can use AI features that send the board’s text to Anthropic." (static text). Detail in ai.md "Summary and sentiment".
+
+## Site links in the menu (krishnabuilds.dev)
+- Below the menu's commands, after a divider and outside `role="menu"` (which, with its "Menu" name, now sits on a wrapper round the commands, not the popover), the shared `SiteLinks` from `@krishnabuilds/ui` (a dev dependency; Vite compiles its source): a link home to krishnabuilds.dev and one per live app, Stickyard with `aria-current="page"`. Styled with Stickyard's ghost button classes (`h-touch`, both themes); no shared tokens.
+- Keys: Tab from a command goes to the first link; Tab moves through the links, and Tab past the last one (or focus anywhere outside the popover) closes the menu. Shift+Tab from the first link goes back to the last command; Shift+Tab from a command still closes. Escape in the links closes and returns focus to the menu button. Tests: `web/test/siteLinks.test.tsx`.
+- `@stickyard/web` pins react and react-dom to the same version as `packages/ui`, so there is one React copy (`pnpm why react`).
