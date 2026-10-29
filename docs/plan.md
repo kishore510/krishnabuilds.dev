@@ -63,3 +63,6 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [ ] Stickyard: rename @stickyard/* packages to @krishnabuilds/*
 - [ ] Stickyard: add a linter
 - [ ] Stickyard: archive the old repo after cutover
+- [ ] Stickyard: remove https://kishore510.github.io from ALLOWED_ORIGINS after the old site is retired
+- [ ] Stickyard: port creation-switch.yml
+- [ ] Stickyard: custom domain for the relay Worker (replace the workers.dev address)

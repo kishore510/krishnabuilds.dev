@@ -113,3 +113,7 @@ Arcade has no build step and 34 standalone HTML games, so it cannot use the Reac
 ## 2026-10-28 — Stickyard flattened into pnpm workspace members
 
 Stickyard was an npm workspace (shared, web, worker). pnpm cannot nest workspaces, so its three packages and its root tooling package are plain members of the monorepo workspace, built and tested by Turborepo. Package names stay @stickyard/* for now, and it keeps TypeScript 5.9 and has no linter; both are revisited later. This PR converts only. The Worker (name `stickyard`) and the GitHub Pages site keep deploying from the old repo until the deploy PR.
+
+## 2026-10-28 — Stickyard deploys as two Workers from one Actions workflow
+
+The relay Worker keeps its name (stickyard) and workers.dev address so live rooms and the hardcoded web config keep working, and deploys with --keep-vars. The web app deploys as a Worker with static assets at stickyard.krishnabuilds.dev, after the relay so the new origin is allowed first. ALLOWED_ORIGINS lists both the new site and the old GitHub Pages origin until the old site is retired. Secrets (create passcode, signing key, creation switch) stay on the Worker and are never handled by this workflow.
