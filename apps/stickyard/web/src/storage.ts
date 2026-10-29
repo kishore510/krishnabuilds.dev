@@ -1,0 +1,117 @@
+/**
+ * Every browser storage key goes through this. GitHub Pages serves all *.github.io
+ * projects of an account from one origin, so keys must be namespaced. Never store anything sensitive,
+ * with one exception the person chooses: the Anthropic API key under "Remember on this device"
+ * (v0.42.0, `aiKey`, listed in SECRET_STORAGE_KEYS).
+ */
+const PREFIX = "stickyard:";
+
+export function storageKey(name: string): string {
+  return `${PREFIX}${name}`;
+}
+
+/** The keys this app uses, in one place. */
+export const STORAGE_KEYS = {
+  /** "light" | "dark" | "system". Mirrored by the inline script in index.html. */
+  theme: storageKey("theme"),
+  /** The app version whose What's new was last opened. */
+  lastSeenVersion: storageKey("last-seen-version"),
+  /** The last name used to join a session, to prefill the name sheet. Not sensitive. */
+  name: storageKey("name"),
+  /** The board's side panels (md and up): width and whether collapsed. Layout only. */
+  palettePanel: storageKey("palette-panel"),
+  propertiesPanel: storageKey("properties-panel"),
+  /** The floating chat panel's size (md and up), once resized. Layout only. */
+  chatPanel: storageKey("chat-panel"),
+  /** Live cursors (v0.19.0): "off" hides other people's pointers / stops sharing mine. Preferences only. */
+  showCursors: storageKey("show-cursors"),
+  shareCursor: storageKey("share-cursor"),
+  /**
+   * Host tokens (protocol v12), one key per room: `stickyard:host:<room id>`, via hostTokenKey.
+   * Kept only on the device that started the session, sent only in claimHost, removed when the
+   * relay says the session ended or expired (or refuses the token).
+   */
+  hostTokenPrefix: storageKey("host:"),
+  /**
+   * Voter keys (protocol v13), one key per room: `stickyard:voter:<room id>`, via voterKeyKey.
+   * 128 random bits made on this device, sent only in claimVoter (the relay keeps only an HMAC
+   * of it), removed when the session ends or expires. Clearing browser data makes a new voter.
+   */
+  voterKeyPrefix: storageKey("voter:"),
+  /**
+   * Stencils saved in this browser (v0.39.0): `{ version, stencils }`, each a name and the saved
+   * items' content and text. Never sent anywhere until one is placed on a board; read back as
+   * untrusted data (stencils/storage.ts).
+   */
+  stencils: storageKey("stencils"),
+  /**
+   * The Anthropic API key (v0.42.0), only when the person chose "Remember on this device" after the
+   * warning page; unencrypted. Written and read only by ai/keyStore.ts, at the moment of a send.
+   * Secret: never shown in full, sent only to api.anthropic.com in its header, never backed up or exported.
+   */
+  aiKey: storageKey("ai-key"),
+  /** AI preferences (v0.42.0): `{ keep, noticeSeen }`. Never the key. */
+  aiPrefs: storageKey("ai-prefs"),
+} as const;
+
+/**
+ * Keys whose values are secrets (v0.42.0): never backed up, exported, copied into Details or logged.
+ * Anything that ever lists or copies stored values must skip these.
+ */
+export const SECRET_STORAGE_KEYS: readonly string[] = [STORAGE_KEYS.aiKey];
+
+export function isSecretStorageKey(key: string): boolean {
+  return SECRET_STORAGE_KEYS.includes(key);
+}
+
+/** The key holding a room's host token on this device. */
+export function hostTokenKey(roomId: string): string {
+  return `${STORAGE_KEYS.hostTokenPrefix}${roomId}`;
+}
+/** The key holding this device's voter key for a room. */
+export function voterKeyKey(roomId: string): string {
+  return `${STORAGE_KEYS.voterKeyPrefix}${roomId}`;
+}
+// The create passcode is never stored: it lives only in the form's state until it is sent.
+
+export type KeyValueStore = Pick<Storage, "getItem" | "setItem"> & Partial<Pick<Storage, "removeItem">>;
+
+/** localStorage, or undefined where it's missing or blocked (private modes, sandboxed frames). */
+export function appStorage(): KeyValueStore | undefined {
+  try {
+    return globalThis.localStorage ?? undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Never throws: storage can be missing, blocked or full. Returns null when unavailable. */
+export function readKey(key: string, store: KeyValueStore | undefined = appStorage()): string | null {
+  try {
+    return store?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Never throws. Returns false when the value couldn't be stored. */
+export function writeKey(key: string, value: string, store: KeyValueStore | undefined = appStorage()): boolean {
+  try {
+    if (!store) return false;
+    store.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Never throws. Returns false when the key couldn't be removed. */
+export function removeKey(key: string, store: KeyValueStore | undefined = appStorage()): boolean {
+  try {
+    if (!store?.removeItem) return false;
+    store.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
+}

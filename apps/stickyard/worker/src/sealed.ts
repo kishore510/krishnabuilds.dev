@@ -1,0 +1,115 @@
+import { MIN_GROUP_MEMBERS, type Connector, type Group, type NoteCarryingType, type ServerMessage } from "@stickyard/shared";
+
+/*
+ * Silent brainstorm (protocol v17): what one recipient may see of an outbound message. Every
+ * message the room sends goes through Room.send / Room.broadcast, which pass each type marked
+ * `carriesNoteContent` in SERVER_MESSAGES through scrubFor with that recipient's view: a sealed
+ * note is visible only to its writer's sockets. The handlers already leave hidden notes out; this
+ * is the backstop that keeps a missed path from leaking. Pure, so it is tested on its own.
+ */
+
+/** Whether the recipient may see this note. */
+export type Visible = (noteId: string) => boolean;
+
+/**
+ * The one visibility rule: a note with no seal (`writer` null) is everyone's; a sealed note is only
+ * its writer's. A viewer without a writer id (null, undefined or "") never matches, and neither
+ * does a sealed note whose writer is "" (a row we never wrote), so a missing value on either side
+ * can't make two of them equal.
+ */
+export function canSee(writer: string | null, viewer: string | null | undefined): boolean {
+  if (writer === null) return true;
+  return writer !== "" && typeof viewer === "string" && viewer !== "" && writer === viewer;
+}
+
+type Of<K extends NoteCarryingType> = Extract<ServerMessage, { type: K }>;
+type Scrubber<K extends NoteCarryingType> = (message: Of<K>, visible: Visible) => ServerMessage | null;
+
+const one = <M extends { id: string }>(m: M, visible: Visible): M | null => (visible(m.id) ? m : null);
+/** A connector is visible when neither end is bound to a note the recipient can't see. */
+const connectorVisible = (k: Connector, visible: Visible): boolean => [k.start, k.end].every((end) => !("item" in end) || visible(end.item));
+
+/** A group as the recipient may see it: hidden members left out, or null when fewer than MIN_GROUP_MEMBERS are left. */
+const groupFor = (g: Group, visible: Visible): Group | null => {
+  const members = g.members.filter(visible);
+  if (members.length === g.members.length) return g;
+  return members.length >= MIN_GROUP_MEMBERS ? { ...g, members } : null;
+};
+
+/** One entry per note-carrying type (the compiler checks every one is here). null: send nothing. */
+const SCRUB: { [K in NoteCarryingType]: Scrubber<K> } = {
+  // Errors go only to the sender and only echo ids it sent itself, exactly as for an unknown id.
+  error: (m) => m,
+  snapshot: (m, visible) => ({ ...m, notes: m.notes.filter((n) => visible(n.id)) }),
+  noteAdded: (m, visible) => (visible(m.note.id) ? m : null),
+  noteUpdated: (m, visible) => (visible(m.note.id) ? m : null),
+  noteMoved: (m, visible) => one(m, visible),
+  noteResized: (m, visible) => one(m, visible),
+  noteDeleted: (m, visible) => one(m, visible),
+  notesBatchApplied: (m, visible) => {
+    const results = m.results.filter((r) => visible(r.id));
+    return results.length > 0 ? { ...m, results } : null;
+  },
+  notesOrdered: (m, visible) => {
+    const results = m.results.filter((r) => visible(r.id));
+    return results.length > 0 ? { ...m, results } : null;
+  },
+  frameMoved: (m, visible) => {
+    if (!m.notes) return m;
+    const { notes: carried, ...rest } = m;
+    const notes = carried.filter((n) => visible(n.id));
+    return notes.length > 0 ? { ...rest, notes } : rest;
+  },
+  itemsAdded: (m, visible) => {
+    const notes = m.notes.filter((n) => visible(n.note.id));
+    if (notes.length === m.notes.length) return m;
+    if (notes.length + m.frames.length + (m.shapes?.length ?? 0) === 0) return null;
+    // A refused list only ever rides on the sender's copy, whose notes are all its own.
+    return { ...m, notes };
+  },
+  voterGranted: (m, visible) => {
+    const { reactions, ...rest } = m;
+    const out = { ...rest, mine: m.mine.filter((v) => visible(v.noteId)) };
+    // Reactions (v20): the relay never stores one on a sealed note; filtered all the same.
+    const mine = reactions?.filter((r) => visible(r.noteId)) ?? [];
+    return mine.length > 0 ? { ...out, reactions: mine } : out;
+  },
+  voteConfirmed: (m, visible) => (visible(m.noteId) ? m : null),
+  votesRevealed: (m, visible) => ({ ...m, totals: m.totals.filter((v) => visible(v.noteId)) }),
+  // Reactions (v20): the relay refuses them on sealed notes and leaves sealed notes out of every
+  // count at the source (NoteStore), so these only ever back that up.
+  reactionCount: (m, visible) => (visible(m.noteId) ? m : null),
+  reactionMine: (m, visible) => (visible(m.noteId) ? m : null),
+  reactionsSnapshot: (m, visible) => ({ ...m, counts: m.counts.filter((c) => visible(c.noteId)) }),
+  // Only ever the recipient's own ids; filtered all the same.
+  silentMine: (m, visible) => ({ ...m, ids: m.ids.filter(visible) }),
+  notesRevealed: (m, visible) => {
+    const notes = m.notes.filter((n) => visible(n.id));
+    return notes.length > 0 ? { ...m, notes } : null;
+  },
+  // Connectors (v21): the relay never binds one to a sealed note (a bind to one is unknown_item),
+  // so these only ever back that up: a connector naming a hidden note is left out whole.
+  connectorsSnapshot: (m, visible) => ({ ...m, connectors: m.connectors.filter((k) => connectorVisible(k, visible)) }),
+  connectorAdded: (m, visible) => (connectorVisible(m.connector, visible) ? m : null),
+  connectorUpdated: (m, visible) => (connectorVisible(m.connector, visible) ? m : null),
+  // Groups (v22): the relay never puts a sealed note in a group (naming one is unknown_item), so
+  // these only ever back that up: a hidden member is left out, and a group left below 2 whole.
+  groupsSnapshot: (m, visible) => ({ ...m, groups: m.groups.flatMap((g) => groupFor(g, visible) ?? []) }),
+  groupCreated: (m, visible) => {
+    const group = groupFor(m.group, visible);
+    return group ? { ...m, group } : null;
+  },
+  groupUpdated: (m, visible) => {
+    const group = groupFor(m.group, visible);
+    return group ? { ...m, group } : null;
+  },
+};
+
+const carries = (message: ServerMessage): message is Of<NoteCarryingType> => message.type in SCRUB;
+
+/** The message as this recipient may see it, or null when nothing of it is theirs to see. */
+export function scrubFor(message: ServerMessage, visible: Visible): ServerMessage | null {
+  if (!carries(message)) return message;
+  const scrub = SCRUB[message.type] as Scrubber<NoteCarryingType>;
+  return scrub(message, visible);
+}
