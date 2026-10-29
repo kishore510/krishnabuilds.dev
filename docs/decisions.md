@@ -101,3 +101,7 @@ An app that uses one component should not ship another component's styles. packa
 ## 2026-10-28 — Sumyard gets site links; external-URL guard allows only the krishnabuilds.dev origins
 
 Sumyard adopts the shared SiteLinks (home link and app switcher) in its existing chrome. Its build guard against external URLs now allows only https://krishnabuilds.dev and its subdomains, so links within the platform work while any other external URL still fails the build.
+
+## 2026-10-28 — Arcade deploys from GitHub Actions to the existing Worker
+
+Arcade moves from Cloudflare Workers Builds on its own repo to a path-filtered GitHub Actions deploy in the monorepo, to the same Worker (krishnabuilds-arcade) so the KV play counts and the domain carry over. Arcade stays plain static files plus one Worker with no build step; the assets upload uses an ignore list so only the site is published.

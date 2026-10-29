@@ -52,3 +52,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [ ] Chalkline: adopt shared tokens (site links done)
 - [ ] Sumyard: adopt shared tokens (site links done)
 - [ ] packages/ui: make the home link in SiteLinks look like a link and improve spacing/layout (affects all apps)
+- [ ] Arcade: restrict the play-counter endpoint to known game slugs (currently accepts any slug and has no rate limit)
+- [ ] Arcade: add to the Portal app list, adopt site links and tokens
+- [ ] Arcade: archive the old repo after the new deploy is verified
+- [ ] Arcade: consider moving the site into a public/ folder instead of using .assetsignore

@@ -10,7 +10,7 @@ tiny optional Cloudflare Worker that powers the "Played N times" counter
 index.html              — landing page, lists every game as a "cartridge"
 assets/game-embed.js    — shared script every game page includes
 src/worker.js           — play-count API + static-asset serving (see below)
-wrangler.jsonc          — Cloudflare Worker config (Workers Builds auto-deploys this)
+wrangler.jsonc          — Cloudflare Worker config (deployed from GitHub Actions)
 games/
   fin-dash/index.html   — Fin Dash
   <slug>/index.html     — next game goes here
@@ -44,12 +44,9 @@ That's the whole process — no other files need to change.
 
 ## Before going live
 
-- Replace `https://buymeacoffee.com/yourname` in both
-  `assets/game-embed.js` (default) and `index.html` (footer button) with
-  your real link.
-- If hosting on Cloudflare Pages: point the project's custom domain at
-  `krishnabuilds.dev`, source = this repo, build output = repo root
-  (no build command needed).
+Arcade now lives in the krishnabuilds.dev monorepo and follows the root
+`CLAUDE.md`: work on a branch, open a PR, squash merge; deploys run from
+GitHub Actions on merge to `main`.
 
 ## Play-count counter (optional)
 
@@ -58,9 +55,8 @@ Every game pings `POST /api/play/<slug>` once per page load
 show "Played N times" on each card. Both routes are handled by
 `src/worker.js`, backed by a single Cloudflare KV namespace holding all
 counts as one JSON blob. This repo deploys as a Cloudflare Worker with
-static assets (`wrangler.jsonc`'s `assets` block), not classic Pages —
-Cloudflare Workers Builds auto-deploys on every push to `master`, same as
-before, no local `wrangler deploy` needed.
+static assets (`wrangler.jsonc`'s `assets` block), deployed from GitHub
+Actions in the krishnabuilds.dev monorepo on merge to `main`.
 
 **One-time setup** (not done yet in this repo — `wrangler.jsonc` has a
 placeholder KV id):
@@ -68,7 +64,7 @@ placeholder KV id):
 1. `npx wrangler login` (if you haven't already)
 2. `npx wrangler kv namespace create PLAY_COUNTS`
 3. Copy the `id` it prints into `wrangler.jsonc` → `kv_namespaces[0].id`
-4. Commit and push — the next Workers Build picks up the binding
+4. Open a PR and squash merge — the next deploy picks up the binding
 
 If this step is skipped, nothing breaks: the fetch calls fail silently
 (caught and ignored), games load exactly as before, and the landing page

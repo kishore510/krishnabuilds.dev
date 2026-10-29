@@ -6,8 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A static games hub — no build step, no backend, no package manager. Every
 page is a single self-contained HTML file with inline `<style>`/`<script>`.
-Live at `arcade.krishnabuilds.dev`, deployed via Cloudflare Pages: pushes to
-`master` deploy automatically (source = repo root, no build command).
+Live at `arcade.krishnabuilds.dev`. Arcade now lives in the krishnabuilds.dev
+monorepo and follows the root `CLAUDE.md`: work on a branch, open a PR,
+squash merge; deploys run from GitHub Actions on merge to `main`.
 
 ## Commands
 
@@ -79,23 +80,11 @@ games/<slug>/index.html       — next game goes here
    attribute a game's plays silently never get counted (page-load alone
    isn't a reliable proxy: it only ever caught the first attempt, missing
    every replay via the same reused button).
-5. **Merge the branch into `master` and push before considering the game
-   done — a feature branch alone is not a finished game.** Cloudflare
-   Pages only deploys pushes to `master`; a game left sitting on its own
-   branch is invisible on the live site and easy to lose track of. This
-   bit real: six built-and-working games (Sudoku, Shard Rush, Mosaica,
-   Comet Watch, Word Search, and an earlier Inkgrid push) ended up stuck
-   on unmerged branches at once, simply because each build session ended
-   at "pushed the branch" instead of "merged to master." Don't stop at
-   `git push -u origin <branch>` — follow it with a merge into `master`
-   (resolving the near-certain conflict where two branches both touched
-   the end of the `GAMES` array and `assets/version.js`, by keeping both
-   games and the newer version number) and push that. If a game is built
-   on a branch for review first, treat "merge to master" as an explicit
-   remaining task, not implied by the branch existing.
+5. Ship it through the monorepo flow in the root `CLAUDE.md`: branch, PR,
+   squash merge to `main`. The game is live once the GitHub Actions deploy
+   for that merge finishes.
 
-That's the whole process for a new game — no other files need to change,
-beyond the master merge above.
+That's the whole process for a new game — no other files need to change.
 
 ## The nav-bar/game-area space contract (applies to canvas AND DOM games)
 
