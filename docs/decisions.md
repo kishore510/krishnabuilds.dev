@@ -121,3 +121,7 @@ The relay Worker keeps its name (stickyard) and workers.dev address so live room
 ## 2026-10-28 — Stickyard is live on the Portal with site links
 
 Stickyard deploys from the monorepo as a relay Worker plus a web app Worker, is listed on the Portal as live in the Create group, and uses the shared SiteLinks inside its existing menu.
+
+## 2026-10-29 — Stickyard creation switch lives at the repo root
+
+The Stickyard creation kill switch (creation-switch.yml) was ported from the archived old repo to .github/workflows/ in the monorepo, because GitHub only runs workflows from the root. It is manual-only (workflow_dispatch), sets the Worker secret CREATION_ENABLED to true or false using the existing CLOUDFLARE_API_TOKEN, and shares the deploy-stickyard concurrency group so it cannot overlap a deploy. Existing rooms keep working when creation is off.
