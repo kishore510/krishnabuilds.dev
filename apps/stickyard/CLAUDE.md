@@ -10,10 +10,10 @@ Read the matching file in `docs/architecture/` first (index: `docs/architecture/
 `PROTOCOL_VERSION = 23` (`shared/src/protocol.ts`), stored `SCHEMA_VERSION = 14` (`worker/src/noteStore.ts`). A test checks these lines against the code.
 
 ## Stack
-- `web/`: Vite, React, TypeScript strict, Zustand, Tailwind, Vitest. Deployed to GitHub Pages via Actions. Hash routes (`#/...`).
+- `web/`: Vite, React, TypeScript strict, Zustand, Tailwind, Vitest. Deployed as a Worker with static assets (stickyard.krishnabuilds.dev) from Actions. Hash routes (`#/...`).
 - `worker/`: Cloudflare Worker + one SQLite-backed Durable Object per room, WebSocket Hibernation API. Deployed with `wrangler deploy` from Actions.
 - `shared/`: Zod message schemas and `PROTOCOL_VERSION`, imported by both sides.
-- npm workspaces at the root. Node version in `.nvmrc`.
+- Stickyard lives in the krishnabuilds.dev monorepo (`apps/stickyard`): it uses pnpm and Turborepo, follows the root `CLAUDE.md`, and deploys from GitHub Actions (`deploy-stickyard.yml`). Node version in `.nvmrc`.
 
 ## Key decisions
 - Server-authoritative, last-write-wins. Server assigns ids and colours; never trust client-claimed identity.
@@ -45,12 +45,10 @@ Read the matching file in `docs/architecture/` first (index: `docs/architecture/
 
 ## Verification (run before saying done)
 ```sh
-npm run typecheck   # tsc --noEmit in shared, web, worker
-npm test            # vitest in shared, web, worker
-npm run build       # web + worker (wrangler dry-run)
-npm run shots       # screenshots at 360/768/1280, light and dark, into shots/ (local relay + Chromium)
-npm run load        # dev only: 12 simulated pages against local wrangler dev (dev/load, localhost only)
-npm run a11y        # dev only: axe, keyboard, targets, reduced motion at 360/768/1280 (dev/a11y)
+pnpm turbo run typecheck test build --filter="./apps/stickyard/**"   # tsc, vitest, web build + worker dry-run
+pnpm shots          # screenshots at 360/768/1280, light and dark, into shots/ (local relay + Chromium)
+pnpm load           # dev only: 12 simulated pages against local wrangler dev (dev/load, localhost only)
+pnpm a11y           # dev only: axe, keyboard, targets, reduced motion at 360/768/1280 (dev/a11y)
 ```
 - On the Raspberry Pi, run the worker tests one file at a time if memory is short; the Pi may not be able to run a browser (skip `shots` there).
 - GitHub runners run the full suites normally.

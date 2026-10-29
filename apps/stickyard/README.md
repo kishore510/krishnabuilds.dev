@@ -2,7 +2,7 @@
 
 A real-time collaborative sticky-note whiteboard for workshops and retros. Join by link and a typed name, no accounts.
 
-Personal learning project. Front end on GitHub Pages, relay on a Cloudflare Worker with one Durable Object per room.
+Personal learning project. Front end on a Cloudflare Worker with static assets at https://stickyard.krishnabuilds.dev, relay on a Cloudflare Worker with one Durable Object per room.
 
 See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md), [docs/PHASE_PLAN.md](docs/PHASE_PLAN.md) and [docs/LIMITS.md](docs/LIMITS.md).
 
@@ -16,21 +16,21 @@ See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md), [docs/PHASE_PLAN.md](docs/PH
 | `worker/` | Cloudflare Worker + SQLite-backed Durable Object (WebSocket Hibernation API) |
 | `shared/` | Zod message schemas and `PROTOCOL_VERSION`, used by both sides |
 
-npm workspaces at the root; `shared/` is consumed as TypeScript source (no build step).
+Stickyard lives in the krishnabuilds.dev monorepo (`apps/stickyard`): it uses pnpm and Turborepo, follows the root `CLAUDE.md`, and deploys from GitHub Actions (`.github/workflows/deploy-stickyard.yml` at the monorepo root). `shared/` is consumed as TypeScript source (no build step).
 
 ## Local development
 
 Requires Node 24 (see `.nvmrc`; `nvm use`). Works on a Raspberry Pi 5 (arm64), including local `wrangler dev`.
 
 ```sh
-npm install
+pnpm install   # from the monorepo root
 cp worker/.dev.vars.example worker/.dev.vars   # then fill in your own local values (gitignored)
 
 # terminal 1: relay on http://127.0.0.1:8787
-cd worker && npx wrangler dev --ip 127.0.0.1 --port 8787
+cd worker && pnpm exec wrangler dev --ip 127.0.0.1 --port 8787
 
 # terminal 2: web on http://127.0.0.1:5173
-cd web && npx vite --host 127.0.0.1
+cd web && pnpm exec vite --host 127.0.0.1
 ```
 
 In dev the web app talks to `http://127.0.0.1:8787` by default. To point it elsewhere (for example a deployed Worker), create `web/.env.local` (gitignored) with:
@@ -44,12 +44,12 @@ The production Worker URL is a single constant in `web/src/config.ts`.
 Checks (same as CI):
 
 ```sh
-npm run typecheck   # tsc --noEmit in shared, web, worker
-npm test            # vitest; worker tests run inside workerd
-npm run build       # web build + worker dry-run bundle
+pnpm turbo run typecheck --filter="./apps/stickyard/**"   # tsc --noEmit in shared, web, worker
+pnpm turbo run test --filter="./apps/stickyard/**"        # vitest; worker tests run inside workerd
+pnpm turbo run build --filter="./apps/stickyard/**"       # web build + worker dry-run bundle
 ```
 
-Screenshots (local only, not in CI): `npm run shots` starts a local relay with made-up secrets and the Vite dev server, seeds a room, and saves the welcome page and the room at 360, 768 and 1280 px in light and dark to `shots/` (gitignored). It uses the Chromium at `CHROMIUM_PATH` or `/opt/pw-browsers/chromium`, else Playwright's own; `SHOTS_HASHES="#/help,#/about"` adds pages.
+Screenshots (local only, not in CI): `pnpm shots` (in `apps/stickyard`) starts a local relay with made-up secrets and the Vite dev server, seeds a room, and saves the welcome page and the room at 360, 768 and 1280 px in light and dark to `shots/` (gitignored). It uses the Chromium at `CHROMIUM_PATH` or `/opt/pw-browsers/chromium`, else Playwright's own; `SHOTS_HASHES="#/help,#/about"` adds pages.
 
 Notes for Claude Code: `CLAUDE.md` is kept short (a test caps it at 6 KB); the detail for each area lives in `docs/architecture/`.
 
@@ -69,23 +69,7 @@ Room codes are `<id>.<sig>`: 16 random bytes and a 128-bit HMAC-SHA256 of `stick
 
 ## Deploy
 
-All deploys run from GitHub Actions (`.github/workflows/ci.yml`):
-
-- **Every push / PR:** typecheck, test, build.
-- **Push to `main`:** deploy `web/` to GitHub Pages (base path `/<repo>/`) and `wrangler deploy` the Worker.
-- **Manual (`workflow_dispatch`, any branch):** deploys the Worker; tick "deploy_pages" to also deploy Pages (only from branches the `github-pages` environment allows, by default `main`).
-
-```sh
-gh workflow run ci.yml --ref <branch>
-gh workflow run ci.yml --ref main -f deploy_pages=true
-```
-
-The Worker deploy needs two repository secrets, set by you (never pasted anywhere else):
-
-```sh
-gh secret set CLOUDFLARE_API_TOKEN    # prompts for the value; nothing lands in shell history
-gh secret set CLOUDFLARE_ACCOUNT_ID
-```
+Stickyard lives in the krishnabuilds.dev monorepo (`apps/stickyard`): it uses pnpm and Turborepo, follows the root `CLAUDE.md`, and deploys from GitHub Actions (`.github/workflows/deploy-stickyard.yml` at the monorepo root). On a push to `main` that touches `apps/stickyard/**`, it tests and builds Stickyard, deploys the relay Worker (`stickyard`, `wrangler deploy --keep-vars`), then the web app as the `krishnabuilds-stickyard` Worker at https://stickyard.krishnabuilds.dev. It uses the monorepo's `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets only.
 
 The Cloudflare API token needs only **Account → Workers Scripts → Edit**, scoped to this one account (enough for Worker + Durable Object migrations + workers.dev). Deployed relay: `https://stickyard.kishore510.workers.dev`.
 
@@ -111,13 +95,7 @@ No secrets are ever committed. The Worker needs two:
 
 If either is missing, creating **and** joining are refused (503); `/health` still works.
 
-They are stored as **GitHub Actions secrets** with the same names, and the deploy job pushes them to the Worker (`wrangler secret bulk`, reading JSON from stdin; the values are never on a command line, on disk or in the log). Set or rotate them on the Pi; each command prompts for the value, so it never lands in shell history:
-
-```sh
-gh secret set CREATE_PASSCODE
-gh secret set ROOM_SIGNING_KEY
-gh workflow run ci.yml --ref main   # re-deploys and pushes the new values
-```
+They live only on the Worker as Worker secrets and survive deploys. The monorepo's deploy workflow (`deploy-stickyard.yml`) never sets or reads them.
 
 Rotating `ROOM_SIGNING_KEY` invalidates every existing room link. Rotating `CREATE_PASSCODE` only affects starting new sessions.
 
