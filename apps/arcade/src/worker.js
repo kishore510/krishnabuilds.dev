@@ -53,18 +53,8 @@ async function isGame(slug, request, env) {
 async function handlePlayPost(slug, request, env) {
   if (!(await isGame(slug, request, env))) return notFound();
 
-  const stored = await readCounts(env);
-  // Rebuild the blob from real games only, so stale or junk keys left by
-  // older versions of this worker are dropped on the next valid play.
-  const counts = {};
-  await Promise.all(Object.keys(stored).map(async (key) => {
-    if (key !== slug && PLAY_ROUTE.test(`/api/play/${key}`) &&
-        (await isGame(key, request, env))) {
-      counts[key] = stored[key];
-    }
-  }));
-  const previous = Object.hasOwn(stored, slug) ? stored[slug] : 0;
-  counts[slug] = previous + 1;
+  const counts = await readCounts(env);
+  counts[slug] = (Object.hasOwn(counts, slug) ? counts[slug] : 0) + 1;
 
   await env.PLAY_COUNTS.put(COUNTS_KEY, JSON.stringify(counts));
   return new Response(JSON.stringify({ slug, count: counts[slug] }), {
