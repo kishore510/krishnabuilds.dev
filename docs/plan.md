@@ -20,7 +20,7 @@
 For each app: scan history for secrets and report before importing, import with history, wire up build + deploy.
 
 - [x] Chalkline
-- [ ] Stickyard
+- [x] Stickyard
 - [x] Sumyard
 - [x] Arcade (migrated, deployed)
 - [ ] Extract shared components into `packages/ui` only where duplicated in two apps
@@ -59,10 +59,16 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [ ] Arcade: consider moving the site into a public/ folder instead of using .assetsignore
 - [ ] Arcade: generate site-links app list from the shared list instead of duplicating it
 - [ ] Stickyard: deploy web to stickyard.krishnabuilds.dev and the Worker from Actions; add the new origin to ALLOWED_ORIGINS; port creation-switch.yml
-- [ ] Stickyard: add to the Portal list, adopt site links and tokens
+- [x] Stickyard: add to the Portal list, adopt site links and tokens
 - [ ] Stickyard: rename @stickyard/* packages to @krishnabuilds/*
 - [ ] Stickyard: add a linter
-- [ ] Stickyard: archive the old repo after cutover
+- [x] Stickyard: archive the old repo after cutover
 - [ ] Stickyard: remove https://kishore510.github.io from ALLOWED_ORIGINS after the old site is retired
 - [ ] Stickyard: port creation-switch.yml
 - [ ] Stickyard: custom domain for the relay Worker (replace the workers.dev address)
+- [ ] Stickyard: remove https://kishore510.github.io from ALLOWED_ORIGINS to retire the old Pages site
+- [ ] Stickyard: port creation-switch.yml (the old repo is archived, so the kill switch no longer runs from there)
+- [ ] Stickyard: fix stale comments in worker/wrangler.jsonc about secrets and ALLOWED_ORIGINS
+- [ ] Credits (About) miss transitive dependencies under pnpm in Sumyard and Stickyard
+- [ ] Chalkline: align react and react-dom with packages/ui (19.3.1) to remove a second React copy
+- [ ] Enforce one React version across apps and packages/ui (for example a root override) so shared components with hooks are safe
