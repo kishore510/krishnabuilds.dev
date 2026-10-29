@@ -125,3 +125,7 @@ Stickyard deploys from the monorepo as a relay Worker plus a web app Worker, is 
 ## 2026-10-29 — Stickyard creation switch lives at the repo root
 
 The Stickyard creation kill switch (creation-switch.yml) was ported from the archived old repo to .github/workflows/ in the monorepo, because GitHub only runs workflows from the root. It is manual-only (workflow_dispatch), sets the Worker secret CREATION_ENABLED to true or false using the existing CLOUDFLARE_API_TOKEN, and shares the deploy-stickyard concurrency group so it cannot overlap a deploy. Existing rooms keep working when creation is off.
+
+## 2026-10-29 — Arcade play counter validates against the games folder
+
+POST /api/play/<slug> now counts a play only if /games/<slug>/ exists in the deployed assets, so the games folder is the allowlist and adding a game needs no Worker change. Slugs are limited to 40 characters with a strict format, and inherited property names like constructor are rejected. A per-play cleanup of stored keys was rejected because it would add one lookup per game on every play and risk the subrequest limit. Rate limiting and atomic counters are deliberately left out; a Cloudflare rate-limiting rule is the first step if abuse appears.
