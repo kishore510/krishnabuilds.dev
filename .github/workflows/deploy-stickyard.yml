@@ -1,0 +1,52 @@
+name: Deploy Stickyard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/stickyard/**
+      - .github/workflows/deploy-stickyard.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-stickyard
+  cancel-in-progress: false
+
+jobs:
+  # The relay goes first, so the new web origin is allowed before the site that uses it.
+  # Its secrets (create passcode, signing key, creation switch) live on the Worker and are never set here.
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run typecheck build --filter=@stickyard/shared --filter=@stickyard/web --filter=@stickyard/worker
+      - run: pnpm turbo run test --concurrency=1 --filter=@stickyard/shared --filter=@stickyard/web --filter=@stickyard/worker
+      - run: pnpm --filter @stickyard/worker exec wrangler deploy --keep-vars
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  web:
+    needs: worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run build --filter=@stickyard/web
+      - run: pnpm --filter @stickyard/web exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
