@@ -13,15 +13,13 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  // Create this namespace once with:
-  //   npx wrangler kv namespace create PLAY_COUNTS
-  // then paste the returned id below (and see README.md for the
-  // one-time dashboard step, since this repo auto-deploys via
-  // Cloudflare Workers Builds rather than local `wrangler deploy`).
+  // Deploys run from GitHub Actions in the krishnabuilds.dev monorepo
+  // (.github/workflows/deploy-arcade.yml) on pushes to main.
   "kv_namespaces": [
     {
       "binding": "PLAY_COUNTS",
       "id": "00630bb9801840ee82a86724e49bd044"
     }
-  ]
+  ],
+  "routes": [{ "pattern": "arcade.krishnabuilds.dev", "custom_domain": true }]
 }
