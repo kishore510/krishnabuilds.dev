@@ -15,17 +15,25 @@
 - [x] Cloudflare deploy for Portal
 - [x] Path-filtered deploy workflow
 
-## Week 2 — Migrate three simple apps (preserving history)
+## Week 2 — Migrate the simple apps and Arcade (preserving history)
 
 For each app: scan history for secrets and report before importing, import with history, wire up build + deploy.
 
-- [x] Chalkline
-- [x] Stickyard
-- [x] Sumyard
+Rule for `packages/ui`: only extract a component once it is duplicated in two apps.
+
+- [x] Chalkline (migrated, deployed)
+- [x] Stickyard (migrated, deployed)
+- [x] Sumyard (migrated, deployed)
 - [x] Arcade (migrated, deployed)
-- [ ] Extract shared components into `packages/ui` only where duplicated in two apps
-- [ ] Extract shared site header and app list into `packages/ui` when the first migrated app needs them, so every app has the same nav bar
-- [ ] For each migrated app: adopt `@krishnabuilds/tokens` and the shared header, and add its subdomain via wrangler `custom_domain`
+- [x] Extract the shared site header and app list into `packages/ui`
+- [x] Add each migrated app's subdomain via wrangler `custom_domain`
+- [x] Add each migrated app to the Portal app list
+- [x] Give each migrated app the shared site links (home link and app switcher)
+- [ ] Adopt `@krishnabuilds/tokens` in each migrated app
+  - [ ] Chalkline
+  - [ ] Stickyard
+  - [ ] Sumyard
+  - [ ] Arcade
 
 ## Week 3 — Stonks, then switch off the Pi
 
@@ -41,34 +49,43 @@ For each app: scan history for secrets and report before importing, import with 
 
 The app list in `packages/ui` (`src/apps.ts`) is the single source for the site header nav and the Portal cards.
 
-- [x] Portal: add group, status, stack to apps.ts and group the cards (can ride along with the first migrated app)
-- [ ] Portal: story page template, then one page per app as each migrates
-- [ ] Portal: "How this is built" page
-- [ ] Chalkline: pnpm conversion, remove the workspace exclusion, wire Cloudflare deploy to chalkline.krishnabuilds.dev, retire the GitHub Pages workflow
-- [x] Chalkline: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
-- [ ] Align Chalkline's ESLint with the shared config when typescript-eslint supports TypeScript 7
-- [x] Sumyard: after the new site is verified, retire the GitHub Pages workflow and archive the old repo
-- [x] Sumyard: add to the Portal app list
-- [ ] Sumyard: About's credits miss transitive dependencies (e.g. `scheduler`) under pnpm, because they are looked up in `apps/sumyard/node_modules`; resolve them properly
-- [ ] Chalkline: adopt shared tokens (site links done)
-- [ ] Sumyard: adopt shared tokens (site links done)
+### Portal
+
+- [x] Add group, status, stack to apps.ts and group the cards
+- [ ] Story page template, then one page per app as each migrates
+- [ ] "How this is built" page
+
+### Shared
+
 - [ ] packages/ui: make the home link in SiteLinks look like a link and improve spacing/layout (affects all apps)
-- [ ] Arcade: restrict the play-counter endpoint to known game slugs (currently accepts any slug and has no rate limit)
-- [ ] Arcade: add to the Portal app list, adopt site links and tokens
-- [ ] Arcade: archive the old repo after the new deploy is verified
-- [ ] Arcade: consider moving the site into a public/ folder instead of using .assetsignore
-- [ ] Arcade: generate site-links app list from the shared list instead of duplicating it
-- [ ] Stickyard: deploy web to stickyard.krishnabuilds.dev and the Worker from Actions; add the new origin to ALLOWED_ORIGINS; port creation-switch.yml
-- [x] Stickyard: add to the Portal list, adopt site links and tokens
-- [ ] Stickyard: rename @stickyard/* packages to @krishnabuilds/*
-- [ ] Stickyard: add a linter
-- [x] Stickyard: archive the old repo after cutover
-- [ ] Stickyard: remove https://kishore510.github.io from ALLOWED_ORIGINS after the old site is retired
-- [ ] Stickyard: port creation-switch.yml
-- [ ] Stickyard: custom domain for the relay Worker (replace the workers.dev address)
-- [ ] Stickyard: remove https://kishore510.github.io from ALLOWED_ORIGINS to retire the old Pages site
-- [ ] Stickyard: port creation-switch.yml (the old repo is archived, so the kill switch no longer runs from there)
-- [ ] Stickyard: fix stale comments in worker/wrangler.jsonc about secrets and ALLOWED_ORIGINS
-- [ ] Credits (About) miss transitive dependencies under pnpm in Sumyard and Stickyard
-- [ ] Chalkline: align react and react-dom with packages/ui (19.3.1) to remove a second React copy
 - [ ] Enforce one React version across apps and packages/ui (for example a root override) so shared components with hooks are safe
+- [ ] Credits (About) miss transitive dependencies (e.g. `scheduler`) under pnpm in Sumyard and Stickyard, because they are looked up in the app's own `node_modules`; resolve them properly
+
+### Chalkline
+
+- [x] pnpm conversion, remove the workspace exclusion, deploy to chalkline.krishnabuilds.dev
+- [x] After the new site is verified, retire the GitHub Pages workflow and archive the old repo
+- [ ] Align ESLint with the shared config when typescript-eslint supports TypeScript 7
+- [ ] Align react and react-dom with packages/ui (19.3.1) to remove a second React copy
+
+### Sumyard
+
+- [x] After the new site is verified, retire the GitHub Pages workflow and archive the old repo
+
+### Arcade
+
+- [ ] Restrict the play-counter endpoint to known game slugs (currently accepts any slug and has no rate limit)
+- [ ] Archive the old repo after the new deploy is verified
+- [ ] Consider moving the site into a public/ folder instead of using .assetsignore
+- [ ] Generate the site-links app list from the shared list instead of duplicating it
+
+### Stickyard
+
+- [x] Deploy web to stickyard.krishnabuilds.dev and the relay Worker from Actions; add the new origin to ALLOWED_ORIGINS
+- [x] Archive the old repo after cutover
+- [ ] Port creation-switch.yml (the old repo is archived, so the kill switch no longer runs from there)
+- [ ] Remove https://kishore510.github.io from ALLOWED_ORIGINS to retire the old Pages site
+- [ ] Custom domain for the relay Worker (replace the workers.dev address)
+- [ ] Fix stale comments in worker/wrangler.jsonc about secrets and ALLOWED_ORIGINS
+- [ ] Rename @stickyard/* packages to @krishnabuilds/*
+- [ ] Add a linter
