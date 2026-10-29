@@ -22,7 +22,7 @@
   const APPS = [
     { name: 'Arcade', url: 'https://arcade.krishnabuilds.dev', status: 'live' },
     { name: 'Chalkline', url: 'https://chalkline.krishnabuilds.dev', status: 'live' },
-    { name: 'Stickyard', url: 'https://stickyard.krishnabuilds.dev', status: 'building' },
+    { name: 'Stickyard', url: 'https://stickyard.krishnabuilds.dev', status: 'live' },
     { name: 'Sumyard', url: 'https://sumyard.krishnabuilds.dev', status: 'live' },
   ];
   const CURRENT = 'Arcade';
