@@ -202,18 +202,20 @@
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
+  /* Type scale and spacing base come from the shared @krishnabuilds/tokens
+     (same values Sumyard used before). Colours and radii stay Sumyard's own. */
   --text-*: initial;
-  --text-xs: 0.75rem;
+  --text-xs: var(--kb-font-size-xs);
   --text-xs--line-height: 1rem;
-  --text-sm: 0.875rem;
+  --text-sm: var(--kb-font-size-sm);
   --text-sm--line-height: 1.25rem;
-  --text-base: 1rem;
+  --text-base: var(--kb-font-size-md);
   --text-base--line-height: 1.5rem;
-  --text-lg: 1.125rem;
+  --text-lg: var(--kb-font-size-lg);
   --text-lg--line-height: 1.75rem;
-  --text-xl: 1.25rem;
+  --text-xl: var(--kb-font-size-xl);
   --text-xl--line-height: 1.75rem;
-  --text-2xl: 1.5rem;
+  --text-2xl: var(--kb-font-size-2xl);
   --text-2xl--line-height: 2rem;
 
   --radius-*: initial;
@@ -222,7 +224,7 @@
   --radius-lg: 12px;
   --radius-full: 9999px;
 
-  --spacing: 0.25rem;
+  --spacing: var(--kb-space-1);
 
   --breakpoint-*: initial;
   --breakpoint-sm: 40rem;

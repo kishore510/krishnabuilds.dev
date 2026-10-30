@@ -6,7 +6,7 @@ All tokens live in `src/styles/tokens.css`. They are adapted from Chalkline's `s
 
 1. **Raw palette** (`--sy-palette-*`): every colour value, defined once in `:root` and never changed by a theme. Used only inside `tokens.css` (a test fails if any other file names a palette token).
 2. **Semantic layer** (`--sy-bg`, `--sy-surface`, `--sy-text`, `--sy-accent`, `--sy-danger`, ...): what components use, usually through the Tailwind utilities (`bg-bg`, `bg-surface`, `text-text`, `text-accent`, ...). The `[data-theme='light']` and `[data-theme='dark']` blocks set only this layer, and every value is a `var()` pointing at the palette (a test checks).
-3. **Theme-independent tokens**: touch target, focus ring, toast duration, motion, layout and chrome sizes, plus Tailwind's type scale, radii, spacing base and breakpoints in `@theme`.
+3. **Theme-independent tokens**: touch target, focus ring, toast duration, motion, layout and chrome sizes, plus Tailwind's type scale, radii, spacing base and breakpoints in `@theme`. The type scale (xs to 2xl) and spacing base point at the shared `@krishnabuilds/tokens` variables (`--kb-font-size-*`, `--kb-space-1`), which have the same values; colours and radii stay Sumyard's own.
 
 ## Differences from Chalkline
 
