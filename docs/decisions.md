@@ -153,3 +153,15 @@ POST /api/play/<slug> is limited to 20 requests per minute per client IP using t
 ## 2026-10-30 — Chalkline adopts the shared tokens for type scale and spacing only
 
 Chalkline imports `@krishnabuilds/tokens/tokens.css` and takes its Tailwind type scale (xs to 2xl) and spacing base from the shared `--kb-*` variables, which had the same values. Its colours (paper and blackboard) and its 8 to 12px radii stay Chalkline's own, because the shared palette and radii differ and swapping them would change how the app looks. Screenshots of the app and its style sheet page at 360 and 1280px in light and dark were pixel-identical before and after. Theme handling is unchanged: Chalkline sets `data-theme` on `<html>` from its own setting, which the shared tokens also follow.
+
+## 2026-10-30 — Stonks D1 schema keeps the daily table narrow
+
+The D1 spike (Week 3, Spike 2 in `docs/plan.md`) found that about 1,900 rows a night at about 1 KB each with 3 indexes reaches the 500 MB Free-plan database cap in about 6.5 months, and that a full scan of a year's rows uses about a seventh of the daily read limit. So the schema follows these rules:
+
+- **Narrow daily table**: one row per instrument per night, holding only numbers, flags and foreign keys (target about 200 bytes). No repeated names, descriptions or text blobs.
+- **Separate instruments table**: name, exchange, sector and other slow-changing text are stored once and referenced by id.
+- **Few, deliberate indexes**: start with (date) and (instrument_id, date) and add one only for a query that needs it. Each index adds a row written per insert and storage.
+- **Nightly summary tables**: the dashboard and outcome views read small precomputed aggregates written by the nightly job, not full scans of the daily table.
+- **Cold archive to R2**: rows older than a set window (for example 12 months) are exported to R2 and deleted from D1, keeping the database under 500 MB.
+
+Moving to Workers Paid (10 GB, no daily caps) is the fallback if these are not enough; it is not needed for year one.
