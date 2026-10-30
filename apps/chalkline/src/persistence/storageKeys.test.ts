@@ -106,8 +106,10 @@ describe('owned storage keys: real writes', () => {
 
     expect(written.size).toBeGreaterThanOrEqual(6)
     for (const key of written) expect(OWNED_KEYS, `${key} is written but not registered`).toContain(key)
-    // The migrated old keys are gone.
-    expect(data.has('chalkline.theme')).toBe(false)
+    // The migrated old keys are gone. The old theme key stays: it is removed only once the
+    // shared kb-theme cookie holds its value, and there are no cookies in this (node) test.
+    expect(data.has('chalkline.view')).toBe(false)
+    expect(data.get('chalkline.theme')).toBe('dark')
     // The dynamic imports pull in most of the app, which is slow on a small machine.
   }, 30_000)
 })

@@ -9,7 +9,7 @@ Panel sizes are remembered the same way: the palette's width, the AI change log'
 
 ## Appearance
 
-- **Theme**: System (follows your device), Light or Dark. The sun and moon button at the top switches it too.
+- **Theme**: System (follows your device), Light or Dark. The sun and moon button at the top switches it too. The theme is shared with the other krishnabuilds.dev apps: it's kept in a `kb-theme` cookie on krishnabuilds.dev, so a theme you choose in one app is used in the others. System means no cookie is set.
 
 ## Canvas
 
@@ -31,13 +31,13 @@ Your diagram, stencil library and settings live in this browser only. A backup m
 
 - **Export everything** downloads one `.json` backup file with your current diagram, your stencils and your settings.
 - **Import backup** checks the file first and tells you what it will replace. Nothing changes until you confirm, and the page then reloads with the restored data.
-- Your AI key is never included in a backup.
+- Your AI key is never included in a backup, and neither is the theme (it's shared with the other apps instead).
 - A backup isn't a diagram file: open single diagrams with **Open JSON** in the menu instead.
 - **Storage used** shows roughly how much this browser holds for Chalkline, where the browser says.
 
 ## Clear local data
 
-**Clear local data** removes everything Chalkline keeps in this browser: the autosaved diagram, stencils, settings, recent items and your AI key. It offers to export a backup first, then reloads to a fresh start. Files you've saved aren't touched.
+**Clear local data** removes everything Chalkline keeps in this browser: the autosaved diagram, stencils, settings, recent items and your AI key. It offers to export a backup first, then reloads to a fresh start. Files you've saved aren't touched, and the theme stays, because it's shared with the other krishnabuilds.dev apps.
 
 ## The tour
 

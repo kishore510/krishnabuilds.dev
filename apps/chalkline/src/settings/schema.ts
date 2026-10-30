@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { ArrowheadSchema, FontIdSchema, FontSizeSchema } from '@/schema/diagram'
-import { THEME_PREFERENCES } from '@/lib/theme'
 
 /*
  * App settings: how Chalkline looks and behaves for this person. View and app
@@ -17,7 +16,7 @@ import { THEME_PREFERENCES } from '@/lib/theme'
  * own storage entry (see src/ai/keyStore.ts), never a field here.
  */
 
-export const SETTINGS_VERSION = 3
+export const SETTINGS_VERSION = 4
 
 /** A field that falls back to `fallback` when missing or invalid. */
 const field = <T extends z.ZodType>(schema: T, fallback: z.infer<T>) => schema.catch(fallback)
@@ -32,9 +31,6 @@ export const GridDisplaySchema = z.enum(['dots', 'lines', 'off'])
 export const AiKeyStorageSchema = z.enum(['session', 'device'])
 
 const SECTIONS = {
-  appearance: section({
-    theme: field(z.enum(THEME_PREFERENCES), 'system'),
-  }),
   canvas: section({
     /** Snap to grid (the G key changes this too). */
     snapToGrid: field(z.boolean(), true),
@@ -111,6 +107,9 @@ export const SETTINGS_MIGRATIONS: Readonly<Record<number, SettingsMigration>> = 
   1: (raw) => ({ ...raw, settingsVersion: 2, ai: { keyStorage: 'session', noticeAcknowledged: false, includeNotes: false } }),
   // v3 adds the AI change log's width and collapsed state to `panels`, keeping the rest of the section.
   2: (raw) => ({ ...raw, settingsVersion: 3, panels: { ...(isRecord(raw.panels) ? raw.panels : {}), logWidth: null, logCollapsed: false } }),
+  // v4 drops `appearance`: the theme moved to the shared kb-theme cookie (src/lib/sharedTheme.ts),
+  // which loadSettings fills from the old value before this step runs.
+  3: ({ appearance: _theme, ...raw }) => ({ ...raw, settingsVersion: 4 }),
 }
 
 const isRecord = (value: unknown): value is RawSettings => typeof value === 'object' && value !== null && !Array.isArray(value)

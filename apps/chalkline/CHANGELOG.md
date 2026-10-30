@@ -2,6 +2,13 @@
 
 All notable changes to Chalkline are listed here, newest first. The format follows Keep a Changelog, and versions follow the project convention: 0.x, a minor bump for each merged slice and a patch bump for each follow-up fix.
 
+## [0.32.0] - 2026-10-30
+
+### Changed
+- **The theme is shared with the other krishnabuilds.dev apps.** Choose System, Light or Dark here or in another app and it's used in both. It's kept in a cookie on krishnabuilds.dev instead of in Chalkline's own settings.
+- **Your theme carries over.** The first time you open this version, a Light or Dark choice you made in Chalkline is moved to the shared setting, unless you've already chosen a theme in another app, in which case that one is used.
+- The theme is no longer part of a backup, and **Clear local data** leaves it as it is.
+
 ## [0.31.0] - 2026-10-11
 
 ### Added

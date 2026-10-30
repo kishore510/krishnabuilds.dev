@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { adoptLocalTheme } from '@/lib/sharedTheme'
 import { appStorage, writeKey, type WriteResult } from '@/persistence/localStore'
 import { loadSettings, mergeSettings, SETTINGS_KEY, type SettingsLoad } from './load'
 import type { Settings } from './schema'
@@ -20,10 +21,10 @@ interface SettingsState {
 }
 
 /** What the first load did (old preferences migrated), for diagnostics and tests. */
-export let settingsLoad: SettingsLoad = { settings: undefined as never, migrated: [], removed: [] }
+export let settingsLoad: SettingsLoad = { settings: undefined as never, migrated: [], removed: [], theme: null }
 
 function initial(): Settings {
-  settingsLoad = loadSettings(appStorage())
+  settingsLoad = loadSettings(appStorage(), adoptLocalTheme)
   return settingsLoad.settings
 }
 

@@ -94,7 +94,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] After the new site is verified, retire the GitHub Pages workflow and archive the old repo
 - [ ] Align ESLint with the shared config when typescript-eslint supports TypeScript 7
 - [ ] Align react and react-dom with packages/ui (19.3.1) to remove a second React copy
-- [ ] Theme choice is stored in localStorage, not the shared `kb-theme` cookie, so it does not carry over to or from the other apps. Decide whether Chalkline should join the shared cookie
+- [x] Join the shared `kb-theme` cookie instead of storing the theme in localStorage, migrating an existing local choice once (0.32.0)
 
 ### Sumyard
 

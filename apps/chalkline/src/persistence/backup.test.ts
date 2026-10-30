@@ -113,7 +113,8 @@ describe('import backup', () => {
     let library: Stencil[] = []
     expect(await applyRestore(check.plan, target, async (s) => void (library = s))).toBeNull()
     expect(parseDiagram(JSON.parse(target.getItem(STORAGE_KEYS.autosave.key)!))).toEqual(diagram)
-    expect(JSON.parse(target.getItem(STORAGE_KEYS.settings.key)!).appearance.theme).toBe('dark')
+    // The backup's theme is not restored: it lives in the shared kb-theme cookie now.
+    expect(JSON.parse(target.getItem(STORAGE_KEYS.settings.key)!)).not.toHaveProperty('appearance')
     expect(library).toHaveLength(1)
   })
 
