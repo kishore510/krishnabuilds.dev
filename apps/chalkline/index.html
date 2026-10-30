@@ -6,10 +6,14 @@
     <meta name="description" content="Chalkline: ideas to diagrams." />
     <title>Chalkline</title>
     <script>
-      // Apply the theme before first paint to avoid a flash. Mirrors storedPreference in src/lib/theme.ts.
+      // Apply the theme before first paint to avoid a flash. The shared kb-theme cookie (see
+      // packages/ui/src/theme.ts) wins; until src/settings/load.ts has moved an old local theme
+      // into it, that local value applies (mirrors storedPreference in src/lib/theme.ts).
       ;(function () {
         var pref = 'system'
-        try {
+        var shared = document.cookie.match(/(?:^|; )kb-theme=(light|dark)(?:;|$)/)
+        if (shared) pref = shared[1]
+        else try {
           var settings = localStorage.getItem('chalkline.settings')
           if (settings === null) pref = localStorage.getItem('chalkline.theme') || 'system'
           else pref = ((JSON.parse(settings) || {}).appearance || {}).theme || 'system'

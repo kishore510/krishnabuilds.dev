@@ -1,4 +1,4 @@
-import { parsePreference } from '@/lib/theme'
+import { parsePreference, type ThemePreference } from '@/lib/theme'
 import { readKey } from '@/persistence/localStore'
 import { STORAGE_KEYS } from '@/persistence/storageKeys'
 import type { Settings } from './schema'
@@ -27,6 +27,8 @@ export interface LegacyResult {
   patch: Patch
   /** Old keys that were present, valid or not; all are removed after migrating. */
   found: string[]
+  /** The old theme key's value, if present. It goes to the shared theme cookie, not settings. */
+  theme: ThemePreference | null
 }
 
 /** Reads every old preference key. Unreadable values are skipped (defaults apply). */
@@ -39,8 +41,8 @@ export function readLegacyPrefs(storage: Reader | undefined): LegacyResult {
   }
   const patch: Patch = {}
 
-  const theme = read(STORAGE_KEYS.legacyTheme.key)
-  if (theme !== null) patch.appearance = { theme: parsePreference(theme) }
+  const themeText = read(STORAGE_KEYS.legacyTheme.key)
+  const theme = themeText === null ? null : parsePreference(themeText)
 
   const view = json(read(STORAGE_KEYS.legacyView.key))
   if (view) {
@@ -66,5 +68,5 @@ export function readLegacyPrefs(storage: Reader | undefined): LegacyResult {
     if (typeof palette?.width === 'number' && Number.isFinite(palette.width) && palette.width > 0) patch.panels.paletteWidth = palette.width
   }
 
-  return { patch, found }
+  return { patch, found, theme }
 }

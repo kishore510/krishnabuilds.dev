@@ -20,7 +20,6 @@ describe('settings validation', () => {
   it('has sensible defaults', () => {
     expect(defaultSettings()).toEqual({
       settingsVersion: SETTINGS_VERSION,
-      appearance: { theme: 'system' },
       canvas: { snapToGrid: true, smartGuides: true, grid: 'dots', arrowhead: 'arrow' },
       text: {},
       arrange: { direction: 'right', spacing: 'normal' },
@@ -37,14 +36,14 @@ describe('settings validation', () => {
       canvas: { snapToGrid: false, smartGuides: 'yes', grid: 'lines', arrowhead: 'closed' },
       text: { fontFamily: 'nunito', fontSize: 400 },
     })
-    expect(s.appearance.theme).toBe('system')
+    expect(s).not.toHaveProperty('appearance')
     expect(s.canvas).toEqual({ snapToGrid: false, smartGuides: true, grid: 'lines', arrowhead: 'closed' })
     expect(s.text).toEqual({ fontFamily: 'nunito' })
   })
 
   it('treats a broken section as defaults without touching the others', () => {
-    const s = parseSettings({ appearance: 'dark', canvas: null, arrange: { direction: 'down' } })
-    expect(s.appearance).toEqual(defaultSettings().appearance)
+    const s = parseSettings({ text: 'dark', canvas: null, arrange: { direction: 'down' } })
+    expect(s.text).toEqual(defaultSettings().text)
     expect(s.canvas).toEqual(defaultSettings().canvas)
     expect(s.arrange.direction).toBe('down')
   })
@@ -58,7 +57,7 @@ describe('settings validation', () => {
     const s = parseSettings({ settingsVersion: 99, future: { provider: 'x' }, appearance: { theme: 'dark' } })
     expect(s.settingsVersion).toBe(99)
     expect((s as Record<string, unknown>).future).toEqual({ provider: 'x' })
-    expect(s.appearance.theme).toBe('dark')
+    expect((s as Record<string, unknown>).appearance).toEqual({ theme: 'dark' })
   })
 
   it('merges a patch section by section and validates it', () => {
@@ -89,7 +88,7 @@ describe('settings v1 to v2: the AI section', () => {
     const s = parseSettings(v1)
     expect(s.settingsVersion).toBe(SETTINGS_VERSION)
     expect(s.ai).toEqual({ keyStorage: 'session', noticeAcknowledged: false, includeNotes: false })
-    const { settingsVersion: _, ...rest } = v1
+    const { settingsVersion: _, appearance: _theme, ...rest } = v1
     expect(s).toMatchObject(rest)
   })
 
@@ -125,9 +124,9 @@ describe('settings v1 to v2: the AI section', () => {
 
   it('a v1 settings key in storage loads as the current version', () => {
     const storage = memoryStorage({ [SETTINGS_KEY]: JSON.stringify(v1) })
-    const { settings } = loadSettings(storage)
+    const { settings, theme } = loadSettings(storage)
     expect(settings.settingsVersion).toBe(SETTINGS_VERSION)
-    expect(settings.appearance.theme).toBe('dark')
+    expect(theme).toBe('dark')
     expect(settings.ai.keyStorage).toBe('session')
   })
 })
@@ -172,8 +171,8 @@ describe('loading settings and migrating old preference keys', () => {
 
   it('folds every old key into settings and keeps the user’s choices', () => {
     const storage = memoryStorage(legacy)
-    const { settings, migrated, removed } = loadSettings(storage)
-    expect(settings.appearance.theme).toBe('dark')
+    const { settings, migrated, removed, theme } = loadSettings(storage, () => true)
+    expect(theme).toBe('dark')
     expect(settings.canvas).toMatchObject({ snapToGrid: false, smartGuides: false, grid: 'lines' })
     expect(settings.arrange).toEqual({ direction: 'down', spacing: 'roomy' })
     expect(settings.panels).toEqual({ paletteWidth: 320, paletteCollapsed: true, rightCollapsed: true, logWidth: null, logCollapsed: false })
@@ -184,9 +183,9 @@ describe('loading settings and migrating old preference keys', () => {
 
   it('removes the old keys only after the new key was written', () => {
     const storage = memoryStorage(legacy)
-    loadSettings(storage)
+    loadSettings(storage, () => true)
     expect([...storage.data.keys()]).toEqual([SETTINGS_KEY])
-    expect(parseSettingsText(storage.getItem(SETTINGS_KEY)).appearance.theme).toBe('dark')
+    expect(storage.getItem(SETTINGS_KEY)).not.toContain('appearance')
   })
 
   it('keeps the old keys when the new key can’t be written (storage full)', () => {
@@ -194,17 +193,17 @@ describe('loading settings and migrating old preference keys', () => {
     storage.setItem = () => {
       throw Object.assign(new Error('full'), { name: 'QuotaExceededError' })
     }
-    const { settings, removed } = loadSettings(storage)
-    expect(settings.appearance.theme).toBe('dark')
+    const { theme, removed } = loadSettings(storage, () => true)
+    expect(theme).toBe('dark')
     expect(removed).toEqual([])
     expect(storage.data.size).toBe(Object.keys(legacy).length)
   })
 
   it('skips unreadable old values but still removes their keys', () => {
     const storage = memoryStorage({ [STORAGE_KEYS.legacyView.key]: '{oops', [STORAGE_KEYS.legacyTheme.key]: 'purple' })
-    const { settings, removed } = loadSettings(storage)
+    const { settings, removed, theme } = loadSettings(storage, () => true)
     expect(settings.canvas).toEqual(defaultSettings().canvas)
-    expect(settings.appearance.theme).toBe('system')
+    expect(theme).toBe('system')
     expect(removed).toHaveLength(2)
   })
 
@@ -245,17 +244,15 @@ describe('settings v2 to v3: the AI change log panel', () => {
     ai: { keyStorage: 'device', noticeAcknowledged: true, includeNotes: true },
   }
 
-  it('is version 3', () => {
-    expect(SETTINGS_VERSION).toBe(3)
+  it('has a step to version 3', () => {
     expect(SETTINGS_MIGRATIONS[2]).toBeTypeOf('function')
   })
 
   it('adds the log width and collapsed state, keeping every v2 panel and AI choice', () => {
     const s = parseSettings(v2)
-    expect(s.settingsVersion).toBe(3)
+    expect(s.settingsVersion).toBe(SETTINGS_VERSION)
     expect(s.panels).toEqual({ paletteWidth: 320, paletteCollapsed: true, rightCollapsed: false, logWidth: null, logCollapsed: false })
     expect(s.ai).toEqual(v2.ai)
-    expect(s.appearance.theme).toBe('light')
   })
 
   it('the step copes with a missing or broken panels section', () => {
@@ -266,5 +263,56 @@ describe('settings v2 to v3: the AI change log panel', () => {
   it('reads v3 choices and falls back field by field', () => {
     expect(parseSettings({ settingsVersion: 3, panels: { logWidth: 400, logCollapsed: true } }).panels).toMatchObject({ logWidth: 400, logCollapsed: true })
     expect(parseSettings({ settingsVersion: 3, panels: { logWidth: -5, logCollapsed: 'yes' } }).panels).toMatchObject({ logWidth: null, logCollapsed: false })
+  })
+})
+
+describe('settings v3 to v4: the theme moves to the shared kb-theme cookie', () => {
+  // What 0.21.0 to 0.31.0 wrote.
+  const v3 = {
+    settingsVersion: 3,
+    appearance: { theme: 'dark' },
+    canvas: { snapToGrid: false, smartGuides: true, grid: 'lines', arrowhead: 'closed' },
+    ai: { keyStorage: 'device', noticeAcknowledged: true, includeNotes: false },
+  }
+
+  it('is version 4, and the step drops appearance and keeps the rest', () => {
+    expect(SETTINGS_VERSION).toBe(4)
+    const { appearance: _theme, ...rest } = v3
+    expect(SETTINGS_MIGRATIONS[3]!(v3)).toEqual({ ...rest, settingsVersion: 4 })
+  })
+
+  it('offers the stored theme to the shared cookie, then rewrites settings without it, once', () => {
+    const storage = memoryStorage({ [SETTINGS_KEY]: JSON.stringify(v3) })
+    const offered: string[] = []
+    const first = loadSettings(storage, (theme) => (offered.push(theme), true))
+    expect(first.theme).toBe('dark')
+    expect(first.settings.canvas.grid).toBe('lines')
+    const stored = JSON.parse(storage.getItem(SETTINGS_KEY)!)
+    expect(stored).not.toHaveProperty('appearance')
+    expect(stored).toMatchObject({ settingsVersion: 4, canvas: v3.canvas, ai: v3.ai })
+
+    expect(loadSettings(storage, (theme) => (offered.push(theme), true)).theme).toBeNull()
+    expect(offered).toEqual(['dark'])
+  })
+
+  it('keeps the stored theme when the cookie couldn’t take it, and offers it again next time', () => {
+    const storage = memoryStorage({ [SETTINGS_KEY]: JSON.stringify(v3) })
+    expect(loadSettings(storage, () => false).theme).toBe('dark')
+    expect(storage.getItem(SETTINGS_KEY)).toBe(JSON.stringify(v3))
+    expect(loadSettings(storage, () => true).theme).toBe('dark')
+  })
+
+  it('offers system too (nothing to keep), so the old field is still cleaned up', () => {
+    const storage = memoryStorage({ [SETTINGS_KEY]: JSON.stringify({ ...v3, appearance: { theme: 'system' } }) })
+    expect(loadSettings(storage, () => true).theme).toBe('system')
+    expect(storage.getItem(SETTINGS_KEY)).not.toContain('appearance')
+  })
+
+  it('keeps the old one-word theme key when the cookie couldn’t take it, and removes the others', () => {
+    const storage = memoryStorage({ [STORAGE_KEYS.legacyTheme.key]: 'light', [STORAGE_KEYS.legacyView.key]: '{}' })
+    const { removed, theme } = loadSettings(storage, () => false)
+    expect(theme).toBe('light')
+    expect(removed).toEqual([STORAGE_KEYS.legacyView.key])
+    expect(storage.getItem(STORAGE_KEYS.legacyTheme.key)).toBe('light')
   })
 })

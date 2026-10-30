@@ -39,5 +39,6 @@ describe('theme', () => {
     expect(html).toContain("localStorage.getItem('chalkline.settings')")
     expect(html).toContain("localStorage.getItem('chalkline.theme')")
     expect(html).toContain('appearance')
+    expect(html).toContain('kb-theme=(light|dark)')
   })
 })

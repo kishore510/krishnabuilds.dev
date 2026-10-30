@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
+import { readThemePreference, subscribeThemePreference, writeThemePreference } from '@/lib/sharedTheme'
 import { nextPreference, resolveTheme, type Theme, type ThemePreference } from '@/lib/theme'
-import { updateSettings, useSettingsStore } from '@/settings/settingsStore'
 
 const DARK_QUERY = '(prefers-color-scheme: dark)'
 
@@ -16,17 +16,21 @@ function useSystemDark() {
   )
 }
 
-/** Current theme preference (from settings), applied to <html data-theme> and kept in sync with the OS. */
+/** Current theme preference (the shared kb-theme cookie), applied to <html data-theme> and kept in sync with the OS. */
 export function useTheme() {
-  const preference = useSettingsStore((s) => s.settings.appearance.theme)
+  const preference = useSyncExternalStore(subscribeThemePreference, readThemePreference, (): ThemePreference => 'system')
   const theme: Theme = resolveTheme(preference, useSystemDark())
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
 
-  const set = useCallback((next: ThemePreference) => updateSettings({ appearance: { theme: next } }), [])
-  const cycle = useCallback(() => set(nextPreference(useSettingsStore.getState().settings.appearance.theme)), [set])
+  const set = useCallback((next: ThemePreference) => {
+    writeThemePreference(next)
+    // The shared helper clears data-theme for system; Chalkline's own tokens need it set.
+    document.documentElement.dataset.theme = resolveTheme(next, window.matchMedia(DARK_QUERY).matches)
+  }, [])
+  const cycle = useCallback(() => set(nextPreference(readThemePreference())), [set])
 
   return { preference, theme, set, cycle }
 }
