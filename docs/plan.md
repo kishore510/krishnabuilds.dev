@@ -31,7 +31,7 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
 - [x] Give each migrated app the shared site links (home link and app switcher)
 - [ ] Adopt `@krishnabuilds/tokens` in each migrated app
   - [x] Chalkline (type scale and spacing base only; keeps its own palette and radii)
-  - [ ] Stickyard
+  - [x] Stickyard (web only; type scale and spacing only; keeps its own palette and radii)
   - [x] Sumyard (type scale and spacing base only; keeps its own palette and radii)
   - [ ] Arcade
 
