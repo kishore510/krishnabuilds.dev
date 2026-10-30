@@ -21,5 +21,14 @@
       "id": "00630bb9801840ee82a86724e49bd044"
     }
   ],
+  // Basic per-IP limit on POST /api/play/<slug>. namespace_id is a
+  // free-form number unique within the account, not a secret.
+  "ratelimits": [
+    {
+      "name": "PLAY_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ],
   "routes": [{ "pattern": "arcade.krishnabuilds.dev", "custom_domain": true }]
 }

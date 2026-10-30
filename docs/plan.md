@@ -93,7 +93,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 
 ### Arcade
 
-- [ ] Restrict the play-counter endpoint to known game slugs (currently accepts any slug and has no rate limit)
+- [x] Restrict the play-counter endpoint to known game slugs and add basic rate limiting
 - [ ] Archive the old repo after the new deploy is verified
 - [ ] Consider moving the site into a public/ folder instead of using .assetsignore
 - [ ] Generate the site-links app list from the shared list instead of duplicating it

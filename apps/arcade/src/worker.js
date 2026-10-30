@@ -7,7 +7,8 @@
 // Routes:
 //   GET  /api/plays        -> { "<slug>": <count>, ... } for every game
 //   POST /api/play/<slug>  -> increments that slug, returns { slug, count };
-//                             404 (KV untouched) unless games/<slug>/ exists
+//                             404 (KV untouched) unless games/<slug>/ exists;
+//                             429 (KV untouched) if this IP is over the limit
 // Any other /api/play/* path that isn't a well-formed slug is a 404.
 // Anything else falls through to the static assets.
 
@@ -48,9 +49,24 @@ async function isGame(slug, request, env) {
   return res.status === 200;
 }
 
+// Basic per-IP limit via the PLAY_LIMITER binding (see wrangler.jsonc). It is
+// per Cloudflare location and approximate, which is fine for a fun counter.
+async function isRateLimited(request, env) {
+  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+  const { success } = await env.PLAY_LIMITER.limit({ key: ip });
+  return !success;
+}
+
 // The route regex only checks the slug's shape; isGame() checks it names a
-// real game before KV is read or written.
+// real game before KV is read or written. The rate limit runs first so
+// rejected requests cost no asset lookup or KV read.
 async function handlePlayPost(slug, request, env) {
+  if (await isRateLimited(request, env)) {
+    return new Response('Too many requests', {
+      status: 429,
+      headers: { 'retry-after': '60' }
+    });
+  }
   if (!(await isGame(slug, request, env))) return notFound();
 
   const counts = await readCounts(env);
