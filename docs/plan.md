@@ -30,7 +30,7 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
 - [x] Add each migrated app to the Portal app list
 - [x] Give each migrated app the shared site links (home link and app switcher)
 - [ ] Adopt `@krishnabuilds/tokens` in each migrated app
-  - [ ] Chalkline
+  - [x] Chalkline (type scale and spacing base only; keeps its own palette and radii)
   - [ ] Stickyard
   - [ ] Sumyard
   - [ ] Arcade
@@ -86,6 +86,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] After the new site is verified, retire the GitHub Pages workflow and archive the old repo
 - [ ] Align ESLint with the shared config when typescript-eslint supports TypeScript 7
 - [ ] Align react and react-dom with packages/ui (19.3.1) to remove a second React copy
+- [ ] Theme choice is stored in localStorage, not the shared `kb-theme` cookie, so it does not carry over to or from the other apps. Decide whether Chalkline should join the shared cookie
 
 ### Sumyard
 

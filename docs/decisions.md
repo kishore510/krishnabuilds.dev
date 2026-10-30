@@ -149,3 +149,7 @@ Data-source feasibility from GitHub Actions and D1 limits are checked with throw
 ## 2026-10-30 — Arcade play counter gets a basic per-IP rate limit
 
 POST /api/play/<slug> is limited to 20 requests per minute per client IP using the Workers Rate Limiting binding (PLAY_LIMITER in wrangler.jsonc), and returns 429 when over the limit. The check runs before the games-folder lookup and the KV write, so rejected requests are cheap. The binding is approximate and per Cloudflare location, which is enough for a fun counter, needs no dashboard setup and works on the free plan. This replaces the earlier choice to leave rate limiting out. Atomic counters are still out of scope.
+
+## 2026-10-30 — Chalkline adopts the shared tokens for type scale and spacing only
+
+Chalkline imports `@krishnabuilds/tokens/tokens.css` and takes its Tailwind type scale (xs to 2xl) and spacing base from the shared `--kb-*` variables, which had the same values. Its colours (paper and blackboard) and its 8 to 12px radii stay Chalkline's own, because the shared palette and radii differ and swapping them would change how the app looks. Screenshots of the app and its style sheet page at 360 and 1280px in light and dark were pixel-identical before and after. Theme handling is unchanged: Chalkline sets `data-theme` on `<html>` from its own setting, which the shared tokens also follow.
