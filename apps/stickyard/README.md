@@ -105,14 +105,16 @@ The same Cloudflare API token (**Account → Workers Scripts → Edit**) covers 
 
 `CREATION_ENABLED` is also a Worker secret. Starting sessions works only when it is exactly `true`; anything else (including unset) returns `503 creation_disabled`. Existing sessions keep working either way.
 
-Flip it from a phone in under a minute, no code change: **GitHub mobile app → stickyard → Actions → Room creation switch → Run workflow → on/off**. Or from the Pi:
+Flip it from a phone in under a minute, no code change: **GitHub mobile app → krishnabuilds.dev → Actions → Room creation switch → Run workflow → on/off**. Or from a terminal:
 
 ```sh
-gh workflow run creation-switch.yml -f creation=off
-gh workflow run creation-switch.yml -f creation=on
+gh workflow run creation-switch.yml -R kishore510/krishnabuilds.dev -f creation=off
+gh workflow run creation-switch.yml -R kishore510/krishnabuilds.dev -f creation=on
 ```
 
-Secrets survive later deploys, so the setting sticks until the switch is run again.
+The workflow is `.github/workflows/creation-switch.yml` at the monorepo root (GitHub only runs workflows from there). It uses the same `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` Actions secrets as the deploys. Secrets survive later deploys, so the setting sticks until the switch is run again.
+
+The switch is not proven until it has been run once from the monorepo. First-run check: run it **off**, confirm starting a session shows it is disabled while an open room still works, then run it **on** and confirm starting a session works again.
 
 ## What Cloudflare may log
 
