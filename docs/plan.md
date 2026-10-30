@@ -32,7 +32,7 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
 - [ ] Adopt `@krishnabuilds/tokens` in each migrated app
   - [x] Chalkline (type scale and spacing base only; keeps its own palette and radii)
   - [ ] Stickyard
-  - [ ] Sumyard
+  - [x] Sumyard (type scale and spacing base only; keeps its own palette and radii)
   - [ ] Arcade
 
 ## Week 3 — Stonks rebuild, then switch off the Pi

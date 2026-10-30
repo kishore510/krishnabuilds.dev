@@ -165,3 +165,7 @@ The D1 spike (Week 3, Spike 2 in `docs/plan.md`) found that about 1,900 rows a n
 - **Cold archive to R2**: rows older than a set window (for example 12 months) are exported to R2 and deleted from D1, keeping the database under 500 MB.
 
 Moving to Workers Paid (10 GB, no daily caps) is the fallback if these are not enough; it is not needed for year one.
+
+## 2026-10-30 — Sumyard adopts the shared tokens for type scale and spacing only
+
+Sumyard follows Chalkline: it imports `@krishnabuilds/tokens/tokens.css` and takes its Tailwind type scale (xs to 2xl) and spacing base from the shared `--kb-*` variables, which had the same values. Its palette and radii stay its own, and Biome stays its linter. Screenshots of the home, mortgage and budget pages at 360 and 1280px in light and dark were pixel-identical before and after. Sumyard always sets `data-theme` on `<html>` before first paint, so the shared theme blocks agree with its own.
