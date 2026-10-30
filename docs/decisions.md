@@ -129,3 +129,19 @@ The Stickyard creation kill switch (creation-switch.yml) was ported from the arc
 ## 2026-10-29 — Arcade play counter validates against the games folder
 
 POST /api/play/<slug> now counts a play only if /games/<slug>/ exists in the deployed assets, so the games folder is the allowlist and adding a game needs no Worker change. Slugs are limited to 40 characters with a strict format, and inherited property names like constructor are rejected. A per-play cleanup of stored keys was rejected because it would add one lookup per game on every play and risk the subrequest limit. Rate limiting and atomic counters are deliberately left out; a Cloudflare rate-limiting rule is the first step if abuse appears.
+
+## 2026-10-30 — Stonks is rebuilt, not migrated
+
+Stonks began as hand-copied scripts on a Raspberry Pi before Claude Code, so its code and history are not worth importing. It is rebuilt in `apps/stonks` using the concept only, with no git history imported. The architecture is unchanged: GitHub Actions cron, Cloudflare D1 and a read-only Worker dashboard. The old setup is a reference for a written spec that contains no secrets or real data. Existing data, if kept, moves into D1 directly and never via the repo.
+
+## 2026-10-30 — Stonks collects broadly and filters at read time
+
+Ingest stays wide: everything that passes only a provable-junk filter is stored, along with the filter inputs as columns. The result of each signal rule is stored per row, so rules can be changed and replayed over history without re-collecting. Strict views such as a price cap, US-only or UK-tradable are queries, not ingest gates.
+
+## 2026-10-30 — Stonks outcomes are derived, with a control group
+
+Win and loss outcomes are computed from stored price history rather than written by a separate tracker. Outcomes are computed for all collected rows, not just flagged ones, so flagged results can be compared against a baseline.
+
+## 2026-10-30 — Stonks data source and limits are validated by spikes first
+
+Data-source feasibility from GitHub Actions and D1 limits are checked with throwaway spikes before any slice is built. The result and any change of source are recorded here.

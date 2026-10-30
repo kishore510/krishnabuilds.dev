@@ -35,15 +35,34 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
   - [ ] Sumyard
   - [ ] Arcade
 
-## Week 3 — Stonks, then switch off the Pi
+## Week 3 — Stonks rebuild, then switch off the Pi
 
-- [ ] Scan Stonks history for secrets and financial data; report before importing
-- [ ] Migrate Stonks
-- [ ] Data refresh on GitHub Actions cron writing to D1
-- [ ] Read-only Worker dashboard
-- [ ] Decide whether the Stonks dashboard is public or behind Cloudflare Access before going live; add Stonks to the app list when live
+### Phase A: Plan and spec
+
+- [ ] Write `docs/stonks-spec.md` in my own words from the existing docs: purpose, pipeline, features, signal rules, outcomes definition, weekly digest, data model. No secrets, hostnames or real data
+- [ ] Decide: keep historical Stonks data in D1 or start fresh
+
+### Phase B: Spikes (throwaway, nothing committed except findings in docs)
+
+- [ ] Spike 1: nightly data fetch from GitHub Actions. Can the universe source and the price-history source be fetched from a GitHub-hosted runner for ~1,300 tickers, within runtime and rate limits? Record pass/fail, runtime and failure modes. If it fails, evaluate alternatives before continuing
+- [ ] Spike 2: D1 limits against ~1,300 rows/night plus history. Check current free-tier limits and record the headroom
+- [ ] Go/no-go recorded in `docs/decisions.md`
+
+### Phase C: Build in thin vertical slices (each is its own small PR)
+
+- [ ] Slice 1: scaffold `apps/stonks`, D1 schema and migrations, path-filtered CI, one ingest run writing a small sample to D1
+- [ ] Slice 2: full nightly ingest on GitHub Actions cron, storing per-rule results per row; run history and error log
+- [ ] Slice 3: derived outcomes and control-group baseline as SQL views
+- [ ] Slice 4: read-only Worker dashboard (latest signals, history, outcomes vs baseline) on the shared tokens and site header
+- [ ] Decide public vs Cloudflare Access before going live; add Stonks to the app list when live
+- [ ] Slice 5: weekly digest (SQL aggregates plus two Claude calls a week, stored; dashboard never calls Claude) and email heartbeat
+- [ ] Slice 6: import historical data to D1 directly, if kept
+
+### Phase D: Cutover
+
 - [ ] Run new setup alongside the Pi and confirm parity
 - [ ] Switch off the Pi
+- [ ] Archive the old docs repo
 
 ## Backlog
 
