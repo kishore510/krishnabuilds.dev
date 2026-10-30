@@ -169,3 +169,7 @@ Moving to Workers Paid (10 GB, no daily caps) is the fallback if these are not e
 ## 2026-10-30 — Sumyard adopts the shared tokens for type scale and spacing only
 
 Sumyard follows Chalkline: it imports `@krishnabuilds/tokens/tokens.css` and takes its Tailwind type scale (xs to 2xl) and spacing base from the shared `--kb-*` variables, which had the same values. Its palette and radii stay its own, and Biome stays its linter. Screenshots of the home, mortgage and budget pages at 360 and 1280px in light and dark were pixel-identical before and after. Sumyard always sets `data-theme` on `<html>` before first paint, so the shared theme blocks agree with its own.
+
+## 2026-10-30 — Stickyard web adopts the shared tokens for type scale and spacing only
+
+The Stickyard web app imports `@krishnabuilds/tokens/tokens.css`. Its type sizes (xs to 2xl) and spacing steps xs to lg (shared steps 1, 2, 3, 4 and 6) now point at the shared `--kb-*` variables, which had the same values. Its colours, radii, 2xs and xl spacing and all component sizes stay its own. The relay Worker is untouched. Of 193 screenshots from `pnpm shots` (360, 768 and 1280px, light and dark, plus Help and About), every difference also appeared between two runs of the same code (QR codes for random room codes, live cursors, timestamps), so none comes from this change.

@@ -238,13 +238,14 @@
 
 /* ── Theme-independent tokens ──────────────────────────────────────── */
 :root {
-  /* Spacing */
+  /* Spacing: xs to lg come from the shared @krishnabuilds/tokens (same values as before);
+     2xs and xl have no shared step and stay Stickyard's own. */
   --sy-space-2xs: 0.125rem;
-  --sy-space-xs: 0.25rem;
-  --sy-space-sm: 0.5rem;
-  --sy-space-ms: 0.75rem;
-  --sy-space-md: 1rem;
-  --sy-space-lg: 1.5rem;
+  --sy-space-xs: var(--kb-space-1);
+  --sy-space-sm: var(--kb-space-2);
+  --sy-space-ms: var(--kb-space-3);
+  --sy-space-md: var(--kb-space-4);
+  --sy-space-lg: var(--kb-space-6);
   --sy-space-xl: 2.5rem;
 
   /* Touch and focus */
@@ -459,12 +460,13 @@
   /* Type */
   --sy-font: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --sy-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --sy-text-xs: 0.75rem;
-  --sy-text-sm: 0.875rem;
-  --sy-text-base: 1rem;
-  --sy-text-lg: 1.125rem;
-  --sy-text-xl: 1.25rem;
-  --sy-text-2xl: 1.5rem;
+  /* xs to 2xl come from the shared @krishnabuilds/tokens (same values as before). */
+  --sy-text-xs: var(--kb-font-size-xs);
+  --sy-text-sm: var(--kb-font-size-sm);
+  --sy-text-base: var(--kb-font-size-md);
+  --sy-text-lg: var(--kb-font-size-lg);
+  --sy-text-xl: var(--kb-font-size-xl);
+  --sy-text-2xl: var(--kb-font-size-2xl);
   /* The welcome screen's wordmark. */
   --sy-text-display: 2.25rem;
 

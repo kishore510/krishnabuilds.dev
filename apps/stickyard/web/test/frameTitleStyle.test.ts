@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { primitives } from "@krishnabuilds/tokens";
 import {
   FRAME_COLORS,
   FRAME_DEFAULTS,
@@ -125,7 +126,8 @@ describe("frame title classes", () => {
   it("defaults reproduce the v9 header: medium (the old text-sm size), semibold, upright, left", () => {
     expect(frameTitleClasses(frame(0))).toEqual(["text-note-m", "text-left", "font-semibold"]);
     expect(tokens).toMatch(/--sy-note-font-m:\s*0\.875rem;/);
-    expect(tokens).toMatch(/--sy-text-sm:\s*0\.875rem;/);
+    expect(tokens).toMatch(/--sy-text-sm:\s*var\(--kb-font-size-sm\);/);
+    expect(primitives.font.size.sm).toBe("0.875rem");
   });
 
   it("bold is semibold (a little lighter than note bold), not bold is normal weight; italic, size and alignment apply", () => {
