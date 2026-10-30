@@ -102,7 +102,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 
 - [x] Deploy web to stickyard.krishnabuilds.dev and the relay Worker from Actions; add the new origin to ALLOWED_ORIGINS
 - [x] Archive the old repo after cutover
-- [ ] Port creation-switch.yml (the old repo is archived, so the kill switch no longer runs from there)
+- [x] Port creation-switch.yml (the old repo is archived, so the kill switch no longer runs from there). Not active until the owner runs it once off and on from the monorepo and confirms both; see the Kill switch section of apps/stickyard/README.md
 - [ ] Remove https://kishore510.github.io from ALLOWED_ORIGINS to retire the old Pages site
 - [ ] Custom domain for the relay Worker (replace the workers.dev address)
 - [ ] Fix stale comments in worker/wrangler.jsonc about secrets and ALLOWED_ORIGINS
