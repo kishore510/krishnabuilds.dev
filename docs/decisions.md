@@ -145,3 +145,7 @@ Win and loss outcomes are computed from stored price history rather than written
 ## 2026-10-30 — Stonks data source and limits are validated by spikes first
 
 Data-source feasibility from GitHub Actions and D1 limits are checked with throwaway spikes before any slice is built. The result and any change of source are recorded here.
+
+## 2026-10-30 — Arcade play counter gets a basic per-IP rate limit
+
+POST /api/play/<slug> is limited to 20 requests per minute per client IP using the Workers Rate Limiting binding (PLAY_LIMITER in wrangler.jsonc), and returns 429 when over the limit. The check runs before the games-folder lookup and the KV write, so rejected requests are cheap. The binding is approximate and per Cloudflare location, which is enough for a fun counter, needs no dashboard setup and works on the free plan. This replaces the earlier choice to leave rate limiting out. Atomic counters are still out of scope.
