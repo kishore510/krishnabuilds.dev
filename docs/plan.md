@@ -29,11 +29,11 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
 - [x] Add each migrated app's subdomain via wrangler `custom_domain`
 - [x] Add each migrated app to the Portal app list
 - [x] Give each migrated app the shared site links (home link and app switcher)
-- [ ] Adopt `@krishnabuilds/tokens` in each migrated app
+- [x] Adopt `@krishnabuilds/tokens` in each migrated app
   - [x] Chalkline (type scale and spacing base only; keeps its own palette and radii)
   - [x] Stickyard (web only; type scale and spacing only; keeps its own palette and radii)
   - [x] Sumyard (type scale and spacing base only; keeps its own palette and radii)
-  - [ ] Arcade
+  - [x] Arcade (committed copy of the shared CSS with a drift check; site links bar sizes only)
 
 ## Week 3 — Stonks rebuild, then switch off the Pi
 

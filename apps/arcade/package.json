@@ -1,7 +1,12 @@
 {
   "name": "@krishnabuilds/arcade",
   "private": true,
+  "scripts": {
+    "lint": "node scripts/check-tokens.mjs",
+    "sync-tokens": "pnpm --filter @krishnabuilds/tokens build && node scripts/check-tokens.mjs --write"
+  },
   "devDependencies": {
+    "@krishnabuilds/tokens": "workspace:*",
     "wrangler": "4.152.0"
   }
 }

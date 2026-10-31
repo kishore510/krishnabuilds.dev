@@ -28,6 +28,10 @@
   const CURRENT = 'Arcade';
   const HOME_URL = 'https://krishnabuilds.dev';
 
+  // Where the page links assets/kb-tokens.css (the landing page), a few sizes
+  // come from the shared tokens; the px fallbacks are the same values, for
+  // game pages. Colours stay Arcade's own (its --kb-bg etc. don't clash with
+  // the shared --kb-color-* names).
   const CSS = `
     :host {
       --kb-bg: #ffffff;
@@ -36,7 +40,7 @@
       --kb-border: rgba(26,34,48,0.18);
       --kb-accent: #12806e;
       font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      font-size: 14px;
+      font-size: var(--kb-font-size-sm, 14px);
       line-height: 1.2;
     }
     @media (prefers-color-scheme: dark) {
@@ -77,8 +81,8 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 0 4px;
-      padding: 0 8px;
+      gap: 0 var(--kb-space-1, 4px);
+      padding: 0 var(--kb-space-2, 8px);
       background: var(--kb-bg);
       border-bottom: 1px solid var(--kb-border);
     }
