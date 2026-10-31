@@ -40,7 +40,8 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
 ### Phase A: Plan and spec
 
 - [ ] Write `docs/stonks-spec.md` in my own words from the existing docs: purpose, pipeline, features, signal rules, outcomes definition, weekly digest, data model. No secrets, hostnames or real data
-- [ ] Decide: keep historical Stonks data in D1 or start fresh
+- [x] Decide: keep historical Stonks data in D1 or start fresh
+  - Start fresh: D1 starts empty and nothing is imported from the Pi (see `docs/decisions.md`)
 
 ### Phase B: Spikes (throwaway, nothing committed except findings in docs)
 
@@ -50,7 +51,7 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
   - Free-plan limits (Cloudflare D1 docs, Limits and Pricing pages, checked 2026-10-30): 100,000 rows written/day and 5 million rows read/day, both reset at 00:00 UTC; when either runs out, queries fail until the reset. **Maximum database size is 500 MB on Free** (10 GB is the Workers Paid limit, which explains the conflicting sources; 10 GB cannot be raised). Account storage is 5 GB on Free; tables and indexes both count. 50 queries per Worker invocation on Free (1,000 Paid), where a `db.batch()` counts as one. Also: 100 bound parameters per query, 30 s per query, and a 50 MB query result cap from 2026-11-04
   - Model: 1,900 rows/night (up from the ~1,300 estimate), 365 nights, about 1 KB per row, 3 indexes. Index entries are assumed at about 100 bytes each; this is an estimate, so measure it in Slice 1 with the `meta` object (`rows_read`, `rows_written`, `size_after`)
   - Size after one year: 693,500 rows, about 0.69 GB of table data plus about 0.21 GB of indexes, **about 0.9 GB total. The 500 MB cap is hit after about 200 nights (about 6.5 months)**, or about 260 nights with no indexes. Account storage (5 GB) is not the constraint
-  - Writes per night: 1,900 rows × (1 table + 3 index entries) = **about 7,600 rows written, 7.6% of the daily limit** (about 13× headroom). Upserts that replace rows can roughly double this and still fit. A one-year history import would be about 2.8 million rows written, about 28 days of the free write limit, so Slice 6 needs a staged import or Workers Paid
+  - Writes per night: 1,900 rows × (1 table + 3 index entries) = **about 7,600 rows written, 7.6% of the daily limit** (about 13× headroom). Upserts that replace rows can roughly double this and still fit.
   - Reads: a full scan of the daily table at the end of year one reads 693,500 rows, so **the 5 million daily limit allows about 7 full scans a day** (about 14 at six months). Any dashboard view or outcome query that scans the whole table on each page load would exhaust it; reads must use indexes or precomputed summaries
   - Ingest runs from GitHub Actions, so the 50-queries-per-invocation limit applies only to the dashboard Worker. Inserts should be batched, with rows per statement kept under the 100 bound-parameter limit
   - Narrow-row check: at about 200 bytes per daily row plus 3 index entries (about 500 bytes in total per row), one year is about 350 MB, which fits under 500 MB with about 30% headroom and reaches the cap after about 17 months, unless older rows are archived or the account moves to Workers Paid (10 GB)
@@ -64,7 +65,6 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
 - [ ] Slice 4: read-only Worker dashboard (latest signals, history, outcomes vs baseline) on the shared tokens and site header
 - [ ] Decide public vs Cloudflare Access before going live; add Stonks to the app list when live
 - [ ] Slice 5: weekly digest (SQL aggregates plus two Claude calls a week, stored; dashboard never calls Claude) and email heartbeat
-- [ ] Slice 6: import historical data to D1 directly, if kept
 
 ### Phase D: Cutover
 
