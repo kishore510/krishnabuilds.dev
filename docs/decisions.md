@@ -189,3 +189,7 @@ The app list in `assets/site-links.js` is still duplicated from `packages/ui` (`
 ## 2026-10-31 — Stonks starts fresh in D1; no historical import
 
 The new Stonks setup starts with an empty D1 database and does not import data from the Pi's SQLite. The old data came from code that may have had bugs, so it cannot be trusted as a baseline for outcomes and control-group comparisons. Starting clean also removes the staged one-year import (about 2.8 million rows written) and Slice 6 from the plan. The Pi's data is not committed to the repo in any form.
+
+## 2026-10-31 — Repo stays public; signal parameters revisited if an edge is found
+
+The monorepo stays public. The Stonks code is not valuable IP: a volume/price scanner is easy to replicate, and any real value would be in validated results and data, which never go in the repo. Public also gives unlimited GitHub Actions minutes for the nightly ingest. If forward data shows a real edge, the signal parameters move to private config before they are relied on. The repo has no open-source licence, so all rights are reserved by default.
