@@ -185,3 +185,7 @@ Arcade has no build step, so it serves `apps/arcade/assets/kb-tokens.css`, a byt
 Adoption is visually safe: only the site links bar's text size and two gaps read the shared variables (`--kb-font-size-sm`, `--kb-space-1`, `--kb-space-2`), with identical px fallbacks on game pages, which don't link the file. Arcade's palette, fonts and games are unchanged, and the landing page pins `color-scheme` back to the browser default so the shared file doesn't change scrollbars or controls on dark-OS devices. Screenshots of the landing page and two games at 360 and 1280px in light and dark were pixel-identical before and after.
 
 The app list in `assets/site-links.js` is still duplicated from `packages/ui` (`src/apps.ts`) and must be kept in sync by hand; generating it from the shared list is still a backlog item.
+
+## 2026-10-31 — Stonks starts fresh in D1; no historical import
+
+The new Stonks setup starts with an empty D1 database and does not import data from the Pi's SQLite. The old data came from code that may have had bugs, so it cannot be trusted as a baseline for outcomes and control-group comparisons. Starting clean also removes the staged one-year import (about 2.8 million rows written) and Slice 6 from the plan. The Pi's data is not committed to the repo in any form.
