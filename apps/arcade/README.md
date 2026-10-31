@@ -9,6 +9,7 @@ tiny optional Cloudflare Worker that powers the "Played N times" counter
 ```
 index.html              — landing page, lists every game as a "cartridge"
 assets/game-embed.js    — shared script every game page includes
+assets/kb-tokens.css    — committed copy of the shared @krishnabuilds/tokens CSS (landing page); refresh with `pnpm sync-tokens`, and `pnpm lint` fails if it drifts
 src/worker.js           — play-count API + static-asset serving (see below)
 wrangler.jsonc          — Cloudflare Worker config (deployed from GitHub Actions)
 games/

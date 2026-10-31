@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - apps/arcade/**
+      - packages/tokens/**
       - .github/workflows/deploy-arcade.yml
 
 permissions:
@@ -25,6 +26,8 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # assets/kb-tokens.css is a committed copy of the shared tokens; stop if it has drifted.
+      - run: pnpm turbo run lint --filter=@krishnabuilds/arcade
       - run: pnpm --filter @krishnabuilds/arcade exec wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
