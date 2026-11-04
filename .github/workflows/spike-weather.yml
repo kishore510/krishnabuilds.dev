@@ -1,9 +1,15 @@
 # THROWAWAY SPIKE: allotment weather data. Lives only on spike/weather-fetch.
-# Manual trigger only. No secrets, no deploy, stores nothing.
+# Manual trigger, plus a push trigger limited to this branch and these files
+# (owner-approved: workflow_dispatch alone only works once the file is on main). No secrets, no deploy, stores nothing.
 name: spike-weather
 
 on:
   workflow_dispatch:
+  push:
+    branches: [spike/weather-fetch]
+    paths:
+      - scripts/spike-weather/**
+      - .github/workflows/spike-weather.yml
 
 permissions:
   contents: read
