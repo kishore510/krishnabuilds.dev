@@ -1,0 +1,18 @@
+# THROWAWAY SPIKE: allotment weather data. Lives only on spike/weather-fetch.
+# Manual trigger only. No secrets, no deploy, stores nothing.
+name: spike-weather
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch forecast and historical weather
+        run: python3 scripts/spike-weather/fetch.py
