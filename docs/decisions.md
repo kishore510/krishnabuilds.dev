@@ -193,3 +193,7 @@ The new Stonks setup starts with an empty D1 database and does not import data f
 ## 2026-10-31 — Repo stays public; signal parameters revisited if an edge is found
 
 The monorepo stays public. The Stonks code is not valuable IP: a volume/price scanner is easy to replicate, and any real value would be in validated results and data, which never go in the repo. Public also gives unlimited GitHub Actions minutes for the nightly ingest. If forward data shows a real edge, the signal parameters move to private config before they are relied on. The repo has no open-source licence, so all rights are reserved by default.
+
+## 2026-11-04 — Stonks data fetch from GitHub Actions: Go
+
+Spike 1 passed. Four runs across three trading days (Fri 30 Oct, Mon 2 Nov, Tue 3 Nov) fetched about 6,200 tickers from a GitHub-hosted runner in 11 to 14 minutes (limit 45). Every run returned 100% data or legitimately empty, with no rate limiting and no retries. About 1,740 to 1,760 instruments a night pass the price filter, in line with the D1 sizing in Spike 2. GitHub can start scheduled runs hours late under load (up to about 5.5 hours seen), so the workflow gate allows runs until 06:00 UTC the next day. Scheduled runs have now stopped; the workflow can still be started by hand. Source and approach unchanged.
