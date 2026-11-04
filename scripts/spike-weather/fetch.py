@@ -90,10 +90,11 @@ def forecast_summary(now):
         errors.append(f"forecast: variables with no data: {missing}")
 
 
-def observed_summary(today):
+def observed_summary(today, model):
+    # best_match fills recent days from forecast models; era5 is reanalysis only.
     start = today - timedelta(days=14)
-    data = get("historical", ARCHIVE_URL, {
-        "latitude": LAT, "longitude": LON, "timezone": TZ,
+    data = get(f"historical[{model}]", ARCHIVE_URL, {
+        "latitude": LAT, "longitude": LON, "timezone": TZ, "models": model,
         "start_date": start.isoformat(), "end_date": today.isoformat(),
         "daily": ",".join(ARCHIVE_DAILY), "hourly": ",".join(ARCHIVE_HOURLY),
     })
@@ -101,7 +102,7 @@ def observed_summary(today):
         return
     d, h = data["daily"], data["hourly"]
     days = [i for i, t in enumerate(d["time"]) if d["temperature_2m_min"][i] is not None]
-    print("\n== Observed / reanalysis (Open-Meteo historical) ==")
+    print(f"\n== Observed / reanalysis (Open-Meteo historical, models={model}) ==")
     if not days:
         errors.append("historical: no daily minimums in the last 14 days")
         print("No days with data in the last 14 days")
@@ -126,9 +127,10 @@ def main():
     now = datetime.now(ZoneInfo(TZ))
     print(f"Weather spike for {LAT}, {LON} (Church Fenton) at {now:%Y-%m-%d %H:%M %Z}\n")
     forecast_summary(now)
-    observed_summary(now.date())
+    observed_summary(now.date(), "best_match")
+    observed_summary(now.date(), "era5")
     print("\n== Run ==")
-    print(f"Runtime            : {time.monotonic() - t0:.2f}s (2 API calls)")
+    print(f"Runtime            : {time.monotonic() - t0:.2f}s (3 API calls)")
     print(f"Errors             : {len(errors)}")
     for e in errors:
         print(f"  - {e}")
