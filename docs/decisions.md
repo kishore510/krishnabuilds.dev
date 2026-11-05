@@ -193,3 +193,23 @@ The new Stonks setup starts with an empty D1 database and does not import data f
 ## 2026-10-31 — Repo stays public; signal parameters revisited if an edge is found
 
 The monorepo stays public. The Stonks code is not valuable IP: a volume/price scanner is easy to replicate, and any real value would be in validated results and data, which never go in the repo. Public also gives unlimited GitHub Actions minutes for the nightly ingest. If forward data shows a real edge, the signal parameters move to private config before they are relied on. The repo has no open-source licence, so all rights are reserved by default.
+
+## 2026-11-04 — Stonks is retired, not rebuilt
+
+This supersedes "Stonks on GitHub Actions cron + D1 + read-only Worker dashboard" (2026-10-24) and "Stonks is rebuilt, not migrated" (2026-10-30), and the Stonks entries that follow from them. Both spikes passed: Spike 1 showed the nightly fetch works from a GitHub-hosted runner (about 6,200 tickers in 11 to 14 minutes, with no rate limiting), and Spike 2 showed D1 sizing is manageable with a narrow schema. The screening idea itself is not worth pursuing, so there is nothing to rebuild for. Several replacement ideas (grid carbon, allotment weather, river levels, train and road data) were assessed and not pursued, each because it had interesting data but no decision it would help with. The allotment weather spike (Spike 3) stayed on an unmerged branch, which is deleted rather than merged. The Raspberry Pi is switched off after the old code and data are archived outside the repo.
+
+## 2026-11-04 — One shared accent colour
+
+The accent in `packages/tokens` becomes #1f6aa5 (light) and #7cc0e6 (dark). Chalkline, Stickyard and Sumyard already used these values locally; they now map their local accent variables to the shared token. Arcade keeps its teal as an in-game colour, but its site-links bar uses the shared accent. Contrast is enforced by the token build (WCAG AA).
+
+## 2026-11-04 — System font in the tokens; no external font requests
+
+The shared tokens keep the system font stack. Apps that self-host Inter may keep it for now. Arcade stops using Google Fonts, so no app makes an external font request.
+
+## 2026-11-04 — Minimal branding set
+
+The brand is a text wordmark, "krishnabuilds", with one hand-written "kb" SVG favicon plus a 180×180 apple-touch icon, one shared 1200×630 share image, Open Graph and Twitter tags, and tab titles in the form "AppName · krishnabuilds".
+
+## 2026-11-04 — Portal landing page and How this is built
+
+Each app card on the Portal gets an illustrative, hand-written SVG preview (not a screenshot of the live app), alongside a stronger hero, links to story pages and a footer. A "How this is built" page renders this decision log, generated from `docs/decisions.md` at build time.
