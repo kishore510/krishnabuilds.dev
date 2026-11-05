@@ -34,6 +34,7 @@ index.html                    — landing page; lists every game as a "cartridge
 assets/game-embed.js          — shared chrome every game page includes (nav bar, support link)
 assets/site-links.js          — link home + app switcher (bar on the landing page, pill via game-embed.js); app list must match packages/ui
 assets/version.js             — single source of truth for the displayed version string
+assets/art/<slug>.svg         — optional card pictures for the landing page (see "Card art")
 games/fin-dash/index.html     — Fin Dash (canvas, single-tap flap physics)
 games/burrow-bash/index.html  — Burrow Bash (DOM/CSS game, no canvas)
 games/air-hockey/index.html   — Air Hockey (canvas, drag-controlled mallet vs. tunable-difficulty AI)
@@ -74,11 +75,7 @@ games/<slug>/index.html       — next game goes here
    inline script (name, tagline, emoji, gradient `color`, `tags`, `path`).
    The card on the landing page is generated entirely from this array.
    Optionally add `art: 'assets/art/<slug>.svg'` for a card picture instead
-   of the emoji (cards without it keep the emoji). Art rules: viewBox
-   `0 0 240 92`, under 10 KB, no external fonts/images, bold simple shapes in
-   the game's `color` plus one accent, and keep the subject inside x 61-179,
-   y 28-86 (list view only shows the middle 118x92; the notch and badges sit
-   above y 28). Check with `node apps/arcade/scripts/card-art-check.mjs`.
+   of the emoji (cards without it keep the emoji); see "Card art" below.
 4. Add a bare `data-kb-play` attribute to whichever button actually begins
    a play — the button that's initially labelled "Start"/"Play" and gets
    relabelled "Play Again"/"Retry" for replays (every game follows this
@@ -123,6 +120,45 @@ sets the play area's pixel width/height from it, and a shared
 every bit of in-game UI sizes off via `calc(Npx * var(--game-scale, 1))`
 — fonts, buttons, HUD text, everything. Follow this same pattern for new
 games so they resize consistently.
+
+## Card art
+
+A GAMES entry's optional `art` points at `assets/art/<slug>.svg`; the card
+shows that picture instead of its emoji. Every picture shares one style so
+the shelf reads as a family. Follow these for every new one:
+
+- **Canvas:** `viewBox="0 0 240 92"` (with `width="240" height="92"`). Grid
+  view covers the label with it (92 px tall, 149-274 px wide); list view shows
+  only the middle 118x92 at 1:1, fading the top and bottom into the card's
+  `color`.
+- **Safe zone:** the subject sits inside x 61-179, y 28-86. Above y 28 is the
+  notch (top centre) and the New / Play badges (top corners); the strips
+  outside x 61-179 are cropped on phones and in list view, so they only hold
+  supporting detail (pattern, spare pills, the end of a path).
+- **Budget:** under 10 KB per file (they come in at 2-4 KB) and 200 KB for
+  all of them together. No external fonts, images or `url()`s; text uses the
+  system font stack (`system-ui, -apple-system, 'Segoe UI', Roboto, Arial,
+  sans-serif`) at weight 800.
+- **Palette:** 2-3 colours from the game itself (its GAMES `color` and the
+  hex values its canvas actually draws with), plus one accent, usually a warm
+  amber/yellow (`#ffb703`, `#ffd166`, `#ffcf5a`) or whatever the game already
+  uses to mean "this one". A cream or near-white is fine for highlights.
+- **Layers, back to front:** a three-stop diagonal `linearGradient` built
+  from the game's `color` (`x1=0 y1=0 x2=1 y2=1`); a faint pattern at about
+  0.07-0.15 opacity that hints at the game's world (tiles, waves, grass,
+  stars, shoji); a soft `radialGradient` glow behind the subject; then the
+  subject in bold flat shapes with one highlight and a soft dark ellipse
+  shadow under anything that stands on the ground.
+- **Subject:** draw what you actually see when playing (look at the game's
+  draw code and a screenshot, not just its emoji): its own objects, its own
+  colours, caught mid-action (a shot in the air, a puck with a trail). Keep
+  it to two to four objects that read at 160 px wide.
+- **Original only:** nothing that copies another product's logo, characters
+  or signature look (e.g. Lexigrid deliberately avoids the green / yellow /
+  grey tile scheme that genre is known for).
+- **Check:** `node apps/arcade/scripts/card-art-check.mjs` from the repo root
+  (rules above, every file used by exactly one game, every card shows its art
+  or emoji in grid and list view at 360 and 1280 px, combined size report).
 
 ## Versioning
 

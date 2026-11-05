@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12200f"/>
+      <stop offset="0.55" stop-color="#2a4519"/>
+      <stop offset="1" stop-color="#4a7a2e"/>
+    </linearGradient>
+    <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b4a2b"/>
+      <stop offset="1" stop-color="#4a3320"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffe28a" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#ffe28a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="rows" width="12" height="9" patternUnits="userSpaceOnUse">
+      <path d="M1 7 H8" stroke="#3a2a18" stroke-opacity="0.6" stroke-width="1.2" stroke-linecap="round"/>
+    </pattern>
+    <pattern id="grass" width="14" height="12" patternUnits="userSpaceOnUse">
+      <path d="M3 9 L4 5 M5 9 L7 5.5" stroke="#7cb342" stroke-opacity="0.14" stroke-width="1" stroke-linecap="round"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#grass)"/>
+  <ellipse cx="110" cy="52" rx="64" ry="36" fill="url(#glow)"/>
+  <!-- three beds -->
+  <g>
+    <rect x="64" y="50" width="34" height="34" rx="4" fill="#3a2a18"/>
+    <rect x="103" y="50" width="34" height="34" rx="4" fill="#3a2a18"/>
+    <rect x="142" y="50" width="34" height="34" rx="4" fill="#3a2a18"/>
+    <rect x="64" y="48" width="34" height="34" rx="4" fill="url(#soil)"/>
+    <rect x="103" y="48" width="34" height="34" rx="4" fill="url(#soil)"/>
+    <rect x="142" y="48" width="34" height="34" rx="4" fill="url(#soil)"/>
+    <rect x="64" y="48" width="112" height="34" fill="url(#rows)"/>
+  </g>
+  <!-- lettuce -->
+  <g transform="translate(81 66)">
+    <circle r="11" fill="#4a7a2e"/>
+    <path d="M-9 0 Q-6 -10 0 -11 Q6 -10 9 0 Q5 -4 0 -4 Q-5 -4 -9 0Z" fill="#7cb342"/>
+    <circle r="4.5" fill="#a8d86a"/>
+  </g>
+  <!-- tomato plant -->
+  <g transform="translate(120 66)">
+    <path d="M0 12 V-10 M0 -2 L-7 -8 M0 4 L7 -3" stroke="#4a7a2e" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M-7 -8 Q-12 -12 -9 -15 Q-5 -13 -7 -8Z M7 -3 Q12 -7 11 -10 Q6 -9 7 -3Z M0 -10 Q-3 -15 0 -18 Q3 -15 0 -10Z" fill="#7cb342"/>
+    <circle cx="-6" cy="-2" r="4.2" fill="#ff6b5e"/><circle cx="6" cy="4" r="4.5" fill="#e8891a"/><circle cx="-3" cy="8" r="3.6" fill="#ff6b5e"/>
+  </g>
+  <!-- pumpkin -->
+  <g transform="translate(159 70)">
+    <path d="M2 -9 Q6 -14 10 -12" fill="none" stroke="#4a7a2e" stroke-width="2" stroke-linecap="round"/>
+    <ellipse rx="12" ry="9" fill="#e07a1a"/>
+    <ellipse rx="5" ry="9" fill="none" stroke="#7a4a10" stroke-opacity="0.5" stroke-width="1.4"/>
+    <path d="M0 -9 V9" stroke="#7a4a10" stroke-opacity="0.5" stroke-width="1.2"/>
+    <rect x="-1.5" y="-12" width="3" height="4" rx="1" fill="#5b3d22"/>
+  </g>
+  <!-- coins: the sale -->
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-weight="800" font-size="9" text-anchor="middle">
+    <circle cx="80" cy="38" r="8" fill="#a8791e"/>
+    <circle cx="80" cy="36.5" r="8" fill="#ffe28a"/>
+    <circle cx="80" cy="36.5" r="5.5" fill="none" stroke="#e8b44a" stroke-width="1.2"/>
+    <text x="80" y="39.8" fill="#7a4a10">$</text>
+    <circle cx="95" cy="33" r="5" fill="#ffe28a" fill-opacity="0.75"/>
+    <path d="M80 24 V20 M71 28 L68 25 M89 28 L92 25" stroke="#ffe28a" stroke-width="1.4" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#041420"/>
+      <stop offset="0.55" stop-color="#0a3550"/>
+      <stop offset="1" stop-color="#1f8eab"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#5ed4ea" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#5ed4ea" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="waves" width="28" height="14" patternUnits="userSpaceOnUse">
+      <path d="M3 8 Q7 5 11 8" fill="none" stroke="#e8f2f5" stroke-opacity="0.12" stroke-width="1.2" stroke-linecap="round"/>
+      <path d="M17 2 Q20 0 23 2" fill="none" stroke="#e8f2f5" stroke-opacity="0.08" stroke-width="1" stroke-linecap="round"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#waves)"/>
+  <ellipse cx="118" cy="58" rx="50" ry="32" fill="url(#glow)"/>
+  <!-- course line round the buoys -->
+  <path d="M20 80 Q60 82 82 68 M172 47 Q200 38 226 40" fill="none" stroke="#e8f2f5" stroke-opacity="0.25" stroke-width="1.2" stroke-dasharray="3 4"/>
+  <!-- passed buoy and the next one -->
+  <circle cx="74" cy="72" r="5.5" fill="#e6783c"/>
+  <circle cx="74" cy="71" r="2" fill="#ffffff" fill-opacity="0.35"/>
+  <circle cx="160" cy="47" r="12" fill="none" stroke="#ffb703" stroke-opacity="0.7" stroke-width="1.8"/>
+  <circle cx="160" cy="47" r="6" fill="#ffb703"/>
+  <circle cx="160" cy="46" r="2.2" fill="#ffffff" fill-opacity="0.45"/>
+  <!-- wake -->
+  <path d="M84 80 Q100 70 112 64 L118 70 Q102 76 84 80Z" fill="#e8f2f5" fill-opacity="0.22"/>
+  <g fill="#e8f2f5"><circle cx="96" cy="75" r="2" fill-opacity="0.3"/><circle cx="88" cy="79" r="2.6" fill-opacity="0.2"/><circle cx="104" cy="70" r="1.6" fill-opacity="0.35"/></g>
+  <!-- boat, heading up and right toward the buoy -->
+  <g transform="translate(124 58) rotate(55)">
+    <ellipse cx="1.5" cy="2" rx="9" ry="21" fill="#000" fill-opacity="0.25"/>
+    <path d="M0 -21 L9 5 Q9 16 0 19 Q-9 16 -9 5Z" fill="#e8e0d0" stroke="#3a2a1a" stroke-opacity="0.3" stroke-width="1.5"/>
+    <path d="M0 -17 L6 4 L-6 4Z" fill="#c9853a"/>
+    <path d="M0 -18 L0 6" stroke="#3a2a1a" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M0 6 L-7 10" stroke="#3a2a1a" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+</svg>

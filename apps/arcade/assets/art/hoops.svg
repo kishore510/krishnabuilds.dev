@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff9a4d"/>
+      <stop offset="0.55" stop-color="#f07a3e"/>
+      <stop offset="1" stop-color="#c9392e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffe28a" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffe28a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ball" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#ffb070"/>
+      <stop offset="1" stop-color="#d95f1f"/>
+    </radialGradient>
+    <pattern id="court" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M0 20L20 0" stroke="#ffe28a" stroke-opacity="0.08" stroke-width="3"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#court)"/>
+  <ellipse cx="144" cy="58" rx="40" ry="30" fill="url(#glow)"/>
+  <g transform="translate(-6 6)">
+  <!-- backboard -->
+  <rect x="134" y="28" width="40" height="28" rx="3" fill="#8ecdd6" stroke="#e8683a" stroke-width="3"/>
+  <rect x="146" y="37" width="16" height="11" rx="1.5" fill="none" stroke="#e8683a" stroke-width="2"/>
+  <rect x="152" y="56" width="4" height="4" fill="#6b2a12"/>
+  <!-- net -->
+  <path d="M142 61 L146 77 L162 77 L166 61" fill="#ffffff" fill-opacity="0.15" stroke="#ffffff" stroke-opacity="0.9" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M148 61 L150 77 M154 61 L154 77 M160 61 L158 77 M143.5 67 L164.5 67 M145 72.5 L163 72.5" stroke="#ffffff" stroke-opacity="0.7" stroke-width="1"/>
+  <!-- shot arc -->
+  <path d="M84 62 Q104 14 138 50" fill="none" stroke="#ffe28a" stroke-width="2" stroke-linecap="round" stroke-dasharray="1 5"/>
+  <!-- ball dropping in, in front of the back rim -->
+  <ellipse cx="154" cy="61" rx="13" ry="3.2" fill="none" stroke="#c9392e" stroke-width="2.6"/>
+  <circle cx="148" cy="54" r="8" fill="url(#ball)" stroke="#6b2a12" stroke-width="1.4"/>
+  <path d="M140.5 53 Q148 50 155.5 55 M148 46 Q145 54 149 62" fill="none" stroke="#6b2a12" stroke-width="1.2"/>
+  <path d="M141 61 Q154 66 167 61" fill="none" stroke="#e8683a" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- launch spot -->
+  <circle cx="82" cy="68" r="10" fill="#6b2a12" fill-opacity="0.18"/>
+  <path d="M68 84 Q82 76 96 84" fill="none" stroke="#ffe28a" stroke-opacity="0.45" stroke-width="2" stroke-linecap="round"/>
+  <g fill="#ffe28a"><circle cx="78" cy="58" r="1.6"/><circle cx="72" cy="66" r="1.2"/><circle cx="91" cy="60" r="1.2"/></g>
+  </g>
+</svg>

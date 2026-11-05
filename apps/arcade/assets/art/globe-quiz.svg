@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1a33"/>
+      <stop offset="0.55" stop-color="#16213e"/>
+      <stop offset="1" stop-color="#1a7a73"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22b8a0" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#22b8a0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="sea" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#1d4f86"/>
+      <stop offset="1" stop-color="#0a2342"/>
+    </radialGradient>
+    <clipPath id="ball"><circle cx="112" cy="58" r="24"/></clipPath>
+    <pattern id="stars" width="30" height="23" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="5" r="0.9" fill="#eef2f5" fill-opacity="0.35"/><circle cx="19" cy="16" r="0.6" fill="#eef2f5" fill-opacity="0.25"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#stars)"/>
+  <circle cx="112" cy="58" r="40" fill="url(#glow)"/>
+  <!-- answer pills either side -->
+  <g fill="#eef2f5" fill-opacity="0.1" stroke="#eef2f5" stroke-opacity="0.2">
+    <rect x="8" y="36" width="40" height="10" rx="5"/><rect x="8" y="51" width="40" height="10" rx="5"/><rect x="8" y="66" width="40" height="10" rx="5"/>
+    <rect x="192" y="36" width="40" height="10" rx="5"/><rect x="192" y="66" width="40" height="10" rx="5"/>
+  </g>
+  <rect x="192" y="51" width="40" height="10" rx="5" fill="#22b8a0" fill-opacity="0.55"/>
+  <!-- timer ring -->
+  <circle cx="112" cy="58" r="29" fill="none" stroke="#eef2f5" stroke-opacity="0.12" stroke-width="3"/>
+  <path d="M112 29 A29 29 0 1 1 86.9 72.5" fill="none" stroke="#ffd166" stroke-width="3" stroke-linecap="round"/>
+  <!-- globe -->
+  <circle cx="112" cy="58" r="24" fill="url(#sea)"/>
+  <g clip-path="url(#ball)">
+    <path d="M92 44 Q99 37 108 40 Q113 45 108 51 Q101 50 99 56 Q94 58 90 52Z" fill="#22b8a0"/>
+    <path d="M113 55 Q122 50 129 55 Q134 63 128 72 Q123 79 118 74 Q119 66 113 63Z" fill="#22b8a0"/>
+    <path d="M118 37 Q126 36 131 42 Q127 46 121 44Z" fill="#22b8a0"/>
+    <path d="M97 66 Q103 64 104 71 Q100 76 96 72Z" fill="#22b8a0"/>
+    <g fill="none" stroke="#eef2f5" stroke-opacity="0.2" stroke-width="0.8">
+      <ellipse cx="112" cy="58" rx="10" ry="24"/><path d="M88 58H136M91 46H133M91 70H133"/>
+    </g>
+  </g>
+  <circle cx="104" cy="49" r="7" fill="#ffffff" fill-opacity="0.08"/>
+  <!-- question badge -->
+  <circle cx="141" cy="38" r="11" fill="#ffd166"/>
+  <path d="M141 50 L136 46 L146 46Z" fill="#ffd166"/>
+  <text x="141" y="42.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-weight="800" font-size="13" text-anchor="middle" fill="#16213e">?</text>
+</svg>
