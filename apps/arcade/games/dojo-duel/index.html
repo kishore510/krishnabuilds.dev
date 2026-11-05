@@ -111,10 +111,10 @@
     opacity: 0.85;
   }
 
-  /* --- In-game top buttons (centre of the HUD, under the health bars) --- */
+  /* --- In-game top buttons (centre of the HUD, below the energy meters and win markers) --- */
   #topBtns {
     position: absolute;
-    top: calc(36px * var(--game-scale, 1));
+    top: calc(56px * var(--game-scale, 1));
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -148,6 +148,7 @@
     --pad: clamp(112px, 36vh, 156px);
     --btn: clamp(52px, 16vh, 68px);
     --gap: 10px;
+    --pw: 44px;      /* power icons: never under 44 px, the minimum touch target */
     position: fixed;
     inset: 0;
     pointer-events: none;
@@ -198,7 +199,7 @@
   }
   #actions {
     position: absolute;
-    right: calc(16px + env(safe-area-inset-right, 0px));
+    right: calc(16px + var(--pw) + var(--gap) + env(safe-area-inset-right, 0px));
     bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
     display: grid;
     grid-template-columns: var(--btn) var(--btn);
@@ -221,6 +222,37 @@
     cursor: pointer;
   }
   .act.lit { background: var(--c); color: #1a1008; transform: scale(0.94); }
+  /* Power icons: a column right of the Power button, bottom-aligned with it.
+     Tap one to select it; Power fires the selected one. */
+  #powers {
+    position: absolute;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 6px;
+    pointer-events: none;
+  }
+  .pw {
+    pointer-events: auto;
+    touch-action: none;
+    width: var(--pw);
+    height: var(--pw);
+    padding: 0;
+    font-size: 20px;
+    line-height: 1;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.55);
+    background: rgba(10,8,6,0.55);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+    cursor: pointer;
+    position: relative;
+  }
+  .pw[aria-checked="true"] { border: 3px solid #ffd32a; background: rgba(255,211,42,0.38); box-shadow: 0 0 10px rgba(255,211,42,0.75); }
+  /* dim the icon, not the border, so a selected icon stays highlighted */
+  .pw span { display: block; transition: opacity 0.15s; }
+  .pw.dim span { opacity: 0.32; filter: grayscale(0.9); }
+  .pw.dim { background: rgba(10,8,6,0.3); }
 
   #rotateHint {
     display: none;
@@ -258,14 +290,14 @@
   </div>
   <div id="overlay">
     <h1>Dojo Duel</h1>
-    <p>Work in progress: best of 3 rounds against REN, 60 seconds a round. Power moves arrive in a later update.</p>
+    <p>Work in progress: best of 3 rounds against REN, 60 seconds a round. The blue meter under your health is energy for power-ups.</p>
     <div id="legend">
       <b>Move</b><span>← → or A D, ↑ / W jump, ↓ / S crouch (touch: left pad)</span>
       <b>Punch / Kick</b><span>J / K. Crouch for a low jab or a sweep; jump for air attacks</span>
       <b>Block</b><span>Hold back, or L / Block. Crouch to block sweeps, stand to block air attacks</span>
       <b>Practice</b><span>T or the Dummy button sets the dummy to stand, block, or low block</span>
       <b>Hitboxes</b><span>H or the Boxes button &middot; Mute: M or 🔊</span>
-      <b>Power</b><span>1 2 3 and the Power button: coming soon</span>
+      <b>Power</b><span>1 Fireball, 2 Speed boost, 3 Shield (touch: pick an icon, then Power). Energy refills slowly, faster when you land hits, not while blocking</span>
     </div>
     <div id="modes" role="radiogroup" aria-label="Opponent">
       <button type="button" role="radio" data-mode="easy" aria-checked="true">Easy</button>
@@ -299,6 +331,11 @@
     <button class="act" type="button" data-act="block" style="--c:#4bb3fd">Block</button>
     <button class="act" type="button" data-act="power" style="--c:#ffd32a">Power</button>
   </div>
+  <div id="powers" role="radiogroup" aria-label="Power-up">
+    <button class="pw" type="button" role="radio" data-power="fireball" aria-label="Fireball" aria-checked="true"><span>🔥</span></button>
+    <button class="pw" type="button" role="radio" data-power="boost" aria-label="Speed boost" aria-checked="false"><span>⚡</span></button>
+    <button class="pw" type="button" role="radio" data-power="shield" aria-label="Shield" aria-checked="false"><span>🛡️</span></button>
+  </div>
 </div>
 
 <script>
@@ -324,6 +361,53 @@ const rotateHint = document.getElementById('rotateHint');
 const controls = document.getElementById('controls');
 const pad = document.getElementById('pad');
 const knob = document.getElementById('knob');
+const powerBtns = document.querySelectorAll('#powers .pw');
+
+// --- Energy and power-ups. Every energy value, cost, duration and speed
+// lives here, so it can be tuned without touching the logic. Durations are
+// simulation frames (60 a second); distances are base units (scaled by FS)
+// unless they say px.
+const POWER = {
+  energy: {
+    max: 100,
+    start: 0.35,       // fraction of max each fighter starts every round with
+    regen: 3,          // per second, on its own (only while the round is live)
+    onHit: 6,          // extra for landing a hit (blocked or shielded hits don't count)
+    flashFrames: 30    // the meter's "no energy" flash
+    // no refill while blocking: guard, blockstun, holding Block, or crouching back
+  },
+  fireball: {
+    cost: 40,
+    startup: 10, recovery: 16,       // the throw: frames before the fireball appears, then after
+    speed: 4.6,                      // px per frame
+    spawnX: 34, height: 66,          // where it appears: in front of the thrower, centre above the feet
+    size: 18,                        // hitbox width and height (shown on the debug overlay)
+    damage: 8, chip: 2, hitstun: 16, blockstun: 12, knock: 3.6,
+    hitstop: 6,
+    burst: 'POW!'                    // the opt-in comic burst on a landed hit
+    // one fireball per fighter on screen at a time; it disappears on any contact
+  },
+  boost: {
+    cost: 30,
+    frames: 240,           // 4 seconds
+    walkMul: 1.45,         // walk speed (forward and back)
+    recoveryMul: 0.55      // attack recovery frames
+  },
+  shield: {
+    cost: 35,
+    frames: 300            // 5 seconds, or until it absorbs one hit (a blocked hit doesn't use it up)
+  },
+  // When the CPU reaches for a power-up (how often is AI_PRESETS.powerUse).
+  ai: {
+    shieldBelowHealth: 40, // shield when its health is at or below this...
+    shieldRange: 170,      // ...and the player is within this many px
+    fireballRange: 200,    // fireball when the player is further than this (px)
+    boostRange: 140,       // boost to press in from between this and fireballRange (px; further out it saves for a fireball)...
+    boostSpare: 75         // ...or at any range once it has this much energy to spare
+  }
+};
+const POWER_IDS = ['fireball', 'boost', 'shield'];   // keys 1, 2, 3
+const POWER_NAMES = { fireball: 'Fireball', boost: 'Boost', shield: 'Shield' };
 
 // --- CPU AI difficulty. Same shape as Air Hockey (delay + jitter +
 // prediction), never a single speed multiplier. The CPU only ever sends the
@@ -338,9 +422,13 @@ const knob = document.getElementById('knob');
 //   preferredRange  gap in px it tries to keep between the fighters
 //   antiAirChance   chance to jab a jump-in out of the air; it predicts the
 //                   jump arc ahead by its own delay plus the jab's startup
+//   powerUse        chance, at each think, to use a power-up when the
+//                   situation calls for one (rules in POWER.ai). Same energy
+//                   rules as the player, and it only sees what it saw
+//                   reactionFrames ago. blockChance also covers fireballs.
 const AI_PRESETS = {
-  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 100, antiAirChance: 0.15 },
-  hard: { reactionFrames: 5, thinkInterval: 10, error: 8, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7 }
+  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 100, antiAirChance: 0.15, powerUse: 0.025 },
+  hard: { reactionFrames: 5, thinkInterval: 10, error: 8, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7, powerUse: 0.4 }
 };
 
 // --- Arena (logical pixels; the canvas is scaled to fit) ---
@@ -433,9 +521,16 @@ const MOVES = {
   lowJab:   { name: 'Low Jab',   button: 'punch', pose: 'crouch', startup: 4, active: 3, recovery: 9,  damage: 5,  chip: 1, hitstun: 13, blockstun: 9,  knock: 2.8, height: 'mid',  hitbox: { x: 44, y: 50, w: 24, h: 14 } },
   sweep:    { name: 'Sweep',     button: 'kick',  pose: 'crouch', startup: 7, active: 4, recovery: 18, damage: 9,  chip: 2, hitstun: 17, blockstun: 12, knock: 4.0, height: 'low',  hitbox: { x: 50, y: 0,  w: 34, h: 14 } },
   airPunch: { name: 'Air Punch', button: 'punch', pose: 'air',    startup: 4, active: 8, recovery: 0,  damage: 7,  chip: 1, hitstun: 15, blockstun: 10, knock: 2.6, height: 'high', hitbox: { x: 36, y: 60, w: 24, h: 20 } },
-  airKick:  { name: 'Air Kick',  button: 'kick',  pose: 'air',    startup: 6, active: 10, recovery: 0, damage: 9,  chip: 2, hitstun: 17, blockstun: 12, knock: 3.0, height: 'high', hitbox: { x: 38, y: 22, w: 30, h: 18 } }
+  airKick:  { name: 'Air Kick',  button: 'kick',  pose: 'air',    startup: 6, active: 10, recovery: 0, damage: 9,  chip: 2, hitstun: 17, blockstun: 12, knock: 3.0, height: 'high', hitbox: { x: 38, y: 22, w: 30, h: 18 } },
+  // The throw has no hitbox of its own: the fireball it releases on its
+  // first active frame carries the hit. All its numbers come from POWER.
+  fireball: { name: 'Fireball', button: 'power', pose: 'stand', startup: POWER.fireball.startup, active: 1, recovery: POWER.fireball.recovery,
+              damage: POWER.fireball.damage, chip: POWER.fireball.chip, hitstun: POWER.fireball.hitstun, blockstun: POWER.fireball.blockstun,
+              knock: POWER.fireball.knock, height: 'mid', hitbox: null, hitstop: POWER.fireball.hitstop, burst: POWER.fireball.burst }
 };
 function moveTotal(m) { return m.startup + m.active + m.recovery; }
+// A move's end frame for this fighter (a speed boost shortens recovery).
+function moveEnd(f) { return f.move.def.startup + f.move.def.active + f.move.rec; }
 function movePhase(f) {
   const m = f.move.def, fr = f.move.frame;
   if (fr < m.startup) return 'startup';
@@ -456,10 +551,12 @@ function resetFighters() {
       state: 'idle', stateFrames: 0, stun: 0, landLag: MOVE.landLag,
       jumpDir: 0, walkPhase: 0, crouched: false, airAttackUsed: false,
       move: null, buffer: null, inp: NO_INPUT, jumps: 0,
-      health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0, flash: 0
+      health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0, flash: 0,
+      energy: POWER.energy.max * POWER.energy.start, noEnergy: 0, powerBuffer: null, boost: 0, shield: 0
     });
   }
   lastHit = null;
+  projectiles = [];
   clearFx();
 }
 
@@ -480,7 +577,7 @@ function worldBox(f, b) {
 function hurtboxes(f) { return BOXES[boxPose(f)].hurt.map(b => worldBox(f, b)); }
 function pushbox(f) { return worldBox(f, BOXES[boxPose(f)].push); }
 function activeHitbox(f) {
-  if (!f.move || f.move.hit || movePhase(f) !== 'active') return null;
+  if (!f.move || !f.move.def.hitbox || f.move.hit || movePhase(f) !== 'active') return null;
   return worldBox(f, f.move.def.hitbox);
 }
 function overlaps(a, b) {
@@ -493,7 +590,8 @@ function atWall(f) { return f.x <= WALL_L + HALF_W + 0.01 || f.x >= WALL_R - HAL
 
 let moveSerial = 0;   // tags each attack, so the CPU decides once per attack it sees
 function startMove(f, id) {
-  f.move = { id, def: MOVES[id], frame: 0, hit: false, n: ++moveSerial };
+  const rec = MOVES[id].recovery;
+  f.move = { id, def: MOVES[id], frame: 0, hit: false, n: ++moveSerial, rec: f.boost > 0 ? Math.round(rec * POWER.boost.recoveryMul) : rec };
   f.buffer = null;
   if (MOVES[id].pose === 'air') { f.airAttackUsed = true; return; }
   f.crouched = MOVES[id].pose === 'crouch';
@@ -506,9 +604,19 @@ function updateFighter(f, opp, inp) {
   f.inp = inp;
   f.stateFrames++;
   if (f.hitCooldown > 0) f.hitCooldown--;
+  if (f.boost > 0) f.boost--;
+  if (f.shield > 0) f.shield--;
+  if (f.noEnergy > 0) f.noEnergy--;
   if (inp.punch) f.buffer = { button: 'punch', t: INPUT_BUFFER };
   if (inp.kick) f.buffer = { button: 'kick', t: INPUT_BUFFER };
   if (f.buffer && --f.buffer.t < 0) f.buffer = null;
+  // A power-up press is refused on the spot without the energy for it;
+  // otherwise it waits, like an attack, for the fighter to be free.
+  if (inp.power) {
+    if (canAfford(f, inp.power)) f.powerBuffer = { id: inp.power, t: INPUT_BUFFER };
+    else refusePower(f);
+  }
+  if (f.powerBuffer && --f.powerBuffer.t < 0) f.powerBuffer = null;
 
   if (airborne(f)) {
     if (f.state === 'air' && !f.move && !f.airAttackUsed && f.buffer) {
@@ -548,7 +656,8 @@ function updateFighter(f, opp, inp) {
     }
   } else if (f.state === 'attack') {
     f.move.frame++;
-    if (f.move.frame >= moveTotal(f.move.def)) { f.move = null; free = true; }
+    if (f.move.id === 'fireball' && f.move.frame === f.move.def.startup) spawnFireball(f);
+    if (f.move.frame >= moveEnd(f)) { f.move = null; free = true; }
   } else if (f.state === 'hitstun' || f.state === 'blockstun') {
     if (f.stateFrames >= f.stun) free = true;
   } else if (f.state === 'land') {
@@ -561,7 +670,17 @@ function updateFighter(f, opp, inp) {
     // Only grounded, actionable fighters turn to face the opponent, so
     // jumping over them doesn't flip you mid-air.
     if (Math.abs(opp.x - f.x) > 1) f.facing = opp.x > f.x ? 1 : -1;
-    if (f.buffer) {
+    // Boost and shield switch on and leave the fighter free to act this
+    // frame; a fireball is a throw that takes the frame like an attack.
+    let threw = false;
+    if (f.powerBuffer) {
+      const id = f.powerBuffer.id;
+      f.powerBuffer = null;
+      threw = usePower(f, id) && id === 'fireball';
+    }
+    if (threw) {
+      // the throw has started
+    } else if (f.buffer) {
       const low = inp.down;
       startMove(f, f.buffer.button === 'punch' ? (low ? 'lowJab' : 'jab') : (low ? 'sweep' : 'kick'));
     } else if (inp.up) {
@@ -582,7 +701,7 @@ function updateFighter(f, opp, inp) {
       setState(f, 'guard');
     } else if (inp.h) {
       const forward = inp.h === f.facing;
-      f.x += inp.h * (forward ? MOVE.walkFwd : MOVE.walkBack);
+      f.x += inp.h * (forward ? MOVE.walkFwd : MOVE.walkBack) * (f.boost > 0 ? POWER.boost.walkMul : 1);
       f.walkPhase += forward ? 0.28 : -0.24;
       f.crouched = false;
       setState(f, 'walk');
@@ -597,10 +716,78 @@ function updateFighter(f, opp, inp) {
 // An attack that is starting or active and close enough to reach soon.
 const GUARD_MARGIN = 48;
 function underAttack(f, opp) {
+  if (projectiles.some(p => p.owner === opp && incoming(p, f) && Math.abs(p.x - f.x) < FIREBALL_GUARD)) return true;
   const m = opp.move;
-  if (!m || m.hit || movePhase(opp) === 'recovery') return false;
+  if (!m || !m.def.hitbox || m.hit || movePhase(opp) === 'recovery') return false;
   const hb = m.def.hitbox;
   return Math.abs(opp.x - f.x) < (hb.x + hb.w / 2) * FS + GUARD_MARGIN;
+}
+
+// --- Energy and power-ups (values in POWER at the top) ---
+const FIREBALL_GUARD = 120;   // px: holding back with a fireball this close stands in guard
+let projectiles = [];          // { owner, x, y, vx, def, hit, n, t }
+let powerLog = [];             // every power-up used this match, for the debug overlay and automated checks
+function canAfford(f, id) { return f.energy >= POWER[id].cost; }
+function hasFireball(f) { return projectiles.some(p => p.owner === f); }
+function incoming(p, f) { return Math.sign(f.x - p.x) === Math.sign(p.vx); }
+function refusePower(f) {
+  f.noEnergy = POWER.energy.flashFrames;
+  f.powerBuffer = null;
+  sfx('noEnergy');
+}
+// Spends the energy and starts the power-up. Returns false (and spends
+// nothing) if it can't happen now: one fireball on screen at a time.
+function usePower(f, id) {
+  if (!canAfford(f, id)) { refusePower(f); return false; }
+  if (id === 'fireball' && hasFireball(f)) return false;
+  f.energy -= POWER[id].cost;
+  powerLog.push({ by: f.name, id, frame: simFrame });
+  if (id === 'fireball') { startMove(f, 'fireball'); sfx('fireCast'); }
+  else if (id === 'boost') { f.boost = POWER.boost.frames; sfx('boost'); ringFx(f, '255,211,42'); }
+  else if (id === 'shield') { f.shield = POWER.shield.frames; sfx('shield'); ringFx(f, '120,205,255'); }
+  return true;
+}
+function spawnFireball(f) {
+  const F = POWER.fireball;
+  projectiles.push({ owner: f, x: f.x + f.facing * F.spawnX * FS, y: f.y - F.height * FS, vx: f.facing * F.speed,
+    def: MOVES.fireball, hit: false, n: ++moveSerial, t: 0 });
+  sfx('fireball');
+}
+function fireballBox(p) {
+  const s = POWER.fireball.size * FS;
+  return { x: p.x - s / 2, y: p.y - s / 2, w: s, h: s };
+}
+// Blocking: guard, blockstun, holding Block, or crouching while holding back.
+function blocking(f) {
+  if (f.state === 'guard' || f.state === 'blockstun') return true;
+  if (airborne(f) || !f.inp) return false;
+  return !!f.inp.block || (f.state === 'crouch' && f.inp.h === -f.facing);
+}
+function regenEnergy(f) {
+  if (!blocking(f)) f.energy = Math.min(POWER.energy.max, f.energy + POWER.energy.regen / 60);
+}
+// Fireballs fly, then hit (or are blocked by, or soaked by a shield on) the
+// other fighter once and vanish. Two fireballs that meet cancel out.
+function updateProjectiles(live) {
+  for (const p of projectiles) { p.x += p.vx; p.t++; }
+  if (live) {
+    for (const p of projectiles) {
+      if (p.hit) continue;
+      const def = p.owner === player ? cpu : player;
+      if (def.hitCooldown > 0) continue;
+      const box = fireballBox(p);
+      if (hurtboxes(def).some(h => overlaps(box, h))) applyHit(p.owner, def, { mv: p, at: { x: p.x, y: p.y }, src: p });
+    }
+    for (const a of projectiles) for (const b of projectiles) {
+      if (a.owner === player && b.owner === cpu && !a.hit && !b.hit && overlaps(fireballBox(a), fireballBox(b))) {
+        a.hit = b.hit = true;
+        hitFx(MOVES.fireball, { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, 1, true, false);
+        sfx('block');
+      }
+    }
+  }
+  for (const p of projectiles) if (!p.hit && (p.x < WALL_L || p.x > WALL_R)) { p.hit = true; ringFx(p, p.owner === player ? '75,179,253' : '255,122,42', 0.6); }
+  projectiles = projectiles.filter(p => !p.hit);
 }
 
 // Fighters can't overlap: split the overlap between them, and if one is
@@ -650,13 +837,25 @@ function impactPoint(att, def) {
 }
 // hit = { mv, at }: the attacker's move and impact point, taken before
 // either hit of a trade is applied (applying one clears the other's move).
+// hit.src is set for a fireball: it blocks against and knocks back from
+// the fireball, not the thrower.
 function applyHit(att, def, hit) {
-  const m = hit.mv.def, at = hit.at;
+  const m = hit.mv.def, at = hit.at, src = hit.src || att;
   hit.mv.hit = true;            // an attack can only connect once
   def.hitCooldown = POST_HIT_COOLDOWN;
   def.lastHitFrame = simFrame;
-  const dir = att.x <= def.x ? 1 : -1;
-  const blocked = canBlock(def, att, m);
+  const dir = hit.src ? Math.sign(src.vx) : att.x <= def.x ? 1 : -1;
+  const blocked = canBlock(def, src, m);
+  // A shield soaks the first hit that would land: no damage, no stun.
+  if (!blocked && def.shield > 0) {
+    def.shield = 0;
+    def.vx = dir * m.knock * FX.blockSlide * 0.5;
+    lastHit = { by: att.name, on: def.name, move: m.name, blocked: false, absorbed: true, dealt: 0, ko: false, frame: simFrame };
+    hitFx(m, at, dir, true, false);
+    ringFx(def, '120,205,255', 1.3);
+    sfx('shieldBreak');
+    return;
+  }
   let dealt;
   if (blocked) {
     dealt = Math.min(m.chip, Math.max(0, def.health - 1));   // chip can't finish a fighter
@@ -680,15 +879,16 @@ function applyHit(att, def, hit) {
     }
     enterState(def, 'hitstun');
     def.flash = FX.flashFrames;
-    sfx(m.button === 'kick' ? 'kickHit' : 'punchHit');
+    att.energy = Math.min(POWER.energy.max, att.energy + POWER.energy.onHit);
+    sfx(m.button === 'kick' ? 'kickHit' : m.button === 'power' ? 'fireHit' : 'punchHit');
   }
   // A cornered defender can't slide back, so the attacker gets pushed out instead.
-  if (!airborne(def) && atWall(def) && Math.sign(def.x - att.x) === dir) {
+  if (!hit.src && !airborne(def) && atWall(def) && Math.sign(def.x - att.x) === dir) {
     att.vx = -dir * m.knock * (blocked ? FX.blockSlide : 1);
   }
   const ko = !blocked && def.health <= 0;
   if (ko) def.stun = Infinity;   // no getting up until the next round
-  lastHit = { by: att.name, on: def.name, move: m.name, blocked, dealt, ko, frame: simFrame };
+  lastHit = { by: att.name, on: def.name, move: m.name, blocked, absorbed: false, dealt, ko, frame: simFrame };
   hitFx(m, at, dir, blocked, ko);
 }
 
@@ -699,11 +899,16 @@ let hitstop = 0;
 let shake = null;       // { mag, t }
 let sparks = [];        // { x, y, vx, vy, t, blocked }
 let bursts = [];        // { x, y, word, scale, rot, t, frames, rise, top }
+let rings = [];         // { x, y, rgb, size, t }: power-up switch-on, shield break, fireball fizzle
 function clearFx() {
-  hitstop = 0; shake = null; sparks = []; bursts = [];
+  hitstop = 0; shake = null; sparks = []; bursts = []; rings = [];
+}
+function ringFx(at, rgb, size) {
+  const y = at.owner ? at.y : at.y - 62 * FS;   // a fighter rings round the chest
+  rings.push({ x: at.x, y, rgb, size: size || 1, t: 0 });
 }
 function hitFx(m, at, dir, blocked, ko) {
-  hitstop = Math.max(hitstop, blocked ? FX.hitstop.block : ko ? FX.hitstop.ko : FX.hitstop[m.button]);
+  hitstop = Math.max(hitstop, blocked ? FX.hitstop.block : ko ? FX.hitstop.ko : m.hitstop !== undefined ? m.hitstop : FX.hitstop[m.button]);
   const n = blocked ? FX.sparks.block : FX.sparks.hit;
   for (let i = 0; i < n; i++) {
     const a = (Math.random() * 2 - 1) * FX.sparks.spread;
@@ -730,6 +935,8 @@ function updateFx() {
   sparks = sparks.filter(s => s.t < FX.sparks.life);
   for (const b of bursts) { b.y -= b.rise; b.t++; }
   bursts = bursts.filter(b => b.t < b.frames);
+  for (const r of rings) r.t++;
+  rings = rings.filter(r => r.t < 20);
   if (shake && ++shake.t >= FX.shake.frames) shake = null;
 }
 
@@ -742,7 +949,7 @@ const KEYMAP = {
   ArrowUp: 'up', KeyW: 'up',
   ArrowDown: 'down', KeyS: 'down',
   KeyJ: 'punch', KeyK: 'kick', KeyL: 'block',
-  Digit1: 'power', Digit2: 'power', Digit3: 'power',
+  Digit1: 'power1', Digit2: 'power2', Digit3: 'power3',
   // the numeric keypad's arrows (Num Lock off reports these codes on some keyboards)
   Numpad4: 'left', Numpad6: 'right', Numpad8: 'up', Numpad2: 'down'
 };
@@ -752,7 +959,8 @@ const KEYMAP_BY_KEY = {
   ArrowLeft: 'left', Left: 'left', ArrowRight: 'right', Right: 'right',
   ArrowUp: 'up', Up: 'up', ArrowDown: 'down', Down: 'down',
   a: 'left', d: 'right', w: 'up', s: 'down', j: 'punch', k: 'kick', l: 'block',
-  A: 'left', D: 'right', W: 'up', S: 'down', J: 'punch', K: 'kick', L: 'block'
+  A: 'left', D: 'right', W: 'up', S: 'down', J: 'punch', K: 'kick', L: 'block',
+  1: 'power1', 2: 'power2', 3: 'power3'
 };
 const KEYMAP_BY_KEYCODE = { 37: 'left', 38: 'up', 39: 'right', 40: 'down', 100: 'left', 104: 'up', 102: 'right', 98: 'down' };
 function keyName(e) {
@@ -762,18 +970,29 @@ let lastKey = '-';   // shown on the debug overlay, to diagnose keyboards that s
 const keyHeld = {};
 const touchHeld = {};
 const pressed = {};
-function held(name) { return !!(keyHeld[name] || touchHeld[name]); }
-function press(name) { if (name === 'punch' || name === 'kick') pressed[name] = true; }
+let selectedPower = 'fireball';   // what the touch Power button fires
+function held(name) {
+  if (name === 'power') return !!(keyHeld.power1 || keyHeld.power2 || keyHeld.power3 || touchHeld.power);
+  return !!(keyHeld[name] || touchHeld[name]);
+}
+// power1..3 are keys 1 2 3; plain 'power' is the touch button (the selected icon).
+function press(name) {
+  if (name === 'punch' || name === 'kick') pressed[name] = true;
+  else if (name === 'power') pressed.power = selectedPower;
+  else if (/^power[123]$/.test(name)) pressed.power = POWER_IDS[Number(name[5]) - 1];
+}
 function readInput() {
   const h = (held('right') ? 1 : 0) - (held('left') ? 1 : 0);
-  const inp = { h, up: held('up'), down: held('down'), block: held('block'), punch: !!pressed.punch, kick: !!pressed.kick };
+  const inp = { h, up: held('up'), down: held('down'), block: held('block'), punch: !!pressed.punch, kick: !!pressed.kick, power: pressed.power || null };
   pressed.punch = pressed.kick = false;
+  pressed.power = null;
   return inp;
 }
 function clearInput() {
   for (const k in keyHeld) delete keyHeld[k];
   for (const k in touchHeld) delete touchHeld[k];
   pressed.punch = pressed.kick = false;
+  pressed.power = null;
   setPad(0, 0, false);
   document.querySelectorAll('.act.lit').forEach(b => b.classList.remove('lit'));
 }
@@ -845,7 +1064,7 @@ for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
 }
 
 // Action buttons: each tracks its own pointer, so a thumb on the pad and
-// a thumb on a button work at the same time. Power does nothing yet.
+// a thumb on a button work at the same time. Power fires the selected icon.
 document.querySelectorAll('.act').forEach((btn) => {
   const act = btn.dataset.act;
   let pid = null;
@@ -867,6 +1086,18 @@ document.querySelectorAll('.act').forEach((btn) => {
   btn.addEventListener('pointercancel', release);
   btn.addEventListener('lostpointercapture', release);
 });
+// Power icons: a tap selects (it doesn't fire). Selected is highlighted;
+// an icon dims while the player can't afford it (synced every frame).
+function selectPower(id) {
+  selectedPower = id;
+  powerBtns.forEach(b => b.setAttribute('aria-checked', String(b.dataset.power === id)));
+}
+powerBtns.forEach((btn) => {
+  btn.addEventListener('pointerdown', (e) => { e.preventDefault(); selectPower(btn.dataset.power); });
+});
+function syncPowerBtns() {
+  powerBtns.forEach(b => b.classList.toggle('dim', !canAfford(player, b.dataset.power)));
+}
 controls.addEventListener('contextmenu', (e) => e.preventDefault());
 
 // Touch controls show on touch devices, after any touch, or with ?touch=1.
@@ -945,14 +1176,16 @@ function resetAi() {
     poke: null,             // { id, pressed, t }: an attack it is walking in to throw
     blockLow: false,
     seenMove: 0, seenJump: 0, seenWhiff: 0,
-    antiAir: false, jumpBlock: false, wasHit: false, counter: false
+    antiAir: false, jumpBlock: false, wasHit: false, counter: false,
+    seenFireball: 0, lastPower: '-'
   });
 }
 function pushObservation() {
   const f = player;
   const o = {
     frame: simFrame, x: f.x, y: f.y, vx: f.vx, vy: f.vy, air: airborne(f), state: f.state, crouched: f.crouched, jumps: f.jumps,
-    move: f.move ? { id: f.move.id, n: f.move.n, phase: movePhase(f), frame: f.move.frame, hit: f.move.hit } : null
+    move: f.move ? { id: f.move.id, n: f.move.n, phase: movePhase(f), frame: f.move.frame, hit: f.move.hit } : null,
+    fireballs: projectiles.filter(p => p.owner === f).map(p => ({ x: p.x, vx: p.vx, n: p.n }))
   };
   const prev = aiHistory[aiHistory.length - 1];
   if (prev && (prev.state !== o.state || prev.air !== o.air || (prev.move && prev.move.n) !== (o.move && o.move.n))) playerChangeFrame = simFrame;
@@ -1031,9 +1264,15 @@ function aiInput() {
   }
 
   // Block an attack it sees coming (once per attack).
-  if (m && m.phase !== 'recovery' && !m.hit && m.n !== ai.seenMove && dist < threatRange(MOVES[m.id]) && ai.decision !== 'anti-air jab') {
+  if (m && MOVES[m.id].hitbox && m.phase !== 'recovery' && !m.hit && m.n !== ai.seenMove && dist < threatRange(MOVES[m.id]) && ai.decision !== 'anti-air jab') {
     ai.seenMove = m.n;
     if (rnd() < P.blockChance) { ai.poke = null; ai.blockLow = MOVES[m.id].height === 'low'; decide(ai.blockLow ? 'block low' : 'block high'); }
+  }
+  // Block a fireball it sees coming (once per fireball).
+  const fb = incomingFireball(o);
+  if (fb && fb.n !== ai.seenFireball && ai.decision !== 'anti-air jab') {
+    ai.seenFireball = fb.n;
+    if (rnd() < P.blockChance) { ai.poke = null; ai.blockLow = false; decide('block high'); }
   }
   // Punish an attack it saw miss (once per attack).
   if (m && m.phase === 'recovery' && !m.hit && m.n !== ai.seenWhiff) {
@@ -1047,7 +1286,7 @@ function aiInput() {
 
   // Keep blocking while an attack it saw is still out, or while it's in blockstun.
   if (ai.decision === 'block high' || ai.decision === 'block low') {
-    const live = (m && m.phase !== 'recovery' && !m.hit) || o.air || me.state === 'blockstun';
+    const live = (m && m.phase !== 'recovery' && !m.hit) || o.air || me.state === 'blockstun' || !!incomingFireball(o);
     // It knows when it has blocked: roll once to counter with a jab as soon as the blockstun ends.
     if (me.state === 'blockstun' && me.stateFrames === 1 && rnd() < P.aggression) ai.counter = true;
     if (live) { inp.h = -toward; inp.down = ai.blockLow; return inp; }
@@ -1090,6 +1329,14 @@ function aiInput() {
     ai.think = P.thinkInterval;
     ai.jitter = (rnd() * 2 - 1) * P.error;
     ai.range = P.preferredRange + ai.jitter;
+    // A power-up, if the moment calls for one and it has the energy.
+    const pw = free ? aiPower(P, dist) : null;
+    if (pw) {
+      inp.power = pw;
+      ai.lastPower = POWER_NAMES[pw];
+      decide(pw === 'boost' ? 'approach' : 'wait');   // boost is for pressing in
+      return inp;
+    }
     // Inside the player's reach it pokes less and guards more.
     const close = dist < GUARD_RANGE;
     if (rnd() < P.aggression * (close ? 0.6 : 1)) { ai.poke = { id: pickPoke(dist), pressed: false, t: 0 }; decide('poke'); return inp; }
@@ -1103,6 +1350,23 @@ function aiInput() {
   // A crouching guard, held back: it stops every grounded attack, but not a jump-in.
   else if (ai.decision === 'guard') { inp.h = -toward; inp.down = true; }
   return inp;
+}
+// A player fireball, as last seen, heading for the CPU and close enough to matter.
+function incomingFireball(o) {
+  return (o.fireballs || []).find(p => Math.sign(cpu.x - p.x) === Math.sign(p.vx) && Math.abs(cpu.x - p.x) < 230);
+}
+// Which power-up the CPU wants now, if any: a shield when it's low on health
+// and the player is close, a fireball from range, a boost to press in.
+// It checks its own energy first (it knows its own state exactly), so it
+// pays the same costs as the player and never has a press refused.
+function aiPower(P, dist) {
+  const me = cpu, A = POWER.ai;
+  if (!P.powerUse || rnd() >= P.powerUse) return null;
+  if (me.health <= A.shieldBelowHealth && me.shield <= 0 && dist < A.shieldRange && canAfford(me, 'shield')) return 'shield';
+  if (dist > A.fireballRange && !hasFireball(me) && canAfford(me, 'fireball')) return 'fireball';
+  const pressIn = dist > A.boostRange && dist <= A.fireballRange;
+  if ((pressIn || me.energy >= A.boostSpare) && me.boost <= 0 && canAfford(me, 'boost')) return 'boost';
+  return null;
 }
 function aiLabel() {
   if (!ai.poke) return ai.decision;
@@ -1129,8 +1393,8 @@ function ensureAudio() {
   }
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
 }
-function tone(freq, dur, type, vol, slideTo) {
-  const t = audioCtx.currentTime;
+function tone(freq, dur, type, vol, slideTo, delay) {
+  const t = audioCtx.currentTime + (delay || 0);
   const osc = audioCtx.createOscillator();
   const g = audioCtx.createGain();
   osc.type = type;
@@ -1200,6 +1464,15 @@ function sfx(name) {
     else if (name === 'bell') tone(880, 0.5, 'triangle', 0.1, 700);
     else if (name === 'win') { tone(523, 0.14, 'square', 0.05); setTimeout(() => sfx('start2'), 130); }
     else if (name === 'lose') tone(330, 0.45, 'triangle', 0.08, 160);
+    // power-ups
+    else if (name === 'fireCast') tone(150, 0.16, 'sawtooth', 0.05, 320);
+    else if (name === 'fireball') { swoosh(0.34, 0.3, 260, 1500); tone(220, 0.3, 'sawtooth', 0.04, 110); }
+    else if (name === 'fireHit') { thump(0.18, 0.85, 1400); tone(320, 0.16, 'square', 0.06, 70); tone(90, 0.2, 'sine', 0.2, 40); }
+    else if (name === 'boost') { tone(330, 0.09, 'square', 0.05, 440); tone(495, 0.09, 'square', 0.05, 660, 0.07); tone(660, 0.16, 'square', 0.05, 1320, 0.14); }
+    else if (name === 'shield') { tone(520, 0.45, 'sine', 0.09, 780); tone(780, 0.45, 'triangle', 0.04, 1170, 0.05); }
+    else if (name === 'shieldBreak') { swoosh(0.2, 0.22, 3200, 1100); tone(1250, 0.18, 'triangle', 0.07, 320); }
+    // not enough energy: a short dull click, nothing else happens
+    else if (name === 'noEnergy') { thump(0.04, 0.5, 240); tone(95, 0.05, 'square', 0.05, 70); }
   } catch (e) {}
 }
 function syncMuteBtn() {
@@ -1316,7 +1589,7 @@ function extension(f) {
   const m = f.move.def, fr = f.move.frame;
   if (fr < m.startup) return fr / m.startup;
   if (fr < m.startup + m.active) return 1;
-  return m.recovery ? Math.max(0, 1 - (fr - m.startup - m.active) / m.recovery) : 0;
+  return f.move.rec ? Math.max(0, 1 - (fr - m.startup - m.active) / f.move.rec) : 0;
 }
 
 // Placeholder fighter in base units: limbs as thick round lines, drawn
@@ -1388,7 +1661,8 @@ function drawFighter(f, t) {
   }
   const chest = p.chest + breathe;
   // back arm
-  if (guarding) limb(-6, -chest + 6, 8, -chest + 16, 12, -chest - 4, 9, c.giDark);
+  if (moveId === 'fireball') limb(-6, -chest + 6, lerp(4, 22, ext), lerp(-chest + 22, -chest + 14, ext), lerp(14, 40, ext), lerp(-chest + 14, -chest + 18, ext), 9, c.giDark);
+  else if (guarding) limb(-6, -chest + 6, 8, -chest + 16, 12, -chest - 4, 9, c.giDark);
   else if (hurt) limb(-6, -chest + 6, -16, -chest + 14, -22, -chest + 4, 9, c.giDark);
   else limb(-6, -chest + 6, 4, -chest + 22, 14, -chest + 14, 9, c.giDark);
   // torso
@@ -1416,6 +1690,10 @@ function drawFighter(f, t) {
     const tx = moveId === 'jab' ? 52 : 48, ty = moveId === 'jab' ? -82 : -58;
     fx = lerp(24, tx, ext); fy = lerp(-chest + 8, ty, ext);
     limb(6, -chest + 6, lerp(18, (6 + tx) / 2, ext), lerp(-chest + 20, (-chest + 6 + ty) / 2, ext), fx, fy, 9, c.gi);
+  } else if (moveId === 'fireball') {
+    // both palms pushed forward
+    fx = lerp(24, 42, ext); fy = lerp(-chest + 8, -chest + 10, ext);
+    limb(6, -chest + 6, lerp(18, 26, ext), lerp(-chest + 20, -chest + 12, ext), fx, fy, 9, c.gi);
   } else if (moveId === 'airPunch') {
     fx = lerp(24, 40, ext); fy = lerp(-chest + 8, -70, ext);
     limb(6, -chest + 6, lerp(18, 23, ext), lerp(-chest + 20, (-chest - 64) / 2, ext), fx, fy, 9, c.gi);
@@ -1475,15 +1753,18 @@ function drawHud() {
     ctx.fillRect(align === 'left' ? x + barW - lagW : x, y, lagW, barH);
     ctx.fillStyle = '#f2c14e';
     ctx.fillRect(align === 'left' ? x + barW - hpW : x, y, hpW, barH);
+    drawEnergy(f, x, y + barH + 4, barW, align);
+    ctx.font = '700 11px system-ui, -apple-system, sans-serif';
+    ctx.textBaseline = 'top';
     ctx.fillStyle = '#fff';
     ctx.textAlign = align;
-    ctx.fillText(f.name, align === 'left' ? x : x + barW, y + barH + 5);
+    ctx.fillText(f.name, align === 'left' ? x : x + barW, y + barH + 15);
     // round win markers, under the bar's inner end
     const won = wins[f === player ? 0 : 1];
     for (let i = 0; i < ROUND.winsNeeded; i++) {
       const mx = align === 'left' ? x + barW - 7 - i * 17 : x + 7 + i * 17;
       ctx.beginPath();
-      ctx.arc(mx, y + barH + 10, 5.5, 0, Math.PI * 2);
+      ctx.arc(mx, y + barH + 20, 5.5, 0, Math.PI * 2);
       ctx.fillStyle = i < won ? '#f2c14e' : 'rgba(0,0,0,0.55)';
       ctx.fill();
       ctx.lineWidth = 1.5;
@@ -1500,6 +1781,133 @@ function drawHud() {
   ctx.textBaseline = 'middle';
   ctx.fillStyle = secs <= 10 && phase === 'fight' ? '#ff6b4a' : '#fff';
   ctx.fillText(String(secs), W / 2, 21);
+}
+
+// Energy meter, under the health bar and filling the same way (toward the
+// centre). Tick marks show each power-up's cost; it flashes red with
+// "NO ENERGY" when a power-up is refused.
+const ENERGY_H = 7;
+function drawEnergy(f, x, y, w, align) {
+  const E = POWER.energy;
+  const flashing = f.noEnergy > 0 && Math.floor(f.noEnergy / 4) % 2 === 0;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(x - 2, y - 1, w + 4, ENERGY_H + 2);
+  ctx.fillStyle = flashing ? '#7a1010' : '#13283a';
+  ctx.fillRect(x, y, w, ENERGY_H);
+  const ew = w * f.energy / E.max;
+  ctx.fillStyle = flashing ? '#ff4d4d' : f.energy >= E.max ? '#9ef0ff' : '#3fc1ff';
+  ctx.fillRect(align === 'left' ? x + w - ew : x, y, ew, ENERGY_H);
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  for (const id of POWER_IDS) {
+    const tx = w * POWER[id].cost / E.max;
+    ctx.fillRect(align === 'left' ? x + w - tx - 0.75 : x + tx - 0.75, y, 1.5, ENERGY_H);
+  }
+  if (f.noEnergy > 0) {
+    ctx.font = '800 9px system-ui, -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#1a0606';
+    ctx.strokeText('NO ENERGY', x + w / 2, y + ENERGY_H / 2 + 0.5);
+    ctx.fillStyle = '#fff';
+    ctx.fillText('NO ENERGY', x + w / 2, y + ENERGY_H / 2 + 0.5);
+  }
+}
+
+// --- Power-up visuals ---
+function chestY(f) { return f.y - (airborne(f) ? 70 : f.crouched ? 42 : 60) * FS; }
+// Boost: a pulsing gold glow and speed streaks trailing behind, drawn under the fighter.
+function drawBoostAura(f, t) {
+  if (f.boost <= 0) return;
+  const cy = chestY(f);
+  const fade = Math.min(1, f.boost / 30);
+  const pulse = 0.75 + 0.25 * Math.sin(t / 60);
+  ctx.save();
+  ctx.globalAlpha = fade;
+  const g = ctx.createRadialGradient(f.x, cy, 6, f.x, cy, 80);
+  g.addColorStop(0, 'rgba(255,224,90,' + (0.5 * pulse) + ')');
+  g.addColorStop(1, 'rgba(255,170,30,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(f.x, cy, 52, 80, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,235,140,0.85)';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 4; i++) {
+    const k = ((t / 9 + i * 23) % 40) / 40;
+    const sy = f.y - (16 + i * 30) * FS * (f.crouched ? 0.65 : 1);
+    const sx = f.x - f.facing * (26 + k * 34);
+    ctx.globalAlpha = fade * (1 - k);
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - f.facing * 22, sy); ctx.stroke();
+  }
+  ctx.restore();
+}
+// Shield: a translucent blue bubble over the fighter; it blinks in its last second.
+function drawShieldBubble(f, t) {
+  if (f.shield <= 0) return;
+  if (f.shield < 60 && Math.floor(f.shield / 5) % 2 === 0) return;
+  const cy = chestY(f) + 6;
+  const rx = 50, ry = f.crouched && !airborne(f) ? 58 : 78;
+  const wob = 1 + Math.sin(t / 110) * 0.025;
+  ctx.save();
+  const g = ctx.createRadialGradient(f.x, cy, 10, f.x, cy, ry);
+  g.addColorStop(0, 'rgba(120,205,255,0.06)');
+  g.addColorStop(0.8, 'rgba(120,205,255,0.2)');
+  g.addColorStop(1, 'rgba(170,230,255,0.42)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(f.x, cy, rx * wob, ry / wob, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(190,235,255,0.9)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // a moving highlight
+  ctx.strokeStyle = 'rgba(255,255,255,0.75)';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  const a = t / 500;
+  ctx.beginPath();
+  ctx.ellipse(f.x, cy, rx * wob - 6, ry / wob - 6, 0, a, a + 0.7);
+  ctx.stroke();
+  ctx.restore();
+}
+// Fireball: a flickering glowing orb with a fading trail, blue for KAI and orange for REN.
+function drawFireball(p, t) {
+  const blue = p.owner === player;
+  const core = blue ? '#f0faff' : '#fff6cc', mid = blue ? '75,179,253' : '255,122,42';
+  const dir = Math.sign(p.vx);
+  const r = 11 * (1 + 0.1 * Math.sin(t / 35 + p.n));
+  ctx.save();
+  for (let i = 5; i >= 1; i--) {
+    ctx.fillStyle = 'rgba(' + mid + ',' + (0.42 - i * 0.07) + ')';
+    ctx.beginPath();
+    ctx.arc(p.x - dir * i * 8, p.y + Math.sin(t / 50 + i) * 1.5, r * (1 - i * 0.13), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 1.9);
+  g.addColorStop(0, core);
+  g.addColorStop(0.4, 'rgba(' + mid + ',0.95)');
+  g.addColorStop(1, 'rgba(' + mid + ',0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, r * 1.9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(p.x + dir * 2, p.y, r * 0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+function drawRings() {
+  for (const r of rings) {
+    const k = r.t / 20;
+    ctx.strokeStyle = 'rgba(' + r.rgb + ',' + (1 - k) + ')';
+    ctx.lineWidth = 4 * (1 - k) + 1;
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, (14 + k * 56) * r.size, 0, Math.PI * 2);
+    ctx.stroke();
+  }
 }
 
 // The big centre banner for the current round phase, or null.
@@ -1540,13 +1948,15 @@ function drawBanner(b) {
 const BOX_COLORS = { push: '#ffd23f', hurt: '#3fa9ff', hit: '#ff4d4d' };
 function moveLabel(f) {
   if (!f.move) return 'move -';
-  return f.move.def.name + ' ' + (f.move.frame + 1) + '/' + (f.move.def.recovery ? moveTotal(f.move.def) : f.move.def.startup + f.move.def.active) + ' ' + movePhase(f) + (f.move.hit ? ' (hit)' : '');
+  return f.move.def.name + ' ' + (f.move.frame + 1) + '/' + moveEnd(f) + ' ' + movePhase(f) + (f.move.hit ? ' (hit)' : '');
 }
 function debugLines() {
   const lines = [];
   for (const f of [player, cpu]) {
     lines.push(f.name + ' ' + f.state + ' f' + f.stateFrames + (f.stun && /stun/.test(f.state) ? '/' + f.stun : '') +
       '  ' + moveLabel(f) + '  hp ' + f.health);
+    lines.push('    energy ' + f.energy.toFixed(1) + (blocking(f) ? ' (blocking, no refill)' : '') + '  boost ' + f.boost + '  shield ' + f.shield +
+      (f.powerBuffer ? '  queued ' + f.powerBuffer.id : '') + (f.noEnergy ? '  NO ENERGY' : ''));
     lines.push('    x' + f.x.toFixed(1) + ' y' + f.y.toFixed(1) + ' vx' + f.vx.toFixed(1) + ' vy' + f.vy.toFixed(1) + ' face ' + (f.facing > 0 ? 'R' : 'L'));
   }
   const names = ['left', 'right', 'up', 'down', 'punch', 'kick', 'block', 'power'];
@@ -1558,12 +1968,13 @@ function debugLines() {
   if (mode === 'practice') lines.push('cpu practice dummy ' + DUMMY_MODES[dummyIndex].id);
   else {
     const P = AI_PRESETS[mode];
-    lines.push('cpu ' + mode + ' seed ' + aiSeed + '   decision ' + aiLabel());
+    lines.push('cpu ' + mode + ' seed ' + aiSeed + '   decision ' + aiLabel() + '   last power ' + ai.lastPower);
     lines.push('    react ' + P.reactionFrames + 'f (sees f' + aiView(P).frame + ')  reacts in ' +
       Math.max(0, playerChangeFrame + P.reactionFrames - simFrame) + 'f  think ' + Math.max(0, ai.think) + 'f  range ' + Math.round(ai.range));
   }
   lines.push('last ' + (lastHit ? lastHit.by + ' ' + lastHit.move + ' on ' + lastHit.on + ': ' +
-    (lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-'));
+    (lastHit.absorbed ? 'shield absorbed it' : lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-') +
+    '   fireballs ' + projectiles.length);
   return lines;
 }
 function drawDebug() {
@@ -1582,7 +1993,7 @@ function drawDebug() {
     ctx.strokeRect(pb.x, pb.y, pb.w, pb.h);
     ctx.setLineDash([]);
     // hitbox: solid while it can still connect, outline once it has
-    if (f.move && movePhase(f) === 'active') {
+    if (f.move && f.move.def.hitbox && movePhase(f) === 'active') {
       const hb = worldBox(f, f.move.def.hitbox);
       if (!f.move.hit) {
         ctx.fillStyle = 'rgba(255,77,77,0.45)';
@@ -1601,11 +2012,20 @@ function drawDebug() {
     ctx.stroke();
   }
 
+  // fireball hitboxes, same colour as a move's
+  for (const p of projectiles) {
+    const hb = fireballBox(p);
+    ctx.fillStyle = 'rgba(255,77,77,0.45)';
+    ctx.fillRect(hb.x, hb.y, hb.w, hb.h);
+    ctx.strokeStyle = BOX_COLORS.hit;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(hb.x, hb.y, hb.w, hb.h);
+  }
   const lines = debugLines();
   ctx.font = '9.5px ui-monospace, Menlo, Consolas, monospace';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  const x = 16, y = 62, lh = 12;
+  const x = 16, y = 66, lh = 12;
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
   ctx.fillRect(x - 4, y - 3, 372, lines.length * lh + 20);
   ctx.fillStyle = '#fff';
@@ -1686,7 +2106,9 @@ function draw(t) {
   drawArena();
   // the attacker draws in front, then whoever is higher up
   const order = (player.move && !cpu.move) || player.y < cpu.y ? [cpu, player] : [player, cpu];
-  for (const f of order) drawFighter(f, t);
+  for (const f of order) { drawBoostAura(f, t); drawFighter(f, t); drawShieldBubble(f, t); }
+  for (const p of projectiles) drawFireball(p, t);
+  drawRings();
   drawFx();
   ctx.restore();
   if (state !== 'menu') {
@@ -1700,6 +2122,7 @@ function draw(t) {
     ctx.restore();
   }
   if (debugOn) drawDebug();
+  if (touchMode && state === 'playing') syncPowerBtns();
 }
 
 // --- Game state and loop ---
@@ -1733,11 +2156,16 @@ function tick() {
   resolvePush(player, cpu);
   if (phase === 'fight') {
     clock--;
+    regenEnergy(player);
+    regenEnergy(cpu);
     // check both before applying either, so a trade hits both ways
     const pHit = checkHit(player, cpu) && { mv: player.move, at: impactPoint(player, cpu) };
     const cHit = checkHit(cpu, player) && { mv: cpu.move, at: impactPoint(cpu, player) };
     if (pHit) applyHit(player, cpu, pHit);
     if (cHit) applyHit(cpu, player, cHit);
+  }
+  updateProjectiles(phase === 'fight');
+  if (phase === 'fight') {
     // a KO on the last frame beats the clock
     const pDown = player.health <= 0, cDown = cpu.health <= 0;
     if (pDown || cDown) endRound('ko', pDown && cDown ? -1 : pDown ? 1 : 0);
@@ -1745,7 +2173,7 @@ function tick() {
   }
   // the swoosh plays on the first active frame of an attack that didn't connect
   for (const f of [player, cpu]) {
-    if (f.move && !f.move.hit && f.move.frame === f.move.def.startup) sfx(f.move.def.button === 'kick' ? 'whiffKick' : 'whiff');
+    if (f.move && f.move.def.hitbox && !f.move.hit && f.move.frame === f.move.def.startup) sfx(f.move.def.button === 'kick' ? 'whiffKick' : 'whiff');
   }
   for (const f of [player, cpu]) {
     if (f.healthLag > f.health && simFrame - f.lastHitFrame > 30) f.healthLag = Math.max(f.health, f.healthLag - 1.2);
@@ -1790,6 +2218,7 @@ function startGame() {
   round = 1;
   wins = [0, 0];
   simFrame = 0;
+  powerLog = [];
   seedAi();
   beginRound();
   clearInput();
@@ -1849,6 +2278,10 @@ window.dojoDuel = {
   set seed(v) { seedOverride = v === null ? null : Number(v); },
   get ai() { return { decision: ai.decision, label: aiLabel(), think: ai.think, range: ai.range, seenFrame: mode === 'practice' ? null : aiView(AI_PRESETS[mode]).frame }; },
   hold(name, on) { keyHeld[name] = !!on; },
+  get projectiles() { return projectiles.map(p => ({ owner: p.owner.name, x: p.x, y: p.y, vx: p.vx, n: p.n, box: fireballBox(p) })); },
+  get powerLog() { return powerLog.slice(); },
+  get selectedPower() { return selectedPower; },
+  selectPower, blocking,
   get lastHit() { return lastHit; },
   get fx() { return { hitstop, shake, sparks: sparks.length, bursts: bursts.map(b => ({ word: b.word, scale: b.scale, x: b.x, y: b.y, top: b.top })), flash: [player.flash, cpu.flash] }; },
   get match() { return { round, wins: wins.slice(), phase, phaseFrames, clock, roundWinner, banner: state === 'playing' ? bannerText() : null }; },
@@ -1864,7 +2297,7 @@ window.dojoDuel = {
   reset() { resetFighters(); clearInput(); },
   startGame,
   player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
-  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, FS, FLOOR, MAX_HEALTH
+  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, POWER, FS, FLOOR, MAX_HEALTH
 };
 
 resetFighters();
