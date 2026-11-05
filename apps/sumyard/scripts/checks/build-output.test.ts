@@ -19,11 +19,13 @@ describe('built output', () => {
 
   it('needs every inert allowlist entry (a stale entry fails, so the list only shrinks)', () => {
     const files = textFiles(DIST).map((path) => ({ path, text: readFileSync(path, 'utf8') }))
-    for (const [url, { fileType }] of Object.entries(INERT_URLS)) {
-      expect(
-        files.some((f) => f.path.endsWith(fileType) && f.text.includes(url)),
-        `${url} is no longer in any ${fileType} file: remove it from INERT_URLS`,
-      ).toBe(true)
+    for (const [url, { fileTypes }] of Object.entries(INERT_URLS)) {
+      for (const fileType of fileTypes) {
+        expect(
+          files.some((f) => f.path.endsWith(fileType) && f.text.includes(url)),
+          `${url} is no longer in any ${fileType} file: remove it from INERT_URLS`,
+        ).toBe(true)
+      }
     }
   })
 

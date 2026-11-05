@@ -41,11 +41,11 @@ The build scan (`scripts/checks/externalUrls.ts`, run by `npm run build`) fails 
 
 1. **Plain https GOV.UK links** (`https://www.gov.uk/...` or `https://gov.uk/...`), and never where the browser would fetch them (script, stylesheet, image, CSS `url()`). Help can link only there: the Markdown parser shows any other link as text.
 2. **Plain https krishnabuilds.dev links** (`https://krishnabuilds.dev` or one subdomain, such as `https://chalkline.krishnabuilds.dev`), with the same rule: links someone follows, never fetched. They are the home link and the other apps in the main menu.
-3. **Exact inert strings** in `INERT_URLS`, each allowed only in one kind of file and never fetched:
+3. **Exact inert strings** in `INERT_URLS`, each allowed only in the kinds of file listed and never fetched:
 
 | String | File type | Why it is in the build |
 |---|---|---|
-| `http://www.w3.org/2000/svg` | `.js` | SVG namespace identifier used by React DOM. |
+| `http://www.w3.org/2000/svg` | `.js`, `.svg` | SVG namespace identifier used by React DOM, and the `xmlns` of the shared `favicon.svg`. |
 | `http://www.w3.org/1999/xlink` | `.js` | XLink namespace identifier used by React DOM. |
 | `http://www.w3.org/1998/Math/MathML` | `.js` | MathML namespace identifier used by React DOM. |
 | `http://www.w3.org/XML/1998/namespace` | `.js` | XML namespace identifier used by React DOM. |
