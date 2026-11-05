@@ -2,7 +2,8 @@
 
 Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
 
-- [ ] Dojo Duel, built in small steps, one PR each:
+- [x] Dojo Duel, built in small steps, one PR each (notes for maintainers in
+      CLAUDE.md, "Dojo Duel notes"):
   - [x] Step 1: arena and movement
   - [x] Step 2: attacks, blocking, health bars, training dummy
   - [x] Step 3: hit feel (hitstop, white flash and stagger pose, POW!/WHAM!
@@ -46,6 +47,21 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         Title screen (1.62.0): DOJO DUEL logo, KAI vs REN, mode picker and a
         pulsing FIGHT! button over a vignette so the fighters show; the
         controls legend moved to a How to play panel (Got it / Escape)
+  - [x] Step 7 (1.63.0): tuning and polish, no new features. Honest landing
+        card (tagline, tags). How to play: short Touch / Keyboard table,
+        opens by itself on the first visit, "?" in the title screen's top
+        right brings it back. Seeded balance harness: the shield was too
+        cheap (35 = the round's starting energy) and decided matches for
+        both sides, and boost made a mashed jab safe; POWER retuned (shield
+        60 / 2 s, boost 40 / recovery x0.75, regen 2/s, CPU shields at 25
+        health). AI_PRESETS unchanged. Pause on hidden tab / lock / portrait,
+        audio resumed on every gesture for iOS, refit after rotation,
+        multi-touch and no-:hover checked
+- [ ] Dojo Duel follow-up: holding jab in range beats Easy every time and
+      Hard ~9 in 10 (jab is about even on block and chips 1; REN's kick and
+      sweep pokes lose to it). Not fixable with AI_PRESETS alone (numbers in
+      PR #63); needs REN to pick faster pokes or back off under pressure, or
+      a jab frame-data change. Decide which before touching it
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
