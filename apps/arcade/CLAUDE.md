@@ -45,7 +45,7 @@ games/lane-racer/index.html   — Lane Racer (canvas, lane-changing traffic/poth
 games/globe-quiz/index.html   — Globe Quiz (DOM, timed multiple-choice trivia: capitals/flags, no Easy/Hard — see note below)
 games/fuseblock/index.html    — Fuseblock (canvas, bomb-placement grid arena: 5 bot tiers, roguelike level progression, power-ups)
 games/mosaica/index.html      — Mosaica (canvas, drag-to-column/rotate tetromino stacker, ceramic-tile visual theme; Phase 1 core loop only)
-games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fighter vs CPU; built in small steps — see BACKLOG.md; touch pad + buttons, hitbox debug overlay, FX table for hit feel, ROUND table for best-of-3 rounds, AI_PRESETS for the Easy/Hard CPU, POWER for energy and power-ups, ?seed=N for a repeatable AI)
+games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fighter vs CPU; see "Dojo Duel notes" below for its layout and tuning tables)
 games/<slug>/index.html       — next game goes here
 ```
 
@@ -171,6 +171,97 @@ cooldown (`puckHitCooldown`, ~8 frames) during which the puck is immune
 to *any* mallet collision, guaranteeing genuine travel time. Apply this
 same pattern - recoil alone is not sufficient - to any future game with
 a body that gets repeatedly struck near a boundary.
+
+## Dojo Duel notes
+
+`games/dojo-duel/index.html` is the biggest single-file game here (a 1v1
+fighter vs the CPU, landscape, fixed 60 Hz simulation on a 640x360 logical
+canvas). It was built in seven small steps (see `BACKLOG.md`); every number
+worth tuning is in one of the tables at the top of the script, so balance
+changes should never need to touch the logic.
+
+### File layout (top to bottom)
+
+- **CSS:** title / How to play / pause / result screens (they pad their
+  bottom by `--chrome-overlap` so nothing sits under the shared bottom
+  chrome), the in-fight top buttons, then the touch controls. `#controls`
+  is fixed to the viewport and keeps a 60 px `--chrome-row` free at the
+  bottom for the fullscreen back button, site-links pill and guide link.
+- **HTML:** `#rotateHint`, then `#wrap` (canvas, `#topBtns`, `#overlay`
+  title screen with the "?" button, `#howto`, `#pause`, `#result`), then
+  `#controls` (pad, four action buttons, three power icons).
+- **Script, in order:** the tuning tables `POWER`, `AI_PRESETS`, arena
+  constants, `MOVE`, `FX`, `ROUND`, `BOXES`, `MOVES`; then fighter update
+  (`updateFighter`), energy and fireballs, hits (`applyHit`, `canBlock`),
+  hit effects, input (keyboard maps, touch pad, buttons), opponent modes,
+  the seeded RNG, the CPU AI (`aiInput`), debug overlay, audio, layout
+  (`fitCanvas`), drawing, then the game state, loop, pause and the
+  `window.dojoDuel` test handle.
+
+### The tables
+
+- **`MOVES`** — frame data per attack: `startup` / `active` / `recovery`
+  frames, `damage` / `chip`, `hitstun` / `blockstun`, `knock`, `height`
+  (`mid`, `low` must be blocked crouching, `high` standing), `hitbox` in
+  `BOXES` base units, and an opt-in comic `burst`. The fireball's row is
+  built from `POWER.fireball`. A move is "+N on hit/block" by comparing the
+  defender's stun with the attacker's remaining frames; that difference is
+  what decides whether mashing it is safe.
+- **`FX`** — hit feel only (hitstop per button, white flash, stagger pose,
+  kick / KO screen shake, burst sizes, sparks, block slide). Nothing in it
+  changes damage, stun or range.
+- **`ROUND`** — best of 3, 60 s clock, banner lengths. Time-out goes to more
+  health; a draw or double KO replays the round.
+- **`POWER`** — the energy economy (`energy.start` fraction of `max`, `regen`
+  per second, `onHit` bonus, no refill while blocking), each power-up's
+  cost and numbers (`fireball`, `boost`, `shield`), and `POWER.ai`, the
+  rules for when the CPU reaches for one. Keep `shield.cost` above
+  `energy.start * max`, or every round opens with a free shield.
+- **`AI_PRESETS`** — Easy / Hard, in the Air Hockey shape (delay + jitter +
+  prediction, never a speed multiplier): `reactionFrames` (how old the
+  CPU's view of the player is), `thinkInterval`, `error`, `blockChance`,
+  `aggression`, `preferredRange`, `antiAirChance`, `powerUse`. The CPU only
+  sends the player's own inputs and pays the same energy costs. A reaction
+  can only block an attack whose `startup` is at least `reactionFrames`
+  (4 blocks the 4-frame jab, 5 can't; above 6 it can't react to sweeps).
+
+### Testing and balance
+
+- `?seed=N` fixes the AI's RNG, `?debug=1` (or H) shows boxes and state,
+  `?touch=1` forces the touch controls. `window.dojoDuel` exposes the
+  state, tables, `paused` + `step(n, keys)` for frame-stepping, `hold()` /
+  `press()` for input, plus `pauseGame` / `resumeGame` and the audio
+  context. Nothing in the game uses it.
+- Balance is checked with a scratch Playwright harness (not committed):
+  load `?seed=1000..`, set `paused = true`, and drive whole matches with
+  scripted players through `hold` / `step` — one-move spammers (jab, kick,
+  sweep, fireball), a mid-skill bot (sees REN 14 frames late, blocks half)
+  and a good bot (8 frames, blocks 80%), with and without power-ups, and
+  with the CPU's power-ups switched off one at a time by editing
+  `POWER.ai`. Step 7's numbers are in that PR (#63).
+- Known balance finding (1.63.0): holding the jab button in range is the
+  strongest single strategy. It beats Easy every time and Hard about 9
+  times in 10, because a jab is about even on block and chips 1, and REN's
+  kick and sweep pokes lose to it. No `AI_PRESETS` value fixes this without
+  making Hard unbeatable for the good bot (or Easy as hard as Hard), so it
+  needs a design change (REN's poke choice under pressure, or jab frame
+  data), not more tuning.
+
+### Robustness
+
+- Pause: a hidden tab (`visibilitychange`), `pagehide` (iOS lock / app
+  switch) or turning to portrait pauses the fight, drops held touches and
+  shows Resume (Escape also resumes). The loop doesn't tick while
+  `suspended`, and resuming resets the frame clock so no time is skipped.
+- Audio: iOS Safari only starts an AudioContext inside a gesture and
+  suspends it again on lock or interruption, so every `touchend`, `click`
+  and `keydown` creates or resumes it; the first time it plays a silent
+  one-sample buffer to unlock older iOS.
+- Multi-touch: the pad and each button capture their own pointer, so the
+  pad, Punch / Kick / Block and the power icons work together.
+- Storage: `sessionStorage` `dojoDuelDebug`, `dojoDuelMuted`;
+  `localStorage` `dojoDuelHowtoSeen` (the How to play panel opens by itself
+  until it's dismissed once).
 
 ## Mobile-first constraints learned the hard way
 
