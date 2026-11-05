@@ -15,7 +15,7 @@ Moved verbatim from `PLAN.md` on 21 October 2026. New ideas go here.
 - Welsh rate variations beyond what the config supports.
 - Spreadsheet (CSV) export of a calculator's tables.
 - Phone-specific polish if the first phone audit shows gaps.
-- A Sumyard logo and favicon (the header uses a text wordmark; the favicon is empty).
+- A Sumyard-specific logo (the header uses a text wordmark; the favicon is the shared krishnabuilds "kb" icon).
 - Remember the compare selection across visits (it lasts for the visit now).
 - A "Discard changes" action on a loaded scenario (today: load it again).
 - Chart tooltips on hover or tap (values are in the summary and the data table now).

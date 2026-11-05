@@ -54,7 +54,7 @@ Stonks is retired, not rebuilt (see `docs/decisions.md`).
 One small PR each, in order.
 
 - [ ] Shared accent token: #1f6aa5 light, #7cc0e6 dark; Chalkline, Stickyard and Sumyard map their local accent to it
-- [ ] Branding assets: "kb" favicon, apple-touch icon, shared share image; icon, Open Graph and Twitter tags and "AppName · krishnabuilds" titles in all five apps
+- [x] Branding assets: "kb" favicon, apple-touch icon, shared share image; icon, Open Graph and Twitter tags and "AppName · krishnabuilds" titles in all five apps
 - [ ] Portal landing page: hand-written SVG card previews, hero, footer
 - [ ] Story page template, then draft story pages for Arcade, Chalkline, Stickyard and Sumyard
 - [ ] "How this is built" page: monorepo diagram, working principles, AI guardrails, decision log from `docs/decisions.md`

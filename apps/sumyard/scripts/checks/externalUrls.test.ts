@@ -46,10 +46,11 @@ describe('scanText', () => {
   })
 
   it('allows only the exact inert identifiers, each with a reason', () => {
-    for (const [url, { reason, fileType }] of Object.entries(INERT_URLS)) {
+    for (const [url, { reason, fileTypes }] of Object.entries(INERT_URLS)) {
       expect(reason.length, url).toBeGreaterThan(10)
-      expect(scanText(`assets/a${fileType}`, `"${url}"`), url).toEqual([])
+      for (const fileType of fileTypes) expect(scanText(`assets/a${fileType}`, `"${url}"`), url).toEqual([])
     }
+    expect(urls('a.svg', '"https://react.dev/errors/"')).toHaveLength(1)
     expect(urls('a.js', '"http://www.w3.org/2000/svg/evil.js"')).toHaveLength(1)
     expect(urls('a.js', '"https://react.dev/errors/../../tracker"')).toHaveLength(1)
   })
