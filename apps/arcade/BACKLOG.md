@@ -24,8 +24,20 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         The dummy is now Practice mode. Fix (1.60.1): holding back against
         an incoming attack stands in guard instead of walking away (the
         "kick did nothing" bug), raised-fist hurtbox, Easy range 115 -> 100
-  - [ ] Power moves (1 2 3 and the Power button); set `burst: 'WHAM!'`
-        (or another word) on their `MOVES` entries to show a comic burst
+  - [x] Step 6: energy and power-ups. An energy meter under each health
+        bar (starts each round at `POWER.energy.start` of full, refills
+        slowly, faster on a landed hit, not while blocking). Fireball (1):
+        a projectile with its own hitbox on the debug overlay, blockable,
+        gone on contact, one on screen per fighter, `burst: 'POW!'`. Speed
+        boost (2): faster walk and shorter attack recovery for a few
+        seconds. Shield (3): soaks one unblocked hit or expires. Touch: three
+        44 px icons beside Power (tap to select, Power fires; selected is
+        highlighted, unaffordable dims). Not enough energy: "NO ENERGY"
+        flash on the meter and a dull click, nothing else. The CPU uses
+        them under the same energy rules and reaction delay, gated by
+        `AI_PRESETS.powerUse` (Easy rarely; Hard: shield when low, fireball
+        at range, boost to press in, rules in `POWER.ai`). Synth sounds,
+        boost glow and shield bubble. Every value is in the `POWER` table
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
