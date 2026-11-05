@@ -14,16 +14,57 @@ body {
   padding: var(--kb-space-8) var(--kb-space-4);
 }
 
+.hero {
+  padding: var(--kb-space-8) 0 var(--kb-space-4);
+}
+
 .hero h1 {
-  margin: 0 0 var(--kb-space-3);
+  margin: 0 0 var(--kb-space-4);
   font-size: var(--kb-font-size-3xl);
   line-height: var(--kb-font-line-height-tight);
 }
 
 .hero p {
+  max-width: 40rem;
   margin: 0;
   color: var(--kb-color-text-muted);
   font-size: var(--kb-font-size-lg);
+}
+
+.hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-3);
+  margin: var(--kb-space-6) 0 0;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--kb-space-4);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-md);
+  color: var(--kb-color-text);
+  font-weight: var(--kb-font-weight-medium);
+  text-decoration: none;
+}
+
+.button:hover {
+  border-color: var(--kb-color-accent);
+}
+
+/* accent / accent-fg is checked for AA contrast in both themes by the tokens build. */
+.button--primary {
+  border-color: var(--kb-color-accent);
+  background: var(--kb-color-accent);
+  color: var(--kb-color-accent-fg);
+}
+
+.button:focus-visible,
+.footer a:focus-visible {
+  outline: 2px solid var(--kb-color-focus-ring);
+  outline-offset: 2px;
 }
 
 .group {
@@ -140,6 +181,100 @@ body {
   background: var(--kb-color-bg);
   color: var(--kb-color-text-muted);
   font-size: var(--kb-font-size-xs);
+}
+
+/* Card previews (Preview.tsx): hand-written SVG drawn with the shared tokens. */
+.card__preview {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 0 var(--kb-space-3);
+  border-radius: var(--kb-radius-md);
+  background: var(--kb-color-bg);
+}
+
+.pv-box,
+.pv-frame,
+.pv-note {
+  fill: var(--kb-color-surface);
+  stroke: var(--kb-color-border);
+  stroke-width: 1.5;
+}
+
+.pv-frame {
+  fill: none;
+  stroke-dasharray: 4 4;
+}
+
+.pv-box--accent,
+.pv-note--accent,
+.pv-accent-fill {
+  fill: var(--kb-color-accent);
+  stroke: var(--kb-color-accent);
+}
+
+.pv-line {
+  fill: none;
+  stroke: var(--kb-color-border);
+  stroke-width: 2;
+}
+
+.pv-line--dash {
+  stroke-dasharray: 4 4;
+}
+
+.pv-accent-stroke {
+  fill: var(--kb-color-accent);
+  stroke: var(--kb-color-accent);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.pv-accent-stroke--wide {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.pv-text {
+  fill: var(--kb-color-text-muted);
+}
+
+.pv-text--on-accent {
+  fill: var(--kb-color-accent-fg);
+}
+
+.pv-pointer {
+  fill: var(--kb-color-text);
+  stroke: var(--kb-color-bg);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.footer {
+  max-width: 64rem;
+  margin: var(--kb-space-12) auto 0;
+  padding: var(--kb-space-6) var(--kb-space-4) var(--kb-space-8);
+  border-top: 1px solid var(--kb-color-border);
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-sm);
+}
+
+.footer p {
+  margin: var(--kb-space-1) 0 0;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-2) var(--kb-space-6);
+  margin: 0 0 var(--kb-space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.footer a {
+  color: var(--kb-color-accent);
 }
 
 @media (min-width: 40em) {
