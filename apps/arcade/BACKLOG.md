@@ -8,10 +8,15 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
   - [x] Step 3: hit feel (hitstop, white flash and stagger pose, POW!/WHAM!
         bursts and sparks, kick screen shake, hit/block/whiff sounds; all
         values in the `FX` table). Moved ahead of rounds and the CPU AI
-  - [ ] Step 4: rounds
+  - [x] Step 4: rounds (best of 3, 60 s clock, Round / Fight! / K.O. /
+        Time! banners, win markers, result screen with Play Again; time-out
+        goes to more health, a draw or double K.O. replays the round; values
+        in the `ROUND` table). Normal hits no longer show a burst: `burst`
+        is now opt-in per move in `MOVES`, and the KO blow gets a big WHAM!
   - [ ] Step 5: a CPU that fights back (reuse Air Hockey's delay + jitter +
         prediction shape); first real test of blocking by holding back
-  - [ ] Power moves (1 2 3 and the Power button)
+  - [ ] Power moves (1 2 3 and the Power button); set `burst: 'WHAM!'`
+        (or another word) on their `MOVES` entries to show a comic burst
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
