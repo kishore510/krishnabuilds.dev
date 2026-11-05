@@ -339,7 +339,7 @@ const knob = document.getElementById('knob');
 //   antiAirChance   chance to jab a jump-in out of the air; it predicts the
 //                   jump arc ahead by its own delay plus the jab's startup
 const AI_PRESETS = {
-  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 115, antiAirChance: 0.15 },
+  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 100, antiAirChance: 0.15 },
   hard: { reactionFrames: 5, thinkInterval: 10, error: 8, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7 }
 };
 
@@ -407,12 +407,14 @@ const ROUND = {
 // --- Boxes in base units, relative to the fighter's feet. x is the box
 // centre's offset in front of the fighter (mirrored by facing); y is the
 // height of the box's bottom above the feet. push = body that fighters
-// can't overlap, hurt = where the fighter can be hit.
+// can't overlap, hurt = where the fighter can be hit. The third standing and
+// crouching hurtbox is the raised front fist (both its rest and guard
+// heights), so a jab that visibly meets it connects.
 const BOXES = {
   stand:  { push: { x: 0, y: 0, w: 40, h: 104 },
-            hurt: [{ x: 2, y: 80, w: 28, h: 28 }, { x: 0, y: 0, w: 44, h: 82 }] },
+            hurt: [{ x: 2, y: 80, w: 28, h: 28 }, { x: 0, y: 0, w: 44, h: 82 }, { x: 23, y: 78, w: 10, h: 24 }] },
   crouch: { push: { x: 0, y: 0, w: 44, h: 66 },
-            hurt: [{ x: 4, y: 50, w: 28, h: 28 }, { x: 0, y: 0, w: 50, h: 52 }] },
+            hurt: [{ x: 4, y: 50, w: 28, h: 28 }, { x: 0, y: 0, w: 50, h: 52 }, { x: 23, y: 52, w: 10, h: 24 }] },
   air:    { push: { x: 0, y: 30, w: 34, h: 70 },
             hurt: [{ x: 2, y: 78, w: 28, h: 28 }, { x: 0, y: 22, w: 42, h: 58 }] }
 };
@@ -573,6 +575,11 @@ function updateFighter(f, opp, inp) {
     } else if (inp.block) {
       f.crouched = false;
       setState(f, 'guard');
+    } else if (inp.h && inp.h !== f.facing && underAttack(f, opp)) {
+      // Holding back against an incoming attack stands your ground in guard
+      // rather than walking away from it (both fighters).
+      f.crouched = false;
+      setState(f, 'guard');
     } else if (inp.h) {
       const forward = inp.h === f.facing;
       f.x += inp.h * (forward ? MOVE.walkFwd : MOVE.walkBack);
@@ -585,6 +592,15 @@ function updateFighter(f, opp, inp) {
     }
   }
   clampToWalls(f);
+}
+
+// An attack that is starting or active and close enough to reach soon.
+const GUARD_MARGIN = 48;
+function underAttack(f, opp) {
+  const m = opp.move;
+  if (!m || m.hit || movePhase(opp) === 'recovery') return false;
+  const hb = m.def.hitbox;
+  return Math.abs(opp.x - f.x) < (hb.x + hb.w / 2) * FS + GUARD_MARGIN;
 }
 
 // Fighters can't overlap: split the overlap between them, and if one is
@@ -950,7 +966,12 @@ function aiView(P) {
 }
 // Reach of a move against a standing body, centre to centre, less a small margin.
 const STAND_HALF = BOXES.stand.hurt[1].w * FS / 2;
-function reach(id) { const hb = MOVES[id].hitbox; return (hb.x + hb.w / 2) * FS + STAND_HALF - 4; }
+function reach(id) {
+  // centre to centre, to the front of the nearest standing hurtbox at the hitbox's height
+  const hb = MOVES[id].hitbox;
+  const front = Math.max(...BOXES.stand.hurt.filter(b => b.y < hb.y + hb.h && hb.y < b.y + b.h).map(b => b.x + b.w / 2));
+  return (hb.x + hb.w / 2 + front) * FS - 4;
+}
 function threatRange(def) { return (def.hitbox.x + def.hitbox.w / 2) * FS + STAND_HALF + 24; }
 const GUARD_RANGE = threatRange(MOVES.kick);   // inside this the player can reach it, so guarding is worth it
 const POKES = [['jab', 0.4], ['kick', 0.35], ['sweep', 0.15], ['lowJab', 0.1]];

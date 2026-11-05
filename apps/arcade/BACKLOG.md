@@ -21,7 +21,9 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         player's inputs: approach, poke, block by holding back (crouching for
         lows), punish whiffs, anti-air jab, back off after a hit. Seedable
         RNG (`?seed=N`), decision and reaction timer on the debug overlay.
-        The dummy is now Practice mode
+        The dummy is now Practice mode. Fix (1.60.1): holding back against
+        an incoming attack stands in guard instead of walking away (the
+        "kick did nothing" bug), raised-fist hurtbox, Easy range 115 -> 100
   - [ ] Power moves (1 2 3 and the Power button); set `burst: 'WHAM!'`
         (or another word) on their `MOVES` entries to show a comic burst
 
