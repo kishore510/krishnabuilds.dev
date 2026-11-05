@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dojo Duel</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #15100b;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  #wrap { position: relative; }
+  canvas {
+    display: block;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    touch-action: none;
+  }
+
+  /* --- Start screen --- */
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    background: rgba(12, 8, 5, 0.74);
+    padding: calc(10px * var(--game-scale, 1));
+    box-sizing: border-box;
+    overflow-y: auto;
+    border-radius: 6px;
+    z-index: 5;
+  }
+  #overlay h1 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
+  #overlay p { margin: 3px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(470px * var(--game-scale, 1)); }
+  #legend {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: calc(2px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    margin: calc(8px * var(--game-scale, 1)) 0 0;
+    font-size: calc(11.5px * var(--game-scale, 1));
+    text-align: left;
+    background: rgba(255,255,255,0.07);
+    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.28);
+    border-radius: calc(10px * var(--game-scale, 1));
+    padding: calc(7px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+  }
+  #legend b { color: #ffcf5a; }
+  #legend span { opacity: 0.9; }
+  #startBtn {
+    margin-top: calc(12px * var(--game-scale, 1));
+    font: inherit;
+    font-size: calc(17px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(10px * var(--game-scale, 1)) calc(34px * var(--game-scale, 1));
+    border-radius: calc(24px * var(--game-scale, 1));
+    border: none;
+    background: #ffcf5a;
+    color: #3a2400;
+    cursor: pointer;
+  }
+  #startBtn:active { background: #ffe08f; }
+  #backToArcade {
+    margin-top: calc(10px * var(--game-scale, 1));
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 700;
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+  }
+
+  /* --- In-game top buttons (centre of the HUD, under the health bars) --- */
+  #topBtns {
+    position: absolute;
+    top: calc(36px * var(--game-scale, 1));
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: calc(6px * var(--game-scale, 1));
+    z-index: 6;
+  }
+  #topBtns button {
+    font: inherit;
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 700;
+    min-width: 36px;
+    min-height: 32px;
+    padding: calc(3px * var(--game-scale, 1)) calc(9px * var(--game-scale, 1));
+    border-radius: calc(14px * var(--game-scale, 1));
+    border: 1.5px solid rgba(255,255,255,0.65);
+    background: rgba(10,8,6,0.6);
+    color: #fff;
+    cursor: pointer;
+  }
+  #debugBtn[aria-pressed="true"] { background: rgba(255,80,80,0.45); border-color: #ff9a9a; }
+
+  /* --- Touch controls ---
+     Fixed to the viewport, not the canvas, so on wide phones they sit in
+     the dark side margins and cover less of the arena. The bottom
+     --chrome-row px of the screen is left empty for the shared chrome
+     that landscape mode floats there (round back button bottom-left,
+     site-links pill bottom-centre, guide link bottom-right), so none of
+     it can ever overlap a control. */
+  #controls {
+    --chrome-row: 60px;
+    --pad: clamp(112px, 36vh, 156px);
+    --btn: clamp(52px, 16vh, 68px);
+    --gap: 10px;
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    display: none;
+  }
+  #controls.on { display: block; }
+  #pad {
+    position: absolute;
+    left: calc(16px + env(safe-area-inset-left, 0px));
+    bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
+    width: var(--pad);
+    height: var(--pad);
+    border-radius: 50%;
+    background: rgba(10,8,6,0.5);
+    border: 2px solid rgba(255,255,255,0.5);
+    box-sizing: border-box;
+    pointer-events: auto;
+    touch-action: none;
+  }
+  #pad .arrow {
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.8);
+    font-size: calc(var(--pad) * 0.15);
+    border-radius: 50%;
+  }
+  #pad .arrow.lit { background: rgba(255,207,90,0.55); color: #fff; }
+  #pad .up { top: 3%; left: 35%; }
+  #pad .down { bottom: 3%; left: 35%; }
+  #pad .left { left: 3%; top: 35%; }
+  #pad .right { right: 3%; top: 35%; }
+  #knob {
+    position: absolute;
+    width: 34%;
+    height: 34%;
+    left: 33%;
+    top: 33%;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.7);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  #actions {
+    position: absolute;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
+    display: grid;
+    grid-template-columns: var(--btn) var(--btn);
+    grid-template-rows: var(--btn) var(--btn);
+    gap: var(--gap);
+    pointer-events: none;
+  }
+  .act {
+    pointer-events: auto;
+    touch-action: none;
+    font: inherit;
+    font-size: calc(var(--btn) * 0.22);
+    font-weight: 800;
+    color: #fff;
+    border-radius: 50%;
+    background: rgba(10,8,6,0.55);
+    border: 3px solid var(--c);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.45);
+    padding: 0;
+    cursor: pointer;
+  }
+  .act.lit { background: var(--c); color: #1a1008; transform: scale(0.94); }
+
+  #rotateHint {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #15100b;
+    color: #fff;
+    z-index: 50;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  #rotateHint .icon { font-size: 48px; margin-bottom: 12px; animation: rotateWiggle 1.6s ease-in-out infinite; }
+  #rotateHint p { font-size: 16px; font-weight: 700; max-width: 260px; }
+  @keyframes rotateWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div id="rotateHint">
+  <div class="icon">📱</div>
+  <p>Rotate your device to landscape to play Dojo Duel</p>
+</div>
+<div id="wrap">
+  <canvas id="game"></canvas>
+  <div id="topBtns">
+    <button id="muteBtn" type="button" aria-label="Mute">🔊</button>
+    <button id="debugBtn" type="button" aria-pressed="false" aria-label="Show hitboxes">Boxes</button>
+  </div>
+  <div id="overlay">
+    <h1>Dojo Duel</h1>
+    <p>Work in progress: this update is movement only. Punches, kicks, rounds and a CPU that fights back arrive in the next updates.</p>
+    <div id="legend">
+      <b>Move</b><span>← → or A D (touch: left pad)</span>
+      <b>Jump</b><span>↑ or W (hold a direction to jump that way)</span>
+      <b>Crouch</b><span>↓ or S</span>
+      <b>Hitboxes</b><span>H or the Boxes button</span>
+      <b>Mute</b><span>M or 🔊</span>
+      <b>Attacks</b><span>J K L, 1 2 3 and the right-hand buttons: coming soon</span>
+    </div>
+    <button id="startBtn" type="button" data-kb-play>Start</button>
+    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+</div>
+
+<div id="controls" aria-hidden="true">
+  <div id="pad">
+    <span class="arrow up">▲</span>
+    <span class="arrow down">▼</span>
+    <span class="arrow left">◀</span>
+    <span class="arrow right">▶</span>
+    <div id="knob"></div>
+  </div>
+  <div id="actions">
+    <button class="act" type="button" data-act="punch" style="--c:#ff9f43">Punch</button>
+    <button class="act" type="button" data-act="kick" style="--c:#ff5e57">Kick</button>
+    <button class="act" type="button" data-act="block" style="--c:#4bb3fd">Block</button>
+    <button class="act" type="button" data-act="power" style="--c:#ffd32a">Power</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('wrap');
+const overlay = document.getElementById('overlay');
+const startBtn = document.getElementById('startBtn');
+const backToArcade = document.getElementById('backToArcade');
+const muteBtn = document.getElementById('muteBtn');
+const debugBtn = document.getElementById('debugBtn');
+const rotateHint = document.getElementById('rotateHint');
+const controls = document.getElementById('controls');
+const pad = document.getElementById('pad');
+const knob = document.getElementById('knob');
+
+// --- Arena (logical pixels; the canvas is scaled to fit) ---
+const W = 640, H = 360;
+const FLOOR = 316;              // y of the fighters' feet
+const WALL_L = 24, WALL_R = 616;
+const STEP_MS = 1000 / 60;      // fixed 60 Hz simulation step
+
+// --- Movement tuning. Speeds are px per frame, durations are frames. ---
+const MOVE = {
+  walkFwd: 2.6,
+  walkBack: 2.0,
+  jumpVy: -10.2,   // ~95px peak, ~37 frames in the air
+  jumpVx: 3.0,
+  gravity: 0.55,
+  jumpSquat: 3,    // frames crouched before leaving the ground
+  landLag: 4       // frames of landing recovery
+};
+
+// --- Boxes, relative to the fighter's feet. x is the box centre's offset
+// in front of the fighter (mirrored by facing); y is the height of the
+// box's bottom above the feet. push = body that fighters can't overlap,
+// hurt = where the fighter can be hit. Hitboxes join in the next update.
+const BOXES = {
+  stand:  { push: { x: 0, y: 0, w: 40, h: 104 },
+            hurt: [{ x: 2, y: 80, w: 28, h: 28 }, { x: 0, y: 0, w: 44, h: 82 }] },
+  crouch: { push: { x: 0, y: 0, w: 44, h: 66 },
+            hurt: [{ x: 4, y: 50, w: 28, h: 28 }, { x: 0, y: 0, w: 50, h: 52 }] },
+  air:    { push: { x: 0, y: 30, w: 34, h: 70 },
+            hurt: [{ x: 2, y: 78, w: 28, h: 28 }, { x: 0, y: 22, w: 42, h: 58 }] }
+};
+
+function makeFighter(name, x, facing, colors) {
+  return {
+    name, x, y: FLOOR, vx: 0, vy: 0, facing, colors,
+    state: 'idle', stateFrames: 0, jumpDir: 0, walkPhase: 0
+  };
+}
+const player = makeFighter('KAI', 200, 1, { gi: '#2f6fd6', giDark: '#1f4c99', band: '#ffffff', belt: '#1a1a1a', skin: '#e8b98f' });
+const cpu = makeFighter('REN', 440, -1, { gi: '#d6453a', giDark: '#99302a', band: '#1a1a1a', belt: '#5a3a1a', skin: '#c98d62' });
+
+function resetFighters() {
+  for (const [f, x, face] of [[player, 200, 1], [cpu, 440, -1]]) {
+    f.x = x; f.y = FLOOR; f.vx = 0; f.vy = 0; f.facing = face;
+    f.state = 'idle'; f.stateFrames = 0; f.jumpDir = 0; f.walkPhase = 0;
+  }
+}
+
+function setState(f, s) {
+  if (f.state !== s) { f.state = s; f.stateFrames = 0; }
+}
+function boxPose(f) {
+  if (f.state === 'crouch') return 'crouch';
+  if (f.state === 'air') return 'air';
+  return 'stand';
+}
+function worldBox(f, b) {
+  const cx = f.x + b.x * f.facing;
+  return { x: cx - b.w / 2, y: f.y - b.y - b.h, w: b.w, h: b.h };
+}
+function overlaps(a, b) {
+  return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+}
+
+function clampToWalls(f) {
+  const half = BOXES.stand.push.w / 2;
+  f.x = Math.max(WALL_L + half, Math.min(WALL_R - half, f.x));
+}
+function atWall(f) {
+  const half = BOXES.stand.push.w / 2;
+  return f.x <= WALL_L + half + 0.01 || f.x >= WALL_R - half - 0.01;
+}
+
+// inp: { h: -1|0|1 (screen direction), up, down }
+function updateFighter(f, opp, inp) {
+  f.stateFrames++;
+  if (f.state === 'air') {
+    f.vy += MOVE.gravity;
+    f.x += f.vx;
+    f.y += f.vy;
+    if (f.y >= FLOOR) {
+      f.y = FLOOR; f.vx = 0; f.vy = 0;
+      setState(f, 'land');
+      sfx('land');
+    }
+  } else if (f.state === 'jumpsquat') {
+    if (f.stateFrames >= MOVE.jumpSquat) {
+      f.vy = MOVE.jumpVy;
+      f.vx = f.jumpDir * MOVE.jumpVx;
+      setState(f, 'air');
+      sfx('jump');
+    }
+  } else if (f.state === 'land' && f.stateFrames < MOVE.landLag) {
+    // landing recovery: can't act yet
+  } else {
+    // Free to act. Only grounded, actionable fighters turn to face the
+    // opponent, so jumping over them doesn't flip you mid-air.
+    if (Math.abs(opp.x - f.x) > 1) f.facing = opp.x > f.x ? 1 : -1;
+    if (inp.up) {
+      f.jumpDir = inp.h;
+      setState(f, 'jumpsquat');
+    } else if (inp.down) {
+      setState(f, 'crouch');
+    } else if (inp.h) {
+      const forward = inp.h === f.facing;
+      f.x += inp.h * (forward ? MOVE.walkFwd : MOVE.walkBack);
+      f.walkPhase += forward ? 0.28 : -0.24;
+      setState(f, 'walk');
+    } else {
+      setState(f, 'idle');
+    }
+  }
+  clampToWalls(f);
+}
+
+// Fighters can't overlap: split the overlap between them, and if one is
+// pinned against a wall, the other takes the rest.
+function resolvePush(a, b) {
+  const pa = worldBox(a, BOXES[boxPose(a)].push);
+  const pb = worldBox(b, BOXES[boxPose(b)].push);
+  if (!overlaps(pa, pb)) return;
+  const ov = Math.min(pa.x + pa.w, pb.x + pb.w) - Math.max(pa.x, pb.x);
+  const dir = a.x < b.x ? -1 : a.x > b.x ? 1 : -a.facing;
+  a.x += dir * ov / 2;
+  b.x -= dir * ov / 2;
+  clampToWalls(a); clampToWalls(b);
+  const qa = worldBox(a, BOXES[boxPose(a)].push);
+  const qb = worldBox(b, BOXES[boxPose(b)].push);
+  const ov2 = Math.min(qa.x + qa.w, qb.x + qb.w) - Math.max(qa.x, qb.x);
+  if (ov2 > 0 && overlaps(qa, qb)) {
+    if (atWall(a)) b.x -= dir * ov2; else a.x += dir * ov2;
+    clampToWalls(a); clampToWalls(b);
+  }
+}
+
+// --- Input: keyboard and touch both feed one set of flags ---
+const KEYMAP = {
+  ArrowLeft: 'left', KeyA: 'left',
+  ArrowRight: 'right', KeyD: 'right',
+  ArrowUp: 'up', KeyW: 'up',
+  ArrowDown: 'down', KeyS: 'down',
+  KeyJ: 'punch', KeyK: 'kick', KeyL: 'block',
+  Digit1: 'power', Digit2: 'power', Digit3: 'power'
+};
+const keyHeld = {};
+const touchHeld = {};
+function held(name) { return !!(keyHeld[name] || touchHeld[name]); }
+function readInput() {
+  const h = (held('right') ? 1 : 0) - (held('left') ? 1 : 0);
+  return { h, up: held('up'), down: held('down') };
+}
+function clearInput() {
+  for (const k in keyHeld) delete keyHeld[k];
+  for (const k in touchHeld) delete touchHeld[k];
+  setPad(0, 0, false);
+  document.querySelectorAll('.act.lit').forEach(b => b.classList.remove('lit'));
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'KeyH' && !e.repeat) { toggleDebug(); return; }
+  if (e.code === 'KeyM' && !e.repeat) { toggleMute(); return; }
+  const name = KEYMAP[e.code];
+  if (!name) return;
+  if (state === 'playing') e.preventDefault();
+  keyHeld[name] = true;
+});
+window.addEventListener('keyup', (e) => {
+  const name = KEYMAP[e.code];
+  if (name) keyHeld[name] = false;
+});
+window.addEventListener('blur', clearInput);
+
+// Touch d-pad: one hit region, direction computed from where the thumb is
+// relative to the centre, so the thumb can slide between directions
+// without lifting (same approach as Fuseblock). Horizontal-only and
+// vertical-only zones are wider than the diagonals so walking doesn't
+// accidentally crouch or jump.
+let padPointer = null;
+const padArrows = {
+  up: pad.querySelector('.up'), down: pad.querySelector('.down'),
+  left: pad.querySelector('.left'), right: pad.querySelector('.right')
+};
+function setPad(nx, ny, active) {
+  let left = false, right = false, up = false, down = false;
+  if (active && Math.hypot(nx, ny) > 0.24) {
+    const a = Math.atan2(-ny, nx) * 180 / Math.PI;  // up is positive
+    const absA = Math.abs(a);
+    right = absA < 60;
+    left = absA > 120;
+    up = a > 30 && a < 150;
+    down = a < -30 && a > -150;
+  }
+  touchHeld.left = left; touchHeld.right = right; touchHeld.up = up; touchHeld.down = down;
+  for (const k in padArrows) padArrows[k].classList.toggle('lit', touchHeld[k]);
+  const m = Math.min(1, Math.hypot(nx, ny)) || 0;
+  const ang = Math.atan2(ny, nx);
+  const kx = active ? Math.cos(ang) * m * 80 : 0;
+  const ky = active ? Math.sin(ang) * m * 80 : 0;
+  knob.style.transform = 'translate(' + kx + '%, ' + ky + '%)';
+}
+function padFromEvent(e) {
+  const r = pad.getBoundingClientRect();
+  const nx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+  const ny = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+  setPad(nx, ny, true);
+}
+pad.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  padPointer = e.pointerId;
+  try { pad.setPointerCapture(e.pointerId); } catch (err) {}
+  padFromEvent(e);
+});
+pad.addEventListener('pointermove', (e) => {
+  if (e.pointerId === padPointer) padFromEvent(e);
+});
+for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+  pad.addEventListener(type, (e) => {
+    if (e.pointerId === padPointer) { padPointer = null; setPad(0, 0, false); }
+  });
+}
+
+// Action buttons: each tracks its own pointer, so a thumb on the pad and
+// a thumb on a button work at the same time. They light up and show in
+// the debug overlay now; the moves themselves arrive in the next update.
+document.querySelectorAll('.act').forEach((btn) => {
+  const act = btn.dataset.act;
+  let pid = null;
+  btn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    pid = e.pointerId;
+    try { btn.setPointerCapture(e.pointerId); } catch (err) {}
+    touchHeld[act] = true;
+    btn.classList.add('lit');
+    sfx('tap');
+  });
+  const release = (e) => {
+    if (e.pointerId !== pid) return;
+    pid = null;
+    touchHeld[act] = false;
+    btn.classList.remove('lit');
+  };
+  btn.addEventListener('pointerup', release);
+  btn.addEventListener('pointercancel', release);
+  btn.addEventListener('lostpointercapture', release);
+});
+controls.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// Touch controls show on touch devices, after any touch, or with ?touch=1.
+let touchMode = window.matchMedia('(pointer: coarse)').matches || /[?&]touch=1\b/.test(location.search);
+window.addEventListener('pointerdown', (e) => {
+  if (e.pointerType === 'touch' && !touchMode) { touchMode = true; updateControls(); }
+}, true);
+function updateControls() {
+  controls.classList.toggle('on', touchMode && state === 'playing');
+}
+
+// --- Debug overlay: H, the Boxes button, or ?debug=1 ---
+let debugOn = /[?&]debug=1\b/.test(location.search) || sessionStorage.getItem('dojoDuelDebug') === '1';
+function toggleDebug() {
+  debugOn = !debugOn;
+  try { sessionStorage.setItem('dojoDuelDebug', debugOn ? '1' : '0'); } catch (e) {}
+  syncDebugBtn();
+}
+function syncDebugBtn() { debugBtn.setAttribute('aria-pressed', String(debugOn)); }
+debugBtn.addEventListener('click', toggleDebug);
+syncDebugBtn();
+
+// --- Audio: Web Audio only, created on the first Start tap ---
+let muted = sessionStorage.getItem('dojoDuelMuted') === '1';
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+}
+function tone(freq, dur, type, vol, slideTo) {
+  const t = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(g).connect(audioCtx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.02);
+}
+function thump(dur, vol, cutoff) {
+  const t = audioCtx.currentTime;
+  const len = Math.floor(audioCtx.sampleRate * dur);
+  const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / len);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = cutoff;
+  const g = audioCtx.createGain();
+  g.gain.value = vol;
+  src.connect(filter).connect(g).connect(audioCtx.destination);
+  src.start(t);
+}
+function sfx(name) {
+  if (muted || !audioCtx) return;
+  try {
+    if (name === 'jump') tone(260, 0.14, 'triangle', 0.08, 520);
+    else if (name === 'land') thump(0.09, 0.35, 420);
+    else if (name === 'tap') tone(720, 0.04, 'triangle', 0.04);
+    else if (name === 'start') { tone(392, 0.12, 'square', 0.05); setTimeout(() => sfx('start2'), 110); }
+    else if (name === 'start2') tone(587, 0.2, 'square', 0.05);
+  } catch (e) {}
+}
+function syncMuteBtn() {
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
+}
+function toggleMute() {
+  muted = !muted;
+  try { sessionStorage.setItem('dojoDuelMuted', muted ? '1' : '0'); } catch (e) {}
+  syncMuteBtn();
+}
+muteBtn.addEventListener('click', toggleMute);
+syncMuteBtn();
+
+// --- Layout ---
+let renderScale = 1;
+function fitCanvas() {
+  const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
+  const scale = Math.min(window.innerWidth / W, (window.innerHeight - reserved) / H);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  canvas.style.width = (W * scale) + 'px';
+  canvas.style.height = (H * scale) + 'px';
+  canvas.width = Math.round(W * scale * dpr);
+  canvas.height = Math.round(H * scale * dpr);
+  renderScale = canvas.width / W;
+  wrap.style.setProperty('--game-scale', scale);
+}
+function checkOrientation() {
+  rotateHint.style.display = window.innerWidth < window.innerHeight ? 'flex' : 'none';
+}
+function handleResize() { fitCanvas(); checkOrientation(); }
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', handleResize);
+window.addEventListener('kb-navbar-ready', fitCanvas);
+
+// --- Drawing ---
+function drawArena() {
+  // back wall
+  const wall = ctx.createLinearGradient(0, 0, 0, FLOOR);
+  wall.addColorStop(0, '#3b2a1c');
+  wall.addColorStop(1, '#5c4128');
+  ctx.fillStyle = wall;
+  ctx.fillRect(0, 0, W, FLOOR);
+  // paper screens between pillars
+  for (let i = 0; i < 4; i++) {
+    const x = 40 + i * 145, w = 120;
+    ctx.fillStyle = '#e9dcc0';
+    ctx.fillRect(x, 70, w, 170);
+    ctx.strokeStyle = '#6b4a2e';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x, 70, w, 170);
+    ctx.lineWidth = 1.5;
+    for (let gx = 1; gx < 4; gx++) {
+      ctx.beginPath(); ctx.moveTo(x + gx * w / 4, 70); ctx.lineTo(x + gx * w / 4, 240); ctx.stroke();
+    }
+    for (let gy = 1; gy < 5; gy++) {
+      ctx.beginPath(); ctx.moveTo(x, 70 + gy * 34); ctx.lineTo(x + w, 70 + gy * 34); ctx.stroke();
+    }
+  }
+  // pillars and beam
+  ctx.fillStyle = '#2a1c10';
+  for (let i = 0; i < 5; i++) ctx.fillRect(22 + i * 145, 40, 14, FLOOR - 40);
+  ctx.fillRect(0, 40, W, 16);
+  ctx.fillRect(0, 240, W, 10);
+  // hanging banner with a plain emblem
+  ctx.fillStyle = '#8c1d18';
+  ctx.fillRect(296, 56, 48, 74);
+  ctx.beginPath();
+  ctx.moveTo(296, 130); ctx.lineTo(320, 118); ctx.lineTo(344, 130); ctx.closePath();
+  ctx.fillStyle = '#5c4128';
+  ctx.fill();
+  ctx.strokeStyle = '#f2c14e';
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(320, 86, 13, 0, Math.PI * 2); ctx.stroke();
+  // floor planks
+  const floor = ctx.createLinearGradient(0, FLOOR - 6, 0, H);
+  floor.addColorStop(0, '#9c6b3c');
+  floor.addColorStop(1, '#6e4624');
+  ctx.fillStyle = floor;
+  ctx.fillRect(0, FLOOR - 6, W, H - FLOOR + 6);
+  ctx.strokeStyle = 'rgba(40,22,10,0.45)';
+  ctx.lineWidth = 1;
+  for (let i = -6; i <= 6; i++) {
+    ctx.beginPath();
+    ctx.moveTo(320 + i * 52, FLOOR - 6);
+    ctx.lineTo(320 + i * 92, H);
+    ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(0, FLOOR + 18); ctx.lineTo(W, FLOOR + 18); ctx.stroke();
+  // arena edge markers
+  ctx.fillStyle = 'rgba(242,193,78,0.5)';
+  ctx.fillRect(WALL_L - 2, FLOOR - 6, 4, H - FLOOR + 6);
+  ctx.fillRect(WALL_R - 2, FLOOR - 6, 4, H - FLOOR + 6);
+}
+
+function limb(x1, y1, x2, y2, x3, y3, width, color) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3);
+  ctx.stroke();
+}
+
+// Placeholder fighter: limbs as thick round lines, drawn facing right and
+// mirrored by facing. Heights match the boxes above.
+function drawFighter(f, t) {
+  const c = f.colors;
+  // shadow on the floor, smaller the higher the fighter is
+  const lift = Math.max(0, FLOOR - f.y);
+  const shadowW = Math.max(12, 30 - lift * 0.15);
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.ellipse(f.x, FLOOR + 2, shadowW, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  let p;
+  if (f.state === 'crouch') p = { hip: 30, chest: 66, head: 78, squat: true };
+  else if (f.state === 'jumpsquat' || (f.state === 'land' && f.stateFrames < MOVE.landLag)) p = { hip: 38, chest: 80, head: 92, squat: true };
+  else if (f.state === 'air') p = { hip: 50, chest: 94, head: 106, air: true };
+  else p = { hip: 48, chest: 92, head: 104 };
+  const breathe = f.state === 'idle' ? Math.sin(t / 380) * 1.2 : 0;
+
+  ctx.save();
+  ctx.translate(f.x, f.y);
+  ctx.scale(f.facing, 1);
+
+  // legs
+  const legW = 11;
+  if (p.air) {
+    limb(-5, -p.hip, -14, -p.hip + 18, -4, -p.hip + 30, legW, c.giDark);
+    limb(5, -p.hip, 16, -p.hip + 14, 10, -p.hip + 32, legW, c.gi);
+  } else if (p.squat) {
+    limb(-5, -p.hip, -20, -p.hip + 14, -14, 0, legW, c.giDark);
+    limb(5, -p.hip, 20, -p.hip + 12, 16, 0, legW, c.gi);
+  } else {
+    const s = f.state === 'walk' ? Math.sin(f.walkPhase) * 8 : 0;
+    limb(-5, -p.hip, -8 - s * 0.5, -p.hip / 2, -11 - s, 0, legW, c.giDark);
+    limb(5, -p.hip, 10 + s * 0.5, -p.hip / 2, 13 + s, 0, legW, c.gi);
+  }
+  // feet
+  ctx.fillStyle = c.skin;
+  if (!p.air) {
+    ctx.fillRect(-18, -4, 12, 4);
+    ctx.fillRect(10, -4, 12, 4);
+  }
+
+  const chest = p.chest + breathe;
+  // back arm (guard)
+  limb(-6, -chest + 6, 4, -chest + 22, 14, -chest + 14, 9, c.giDark);
+  // torso
+  ctx.fillStyle = c.gi;
+  ctx.beginPath();
+  ctx.moveTo(-14, -chest);
+  ctx.lineTo(14, -chest);
+  ctx.lineTo(12, -p.hip + 2);
+  ctx.lineTo(-12, -p.hip + 2);
+  ctx.closePath();
+  ctx.fill();
+  // collar
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-7, -chest); ctx.lineTo(2, -chest + 16); ctx.lineTo(9, -chest);
+  ctx.stroke();
+  // belt
+  ctx.fillStyle = c.belt;
+  ctx.fillRect(-13, -p.hip, 26, 6);
+  ctx.fillRect(-4, -p.hip + 4, 4, 9);
+  // front arm (guard, fist up)
+  limb(6, -chest + 6, 18, -chest + 20, 24, -chest + 8, 9, c.gi);
+  ctx.fillStyle = c.skin;
+  ctx.beginPath(); ctx.arc(24, -chest + 7, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(14, -chest + 13, 4.5, 0, Math.PI * 2); ctx.fill();
+  // head
+  const head = p.head + breathe;
+  ctx.fillStyle = c.skin;
+  ctx.beginPath(); ctx.arc(3, -head, 12, 0, Math.PI * 2); ctx.fill();
+  // headband with tails flowing behind
+  ctx.fillStyle = c.band;
+  ctx.fillRect(-9, -head - 6, 24, 5);
+  const flutter = Math.sin(t / 120 + f.x * 0.05) * 3;
+  ctx.beginPath();
+  ctx.moveTo(-9, -head - 5);
+  ctx.lineTo(-22, -head - 8 + flutter);
+  ctx.lineTo(-21, -head - 3 + flutter);
+  ctx.closePath();
+  ctx.fill();
+  // eye
+  ctx.fillStyle = '#1a1008';
+  ctx.fillRect(8, -head - 1, 3, 3);
+
+  ctx.restore();
+}
+
+function drawHud() {
+  const barW = 240, barH = 14, y = 12;
+  ctx.font = '700 11px system-ui, -apple-system, sans-serif';
+  ctx.textBaseline = 'top';
+  for (const [f, x, align] of [[player, 16, 'left'], [cpu, W - 16 - barW, 'right']]) {
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(x - 2, y - 2, barW + 4, barH + 4);
+    ctx.fillStyle = '#f2c14e';
+    ctx.fillRect(x, y, barW, barH);
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = align;
+    ctx.fillText(f.name, align === 'left' ? x : x + barW, y + barH + 5);
+  }
+}
+
+const BOX_COLORS = { push: '#ffd23f', hurt: '#3fa9ff', hit: '#ff4d4d' };
+function drawDebug() {
+  for (const f of [player, cpu]) {
+    const set = BOXES[boxPose(f)];
+    for (const b of set.hurt) {
+      const r = worldBox(f, b);
+      ctx.fillStyle = 'rgba(63,169,255,0.25)';
+      ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.strokeStyle = BOX_COLORS.hurt;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(r.x, r.y, r.w, r.h);
+    }
+    const pb = worldBox(f, set.push);
+    ctx.setLineDash([4, 3]);
+    ctx.strokeStyle = BOX_COLORS.push;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(pb.x, pb.y, pb.w, pb.h);
+    ctx.setLineDash([]);
+    // origin (feet) cross
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(f.x - 5, f.y); ctx.lineTo(f.x + 5, f.y);
+    ctx.moveTo(f.x, f.y - 5); ctx.lineTo(f.x, f.y + 5);
+    ctx.stroke();
+  }
+
+  // text panel
+  const lines = [];
+  for (const f of [player, cpu]) {
+    lines.push(f.name + ' ' + f.state + ' f' + f.stateFrames +
+      '  x' + f.x.toFixed(1) + ' y' + f.y.toFixed(1) +
+      '  vx' + f.vx.toFixed(1) + ' vy' + f.vy.toFixed(1) +
+      '  face ' + (f.facing > 0 ? 'R' : 'L'));
+  }
+  const names = ['left', 'right', 'up', 'down', 'punch', 'kick', 'block', 'power'];
+  const glyphs = ['←', '→', '↑', '↓', 'P', 'K', 'B', 'Pw'];
+  lines.push('input ' + names.map((n, i) => held(n) ? glyphs[i] : '·').join(' ') +
+    '   frame ' + simFrame + '   ' + fps + ' fps');
+  ctx.font = '10px ui-monospace, Menlo, Consolas, monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  const x = 16, y = 68, lh = 13;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(x - 4, y - 3, 330, lines.length * lh + 22);
+  ctx.fillStyle = '#fff';
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh));
+  // legend
+  const ly = y + lines.length * lh + 4;
+  let lx = x;
+  for (const [k, label] of [['push', 'push'], ['hurt', 'hurt'], ['hit', 'hit']]) {
+    ctx.fillStyle = BOX_COLORS[k];
+    ctx.fillRect(lx, ly + 2, 10, 8);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(label, lx + 14, ly);
+    lx += 56;
+  }
+}
+
+function draw(t) {
+  ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
+  drawArena();
+  // draw the fighter that's in the air last, so a jump passes in front
+  const order = player.y < cpu.y ? [cpu, player] : [player, cpu];
+  for (const f of order) drawFighter(f, t);
+  if (state === 'playing') drawHud();
+  if (debugOn) drawDebug();
+}
+
+// --- Game state and loop ---
+let state = 'menu'; // 'menu' | 'playing'
+let simFrame = 0;
+const NO_INPUT = { h: 0, up: false, down: false };
+
+function tick() {
+  simFrame++;
+  updateFighter(player, cpu, readInput());
+  updateFighter(cpu, player, NO_INPUT); // the CPU just stands its ground for now
+  resolvePush(player, cpu);
+}
+
+function startGame() {
+  resetFighters();
+  clearInput();
+  simFrame = 0;
+  state = 'playing';
+  overlay.style.display = 'none';
+  updateControls();
+  sfx('start');
+}
+
+startBtn.addEventListener('click', () => {
+  window.kbEnterFullscreen?.(document.documentElement);
+  ensureAudio();
+  startGame();
+});
+backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+
+let last = performance.now(), acc = 0;
+let fps = 60, fpsFrames = 0, fpsSince = last;
+function loop(now) {
+  let dt = now - last;
+  last = now;
+  if (dt > 250) dt = 250;
+  if (state === 'playing') {
+    acc += dt;
+    let steps = 0;
+    while (acc >= STEP_MS && steps < 5) { tick(); acc -= STEP_MS; steps++; }
+    if (steps === 5) acc = 0;
+  }
+  fpsFrames++;
+  if (now - fpsSince >= 500) {
+    fps = Math.round(fpsFrames * 1000 / (now - fpsSince));
+    fpsFrames = 0; fpsSince = now;
+  }
+  draw(now);
+  requestAnimationFrame(loop);
+}
+
+// Read-only handle for automated checks (Playwright).
+window.dojoDuel = {
+  get state() { return state; },
+  get debug() { return debugOn; },
+  get muted() { return muted; },
+  player, cpu, held, MOVE, FLOOR
+};
+
+handleResize();
+requestAnimationFrame(loop);
+</script>
+
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox" data-fullscreen="landscape"></script>
+</body>
+</html>

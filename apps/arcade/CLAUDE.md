@@ -45,6 +45,7 @@ games/lane-racer/index.html   — Lane Racer (canvas, lane-changing traffic/poth
 games/globe-quiz/index.html   — Globe Quiz (DOM, timed multiple-choice trivia: capitals/flags, no Easy/Hard — see note below)
 games/fuseblock/index.html    — Fuseblock (canvas, bomb-placement grid arena: 5 bot tiers, roguelike level progression, power-ups)
 games/mosaica/index.html      — Mosaica (canvas, drag-to-column/rotate tetromino stacker, ceramic-tile visual theme; Phase 1 core loop only)
+games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fighter vs CPU; built in small steps, step 1 = movement, touch pad + buttons, hitbox debug overlay)
 games/<slug>/index.html       — next game goes here
 ```
 
