@@ -29,17 +29,18 @@
   const HOME_URL = 'https://krishnabuilds.dev';
 
   // Where the page links assets/kb-tokens.css (the landing page), a few sizes
-  // come from the shared tokens; the px fallbacks are the same values, for
-  // game pages. Colours stay Arcade's own (its --kb-bg etc. don't clash with
-  // the shared --kb-color-* names).
+  // and the accent come from the shared tokens; the fallbacks are the same
+  // values, for game pages. The other colours stay Arcade's own (its --kb-bg
+  // etc. don't clash with the shared --kb-color-* names); the accent is the
+  // shared one (#1f6aa5 light, #7cc0e6 dark), not Arcade's in-game teal.
   const CSS = `
     :host {
       --kb-bg: #ffffff;
       --kb-text: #1a2230;
       --kb-muted: #5a6678;
       --kb-border: rgba(26,34,48,0.18);
-      --kb-accent: #12806e;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      --kb-accent: var(--kb-color-accent, #1f6aa5);
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       font-size: var(--kb-font-size-sm, 14px);
       line-height: 1.2;
     }
@@ -49,7 +50,7 @@
         --kb-text: #eef2f5;
         --kb-muted: #8a97ab;
         --kb-border: rgba(255,255,255,0.22);
-        --kb-accent: #22b8a0;
+        --kb-accent: var(--kb-color-accent, #7cc0e6);
       }
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }

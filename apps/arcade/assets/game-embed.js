@@ -72,7 +72,7 @@
       background: #0a0f1a;
       border-bottom: 3px solid rgba(34,184,160,0.65);
       box-shadow: 0 4px 18px rgba(0,0,0,0.55);
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     }
     .kb-navbar::after {
       content: '';
@@ -117,7 +117,7 @@
       bottom: 10px; right: 10px;
       display: inline-flex;
       align-items: center;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       font-size: 13px;
       font-weight: 600;
       text-decoration: none;
