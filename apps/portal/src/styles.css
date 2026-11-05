@@ -368,3 +368,152 @@ body {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* How this is built (HowPage.tsx). */
+.diagram {
+  display: block;
+  width: 100%;
+  max-width: 30rem;
+  height: auto;
+  font-family: var(--kb-font-family-sans);
+}
+
+.dg-group {
+  fill: var(--kb-color-surface);
+  stroke: var(--kb-color-border);
+  stroke-width: 1.5;
+}
+
+.dg-box {
+  fill: var(--kb-color-bg);
+  stroke: var(--kb-color-border);
+  stroke-width: 1.5;
+}
+
+.dg-box--accent {
+  fill: var(--kb-color-accent);
+  stroke: var(--kb-color-accent);
+}
+
+.dg-title {
+  fill: var(--kb-color-text);
+  font-size: 12px;
+  font-weight: var(--kb-font-weight-semibold);
+}
+
+.dg-label {
+  fill: var(--kb-color-text-muted);
+  font-size: 10px;
+}
+
+.dg-text {
+  fill: var(--kb-color-text);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.dg-text--left {
+  text-anchor: start;
+}
+
+.dg-text--on-accent {
+  fill: var(--kb-color-accent-fg);
+}
+
+.dg-arrow {
+  stroke: var(--kb-color-text-muted);
+  stroke-width: 2;
+}
+
+.dg-head {
+  fill: var(--kb-color-text-muted);
+}
+
+.how ul {
+  padding-left: var(--kb-space-6);
+}
+
+.how li + li {
+  margin-top: var(--kb-space-2);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-2);
+}
+
+.filter {
+  min-height: 2.75rem;
+  padding: 0 var(--kb-space-4);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-full);
+  background: var(--kb-color-bg);
+  color: var(--kb-color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.filter[aria-pressed="true"] {
+  border-color: var(--kb-color-accent);
+  background: var(--kb-color-accent);
+  color: var(--kb-color-accent-fg);
+}
+
+.filter:focus-visible,
+.log__item summary:focus-visible {
+  outline: 2px solid var(--kb-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.log__count {
+  margin: var(--kb-space-3) 0;
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-sm);
+}
+
+.how .log {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.how .log li + li {
+  margin-top: var(--kb-space-2);
+}
+
+.log__item {
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-md);
+  background: var(--kb-color-surface);
+}
+
+.log__item summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--kb-space-1) var(--kb-space-3);
+  min-height: 2.75rem;
+  padding: var(--kb-space-3) var(--kb-space-4);
+  border-radius: var(--kb-radius-md);
+  cursor: pointer;
+}
+
+.log__date,
+.log__tag {
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-sm);
+}
+
+.log__title {
+  flex: 1 1 16rem;
+  font-weight: var(--kb-font-weight-medium);
+}
+
+.log__body {
+  padding: 0 var(--kb-space-4) var(--kb-space-2);
+}
+
+.log__body ul {
+  padding-left: var(--kb-space-6);
+}

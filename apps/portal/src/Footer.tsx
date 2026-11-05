@@ -1,6 +1,5 @@
 export const SOURCE_URL = "https://github.com/kishore510/krishnabuilds.dev";
-// Until the Portal has its own page, "How this is built" opens the decision log on GitHub.
-export const HOW_URL = `${SOURCE_URL}/blob/main/docs/decisions.md`;
+export const HOW_URL = "/how-this-is-built";
 
 export function Footer() {
   return (

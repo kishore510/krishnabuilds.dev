@@ -57,7 +57,7 @@ One small PR each, in order.
 - [x] Branding assets: "kb" favicon, apple-touch icon, shared share image; icon, Open Graph and Twitter tags and "AppName · krishnabuilds" titles in all five apps
 - [x] Portal landing page: hand-written SVG card previews, hero, footer
 - [x] Story page template, then draft story pages for Arcade, Chalkline, Stickyard and Sumyard
-- [ ] "How this is built" page: monorepo diagram, working principles, AI guardrails, decision log from `docs/decisions.md`
+- [x] "How this is built" page: monorepo diagram, working principles, AI guardrails, decision log from `docs/decisions.md`
 - [ ] Stickyard and Sumyard join the shared `kb-theme` cookie, migrating an existing local choice once
 - [ ] Arcade: drop Google Fonts for the system font stack; site-links bar uses the shared accent
 
