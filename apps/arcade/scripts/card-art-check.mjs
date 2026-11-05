@@ -109,6 +109,19 @@ for (const width of [360, 1280]) {
         if (text.trim() !== g.emoji) problems.push(`${where}: ${g.name} emoji fallback missing`);
       }
     }
+    // The emoji fallback, even once every real game has art: add a game with
+    // no `art`, re-render, and check its card shows the emoji and no img.
+    const fallback = await page.evaluate(() => {
+      GAMES.push({ name: 'Fallback Check', tagline: 't', emoji: '\u{1F3AE}', color: '#333', category: 'arcade',
+        tags: ['t'], path: 'games/zz-fallback-check/index.html', published: '2000-01-01' });
+      renderCards();
+      const label = document.querySelector('.cartridge[href="games/zz-fallback-check/index.html"] .label');
+      const out = label ? { img: label.querySelectorAll('img').length, span: (label.querySelector(':scope > span') || {}).textContent } : null;
+      GAMES.pop(); renderCards();
+      return out;
+    });
+    if (!fallback || fallback.img !== 0 || fallback.span !== '\u{1F3AE}') problems.push(`${where}: emoji fallback for a game without art is broken (${JSON.stringify(fallback)})`);
+
     // Nothing anywhere on the page may be a broken image.
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     const broken = await page.$$eval('img', els => els.filter(el => el.complete && el.naturalWidth === 0).map(el => el.src));

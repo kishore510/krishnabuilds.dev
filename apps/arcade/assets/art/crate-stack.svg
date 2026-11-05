@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c2a1f"/>
+      <stop offset="0.55" stop-color="#4a5a3a"/>
+      <stop offset="1" stop-color="#c9853a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd76a" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ffd76a" stop-opacity="0"/>
+    </radialGradient>
+    <g id="crate">
+      <rect width="34" height="13" rx="1.5" fill="#c9853a"/>
+      <rect width="34" height="13" rx="1.5" fill="none" stroke="#a86f36" stroke-width="1.6"/>
+      <path d="M1.5 11.5 L32.5 1.5" stroke="#a86f36" stroke-width="1.6"/>
+      <rect x="1" y="1" width="32" height="2" fill="#d9975a"/>
+    </g>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <!-- fence and ground -->
+  <rect y="84" width="240" height="8" fill="#2a1608" fill-opacity="0.55"/>
+  <path d="M0 74 H240 M0 79 H240 M10 70 V84 M40 70 V84 M70 70 V84 M170 70 V84 M200 70 V84 M230 70 V84" stroke="#cfe3d0" stroke-opacity="0.18" stroke-width="1.4"/>
+  <!-- the tower so far, slightly off -->
+  <use href="#crate" x="101" y="71"/>
+  <use href="#crate" x="104" y="58"/>
+  <use href="#crate" x="99" y="45"/>
+  <!-- the next crate, just dropped from the swinging hook -->
+  <path d="M140 0 L134 22" stroke="#2a1608" stroke-width="1.2"/>
+  <path d="M131 22 Q134 27 137 22" fill="none" stroke="#2a1608" stroke-width="1.4"/>
+  <path d="M146 16 Q142 6 136 2" fill="none" stroke="#ffd76a" stroke-opacity="0.45" stroke-width="1" stroke-dasharray="2 3"/>
+  <ellipse cx="117" cy="40" rx="28" ry="10" fill="url(#glow)"/>
+  <use href="#crate" x="100" y="29"/>
+  <path d="M116 26 V22 M108 27 L106 24 M124 27 L126 24" stroke="#ffd76a" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M100 44.5 H134" stroke="#ffd76a" stroke-width="1.4" stroke-dasharray="3 2"/>
+</svg>

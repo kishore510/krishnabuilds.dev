@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0716"/>
+      <stop offset="0.55" stop-color="#2c1a5c"/>
+      <stop offset="1" stop-color="#5b3aa8"/>
+    </linearGradient>
+    <radialGradient id="me" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7cff6b" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#7cff6b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="heat" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff4d4d" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ff4d4d" stop-opacity="0"/>
+    </radialGradient>
+    <g id="wall"><rect width="20" height="12" rx="2.5" fill="#2c1a5c"/><rect width="20" height="10" rx="2.5" fill="#5b3aa8"/><rect x="1.5" y="1" width="17" height="3" rx="1.5" fill="#8b63e0"/></g>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <!-- maze: two horizontal corridors joined by a gap -->
+  <g>
+    <use href="#wall" x="0" y="26"/><use href="#wall" x="22" y="26"/><use href="#wall" x="44" y="26"/><use href="#wall" x="66" y="26"/><use href="#wall" x="88" y="26"/><use href="#wall" x="110" y="26"/><use href="#wall" x="132" y="26"/><use href="#wall" x="154" y="26"/><use href="#wall" x="176" y="26"/><use href="#wall" x="198" y="26"/><use href="#wall" x="220" y="26"/>
+    <use href="#wall" x="0" y="56"/><use href="#wall" x="22" y="56"/><use href="#wall" x="44" y="56"/><use href="#wall" x="66" y="56"/><use href="#wall" x="132" y="56"/><use href="#wall" x="154" y="56"/><use href="#wall" x="176" y="56"/><use href="#wall" x="198" y="56"/><use href="#wall" x="220" y="56"/>
+    <use href="#wall" x="0" y="84"/><use href="#wall" x="22" y="84"/><use href="#wall" x="44" y="84"/><use href="#wall" x="66" y="84"/><use href="#wall" x="88" y="84"/><use href="#wall" x="110" y="84"/><use href="#wall" x="132" y="84"/><use href="#wall" x="154" y="84"/><use href="#wall" x="176" y="84"/><use href="#wall" x="198" y="84"/><use href="#wall" x="220" y="84"/>
+  </g>
+  <!-- pellets left in the top corridor, power pellet at the end -->
+  <g fill="#ffe66d"><circle cx="148" cy="46" r="1.6"/><circle cx="160" cy="46" r="1.6"/><circle cx="172" cy="46" r="1.6"/><circle cx="184" cy="46" r="1.6"/><circle cx="196" cy="46" r="1.6"/>
+    <circle cx="20" cy="74" r="1.6"/><circle cx="32" cy="74" r="1.6"/><circle cx="44" cy="74" r="1.6"/><circle cx="56" cy="74" r="1.6"/></g>
+  <circle cx="212" cy="46" r="7" fill="#ff9f4a" fill-opacity="0.3"/><circle cx="212" cy="46" r="3.6" fill="#ff9f4a"/>
+  <!-- the player: a glowing green orb, pellets eaten behind it -->
+  <circle cx="128" cy="46" r="16" fill="url(#me)"/>
+  <path d="M96 46 H118" stroke="#7cff6b" stroke-opacity="0.3" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="128" cy="46" r="8" fill="#7cff6b"/>
+  <circle cx="125.5" cy="43.5" r="2.8" fill="#ffffff" fill-opacity="0.55"/>
+  <circle cx="131" cy="44.5" r="1.4" fill="#2f6b28"/>
+  <!-- Ember, a flame, coming up through the gap -->
+  <circle cx="99" cy="64" r="16" fill="url(#heat)"/>
+  <path d="M99 76 Q89 75 90 66 Q91 60 95 56 Q95 61 98 62 Q97 56 101 50 Q103 57 106 59 Q109 63 108 68 Q107 76 99 76Z" fill="#ff4d4d"/>
+  <path d="M99 74 Q94 73 95 68 Q96 65 98 63 Q99 66 101 66 Q104 68 103 71 Q102 74 99 74Z" fill="#ff9f4a"/>
+  <circle cx="96.5" cy="66" r="1.5" fill="#ffffff"/><circle cx="102" cy="66" r="1.5" fill="#ffffff"/>
+  <circle cx="97" cy="65.4" r="0.8" fill="#8a1f1f"/><circle cx="102.5" cy="65.4" r="0.8" fill="#8a1f1f"/>
+</svg>

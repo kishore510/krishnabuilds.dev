@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5a5f68"/>
+      <stop offset="0.6" stop-color="#8a5a50"/>
+      <stop offset="1" stop-color="#c0392b"/>
+    </linearGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b8935a"/>
+      <stop offset="1" stop-color="#6a5a3a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd76a" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#ffd76a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="stone" width="12" height="8" patternUnits="userSpaceOnUse">
+      <path d="M0 .5H12M6 .5V4.5M0 4.5H12M.5 4.5V8.5" stroke="#2a2f36" stroke-opacity="0.45" stroke-width="0.8" fill="none"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <path d="M0 74 Q60 64 120 70 T240 66 V92 H0Z" fill="url(#sand)"/>
+  <path d="M0 74 Q60 64 120 70 T240 66" fill="none" stroke="#ffd76a" stroke-opacity="0.25"/>
+  <g transform="translate(14 0)">
+  <!-- wall and tower -->
+  <rect x="40" y="44" width="40" height="34" fill="#8a9098"/>
+  <rect x="80" y="30" width="22" height="48" fill="#767b84"/>
+  <rect x="40" y="30" width="62" height="48" fill="url(#stone)"/>
+  <path d="M40 44 V39 H45 V44 H50 V39 H55 V44 H60 V39 H65 V44 H70 V39 H75 V44 H80" fill="#8a9098"/>
+  <path d="M80 30 V25 H85 V30 H89 V25 H94 V30 H98 V25 H102 V30" fill="#767b84"/>
+  <rect x="88" y="38" width="3" height="7" fill="#2a2f36"/>
+  <path d="M56 78 V62 Q64 52 72 62 V78Z" fill="#3a2a18"/>
+  <path d="M58.5 62 V78 M62.5 57.5 V78 M66.5 57.5 V78 M70 61 V78 M57 66 H71 M57 72 H71" stroke="#8a6a3a" stroke-width="1.3"/>
+  <!-- glowing unit slots and an archer on the tower -->
+  <circle cx="54" cy="36" r="6" fill="url(#glow)"/><circle cx="54" cy="36" r="2.8" fill="none" stroke="#ffd76a" stroke-width="1.2"/>
+  <circle cx="86" cy="82" r="6" fill="url(#glow)"/><circle cx="86" cy="82" r="2.8" fill="none" stroke="#ffd76a" stroke-width="1.2"/>
+  <g transform="translate(93 22)">
+    <circle cy="-3" r="2.8" fill="#e8c9a8"/>
+    <rect x="-2.8" y="0" width="5.6" height="6" rx="1.2" fill="#3a5a8a"/>
+    <path d="M3.5 -6 Q8 0 3.5 6" fill="none" stroke="#6b4a2f" stroke-width="1.3"/>
+  </g>
+  </g>
+  <!-- arrow on its way to the front soldier -->
+  <path d="M114 22 Q138 12 150 54" fill="none" stroke="#ffd76a" stroke-opacity="0.55" stroke-width="1.2" stroke-dasharray="2 3"/>
+  <g transform="translate(147 49) rotate(62)">
+    <path d="M-7 0 H5" stroke="#f4e8d0" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M7 0 L3.5 -2 L3.5 2Z" fill="#c0c0c0"/>
+    <path d="M-7 0 L-9 -2 M-7 0 L-9 2" stroke="#ffd76a" stroke-width="1.1"/>
+  </g>
+  <!-- enemy soldiers walking in -->
+  <g>
+    <ellipse cx="156" cy="77" rx="7" ry="1.6" fill="#000" fill-opacity="0.25"/>
+    <path d="M153 76 L154.5 69 M159 76 L157.5 69" stroke="#4a1a12" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="151.5" y="59" width="9" height="11" rx="2" fill="#c0392b"/>
+    <circle cx="156" cy="55" r="3.4" fill="#e8c9a8"/>
+    <path d="M152.6 54 Q156 49.5 159.4 54Z" fill="#5a5f68"/>
+    <path d="M150 50 V75" stroke="#6b4a2f" stroke-width="1.4"/>
+    <path d="M150 50 L148.6 46.5 L151.4 46.5Z" fill="#c0c0c0"/>
+  </g>
+  <g transform="translate(20 -2)" opacity="0.85">
+    <ellipse cx="156" cy="77" rx="7" ry="1.6" fill="#000" fill-opacity="0.25"/>
+    <path d="M153 76 L154.5 69 M159 76 L157.5 69" stroke="#4a1a12" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="151.5" y="59" width="9" height="11" rx="2" fill="#8a3a3a"/>
+    <circle cx="156" cy="55" r="3.4" fill="#e8c9a8"/>
+    <path d="M152.6 54 Q156 49.5 159.4 54Z" fill="#5a5f68"/>
+  </g>
+</svg>

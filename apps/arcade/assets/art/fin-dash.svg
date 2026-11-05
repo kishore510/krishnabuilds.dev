@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a3d62"/>
+      <stop offset="0.55" stop-color="#1e6091"/>
+      <stop offset="1" stop-color="#2a9d8f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffb703" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffb703" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ray" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <path d="M40 0 H56 L36 92 H20Z M120 0 H130 L112 92 H102Z M190 0 H204 L186 92 H172Z" fill="url(#ray)"/>
+  <!-- sand and kelp -->
+  <path d="M0 86 Q60 80 120 85 T240 83 V92 H0Z" fill="#d9c98a"/>
+  <path d="M30 86 Q26 74 31 64 Q36 56 31 48 M212 84 Q216 74 211 66 Q207 58 212 52" fill="none" stroke="#2f9e44" stroke-width="3" stroke-linecap="round"/>
+  <!-- rock from above, coral from below: the gap the fish threads -->
+  <path d="M138 0 H160 V18 Q158 26 149 28 Q140 26 138 18Z" fill="#7a7f8c"/>
+  <path d="M141 0 H149 V22 Q144 22 141 16Z" fill="#8f95a3"/>
+  <path d="M136 86 V66 Q136 60 141 60 Q146 60 146 66 V70 Q146 64 151 64 Q156 64 156 70 V86Z" fill="#ff8fa3"/>
+  <path d="M164 86 V74 Q164 70 168 70 Q172 70 172 74 V86Z" fill="#e0715a"/>
+  <!-- bubbles -->
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="1"><circle cx="89" cy="44" r="2.5"/><circle cx="80" cy="36" r="1.6"/><circle cx="84" cy="54" r="1.2"/></g>
+  <!-- fish -->
+  <ellipse cx="112" cy="50" rx="24" ry="18" fill="url(#glow)"/>
+  <g transform="rotate(-12 112 50)">
+    <path d="M96 50 L86 42 L88 50 L86 58Z" fill="#e08e00"/>
+    <ellipse cx="110" cy="50" rx="15" ry="10" fill="#ffb703"/>
+    <path d="M104 41 Q110 36 116 41Z" fill="#f4a300"/>
+    <path d="M100 50 Q110 46 120 50 Q110 58 100 50Z" fill="#f4a300" fill-opacity="0.6"/>
+    <circle cx="118" cy="47.5" r="3" fill="#ffffff"/><circle cx="118.8" cy="47.5" r="1.6" fill="#222"/>
+    <path d="M124 52 Q122 54 120 53" fill="none" stroke="#e8590c" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+</svg>

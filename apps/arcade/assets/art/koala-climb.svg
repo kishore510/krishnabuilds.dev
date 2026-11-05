@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8fd3e8"/>
+      <stop offset="0.6" stop-color="#b0e0e4"/>
+      <stop offset="1" stop-color="#c9ecd8"/>
+    </linearGradient>
+    <linearGradient id="bark" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5f3f22"/>
+      <stop offset="0.5" stop-color="#7a5230"/>
+      <stop offset="1" stop-color="#5f3f22"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f5d76e" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#f5d76e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <g fill="#ffffff" fill-opacity="0.8"><ellipse cx="34" cy="30" rx="14" ry="5"/><ellipse cx="44" cy="27" rx="8" ry="5"/><ellipse cx="200" cy="58" rx="16" ry="5"/><ellipse cx="210" cy="55" rx="8" ry="5"/></g>
+  <!-- trunk -->
+  <rect x="100" y="0" width="34" height="92" fill="url(#bark)"/>
+  <path d="M104 12 Q117 15 130 12 M104 40 Q117 43 130 40 M104 70 Q117 73 130 70" fill="none" stroke="#241608" stroke-opacity="0.35" stroke-width="1.2"/>
+  <!-- branch to dodge, with leaves -->
+  <path d="M134 34 L170 28" stroke="#5f3f22" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#5aa15c"><ellipse cx="170" cy="26" rx="9" ry="6"/><ellipse cx="160" cy="24" rx="6" ry="4.5"/></g>
+  <ellipse cx="172" cy="25" rx="5" ry="3" fill="#4a8a4f"/>
+  <!-- acorn bonus -->
+  <circle cx="80" cy="40" r="11" fill="url(#glow)"/>
+  <ellipse cx="80" cy="42" rx="4.6" ry="5.4" fill="#f5d76e" stroke="#a8862a" stroke-width="0.8"/>
+  <path d="M75 39 Q80 34 85 39Z" fill="#7a5230"/><path d="M80 34.5 V32.5" stroke="#5f3f22" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- koala hugging the trunk -->
+  <g transform="translate(104 64)">
+    <ellipse cx="0" cy="2" rx="9" ry="11" fill="#9aa3a8"/>
+    <ellipse cx="2" cy="5" rx="5" ry="7" fill="#eceff0"/>
+    <path d="M6 -4 Q12 -2 13 4 M6 9 Q11 12 12 16" fill="none" stroke="#9aa3a8" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="0" cy="-11" r="8" fill="#9aa3a8"/>
+    <circle cx="-7" cy="-17" r="4.6" fill="#9aa3a8"/><circle cx="7" cy="-17" r="4.6" fill="#9aa3a8"/>
+    <circle cx="-7" cy="-17" r="2.4" fill="#eceff0"/><circle cx="7" cy="-17" r="2.4" fill="#eceff0"/>
+    <ellipse cx="0" cy="-9" rx="2.6" ry="3.4" fill="#2a2a2a"/>
+    <circle cx="-3.6" cy="-13" r="1.2" fill="#2a2a2a"/><circle cx="3.6" cy="-13" r="1.2" fill="#2a2a2a"/>
+  </g>
+</svg>
