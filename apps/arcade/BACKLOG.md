@@ -37,7 +37,12 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         them under the same energy rules and reaction delay, gated by
         `AI_PRESETS.powerUse` (Easy rarely; Hard: shield when low, fireball
         at range, boost to press in, rules in `POWER.ai`). Synth sounds,
-        boost glow and shield bubble. Every value is in the `POWER` table
+        boost glow and shield bubble. Every value is in the `POWER` table.
+        Fix (1.61.1): on short phones the bottom chrome (site-links pill,
+        back button, guide link) covered Start and the start screen
+        couldn't scroll past it; start/result screens now pad above it
+        (`--chrome-overlap`, set in fitCanvas) and scroll from the top,
+        Start moved above the controls legend, top buttons only in a fight
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,

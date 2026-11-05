@@ -39,17 +39,27 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     color: #fff;
     text-align: center;
     text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     background: rgba(12, 8, 5, 0.74);
     padding: calc(10px * var(--game-scale, 1));
+    /* keep content above the floating bottom chrome (back button, site-links
+       pill, guide link) where it overlaps the canvas; set in fitCanvas() */
+    padding-bottom: calc(10px * var(--game-scale, 1) + var(--chrome-overlap, 0px));
+    scroll-padding-bottom: var(--chrome-overlap, 0px);
     box-sizing: border-box;
     overflow-y: auto;
+    touch-action: pan-y;
     border-radius: 6px;
     z-index: 5;
   }
+  /* Centred when it fits, scrollable from the top when it doesn't
+     (justify-content: center would push the top out of reach). */
+  #overlay > *, #result > * { flex-shrink: 0; }
+  #overlay > :first-child, #result > :first-child { margin-top: auto; }
+  #overlay > :last-child, #result > :last-child { margin-bottom: auto; }
   #result { display: none; }
   #result.on { display: flex; }
   #overlay h1, #result h1 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
@@ -291,6 +301,13 @@
   <div id="overlay">
     <h1>Dojo Duel</h1>
     <p>Work in progress: best of 3 rounds against REN, 60 seconds a round. The blue meter under your health is energy for power-ups.</p>
+    <div id="modes" role="radiogroup" aria-label="Opponent">
+      <button type="button" role="radio" data-mode="easy" aria-checked="true">Easy</button>
+      <button type="button" role="radio" data-mode="hard" aria-checked="false">Hard</button>
+      <button type="button" role="radio" data-mode="practice" aria-checked="false">Practice</button>
+    </div>
+    <p id="modeNote"></p>
+    <button id="startBtn" type="button" data-kb-play>Start</button>
     <div id="legend">
       <b>Move</b><span>← → or A D, ↑ / W jump, ↓ / S crouch (touch: left pad)</span>
       <b>Punch / Kick</b><span>J / K. Crouch for a low jab or a sweep; jump for air attacks</span>
@@ -299,13 +316,6 @@
       <b>Hitboxes</b><span>H or the Boxes button &middot; Mute: M or 🔊</span>
       <b>Power</b><span>1 Fireball, 2 Speed boost, 3 Shield (touch: pick an icon, then Power). Energy refills slowly, faster when you land hits, not while blocking</span>
     </div>
-    <div id="modes" role="radiogroup" aria-label="Opponent">
-      <button type="button" role="radio" data-mode="easy" aria-checked="true">Easy</button>
-      <button type="button" role="radio" data-mode="hard" aria-checked="false">Hard</button>
-      <button type="button" role="radio" data-mode="practice" aria-checked="false">Practice</button>
-    </div>
-    <p id="modeNote"></p>
-    <button id="startBtn" type="button" data-kb-play>Start</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
   <div id="result">
@@ -359,6 +369,7 @@ const debugBtn = document.getElementById('debugBtn');
 const dummyBtn = document.getElementById('dummyBtn');
 const rotateHint = document.getElementById('rotateHint');
 const controls = document.getElementById('controls');
+const topBtns = document.getElementById('topBtns');
 const pad = document.getElementById('pad');
 const knob = document.getElementById('knob');
 const powerBtns = document.querySelectorAll('#powers .pw');
@@ -1107,6 +1118,9 @@ window.addEventListener('pointerdown', (e) => {
 }, true);
 function updateControls() {
   controls.classList.toggle('on', touchMode && state === 'playing');
+  // Mute / Boxes / Dummy are for the fight; on the start and result screens
+  // they would sit over the text (H and M still work there).
+  topBtns.style.display = state === 'playing' ? '' : 'none';
 }
 
 // --- Opponent mode: Easy or Hard CPU, or Practice against the training
@@ -1489,6 +1503,7 @@ syncMuteBtn();
 
 // --- Layout ---
 let renderScale = 1;
+const CHROME_ROW = 60;   // px; matches #controls --chrome-row
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
   const scale = Math.min(window.innerWidth / W, (window.innerHeight - reserved) / H);
@@ -1499,6 +1514,11 @@ function fitCanvas() {
   canvas.height = Math.round(H * scale * dpr);
   renderScale = canvas.width / W;
   wrap.style.setProperty('--game-scale', scale);
+  // How far the canvas reaches into the bottom strip that the floating
+  // chrome uses (the same strip #controls keeps clear), so the start and
+  // result screens can pad their content above it.
+  const overlap = canvas.getBoundingClientRect().bottom - (window.innerHeight - CHROME_ROW);
+  wrap.style.setProperty('--chrome-overlap', Math.max(0, Math.ceil(overlap)) + 'px');
 }
 function checkOrientation() {
   rotateHint.style.display = window.innerWidth < window.innerHeight ? 'flex' : 'none';
@@ -2303,6 +2323,7 @@ window.dojoDuel = {
 resetFighters();
 resetAi();
 setMode('easy');
+updateControls();
 handleResize();
 requestAnimationFrame(loop);
 </script>
