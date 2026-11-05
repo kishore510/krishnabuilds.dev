@@ -305,8 +305,32 @@ const MOVE = {
   friction: 0.82   // knockback slide decay per frame on the ground
 };
 
+// --- Hit feel. Every effect value lives here so it can be tuned in one
+// place. Durations are simulation frames (60 a second); sizes are arena px.
+// None of this changes damage, stun or ranges, and none of it is shown on
+// the debug overlay.
+const FX = {
+  hitstop: { punch: 5, kick: 9, block: 0 }, // frames both fighters freeze on contact (by the move's button)
+  flashFrames: 4,             // a hit fighter is drawn white through the hitstop, then for this many frames more
+  stagger: { lean: 0.42, leanEnd: 0.12, step: 14 }, // hit pose: body lean (radians) at the start and end of hitstun, back-foot step (base units)
+  shake: { kick: 3.5, frames: 12 },  // screen shake on a landed kick only: size in px, then eases out over frames
+  burst: {
+    words: { punch: ['POW!'], kick: ['WHAM!'] },
+    frames: 30,               // how long the burst stays up (pops in, holds, fades)
+    baseScale: 0.55,          // size at 0 damage...
+    perDamage: 0.06,          // ...plus this per point of damage (a 6-damage jab is 0.91, a 10-damage kick 1.15)
+    rise: 0.35                // px per frame the burst drifts up
+  },
+  sparks: {
+    hit: 7, block: 3,         // particles per landed / blocked hit
+    speed: 3.4, spread: 1.1,  // px per frame, and the spray angle either side (radians)
+    life: 16, gravity: 0.18
+  },
+  blockSlide: 0.85            // a blocker slides back by this fraction of the move's knockback
+};
+
 const MAX_HEALTH = 100;
-const INPUT_BUFFER = 6;       // frames an attack press waits for the fighter to be free
+const INPUT_BUFFER = 6;      // frames an attack press waits for the fighter to be free
 const POST_HIT_COOLDOWN = 4;  // frames a fighter can't be hit again after a hit or block
 const REFILL_AFTER = 120;     // training: health refills after this many frames without a hit
 
@@ -359,10 +383,11 @@ function resetFighters() {
       state: 'idle', stateFrames: 0, stun: 0, landLag: MOVE.landLag,
       jumpDir: 0, walkPhase: 0, crouched: false, airAttackUsed: false,
       move: null, buffer: null, inp: NO_INPUT,
-      health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0
+      health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0, flash: 0
     });
   }
   lastHit = null;
+  clearFx();
 }
 
 function setState(f, s) {
@@ -399,7 +424,6 @@ function startMove(f, id) {
   if (MOVES[id].pose === 'air') { f.airAttackUsed = true; return; }
   f.crouched = MOVES[id].pose === 'crouch';
   enterState(f, 'attack');
-  sfx('whiff');
 }
 
 // inp: { h: -1|0|1 (screen direction), up, down, block, punch, kick }
@@ -526,9 +550,20 @@ function checkHit(att, def) {
   if (!hb || def.hitCooldown > 0) return false;
   return hurtboxes(def).some(h => overlaps(hb, h));
 }
-function applyHit(att, def) {
-  const m = att.move.def;
-  att.move.hit = true;            // an attack can only connect once
+// Where the hit landed: the middle of the overlap between the attack's
+// hitbox and the first hurtbox it touches.
+function impactPoint(att, def) {
+  const hb = activeHitbox(att);
+  const h = hurtboxes(def).find(r => overlaps(hb, r)) || hb;
+  const x1 = Math.max(hb.x, h.x), x2 = Math.min(hb.x + hb.w, h.x + h.w);
+  const y1 = Math.max(hb.y, h.y), y2 = Math.min(hb.y + hb.h, h.y + h.h);
+  return { x: (x1 + x2) / 2, y: (y1 + y2) / 2 };
+}
+// hit = { mv, at }: the attacker's move and impact point, taken before
+// either hit of a trade is applied (applying one clears the other's move).
+function applyHit(att, def, hit) {
+  const m = hit.mv.def, at = hit.at;
+  hit.mv.hit = true;            // an attack can only connect once
   def.hitCooldown = POST_HIT_COOLDOWN;
   def.lastHitFrame = simFrame;
   const dir = att.x <= def.x ? 1 : -1;
@@ -539,7 +574,7 @@ function applyHit(att, def) {
     def.health -= dealt;
     def.crouched = !!def.inp.down;
     def.stun = m.blockstun;
-    def.vx = dir * m.knock * 0.7;
+    def.vx = dir * m.knock * FX.blockSlide;
     enterState(def, 'blockstun');
     sfx('block');
   } else {
@@ -555,13 +590,54 @@ function applyHit(att, def) {
       def.vx = dir * m.knock;
     }
     enterState(def, 'hitstun');
-    sfx('hit');
+    def.flash = FX.flashFrames;
+    sfx(m.button === 'kick' ? 'kickHit' : 'punchHit');
   }
   // A cornered defender can't slide back, so the attacker gets pushed out instead.
   if (!airborne(def) && atWall(def) && Math.sign(def.x - att.x) === dir) {
-    att.vx = -dir * m.knock * (blocked ? 0.7 : 1);
+    att.vx = -dir * m.knock * (blocked ? FX.blockSlide : 1);
   }
   lastHit = { by: att.name, on: def.name, move: m.name, blocked, dealt, frame: simFrame };
+  hitFx(m, at, dir, blocked);
+}
+
+// --- Hit effects. Hitstop freezes the simulation (see tick); the rest are
+// purely visual and run every tick, frozen or not, so sparks fly and the
+// burst pops while the fighters hold still.
+let hitstop = 0;
+let shake = null;       // { mag, t }
+let sparks = [];        // { x, y, vx, vy, t, blocked }
+let bursts = [];        // { x, y, word, scale, rot, t }
+function clearFx() {
+  hitstop = 0; shake = null; sparks = []; bursts = [];
+}
+function hitFx(m, at, dir, blocked) {
+  hitstop = Math.max(hitstop, blocked ? FX.hitstop.block : FX.hitstop[m.button]);
+  const n = blocked ? FX.sparks.block : FX.sparks.hit;
+  for (let i = 0; i < n; i++) {
+    const a = (Math.random() * 2 - 1) * FX.sparks.spread;
+    const v = FX.sparks.speed * (0.55 + Math.random() * 0.7) * (blocked ? 0.7 : 1);
+    // spray away from the attacker, tipped slightly upward
+    sparks.push({ x: at.x, y: at.y, vx: Math.cos(a) * v * dir, vy: Math.sin(a) * v - 1, t: 0, blocked });
+  }
+  if (blocked) return;
+  const words = FX.burst.words[m.button];
+  bursts.push({
+    x: at.x, y: at.y,
+    word: words[Math.floor(Math.random() * words.length)],
+    scale: FX.burst.baseScale + m.damage * FX.burst.perDamage,
+    rot: (Math.random() * 2 - 1) * 0.18,
+    t: 0
+  });
+  if (m.button === 'kick') shake = { mag: FX.shake.kick, t: 0 };
+}
+function updateFx() {
+  if (hitstop === 0) for (const f of [player, cpu]) if (f.flash > 0) f.flash--;
+  for (const s of sparks) { s.x += s.vx; s.y += s.vy; s.vy += FX.sparks.gravity; s.t++; }
+  sparks = sparks.filter(s => s.t < FX.sparks.life);
+  for (const b of bursts) { b.y -= FX.burst.rise; b.t++; }
+  bursts = bursts.filter(b => b.t < FX.burst.frames);
+  if (shake && ++shake.t >= FX.shake.frames) shake = null;
 }
 
 // --- Input: keyboard and touch both feed one set of flags. Attack
@@ -756,14 +832,42 @@ function thump(dur, vol, cutoff) {
   src.connect(filter).connect(g).connect(audioCtx.destination);
   src.start(t);
 }
+// Filtered noise swept from one pitch to another: an air swoosh.
+function swoosh(dur, vol, from, to) {
+  const t = audioCtx.currentTime;
+  const len = Math.floor(audioCtx.sampleRate * dur);
+  const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.Q.value = 1.6;
+  filter.frequency.setValueAtTime(from, t);
+  filter.frequency.exponentialRampToValueAtTime(to, t + dur);
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.35);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(filter).connect(g).connect(audioCtx.destination);
+  src.start(t);
+}
+const sfxLog = [];   // the last few sounds played, for automated checks only
 function sfx(name) {
   if (muted || !audioCtx) return;
+  sfxLog.push(name);
+  if (sfxLog.length > 20) sfxLog.shift();
   try {
     if (name === 'jump') tone(260, 0.14, 'triangle', 0.08, 520);
     else if (name === 'land') thump(0.09, 0.35, 420);
-    else if (name === 'whiff') thump(0.07, 0.12, 2400);
-    else if (name === 'hit') { thump(0.12, 0.6, 900); tone(140, 0.1, 'square', 0.06, 70); }
-    else if (name === 'block') { tone(900, 0.06, 'square', 0.04, 600); thump(0.05, 0.2, 3000); }
+    else if (name === 'whiff') swoosh(0.13, 0.22, 700, 2600);
+    else if (name === 'whiffKick') swoosh(0.19, 0.26, 450, 1700);
+    // a snappy smack for punches, a heavier boom for kicks
+    else if (name === 'punchHit') { thump(0.09, 0.7, 1800); tone(220, 0.07, 'square', 0.06, 90); }
+    else if (name === 'kickHit') { thump(0.16, 0.85, 900); tone(130, 0.16, 'sine', 0.22, 45); tone(160, 0.08, 'square', 0.05, 60); }
+    // a block is a duller, softer thud with no crack on top
+    else if (name === 'block') { thump(0.08, 0.45, 320); tone(95, 0.08, 'sine', 0.12, 60); }
     else if (name === 'start') { tone(392, 0.12, 'square', 0.05); setTimeout(() => sfx('start2'), 110); }
     else if (name === 'start2') tone(587, 0.2, 'square', 0.05);
   } catch (e) {}
@@ -888,8 +992,9 @@ function extension(f) {
 // Placeholder fighter in base units: limbs as thick round lines, drawn
 // facing right, then mirrored by facing and scaled by FS. Limb tips at
 // full extension sit inside the matching MOVES hitbox.
+const FLASH_COLORS = { gi: '#ffffff', giDark: '#eef0f4', band: '#ffffff', belt: '#e2e4ea', skin: '#ffffff' };
 function drawFighter(f, t) {
-  const c = f.colors;
+  const c = f.flash > 0 ? FLASH_COLORS : f.colors;
   // shadow on the floor, smaller the higher the fighter is
   const lift = Math.max(0, FLOOR - f.y);
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -908,6 +1013,9 @@ function drawFighter(f, t) {
   const squat = !air && p.hip < 48;
   const breathe = f.state === 'idle' ? Math.sin(t / 380) * 1.2 : 0;
   const hurt = f.state === 'hitstun';
+  // stagger: strongest as the hit lands, easing off over the hitstun
+  const lean = hurt ? lerp(FX.stagger.lean, FX.stagger.leanEnd, Math.min(1, f.stateFrames / Math.max(1, f.stun))) : 0;
+  const stepBack = FX.stagger.step * lean / FX.stagger.lean;
   const guarding = f.state === 'guard' || f.state === 'blockstun' || (f.state === 'crouch' && f.inp.block);
 
   ctx.save();
@@ -928,6 +1036,10 @@ function drawFighter(f, t) {
   } else if (air) {
     limb(-5, -p.hip, -14, -p.hip + 18, -4, -p.hip + 30, legW, c.giDark);
     limb(5, -p.hip, 16, -p.hip + 14, 10, -p.hip + 32, legW, c.gi);
+  } else if (hurt && !squat) {
+    // knocked back on the heels: back foot steps away, front knee locks
+    limb(-5, -p.hip, -10 - stepBack * 0.5, -p.hip / 2, -11 - stepBack, 0, legW, c.giDark);
+    limb(5, -p.hip, 9, -p.hip / 2 + 2, 10 - stepBack * 0.2, 0, legW, c.gi);
   } else if (squat) {
     limb(-5, -p.hip, -20, -p.hip + 14, -14, 0, legW, c.giDark);
     limb(5, -p.hip, 20, -p.hip + 12, 16, 0, legW, c.gi);
@@ -940,8 +1052,8 @@ function drawFighter(f, t) {
   // upper body leans back when hit
   ctx.save();
   if (hurt) {
-    ctx.translate(0, -p.hip);
-    ctx.rotate(-0.22);
+    ctx.translate(-lean * 8, -p.hip);
+    ctx.rotate(-lean);
     ctx.translate(0, p.hip);
   }
   const chest = p.chest + breathe;
@@ -991,6 +1103,11 @@ function drawFighter(f, t) {
   if (!guarding && !hurt) fist(14, -chest + 13, 4.5, c.skin);
   // head
   const head = p.head + breathe;
+  if (hurt) {
+    ctx.translate(0, -chest);
+    ctx.rotate(-lean * 0.5);
+    ctx.translate(0, chest);
+  }
   ctx.fillStyle = c.skin;
   ctx.beginPath(); ctx.arc(3, -head, 12, 0, Math.PI * 2); ctx.fill();
   // headband with tails flowing behind
@@ -1110,12 +1227,73 @@ function drawDebug() {
   }
 }
 
+// A comic-book burst: a spiky star with the word on top. Pops in with a
+// small overshoot, holds, then fades.
+function drawBurst(b) {
+  const p = b.t / FX.burst.frames;
+  const pop = b.t < 4 ? lerp(0.3, 1.2, b.t / 4) : b.t < 7 ? lerp(1.2, 1, (b.t - 4) / 3) : 1;
+  ctx.save();
+  ctx.globalAlpha = p > 0.7 ? 1 - (p - 0.7) / 0.3 : 1;
+  ctx.translate(b.x, b.y);
+  ctx.rotate(b.rot);
+  ctx.scale(b.scale * pop, b.scale * pop);
+  const spikes = 12;
+  ctx.beginPath();
+  for (let i = 0; i < spikes * 2; i++) {
+    const r = i % 2 ? 22 : 40 + (i % 4 === 0 ? 6 : 0);
+    const a = i * Math.PI / spikes;
+    ctx.lineTo(Math.cos(a) * r * 1.25, Math.sin(a) * r * 0.9);
+  }
+  ctx.closePath();
+  ctx.fillStyle = '#ffd23f';
+  ctx.fill();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#d6261c';
+  ctx.stroke();
+  ctx.font = '900 21px Impact, "Arial Black", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#1a1008';
+  ctx.strokeText(b.word, 0, 1);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(b.word, 0, 1);
+  ctx.restore();
+}
+function drawFx() {
+  ctx.lineCap = 'round';
+  for (const s of sparks) {
+    const k = 1 - s.t / FX.sparks.life;
+    ctx.strokeStyle = s.blocked ? 'rgba(190,225,255,' + k + ')' : 'rgba(255,236,140,' + k + ')';
+    ctx.lineWidth = (s.blocked ? 3.5 : 2.5) * k + 0.8;
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y);
+    ctx.lineTo(s.x - s.vx * 2.2, s.y - s.vy * 2.2);
+    ctx.stroke();
+  }
+  for (const b of bursts) drawBurst(b);
+}
 function draw(t) {
   ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
+  // Shake moves the arena, fighters and effects; the HUD and debug overlay
+  // stay put. Fill behind first so a shaken edge never shows a stale strip.
+  let sx = 0, sy = 0;
+  if (shake) {
+    const k = shake.mag * (1 - shake.t / FX.shake.frames);
+    sx = (Math.random() * 2 - 1) * k;
+    sy = (Math.random() * 2 - 1) * k * 0.6;
+    ctx.fillStyle = '#15100b';
+    ctx.fillRect(0, 0, W, H);
+  }
+  ctx.save();
+  ctx.translate(sx, sy);
   drawArena();
   // the attacker draws in front, then whoever is higher up
   const order = (player.move && !cpu.move) || player.y < cpu.y ? [cpu, player] : [player, cpu];
   for (const f of order) drawFighter(f, t);
+  drawFx();
+  ctx.restore();
   if (state === 'playing') drawHud();
   if (debugOn) drawDebug();
 }
@@ -1126,14 +1304,24 @@ let simFrame = 0;
 const NO_INPUT = { h: 0, up: false, down: false, block: false, punch: false, kick: false };
 
 function tick() {
+  updateFx();
+  // Hitstop: on contact the fighters (and their move, stun and slide
+  // timers) hold still for a few frames. Attack presses made meanwhile
+  // stay queued and are read once it ends.
+  if (hitstop > 0) { hitstop--; return; }
   simFrame++;
   updateFighter(player, cpu, readInput());
   updateFighter(cpu, player, DUMMY_MODES[dummyIndex].inp);
   resolvePush(player, cpu);
   // check both before applying either, so a trade hits both ways
-  const pHits = checkHit(player, cpu), cHits = checkHit(cpu, player);
-  if (pHits) applyHit(player, cpu);
-  if (cHits) applyHit(cpu, player);
+  const pHit = checkHit(player, cpu) && { mv: player.move, at: impactPoint(player, cpu) };
+  const cHit = checkHit(cpu, player) && { mv: cpu.move, at: impactPoint(cpu, player) };
+  if (pHit) applyHit(player, cpu, pHit);
+  if (cHit) applyHit(cpu, player, cHit);
+  // the swoosh plays on the first active frame of an attack that didn't connect
+  for (const f of [player, cpu]) {
+    if (f.move && !f.move.hit && f.move.frame === f.move.def.startup) sfx(f.move.def.button === 'kick' ? 'whiffKick' : 'whiff');
+  }
   for (const f of [player, cpu]) {
     // training mode: health comes back after a short break from being hit
     if (f.health < MAX_HEALTH && simFrame - f.lastHitFrame > REFILL_AFTER) f.health = MAX_HEALTH;
@@ -1188,6 +1376,8 @@ window.dojoDuel = {
   get muted() { return muted; },
   get dummy() { return DUMMY_MODES[dummyIndex].id; },
   get lastHit() { return lastHit; },
+  get fx() { return { hitstop, shake, sparks: sparks.length, bursts: bursts.map(b => ({ word: b.word, scale: b.scale, x: b.x, y: b.y })), flash: [player.flash, cpu.flash] }; },
+  get sfxLog() { return sfxLog.slice(); },
   set paused(v) { paused = !!v; acc = 0; },
   step(n, keys) {
     for (let i = 0; i < (n || 1); i++) {
@@ -1197,7 +1387,7 @@ window.dojoDuel = {
   },
   reset() { resetFighters(); clearInput(); },
   player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
-  MOVE, MOVES, BOXES, FS, FLOOR, MAX_HEALTH
+  MOVE, MOVES, BOXES, FX, FS, FLOOR, MAX_HEALTH
 };
 
 resetFighters();
