@@ -220,7 +220,15 @@ changes should never need to touch the logic.
 - **`AI_PRESETS`** — Easy / Hard, in the Air Hockey shape (delay + jitter +
   prediction, never a speed multiplier): `reactionFrames` (how old the
   CPU's view of the player is), `thinkInterval`, `error`, `blockChance`,
-  `aggression`, `preferredRange`, `antiAirChance`, `powerUse`. The CPU only
+  `aggression`, `preferredRange`, `antiAirChance`, `powerUse`, and the
+  counter state (`counterHits`, `counterWindow`, `counterFrames`,
+  `counterBlock`, `counterSpace`, `counterPower`): once one move connects
+  (hit or blocked) `counterHits` times within `counterWindow` seconds, as
+  the CPU saw it, it spends `counterFrames` guarding more, backing off out
+  of that move's reach and throwing a sweep (a kick against a sweep) timed
+  for the player walking back in, with a shield when cornered or a
+  fireball from range when energy allows. Easy has it off
+  (`counterHits: 0`). The CPU only
   sends the player's own inputs and pays the same energy costs. A reaction
   can only block an attack whose `startup` is at least `reactionFrames`
   (4 blocks the 4-frame jab, 5 can't; above 6 it can't react to sweeps).
@@ -232,20 +240,23 @@ changes should never need to touch the logic.
   state, tables, `paused` + `step(n, keys)` for frame-stepping, `hold()` /
   `press()` for input, plus `pauseGame` / `resumeGame` and the audio
   context. Nothing in the game uses it.
-- Balance is checked with a scratch Playwright harness (not committed):
-  load `?seed=1000..`, set `paused = true`, and drive whole matches with
-  scripted players through `hold` / `step` — one-move spammers (jab, kick,
-  sweep, fireball), a mid-skill bot (sees REN 14 frames late, blocks half)
-  and a good bot (8 frames, blocks 80%), with and without power-ups, and
-  with the CPU's power-ups switched off one at a time by editing
-  `POWER.ai`. Step 7's numbers are in that PR (#63).
-- Known balance finding (1.63.0): holding the jab button in range is the
-  strongest single strategy. It beats Easy every time and Hard about 9
-  times in 10, because a jab is about even on block and chips 1, and REN's
-  kick and sweep pokes lose to it. No `AI_PRESETS` value fixes this without
-  making Hard unbeatable for the good bot (or Easy as hard as Hard), so it
-  needs a design change (REN's poke choice under pressure, or jab frame
-  data), not more tuning.
+- Balance is checked with `scripts/dojo-duel-balance.mjs` (run by hand,
+  not wired into CI or lint):
+  `node apps/arcade/scripts/dojo-duel-balance.mjs` from the repo root. It
+  serves `apps/arcade` locally, loads the game in headless Chromium, sets
+  `paused = true` and drives whole matches (seeds 1000-1059 by default)
+  with scripted players through `hold` / `step`: one-move spammers (jab,
+  kick, sweep mashed at their furthest reach about 10 times a second;
+  fireball whenever affordable), a mid-skill bot (sees REN 14 frames late,
+  blocks half) and a good bot (8 frames, blocks 80%). Options: `--rows`,
+  `--matches`, `--first-seed`, and `--set hard.counterHits=5` (or
+  `easy.*`, `ai.*` for `POWER.ai`) to try a value without editing the game.
+  60 matches a row is about +/-7 points of noise; check a change on a
+  second seed range (`--first-seed 2000`) before trusting it.
+- Balance targets (1.64.0, numbers in PR for that version): jab spam vs
+  Hard 50% or less, kick / sweep / fireball spam lose to Hard, good bot vs
+  Hard 15-35%, mid bot vs Easy above 90%. Jab spam still beats Easy, which
+  has no counter state. Jab frame data was deliberately left alone.
 
 ### Robustness
 

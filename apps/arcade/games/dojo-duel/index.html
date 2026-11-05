@@ -562,9 +562,24 @@ const POWER_NAMES = { fireball: 'Fireball', boost: 'Boost', shield: 'Shield' };
 //                   situation calls for one (rules in POWER.ai). Same energy
 //                   rules as the player, and it only sees what it saw
 //                   reactionFrames ago. blockChance also covers fireballs.
+// Counter state: when one of the player's moves connects (landed or
+// blocked) counterHits times within counterWindow seconds, as the CPU saw
+// it reactionFrames late, it switches to countering that move for
+// counterFrames: it guards more, backs off out of the move's reach, then
+// throws a slower poke (sweep, or kick against a sweep) timed for the
+// player walking back in, and may shield or throw a fireball if it can afford it.
+//   counterHits     hits from one move that start it (0 = never)
+//   counterWindow   seconds those hits must fall within
+//   counterFrames   how long it lasts
+//   counterBlock    blockChance while it lasts (the higher of the two counts)
+//   counterSpace    extra px beyond the move's reach it backs off to
+//   counterPower    chance, every thinkInterval frames, to shield when cornered
+//                   or throw a fireball from out of range, if it can afford it
 const AI_PRESETS = {
-  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 100, antiAirChance: 0.15, powerUse: 0.025 },
-  hard: { reactionFrames: 5, thinkInterval: 10, error: 8, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7, powerUse: 0.4 }
+  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 100, antiAirChance: 0.15, powerUse: 0.025,
+          counterHits: 0, counterWindow: 0, counterFrames: 0, counterBlock: 0, counterSpace: 0, counterPower: 0 },
+  hard: { reactionFrames: 5, thinkInterval: 14, error: 8, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7, powerUse: 0.4,
+          counterHits: 4, counterWindow: 2.5, counterFrames: 180, counterBlock: 0.95, counterSpace: 16, counterPower: 0.3 }
 };
 
 // --- Arena (logical pixels; the canvas is scaled to fit) ---
@@ -1320,7 +1335,9 @@ function resetAi() {
     blockLow: false,
     seenMove: 0, seenJump: 0, seenWhiff: 0,
     antiAir: false, jumpBlock: false, wasHit: false, counter: false,
-    seenFireball: 0, lastPower: '-'
+    seenFireball: 0, lastPower: '-',
+    hits: [], seenHit: 0,   // the player's moves seen connecting: { id, frame }
+    counterMove: null, counterT: 0, counterRoll: 0, counterJitter: 0
   });
 }
 function pushObservation() {
@@ -1370,6 +1387,8 @@ function aiInput() {
   const dx = o.x - me.x, dist = Math.abs(dx);
   const toward = dx >= 0 ? 1 : -1;   // from where it last saw the player, so a cross-up can fool it
   const free = AI_FREE.includes(me.state);
+  trackPressure(P, o);
+  const blockChance = ai.counterT > 0 ? Math.max(P.blockChance, P.counterBlock) : P.blockChance;
 
   // Taking a hit: wait it out, then back off.
   if (me.state === 'hitstun') { ai.wasHit = true; ai.poke = null; ai.antiAir = false; decide('hit'); return inp; }
@@ -1409,13 +1428,13 @@ function aiInput() {
   // Block an attack it sees coming (once per attack).
   if (m && MOVES[m.id].hitbox && m.phase !== 'recovery' && !m.hit && m.n !== ai.seenMove && dist < threatRange(MOVES[m.id]) && ai.decision !== 'anti-air jab') {
     ai.seenMove = m.n;
-    if (rnd() < P.blockChance) { ai.poke = null; ai.blockLow = MOVES[m.id].height === 'low'; decide(ai.blockLow ? 'block low' : 'block high'); }
+    if (rnd() < blockChance) { ai.poke = null; ai.blockLow = MOVES[m.id].height === 'low'; decide(ai.blockLow ? 'block low' : 'block high'); }
   }
   // Block a fireball it sees coming (once per fireball).
   const fb = incomingFireball(o);
   if (fb && fb.n !== ai.seenFireball && ai.decision !== 'anti-air jab') {
     ai.seenFireball = fb.n;
-    if (rnd() < P.blockChance) { ai.poke = null; ai.blockLow = false; decide('block high'); }
+    if (rnd() < blockChance) { ai.poke = null; ai.blockLow = false; decide('block high'); }
   }
   // Punish an attack it saw miss (once per attack).
   if (m && m.phase === 'recovery' && !m.hit && m.n !== ai.seenWhiff) {
@@ -1467,6 +1486,8 @@ function aiInput() {
 
   if (ai.antiAir) return inp;   // stand ready for the jump-in
 
+  if (ai.counterT > 0 && free) return counterInput(P, o, inp, dist, toward);
+
   // Neutral: every thinkInterval frames, pick what to do next.
   if (--ai.think <= 0) {
     ai.think = P.thinkInterval;
@@ -1492,6 +1513,77 @@ function aiInput() {
   else if (ai.decision === 'retreat') { if (dist < ai.range) inp.h = -toward; else decide('wait'); }
   // A crouching guard, held back: it stops every grounded attack, but not a jump-in.
   else if (ai.decision === 'guard') { inp.h = -toward; inp.down = true; }
+  return inp;
+}
+// Counter state (AI_PRESETS counter*). It counts the player's moves it has
+// seen connect, blocked or not, so it reacts reactionFrames late like
+// everything else, and never sees an input before the move is out.
+function trackPressure(P, o) {
+  if (ai.counterT > 0) ai.counterT--;
+  if (!P.counterHits) return;
+  const m = o.move;
+  if (m && m.hit && m.n !== ai.seenHit) {
+    ai.seenHit = m.n;
+    ai.hits.push({ id: m.id, frame: o.frame });
+  }
+  ai.hits = ai.hits.filter(h => o.frame - h.frame <= P.counterWindow * 60);
+  if (!m || ai.counterT > 0) return;
+  const same = ai.hits.filter(h => h.id === m.id);
+  if (same.length >= P.counterHits && MOVES[m.id].hitbox) {
+    ai.counterMove = m.id;
+    ai.counterT = P.counterFrames;
+    ai.counterJitter = (rnd() * 2 - 1) * P.error;
+    ai.hits = ai.hits.filter(h => h.id !== m.id);
+  }
+}
+// How fast the player was closing in, px per frame, over the few frames
+// before what the CPU sees (positive = coming towards it).
+function closingSpeed(o) {
+  const old = aiHistory[aiHistory.indexOf(o) - 3];
+  if (!old || o.move || o.air) return 0;
+  return Math.max(0, (o.x - old.x) * Math.sign(cpu.x - o.x) / 3);
+}
+// Out of the pressing move's reach, then a slower poke timed so it goes
+// active as the player walks back into range, before their own move can.
+function counterInput(P, o, inp, dist, toward) {
+  const me = cpu, S = ai.counterMove;
+  const M = S === 'sweep' ? 'kick' : 'sweep';
+  const v = closingSpeed(o);
+  // where the player is now, give or take: seen reactionFrames ago, walking at v
+  const est = dist - v * P.reactionFrames + ai.counterJitter;
+  // A player still finishing the pressing move will walk straight back in, so
+  // time the poke for a full-speed walk; otherwise for the speed they're walking.
+  const vs = o.move && o.move.id === S ? MOVE.walkFwd : v;
+  const lo = reach(S) + vs * Math.max(0, MOVES[M].startup - MOVES[S].startup);
+  const hi = reach(M) + vs * MOVES[M].startup;
+  const attacking = o.move && o.move.phase !== 'recovery';
+  const roll = --ai.counterRoll <= 0;
+  if (roll) ai.counterRoll = P.thinkInterval;
+  const powerRoll = roll && rnd() < P.counterPower;
+  if (est < reach(S) + 4 || attacking) {
+    // in its reach: give ground, which also guards against it
+    if (atWall(me) && powerRoll && me.shield <= 0 && canAfford(me, 'shield')) {
+      inp.power = 'shield'; ai.lastPower = POWER_NAMES.shield; decide('counter: shield'); return inp;
+    }
+    inp.h = -toward;
+    decide('counter: back off');
+  } else if (est >= lo && est <= hi) {
+    inp[MOVES[M].button] = true;
+    inp.down = MOVES[M].pose === 'crouch';
+    ai.poke = { id: M, pressed: true, t: 0 };   // holds the crouch until the attack starts
+    ai.counterJitter = (rnd() * 2 - 1) * P.error;
+    decide('counter');
+  } else if (est < reach(S) + P.counterSpace) {
+    inp.h = -toward;   // standing just outside it: keep backing off to the spacing
+    decide('counter: back off');
+  } else if (est > hi + 30 && powerRoll && !hasFireball(me) && canAfford(me, 'fireball')) {
+    inp.power = 'fireball'; ai.lastPower = POWER_NAMES.fireball; decide('counter: fireball');
+  } else if (est > reach(S) + P.counterSpace + 12 && v < 1) {
+    inp.h = toward;   // they've stopped coming: close in to poke range
+    decide('counter: close in');
+  } else {
+    decide('counter: wait');
+  }
   return inp;
 }
 // A player fireball, as last seen, heading for the CPU and close enough to matter.
@@ -2137,7 +2229,8 @@ function debugLines() {
     const P = AI_PRESETS[mode];
     lines.push('cpu ' + mode + ' seed ' + aiSeed + '   decision ' + aiLabel() + '   last power ' + ai.lastPower);
     lines.push('    react ' + P.reactionFrames + 'f (sees f' + aiView(P).frame + ')  reacts in ' +
-      Math.max(0, playerChangeFrame + P.reactionFrames - simFrame) + 'f  think ' + Math.max(0, ai.think) + 'f  range ' + Math.round(ai.range));
+      Math.max(0, playerChangeFrame + P.reactionFrames - simFrame) + 'f  think ' + Math.max(0, ai.think) + 'f  range ' + Math.round(ai.range) +
+      (ai.counterT > 0 ? '  countering ' + MOVES[ai.counterMove].name + ' ' + ai.counterT + 'f' : ''));
   }
   lines.push('last ' + (lastHit ? lastHit.by + ' ' + lastHit.move + ' on ' + lastHit.on + ': ' +
     (lastHit.absorbed ? 'shield absorbed it' : lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-') +
@@ -2490,7 +2583,7 @@ window.dojoDuel = {
   set mode(m) { setMode(m); },
   get seed() { return aiSeed; },
   set seed(v) { seedOverride = v === null ? null : Number(v); },
-  get ai() { return { decision: ai.decision, label: aiLabel(), think: ai.think, range: ai.range, seenFrame: mode === 'practice' ? null : aiView(AI_PRESETS[mode]).frame }; },
+  get ai() { return { decision: ai.decision, label: aiLabel(), think: ai.think, range: ai.range, seenFrame: mode === 'practice' ? null : aiView(AI_PRESETS[mode]).frame, countering: ai.counterT > 0 ? ai.counterMove : null }; },
   hold(name, on) { keyHeld[name] = !!on; },
   get projectiles() { return projectiles.map(p => ({ owner: p.owner.name, x: p.x, y: p.y, vx: p.vx, n: p.n, box: fireballBox(p) })); },
   get powerLog() { return powerLog.slice(); },
