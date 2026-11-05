@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
+import { primitives, semantic } from '@krishnabuilds/tokens'
 import { describe, expect, it } from 'vitest'
 
 const SRC = join(import.meta.dirname, '..')
@@ -32,6 +33,8 @@ function readColours(theme: Theme): Record<string, string> {
     const ref = value.match(/^var\(--sy-(palette-[\w-]+)\)$/)
     if (ref) colours[name] = palette[ref[1]!]!
   }
+  // The accent is the shared token, mapped once in :root, so its value comes from @krishnabuilds/tokens.
+  colours.accent = primitives.color[semantic.color.accent[theme]]
   return colours
 }
 
@@ -90,6 +93,10 @@ const COMPOSITES: [foreground: string, overlay: string, base: string, min: numbe
   ['text', 'accent-subtle', 'surface', TEXT],
   ['text-muted', 'accent-subtle', 'surface', TEXT],
 ]
+
+it('maps the accent to the shared token', () => {
+  expect(tokensCss).toContain('--sy-accent: var(--kb-color-accent);')
+})
 
 describe('palette', () => {
   it('holds only hex colours', () => {

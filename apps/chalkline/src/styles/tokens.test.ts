@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { COLOUR_PRESETS, LAYER_PRESETS } from '@/lib/colour'
+import { primitives, semantic } from '@krishnabuilds/tokens'
 
 const SRC = join(import.meta.dirname, '..')
 const TOKENS_FILE = join(import.meta.dirname, 'tokens.css')
@@ -20,6 +21,8 @@ function readColours(theme: Theme): Record<string, string> {
   for (const [, name, value] of themeBlock(theme).matchAll(/--cl-([\w-]+):\s*(#[0-9a-f]{6,8})\s*;/gi)) {
     colours[name!] = value!.toLowerCase()
   }
+  // The accent is the shared token, mapped once in :root, so its value comes from @krishnabuilds/tokens.
+  colours.accent = primitives.color[semantic.color.accent[theme]]
   return colours
 }
 
@@ -116,6 +119,10 @@ for (const name of COLOUR_PRESETS) {
     ['edge', `swatch-${name}-soft`, UI],
   )
 }
+
+it('maps the accent to the shared token', () => {
+  expect(tokensCss).toContain('--cl-accent: var(--kb-color-accent);')
+})
 
 describe('layer presets', () => {
   it.each(Object.entries(LAYER_PRESETS))('%s uses a preset (%s) defined in both themes', (_layer, preset) => {

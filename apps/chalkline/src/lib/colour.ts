@@ -3,6 +3,8 @@
  * point at --cl-<name> in tokens.css, so they follow the light/dark theme.
  */
 
+import { primitives, semantic } from '@krishnabuilds/tokens'
+
 export const COLOUR_PRESETS = ['slate', 'blue', 'teal', 'green', 'amber', 'red', 'purple', 'yellow', 'steel', 'tan', 'pink'] as const
 export type ColourPreset = (typeof COLOUR_PRESETS)[number]
 
@@ -71,5 +73,7 @@ export function parseThemeColours(css: string, theme: 'light' | 'dark'): Record<
   const block = css.match(new RegExp(`\\[data-theme='${theme}'\\]\\s*\\{([^}]*)\\}`))?.[1] ?? ''
   const colours: Record<string, string> = {}
   for (const [, name, value] of block.matchAll(/--cl-([\w-]+):\s*(#[0-9a-f]{6,8})\s*;/gi)) colours[name!] = value!.toLowerCase()
+  // --cl-accent maps to the shared token in :root, so its value comes from @krishnabuilds/tokens.
+  colours.accent ??= primitives.color[semantic.color.accent[theme]]
   return colours
 }

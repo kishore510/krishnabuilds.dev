@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { primitives, semantic } from "@krishnabuilds/tokens";
 import { describe, expect, it } from "vitest";
 import { BOARD_HEIGHT, BOARD_WIDTH, NOTE_COLORS, NOTE_DEFAULT_W, PALETTE_SIZE } from "@stickyard/shared";
 import { BREAKPOINTS } from "../src/styles/breakpoints";
@@ -17,7 +18,10 @@ const files = (dir: string): string[] =>
 function theme(selector: string): Record<string, string> {
   const start = tokens.indexOf(selector);
   const block = tokens.slice(start, tokens.indexOf("}", start));
-  return Object.fromEntries([...block.matchAll(/--sy-([\w-]+):\s*(#[0-9a-f]{6})\b/g)].map((m) => [m[1], m[2]]));
+  const colours = Object.fromEntries([...block.matchAll(/--sy-([\w-]+):\s*(#[0-9a-f]{6})\b/g)].map((m) => [m[1], m[2]]));
+  // The accent is the shared token, mapped once in :root, so its value comes from @krishnabuilds/tokens.
+  colours.accent = primitives.color[semantic.color.accent[selector.includes("dark") ? "dark" : "light"]];
+  return colours;
 }
 
 const luminance = (hex: string) => {
@@ -41,6 +45,10 @@ describe("design tokens", () => {
       expect(contrast(c["note-fg"]!, ink[0]!), selector).toBeGreaterThanOrEqual(7);
       expect(luminance(c["note-fg"]!)).toBeLessThan(luminance(ink[0]!));
     }
+  });
+
+  it("maps the accent to the shared token", () => {
+    expect(tokens).toContain("--sy-accent: var(--kb-color-accent);");
   });
 
   it("breakpoints in script match tokens.css", () => {

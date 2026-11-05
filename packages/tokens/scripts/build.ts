@@ -22,6 +22,8 @@ const CONTRAST_PAIRS: [SemanticColor, SemanticColor][] = [
   ["text-muted", "surface"],
   ["danger", "bg"],
   ["danger", "surface"],
+  ["accent", "bg"],
+  ["accent", "surface"],
   ["accent-fg", "accent"],
 ];
 

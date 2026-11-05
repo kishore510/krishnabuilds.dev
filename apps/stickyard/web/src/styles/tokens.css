@@ -22,7 +22,6 @@
   --sy-border-strong: #81888d;
   --sy-fg: #1d2327;
   --sy-fg-muted: #566064;
-  --sy-accent: #1f6aa5;
   --sy-accent-hover: #185686;
   --sy-accent-subtle: #1f6aa51f;
   --sy-accent-fg: #ffffff;
@@ -140,7 +139,6 @@
   --sy-border-strong: #6f7e86;
   --sy-fg: #ebede6;
   --sy-fg-muted: #a5afb3;
-  --sy-accent: #7cc0e6;
   --sy-accent-hover: #9dd0ee;
   --sy-accent-subtle: #7cc0e626;
   --sy-accent-fg: #0d1a22;
@@ -238,6 +236,7 @@
 
 /* ── Theme-independent tokens ──────────────────────────────────────── */
 :root {
+  --sy-accent: var(--kb-color-accent);
   /* Spacing: xs to lg come from the shared @krishnabuilds/tokens (same values as before);
      2xs and xl have no shared step and stay Stickyard's own. */
   --sy-space-2xs: 0.125rem;
