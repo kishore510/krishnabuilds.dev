@@ -81,6 +81,26 @@
     cursor: pointer;
   }
   #startBtn:active, #againBtn:active { background: #ffe08f; }
+  #modes {
+    display: flex;
+    gap: calc(6px * var(--game-scale, 1));
+    margin-top: calc(10px * var(--game-scale, 1));
+  }
+  #modes button, #menuBtn {
+    font: inherit;
+    font-size: calc(13px * var(--game-scale, 1));
+    font-weight: 700;
+    min-height: 32px;
+    padding: calc(5px * var(--game-scale, 1)) calc(16px * var(--game-scale, 1));
+    border-radius: calc(16px * var(--game-scale, 1));
+    border: 2px solid rgba(255,255,255,0.65);
+    background: rgba(10,8,6,0.6);
+    color: #fff;
+    cursor: pointer;
+  }
+  #modes button[aria-checked="true"] { background: #ffcf5a; border-color: #ffcf5a; color: #3a2400; }
+  #modeNote { min-height: 1.3em; }
+  #menuBtn { margin-top: calc(10px * var(--game-scale, 1)); }
   #backToArcade, #resultBack {
     margin-top: calc(10px * var(--game-scale, 1));
     font-size: calc(12px * var(--game-scale, 1));
@@ -238,15 +258,21 @@
   </div>
   <div id="overlay">
     <h1>Dojo Duel</h1>
-    <p>Work in progress: best of 3 rounds against a training dummy, 60 seconds a round. A CPU that fights back arrives in the next update.</p>
+    <p>Work in progress: best of 3 rounds against REN, 60 seconds a round. Power moves arrive in a later update.</p>
     <div id="legend">
       <b>Move</b><span>← → or A D, ↑ / W jump, ↓ / S crouch (touch: left pad)</span>
       <b>Punch / Kick</b><span>J / K. Crouch for a low jab or a sweep; jump for air attacks</span>
       <b>Block</b><span>Hold back, or L / Block. Crouch to block sweeps, stand to block air attacks</span>
-      <b>Dummy</b><span>T or the Dummy button: stand, block, or low block</span>
+      <b>Practice</b><span>T or the Dummy button sets the dummy to stand, block, or low block</span>
       <b>Hitboxes</b><span>H or the Boxes button &middot; Mute: M or 🔊</span>
       <b>Power</b><span>1 2 3 and the Power button: coming soon</span>
     </div>
+    <div id="modes" role="radiogroup" aria-label="Opponent">
+      <button type="button" role="radio" data-mode="easy" aria-checked="true">Easy</button>
+      <button type="button" role="radio" data-mode="hard" aria-checked="false">Hard</button>
+      <button type="button" role="radio" data-mode="practice" aria-checked="false">Practice</button>
+    </div>
+    <p id="modeNote"></p>
     <button id="startBtn" type="button" data-kb-play>Start</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
   </div>
@@ -254,6 +280,7 @@
     <h1 id="resultTitle">You win</h1>
     <p id="resultScore"></p>
     <button id="againBtn" type="button" data-kb-play>Play Again</button>
+    <button id="menuBtn" type="button">Change opponent</button>
     <a id="resultBack" href="../../index.html">&larr; Back to Arcade</a>
   </div>
 </div>
@@ -288,6 +315,8 @@ const resultTitle = document.getElementById('resultTitle');
 const resultScore = document.getElementById('resultScore');
 const againBtn = document.getElementById('againBtn');
 const resultBack = document.getElementById('resultBack');
+const menuBtn = document.getElementById('menuBtn');
+const modeNote = document.getElementById('modeNote');
 const muteBtn = document.getElementById('muteBtn');
 const debugBtn = document.getElementById('debugBtn');
 const dummyBtn = document.getElementById('dummyBtn');
@@ -295,6 +324,24 @@ const rotateHint = document.getElementById('rotateHint');
 const controls = document.getElementById('controls');
 const pad = document.getElementById('pad');
 const knob = document.getElementById('knob');
+
+// --- CPU AI difficulty. Same shape as Air Hockey (delay + jitter +
+// prediction), never a single speed multiplier. The CPU only ever sends the
+// inputs the player has (left/right, up, down, block, punch, kick), and it
+// acts on what the player was visibly doing reactionFrames ago, never on
+// this frame's input.
+//   reactionFrames  age of the CPU's view of the player, in frames (at least 1)
+//   thinkInterval   frames between neutral decisions: approach, poke, wait, guard
+//   error           spacing jitter in px, rerolled at each think
+//   blockChance     chance to block an attack it sees coming (or a jump-in it doesn't anti-air)
+//   aggression      chance to poke at each think, and to punish a whiffed attack
+//   preferredRange  gap in px it tries to keep between the fighters
+//   antiAirChance   chance to jab a jump-in out of the air; it predicts the
+//                   jump arc ahead by its own delay plus the jab's startup
+const AI_PRESETS = {
+  easy: { reactionFrames: 16, thinkInterval: 22, error: 30, blockChance: 0.3, aggression: 0.4, preferredRange: 115, antiAirChance: 0.15 },
+  hard: { reactionFrames: 5, thinkInterval: 10, error: 8, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7 }
+};
 
 // --- Arena (logical pixels; the canvas is scaled to fit) ---
 const W = 640, H = 360;
@@ -406,7 +453,7 @@ function resetFighters() {
       x, y: FLOOR, vx: 0, vy: 0, facing: face,
       state: 'idle', stateFrames: 0, stun: 0, landLag: MOVE.landLag,
       jumpDir: 0, walkPhase: 0, crouched: false, airAttackUsed: false,
-      move: null, buffer: null, inp: NO_INPUT,
+      move: null, buffer: null, inp: NO_INPUT, jumps: 0,
       health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0, flash: 0
     });
   }
@@ -442,8 +489,9 @@ const HALF_W = BOXES.stand.push.w * FS / 2;
 function clampToWalls(f) { f.x = Math.max(WALL_L + HALF_W, Math.min(WALL_R - HALF_W, f.x)); }
 function atWall(f) { return f.x <= WALL_L + HALF_W + 0.01 || f.x >= WALL_R - HALF_W - 0.01; }
 
+let moveSerial = 0;   // tags each attack, so the CPU decides once per attack it sees
 function startMove(f, id) {
-  f.move = { id, def: MOVES[id], frame: 0, hit: false };
+  f.move = { id, def: MOVES[id], frame: 0, hit: false, n: ++moveSerial };
   f.buffer = null;
   if (MOVES[id].pose === 'air') { f.airAttackUsed = true; return; }
   f.crouched = MOVES[id].pose === 'crouch';
@@ -515,6 +563,7 @@ function updateFighter(f, opp, inp) {
       const low = inp.down;
       startMove(f, f.buffer.button === 'punch' ? (low ? 'lowJab' : 'jab') : (low ? 'sweep' : 'kick'));
     } else if (inp.up) {
+      if (f.state !== 'jumpsquat') f.jumps++;
       f.jumpDir = inp.h;
       f.crouched = true;
       setState(f, 'jumpsquat');
@@ -813,19 +862,231 @@ function updateControls() {
   controls.classList.toggle('on', touchMode && state === 'playing');
 }
 
-// --- Training dummy: the CPU only stands, blocks standing, or blocks
-// crouching until it learns to fight. T or the Dummy button cycles it.
+// --- Opponent mode: Easy or Hard CPU, or Practice against the training
+// dummy (stand, block, or low block; T or the Dummy button cycles it).
 const DUMMY_MODES = [
   { id: 'stand', label: 'Stand', inp: { h: 0, up: false, down: false, block: false, punch: false, kick: false } },
   { id: 'block', label: 'Block', inp: { h: 0, up: false, down: false, block: true, punch: false, kick: false } },
   { id: 'lowblock', label: 'Low block', inp: { h: 0, up: false, down: true, block: true, punch: false, kick: false } }
 ];
+const MODE_NOTES = {
+  easy: 'REN is slow to react and often forgets to block.',
+  hard: 'REN reacts fast, blocks most attacks and punishes misses.',
+  practice: 'A training dummy that never attacks: stand, block, or low block.'
+};
+const MODE_LABELS = { easy: 'Easy', hard: 'Hard', practice: 'Practice' };
+let mode = 'easy';
+const modeBtns = document.querySelectorAll('#modes button');
+function setMode(m) {
+  mode = m;
+  modeBtns.forEach(b => b.setAttribute('aria-checked', String(b.dataset.mode === m)));
+  modeNote.textContent = MODE_NOTES[m];
+  dummyBtn.style.display = m === 'practice' ? '' : 'none';
+}
+modeBtns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
 let dummyIndex = 0;
 function cycleDummy() {
+  if (mode !== 'practice') return;
   dummyIndex = (dummyIndex + 1) % DUMMY_MODES.length;
   dummyBtn.textContent = 'Dummy: ' + DUMMY_MODES[dummyIndex].label;
 }
 dummyBtn.addEventListener('click', cycleDummy);
+
+// --- Seedable RNG for the AI (mulberry32), so automated runs are
+// repeatable. ?seed=N fixes it; otherwise each match gets a fresh seed.
+function makeRng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const seedParam = /[?&]seed=(\d+)/.exec(location.search);
+let seedOverride = seedParam ? Number(seedParam[1]) : null;
+let aiSeed = 0, rnd = makeRng(0);
+function seedAi() {
+  aiSeed = seedOverride !== null ? seedOverride : (Math.random() * 4294967296) >>> 0;
+  rnd = makeRng(aiSeed);
+}
+
+// --- CPU AI. Each frame the player's visible state (position, velocity,
+// pose, current attack and whether it connected) goes into a short
+// history; the CPU reads the entry from reactionFrames ago. It knows its
+// own state exactly. All tuning is in AI_PRESETS at the top.
+const AI_HISTORY = 64;
+let aiHistory = [];
+let playerChangeFrame = 0;   // when the player's visible action last changed (for the reaction timer)
+const ai = {};
+function resetAi() {
+  aiHistory = [];
+  pushObservation();
+  playerChangeFrame = simFrame;
+  Object.assign(ai, {
+    decision: 'wait', think: 0, jitter: 0, range: 0, hold: 0,
+    poke: null,             // { id, pressed, t }: an attack it is walking in to throw
+    blockLow: false,
+    seenMove: 0, seenJump: 0, seenWhiff: 0,
+    antiAir: false, jumpBlock: false, wasHit: false, counter: false
+  });
+}
+function pushObservation() {
+  const f = player;
+  const o = {
+    frame: simFrame, x: f.x, y: f.y, vx: f.vx, vy: f.vy, air: airborne(f), state: f.state, crouched: f.crouched, jumps: f.jumps,
+    move: f.move ? { id: f.move.id, n: f.move.n, phase: movePhase(f), frame: f.move.frame, hit: f.move.hit } : null
+  };
+  const prev = aiHistory[aiHistory.length - 1];
+  if (prev && (prev.state !== o.state || prev.air !== o.air || (prev.move && prev.move.n) !== (o.move && o.move.n))) playerChangeFrame = simFrame;
+  aiHistory.push(o);
+  if (aiHistory.length > AI_HISTORY) aiHistory.shift();
+}
+// What the CPU sees: the player as they were reactionFrames ago (the
+// newest entry is from the end of the previous frame).
+function aiView(P) {
+  return aiHistory[Math.max(0, aiHistory.length - Math.max(1, P.reactionFrames))];
+}
+// Reach of a move against a standing body, centre to centre, less a small margin.
+const STAND_HALF = BOXES.stand.hurt[1].w * FS / 2;
+function reach(id) { const hb = MOVES[id].hitbox; return (hb.x + hb.w / 2) * FS + STAND_HALF - 4; }
+function threatRange(def) { return (def.hitbox.x + def.hitbox.w / 2) * FS + STAND_HALF + 24; }
+const GUARD_RANGE = threatRange(MOVES.kick);   // inside this the player can reach it, so guarding is worth it
+const POKES = [['jab', 0.4], ['kick', 0.35], ['sweep', 0.15], ['lowJab', 0.1]];
+// Picks from the pokes that reach from here; if none do, from all of them (it walks in).
+function pickPoke(dist) {
+  const fits = POKES.filter(([id]) => reach(id) >= dist);
+  const list = fits.length ? fits : POKES;
+  let r = rnd() * list.reduce((t, [, w]) => t + w, 0);
+  for (const [id, w] of list) { if ((r -= w) < 0) return id; }
+  return list[list.length - 1][0];
+}
+const AI_FREE = ['idle', 'walk', 'crouch', 'guard'];
+function decide(d, hold) { ai.decision = d; ai.hold = hold || 0; }
+
+function aiInput() {
+  const P = AI_PRESETS[mode];
+  const o = aiView(P);
+  const me = cpu;
+  const inp = { h: 0, up: false, down: false, block: false, punch: false, kick: false };
+  const dx = o.x - me.x, dist = Math.abs(dx);
+  const toward = dx >= 0 ? 1 : -1;   // from where it last saw the player, so a cross-up can fool it
+  const free = AI_FREE.includes(me.state);
+
+  // Taking a hit: wait it out, then back off.
+  if (me.state === 'hitstun') { ai.wasHit = true; ai.poke = null; ai.antiAir = false; decide('hit'); return inp; }
+  if (ai.wasHit) { ai.wasHit = false; decide('back off', Math.round(lerp(36, 12, P.aggression))); }
+
+  const m = o.move;
+  // Anti-air: once per jump, roll to jab it out of the air; otherwise roll to block it.
+  if (o.air || o.state === 'jumpsquat') {
+    if (o.jumps !== ai.seenJump) {
+      ai.seenJump = o.jumps;
+      ai.poke = null;
+      if (rnd() < P.antiAirChance) { ai.antiAir = true; decide('anti-air'); }
+      else if (rnd() < P.blockChance) { ai.blockLow = false; ai.jumpBlock = true; decide('block high'); }
+    }
+  } else if (ai.antiAir || ai.jumpBlock) {
+    // the jumper has landed
+    if (ai.jumpBlock && ai.decision === 'block high') decide('wait');
+    ai.antiAir = ai.jumpBlock = false;
+  }
+  // An air attack already coming out beats a standing jab, so switch to a block roll instead.
+  if (ai.antiAir && m && MOVES[m.id].pose === 'air') { ai.antiAir = false; decide('wait'); }
+  if (ai.antiAir && free && o.air) {
+    // Predict where the jumper will be when a jab started now goes active.
+    const k = P.reactionFrames + MOVES.jab.startup;
+    const px = o.x + o.vx * k;
+    const py = Math.min(FLOOR, o.y + o.vy * k + MOVE.gravity * k * (k + 1) / 2);
+    const vyNow = o.vy + MOVE.gravity * k;
+    const lift = FLOOR - py;
+    if (vyNow > 0 && lift > 12 && lift < 80 && Math.abs(px - me.x) < reach('jab') + 6) {
+      inp.punch = true;
+      ai.antiAir = false;
+      decide('anti-air jab', 20);
+      return inp;
+    }
+  }
+
+  // Block an attack it sees coming (once per attack).
+  if (m && m.phase !== 'recovery' && !m.hit && m.n !== ai.seenMove && dist < threatRange(MOVES[m.id]) && ai.decision !== 'anti-air jab') {
+    ai.seenMove = m.n;
+    if (rnd() < P.blockChance) { ai.poke = null; ai.blockLow = MOVES[m.id].height === 'low'; decide(ai.blockLow ? 'block low' : 'block high'); }
+  }
+  // Punish an attack it saw miss (once per attack).
+  if (m && m.phase === 'recovery' && !m.hit && m.n !== ai.seenWhiff) {
+    ai.seenWhiff = m.n;
+    if (rnd() < P.aggression) {
+      const left = MOVES[m.id].recovery - (m.frame - MOVES[m.id].startup - MOVES[m.id].active);
+      ai.poke = { id: dist <= reach('jab') - 6 ? 'jab' : 'kick', pressed: false, t: 0 };
+      decide('punish', left + 6);
+    }
+  }
+
+  // Keep blocking while an attack it saw is still out, or while it's in blockstun.
+  if (ai.decision === 'block high' || ai.decision === 'block low') {
+    const live = (m && m.phase !== 'recovery' && !m.hit) || o.air || me.state === 'blockstun';
+    // It knows when it has blocked: roll once to counter with a jab as soon as the blockstun ends.
+    if (me.state === 'blockstun' && me.stateFrames === 1 && rnd() < P.aggression) ai.counter = true;
+    if (live) { inp.h = -toward; inp.down = ai.blockLow; return inp; }
+    if (ai.counter) { ai.counter = false; ai.poke = { id: 'jab', pressed: false, t: 30 }; decide('punish', 10); }
+    else { decide('wait'); ai.think = Math.min(ai.think, 4); }
+  }
+
+  // An attack on its way: walk in until it's in reach, then throw it.
+  if (ai.poke) {
+    const p = ai.poke;
+    p.t++;
+    const low = MOVES[p.id].pose === 'crouch';
+    if (!p.pressed) {
+      if (dist <= reach(p.id) && free) {
+        inp[MOVES[p.id].button] = true;
+        inp.down = low;
+        p.pressed = true;
+      } else if (p.t > 40 || (ai.decision === 'punish' && ai.hold <= 0)) {
+        ai.poke = null; decide('wait');
+      } else {
+        inp.h = toward;
+      }
+    } else {
+      inp.down = low;   // the crouch has to be held on the frame the attack starts
+      if ((me.move && me.move.n) || p.t > 10) { ai.poke = null; decide('wait'); ai.think = Math.min(ai.think, 6); }
+    }
+    if (ai.hold > 0) ai.hold--;
+    return inp;
+  }
+
+  if (ai.decision === 'back off' || ai.decision === 'anti-air jab') {
+    if (ai.hold-- > 0) { if (ai.decision === 'back off') inp.h = -toward; return inp; }
+    decide('wait');
+  }
+
+  if (ai.antiAir) return inp;   // stand ready for the jump-in
+
+  // Neutral: every thinkInterval frames, pick what to do next.
+  if (--ai.think <= 0) {
+    ai.think = P.thinkInterval;
+    ai.jitter = (rnd() * 2 - 1) * P.error;
+    ai.range = P.preferredRange + ai.jitter;
+    // Inside the player's reach it pokes less and guards more.
+    const close = dist < GUARD_RANGE;
+    if (rnd() < P.aggression * (close ? 0.6 : 1)) { ai.poke = { id: pickPoke(dist), pressed: false, t: 0 }; decide('poke'); return inp; }
+    if (close && rnd() < P.blockChance) decide('guard');
+    else if (dist > ai.range + 10) decide('approach');
+    else if (dist < ai.range - 25) decide('retreat');
+    else decide('wait');
+  }
+  if (ai.decision === 'approach') { if (dist > ai.range) inp.h = toward; else decide('wait'); }
+  else if (ai.decision === 'retreat') { if (dist < ai.range) inp.h = -toward; else decide('wait'); }
+  // A crouching guard, held back: it stops every grounded attack, but not a jump-in.
+  else if (ai.decision === 'guard') { inp.h = -toward; inp.down = true; }
+  return inp;
+}
+function aiLabel() {
+  if (!ai.poke) return ai.decision;
+  return ai.decision + ' ' + MOVES[ai.poke.id].name + (ai.poke.pressed ? ' (thrown)' : '');
+}
 
 // --- Debug overlay: H, the Boxes button, or ?debug=1 ---
 let debugOn = /[?&]debug=1\b/.test(location.search) || sessionStorage.getItem('dojoDuelDebug') === '1';
@@ -1273,6 +1534,13 @@ function debugLines() {
     '   frame ' + simFrame + '   ' + fps + ' fps');
   lines.push('key ' + lastKey);
   lines.push('round ' + round + ' ' + phase + ' f' + phaseFrames + '   clock ' + (clock / 60).toFixed(2) + 's   wins ' + wins[0] + '-' + wins[1] + '   hitstop ' + hitstop);
+  if (mode === 'practice') lines.push('cpu practice dummy ' + DUMMY_MODES[dummyIndex].id);
+  else {
+    const P = AI_PRESETS[mode];
+    lines.push('cpu ' + mode + ' seed ' + aiSeed + '   decision ' + aiLabel());
+    lines.push('    react ' + P.reactionFrames + 'f (sees f' + aiView(P).frame + ')  reacts in ' +
+      Math.max(0, playerChangeFrame + P.reactionFrames - simFrame) + 'f  think ' + Math.max(0, ai.think) + 'f  range ' + Math.round(ai.range));
+  }
   lines.push('last ' + (lastHit ? lastHit.by + ' ' + lastHit.move + ' on ' + lastHit.on + ': ' +
     (lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-'));
   return lines;
@@ -1318,7 +1586,7 @@ function drawDebug() {
   ctx.textBaseline = 'top';
   const x = 16, y = 62, lh = 12;
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.fillRect(x - 4, y - 3, 340, lines.length * lh + 20);
+  ctx.fillRect(x - 4, y - 3, 372, lines.length * lh + 20);
   ctx.fillStyle = '#fff';
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh));
   // legend
@@ -1439,7 +1707,8 @@ function tick() {
   // Input is locked during banners: presses are still drained, then dropped.
   const inp = readInput();
   updateFighter(player, cpu, phase === 'fight' ? inp : NO_INPUT);
-  updateFighter(cpu, player, DUMMY_MODES[dummyIndex].inp);
+  const cpuInp = mode === 'practice' ? DUMMY_MODES[dummyIndex].inp : phase === 'fight' ? aiInput() : NO_INPUT;
+  updateFighter(cpu, player, cpuInp);
   resolvePush(player, cpu);
   if (phase === 'fight') {
     clock--;
@@ -1461,10 +1730,12 @@ function tick() {
     if (f.healthLag > f.health && simFrame - f.lastHitFrame > 30) f.healthLag = Math.max(f.health, f.healthLag - 1.2);
     if (f.healthLag < f.health) f.healthLag = f.health;
   }
+  pushObservation();   // what the CPU will see, reactionFrames from now
 }
 
 function beginRound() {
   resetFighters();   // start positions, full health, effects cleared
+  resetAi();
   phase = 'intro';
   phaseFrames = 0;
   clock = ROUND.seconds * 60;
@@ -1487,7 +1758,7 @@ function showResult() {
   state = 'result';
   const won = wins[0] > wins[1];
   resultTitle.textContent = won ? 'You win' : 'You lose';
-  resultScore.textContent = player.name + ' ' + wins[0] + ' \u2013 ' + wins[1] + ' ' + cpu.name;
+  resultScore.textContent = player.name + ' ' + wins[0] + ' \u2013 ' + wins[1] + ' ' + cpu.name + ' \u00b7 ' + MODE_LABELS[mode];
   resultEl.classList.add('on');
   clearInput();
   updateControls();
@@ -1497,9 +1768,10 @@ function showResult() {
 function startGame() {
   round = 1;
   wins = [0, 0];
+  simFrame = 0;
+  seedAi();
   beginRound();
   clearInput();
-  simFrame = 0;
   state = 'playing';
   overlay.style.display = 'none';
   resultEl.classList.remove('on');
@@ -1513,6 +1785,13 @@ for (const btn of [startBtn, againBtn]) {
     startGame();
   });
 }
+menuBtn.addEventListener('click', () => {
+  state = 'menu';
+  resultEl.classList.remove('on');
+  overlay.style.display = '';
+  resetFighters();
+  updateControls();
+});
 for (const a of [backToArcade, resultBack]) a.addEventListener('click', () => { window.kbExitFullscreen?.(); });
 
 let last = performance.now(), acc = 0;
@@ -1543,6 +1822,12 @@ window.dojoDuel = {
   get debug() { return debugOn; },
   get muted() { return muted; },
   get dummy() { return DUMMY_MODES[dummyIndex].id; },
+  get mode() { return mode; },
+  set mode(m) { setMode(m); },
+  get seed() { return aiSeed; },
+  set seed(v) { seedOverride = v === null ? null : Number(v); },
+  get ai() { return { decision: ai.decision, label: aiLabel(), think: ai.think, range: ai.range, seenFrame: mode === 'practice' ? null : aiView(AI_PRESETS[mode]).frame }; },
+  hold(name, on) { keyHeld[name] = !!on; },
   get lastHit() { return lastHit; },
   get fx() { return { hitstop, shake, sparks: sparks.length, bursts: bursts.map(b => ({ word: b.word, scale: b.scale, x: b.x, y: b.y, top: b.top })), flash: [player.flash, cpu.flash] }; },
   get match() { return { round, wins: wins.slice(), phase, phaseFrames, clock, roundWinner, banner: state === 'playing' ? bannerText() : null }; },
@@ -1558,10 +1843,12 @@ window.dojoDuel = {
   reset() { resetFighters(); clearInput(); },
   startGame,
   player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
-  MOVE, MOVES, BOXES, FX, ROUND, FS, FLOOR, MAX_HEALTH
+  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, FS, FLOOR, MAX_HEALTH
 };
 
 resetFighters();
+resetAi();
+setMode('easy');
 handleResize();
 requestAnimationFrame(loop);
 </script>
