@@ -232,17 +232,18 @@
   <div id="topBtns">
     <button id="muteBtn" type="button" aria-label="Mute">🔊</button>
     <button id="debugBtn" type="button" aria-pressed="false" aria-label="Show hitboxes">Boxes</button>
+    <button id="dummyBtn" type="button">Dummy: Stand</button>
   </div>
   <div id="overlay">
     <h1>Dojo Duel</h1>
-    <p>Work in progress: this update is movement only. Punches, kicks, rounds and a CPU that fights back arrive in the next updates.</p>
+    <p>Work in progress: practise on a training dummy. Rounds and a CPU that fights back arrive in the next updates.</p>
     <div id="legend">
-      <b>Move</b><span>← → or A D (touch: left pad)</span>
-      <b>Jump</b><span>↑ or W (hold a direction to jump that way)</span>
-      <b>Crouch</b><span>↓ or S</span>
-      <b>Hitboxes</b><span>H or the Boxes button</span>
-      <b>Mute</b><span>M or 🔊</span>
-      <b>Attacks</b><span>J K L, 1 2 3 and the right-hand buttons: coming soon</span>
+      <b>Move</b><span>← → or A D, ↑ / W jump, ↓ / S crouch (touch: left pad)</span>
+      <b>Punch / Kick</b><span>J / K. Crouch for a low jab or a sweep; jump for air attacks</span>
+      <b>Block</b><span>Hold back, or L / Block. Crouch to block sweeps, stand to block air attacks</span>
+      <b>Dummy</b><span>T or the Dummy button: stand, block, or low block</span>
+      <b>Hitboxes</b><span>H or the Boxes button &middot; Mute: M or 🔊</span>
+      <b>Power</b><span>1 2 3 and the Power button: coming soon</span>
     </div>
     <button id="startBtn" type="button" data-kb-play>Start</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
@@ -276,6 +277,7 @@ const startBtn = document.getElementById('startBtn');
 const backToArcade = document.getElementById('backToArcade');
 const muteBtn = document.getElementById('muteBtn');
 const debugBtn = document.getElementById('debugBtn');
+const dummyBtn = document.getElementById('dummyBtn');
 const rotateHint = document.getElementById('rotateHint');
 const controls = document.getElementById('controls');
 const pad = document.getElementById('pad');
@@ -287,21 +289,31 @@ const FLOOR = 316;              // y of the fighters' feet
 const WALL_L = 24, WALL_R = 616;
 const STEP_MS = 1000 / 60;      // fixed 60 Hz simulation step
 
+// Fighter scale. Boxes, move hitboxes and the drawing are all written in
+// base units and multiplied by this, so they always line up.
+const FS = 1.25;
+
 // --- Movement tuning. Speeds are px per frame, durations are frames. ---
 const MOVE = {
-  walkFwd: 2.6,
-  walkBack: 2.0,
-  jumpVy: -10.2,   // ~95px peak, ~37 frames in the air
-  jumpVx: 3.0,
+  walkFwd: 3.0,
+  walkBack: 2.3,
+  jumpVy: -11.6,   // ~122px peak, ~42 frames in the air
+  jumpVx: 3.4,
   gravity: 0.55,
   jumpSquat: 3,    // frames crouched before leaving the ground
-  landLag: 4       // frames of landing recovery
+  landLag: 4,      // frames of landing recovery
+  friction: 0.82   // knockback slide decay per frame on the ground
 };
 
-// --- Boxes, relative to the fighter's feet. x is the box centre's offset
-// in front of the fighter (mirrored by facing); y is the height of the
-// box's bottom above the feet. push = body that fighters can't overlap,
-// hurt = where the fighter can be hit. Hitboxes join in the next update.
+const MAX_HEALTH = 100;
+const INPUT_BUFFER = 6;       // frames an attack press waits for the fighter to be free
+const POST_HIT_COOLDOWN = 4;  // frames a fighter can't be hit again after a hit or block
+const REFILL_AFTER = 120;     // training: health refills after this many frames without a hit
+
+// --- Boxes in base units, relative to the fighter's feet. x is the box
+// centre's offset in front of the fighter (mirrored by facing); y is the
+// height of the box's bottom above the feet. push = body that fighters
+// can't overlap, hurt = where the fighter can be hit.
 const BOXES = {
   stand:  { push: { x: 0, y: 0, w: 40, h: 104 },
             hurt: [{ x: 2, y: 80, w: 28, h: 28 }, { x: 0, y: 0, w: 44, h: 82 }] },
@@ -311,83 +323,167 @@ const BOXES = {
             hurt: [{ x: 2, y: 78, w: 28, h: 28 }, { x: 0, y: 22, w: 42, h: 58 }] }
 };
 
-function makeFighter(name, x, facing, colors) {
-  return {
-    name, x, y: FLOOR, vx: 0, vy: 0, facing, colors,
-    state: 'idle', stateFrames: 0, jumpDir: 0, walkPhase: 0
-  };
+// --- Frame data. startup/active/recovery are frames; a move's frame
+// counter starts at 0 on the frame it's pressed. damage/chip are health;
+// hitstun/blockstun are frames the defender can't act; knock is the
+// defender's slide speed (px/frame, decays). height: 'mid' blocks either
+// way, 'low' must be blocked crouching, 'high' (air attacks) standing.
+// The hitbox is in the same base units as BOXES and only exists during
+// active frames.
+const MOVES = {
+  jab:      { name: 'Jab',       button: 'punch', pose: 'stand',  startup: 4, active: 3, recovery: 8,  damage: 6,  chip: 1, hitstun: 14, blockstun: 10, knock: 3.2, height: 'mid',  hitbox: { x: 46, y: 72, w: 26, h: 16 } },
+  kick:     { name: 'Kick',      button: 'kick',  pose: 'stand',  startup: 8, active: 4, recovery: 16, damage: 10, chip: 2, hitstun: 18, blockstun: 13, knock: 4.5, height: 'mid',  hitbox: { x: 50, y: 48, w: 32, h: 16 } },
+  lowJab:   { name: 'Low Jab',   button: 'punch', pose: 'crouch', startup: 4, active: 3, recovery: 9,  damage: 5,  chip: 1, hitstun: 13, blockstun: 9,  knock: 2.8, height: 'mid',  hitbox: { x: 44, y: 50, w: 24, h: 14 } },
+  sweep:    { name: 'Sweep',     button: 'kick',  pose: 'crouch', startup: 7, active: 4, recovery: 18, damage: 9,  chip: 2, hitstun: 17, blockstun: 12, knock: 4.0, height: 'low',  hitbox: { x: 50, y: 0,  w: 34, h: 14 } },
+  airPunch: { name: 'Air Punch', button: 'punch', pose: 'air',    startup: 4, active: 8, recovery: 0,  damage: 7,  chip: 1, hitstun: 15, blockstun: 10, knock: 2.6, height: 'high', hitbox: { x: 36, y: 60, w: 24, h: 20 } },
+  airKick:  { name: 'Air Kick',  button: 'kick',  pose: 'air',    startup: 6, active: 10, recovery: 0, damage: 9,  chip: 2, hitstun: 17, blockstun: 12, knock: 3.0, height: 'high', hitbox: { x: 38, y: 22, w: 30, h: 18 } }
+};
+function moveTotal(m) { return m.startup + m.active + m.recovery; }
+function movePhase(f) {
+  const m = f.move.def, fr = f.move.frame;
+  if (fr < m.startup) return 'startup';
+  if (fr < m.startup + m.active) return 'active';
+  return 'recovery';
 }
-const player = makeFighter('KAI', 200, 1, { gi: '#2f6fd6', giDark: '#1f4c99', band: '#ffffff', belt: '#1a1a1a', skin: '#e8b98f' });
-const cpu = makeFighter('REN', 440, -1, { gi: '#d6453a', giDark: '#99302a', band: '#1a1a1a', belt: '#5a3a1a', skin: '#c98d62' });
+
+function makeFighter(name, colors) {
+  return { name, colors, x: 0, y: FLOOR, vx: 0, vy: 0, facing: 1 };
+}
+const player = makeFighter('KAI', { gi: '#2f6fd6', giDark: '#1f4c99', band: '#ffffff', belt: '#1a1a1a', skin: '#e8b98f' });
+const cpu = makeFighter('REN', { gi: '#d6453a', giDark: '#99302a', band: '#1a1a1a', belt: '#5a3a1a', skin: '#c98d62' });
 
 function resetFighters() {
   for (const [f, x, face] of [[player, 200, 1], [cpu, 440, -1]]) {
-    f.x = x; f.y = FLOOR; f.vx = 0; f.vy = 0; f.facing = face;
-    f.state = 'idle'; f.stateFrames = 0; f.jumpDir = 0; f.walkPhase = 0;
+    Object.assign(f, {
+      x, y: FLOOR, vx: 0, vy: 0, facing: face,
+      state: 'idle', stateFrames: 0, stun: 0, landLag: MOVE.landLag,
+      jumpDir: 0, walkPhase: 0, crouched: false, airAttackUsed: false,
+      move: null, buffer: null, inp: NO_INPUT,
+      health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0
+    });
   }
+  lastHit = null;
 }
 
 function setState(f, s) {
   if (f.state !== s) { f.state = s; f.stateFrames = 0; }
 }
+function enterState(f, s) { f.state = s; f.stateFrames = 0; }   // always restarts the counter
+function airborne(f) { return f.y < FLOOR || f.state === 'air'; }
 function boxPose(f) {
-  if (f.state === 'crouch') return 'crouch';
-  if (f.state === 'air') return 'air';
-  return 'stand';
+  if (airborne(f)) return 'air';
+  return f.crouched ? 'crouch' : 'stand';
 }
 function worldBox(f, b) {
-  const cx = f.x + b.x * f.facing;
-  return { x: cx - b.w / 2, y: f.y - b.y - b.h, w: b.w, h: b.h };
+  const cx = f.x + b.x * FS * f.facing;
+  const w = b.w * FS, h = b.h * FS;
+  return { x: cx - w / 2, y: f.y - (b.y + b.h) * FS, w, h };
+}
+function hurtboxes(f) { return BOXES[boxPose(f)].hurt.map(b => worldBox(f, b)); }
+function pushbox(f) { return worldBox(f, BOXES[boxPose(f)].push); }
+function activeHitbox(f) {
+  if (!f.move || f.move.hit || movePhase(f) !== 'active') return null;
+  return worldBox(f, f.move.def.hitbox);
 }
 function overlaps(a, b) {
   return a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
 }
 
-function clampToWalls(f) {
-  const half = BOXES.stand.push.w / 2;
-  f.x = Math.max(WALL_L + half, Math.min(WALL_R - half, f.x));
-}
-function atWall(f) {
-  const half = BOXES.stand.push.w / 2;
-  return f.x <= WALL_L + half + 0.01 || f.x >= WALL_R - half - 0.01;
+const HALF_W = BOXES.stand.push.w * FS / 2;
+function clampToWalls(f) { f.x = Math.max(WALL_L + HALF_W, Math.min(WALL_R - HALF_W, f.x)); }
+function atWall(f) { return f.x <= WALL_L + HALF_W + 0.01 || f.x >= WALL_R - HALF_W - 0.01; }
+
+function startMove(f, id) {
+  f.move = { id, def: MOVES[id], frame: 0, hit: false };
+  f.buffer = null;
+  if (MOVES[id].pose === 'air') { f.airAttackUsed = true; return; }
+  f.crouched = MOVES[id].pose === 'crouch';
+  enterState(f, 'attack');
+  sfx('whiff');
 }
 
-// inp: { h: -1|0|1 (screen direction), up, down }
+// inp: { h: -1|0|1 (screen direction), up, down, block, punch, kick }
+// where punch/kick are fresh presses this frame.
 function updateFighter(f, opp, inp) {
+  f.inp = inp;
   f.stateFrames++;
-  if (f.state === 'air') {
+  if (f.hitCooldown > 0) f.hitCooldown--;
+  if (inp.punch) f.buffer = { button: 'punch', t: INPUT_BUFFER };
+  if (inp.kick) f.buffer = { button: 'kick', t: INPUT_BUFFER };
+  if (f.buffer && --f.buffer.t < 0) f.buffer = null;
+
+  if (airborne(f)) {
+    if (f.state === 'air' && !f.move && !f.airAttackUsed && f.buffer) {
+      startMove(f, f.buffer.button === 'punch' ? 'airPunch' : 'airKick');
+    } else if (f.move) {
+      f.move.frame++;
+      if (f.move.frame >= f.move.def.startup + f.move.def.active) f.move = null;
+    }
     f.vy += MOVE.gravity;
     f.x += f.vx;
     f.y += f.vy;
     if (f.y >= FLOOR) {
+      const wasHit = f.state === 'hitstun';
       f.y = FLOOR; f.vx = 0; f.vy = 0;
-      setState(f, 'land');
+      f.move = null; f.airAttackUsed = false; f.crouched = false;
+      f.landLag = wasHit ? 10 : MOVE.landLag;
+      enterState(f, 'land');
       sfx('land');
     }
-  } else if (f.state === 'jumpsquat') {
+    clampToWalls(f);
+    return;
+  }
+
+  // ground slide from knockback
+  f.x += f.vx;
+  f.vx *= MOVE.friction;
+  if (Math.abs(f.vx) < 0.05) f.vx = 0;
+
+  let free = false;
+  if (f.state === 'jumpsquat') {
     if (f.stateFrames >= MOVE.jumpSquat) {
       f.vy = MOVE.jumpVy;
       f.vx = f.jumpDir * MOVE.jumpVx;
-      setState(f, 'air');
+      f.crouched = false;
+      enterState(f, 'air');
       sfx('jump');
     }
-  } else if (f.state === 'land' && f.stateFrames < MOVE.landLag) {
-    // landing recovery: can't act yet
+  } else if (f.state === 'attack') {
+    f.move.frame++;
+    if (f.move.frame >= moveTotal(f.move.def)) { f.move = null; free = true; }
+  } else if (f.state === 'hitstun' || f.state === 'blockstun') {
+    if (f.stateFrames >= f.stun) free = true;
+  } else if (f.state === 'land') {
+    if (f.stateFrames >= f.landLag) free = true;
   } else {
-    // Free to act. Only grounded, actionable fighters turn to face the
-    // opponent, so jumping over them doesn't flip you mid-air.
+    free = true;
+  }
+
+  if (free) {
+    // Only grounded, actionable fighters turn to face the opponent, so
+    // jumping over them doesn't flip you mid-air.
     if (Math.abs(opp.x - f.x) > 1) f.facing = opp.x > f.x ? 1 : -1;
-    if (inp.up) {
+    if (f.buffer) {
+      const low = inp.down;
+      startMove(f, f.buffer.button === 'punch' ? (low ? 'lowJab' : 'jab') : (low ? 'sweep' : 'kick'));
+    } else if (inp.up) {
       f.jumpDir = inp.h;
+      f.crouched = true;
       setState(f, 'jumpsquat');
     } else if (inp.down) {
+      f.crouched = true;
       setState(f, 'crouch');
+    } else if (inp.block) {
+      f.crouched = false;
+      setState(f, 'guard');
     } else if (inp.h) {
       const forward = inp.h === f.facing;
       f.x += inp.h * (forward ? MOVE.walkFwd : MOVE.walkBack);
       f.walkPhase += forward ? 0.28 : -0.24;
+      f.crouched = false;
       setState(f, 'walk');
     } else {
+      f.crouched = false;
       setState(f, 'idle');
     }
   }
@@ -397,16 +493,14 @@ function updateFighter(f, opp, inp) {
 // Fighters can't overlap: split the overlap between them, and if one is
 // pinned against a wall, the other takes the rest.
 function resolvePush(a, b) {
-  const pa = worldBox(a, BOXES[boxPose(a)].push);
-  const pb = worldBox(b, BOXES[boxPose(b)].push);
+  const pa = pushbox(a), pb = pushbox(b);
   if (!overlaps(pa, pb)) return;
   const ov = Math.min(pa.x + pa.w, pb.x + pb.w) - Math.max(pa.x, pb.x);
   const dir = a.x < b.x ? -1 : a.x > b.x ? 1 : -a.facing;
   a.x += dir * ov / 2;
   b.x -= dir * ov / 2;
   clampToWalls(a); clampToWalls(b);
-  const qa = worldBox(a, BOXES[boxPose(a)].push);
-  const qb = worldBox(b, BOXES[boxPose(b)].push);
+  const qa = pushbox(a), qb = pushbox(b);
   const ov2 = Math.min(qa.x + qa.w, qb.x + qb.w) - Math.max(qa.x, qb.x);
   if (ov2 > 0 && overlaps(qa, qb)) {
     if (atWall(a)) b.x -= dir * ov2; else a.x += dir * ov2;
@@ -414,7 +508,65 @@ function resolvePush(a, b) {
   }
 }
 
-// --- Input: keyboard and touch both feed one set of flags ---
+// --- Hits ---
+const CAN_BLOCK_FROM = ['idle', 'walk', 'crouch', 'guard', 'blockstun'];
+function canBlock(def, att, m) {
+  if (airborne(def) || !CAN_BLOCK_FROM.includes(def.state)) return false;
+  const inp = def.inp;
+  const toward = att.x >= def.x ? 1 : -1;
+  if (!(inp.block || inp.h === -toward)) return false;
+  if (m.height === 'low' && !inp.down) return false;
+  if (m.height === 'high' && inp.down) return false;
+  return true;
+}
+
+let lastHit = null;   // for the debug overlay
+function checkHit(att, def) {
+  const hb = activeHitbox(att);
+  if (!hb || def.hitCooldown > 0) return false;
+  return hurtboxes(def).some(h => overlaps(hb, h));
+}
+function applyHit(att, def) {
+  const m = att.move.def;
+  att.move.hit = true;            // an attack can only connect once
+  def.hitCooldown = POST_HIT_COOLDOWN;
+  def.lastHitFrame = simFrame;
+  const dir = att.x <= def.x ? 1 : -1;
+  const blocked = canBlock(def, att, m);
+  let dealt;
+  if (blocked) {
+    dealt = Math.min(m.chip, Math.max(0, def.health - 1));   // chip can't finish a fighter
+    def.health -= dealt;
+    def.crouched = !!def.inp.down;
+    def.stun = m.blockstun;
+    def.vx = dir * m.knock * 0.7;
+    enterState(def, 'blockstun');
+    sfx('block');
+  } else {
+    dealt = Math.min(m.damage, def.health);
+    def.health -= dealt;
+    def.move = null;
+    def.buffer = null;
+    def.stun = m.hitstun;
+    if (airborne(def)) {
+      def.vx = dir * m.knock * 0.6;
+      def.vy = Math.min(def.vy, -3);
+    } else {
+      def.vx = dir * m.knock;
+    }
+    enterState(def, 'hitstun');
+    sfx('hit');
+  }
+  // A cornered defender can't slide back, so the attacker gets pushed out instead.
+  if (!airborne(def) && atWall(def) && Math.sign(def.x - att.x) === dir) {
+    att.vx = -dir * m.knock * (blocked ? 0.7 : 1);
+  }
+  lastHit = { by: att.name, on: def.name, move: m.name, blocked, dealt, frame: simFrame };
+}
+
+// --- Input: keyboard and touch both feed one set of flags. Attack
+// presses are also queued as events, so a tap shorter than a frame
+// still counts.
 const KEYMAP = {
   ArrowLeft: 'left', KeyA: 'left',
   ArrowRight: 'right', KeyD: 'right',
@@ -425,14 +577,19 @@ const KEYMAP = {
 };
 const keyHeld = {};
 const touchHeld = {};
+const pressed = {};
 function held(name) { return !!(keyHeld[name] || touchHeld[name]); }
+function press(name) { if (name === 'punch' || name === 'kick') pressed[name] = true; }
 function readInput() {
   const h = (held('right') ? 1 : 0) - (held('left') ? 1 : 0);
-  return { h, up: held('up'), down: held('down') };
+  const inp = { h, up: held('up'), down: held('down'), block: held('block'), punch: !!pressed.punch, kick: !!pressed.kick };
+  pressed.punch = pressed.kick = false;
+  return inp;
 }
 function clearInput() {
   for (const k in keyHeld) delete keyHeld[k];
   for (const k in touchHeld) delete touchHeld[k];
+  pressed.punch = pressed.kick = false;
   setPad(0, 0, false);
   document.querySelectorAll('.act.lit').forEach(b => b.classList.remove('lit'));
 }
@@ -440,9 +597,11 @@ function clearInput() {
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyH' && !e.repeat) { toggleDebug(); return; }
   if (e.code === 'KeyM' && !e.repeat) { toggleMute(); return; }
+  if (e.code === 'KeyT' && !e.repeat) { cycleDummy(); return; }
   const name = KEYMAP[e.code];
   if (!name) return;
   if (state === 'playing') e.preventDefault();
+  if (!e.repeat) press(name);
   keyHeld[name] = true;
 });
 window.addEventListener('keyup', (e) => {
@@ -501,8 +660,7 @@ for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
 }
 
 // Action buttons: each tracks its own pointer, so a thumb on the pad and
-// a thumb on a button work at the same time. They light up and show in
-// the debug overlay now; the moves themselves arrive in the next update.
+// a thumb on a button work at the same time. Power does nothing yet.
 document.querySelectorAll('.act').forEach((btn) => {
   const act = btn.dataset.act;
   let pid = null;
@@ -511,8 +669,8 @@ document.querySelectorAll('.act').forEach((btn) => {
     pid = e.pointerId;
     try { btn.setPointerCapture(e.pointerId); } catch (err) {}
     touchHeld[act] = true;
+    press(act);
     btn.classList.add('lit');
-    sfx('tap');
   });
   const release = (e) => {
     if (e.pointerId !== pid) return;
@@ -534,6 +692,20 @@ window.addEventListener('pointerdown', (e) => {
 function updateControls() {
   controls.classList.toggle('on', touchMode && state === 'playing');
 }
+
+// --- Training dummy: the CPU only stands, blocks standing, or blocks
+// crouching until it learns to fight. T or the Dummy button cycles it.
+const DUMMY_MODES = [
+  { id: 'stand', label: 'Stand', inp: { h: 0, up: false, down: false, block: false, punch: false, kick: false } },
+  { id: 'block', label: 'Block', inp: { h: 0, up: false, down: false, block: true, punch: false, kick: false } },
+  { id: 'lowblock', label: 'Low block', inp: { h: 0, up: false, down: true, block: true, punch: false, kick: false } }
+];
+let dummyIndex = 0;
+function cycleDummy() {
+  dummyIndex = (dummyIndex + 1) % DUMMY_MODES.length;
+  dummyBtn.textContent = 'Dummy: ' + DUMMY_MODES[dummyIndex].label;
+}
+dummyBtn.addEventListener('click', cycleDummy);
 
 // --- Debug overlay: H, the Boxes button, or ?debug=1 ---
 let debugOn = /[?&]debug=1\b/.test(location.search) || sessionStorage.getItem('dojoDuelDebug') === '1';
@@ -589,7 +761,9 @@ function sfx(name) {
   try {
     if (name === 'jump') tone(260, 0.14, 'triangle', 0.08, 520);
     else if (name === 'land') thump(0.09, 0.35, 420);
-    else if (name === 'tap') tone(720, 0.04, 'triangle', 0.04);
+    else if (name === 'whiff') thump(0.07, 0.12, 2400);
+    else if (name === 'hit') { thump(0.12, 0.6, 900); tone(140, 0.1, 'square', 0.06, 70); }
+    else if (name === 'block') { tone(900, 0.06, 'square', 0.04, 600); thump(0.05, 0.2, 3000); }
     else if (name === 'start') { tone(392, 0.12, 'square', 0.05); setTimeout(() => sfx('start2'), 110); }
     else if (name === 'start2') tone(587, 0.2, 'square', 0.05);
   } catch (e) {}
@@ -696,36 +870,65 @@ function limb(x1, y1, x2, y2, x3, y3, width, color) {
   ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x3, y3);
   ctx.stroke();
 }
+function fist(x, y, r, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+}
+const lerp = (a, b, t) => a + (b - a) * t;
 
-// Placeholder fighter: limbs as thick round lines, drawn facing right and
-// mirrored by facing. Heights match the boxes above.
+// How far the attacking limb is out: 0 at rest, 1 during active frames.
+function extension(f) {
+  if (!f.move) return 0;
+  const m = f.move.def, fr = f.move.frame;
+  if (fr < m.startup) return fr / m.startup;
+  if (fr < m.startup + m.active) return 1;
+  return m.recovery ? Math.max(0, 1 - (fr - m.startup - m.active) / m.recovery) : 0;
+}
+
+// Placeholder fighter in base units: limbs as thick round lines, drawn
+// facing right, then mirrored by facing and scaled by FS. Limb tips at
+// full extension sit inside the matching MOVES hitbox.
 function drawFighter(f, t) {
   const c = f.colors;
   // shadow on the floor, smaller the higher the fighter is
   const lift = Math.max(0, FLOOR - f.y);
-  const shadowW = Math.max(12, 30 - lift * 0.15);
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.beginPath();
-  ctx.ellipse(f.x, FLOOR + 2, shadowW, 5, 0, 0, Math.PI * 2);
+  ctx.ellipse(f.x, FLOOR + 2, Math.max(14, 30 * FS - lift * 0.15), 5 * FS, 0, 0, Math.PI * 2);
   ctx.fill();
 
+  const air = airborne(f);
+  const moveId = f.move ? f.move.id : null;
+  const ext = extension(f);
   let p;
-  if (f.state === 'crouch') p = { hip: 30, chest: 66, head: 78, squat: true };
-  else if (f.state === 'jumpsquat' || (f.state === 'land' && f.stateFrames < MOVE.landLag)) p = { hip: 38, chest: 80, head: 92, squat: true };
-  else if (f.state === 'air') p = { hip: 50, chest: 94, head: 106, air: true };
+  if (air) p = { hip: 50, chest: 94, head: 106 };
+  else if (f.crouched && f.state !== 'jumpsquat') p = { hip: 30, chest: 66, head: 78 };
+  else if (f.state === 'jumpsquat' || (f.state === 'land' && f.stateFrames < f.landLag)) p = { hip: 38, chest: 80, head: 92 };
   else p = { hip: 48, chest: 92, head: 104 };
+  const squat = !air && p.hip < 48;
   const breathe = f.state === 'idle' ? Math.sin(t / 380) * 1.2 : 0;
+  const hurt = f.state === 'hitstun';
+  const guarding = f.state === 'guard' || f.state === 'blockstun' || (f.state === 'crouch' && f.inp.block);
 
   ctx.save();
   ctx.translate(f.x, f.y);
-  ctx.scale(f.facing, 1);
+  ctx.scale(f.facing * FS, FS);
 
   // legs
   const legW = 11;
-  if (p.air) {
+  if (moveId === 'kick') {
+    limb(-5, -p.hip, -9, -p.hip / 2, -13, 0, legW, c.giDark);
+    limb(5, -p.hip, lerp(10, 34, ext), lerp(-p.hip / 2, -54, ext), lerp(13, 62, ext), lerp(0, -56, ext), legW, c.gi);
+  } else if (moveId === 'sweep') {
+    limb(-5, -p.hip, -20, -p.hip + 14, -14, 0, legW, c.giDark);
+    limb(5, -p.hip, lerp(20, 36, ext), lerp(-p.hip + 12, -12, ext), lerp(16, 66, ext), lerp(0, -6, ext), legW, c.gi);
+  } else if (moveId === 'airKick') {
+    limb(-5, -p.hip, -14, -p.hip + 18, -4, -p.hip + 30, legW, c.giDark);
+    limb(5, -p.hip, lerp(16, 26, ext), lerp(-p.hip + 14, -34, ext), lerp(10, 46, ext), lerp(-p.hip + 32, -30, ext), legW, c.gi);
+  } else if (air) {
     limb(-5, -p.hip, -14, -p.hip + 18, -4, -p.hip + 30, legW, c.giDark);
     limb(5, -p.hip, 16, -p.hip + 14, 10, -p.hip + 32, legW, c.gi);
-  } else if (p.squat) {
+  } else if (squat) {
     limb(-5, -p.hip, -20, -p.hip + 14, -14, 0, legW, c.giDark);
     limb(5, -p.hip, 20, -p.hip + 12, 16, 0, legW, c.gi);
   } else {
@@ -733,16 +936,19 @@ function drawFighter(f, t) {
     limb(-5, -p.hip, -8 - s * 0.5, -p.hip / 2, -11 - s, 0, legW, c.giDark);
     limb(5, -p.hip, 10 + s * 0.5, -p.hip / 2, 13 + s, 0, legW, c.gi);
   }
-  // feet
-  ctx.fillStyle = c.skin;
-  if (!p.air) {
-    ctx.fillRect(-18, -4, 12, 4);
-    ctx.fillRect(10, -4, 12, 4);
-  }
 
+  // upper body leans back when hit
+  ctx.save();
+  if (hurt) {
+    ctx.translate(0, -p.hip);
+    ctx.rotate(-0.22);
+    ctx.translate(0, p.hip);
+  }
   const chest = p.chest + breathe;
-  // back arm (guard)
-  limb(-6, -chest + 6, 4, -chest + 22, 14, -chest + 14, 9, c.giDark);
+  // back arm
+  if (guarding) limb(-6, -chest + 6, 8, -chest + 16, 12, -chest - 4, 9, c.giDark);
+  else if (hurt) limb(-6, -chest + 6, -16, -chest + 14, -22, -chest + 4, 9, c.giDark);
+  else limb(-6, -chest + 6, 4, -chest + 22, 14, -chest + 14, 9, c.giDark);
   // torso
   ctx.fillStyle = c.gi;
   ctx.beginPath();
@@ -762,11 +968,27 @@ function drawFighter(f, t) {
   ctx.fillStyle = c.belt;
   ctx.fillRect(-13, -p.hip, 26, 6);
   ctx.fillRect(-4, -p.hip + 4, 4, 9);
-  // front arm (guard, fist up)
-  limb(6, -chest + 6, 18, -chest + 20, 24, -chest + 8, 9, c.gi);
-  ctx.fillStyle = c.skin;
-  ctx.beginPath(); ctx.arc(24, -chest + 7, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(14, -chest + 13, 4.5, 0, Math.PI * 2); ctx.fill();
+  // front arm
+  let fx, fy;
+  if (moveId === 'jab' || moveId === 'lowJab') {
+    const tx = moveId === 'jab' ? 52 : 48, ty = moveId === 'jab' ? -82 : -58;
+    fx = lerp(24, tx, ext); fy = lerp(-chest + 8, ty, ext);
+    limb(6, -chest + 6, lerp(18, (6 + tx) / 2, ext), lerp(-chest + 20, (-chest + 6 + ty) / 2, ext), fx, fy, 9, c.gi);
+  } else if (moveId === 'airPunch') {
+    fx = lerp(24, 40, ext); fy = lerp(-chest + 8, -70, ext);
+    limb(6, -chest + 6, lerp(18, 23, ext), lerp(-chest + 20, (-chest - 64) / 2, ext), fx, fy, 9, c.gi);
+  } else if (guarding) {
+    fx = 22; fy = -chest - 6;
+    limb(6, -chest + 6, 20, -chest + 16, fx, fy, 9, c.gi);
+  } else if (hurt) {
+    fx = -12; fy = -chest - 4;
+    limb(6, -chest + 6, -2, -chest + 2, fx, fy, 9, c.gi);
+  } else {
+    fx = 24; fy = -chest + 8;
+    limb(6, -chest + 6, 18, -chest + 20, fx, fy, 9, c.gi);
+  }
+  fist(fx, fy, 5, c.skin);
+  if (!guarding && !hurt) fist(14, -chest + 13, 4.5, c.skin);
   // head
   const head = p.head + breathe;
   ctx.fillStyle = c.skin;
@@ -781,9 +1003,11 @@ function drawFighter(f, t) {
   ctx.lineTo(-21, -head - 3 + flutter);
   ctx.closePath();
   ctx.fill();
-  // eye
+  // eye (shut when hit)
   ctx.fillStyle = '#1a1008';
-  ctx.fillRect(8, -head - 1, 3, 3);
+  if (hurt) ctx.fillRect(7, -head, 5, 1.5);
+  else ctx.fillRect(8, -head - 1, 3, 3);
+  ctx.restore();
 
   ctx.restore();
 }
@@ -793,10 +1017,17 @@ function drawHud() {
   ctx.font = '700 11px system-ui, -apple-system, sans-serif';
   ctx.textBaseline = 'top';
   for (const [f, x, align] of [[player, 16, 'left'], [cpu, W - 16 - barW, 'right']]) {
-    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(x - 2, y - 2, barW + 4, barH + 4);
-    ctx.fillStyle = '#f2c14e';
+    ctx.fillStyle = '#5a1a14';
     ctx.fillRect(x, y, barW, barH);
+    // bars drain toward the centre, like most fighting games
+    const lagW = barW * f.healthLag / MAX_HEALTH;
+    const hpW = barW * f.health / MAX_HEALTH;
+    ctx.fillStyle = '#ff6b4a';
+    ctx.fillRect(align === 'left' ? x + barW - lagW : x, y, lagW, barH);
+    ctx.fillStyle = '#f2c14e';
+    ctx.fillRect(align === 'left' ? x + barW - hpW : x, y, hpW, barH);
     ctx.fillStyle = '#fff';
     ctx.textAlign = align;
     ctx.fillText(f.name, align === 'left' ? x : x + barW, y + barH + 5);
@@ -804,23 +1035,51 @@ function drawHud() {
 }
 
 const BOX_COLORS = { push: '#ffd23f', hurt: '#3fa9ff', hit: '#ff4d4d' };
+function moveLabel(f) {
+  if (!f.move) return 'move -';
+  return f.move.def.name + ' ' + (f.move.frame + 1) + '/' + (f.move.def.recovery ? moveTotal(f.move.def) : f.move.def.startup + f.move.def.active) + ' ' + movePhase(f) + (f.move.hit ? ' (hit)' : '');
+}
+function debugLines() {
+  const lines = [];
+  for (const f of [player, cpu]) {
+    lines.push(f.name + ' ' + f.state + ' f' + f.stateFrames + (f.stun && /stun/.test(f.state) ? '/' + f.stun : '') +
+      '  ' + moveLabel(f) + '  hp ' + f.health);
+    lines.push('    x' + f.x.toFixed(1) + ' y' + f.y.toFixed(1) + ' vx' + f.vx.toFixed(1) + ' vy' + f.vy.toFixed(1) + ' face ' + (f.facing > 0 ? 'R' : 'L'));
+  }
+  const names = ['left', 'right', 'up', 'down', 'punch', 'kick', 'block', 'power'];
+  const glyphs = ['←', '→', '↑', '↓', 'P', 'K', 'B', 'Pw'];
+  lines.push('input ' + names.map((n, i) => held(n) ? glyphs[i] : '·').join(' ') +
+    '   frame ' + simFrame + '   ' + fps + ' fps');
+  lines.push('last ' + (lastHit ? lastHit.by + ' ' + lastHit.move + ' on ' + lastHit.on + ': ' +
+    (lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-'));
+  return lines;
+}
 function drawDebug() {
   for (const f of [player, cpu]) {
-    const set = BOXES[boxPose(f)];
-    for (const b of set.hurt) {
-      const r = worldBox(f, b);
+    for (const r of hurtboxes(f)) {
       ctx.fillStyle = 'rgba(63,169,255,0.25)';
       ctx.fillRect(r.x, r.y, r.w, r.h);
       ctx.strokeStyle = BOX_COLORS.hurt;
       ctx.lineWidth = 1.5;
       ctx.strokeRect(r.x, r.y, r.w, r.h);
     }
-    const pb = worldBox(f, set.push);
+    const pb = pushbox(f);
     ctx.setLineDash([4, 3]);
     ctx.strokeStyle = BOX_COLORS.push;
     ctx.lineWidth = 1.5;
     ctx.strokeRect(pb.x, pb.y, pb.w, pb.h);
     ctx.setLineDash([]);
+    // hitbox: solid while it can still connect, outline once it has
+    if (f.move && movePhase(f) === 'active') {
+      const hb = worldBox(f, f.move.def.hitbox);
+      if (!f.move.hit) {
+        ctx.fillStyle = 'rgba(255,77,77,0.45)';
+        ctx.fillRect(hb.x, hb.y, hb.w, hb.h);
+      }
+      ctx.strokeStyle = BOX_COLORS.hit;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(hb.x, hb.y, hb.w, hb.h);
+    }
     // origin (feet) cross
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 1;
@@ -830,34 +1089,23 @@ function drawDebug() {
     ctx.stroke();
   }
 
-  // text panel
-  const lines = [];
-  for (const f of [player, cpu]) {
-    lines.push(f.name + ' ' + f.state + ' f' + f.stateFrames +
-      '  x' + f.x.toFixed(1) + ' y' + f.y.toFixed(1) +
-      '  vx' + f.vx.toFixed(1) + ' vy' + f.vy.toFixed(1) +
-      '  face ' + (f.facing > 0 ? 'R' : 'L'));
-  }
-  const names = ['left', 'right', 'up', 'down', 'punch', 'kick', 'block', 'power'];
-  const glyphs = ['←', '→', '↑', '↓', 'P', 'K', 'B', 'Pw'];
-  lines.push('input ' + names.map((n, i) => held(n) ? glyphs[i] : '·').join(' ') +
-    '   frame ' + simFrame + '   ' + fps + ' fps');
-  ctx.font = '10px ui-monospace, Menlo, Consolas, monospace';
+  const lines = debugLines();
+  ctx.font = '9.5px ui-monospace, Menlo, Consolas, monospace';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  const x = 16, y = 68, lh = 13;
+  const x = 16, y = 62, lh = 12;
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
-  ctx.fillRect(x - 4, y - 3, 330, lines.length * lh + 22);
+  ctx.fillRect(x - 4, y - 3, 340, lines.length * lh + 20);
   ctx.fillStyle = '#fff';
   lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh));
   // legend
-  const ly = y + lines.length * lh + 4;
+  const ly = y + lines.length * lh + 3;
   let lx = x;
-  for (const [k, label] of [['push', 'push'], ['hurt', 'hurt'], ['hit', 'hit']]) {
+  for (const k of ['push', 'hurt', 'hit']) {
     ctx.fillStyle = BOX_COLORS[k];
     ctx.fillRect(lx, ly + 2, 10, 8);
     ctx.fillStyle = '#fff';
-    ctx.fillText(label, lx + 14, ly);
+    ctx.fillText(k, lx + 14, ly);
     lx += 56;
   }
 }
@@ -865,8 +1113,8 @@ function drawDebug() {
 function draw(t) {
   ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
   drawArena();
-  // draw the fighter that's in the air last, so a jump passes in front
-  const order = player.y < cpu.y ? [cpu, player] : [player, cpu];
+  // the attacker draws in front, then whoever is higher up
+  const order = (player.move && !cpu.move) || player.y < cpu.y ? [cpu, player] : [player, cpu];
   for (const f of order) drawFighter(f, t);
   if (state === 'playing') drawHud();
   if (debugOn) drawDebug();
@@ -875,13 +1123,23 @@ function draw(t) {
 // --- Game state and loop ---
 let state = 'menu'; // 'menu' | 'playing'
 let simFrame = 0;
-const NO_INPUT = { h: 0, up: false, down: false };
+const NO_INPUT = { h: 0, up: false, down: false, block: false, punch: false, kick: false };
 
 function tick() {
   simFrame++;
   updateFighter(player, cpu, readInput());
-  updateFighter(cpu, player, NO_INPUT); // the CPU just stands its ground for now
+  updateFighter(cpu, player, DUMMY_MODES[dummyIndex].inp);
   resolvePush(player, cpu);
+  // check both before applying either, so a trade hits both ways
+  const pHits = checkHit(player, cpu), cHits = checkHit(cpu, player);
+  if (pHits) applyHit(player, cpu);
+  if (cHits) applyHit(cpu, player);
+  for (const f of [player, cpu]) {
+    // training mode: health comes back after a short break from being hit
+    if (f.health < MAX_HEALTH && simFrame - f.lastHitFrame > REFILL_AFTER) f.health = MAX_HEALTH;
+    if (f.healthLag > f.health && simFrame - f.lastHitFrame > 30) f.healthLag = Math.max(f.health, f.healthLag - 1.2);
+    if (f.healthLag < f.health) f.healthLag = f.health;
+  }
 }
 
 function startGame() {
@@ -903,11 +1161,12 @@ backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
 
 let last = performance.now(), acc = 0;
 let fps = 60, fpsFrames = 0, fpsSince = last;
+let paused = false;   // automated checks only: freezes the simulation so it can be stepped
 function loop(now) {
   let dt = now - last;
   last = now;
   if (dt > 250) dt = 250;
-  if (state === 'playing') {
+  if (state === 'playing' && !paused) {
     acc += dt;
     let steps = 0;
     while (acc >= STEP_MS && steps < 5) { tick(); acc -= STEP_MS; steps++; }
@@ -922,14 +1181,26 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-// Read-only handle for automated checks (Playwright).
+// Handle for automated checks (Playwright). Nothing in the game uses it.
 window.dojoDuel = {
   get state() { return state; },
   get debug() { return debugOn; },
   get muted() { return muted; },
-  player, cpu, held, MOVE, FLOOR
+  get dummy() { return DUMMY_MODES[dummyIndex].id; },
+  get lastHit() { return lastHit; },
+  set paused(v) { paused = !!v; acc = 0; },
+  step(n, keys) {
+    for (let i = 0; i < (n || 1); i++) {
+      for (const k of (i === 0 && keys) || []) press(k);
+      tick();
+    }
+  },
+  reset() { resetFighters(); clearInput(); },
+  player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
+  MOVE, MOVES, BOXES, FS, FLOOR, MAX_HEALTH
 };
 
+resetFighters();
 handleResize();
 requestAnimationFrame(loop);
 </script>
