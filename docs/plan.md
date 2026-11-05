@@ -59,7 +59,7 @@ One small PR each, in order.
 - [x] Story page template, then draft story pages for Arcade, Chalkline, Stickyard and Sumyard
 - [x] "How this is built" page: monorepo diagram, working principles, AI guardrails, decision log from `docs/decisions.md`
 - [x] Stickyard and Sumyard join the shared `kb-theme` cookie, migrating an existing local choice once
-- [ ] Arcade: drop Google Fonts for the system font stack; site-links bar uses the shared accent
+- [x] Arcade: drop Google Fonts for the system font stack; site-links bar uses the shared accent
 
 ## Backlog
 

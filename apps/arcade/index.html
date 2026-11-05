@@ -17,8 +17,6 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="krishnabuilds: Small web apps, built in the open.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/kb-tokens.css">
 <script src="assets/version.js"></script>
 <style>
@@ -40,7 +38,7 @@
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     line-height: 1.5;
   }
   a { color: inherit; }
@@ -62,7 +60,7 @@
     pointer-events: none;
   }
   .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 12.5px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -70,7 +68,7 @@
     margin: 0 0 14px;
   }
   h1 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 700;
     font-size: clamp(34px, 6vw, 52px);
     line-height: 1.08;
@@ -96,7 +94,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .shelf-head h2 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 13px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -135,7 +133,7 @@
   .sort-btn {
     height: 26px;
     padding: 0 10px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-size: 11.5px;
     font-weight: 600;
     white-space: nowrap;
@@ -153,7 +151,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 600;
     font-size: 12.5px;
     color: var(--muted);
@@ -165,7 +163,7 @@
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   }
   .cat-btn .cat-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 10.5px;
     opacity: 0.7;
   }
@@ -271,7 +269,7 @@
     gap: 3px;
     background: var(--teal);
     color: #04121c;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 700;
     font-size: 10px;
     letter-spacing: 0.03em;
@@ -285,7 +283,7 @@
     top: 8px; left: 8px;
     background: var(--amber);
     color: #2a1a00;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 700;
     font-size: 10px;
     letter-spacing: 0.03em;
@@ -318,7 +316,7 @@
     justify-content: flex-start;
   }
   .cartridge .name {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 700;
     font-size: 18px;
     margin: 0 0 6px;
@@ -334,7 +332,7 @@
     flex-wrap: wrap;
   }
   .cartridge .meta {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 10.5px;
     color: var(--muted);
     margin: 6px 0 0;
@@ -349,7 +347,7 @@
     border-radius: 999px;
     background: rgba(34,184,160,0.16);
     border: 1px solid rgba(34,184,160,0.4);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 700;
     font-size: 12.5px;
     color: var(--teal);
@@ -357,7 +355,7 @@
   }
   .cartridge .play-hint svg { flex: none; }
   .tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 10.5px;
     padding: 3px 8px;
     border-radius: 999px;
@@ -402,7 +400,7 @@
     max-width: 40ch;
   }
   .coffee-btn {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     font-weight: 700;
     font-size: 14px;
     text-decoration: none;
@@ -415,7 +413,7 @@
   }
   .coffee-btn:hover { filter: brightness(1.08); }
   .version-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 11px;
     color: rgba(138,151,171,0.55);
     text-align: center;
