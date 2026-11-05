@@ -73,6 +73,12 @@ games/<slug>/index.html       — next game goes here
 3. Add one entry to the `GAMES` array near the bottom of `index.html`'s
    inline script (name, tagline, emoji, gradient `color`, `tags`, `path`).
    The card on the landing page is generated entirely from this array.
+   Optionally add `art: 'assets/art/<slug>.svg'` for a card picture instead
+   of the emoji (cards without it keep the emoji). Art rules: viewBox
+   `0 0 240 92`, under 10 KB, no external fonts/images, bold simple shapes in
+   the game's `color` plus one accent, and keep the subject inside x 61-179,
+   y 28-86 (list view only shows the middle 118x92; the notch and badges sit
+   above y 28). Check with `node apps/arcade/scripts/card-art-check.mjs`.
 4. Add a bare `data-kb-play` attribute to whichever button actually begins
    a play — the button that's initially labelled "Start"/"Play" and gets
    relabelled "Play Again"/"Retry" for replays (every game follows this

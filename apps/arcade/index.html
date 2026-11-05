@@ -261,6 +261,31 @@
     font-size: 40px;
   }
   .cartridge .label span { display: inline-block; transition: transform 0.18s ease; }
+  /* Optional card art (a GAMES entry's `art`): every SVG uses viewBox 0 0 240 92.
+     Grid (92 px tall, 149-274 px wide) covers the label with it; list view
+     (118 px wide, as tall as the text) shows its middle 118x92 at 1:1, faded
+     into the label colour top and bottom. So the subject of each picture sits
+     inside x 61-179, y 28-86, clear of the notch and the badges. */
+  .cartridge .label.has-art { overflow: hidden; }
+  .cartridge .label .art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.18s ease;
+  }
+  .cartridges:not(.layout-grid) .cartridge .label .art {
+    inset: auto;
+    left: 0;
+    top: calc(50% - 46px);
+    width: 118px;
+    height: 92px;
+    -webkit-mask-image: linear-gradient(transparent, #000 20%, #000 80%, transparent);
+    mask-image: linear-gradient(transparent, #000 20%, #000 80%, transparent);
+  }
+  .cartridge:hover .label .art { transform: scale(1.05); }
   .cartridge .play-badge {
     position: absolute;
     top: 8px; right: 8px;
@@ -300,6 +325,7 @@
     width: 46px; height: 14px;
     background: var(--bg);
     border-radius: 0 0 8px 8px;
+    z-index: 1;
   }
   .cartridges.layout-grid .cartridge .notch { display: block; }
 
@@ -789,6 +815,7 @@
       color: '#4C9F70',
       category: 'puzzle',
       tags: ['puzzle', 'words'],
+      art: 'assets/art/lexigrid.svg',
       path: 'games/lexigrid/index.html',
       published: '2026-08-03'
     },
@@ -799,6 +826,7 @@
       color: '#E8A24A',
       category: 'puzzle',
       tags: ['puzzle', 'words'],
+      art: 'assets/art/word-circle.svg',
       path: 'games/word-circle/index.html',
       published: '2026-08-04'
     },
@@ -809,6 +837,7 @@
       color: 'linear-gradient(135deg, #7f1d1d, #f77f00)',
       category: 'arcade',
       tags: ['arcade', 'reflex'],
+      art: 'assets/art/slice-master.svg',
       path: 'games/slice-master/index.html',
       published: '2026-09-13'
     },
@@ -819,6 +848,7 @@
       color: 'linear-gradient(135deg, #3b2a1c, #c0392b)',
       category: 'arcade',
       tags: ['fighting', 'vs CPU', '2 min'],
+      art: 'assets/art/dojo-duel.svg',
       path: 'games/dojo-duel/index.html',
       published: '2026-11-05'
     }
@@ -830,6 +860,7 @@
     //   color: 'linear-gradient(135deg, #hex1, #hex2)',
     //   category: 'arcade', // one of CATEGORIES below - drives the filter tiles
     //   tags: ['genre', 'length'],
+    //   art: 'assets/art/game-slug.svg', // optional - card picture; without it the card shows `emoji`
     //   path: 'games/game-slug/index.html',
     //   published: 'YYYY-MM-DD'
     // },
@@ -869,9 +900,11 @@
       + (n ? ' \u00b7 Played ' + n.toLocaleString() + (n === 1 ? ' time' : ' times') : '');
     return `
       <a class="cartridge" href="${g.path}">
-        <div class="label" style="background:${g.color}">
+        <div class="label${g.art ? ' has-art' : ''}" style="background:${g.color}">
           <div class="notch"></div>
-          <span>${g.emoji}</span>
+          ${g.art
+            ? `<img class="art" src="${g.art}" width="240" height="92" loading="lazy" decoding="async" alt="">`
+            : `<span>${g.emoji}</span>`}
           ${isNew(g.published) ? '<div class="new-badge">New</div>' : ''}
           <div class="play-badge">
             <svg width="8" height="9" viewBox="0 0 11 13" fill="currentColor"><path d="M0 0L11 6.5 0 13Z"/></svg>
