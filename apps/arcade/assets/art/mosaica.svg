@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8c3a14"/>
+      <stop offset="0.55" stop-color="#c1440e"/>
+      <stop offset="1" stop-color="#8c6239"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f5e9d6" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#f5e9d6" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="tiles" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect x="1" y="1" width="18" height="18" rx="2" fill="none" stroke="#f5e9d6" stroke-opacity="0.08"/>
+      <path d="M10 4 L16 10 L10 16 L4 10Z" fill="#f5e9d6" fill-opacity="0.05"/>
+    </pattern>
+    <g id="o"><rect width="10" height="10" rx="1.6" fill="#d9a227"/><rect x="1" y="1" width="8" height="3.2" rx="1" fill="#efc158"/></g>
+    <g id="s"><rect width="10" height="10" rx="1.6" fill="#c1440e"/><rect x="1" y="1" width="8" height="3.2" rx="1" fill="#e0642c"/></g>
+    <g id="b"><rect width="10" height="10" rx="1.6" fill="#2c6e8a"/><rect x="1" y="1" width="8" height="3.2" rx="1" fill="#3f8dad"/></g>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#tiles)"/>
+  <g transform="translate(0 -5)">
+  <!-- kiln: bronze trim around a dark board, 8 columns of 11 -->
+  <rect x="72" y="26" width="96" height="64" rx="5" fill="#5f4023"/>
+  <rect x="74" y="28" width="92" height="62" rx="4" fill="#8c6239"/>
+  <rect x="76" y="30" width="88" height="60" fill="#2a1a10"/>
+  <path d="M87 30V90M98 30V90M109 30V90M120 30V90M131 30V90M142 30V90M153 30V90" stroke="#4a2c1a" stroke-opacity="0.6"/>
+  <!-- stack, bottom row full and glowing -->
+  <ellipse cx="120" cy="83" rx="50" ry="10" fill="url(#glow)"/>
+  <g transform="translate(76.5 79)">
+    <use href="#s"/><use href="#s" x="11"/><use href="#o" x="22"/><use href="#b" x="33"/><use href="#b" x="44"/><use href="#o" x="55"/><use href="#s" x="66"/><use href="#s" x="77"/>
+  </g>
+  <rect x="76" y="78.5" width="88" height="11" fill="#f5e9d6" fill-opacity="0.22"/>
+  <g transform="translate(76.5 68)">
+    <use href="#o"/><use href="#o" x="11"/><use href="#b" x="33"/><use href="#s" x="55"/><use href="#s" x="66"/><use href="#o" x="77"/>
+  </g>
+  <g transform="translate(76.5 57)">
+    <use href="#o"/><use href="#b" x="66"/><use href="#b" x="77"/>
+  </g>
+  <!-- falling piece -->
+  <g transform="translate(109.5 35)">
+    <use href="#b"/><use href="#b" x="11"/><use href="#b" x="22"/><use href="#b" x="11" y="11"/>
+  </g>
+  <path d="M121 58 V64 M126 60 V66" stroke="#f5e9d6" stroke-opacity="0.35" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+</svg>
