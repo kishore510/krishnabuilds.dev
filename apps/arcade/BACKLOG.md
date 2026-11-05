@@ -13,8 +13,15 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         goes to more health, a draw or double K.O. replays the round; values
         in the `ROUND` table). Normal hits no longer show a burst: `burst`
         is now opt-in per move in `MOVES`, and the KO blow gets a big WHAM!
-  - [ ] Step 5: a CPU that fights back (reuse Air Hockey's delay + jitter +
-        prediction shape); first real test of blocking by holding back
+  - [x] Step 5: a CPU that fights back. Easy / Hard on the start screen
+        (default Easy), tuned in `AI_PRESETS` (reactionFrames, thinkInterval,
+        error, blockChance, aggression, preferredRange, antiAirChance; Air
+        Hockey's delay + jitter + prediction shape). It sees the player's
+        visible state reactionFrames late, never inputs, and only uses the
+        player's inputs: approach, poke, block by holding back (crouching for
+        lows), punish whiffs, anti-air jab, back off after a hit. Seedable
+        RNG (`?seed=N`), decision and reaction timer on the debug overlay.
+        The dummy is now Practice mode
   - [ ] Power moves (1 2 3 and the Power button); set `burst: 'WHAM!'`
         (or another word) on their `MOVES` entries to show a comic burst
 
