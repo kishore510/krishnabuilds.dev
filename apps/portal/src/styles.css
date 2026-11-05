@@ -288,3 +288,83 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* Story pages (StoryPage.tsx). */
+.story {
+  max-width: 44rem;
+}
+
+.story__back {
+  margin: 0 0 var(--kb-space-6);
+}
+
+.story a:not(.button),
+.card__story {
+  color: var(--kb-color-accent);
+}
+
+.story__head h1 {
+  margin: 0 0 var(--kb-space-3);
+  font-size: var(--kb-font-size-3xl);
+  line-height: var(--kb-font-line-height-tight);
+}
+
+.story__head > p {
+  margin: 0 0 var(--kb-space-6);
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-lg);
+}
+
+.story__draft {
+  display: inline-block;
+  margin: 0 0 var(--kb-space-3) !important;
+  padding: var(--kb-space-1) var(--kb-space-2);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-full);
+  font-size: var(--kb-font-size-xs) !important;
+  font-weight: var(--kb-font-weight-medium);
+}
+
+.story__section {
+  margin: var(--kb-space-8) 0 0;
+}
+
+.story__section h2 {
+  margin: 0 0 var(--kb-space-3);
+  font-size: var(--kb-font-size-xl);
+}
+
+.story__section p {
+  margin: 0 0 var(--kb-space-3);
+}
+
+/* A visible gap in a draft story, never invented text. */
+.todo {
+  padding: var(--kb-space-2) var(--kb-space-3);
+  border: 1px dashed var(--kb-color-danger);
+  border-radius: var(--kb-radius-md);
+  color: var(--kb-color-text);
+}
+
+.todo strong {
+  color: var(--kb-color-danger);
+}
+
+/* Second link in a card: sits above the stretched title link. */
+.card__story {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  margin: var(--kb-space-3) 0 0;
+  font-size: var(--kb-font-size-sm);
+  font-weight: var(--kb-font-weight-medium);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
