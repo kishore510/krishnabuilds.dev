@@ -649,8 +649,23 @@ const KEYMAP = {
   ArrowUp: 'up', KeyW: 'up',
   ArrowDown: 'down', KeyS: 'down',
   KeyJ: 'punch', KeyK: 'kick', KeyL: 'block',
-  Digit1: 'power', Digit2: 'power', Digit3: 'power'
+  Digit1: 'power', Digit2: 'power', Digit3: 'power',
+  // the numeric keypad's arrows (Num Lock off reports these codes on some keyboards)
+  Numpad4: 'left', Numpad6: 'right', Numpad8: 'up', Numpad2: 'down'
 };
+// Fallbacks for keyboards, remote desktops and remapping tools that send
+// an unexpected or empty e.code: try the key's name, then the legacy keyCode.
+const KEYMAP_BY_KEY = {
+  ArrowLeft: 'left', Left: 'left', ArrowRight: 'right', Right: 'right',
+  ArrowUp: 'up', Up: 'up', ArrowDown: 'down', Down: 'down',
+  a: 'left', d: 'right', w: 'up', s: 'down', j: 'punch', k: 'kick', l: 'block',
+  A: 'left', D: 'right', W: 'up', S: 'down', J: 'punch', K: 'kick', L: 'block'
+};
+const KEYMAP_BY_KEYCODE = { 37: 'left', 38: 'up', 39: 'right', 40: 'down', 100: 'left', 104: 'up', 102: 'right', 98: 'down' };
+function keyName(e) {
+  return KEYMAP[e.code] || KEYMAP_BY_KEY[e.key] || KEYMAP_BY_KEYCODE[e.keyCode] || null;
+}
+let lastKey = '-';   // shown on the debug overlay, to diagnose keyboards that send odd codes
 const keyHeld = {};
 const touchHeld = {};
 const pressed = {};
@@ -671,17 +686,18 @@ function clearInput() {
 }
 
 window.addEventListener('keydown', (e) => {
+  lastKey = (e.code || '""') + ' / ' + (e.key || '""') + ' / ' + e.keyCode;
   if (e.code === 'KeyH' && !e.repeat) { toggleDebug(); return; }
   if (e.code === 'KeyM' && !e.repeat) { toggleMute(); return; }
   if (e.code === 'KeyT' && !e.repeat) { cycleDummy(); return; }
-  const name = KEYMAP[e.code];
+  const name = keyName(e);
   if (!name) return;
   if (state === 'playing') e.preventDefault();
   if (!e.repeat) press(name);
   keyHeld[name] = true;
 });
 window.addEventListener('keyup', (e) => {
-  const name = KEYMAP[e.code];
+  const name = keyName(e);
   if (name) keyHeld[name] = false;
 });
 window.addEventListener('blur', clearInput);
@@ -1167,6 +1183,7 @@ function debugLines() {
   const glyphs = ['←', '→', '↑', '↓', 'P', 'K', 'B', 'Pw'];
   lines.push('input ' + names.map((n, i) => held(n) ? glyphs[i] : '·').join(' ') +
     '   frame ' + simFrame + '   ' + fps + ' fps');
+  lines.push('key ' + lastKey);
   lines.push('last ' + (lastHit ? lastHit.by + ' ' + lastHit.move + ' on ' + lastHit.on + ': ' +
     (lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-'));
   return lines;
