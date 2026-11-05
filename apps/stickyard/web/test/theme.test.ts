@@ -1,11 +1,19 @@
+// @vitest-environment happy-dom
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
-import { nextPreference, parsePreference, readPreference, resolveTheme } from "../src/shell/theme";
+import { join } from "node:path";
+import { setTheme } from "@krishnabuilds/ui";
+import { beforeEach, describe, expect, it } from "vitest";
+import { migrateLocalTheme, nextPreference, parsePreference, readPreference, resolveTheme } from "../src/shell/theme";
 import { STORAGE_KEYS, readKey, storageKey, writeKey } from "../src/storage";
 
 const memory = () => {
   const map = new Map<string, string>();
-  return { getItem: (k: string) => map.get(k) ?? null, setItem: (k: string, v: string) => void map.set(k, v), map };
+  return {
+    getItem: (k: string) => map.get(k) ?? null,
+    setItem: (k: string, v: string) => void map.set(k, v),
+    removeItem: (k: string) => void map.delete(k),
+    map,
+  };
 };
 
 describe("theme preference", () => {
@@ -26,16 +34,44 @@ describe("theme preference", () => {
     expect(parsePreference(null)).toBe("system");
   });
 
-  it("is stored under the stickyard: prefix", () => {
+  it("index.html applies the shared cookie first, then an older local choice, before first paint", () => {
+    const html = readFileSync(join(import.meta.dirname, "..", "index.html"), "utf8");
+    expect(html).toContain("document.cookie.match(/(?:^|; )kb-theme=(light|dark)(?:;|$)/)");
+    expect(html).toContain(`localStorage.getItem("${STORAGE_KEYS.theme}")`);
+  });
+});
+
+describe("shared theme (kb-theme cookie, v0.45.0)", () => {
+  beforeEach(() => setTheme("system"));
+
+  it("reads the shared cookie", () => {
+    expect(readPreference()).toBe("system");
+    setTheme("dark");
+    expect(readPreference()).toBe("dark");
+  });
+
+  it("moves an older local choice into the cookie once, then removes the local copy", () => {
     expect(STORAGE_KEYS.theme).toBe("stickyard:theme");
     const store = memory();
     store.setItem(STORAGE_KEYS.theme, "dark");
-    expect(readPreference(store)).toBe("dark");
+    expect(migrateLocalTheme(store)).toBe("dark");
+    expect(readPreference()).toBe("dark");
+    expect(store.map.has(STORAGE_KEYS.theme)).toBe(false);
   });
 
-  it("index.html applies the same key before first paint", () => {
-    const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-    expect(html).toContain(`localStorage.getItem("${STORAGE_KEYS.theme}")`);
+  it("keeps a choice already made in another app over an older local one", () => {
+    setTheme("light");
+    const store = memory();
+    store.setItem(STORAGE_KEYS.theme, "dark");
+    expect(migrateLocalTheme(store)).toBe("light");
+    expect(store.map.has(STORAGE_KEYS.theme)).toBe(false);
+  });
+
+  it("drops a local System choice and leaves the cookie alone", () => {
+    const store = memory();
+    store.setItem(STORAGE_KEYS.theme, "system");
+    expect(migrateLocalTheme(store)).toBe("system");
+    expect(store.map.has(STORAGE_KEYS.theme)).toBe(false);
   });
 });
 

@@ -31,13 +31,15 @@ If a scenario was saved for a tax year this version of Sumyard doesn’t have, i
 
 In **Settings**, **Export a backup** saves everything Sumyard keeps in one file: scenarios, settings, theme and whether you have read the “not advice” notice. **Restore from a backup** shows what the backup holds, offers to export your current data first, and replaces your data only when you confirm.
 
-**Clear all data** removes everything Sumyard keeps in this browser. It asks first and offers a backup, because it can’t be undone.
+**Clear all data** removes everything Sumyard keeps in this browser. It asks first and offers a backup, because it can’t be undone. Your theme stays as it is, because it is shared with the other krishnabuilds.dev apps.
 
 ## What is saved in this browser
 
-- your theme choice and your settings;
+- your settings;
 - your scenarios;
 - the last version whose What’s new you opened, for the **New** marker;
 - that you have read the “illustrative, not advice” notice.
+
+Your theme choice is shared with the other krishnabuilds.dev apps (Arcade, Chalkline, Stickyard and the home page), so choosing Light or Dark here changes it there too.
 
 About Sumyard lists each one and how much space they use. Clearing this site’s data in your browser removes them, and private or incognito windows usually forget them when closed, so export to keep a copy.

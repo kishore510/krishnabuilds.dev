@@ -107,6 +107,11 @@ export function AboutPage() {
             </li>
           ))}
         </ul>
+        <p className="text-text-muted">
+          Your theme choice is shared with the other krishnabuilds.dev apps, in a cookie named{' '}
+          <code className="font-mono text-xs">kb-theme</code> on krishnabuilds.dev. It holds only Light or Dark (no cookie means System),
+          and Clear all data leaves it alone.
+        </p>
       </section>
 
       <section aria-label="Disclaimer" className="flex flex-col gap-1">

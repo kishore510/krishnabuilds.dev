@@ -24,7 +24,8 @@ export function nextPreference(preference: ThemePreference): ThemePreference {
 }
 
 /**
- * The preference stored under `sumyard:v1:theme`: `{ schemaVersion, theme }`.
+ * The preference Sumyard stored under `sumyard:v1:theme` before 0.32.0: `{ schemaVersion, theme }`.
+ * Read once to move it into the shared kb-theme cookie (src/hooks/useTheme.ts), and by the pre-paint script until then.
  * Anything missing, unreadable or from another schema version means system.
  * Mirrored by the inline script in index.html, which applies the theme before
  * first paint; src/lib/theme.test.ts runs that script and keeps the two in step.
@@ -49,16 +50,5 @@ export function readPreference(storage: Pick<Storage, 'getItem'> | undefined): T
     return storedPreference(storage?.getItem(THEME_KEY) ?? null)
   } catch {
     return 'system'
-  }
-}
-
-/** Saves the preference. Returns false if storage is unavailable (the choice then lasts for this visit only). */
-export function writePreference(storage: Pick<Storage, 'setItem'> | undefined, preference: ThemePreference): boolean {
-  try {
-    if (!storage) return false
-    storage.setItem(THEME_KEY, serializePreference(preference))
-    return true
-  } catch {
-    return false
   }
 }

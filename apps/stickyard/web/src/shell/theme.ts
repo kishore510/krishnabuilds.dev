@@ -1,6 +1,7 @@
+import { getTheme, setTheme } from "@krishnabuilds/ui";
 import { create } from "zustand";
 import { MEDIA } from "../styles/breakpoints";
-import { STORAGE_KEYS, readKey, writeKey, type KeyValueStore } from "../storage";
+import { STORAGE_KEYS, readKey, removeKey, type KeyValueStore } from "../storage";
 
 export const THEME_PREFERENCES = ["system", "light", "dark"] as const;
 export type ThemePreference = (typeof THEME_PREFERENCES)[number];
@@ -21,9 +22,43 @@ export function nextPreference(preference: ThemePreference): ThemePreference {
   return THEME_PREFERENCES[(index + 1) % THEME_PREFERENCES.length] ?? "system";
 }
 
-/** The stored preference. Mirrored by the inline script in index.html (a test keeps them in step). */
-export const readPreference = (store?: KeyValueStore): ThemePreference =>
-  parsePreference(readKey(STORAGE_KEYS.theme, store));
+/**
+ * The preference, from the `kb-theme` cookie on .krishnabuilds.dev shared by every krishnabuilds.dev app (read and
+ * written only through @krishnabuilds/ui; no cookie means system). Applied before first paint by the inline script in
+ * index.html (a test keeps them in step).
+ */
+export function readPreference(): ThemePreference {
+  try {
+    return parsePreference(getTheme());
+  } catch {
+    return "system";
+  }
+}
+
+/** Writes the shared preference. Returns false if the browser refused the cookie. */
+function writePreference(preference: ThemePreference): boolean {
+  try {
+    setTheme(preference);
+    return readPreference() === preference;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The preference on first load (v0.45.0). A choice stored locally before (`stickyard:theme`) moves into the shared
+ * cookie once, unless the cookie already holds a choice made in another app, which wins. The local copy is removed only
+ * once the cookie holds the choice; if the cookie is blocked, the local choice keeps applying, as index.html does.
+ */
+export function migrateLocalTheme(store?: KeyValueStore): ThemePreference {
+  const stored = readKey(STORAGE_KEYS.theme, store);
+  if (stored === null) return readPreference();
+  const local = parsePreference(stored);
+  const shared = readPreference();
+  if (shared === "system" && local !== "system" && !writePreference(local)) return local;
+  removeKey(STORAGE_KEYS.theme, store);
+  return readPreference();
+}
 
 const systemDark = () => Boolean(globalThis.matchMedia?.(MEDIA.systemDark).matches);
 
@@ -39,9 +74,10 @@ interface ThemeState {
 }
 
 export const useThemeStore = create<ThemeState>()((set, get) => ({
-  preference: readPreference(),
+  preference: migrateLocalTheme(),
   set: (preference) => {
-    writeKey(STORAGE_KEYS.theme, preference);
+    writePreference(preference);
+    // The shared helper clears data-theme for system; Stickyard's own tokens need it set.
     applyTheme(preference);
     set({ preference });
   },

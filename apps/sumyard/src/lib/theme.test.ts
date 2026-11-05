@@ -53,7 +53,7 @@ describe('theme', () => {
 })
 
 /** Runs the real inline script from index.html against a fake browser. */
-function runPrePaint(stored: string | null | Error, systemDark: boolean | 'no-matchMedia') {
+function runPrePaint(stored: string | null | Error, systemDark: boolean | 'no-matchMedia', cookie = '') {
   const documentElement = { dataset: {} as Record<string, string> }
   const localStorage = {
     getItem(key: string) {
@@ -66,7 +66,7 @@ function runPrePaint(stored: string | null | Error, systemDark: boolean | 'no-ma
     matchMedia:
       systemDark === 'no-matchMedia' ? undefined : (query: string) => ({ matches: query === '(prefers-color-scheme: dark)' && systemDark }),
   }
-  new Function('window', 'document', 'localStorage', extractPrePaintScript(html))(window, { documentElement }, localStorage)
+  new Function('window', 'document', 'localStorage', extractPrePaintScript(html))(window, { documentElement, cookie }, localStorage)
   return documentElement.dataset.theme
 }
 
@@ -91,6 +91,17 @@ describe('pre-paint theme script (index.html)', () => {
 
   it.each(cases)('agrees with theme.ts: %s', (_label, stored, systemDark) => {
     expect(runPrePaint(stored, systemDark)).toBe(resolveTheme(storedPreference(stored), systemDark))
+  })
+
+  it('uses the shared kb-theme cookie first, over an older local choice', () => {
+    expect(runPrePaint(record('light'), false, 'kb-theme=dark')).toBe('dark')
+    expect(runPrePaint(null, true, 'other=1; kb-theme=light')).toBe('light')
+    expect(runPrePaint(new Error('SecurityError'), false, 'kb-theme=dark')).toBe('dark')
+  })
+
+  it('ignores an unknown cookie value', () => {
+    expect(runPrePaint(record('dark'), false, 'kb-theme=neon')).toBe('dark')
+    expect(runPrePaint(null, false, 'not-kb-theme=dark')).toBe('light')
   })
 
   it('falls back to the OS when storage is blocked', () => {

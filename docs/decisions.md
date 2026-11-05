@@ -213,3 +213,7 @@ The brand is a text wordmark, "krishnabuilds", with one hand-written "kb" SVG fa
 ## 2026-11-04 — Portal landing page and How this is built
 
 Each app card on the Portal gets an illustrative, hand-written SVG preview (not a screenshot of the live app), alongside a stronger hero, links to story pages and a footer. A "How this is built" page renders this decision log, generated from `docs/decisions.md` at build time.
+
+## 2026-11-05 — Stickyard and Sumyard join the shared kb-theme cookie
+
+Stickyard (0.45.0) and Sumyard (0.32.0) follow Chalkline: the theme lives only in the shared `kb-theme` cookie on `.krishnabuilds.dev`, read and written through `getTheme`/`setTheme` in packages/ui, so a theme chosen in any app carries over. On first load, a Light or Dark choice stored under the app's old localStorage key is written to the cookie, unless the cookie already holds a choice from another app, which wins; the old key is removed only once the cookie holds the choice. Each pre-paint script reads the cookie first and falls back to the old key until the move has run. Both apps still set `data-theme` for System, because their own tokens need it. In Sumyard, Clear all data now leaves the theme alone (it belongs to every app), while backups still record it and a restore sets it; its storage guard allows only reading the cookie with the pre-paint pattern.

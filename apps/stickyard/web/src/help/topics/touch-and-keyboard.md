@@ -38,4 +38,4 @@ Each sheet has its own address, for example `#/help` or `#/about`. Your browser'
 
 ## Theme
 
-The theme button switches between **light**, **dark** and **following your device**. Your choice is remembered in this browser.
+The theme button switches between **light**, **dark** and **following your device**. Your choice is shared with the other krishnabuilds.dev apps (it's kept in a cookie on krishnabuilds.dev), so choosing it here changes it there too.

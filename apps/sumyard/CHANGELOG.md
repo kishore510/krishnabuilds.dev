@@ -4,8 +4,15 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-11-05
+
 ### Added
 - The menu now links to krishnabuilds.dev and the other apps (Arcade, Chalkline), with Sumyard marked as the one you're in.
+
+### Changed
+- **The theme is shared with the other krishnabuilds.dev apps.** Choose System, Light or Dark here or in another app and it's used in both. It's kept in a cookie on krishnabuilds.dev instead of in Sumyard's own storage.
+- **Your theme carries over.** The first time you open this version, a Light or Dark choice you made in Sumyard is moved to the shared setting, unless you've already chosen a theme in another app, in which case that one is used.
+- **Clear all data** now leaves the theme as it is, because other apps use it too. A backup still includes the theme, and restoring one sets it.
 
 ## [0.31.0] - 2026-10-23
 

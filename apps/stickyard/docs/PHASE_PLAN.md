@@ -1,6 +1,6 @@
 # Phase plan: Stickyard
 
-Last updated: 17 October 2026 (10c AI: Summary and sentiment; v0.44.0, web only, protocol v23, stored schema 14)
+Last updated: 5 November 2026 (shared krishnabuilds.dev theme; v0.45.0, web only, protocol v23, stored schema 14)
 
 Draft roadmap. When a slice starts, rewrite its prompt against the real code (see the skeleton in PROJECT_BRIEF.md). Do not treat these notes as final prompts.
 
@@ -64,6 +64,7 @@ Draft roadmap. When a slice starts, rewrite its prompt against the real code (se
 | 10 AI, 10a Settings and key (part 1 of 4) | Settings in the menu (every screen) with AI (your own key): save, test, replace and remove an Anthropic API key, kept for this session only or remembered on this device after a warning; the browser's own client (plain fetch to api.anthropic.com, streaming, no-data timeout, cancel, no automatic retry), one error table, one redaction module, the reusable check-before-sending page. Test key (count_tokens, free) is the only call to Anthropic; no AI feature button. Web only, no protocol, relay or stored-schema change | Done (v0.42.0, web only, PR #66, merged and deployed 16 October 2026) |
 | 10 AI, 10b Board setup from a prompt (part 2 of 4) | Set up board from a prompt (menu in a session, and the empty board): a typed description (the only user content sent) to the large model with structured JSON output, streamed with a no-data timeout and Cancel; the reply validated as untrusted (caps 60 items, 8 frames, 140-character notes, palette keys; fix-ups listed), re-laid out by a fixed rule when untidy; a preview by frame; Add to board through the Import path at the nearest free spot as one undo step, frames carrying their notes. Web only, no protocol, relay or stored-schema change | Done (v0.43.0, web only, PR #67, merged and deployed 16 October 2026) |
 | 10 AI, 10c Summary and sentiment (part 3 of 4) | Summarise board, host only and off during a silent round: note text and frame titles (grouped by frame membership, stand-in refs, no names or ids) to the small model (Deeper analysis: the large one) with structured JSON output, streamed with a no-data timeout and Cancel; the reply validated as untrusted, counts computed by the page; a text-only result with Show note chips, Copy as Markdown, and Add to board (one frame of notes through the paced add path, one undo step). Web only, no protocol, relay or stored-schema change | Done (v0.44.0, web only, PR #68, merged and deployed 17 October 2026) |
+| Shared theme (monorepo) | The theme moves to the shared krishnabuilds.dev `kb-theme` cookie (read and written through `@krishnabuilds/ui`), so a choice in any krishnabuilds.dev app carries over; an older `stickyard:theme` choice is moved once and then removed, and the pre-paint script reads the cookie first. Web only, no protocol, relay or stored-schema change | Done (v0.45.0, web only, PR #52, merged and deployed 5 November 2026) |
 | 10 AI, 10d Iterative edits (part 4 of 4) | Ask for changes to what AI added, add-only and undoable. No protocol bump expected | Not started |
 | Later | Yjs migration, anonymous mode, PWA | Parked |
 

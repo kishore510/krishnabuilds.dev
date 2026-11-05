@@ -185,7 +185,8 @@ export function AboutPage() {
             your key, Anthropic receives the request and similar request details.
           </li>
           <li>
-            This browser stores your theme choice, the last version whose notes you opened, the last name you joined with,
+            Your theme choice is shared with the other krishnabuilds.dev apps, in a cookie named kb-theme on krishnabuilds.dev that holds
+            only light or dark (no cookie means following your device). This browser stores the last version whose notes you opened, the last name you joined with,
             how wide the board’s side panels are and whether they’re collapsed, the chat panel’s size if you resized it, and
             whether you show other people’s cursors and share yours: layout preferences only, with no session content and nothing about you, and it stays on this device. Where you
             are on the board, the zoom, the tool you pick and which note is selected stay in the open page: they aren’t

@@ -20,10 +20,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <title>Stickyard · krishnabuilds</title>
     <script>
-      // Apply the theme before first paint to avoid a flash. Mirrors readPreference in src/shell/theme.ts.
+      // Apply the theme before first paint to avoid a flash. The shared kb-theme cookie (packages/ui/src/theme.ts) wins;
+      // until src/shell/theme.ts has moved an older local choice into it, that applies (mirrors migrateLocalTheme).
       (function () {
         var pref = "system";
-        try {
+        var shared = document.cookie.match(/(?:^|; )kb-theme=(light|dark)(?:;|$)/);
+        if (shared) pref = shared[1];
+        else try {
           pref = localStorage.getItem("stickyard:theme") || "system";
         } catch (e) {}
         var dark = pref === "dark" || (pref !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
