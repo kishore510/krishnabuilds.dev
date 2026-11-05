@@ -32,8 +32,8 @@
     touch-action: none;
   }
 
-  /* --- Start screen --- */
-  #overlay, #result {
+  /* --- Title, How to play and result screens --- */
+  #overlay, #result, #howto {
     position: absolute;
     inset: 0;
     display: flex;
@@ -57,13 +57,87 @@
   }
   /* Centred when it fits, scrollable from the top when it doesn't
      (justify-content: center would push the top out of reach). */
-  #overlay > *, #result > * { flex-shrink: 0; }
-  #overlay > :first-child, #result > :first-child { margin-top: auto; }
-  #overlay > :last-child, #result > :last-child { margin-bottom: auto; }
-  #result { display: none; }
-  #result.on { display: flex; }
-  #overlay h1, #result h1 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
-  #overlay p, #result p { margin: 3px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(470px * var(--game-scale, 1)); }
+  #overlay > *, #result > *, #howto > * { flex-shrink: 0; }
+  #overlay > :first-child, #result > :first-child, #howto > :first-child { margin-top: auto; }
+  #overlay > :last-child, #result > :last-child, #howto > :last-child { margin-bottom: auto; }
+  #result, #howto { display: none; }
+  #result.on, #howto.on { display: flex; }
+  #result h1, #howto h2 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
+  #howto h2 { font-size: calc(24px * var(--game-scale, 1)); }
+  #result p, #howto p { margin: 3px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(470px * var(--game-scale, 1)); }
+
+  /* Title screen: the dojo and both fighters show through a vignette,
+     under a big comic logo, KAI vs REN, and one FIGHT! button. */
+  #overlay {
+    padding-top: calc(6px * var(--game-scale, 1));
+    background: radial-gradient(ellipse 72% 85% at 50% 42%, rgba(12,8,5,0.3) 0%, rgba(12,8,5,0.62) 60%, rgba(12,8,5,0.9) 100%);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.85);
+  }
+  #logo {
+    margin: calc(4px * var(--game-scale, 1)) 0 0;   /* room for the tilt */
+    font-family: Impact, 'Arial Black', 'Helvetica Neue', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: calc(56px * var(--game-scale, 1));
+    line-height: 0.95;
+    letter-spacing: 0.05em;
+    transform: rotate(-2deg);
+    text-shadow:
+      0 calc(4px * var(--game-scale, 1)) 0 #1a1008,
+      calc(3px * var(--game-scale, 1)) calc(6px * var(--game-scale, 1)) 0 #8c1d18,
+      0 0 calc(24px * var(--game-scale, 1)) rgba(255,140,40,0.45);
+    -webkit-text-stroke: calc(1.5px * var(--game-scale, 1)) #1a1008;
+    animation: logoIn 0.5s cubic-bezier(.2,1.6,.4,1) both;
+  }
+  #logo .a { color: #ffcf5a; }
+  #logo .b { color: #ff6b4a; }
+  @keyframes logoIn {
+    from { transform: rotate(-2deg) scale(0.4); opacity: 0; }
+    to { transform: rotate(-2deg) scale(1); opacity: 1; }
+  }
+  #versus {
+    display: flex;
+    align-items: center;
+    gap: calc(12px * var(--game-scale, 1));
+    margin: calc(8px * var(--game-scale, 1)) 0 0;
+    font-family: Impact, 'Arial Black', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: calc(19px * var(--game-scale, 1));
+    letter-spacing: 0.12em;
+  }
+  #versus .kai { color: #7fb8ff; }
+  #versus .ren { color: #ff8a7a; }
+  #versus b {
+    font-size: calc(13px * var(--game-scale, 1));
+    color: #1a1008;
+    background: #ffcf5a;
+    border-radius: calc(5px * var(--game-scale, 1));
+    padding: calc(1px * var(--game-scale, 1)) calc(6px * var(--game-scale, 1));
+    text-shadow: none;
+    letter-spacing: 0.05em;
+  }
+  #howBtn {
+    margin-top: calc(2px * var(--game-scale, 1));
+    min-height: 30px;
+    padding: 0 14px;
+    font: inherit;
+    font-size: calc(12px * var(--game-scale, 1));
+    font-weight: 700;
+    color: #fff;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 0.85;
+    cursor: pointer;
+  }
+  #howto {
+    background: rgba(12, 8, 5, 0.94);
+    z-index: 7;
+  }
+  #howClose {
+    margin-top: calc(10px * var(--game-scale, 1));
+    min-height: 44px;
+  }
   #legend {
     display: grid;
     grid-template-columns: auto auto;
@@ -78,7 +152,7 @@
   }
   #legend b { color: #ffcf5a; }
   #legend span { opacity: 0.9; }
-  #startBtn, #againBtn {
+  #againBtn, #howClose {
     margin-top: calc(12px * var(--game-scale, 1));
     font: inherit;
     font-size: calc(17px * var(--game-scale, 1));
@@ -90,7 +164,32 @@
     color: #3a2400;
     cursor: pointer;
   }
-  #startBtn:active, #againBtn:active { background: #ffe08f; }
+  #againBtn:active, #howClose:active { background: #ffe08f; }
+  #startBtn {
+    margin-top: calc(8px * var(--game-scale, 1));
+    min-height: 44px;
+    font-family: Impact, 'Arial Black', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: calc(26px * var(--game-scale, 1));
+    letter-spacing: 0.08em;
+    padding: calc(6px * var(--game-scale, 1)) calc(46px * var(--game-scale, 1));
+    border-radius: calc(30px * var(--game-scale, 1));
+    border: calc(2px * var(--game-scale, 1)) solid #1a1008;
+    background: linear-gradient(#ffe08f, #ffcf5a 45%, #f29a2e);
+    color: #3a1200;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+    box-shadow: 0 calc(4px * var(--game-scale, 1)) 0 #8c4a12, 0 0 0 0 rgba(255,207,90,0.6);
+    cursor: pointer;
+    animation: fightPulse 1.6s ease-in-out infinite;
+  }
+  #startBtn:active { transform: translateY(calc(3px * var(--game-scale, 1))); box-shadow: 0 calc(1px * var(--game-scale, 1)) 0 #8c4a12; }
+  @keyframes fightPulse {
+    0%, 100% { box-shadow: 0 calc(4px * var(--game-scale, 1)) 0 #8c4a12, 0 0 0 0 rgba(255,207,90,0.6); }
+    50% { box-shadow: 0 calc(4px * var(--game-scale, 1)) 0 #8c4a12, 0 0 0 calc(12px * var(--game-scale, 1)) rgba(255,207,90,0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #logo, #startBtn { animation: none; }
+  }
   #modes {
     display: flex;
     gap: calc(6px * var(--game-scale, 1));
@@ -109,9 +208,9 @@
     cursor: pointer;
   }
   #modes button[aria-checked="true"] { background: #ffcf5a; border-color: #ffcf5a; color: #3a2400; }
-  #modeNote { min-height: 1.3em; }
+  #modeNote { min-height: 1.3em; margin: calc(3px * var(--game-scale, 1)) 0 0; font-size: calc(11px * var(--game-scale, 1)); opacity: 0.85; }
   #menuBtn { margin-top: calc(10px * var(--game-scale, 1)); }
-  #backToArcade, #resultBack {
+  #resultBack {
     margin-top: calc(10px * var(--game-scale, 1));
     font-size: calc(12px * var(--game-scale, 1));
     font-weight: 700;
@@ -299,15 +398,20 @@
     <button id="dummyBtn" type="button">Dummy: Stand</button>
   </div>
   <div id="overlay">
-    <h1>Dojo Duel</h1>
-    <p>Work in progress: best of 3 rounds against REN, 60 seconds a round. The blue meter under your health is energy for power-ups.</p>
+    <h1 id="logo"><span class="a">DOJO</span> <span class="b">DUEL</span></h1>
+    <p id="versus"><span class="kai">KAI</span><b>VS</b><span class="ren">REN</span></p>
     <div id="modes" role="radiogroup" aria-label="Opponent">
       <button type="button" role="radio" data-mode="easy" aria-checked="true">Easy</button>
       <button type="button" role="radio" data-mode="hard" aria-checked="false">Hard</button>
       <button type="button" role="radio" data-mode="practice" aria-checked="false">Practice</button>
     </div>
     <p id="modeNote"></p>
-    <button id="startBtn" type="button" data-kb-play>Start</button>
+    <button id="startBtn" type="button" data-kb-play>FIGHT!</button>
+    <button id="howBtn" type="button" aria-haspopup="dialog">How to play</button>
+  </div>
+  <div id="howto" role="dialog" aria-modal="true" aria-labelledby="howTitle">
+    <h2 id="howTitle">How to play</h2>
+    <p>Best of 3 rounds against REN, 60 seconds each. Knock REN out, or have more health when time runs out. The blue meter under your health is energy for power-ups.</p>
     <div id="legend">
       <b>Move</b><span>← → or A D, ↑ / W jump, ↓ / S crouch (touch: left pad)</span>
       <b>Punch / Kick</b><span>J / K. Crouch for a low jab or a sweep; jump for air attacks</span>
@@ -316,7 +420,7 @@
       <b>Hitboxes</b><span>H or the Boxes button &middot; Mute: M or 🔊</span>
       <b>Power</b><span>1 Fireball, 2 Speed boost, 3 Shield (touch: pick an icon, then Power). Energy refills slowly, faster when you land hits, not while blocking</span>
     </div>
-    <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+    <button id="howClose" type="button">Got it</button>
   </div>
   <div id="result">
     <h1 id="resultTitle">You win</h1>
@@ -356,7 +460,9 @@ const ctx = canvas.getContext('2d');
 const wrap = document.getElementById('wrap');
 const overlay = document.getElementById('overlay');
 const startBtn = document.getElementById('startBtn');
-const backToArcade = document.getElementById('backToArcade');
+const howto = document.getElementById('howto');
+const howBtn = document.getElementById('howBtn');
+const howClose = document.getElementById('howClose');
 const resultEl = document.getElementById('result');
 const resultTitle = document.getElementById('resultTitle');
 const resultScore = document.getElementById('resultScore');
@@ -1009,6 +1115,7 @@ function clearInput() {
 }
 
 window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && howto.classList.contains('on')) { showHowto(false); return; }
   lastKey = (e.code || '""') + ' / ' + (e.key || '""') + ' / ' + e.keyCode;
   if (e.code === 'KeyH' && !e.repeat) { toggleDebug(); return; }
   if (e.code === 'KeyM' && !e.repeat) { toggleMute(); return; }
@@ -2262,7 +2369,14 @@ menuBtn.addEventListener('click', () => {
   resetFighters();
   updateControls();
 });
-for (const a of [backToArcade, resultBack]) a.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+resultBack.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+// How to play: the controls list, kept off the title screen.
+function showHowto(on) {
+  howto.classList.toggle('on', on);
+  if (on) { howto.scrollTop = 0; howClose.focus(); } else howBtn.focus();
+}
+howBtn.addEventListener('click', () => showHowto(true));
+howClose.addEventListener('click', () => showHowto(false));
 
 let last = performance.now(), acc = 0;
 let fps = 60, fpsFrames = 0, fpsSince = last;

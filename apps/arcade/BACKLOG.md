@@ -42,7 +42,10 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         back button, guide link) covered Start and the start screen
         couldn't scroll past it; start/result screens now pad above it
         (`--chrome-overlap`, set in fitCanvas) and scroll from the top,
-        Start moved above the controls legend, top buttons only in a fight
+        Start moved above the controls legend, top buttons only in a fight.
+        Title screen (1.62.0): DOJO DUEL logo, KAI vs REN, mode picker and a
+        pulsing FIGHT! button over a vignette so the fighters show; the
+        controls legend moved to a How to play panel (Got it / Escape)
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
