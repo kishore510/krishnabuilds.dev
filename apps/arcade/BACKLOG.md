@@ -2,6 +2,17 @@
 
 Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
 
+- [ ] Dojo Duel, built in small steps, one PR each:
+  - [x] Step 1: arena and movement
+  - [x] Step 2: attacks, blocking, health bars, training dummy
+  - [x] Step 3: hit feel (hitstop, white flash and stagger pose, POW!/WHAM!
+        bursts and sparks, kick screen shake, hit/block/whiff sounds; all
+        values in the `FX` table). Moved ahead of rounds and the CPU AI
+  - [ ] Step 4: rounds
+  - [ ] Step 5: a CPU that fights back (reuse Air Hockey's delay + jitter +
+        prediction shape); first real test of blocking by holding back
+  - [ ] Power moves (1 2 3 and the Power button)
+
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
       upgrades, and the rebalance are all in
