@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1e1a33"/>
+      <stop offset="0.55" stop-color="#2b1f4a"/>
+      <stop offset="1" stop-color="#dd8752"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffd76a" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ffd76a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7f521f"/>
+      <stop offset="0.5" stop-color="#a8703f"/>
+      <stop offset="1" stop-color="#7f521f"/>
+    </linearGradient>
+    <g id="drum">
+      <path d="M-15 0 V20 Q0 27 15 20 V0Z" fill="url(#shell)"/>
+      <path d="M-15 3 L-5 22 M-5 2 L5 24 M5 2 L15 21 M15 3 L5 22 M5 2 L-5 24 M-5 2 L-15 21" stroke="#ffd76a" stroke-opacity="0.7" stroke-width="1"/>
+      <ellipse rx="15" ry="5" fill="#cfd6dc"/>
+      <ellipse rx="15" ry="5" fill="none" stroke="#5a3d24" stroke-width="1.6"/>
+    </g>
+    <g id="unit" stroke="#8a5a24" stroke-linecap="round" fill="none">
+      <path d="M0 7 L-5 14 M0 7 L4.5 14" stroke-width="2"/><path d="M0 -8 V7" stroke-width="2.4"/>
+      <path d="M0 -5 L7 -11" stroke-width="1.8"/><path d="M0 -5 Q-7 -2 -6 4" stroke-width="1.8"/>
+      <circle cy="-12" r="4" fill="#8a5a24" stroke="none"/>
+    </g>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <!-- jungle silhouettes -->
+  <g fill="#141d16" fill-opacity="0.7"><ellipse cx="20" cy="40" rx="26" ry="20"/><ellipse cx="222" cy="44" rx="24" ry="20"/><rect x="16" y="40" width="4" height="40"/><rect x="220" y="44" width="4" height="36"/></g>
+  <rect y="80" width="240" height="12" fill="#1c231e"/>
+  <!-- squad marching in, spears raised -->
+  <g transform="translate(66 66) scale(0.9)"><use href="#unit"/></g>
+  <g transform="translate(78 67) scale(0.9)"><use href="#unit"/></g>
+  <path d="M70 52 L78 40 M82 53 L90 41" stroke="#cfd6dc" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- the two drums and the beat ring -->
+  <ellipse cx="120" cy="54" rx="48" ry="28" fill="url(#glow)"/>
+  <circle cx="102" cy="44" r="13" fill="none" stroke="#ffd76a" stroke-width="2"/>
+  <circle cx="102" cy="44" r="18" fill="none" stroke="#ffd76a" stroke-opacity="0.35" stroke-width="1.4"/>
+  <use href="#drum" x="102" y="56"/>
+  <use href="#drum" x="138" y="58"/>
+  <g fill="#ffe28a"><path d="M102 34 L103 38 L107 39 L103 40 L102 44 L101 40 L97 39 L101 38Z"/></g>
+  <path d="M146 34 L140 50" stroke="#5a3d24" stroke-width="2.4" stroke-linecap="round"/><circle cx="146.5" cy="33" r="2.4" fill="#cfd6dc"/>
+  <!-- the enemy waiting on the right -->
+  <g transform="translate(170 66) scale(1.15)"><use href="#unit" stroke="#050505"/></g>
+  <circle cx="170" cy="52" r="5" fill="#050505"/>
+  <circle cx="168.5" cy="51.5" r="0.9" fill="#ff5a4a"/><circle cx="171.5" cy="51.5" r="0.9" fill="#ff5a4a"/>
+</svg>

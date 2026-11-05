@@ -135,7 +135,7 @@ the shelf reads as a family. Follow these for every new one:
   notch (top centre) and the New / Play badges (top corners); the strips
   outside x 61-179 are cropped on phones and in list view, so they only hold
   supporting detail (pattern, spare pills, the end of a path).
-- **Budget:** under 10 KB per file (they come in at 2-4 KB) and 200 KB for
+- **Budget:** under 10 KB per file (most come in at 2-4 KB) and 200 KB for
   all of them together. No external fonts, images or `url()`s; text uses the
   system font stack (`system-ui, -apple-system, 'Segoe UI', Roboto, Arial,
   sans-serif`) at weight 800.
@@ -158,7 +158,8 @@ the shelf reads as a family. Follow these for every new one:
   grey tile scheme that genre is known for).
 - **Check:** `node apps/arcade/scripts/card-art-check.mjs` from the repo root
   (rules above, every file used by exactly one game, every card shows its art
-  or emoji in grid and list view at 360 and 1280 px, combined size report).
+  or emoji in grid and list view at 360 and 1280 px, a game with no `art`
+  still falls back to its emoji, combined size report).
 
 ## Versioning
 

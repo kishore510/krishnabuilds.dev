@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2536"/>
+      <stop offset="0.55" stop-color="#26344a"/>
+      <stop offset="1" stop-color="#3a4a62"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#efead9" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#efead9" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="paper" width="11" height="11" patternUnits="userSpaceOnUse">
+      <path d="M.5 0V11M0 .5H11" stroke="#efead9" stroke-opacity="0.06" fill="none"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#paper)"/>
+  <ellipse cx="124" cy="58" rx="56" ry="34" fill="url(#glow)"/>
+  <!-- paper sheet with clue strips -->
+  <rect x="68" y="26" width="104" height="63" rx="3" fill="#efead9"/>
+  <rect x="68" y="26" width="104" height="12" fill="#cfc5ac" fill-opacity="0.5"/>
+  <rect x="68" y="26" width="22" height="63" fill="#cfc5ac" fill-opacity="0.5"/>
+  <!-- 7 x 4 cells of 11, starting at (92,40) -->
+  <g fill="#26344a">
+    <rect x="103" y="40" width="10" height="10" rx="1"/><rect x="136" y="40" width="10" height="10" rx="1"/>
+    <rect x="92" y="51" width="10" height="10" rx="1"/><rect x="103" y="51" width="10" height="10" rx="1"/><rect x="114" y="51" width="10" height="10" rx="1"/><rect x="125" y="51" width="10" height="10" rx="1"/><rect x="136" y="51" width="10" height="10" rx="1"/><rect x="147" y="51" width="10" height="10" rx="1"/>
+    <rect x="103" y="62" width="10" height="10" rx="1"/><rect x="114" y="62" width="10" height="10" rx="1"/><rect x="125" y="62" width="10" height="10" rx="1"/><rect x="136" y="62" width="10" height="10" rx="1"/>
+    <rect x="114" y="73" width="10" height="10" rx="1"/>
+  </g>
+  <path d="M91.5 40V84M102.5 40V84M113.5 40V84M124.5 40V84M135.5 40V84M146.5 40V84M157.5 40V84M168.5 40V84M91.5 39.5H168.5M91.5 50.5H168.5M91.5 61.5H168.5M91.5 72.5H168.5M91.5 83.5H168.5" stroke="#b7af98" stroke-width="0.8"/>
+  <!-- marks: an X on a known-empty cell, and the brush about to fill -->
+  <path d="M117 43 L121 47 M121 43 L117 47 M150 66 L154 70 M154 66 L150 70" stroke="#b8722c" stroke-width="1.3" stroke-linecap="round"/>
+  <rect x="125.5" y="73.5" width="9" height="9" rx="1" fill="#128266" fill-opacity="0.35" stroke="#128266" stroke-width="1.2"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-weight="800" font-size="6.5" text-anchor="middle" fill="#4a4638">
+    <text x="108" y="35.5">2</text><text x="119" y="35.5">2</text><text x="130" y="35.5">2</text><text x="141" y="35.5">3</text><text x="152" y="35.5">1</text><text x="97" y="35.5">1</text><text x="163" y="35.5">0</text>
+    <text x="79" y="47.5">1 1</text><text x="79" y="58.5">6</text><text x="79" y="69.5">4</text><text x="79" y="80.5">1</text>
+  </g>
+</svg>
