@@ -3,9 +3,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { setTheme } from "@krishnabuilds/ui";
 import { REACTION_KEYS } from "@stickyard/shared";
 import { REACTIONS, REACTION_TEXT, chipLabel } from "../src/reactions/reactions";
-import { STORAGE_KEYS } from "../src/storage";
 import {
   cleanupUi,
   click,
@@ -175,7 +175,7 @@ describe("chips on a note", () => {
 
   it("render in light and in dark from tokens only", async () => {
     for (const theme of ["light", "dark"]) {
-      localStorage.setItem(STORAGE_KEYS.theme, theme);
+      setTheme(theme as "light" | "dark");
       await reacting();
       const { applyTheme, readPreference } = await import("../src/shell/theme");
       await act(async () => applyTheme(readPreference()));

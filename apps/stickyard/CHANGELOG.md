@@ -2,6 +2,12 @@
 
 All notable changes to Stickyard, newest first. The format follows Keep a Changelog. Versions are 0.x: a minor bump for each slice and a patch bump for each follow-up fix. This file is shown in the app under **What’s new**, so entries are written for the people using it.
 
+## [0.45.0] - 2026-11-05
+
+### Changed
+- **The theme is shared with the other krishnabuilds.dev apps.** Choose light, dark or following your device here or in another app and it's used in both. It's kept in a cookie on krishnabuilds.dev instead of in Stickyard's own storage.
+- **Your theme carries over.** The first time you open this version, a theme you chose in Stickyard is moved to the shared setting, unless you've already chosen one in another app, in which case that one is used.
+
 ## [0.44.0] - 2026-10-17
 
 ### Added

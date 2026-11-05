@@ -102,7 +102,7 @@ describe('restore and clear', () => {
     expect(restoreBackup(result.backup, t)).toEqual({ saved: false })
   })
 
-  it('clear all data removes every Sumyard key and nothing else, and resets what is in memory', () => {
+  it('clear all data removes every Sumyard key and nothing else, resets what is in memory and leaves the shared theme', () => {
     const storage = new Map<string, string>(Object.values(STORAGE_KEYS).map(({ key }) => [key, '{}']))
     storage.set('someone-else', 'keep me')
     const t = targets()
@@ -110,7 +110,7 @@ describe('restore and clear', () => {
     expect([...storage.keys()]).toEqual(['someone-else'])
     expect(t.scenarios.clear).toHaveBeenCalled()
     expect(t.settings.replace).toHaveBeenCalled()
-    expect(t.theme.set).toHaveBeenCalledWith('system')
+    expect(t.theme.set).not.toHaveBeenCalled()
     expect(t.acknowledged.set).toHaveBeenCalledWith(false)
     expect(t.lastSeen.clear).toHaveBeenCalled()
   })

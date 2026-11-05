@@ -58,7 +58,7 @@ One small PR each, in order.
 - [x] Portal landing page: hand-written SVG card previews, hero, footer
 - [x] Story page template, then draft story pages for Arcade, Chalkline, Stickyard and Sumyard
 - [x] "How this is built" page: monorepo diagram, working principles, AI guardrails, decision log from `docs/decisions.md`
-- [ ] Stickyard and Sumyard join the shared `kb-theme` cookie, migrating an existing local choice once
+- [x] Stickyard and Sumyard join the shared `kb-theme` cookie, migrating an existing local choice once
 - [ ] Arcade: drop Google Fonts for the system font stack; site-links bar uses the shared accent
 
 ## Backlog

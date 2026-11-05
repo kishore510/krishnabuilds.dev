@@ -23,7 +23,7 @@ Sumyard reads only its own files: a scenarios export for **Import**, a backup fo
 
 ## The theme looks wrong
 
-**System** follows your device’s light or dark setting. Choose **Light** or **Dark** in Settings, or with the top-bar button, to fix it.
+**System** follows your device’s light or dark setting. Choose **Light** or **Dark** in Settings, or with the top-bar button, to fix it. The choice is shared with the other krishnabuilds.dev apps, so one made in another app applies here too.
 
 ## The New marker keeps coming back
 

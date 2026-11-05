@@ -8,7 +8,10 @@
  * "Used" means the code names the key: a `sumyard:v1:...` string literal
  * (index.html's pre-paint script has one) or a `STORAGE_KEYS.<name>`
  * reference. Storage calls with any other literal key, and other browser
- * storage (sessionStorage, IndexedDB, cookies), fail outright.
+ * storage (sessionStorage, IndexedDB, cookies), fail outright. The one
+ * exception is reading the shared krishnabuilds.dev `kb-theme` cookie with
+ * exactly the pre-paint script's pattern; it is written only by
+ * @krishnabuilds/ui (outside this app) and documented in docs/privacy.md.
  */
 
 import { readdirSync, readFileSync, statSync } from 'node:fs'
@@ -26,7 +29,7 @@ const STORAGE_CALL = /\b(?:localStorage|storage\(\)|storage)\??\.(?:getItem|setI
 const OTHER_STORAGE: [label: string, pattern: RegExp][] = [
   ['sessionStorage', /\bsessionStorage\b/],
   ['IndexedDB', /\bindexedDB\b/],
-  ['cookies', /\bdocument\.cookie\b/],
+  ['cookies', /\bdocument\.cookie\b(?!\.match\(\/\(\?:\^\|; \)kb-theme=\(light\|dark\)\(\?:;\|\$\)\/\))/],
 ]
 
 /** Keys in the first column of docs/privacy.md's table rows. */

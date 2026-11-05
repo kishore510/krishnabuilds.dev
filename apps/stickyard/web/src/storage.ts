@@ -12,7 +12,10 @@ export function storageKey(name: string): string {
 
 /** The keys this app uses, in one place. */
 export const STORAGE_KEYS = {
-  /** "light" | "dark" | "system". Mirrored by the inline script in index.html. */
+  /**
+   * "light" | "dark" | "system", from before v0.45.0. No longer written: the theme lives in the shared kb-theme cookie
+   * (@krishnabuilds/ui). Read once to move an older choice there, then removed (shell/theme.ts migrateLocalTheme).
+   */
   theme: storageKey("theme"),
   /** The app version whose What's new was last opened. */
   lastSeenVersion: storageKey("last-seen-version"),

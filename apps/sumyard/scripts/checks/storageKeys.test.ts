@@ -68,6 +68,15 @@ describe('checkStorageKeys', () => {
     )
   })
 
+  it('allows only reading the shared kb-theme cookie with the pre-paint pattern', () => {
+    const read = 'const shared = document.cookie.match(/(?:^|; )kb-theme=(light|dark)(?:;|$)/)'
+    const check = (text: string) =>
+      checkStorageKeys({ files: [...uses, file('index.html', text)], owned, privacyDoc: doc('sumyard:v1:theme', 'sumyard:v1:settings') })
+    expect(check(read)).toEqual([])
+    expect(check('document.cookie = "kb-theme=dark"').join('\n')).toMatch(/cookies/)
+    expect(check('document.cookie.match(/other=(x)/)').join('\n')).toMatch(/cookies/)
+  })
+
   it('fails on other browser storage: sessionStorage, IndexedDB and cookies', () => {
     for (const text of ['sessionStorage.setItem(k, v)', 'indexedDB.open("x")', 'document.cookie = "a=b"']) {
       const files = [...uses, file('src/x.ts', text)]

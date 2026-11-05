@@ -4,10 +4,14 @@
     <meta charset="UTF-8" />
     <script>
       // sumyard:pre-paint-theme. Applies the theme before first paint so there is no flash of the wrong theme.
-      // Mirrors storedPreference and resolveTheme in src/lib/theme.ts; src/lib/theme.test.ts runs this script to keep them in step.
+      // The shared kb-theme cookie (packages/ui/src/theme.ts) wins; until src/hooks/useTheme.ts has moved an older local
+      // choice into it, that applies (mirrors storedPreference and resolveTheme in src/lib/theme.ts; src/lib/theme.test.ts
+      // runs this script to keep them in step).
       ;(() => {
         let pref = 'system'
-        try {
+        const shared = document.cookie.match(/(?:^|; )kb-theme=(light|dark)(?:;|$)/)
+        if (shared) pref = shared[1]
+        else try {
           const record = JSON.parse(localStorage.getItem('sumyard:v1:theme'))
           if (record && record.schemaVersion === 1 && (record.theme === 'light' || record.theme === 'dark')) pref = record.theme
         } catch {}

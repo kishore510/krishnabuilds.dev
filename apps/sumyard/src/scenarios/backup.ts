@@ -94,7 +94,7 @@ export function restoreBackup(backup: BackupData, targets: DataTargets): { saved
 export function clearAllData(targets: DataTargets, storage: Pick<Storage, 'removeItem'> | undefined): { saved: boolean } {
   let saved = targets.scenarios.clear()
   saved = targets.settings.replace({ ...DEFAULT_SETTINGS }) && saved
-  targets.theme.set('system')
+  // The theme is shared with the other krishnabuilds.dev apps, so clearing Sumyard's data leaves it alone.
   saved = targets.acknowledged.set(false) && saved
   targets.lastSeen.clear()
   for (const { key } of Object.values(STORAGE_KEYS)) {

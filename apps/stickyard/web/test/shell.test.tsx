@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import { setTheme } from "@krishnabuilds/ui";
 import { PROTOCOL_VERSION } from "@stickyard/shared";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
@@ -201,7 +202,7 @@ describe("What's new", () => {
   it("shows the current version with the This version badge", async () => {
     await mount("#/changelog");
     const current = dialog()?.querySelector('[aria-current="true"]');
-    expect(current?.querySelector("h3")?.textContent).toBe("0.44.0");
+    expect(current?.querySelector("h3")?.textContent).toBe("0.45.0");
     expect(current?.textContent).toContain("This version");
     expect(current?.textContent).toMatch(/Added|Changed|Fixed/);
   });
@@ -215,11 +216,11 @@ describe("What's new", () => {
     await openFromMenu("What’s new");
     await press("Escape");
     expect(document.querySelector('[data-testid="unseen-dot"]')).toBeNull();
-    expect(localStorage.getItem("stickyard:last-seen-version")).toBe("0.44.0");
+    expect(localStorage.getItem("stickyard:last-seen-version")).toBe("0.45.0");
   });
 
   it("no dot once this version has been seen", async () => {
-    localStorage.setItem("stickyard:last-seen-version", "0.44.0");
+    localStorage.setItem("stickyard:last-seen-version", "0.45.0");
     await mount();
     expect(document.querySelector('[data-testid="unseen-dot"]')).toBeNull();
   });
@@ -231,7 +232,7 @@ describe("About", () => {
 
   it("shows version, build, protocol and relay", async () => {
     await mount("#/about");
-    expect(detail("Version")).toBe("0.44.0");
+    expect(detail("Version")).toBe("0.45.0");
     expect(detail("Build")).toMatch(/^([0-9a-f]{4,40}|dev)$/);
     expect(detail("Built")).not.toBe("unknown");
     expect(detail("Protocol")).toBe(`v${PROTOCOL_VERSION}`);
@@ -362,22 +363,37 @@ describe("About", () => {
 });
 
 describe("theme", () => {
-  it("cycles and persists under the stickyard: prefix", async () => {
+  const sharedTheme = () => document.cookie.match(/(?:^|; )kb-theme=([a-z]+)/)?.[1] ?? null;
+  beforeEach(() => setTheme("system"));
+
+  it("cycles and persists in the shared kb-theme cookie", async () => {
     await mount();
     expect(byLabel(/^Theme: follow system/)).toBeDefined();
     await click(byLabel(/^Theme:/));
-    expect(localStorage.getItem("stickyard:theme")).toBe("light");
+    expect(sharedTheme()).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("light");
     await click(byLabel(/^Theme:/));
-    expect(localStorage.getItem("stickyard:theme")).toBe("dark");
+    expect(sharedTheme()).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
+    await click(byLabel(/^Theme:/));
+    expect(sharedTheme()).toBeNull();
+    expect(document.documentElement.dataset.theme).toMatch(/^(light|dark)$/);
+    expect(localStorage.getItem("stickyard:theme")).toBeNull();
   });
 
-  it("restores the stored choice on load", async () => {
-    localStorage.setItem("stickyard:theme", "dark");
+  it("restores the shared choice on load", async () => {
+    setTheme("dark");
     await mount();
     expect(document.documentElement.dataset.theme).toBe("dark");
     expect(byLabel(/^Theme: dark/)).toBeDefined();
+  });
+
+  it("moves a choice stored before v0.45.0 into the shared cookie on load", async () => {
+    localStorage.setItem("stickyard:theme", "dark");
+    await mount();
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(sharedTheme()).toBe("dark");
+    expect(localStorage.getItem("stickyard:theme")).toBeNull();
   });
 });
 
