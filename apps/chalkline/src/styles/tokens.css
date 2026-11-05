@@ -31,7 +31,6 @@
   --cl-text: #1d2327;
   --cl-text-muted: #5a6368;
 
-  --cl-accent: #1f6aa5;
   --cl-accent-hover: #185686;
   --cl-accent-subtle: #1f6aa51f;
   --cl-on-accent: #ffffff;
@@ -100,7 +99,6 @@
   --cl-text: #ebede6;
   --cl-text-muted: #a5afb3;
 
-  --cl-accent: #7cc0e6;
   --cl-accent-hover: #9dd0ee;
   --cl-accent-subtle: #7cc0e626;
   --cl-on-accent: #0d1a22;
@@ -150,6 +148,7 @@
 
 /* ── Theme-independent tokens ───────────────────────────────────────── */
 :root {
+  --cl-accent: var(--kb-color-accent);
   /* Diagram rendering */
   --cl-node-stroke-width: 1.5px;
   --cl-edge-width: 1.5px;

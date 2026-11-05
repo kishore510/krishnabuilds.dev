@@ -75,7 +75,6 @@
   --sy-text: var(--sy-palette-slate-850);
   --sy-text-muted: var(--sy-palette-slate-500);
 
-  --sy-accent: var(--sy-palette-blue-600);
   --sy-accent-hover: var(--sy-palette-blue-700);
   --sy-accent-subtle: var(--sy-palette-blue-600-a12);
   --sy-on-accent: var(--sy-palette-white);
@@ -104,7 +103,6 @@
   --sy-text: var(--sy-palette-chalk);
   --sy-text-muted: var(--sy-palette-slate-200);
 
-  --sy-accent: var(--sy-palette-blue-300);
   --sy-accent-hover: var(--sy-palette-blue-200);
   --sy-accent-subtle: var(--sy-palette-blue-300-a15);
   --sy-on-accent: var(--sy-palette-blue-950);
@@ -122,6 +120,7 @@
 
 /* ── Theme-independent tokens ───────────────────────────────────────── */
 :root {
+  --sy-accent: var(--kb-color-accent);
   /* Touch and focus */
   --sy-touch-target: 44px;
   --sy-focus-ring-width: 2px;
