@@ -6,11 +6,10 @@ import {
   statusLabels,
 } from "@krishnabuilds/ui";
 
+import { Footer, HOW_URL } from "./Footer";
 import { Preview } from "./Preview";
+import { storyFor } from "./stories";
 
-const SOURCE_URL = "https://github.com/kishore510/krishnabuilds.dev";
-// Until the Portal has its own page, "How this is built" opens the decision log on GitHub.
-const HOW_URL = `${SOURCE_URL}/blob/main/docs/decisions.md`;
 
 export function App() {
   return (
@@ -69,6 +68,15 @@ export function App() {
                           </li>
                         ))}
                       </ul>
+                      {storyFor(app.name) && (
+                        <a
+                          className="card__story"
+                          href={`/stories/${storyFor(app.name)?.slug}`}
+                        >
+                          Read the story
+                          <span className="visually-hidden"> of {app.name}</span>
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -77,19 +85,7 @@ export function App() {
           })}
         </div>
       </main>
-      <footer className="footer">
-        <ul className="footer__links">
-          <li>
-            <a href={SOURCE_URL}>Source on GitHub</a>
-          </li>
-          <li>
-            <a href={HOW_URL}>How this is built</a>
-          </li>
-        </ul>
-        <p>Built with React and Vite, hosted on Cloudflare. System fonts.</p>
-        <p>No ads, no tracking and no analytics.</p>
-        <p>Personal projects, not financial advice.</p>
-      </footer>
+      <Footer />
     </>
   );
 }
