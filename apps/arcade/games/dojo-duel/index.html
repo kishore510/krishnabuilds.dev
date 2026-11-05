@@ -33,7 +33,7 @@
   }
 
   /* --- Start screen --- */
-  #overlay {
+  #overlay, #result {
     position: absolute;
     inset: 0;
     display: flex;
@@ -50,8 +50,10 @@
     border-radius: 6px;
     z-index: 5;
   }
-  #overlay h1 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
-  #overlay p { margin: 3px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(470px * var(--game-scale, 1)); }
+  #result { display: none; }
+  #result.on { display: flex; }
+  #overlay h1, #result h1 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
+  #overlay p, #result p { margin: 3px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; max-width: calc(470px * var(--game-scale, 1)); }
   #legend {
     display: grid;
     grid-template-columns: auto auto;
@@ -66,7 +68,7 @@
   }
   #legend b { color: #ffcf5a; }
   #legend span { opacity: 0.9; }
-  #startBtn {
+  #startBtn, #againBtn {
     margin-top: calc(12px * var(--game-scale, 1));
     font: inherit;
     font-size: calc(17px * var(--game-scale, 1));
@@ -78,8 +80,8 @@
     color: #3a2400;
     cursor: pointer;
   }
-  #startBtn:active { background: #ffe08f; }
-  #backToArcade {
+  #startBtn:active, #againBtn:active { background: #ffe08f; }
+  #backToArcade, #resultBack {
     margin-top: calc(10px * var(--game-scale, 1));
     font-size: calc(12px * var(--game-scale, 1));
     font-weight: 700;
@@ -236,7 +238,7 @@
   </div>
   <div id="overlay">
     <h1>Dojo Duel</h1>
-    <p>Work in progress: practise on a training dummy. Rounds and a CPU that fights back arrive in the next updates.</p>
+    <p>Work in progress: best of 3 rounds against a training dummy, 60 seconds a round. A CPU that fights back arrives in the next update.</p>
     <div id="legend">
       <b>Move</b><span>← → or A D, ↑ / W jump, ↓ / S crouch (touch: left pad)</span>
       <b>Punch / Kick</b><span>J / K. Crouch for a low jab or a sweep; jump for air attacks</span>
@@ -247,6 +249,12 @@
     </div>
     <button id="startBtn" type="button" data-kb-play>Start</button>
     <a id="backToArcade" href="../../index.html">&larr; Back to Arcade</a>
+  </div>
+  <div id="result">
+    <h1 id="resultTitle">You win</h1>
+    <p id="resultScore"></p>
+    <button id="againBtn" type="button" data-kb-play>Play Again</button>
+    <a id="resultBack" href="../../index.html">&larr; Back to Arcade</a>
   </div>
 </div>
 
@@ -275,6 +283,11 @@ const wrap = document.getElementById('wrap');
 const overlay = document.getElementById('overlay');
 const startBtn = document.getElementById('startBtn');
 const backToArcade = document.getElementById('backToArcade');
+const resultEl = document.getElementById('result');
+const resultTitle = document.getElementById('resultTitle');
+const resultScore = document.getElementById('resultScore');
+const againBtn = document.getElementById('againBtn');
+const resultBack = document.getElementById('resultBack');
 const muteBtn = document.getElementById('muteBtn');
 const debugBtn = document.getElementById('debugBtn');
 const dummyBtn = document.getElementById('dummyBtn');
@@ -310,16 +323,18 @@ const MOVE = {
 // None of this changes damage, stun or ranges, and none of it is shown on
 // the debug overlay.
 const FX = {
-  hitstop: { punch: 5, kick: 9, block: 0 }, // frames both fighters freeze on contact (by the move's button)
+  hitstop: { punch: 5, kick: 9, block: 0, ko: 22 }, // frames both fighters freeze on contact (by the move's button; ko for the round-ending blow)
   flashFrames: 4,             // a hit fighter is drawn white through the hitstop, then for this many frames more
   stagger: { lean: 0.42, leanEnd: 0.12, step: 14 }, // hit pose: body lean (radians) at the start and end of hitstun, back-foot step (base units)
-  shake: { kick: 3.5, frames: 12 },  // screen shake on a landed kick only: size in px, then eases out over frames
+  shake: { kick: 3.5, ko: 6, frames: 12 },  // screen shake on a landed kick (and a bigger one on a KO): size in px, then eases out over frames
+  // Comic bursts are opt-in: only a move with a `burst` word in MOVES shows
+  // one (none do yet; power moves will), plus the big one on a KO blow.
   burst: {
-    words: { punch: ['POW!'], kick: ['WHAM!'] },
-    frames: 30,               // how long the burst stays up (pops in, holds, fades)
+    frames: 30,               // how long a move's burst stays up (pops in, holds, fades)
     baseScale: 0.55,          // size at 0 damage...
-    perDamage: 0.06,          // ...plus this per point of damage (a 6-damage jab is 0.91, a 10-damage kick 1.15)
-    rise: 0.35                // px per frame the burst drifts up
+    perDamage: 0.06,          // ...plus this per point of damage (a 10-damage move is 1.15)
+    rise: 0.35,               // px per frame the burst drifts up
+    ko: { word: 'WHAM!', scale: 2.3, frames: 85 }   // the round-ending blow, drawn on top of the KO banner (gone before the banner, so its subline reads)
   },
   sparks: {
     hit: 7, block: 3,         // particles per landed / blocked hit
@@ -332,7 +347,15 @@ const FX = {
 const MAX_HEALTH = 100;
 const INPUT_BUFFER = 6;      // frames an attack press waits for the fighter to be free
 const POST_HIT_COOLDOWN = 4;  // frames a fighter can't be hit again after a hit or block
-const REFILL_AFTER = 120;     // training: health refills after this many frames without a hit
+
+// --- Rounds: best of 3. Durations are simulation frames (60 a second).
+const ROUND = {
+  seconds: 60,        // round clock; at zero, more health wins and equal health replays the round
+  winsNeeded: 2,
+  introFrames: 70,    // "Round N" banner...
+  fightFrames: 36,    // ...then "Fight!"; input is locked through both
+  endFrames: 130      // the KO / Time banner, then the next round or the result screen
+};
 
 // --- Boxes in base units, relative to the fighter's feet. x is the box
 // centre's offset in front of the fighter (mirrored by facing); y is the
@@ -353,7 +376,8 @@ const BOXES = {
 // defender's slide speed (px/frame, decays). height: 'mid' blocks either
 // way, 'low' must be blocked crouching, 'high' (air attacks) standing.
 // The hitbox is in the same base units as BOXES and only exists during
-// active frames.
+// active frames. burst (optional) is the comic word shown on a landed hit,
+// e.g. burst: 'WHAM!'; leave it unset for no burst (sizes are in FX.burst).
 const MOVES = {
   jab:      { name: 'Jab',       button: 'punch', pose: 'stand',  startup: 4, active: 3, recovery: 8,  damage: 6,  chip: 1, hitstun: 14, blockstun: 10, knock: 3.2, height: 'mid',  hitbox: { x: 46, y: 72, w: 26, h: 16 } },
   kick:     { name: 'Kick',      button: 'kick',  pose: 'stand',  startup: 8, active: 4, recovery: 16, damage: 10, chip: 2, hitstun: 18, blockstun: 13, knock: 4.5, height: 'mid',  hitbox: { x: 50, y: 48, w: 32, h: 16 } },
@@ -451,7 +475,7 @@ function updateFighter(f, opp, inp) {
       f.y = FLOOR; f.vx = 0; f.vy = 0;
       f.move = null; f.airAttackUsed = false; f.crouched = false;
       f.landLag = wasHit ? 10 : MOVE.landLag;
-      enterState(f, 'land');
+      enterState(f, f.health <= 0 ? 'hitstun' : 'land');   // a KO'd fighter stays reeling
       sfx('land');
     }
     clampToWalls(f);
@@ -597,8 +621,10 @@ function applyHit(att, def, hit) {
   if (!airborne(def) && atWall(def) && Math.sign(def.x - att.x) === dir) {
     att.vx = -dir * m.knock * (blocked ? FX.blockSlide : 1);
   }
-  lastHit = { by: att.name, on: def.name, move: m.name, blocked, dealt, frame: simFrame };
-  hitFx(m, at, dir, blocked);
+  const ko = !blocked && def.health <= 0;
+  if (ko) def.stun = Infinity;   // no getting up until the next round
+  lastHit = { by: att.name, on: def.name, move: m.name, blocked, dealt, ko, frame: simFrame };
+  hitFx(m, at, dir, blocked, ko);
 }
 
 // --- Hit effects. Hitstop freezes the simulation (see tick); the rest are
@@ -607,12 +633,12 @@ function applyHit(att, def, hit) {
 let hitstop = 0;
 let shake = null;       // { mag, t }
 let sparks = [];        // { x, y, vx, vy, t, blocked }
-let bursts = [];        // { x, y, word, scale, rot, t }
+let bursts = [];        // { x, y, word, scale, rot, t, frames, rise, top }
 function clearFx() {
   hitstop = 0; shake = null; sparks = []; bursts = [];
 }
-function hitFx(m, at, dir, blocked) {
-  hitstop = Math.max(hitstop, blocked ? FX.hitstop.block : FX.hitstop[m.button]);
+function hitFx(m, at, dir, blocked, ko) {
+  hitstop = Math.max(hitstop, blocked ? FX.hitstop.block : ko ? FX.hitstop.ko : FX.hitstop[m.button]);
   const n = blocked ? FX.sparks.block : FX.sparks.hit;
   for (let i = 0; i < n; i++) {
     const a = (Math.random() * 2 - 1) * FX.sparks.spread;
@@ -621,22 +647,24 @@ function hitFx(m, at, dir, blocked) {
     sparks.push({ x: at.x, y: at.y, vx: Math.cos(a) * v * dir, vy: Math.sin(a) * v - 1, t: 0, blocked });
   }
   if (blocked) return;
-  const words = FX.burst.words[m.button];
-  bursts.push({
-    x: at.x, y: at.y,
-    word: words[Math.floor(Math.random() * words.length)],
-    scale: FX.burst.baseScale + m.damage * FX.burst.perDamage,
-    rot: (Math.random() * 2 - 1) * 0.18,
-    t: 0
-  });
-  if (m.button === 'kick') shake = { mag: FX.shake.kick, t: 0 };
+  const rot = (Math.random() * 2 - 1) * 0.18;
+  if (ko) {
+    // the KO blow always gets the big one, drawn over the KO banner
+    const k = FX.burst.ko;
+    bursts.push({ x: at.x, y: at.y, word: k.word, scale: k.scale, rot, t: 0, frames: k.frames, rise: 0, top: true });
+  } else if (m.burst) {
+    bursts.push({ x: at.x, y: at.y, word: m.burst, scale: FX.burst.baseScale + m.damage * FX.burst.perDamage,
+      rot, t: 0, frames: FX.burst.frames, rise: FX.burst.rise, top: false });
+  }
+  if (ko) shake = { mag: FX.shake.ko, t: 0 };
+  else if (m.button === 'kick') shake = { mag: FX.shake.kick, t: 0 };
 }
 function updateFx() {
   if (hitstop === 0) for (const f of [player, cpu]) if (f.flash > 0) f.flash--;
   for (const s of sparks) { s.x += s.vx; s.y += s.vy; s.vy += FX.sparks.gravity; s.t++; }
   sparks = sparks.filter(s => s.t < FX.sparks.life);
-  for (const b of bursts) { b.y -= FX.burst.rise; b.t++; }
-  bursts = bursts.filter(b => b.t < FX.burst.frames);
+  for (const b of bursts) { b.y -= b.rise; b.t++; }
+  bursts = bursts.filter(b => b.t < b.frames);
   if (shake && ++shake.t >= FX.shake.frames) shake = null;
 }
 
@@ -886,6 +914,10 @@ function sfx(name) {
     else if (name === 'block') { thump(0.08, 0.45, 320); tone(95, 0.08, 'sine', 0.12, 60); }
     else if (name === 'start') { tone(392, 0.12, 'square', 0.05); setTimeout(() => sfx('start2'), 110); }
     else if (name === 'start2') tone(587, 0.2, 'square', 0.05);
+    else if (name === 'ko') { thump(0.3, 0.9, 600); tone(110, 0.6, 'sine', 0.25, 40); }
+    else if (name === 'bell') tone(880, 0.5, 'triangle', 0.1, 700);
+    else if (name === 'win') { tone(523, 0.14, 'square', 0.05); setTimeout(() => sfx('start2'), 130); }
+    else if (name === 'lose') tone(330, 0.45, 'triangle', 0.08, 160);
   } catch (e) {}
 }
 function syncMuteBtn() {
@@ -1164,7 +1196,63 @@ function drawHud() {
     ctx.fillStyle = '#fff';
     ctx.textAlign = align;
     ctx.fillText(f.name, align === 'left' ? x : x + barW, y + barH + 5);
+    // round win markers, under the bar's inner end
+    const won = wins[f === player ? 0 : 1];
+    for (let i = 0; i < ROUND.winsNeeded; i++) {
+      const mx = align === 'left' ? x + barW - 7 - i * 17 : x + 7 + i * 17;
+      ctx.beginPath();
+      ctx.arc(mx, y + barH + 10, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = i < won ? '#f2c14e' : 'rgba(0,0,0,0.55)';
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = i < won ? '#fff3c4' : 'rgba(255,255,255,0.55)';
+      ctx.stroke();
+    }
   }
+  // round clock, top centre
+  const secs = Math.ceil(clock / 60);
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(W / 2 - 24, 6, 48, 28);
+  ctx.font = '800 22px system-ui, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = secs <= 10 && phase === 'fight' ? '#ff6b4a' : '#fff';
+  ctx.fillText(String(secs), W / 2, 21);
+}
+
+// The big centre banner for the current round phase, or null.
+function bannerText() {
+  const name = (w) => (w === 0 ? player : cpu).name;
+  if (phase === 'intro') return phaseFrames < ROUND.introFrames ? { text: 'ROUND ' + round, t: phaseFrames } : { text: 'FIGHT!', t: phaseFrames - ROUND.introFrames };
+  const sub = roundWinner < 0 ? 'Draw: replay the round' : name(roundWinner) + ' wins the round';
+  if (phase === 'ko') return { text: roundWinner < 0 ? 'DOUBLE K.O.' : 'K.O.', sub, t: phaseFrames };
+  if (phase === 'timeup') return { text: 'TIME!', sub, t: phaseFrames };
+  return null;
+}
+function drawBanner(b) {
+  const pop = b.t < 6 ? lerp(0.4, 1.15, b.t / 6) : b.t < 10 ? lerp(1.15, 1, (b.t - 6) / 4) : 1;
+  ctx.save();
+  ctx.fillStyle = 'rgba(10,6,3,0.55)';
+  ctx.fillRect(0, 128, W, b.sub ? 92 : 72);
+  ctx.translate(W / 2, 164);
+  ctx.scale(pop, pop);
+  ctx.font = '900 46px Impact, "Arial Black", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 7;
+  ctx.strokeStyle = '#1a1008';
+  ctx.strokeText(b.text, 0, 0);
+  ctx.fillStyle = b.text === 'FIGHT!' ? '#ff6b4a' : '#f2c14e';
+  ctx.fillText(b.text, 0, 0);
+  if (b.sub) {
+    ctx.font = '700 15px system-ui, -apple-system, sans-serif';
+    ctx.lineWidth = 4;
+    ctx.strokeText(b.sub, 0, 38);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(b.sub, 0, 38);
+  }
+  ctx.restore();
 }
 
 const BOX_COLORS = { push: '#ffd23f', hurt: '#3fa9ff', hit: '#ff4d4d' };
@@ -1184,6 +1272,7 @@ function debugLines() {
   lines.push('input ' + names.map((n, i) => held(n) ? glyphs[i] : '·').join(' ') +
     '   frame ' + simFrame + '   ' + fps + ' fps');
   lines.push('key ' + lastKey);
+  lines.push('round ' + round + ' ' + phase + ' f' + phaseFrames + '   clock ' + (clock / 60).toFixed(2) + 's   wins ' + wins[0] + '-' + wins[1] + '   hitstop ' + hitstop);
   lines.push('last ' + (lastHit ? lastHit.by + ' ' + lastHit.move + ' on ' + lastHit.on + ': ' +
     (lastHit.blocked ? 'blocked, ' + lastHit.dealt + ' chip' : lastHit.dealt + ' dmg') : '-'));
   return lines;
@@ -1247,7 +1336,7 @@ function drawDebug() {
 // A comic-book burst: a spiky star with the word on top. Pops in with a
 // small overshoot, holds, then fades.
 function drawBurst(b) {
-  const p = b.t / FX.burst.frames;
+  const p = b.t / b.frames;
   const pop = b.t < 4 ? lerp(0.3, 1.2, b.t / 4) : b.t < 7 ? lerp(1.2, 1, (b.t - 4) / 3) : 1;
   ctx.save();
   ctx.globalAlpha = p > 0.7 ? 1 - (p - 0.7) / 0.3 : 1;
@@ -1289,7 +1378,7 @@ function drawFx() {
     ctx.lineTo(s.x - s.vx * 2.2, s.y - s.vy * 2.2);
     ctx.stroke();
   }
-  for (const b of bursts) drawBurst(b);
+  for (const b of bursts) if (!b.top) drawBurst(b);
 }
 function draw(t) {
   ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
@@ -1311,58 +1400,120 @@ function draw(t) {
   for (const f of order) drawFighter(f, t);
   drawFx();
   ctx.restore();
-  if (state === 'playing') drawHud();
+  if (state !== 'menu') {
+    drawHud();
+    const b = state === 'playing' && bannerText();
+    if (b) drawBanner(b);
+    // the KO blow's WHAM! sits on top of the KO banner
+    ctx.save();
+    ctx.translate(sx, sy);
+    for (const bu of bursts) if (bu.top) drawBurst(bu);
+    ctx.restore();
+  }
   if (debugOn) drawDebug();
 }
 
 // --- Game state and loop ---
-let state = 'menu'; // 'menu' | 'playing'
+let state = 'menu'; // 'menu' | 'playing' | 'result'
 let simFrame = 0;
+// Within 'playing', each round runs intro (Round N, Fight!) -> fight ->
+// ko or timeup (banner) -> next round, or the result screen.
+let round = 1, wins = [0, 0], phase = 'intro', phaseFrames = 0;
+let clock = ROUND.seconds * 60;   // frames left in the round
+let roundWinner = -1;             // 0 player, 1 cpu, -1 draw
 const NO_INPUT = { h: 0, up: false, down: false, block: false, punch: false, kick: false };
 
 function tick() {
   updateFx();
+  // Banner timing runs on every tick, so the KO banner is already up during
+  // the KO blow's hitstop.
+  phaseFrames++;
+  if (phase === 'intro' && phaseFrames === ROUND.introFrames) sfx('start');
+  if (phase === 'intro' && phaseFrames >= ROUND.introFrames + ROUND.fightFrames) { phase = 'fight'; phaseFrames = 0; }
+  if ((phase === 'ko' || phase === 'timeup') && phaseFrames >= ROUND.endFrames) { nextRound(); return; }
   // Hitstop: on contact the fighters (and their move, stun and slide
-  // timers) hold still for a few frames. Attack presses made meanwhile
-  // stay queued and are read once it ends.
+  // timers, and the round clock) hold still for a few frames. Attack
+  // presses made meanwhile stay queued and are read once it ends.
   if (hitstop > 0) { hitstop--; return; }
   simFrame++;
-  updateFighter(player, cpu, readInput());
+  // Input is locked during banners: presses are still drained, then dropped.
+  const inp = readInput();
+  updateFighter(player, cpu, phase === 'fight' ? inp : NO_INPUT);
   updateFighter(cpu, player, DUMMY_MODES[dummyIndex].inp);
   resolvePush(player, cpu);
-  // check both before applying either, so a trade hits both ways
-  const pHit = checkHit(player, cpu) && { mv: player.move, at: impactPoint(player, cpu) };
-  const cHit = checkHit(cpu, player) && { mv: cpu.move, at: impactPoint(cpu, player) };
-  if (pHit) applyHit(player, cpu, pHit);
-  if (cHit) applyHit(cpu, player, cHit);
+  if (phase === 'fight') {
+    clock--;
+    // check both before applying either, so a trade hits both ways
+    const pHit = checkHit(player, cpu) && { mv: player.move, at: impactPoint(player, cpu) };
+    const cHit = checkHit(cpu, player) && { mv: cpu.move, at: impactPoint(cpu, player) };
+    if (pHit) applyHit(player, cpu, pHit);
+    if (cHit) applyHit(cpu, player, cHit);
+    // a KO on the last frame beats the clock
+    const pDown = player.health <= 0, cDown = cpu.health <= 0;
+    if (pDown || cDown) endRound('ko', pDown && cDown ? -1 : pDown ? 1 : 0);
+    else if (clock <= 0) endRound('timeup', player.health > cpu.health ? 0 : cpu.health > player.health ? 1 : -1);
+  }
   // the swoosh plays on the first active frame of an attack that didn't connect
   for (const f of [player, cpu]) {
     if (f.move && !f.move.hit && f.move.frame === f.move.def.startup) sfx(f.move.def.button === 'kick' ? 'whiffKick' : 'whiff');
   }
   for (const f of [player, cpu]) {
-    // training mode: health comes back after a short break from being hit
-    if (f.health < MAX_HEALTH && simFrame - f.lastHitFrame > REFILL_AFTER) f.health = MAX_HEALTH;
     if (f.healthLag > f.health && simFrame - f.lastHitFrame > 30) f.healthLag = Math.max(f.health, f.healthLag - 1.2);
     if (f.healthLag < f.health) f.healthLag = f.health;
   }
 }
 
+function beginRound() {
+  resetFighters();   // start positions, full health, effects cleared
+  phase = 'intro';
+  phaseFrames = 0;
+  clock = ROUND.seconds * 60;
+  roundWinner = -1;
+}
+function endRound(kind, winner) {
+  phase = kind;
+  phaseFrames = 0;
+  roundWinner = winner;
+  if (winner >= 0) wins[winner]++;
+  for (const f of [player, cpu]) f.buffer = null;
+  sfx(kind === 'ko' ? 'ko' : 'bell');
+}
+function nextRound() {
+  if (wins[0] >= ROUND.winsNeeded || wins[1] >= ROUND.winsNeeded) { showResult(); return; }
+  if (roundWinner >= 0) round++;   // a draw replays the same round
+  beginRound();
+}
+function showResult() {
+  state = 'result';
+  const won = wins[0] > wins[1];
+  resultTitle.textContent = won ? 'You win' : 'You lose';
+  resultScore.textContent = player.name + ' ' + wins[0] + ' \u2013 ' + wins[1] + ' ' + cpu.name;
+  resultEl.classList.add('on');
+  clearInput();
+  updateControls();
+  sfx(won ? 'win' : 'lose');
+}
+
 function startGame() {
-  resetFighters();
+  round = 1;
+  wins = [0, 0];
+  beginRound();
   clearInput();
   simFrame = 0;
   state = 'playing';
   overlay.style.display = 'none';
+  resultEl.classList.remove('on');
   updateControls();
-  sfx('start');
 }
 
-startBtn.addEventListener('click', () => {
-  window.kbEnterFullscreen?.(document.documentElement);
-  ensureAudio();
-  startGame();
-});
-backToArcade.addEventListener('click', () => { window.kbExitFullscreen?.(); });
+for (const btn of [startBtn, againBtn]) {
+  btn.addEventListener('click', () => {
+    window.kbEnterFullscreen?.(document.documentElement);
+    ensureAudio();
+    startGame();
+  });
+}
+for (const a of [backToArcade, resultBack]) a.addEventListener('click', () => { window.kbExitFullscreen?.(); });
 
 let last = performance.now(), acc = 0;
 let fps = 60, fpsFrames = 0, fpsSince = last;
@@ -1393,7 +1544,9 @@ window.dojoDuel = {
   get muted() { return muted; },
   get dummy() { return DUMMY_MODES[dummyIndex].id; },
   get lastHit() { return lastHit; },
-  get fx() { return { hitstop, shake, sparks: sparks.length, bursts: bursts.map(b => ({ word: b.word, scale: b.scale, x: b.x, y: b.y })), flash: [player.flash, cpu.flash] }; },
+  get fx() { return { hitstop, shake, sparks: sparks.length, bursts: bursts.map(b => ({ word: b.word, scale: b.scale, x: b.x, y: b.y, top: b.top })), flash: [player.flash, cpu.flash] }; },
+  get match() { return { round, wins: wins.slice(), phase, phaseFrames, clock, roundWinner, banner: state === 'playing' ? bannerText() : null }; },
+  set clock(v) { clock = v; },
   get sfxLog() { return sfxLog.slice(); },
   set paused(v) { paused = !!v; acc = 0; },
   step(n, keys) {
@@ -1403,8 +1556,9 @@ window.dojoDuel = {
     }
   },
   reset() { resetFighters(); clearInput(); },
+  startGame,
   player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
-  MOVE, MOVES, BOXES, FX, FS, FLOOR, MAX_HEALTH
+  MOVE, MOVES, BOXES, FX, ROUND, FS, FLOOR, MAX_HEALTH
 };
 
 resetFighters();
