@@ -271,18 +271,27 @@ are the current values in the tables below; check those before quoting.
 - **Energy and power-ups** (`POWER`): a blue meter under each health bar.
   It starts each round at 35 of 100, refills about 2 a second plus 6 for
   each hit you land, and stops refilling while you block. It pays for
-  three power-ups:
+  six power-ups:
   - **Fireball** (40): a projectile that can be blocked.
   - **Boost** (40): 4 s of faster walking and quicker recovery.
   - **Shield** (60): soaks one hit, or lasts 2 s.
+  - **Parry** (30): a brief stance (a 10-frame window after 2 frames).
+    A hit in the window does nothing, stuns the attacker for 40 frames and
+    refunds 15 energy; a parried fireball fizzles. Mistimed, it leaves you
+    in an 18-frame recovery.
+  - **Rage** (45): 4 s of dealing 1.4x damage and taking 1.3x.
+  - **Dash strike** (25): a 10-frame wind-up, then an 80 px lunging punch
+    (11 damage). It's -16 on block, so unsafe.
 
-  The CPU plays by the same energy rules.
+  The CPU plays by the same energy rules. REN (Easy, Hard) only uses the
+  first three; the challengers use the new ones too (GORO dashes and rages,
+  IWA and SORA parry, the Sensei uses all three).
 - **Controls:**
   - Touch: a left pad to move, jump and crouch; Punch, Kick, Block and
-    Power buttons; and three power icons (🔥 ⚡ 🛡️) to pick the power-up
-    before pressing Power.
-  - Keyboard: arrows or W A S D to move, J punch, K kick, L block, and 1 / 2
-    / 3 for the power-ups.
+    Power buttons; and six power icons in two columns (🔥 ⚡ 🛡️ outside, ✋ 💢
+    💨 inside) to pick the power-up before pressing Power.
+  - Keyboard: arrows or W A S D to move, J punch, K kick, L block, and 1 to
+    6 for the power-ups.
   - Other keys: M mutes, H shows hitboxes, T sets the Practice dummy,
     Escape resumes.
   - The How to play panel opens on the first visit, and "?" brings it back.
@@ -291,7 +300,8 @@ are the current values in the tables below; check those before quoting.
   POW! / WHAM! bursts appear on K.O.s and fireball hits.
 - **History:** built in seven steps (1.56.0 to 1.63.0, PRs #54 onward),
   then the 1.64.0 fix that stops jab spam beating Hard, the four
-  challengers in 1.68.0 and Tournament mode in 1.69.0. Step by step in
+  challengers in 1.68.0, Tournament mode in 1.69.0 and Parry / Rage / Dash
+  strike in 1.70.0. Step by step in
   `BACKLOG.md`, player-facing notes in `changelog.html`.
 
 ### File layout (top to bottom)
@@ -304,7 +314,7 @@ are the current values in the tables below; check those before quoting.
 - **HTML:** `#rotateHint`, then `#wrap` (canvas, `#topBtns`, `#overlay`
   title screen with the "?" button, `#howto`, `#pause`, `#upgrade` (the
   tournament upgrade pick), `#result`), then
-  `#controls` (pad, four action buttons, three power icons).
+  `#controls` (pad, four action buttons, six power icons in a 2x3 grid).
 - **Script, in order:** the tuning tables `POWER`, `AI_PRESETS`,
   `TOURNAMENT`, `UPGRADES`, arena
   constants, `MOVE`, `FX`, `ROUND`, `BOXES`, `MOVES`; then fighter update
@@ -330,9 +340,17 @@ are the current values in the tables below; check those before quoting.
   health; a draw or double KO replays the round.
 - **`POWER`** — the energy economy (`energy.start` fraction of `max`, `regen`
   per second, `onHit` bonus, no refill while blocking), each power-up's
-  cost and numbers (`fireball`, `boost`, `shield`), and `POWER.ai`, the
-  rules for when the CPU reaches for one. Keep `shield.cost` above
-  `energy.start * max`, or every round opens with a free shield.
+  cost and numbers (`fireball`, `boost`, `shield`, `parry`, `rage`,
+  `dash`), and `POWER.ai`, the rules for when the CPU reaches for one. Keep
+  `shield.cost` above `energy.start * max`, or every round opens with a
+  free shield. Parry and Dash strike are `MOVES` rows built from `POWER`
+  (parry has no hitbox; its active frames are the window, see `parrying()`;
+  dash has a `lunge`, px a frame through its active frames, and the threat
+  ranges add the lunge). Rage scales landed damage through `rageMul()`.
+  The new `POWER.ai` rules (`parryChance` / `parryLead`, `rageChance` /
+  `rageRange` / `rageFinish`, `dashChance` / `dashMin` / `dashMax`) are
+  off (chance 0) by default and only roll the RNG when on, so Easy and Hard
+  play exactly as before; challengers turn them on in `powerAi`.
 - **`AI_PRESETS`** — Easy / Hard (REN) and the challengers `rusher`,
   `turtle`, `zoner`, `sensei`, in the Air Hockey shape (delay + jitter +
   prediction, never a speed multiplier): `reactionFrames` (how old the
@@ -392,6 +410,10 @@ are the current values in the tables below; check those before quoting.
   each win, and report runs won, how many won fight 1 and fight 2, and run
   length in game time. `window.dojoDuel` has `tour`, `opponent` and
   `pickUpgrade(i)` for this.
+  Bots `dash`, `rage` (jab spam + rage) and `parry` (jab spam + mashed
+  parry) cover the new powers; mid and good also punish a blocked move at
+  -10 or worse (only the dash strike). `--powers` adds a column of what
+  the CPU spent energy on per match and how many hits it parried.
   60 matches a row is about +/-7 points of noise; check a change on a
   second seed range (`--first-seed 2000`) before trusting it.
 - Balance targets (1.64.0, numbers in PR for that version): jab spam vs
@@ -402,6 +424,8 @@ are the current values in the tables below; check those before quoting.
   Zoner and Sensei, no challenger loses more than 50% to a single spammed
   move, good bot vs each 15-45%. Mid bot wins little against any of them
   (2-20%); they are meant to be harder than Easy.
+  New powers (1.70.0): the same challenger targets hold, and dash, rage
+  and parry spam lose to every opponent.
   Tournament (1.69.0) has no target yet. The good bot wins about 3-4% of
   runs, mostly because the single-round fights are a coin flip it often
   loses.

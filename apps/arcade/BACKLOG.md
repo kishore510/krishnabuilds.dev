@@ -86,7 +86,18 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         KAI's name and FIGHT n/3 under the clock. ?seed=N repeats the
         opponent draw and the offers. Harness rows `*-tournament`
         (runs won, how far, run length); numbers in the PR
-  - [ ] PR 3: new powers (Parry, Rage, Dash strike)
+  - [x] PR 3 (1.70.0): Parry (30: 2-frame start, 10-frame window, 18
+        recovery; a parried hit stuns the attacker 40 frames, refunds 15,
+        fizzles a fireball), Rage (45: 4 s, deal x1.4, take x1.3), Dash
+        strike (25: 10-frame wind-up, 80 px lunge on its 8 active frames,
+        -16 on block). Keys 4-6 and a second column of touch icons. CPU
+        rules in `POWER.ai` (`parryChance` / `parryLead`, `rageChance` /
+        `rageRange` / `rageFinish`, `dashChance` / `dashMin` / `dashMax`),
+        all off by default so Easy / Hard are unchanged; challengers turn
+        them on in `powerAi`. Sensei `dashChance` tuned to 0.2. Lunging moves
+        count their lunge in the threat ranges. Harness: dash / rage / parry
+        spam bots, `--powers`, bots punish blocked moves at -10 or worse
+        (only the dash strike); numbers in the PR
   - [ ] PR 4: arenas with one gameplay tweak each (ice, moon, temple)
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),

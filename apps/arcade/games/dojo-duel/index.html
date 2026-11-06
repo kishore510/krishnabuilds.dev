@@ -359,7 +359,7 @@
   }
   #actions {
     position: absolute;
-    right: calc(16px + var(--pw) + var(--gap) + env(safe-area-inset-right, 0px));
+    right: calc(16px + 2 * var(--pw) + 6px + var(--gap) + env(safe-area-inset-right, 0px));
     bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
     display: grid;
     grid-template-columns: var(--btn) var(--btn);
@@ -388,11 +388,19 @@
     position: absolute;
     right: calc(16px + env(safe-area-inset-right, 0px));
     bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
-    display: flex;
-    flex-direction: column-reverse;
+    display: grid;
+    grid-template-columns: var(--pw) var(--pw);
+    grid-template-rows: var(--pw) var(--pw) var(--pw);
     gap: 6px;
     pointer-events: none;
   }
+  /* two columns, each filled bottom-up: 🔥 ⚡ 🛡️ on the outside (keys 1-3), ✋ 💢 💨 inside (4-6) */
+  #powers .pw:nth-child(1) { grid-area: 3 / 2; }
+  #powers .pw:nth-child(2) { grid-area: 2 / 2; }
+  #powers .pw:nth-child(3) { grid-area: 1 / 2; }
+  #powers .pw:nth-child(4) { grid-area: 3 / 1; }
+  #powers .pw:nth-child(5) { grid-area: 2 / 1; }
+  #powers .pw:nth-child(6) { grid-area: 1 / 1; }
   .pw {
     pointer-events: auto;
     touch-action: none;
@@ -475,9 +483,9 @@
       <b>Move, jump, crouch</b><span>Left pad</span><span>Arrows or W A S D</span>
       <b>Punch / Kick</b><span>Punch / Kick</span><span>J / K</span>
       <b>Block</b><span>Hold back, or Block</span><span>Hold back, or L</span>
-      <b>Power-up</b><span>Pick 🔥 ⚡ 🛡️, then Power</span><span>1 / 2 / 3</span>
+      <b>Power-up</b><span>Pick 🔥 ⚡ 🛡️ ✋ 💢 💨, then Power</span><span>1 to 6</span>
     </div>
-    <p class="small">Crouch + Kick sweeps (block it crouching). The blue meter pays for power-ups. M mutes, H shows hitboxes, T sets the Practice dummy.</p>
+    <p class="small">Crouch + Kick sweeps (block it crouching). The blue meter pays for power-ups: Fireball, Boost, Shield, Parry (time it as a hit lands to stun the attacker), Rage (hit harder, take more) and Dash strike (a lunging punch, unsafe if blocked). M mutes, H shows hitboxes, T sets the Practice dummy.</p>
     <button id="howClose" type="button">Got it</button>
   </div>
   <div id="pause" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
@@ -517,6 +525,9 @@
     <button class="pw" type="button" role="radio" data-power="fireball" aria-label="Fireball" aria-checked="true"><span>🔥</span></button>
     <button class="pw" type="button" role="radio" data-power="boost" aria-label="Speed boost" aria-checked="false"><span>⚡</span></button>
     <button class="pw" type="button" role="radio" data-power="shield" aria-label="Shield" aria-checked="false"><span>🛡️</span></button>
+    <button class="pw" type="button" role="radio" data-power="parry" aria-label="Parry" aria-checked="false"><span>✋</span></button>
+    <button class="pw" type="button" role="radio" data-power="rage" aria-label="Rage" aria-checked="false"><span>💢</span></button>
+    <button class="pw" type="button" role="radio" data-power="dash" aria-label="Dash strike" aria-checked="false"><span>💨</span></button>
   </div>
 </div>
 
@@ -588,17 +599,57 @@ const POWER = {
     cost: 60,              // keep it above energy.start * max, or every round opens with a free shield
     frames: 120            // 2 seconds, or until it absorbs one hit (a blocked hit doesn't use it up)
   },
+  // Parry: a short stance. A hit that would land on you while it's open does
+  // nothing; the attacker is stunned (a fireball just fizzles) and you get
+  // some energy back. Miss the timing and you sit in the recovery.
+  parry: {
+    cost: 30,
+    startup: 2, window: 10, recovery: 18,   // frames: before it opens, open, then the whiff recovery
+    stun: 40,              // the attacker's hitstun on a parried hit (punish window)
+    refund: 15,            // energy back on a parry
+    hitstop: 10
+  },
+  // Rage: hit harder for a few seconds, but take more too.
+  rage: {
+    cost: 45,
+    frames: 240,           // 4 seconds
+    dealMul: 1.4,          // damage you deal (rounded)
+    takeMul: 1.3           // damage you take
+  },
+  // Dash strike: a wind-up, then a lunging punch that covers ground fast.
+  // The wind-up is long enough to see coming, and the recovery is long, so
+  // it's unsafe when blocked (and a whiff is easy to punish).
+  dash: {
+    cost: 25,
+    startup: 10, active: 8, recovery: 24,
+    lunge: 10,             // px per frame forward through the active frames (80 px), stopping on contact
+    damage: 11, chip: 2, hitstun: 18, blockstun: 10, knock: 5.5,
+    hitbox: { x: 48, y: 68, w: 30, h: 20 },
+    hitstop: 7
+  },
   // When the CPU reaches for a power-up (how often is AI_PRESETS.powerUse).
   ai: {
     shieldBelowHealth: 25, // shield when its health is at or below this...
     shieldRange: 170,      // ...and the player is within this many px
     fireballRange: 200,    // fireball when the player is further than this (px)
     boostRange: 140,       // boost to press in from between this and fireballRange (px; further out it saves for a fireball)...
-    boostSpare: 75         // ...or at any range once it has this much energy to spare
+    boostSpare: 75,        // ...or at any range once it has this much energy to spare
+    // The newer powers are off by default (chance 0), so Easy and Hard play
+    // exactly as before; a challenger's powerAi turns them on. Each is
+    // rolled after powerUse, and only when it can afford the power.
+    parryChance: 0,        // chance to parry, instead of blocking, an attack it sees coming with at least parryLead frames to go
+    parryLead: 2,          //   (frames left before the attack is active, as it estimates them; the stance opens in POWER.parry.startup)
+    rageChance: 0,         // chance to rage when the player is within rageRange px...
+    rageRange: 150,
+    rageFinish: 50,        //   ...and at or below this much health
+    dashChance: 0,         // chance to dash strike from between dashMin and dashMax px
+    dashMin: 110,
+    dashMax: 175
   }
 };
-const POWER_IDS = ['fireball', 'boost', 'shield'];   // keys 1, 2, 3
-const POWER_NAMES = { fireball: 'Fireball', boost: 'Boost', shield: 'Shield' };
+const POWER_IDS = ['fireball', 'boost', 'shield', 'parry', 'rage', 'dash'];   // keys 1-6
+const POWER_NAMES = { fireball: 'Fireball', boost: 'Boost', shield: 'Shield', parry: 'Parry', rage: 'Rage', dash: 'Dash strike' };
+const MOVE_POWERS = ['fireball', 'parry', 'dash'];   // power-ups that are moves: they take the frame like an attack
 
 // --- CPU AI difficulty. Same shape as Air Hockey (delay + jitter +
 // prediction), never a single speed multiplier. The CPU only ever sends the
@@ -640,21 +691,22 @@ const AI_PRESETS = {
   // that replace POWER.ai's for this opponent only. Easy and Hard are REN.
   rusher: { reactionFrames: 7, thinkInterval: 12, error: 14, blockChance: 0.35, aggression: 0.8, preferredRange: 72, antiAirChance: 0.4, powerUse: 0.3,
             counterHits: 2, counterWindow: 2.5, counterFrames: 150, counterBlock: 0.8, counterSpace: 12, counterPower: 0.2,
-            powerAi: { boostSpare: 50 },
+            powerAi: { boostSpare: 50, dashChance: 0.5, rageChance: 0.6 },
             name: 'GORO', accent: '#ffa94d', intro: 'GORO never stops coming. Block the rush, then punish.',
             colors: { gi: '#e8862a', giDark: '#a85a14', band: '#1a1a1a', belt: '#1a1a1a', skin: '#d9a070' } },
   turtle: { reactionFrames: 5, thinkInterval: 20, error: 10, blockChance: 0.9, aggression: 0.2, preferredRange: 112, antiAirChance: 0.6, powerUse: 0.25,
             counterHits: 3, counterWindow: 2.5, counterFrames: 300, counterBlock: 0.98, counterSpace: 16, counterPower: 0.2,
+            powerAi: { parryChance: 0.5 },
             name: 'IWA', accent: '#7bd88f', intro: 'IWA blocks almost everything and waits for you to slip.',
             colors: { gi: '#3f8f4e', giDark: '#2a6135', band: '#f2e6c9', belt: '#5a3a1a', skin: '#b98258' } },
   zoner:  { reactionFrames: 6, thinkInterval: 14, error: 12, blockChance: 0.75, aggression: 0.3, preferredRange: 230, antiAirChance: 0.6, powerUse: 0.7,
             counterHits: 3, counterWindow: 2.5, counterFrames: 180, counterBlock: 0.9, counterSpace: 24, counterPower: 0.5,
-            powerAi: { fireballRange: 180, boostRange: 999, boostSpare: 999 },   // fireballs only, never boosts in
+            powerAi: { fireballRange: 180, boostRange: 999, boostSpare: 999, parryChance: 0.3 },   // fireballs, never boosts or dashes in
             name: 'SORA', accent: '#c3a6ff', intro: 'SORA keeps away and throws fireballs. Get in close.',
             colors: { gi: '#7a4fc9', giDark: '#53338f', band: '#ffffff', belt: '#1a1a1a', skin: '#e3b48a' } },
   sensei: { reactionFrames: 5, thinkInterval: 14, error: 12, blockChance: 0.85, aggression: 0.45, preferredRange: 104, antiAirChance: 0.7, powerUse: 0.6,
             counterHits: 4, counterWindow: 2.5, counterFrames: 180, counterBlock: 0.95, counterSpace: 16, counterPower: 0.4,
-            powerAi: { shieldBelowHealth: 40, fireballRange: 180, boostSpare: 65 },
+            powerAi: { shieldBelowHealth: 40, fireballRange: 180, boostSpare: 65, parryChance: 0.5, rageChance: 0.6, dashChance: 0.2 },
             name: 'SENSEI', accent: '#ffd166', intro: 'The boss. Reads your habits and spends energy well.',
             colors: { gi: '#2b2b2f', giDark: '#151518', band: '#ffd166', belt: '#ffd166', skin: '#c98d62' } }
 };
@@ -796,7 +848,14 @@ const MOVES = {
   // first active frame carries the hit. All its numbers come from POWER.
   fireball: { name: 'Fireball', button: 'power', pose: 'stand', startup: POWER.fireball.startup, active: 1, recovery: POWER.fireball.recovery,
               damage: POWER.fireball.damage, chip: POWER.fireball.chip, hitstun: POWER.fireball.hitstun, blockstun: POWER.fireball.blockstun,
-              knock: POWER.fireball.knock, height: 'mid', hitbox: null, hitstop: POWER.fireball.hitstop, burst: POWER.fireball.burst }
+              knock: POWER.fireball.knock, height: 'mid', hitbox: null, hitstop: POWER.fireball.hitstop, burst: POWER.fireball.burst },
+  // Parry: a stance, no hitbox; its "active" frames are the window (see parrying()).
+  parry:    { name: 'Parry', button: 'power', pose: 'stand', startup: POWER.parry.startup, active: POWER.parry.window, recovery: POWER.parry.recovery,
+              damage: 0, chip: 0, hitstun: 0, blockstun: 0, knock: 0, height: 'mid', hitbox: null },
+  // Dash strike: lunges forward (lunge px a frame) through its active frames.
+  dash:     { name: 'Dash Strike', button: 'power', pose: 'stand', startup: POWER.dash.startup, active: POWER.dash.active, recovery: POWER.dash.recovery,
+              damage: POWER.dash.damage, chip: POWER.dash.chip, hitstun: POWER.dash.hitstun, blockstun: POWER.dash.blockstun,
+              knock: POWER.dash.knock, height: 'mid', hitbox: POWER.dash.hitbox, hitstop: POWER.dash.hitstop, lunge: POWER.dash.lunge }
 };
 function moveTotal(m) { return m.startup + m.active + m.recovery; }
 // A move's end frame for this fighter (a speed boost shortens recovery).
@@ -826,7 +885,7 @@ function resetFighters() {
       jumpDir: 0, walkPhase: 0, crouched: false, airAttackUsed: false,
       move: null, buffer: null, inp: NO_INPUT, jumps: 0,
       health: maxHealth(f), healthLag: maxHealth(f), lastHitFrame: -9999, hitCooldown: 0, flash: 0,
-      energy: POWER.energy.max * POWER.energy.start + f.mods.startEnergy, noEnergy: 0, powerBuffer: null, boost: 0, shield: 0
+      energy: POWER.energy.max * POWER.energy.start + f.mods.startEnergy, noEnergy: 0, powerBuffer: null, boost: 0, shield: 0, rage: 0
     });
   }
   lastHit = null;
@@ -880,6 +939,7 @@ function updateFighter(f, opp, inp) {
   if (f.hitCooldown > 0) f.hitCooldown--;
   if (f.boost > 0) f.boost--;
   if (f.shield > 0) f.shield--;
+  if (f.rage > 0) f.rage--;
   if (f.noEnergy > 0) f.noEnergy--;
   if (inp.punch) f.buffer = { button: 'punch', t: INPUT_BUFFER };
   if (inp.kick) f.buffer = { button: 'kick', t: INPUT_BUFFER };
@@ -931,6 +991,7 @@ function updateFighter(f, opp, inp) {
   } else if (f.state === 'attack') {
     f.move.frame++;
     if (f.move.id === 'fireball' && f.move.frame === f.move.def.startup) spawnFireball(f);
+    if (f.move.def.lunge && !f.move.hit && movePhase(f) === 'active') f.x += f.facing * f.move.def.lunge;
     if (f.move.frame >= moveEnd(f)) { f.move = null; free = true; }
   } else if (f.state === 'hitstun' || f.state === 'blockstun') {
     if (f.stateFrames >= f.stun) free = true;
@@ -944,13 +1005,13 @@ function updateFighter(f, opp, inp) {
     // Only grounded, actionable fighters turn to face the opponent, so
     // jumping over them doesn't flip you mid-air.
     if (Math.abs(opp.x - f.x) > 1) f.facing = opp.x > f.x ? 1 : -1;
-    // Boost and shield switch on and leave the fighter free to act this
-    // frame; a fireball is a throw that takes the frame like an attack.
+    // Boost, shield and rage switch on and leave the fighter free to act
+    // this frame; fireball, parry and dash strike are moves that take it.
     let threw = false;
     if (f.powerBuffer) {
       const id = f.powerBuffer.id;
       f.powerBuffer = null;
-      threw = usePower(f, id) && id === 'fireball';
+      threw = usePower(f, id) && MOVE_POWERS.includes(id);
     }
     if (threw) {
       // the throw has started
@@ -994,7 +1055,7 @@ function underAttack(f, opp) {
   const m = opp.move;
   if (!m || !m.def.hitbox || m.hit || movePhase(opp) === 'recovery') return false;
   const hb = m.def.hitbox;
-  return Math.abs(opp.x - f.x) < (hb.x + hb.w / 2) * FS + GUARD_MARGIN;
+  return Math.abs(opp.x - f.x) < (hb.x + hb.w / 2) * FS + GUARD_MARGIN + (m.def.lunge || 0) * m.def.active;
 }
 
 // --- Energy and power-ups (values in POWER at the top) ---
@@ -1019,7 +1080,16 @@ function usePower(f, id) {
   if (id === 'fireball') { startMove(f, 'fireball'); sfx('fireCast'); }
   else if (id === 'boost') { f.boost = POWER.boost.frames + f.mods.boostFrames; sfx('boost'); ringFx(f, '255,211,42'); }
   else if (id === 'shield') { f.shield = POWER.shield.frames + f.mods.shieldFrames; sfx('shield'); ringFx(f, '120,205,255'); }
+  else if (id === 'rage') { f.rage = POWER.rage.frames; sfx('rage'); ringFx(f, '255,70,50'); }
+  else if (id === 'parry') { startMove(f, 'parry'); sfx('parryUp'); }
+  else if (id === 'dash') { startMove(f, 'dash'); sfx('dash'); }
   return true;
+}
+// The parry window: the stance's "active" frames.
+function parrying(f) { return !!f.move && f.move.id === 'parry' && movePhase(f) === 'active'; }
+// Rage scales damage both ways (a blocked hit's chip is left alone).
+function rageMul(att, def) {
+  return (att.rage > 0 ? POWER.rage.dealMul : 1) * (def.rage > 0 ? POWER.rage.takeMul : 1);
 }
 function spawnFireball(f) {
   const F = POWER.fireball;
@@ -1120,6 +1190,27 @@ function applyHit(att, def, hit) {
   def.lastHitFrame = simFrame;
   const dir = hit.src ? Math.sign(src.vx) : att.x <= def.x ? 1 : -1;
   const blocked = canBlock(def, src, m);
+  // A parry beats any hit in its window: no damage, the parrier gets energy
+  // back and is free at once, and an attacker in reach is stunned.
+  if (parrying(def)) {
+    const P = POWER.parry;
+    def.move = null;
+    enterState(def, 'idle');
+    def.energy = Math.min(POWER.energy.max, def.energy + P.refund);
+    if (!hit.src) {
+      att.move = null;
+      att.buffer = null;
+      att.stun = P.stun;
+      att.vx = dir * 1.5;
+      enterState(att, 'hitstun');
+    }
+    lastHit = { by: att.name, on: def.name, move: m.name, blocked: false, absorbed: false, parried: true, dealt: 0, ko: false, frame: simFrame };
+    hitstop = Math.max(hitstop, P.hitstop);
+    ringFx(def, '255,255,255', 1.4);
+    bursts.push({ x: at.x, y: at.y, word: 'PARRY!', scale: 0.8, rot: (Math.random() * 2 - 1) * 0.12, t: 0, frames: FX.burst.frames, rise: FX.burst.rise, top: false });
+    sfx('parry');
+    return;
+  }
   // A shield soaks the first hit that would land: no damage, no stun.
   if (!blocked && def.shield > 0) {
     def.shield = 0;
@@ -1140,7 +1231,7 @@ function applyHit(att, def, hit) {
     enterState(def, 'blockstun');
     sfx('block');
   } else {
-    dealt = Math.min(m.damage, def.health);
+    dealt = Math.min(Math.round(m.damage * rageMul(att, def)), def.health);
     def.health -= dealt;
     def.move = null;
     def.buffer = null;
@@ -1223,7 +1314,7 @@ const KEYMAP = {
   ArrowUp: 'up', KeyW: 'up',
   ArrowDown: 'down', KeyS: 'down',
   KeyJ: 'punch', KeyK: 'kick', KeyL: 'block',
-  Digit1: 'power1', Digit2: 'power2', Digit3: 'power3',
+  Digit1: 'power1', Digit2: 'power2', Digit3: 'power3', Digit4: 'power4', Digit5: 'power5', Digit6: 'power6',
   // the numeric keypad's arrows (Num Lock off reports these codes on some keyboards)
   Numpad4: 'left', Numpad6: 'right', Numpad8: 'up', Numpad2: 'down'
 };
@@ -1234,7 +1325,7 @@ const KEYMAP_BY_KEY = {
   ArrowUp: 'up', Up: 'up', ArrowDown: 'down', Down: 'down',
   a: 'left', d: 'right', w: 'up', s: 'down', j: 'punch', k: 'kick', l: 'block',
   A: 'left', D: 'right', W: 'up', S: 'down', J: 'punch', K: 'kick', L: 'block',
-  1: 'power1', 2: 'power2', 3: 'power3'
+  1: 'power1', 2: 'power2', 3: 'power3', 4: 'power4', 5: 'power5', 6: 'power6'
 };
 const KEYMAP_BY_KEYCODE = { 37: 'left', 38: 'up', 39: 'right', 40: 'down', 100: 'left', 104: 'up', 102: 'right', 98: 'down' };
 function keyName(e) {
@@ -1246,14 +1337,14 @@ const touchHeld = {};
 const pressed = {};
 let selectedPower = 'fireball';   // what the touch Power button fires
 function held(name) {
-  if (name === 'power') return !!(keyHeld.power1 || keyHeld.power2 || keyHeld.power3 || touchHeld.power);
+  if (name === 'power') return POWER_IDS.some((id, i) => keyHeld['power' + (i + 1)]) || !!touchHeld.power;
   return !!(keyHeld[name] || touchHeld[name]);
 }
-// power1..3 are keys 1 2 3; plain 'power' is the touch button (the selected icon).
+// power1..6 are keys 1-6; plain 'power' is the touch button (the selected icon).
 function press(name) {
   if (name === 'punch' || name === 'kick') pressed[name] = true;
   else if (name === 'power') pressed.power = selectedPower;
-  else if (/^power[123]$/.test(name)) pressed.power = POWER_IDS[Number(name[5]) - 1];
+  else if (/^power[1-6]$/.test(name)) pressed.power = POWER_IDS[Number(name[5]) - 1];
 }
 function readInput() {
   const h = (held('right') ? 1 : 0) - (held('left') ? 1 : 0);
@@ -1503,7 +1594,8 @@ function reach(id) {
   const front = Math.max(...BOXES.stand.hurt.filter(b => b.y < hb.y + hb.h && hb.y < b.y + b.h).map(b => b.x + b.w / 2));
   return (hb.x + hb.w / 2 + front) * FS - 4;
 }
-function threatRange(def) { return (def.hitbox.x + def.hitbox.w / 2) * FS + STAND_HALF + 24; }
+// (a lunging move reaches its lunge further)
+function threatRange(def) { return (def.hitbox.x + def.hitbox.w / 2) * FS + STAND_HALF + 24 + (def.lunge || 0) * def.active; }
 const GUARD_RANGE = threatRange(MOVES.kick);   // inside this the player can reach it, so guarding is worth it
 const POKES = [['jab', 0.4], ['kick', 0.35], ['sweep', 0.15], ['lowJab', 0.1]];
 // Picks from the pokes that reach from here; if none do, from all of them (it walks in).
@@ -1563,9 +1655,16 @@ function aiInput() {
     }
   }
 
-  // Block an attack it sees coming (once per attack).
+  // Block an attack it sees coming (once per attack), or parry it if
+  // POWER.ai lets it, there's time, and it can afford one.
   if (m && MOVES[m.id].hitbox && m.phase !== 'recovery' && !m.hit && m.n !== ai.seenMove && dist < threatRange(MOVES[m.id]) && ai.decision !== 'anti-air jab') {
     ai.seenMove = m.n;
+    const A = aiRules(P);
+    // frames until it goes active, as it guesses: the frame it saw, plus the time since
+    const lead = MOVES[m.id].startup - m.frame - P.reactionFrames;
+    if (free && lead >= A.parryLead && canAfford(me, 'parry') && P.powerUse && aiRoll(A.parryChance * P.powerUse)) {
+      ai.poke = null; inp.power = 'parry'; ai.lastPower = POWER_NAMES.parry; decide('parry', 20); return inp;
+    }
     if (rnd() < blockChance) { ai.poke = null; ai.blockLow = MOVES[m.id].height === 'low'; decide(ai.blockLow ? 'block low' : 'block high'); }
   }
   // Block a fireball it sees coming (once per fireball).
@@ -1636,7 +1735,7 @@ function aiInput() {
     if (pw) {
       inp.power = pw;
       ai.lastPower = POWER_NAMES[pw];
-      decide(pw === 'boost' ? 'approach' : 'wait');   // boost is for pressing in
+      decide(pw === 'boost' ? 'approach' : 'wait');   // boost is for pressing in (a dash strike is a move: it's on its way)
       return inp;
     }
     // Inside the player's reach it pokes less and guards more.
@@ -1732,11 +1831,17 @@ function incomingFireball(o) {
 // and the player is close, a fireball from range, a boost to press in.
 // It checks its own energy first (it knows its own state exactly), so it
 // pays the same costs as the player and never has a press refused.
+function aiRules(P) { return P.powerAi ? Object.assign({}, POWER.ai, P.powerAi) : POWER.ai; }
+// A roll that only draws from the RNG when the chance is above 0, so a
+// preset with a rule switched off plays exactly as it did before the rule.
+function aiRoll(chance) { return chance > 0 && rnd() < chance; }
 function aiPower(P, dist) {
-  const me = cpu, A = P.powerAi ? Object.assign({}, POWER.ai, P.powerAi) : POWER.ai;
+  const me = cpu, A = aiRules(P);
   if (!P.powerUse || rnd() >= P.powerUse) return null;
   if (me.health <= A.shieldBelowHealth && me.shield <= 0 && dist < A.shieldRange && canAfford(me, 'shield')) return 'shield';
+  if (me.rage <= 0 && dist < A.rageRange && player.health <= A.rageFinish && canAfford(me, 'rage') && aiRoll(A.rageChance)) return 'rage';
   if (dist > A.fireballRange && !hasFireball(me) && canAfford(me, 'fireball')) return 'fireball';
+  if (dist >= A.dashMin && dist <= A.dashMax && canAfford(me, 'dash') && aiRoll(A.dashChance)) return 'dash';
   const pressIn = dist > A.boostRange && dist <= A.fireballRange;
   if ((pressIn || me.energy >= A.boostSpare) && me.boost <= 0 && canAfford(me, 'boost')) return 'boost';
   return null;
@@ -1859,6 +1964,10 @@ function sfx(name) {
     else if (name === 'shield') { tone(520, 0.45, 'sine', 0.09, 780); tone(780, 0.45, 'triangle', 0.04, 1170, 0.05); }
     else if (name === 'shieldBreak') { swoosh(0.2, 0.22, 3200, 1100); tone(1250, 0.18, 'triangle', 0.07, 320); }
     // not enough energy: a short dull click, nothing else happens
+    else if (name === 'rage') { tone(110, 0.22, 'sawtooth', 0.07, 70); tone(165, 0.22, 'sawtooth', 0.05, 90, 0.05); }
+    else if (name === 'parryUp') tone(1500, 0.05, 'triangle', 0.04, 1800);
+    else if (name === 'parry') { tone(2100, 0.2, 'triangle', 0.08, 1400); tone(3150, 0.12, 'sine', 0.05, 2400, 0.02); }
+    else if (name === 'dash') swoosh(0.16, 0.3, 500, 2200);
     else if (name === 'noEnergy') { thump(0.04, 0.5, 240); tone(95, 0.05, 'square', 0.05, 70); }
   } catch (e) {}
 }
@@ -2016,7 +2125,7 @@ function drawFighter(f, t) {
   // stagger: strongest as the hit lands, easing off over the hitstun
   const lean = hurt ? lerp(FX.stagger.lean, FX.stagger.leanEnd, Math.min(1, f.stateFrames / Math.max(1, f.stun))) : 0;
   const stepBack = FX.stagger.step * lean / FX.stagger.lean;
-  const guarding = f.state === 'guard' || f.state === 'blockstun' || (f.state === 'crouch' && f.inp.block);
+  const guarding = f.state === 'guard' || f.state === 'blockstun' || (f.state === 'crouch' && f.inp.block) || (f.move && f.move.id === 'parry');
 
   ctx.save();
   ctx.translate(f.x, f.y);
@@ -2083,8 +2192,8 @@ function drawFighter(f, t) {
   ctx.fillRect(-4, -p.hip + 4, 4, 9);
   // front arm
   let fx, fy;
-  if (moveId === 'jab' || moveId === 'lowJab') {
-    const tx = moveId === 'jab' ? 52 : 48, ty = moveId === 'jab' ? -82 : -58;
+  if (moveId === 'jab' || moveId === 'lowJab' || moveId === 'dash') {
+    const tx = moveId === 'lowJab' ? 48 : 52, ty = moveId === 'lowJab' ? -58 : -82;
     fx = lerp(24, tx, ext); fy = lerp(-chest + 8, ty, ext);
     limb(6, -chest + 6, lerp(18, (6 + tx) / 2, ext), lerp(-chest + 20, (-chest + 6 + ty) / 2, ext), fx, fy, 9, c.gi);
   } else if (moveId === 'fireball') {
@@ -2261,6 +2370,38 @@ function drawBoostAura(f, t) {
     ctx.globalAlpha = fade * (1 - k);
     ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - f.facing * 22, sy); ctx.stroke();
   }
+  ctx.restore();
+}
+// Rage: a flickering red glow round the fighter; it blinks in its last second.
+function drawRageAura(f, t) {
+  if (f.rage <= 0 || (f.rage < 60 && Math.floor(f.rage / 5) % 2 === 0)) return;
+  const cy = chestY(f);
+  const flick = 0.7 + 0.3 * Math.sin(t / 45) * Math.sin(t / 23);
+  ctx.save();
+  const g = ctx.createRadialGradient(f.x, cy, 8, f.x, cy, 84);
+  g.addColorStop(0, 'rgba(255,60,40,' + (0.45 * flick) + ')');
+  g.addColorStop(1, 'rgba(200,20,10,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.ellipse(f.x, cy, 54, 84, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+// Parry: a white glint at the guarding hands while the window is open.
+function drawParryGlint(f, t) {
+  if (!parrying(f)) return;
+  const x = f.x + f.facing * 30 * FS, y = chestY(f) - 4;
+  const k = 1 + 0.15 * Math.sin(t / 30);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x - 12 * k, y); ctx.lineTo(x + 12 * k, y);
+  ctx.moveTo(x, y - 16 * k); ctx.lineTo(x, y + 16 * k);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath(); ctx.arc(x, y, 14 * k, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 }
 // Shield: a translucent blue bubble over the fighter; it blinks in its last second.
@@ -2530,7 +2671,7 @@ function draw(t) {
   drawArena();
   // the attacker draws in front, then whoever is higher up
   const order = (player.move && !cpu.move) || player.y < cpu.y ? [cpu, player] : [player, cpu];
-  for (const f of order) { drawBoostAura(f, t); drawFighter(f, t); drawShieldBubble(f, t); }
+  for (const f of order) { drawBoostAura(f, t); drawRageAura(f, t); drawFighter(f, t); drawParryGlint(f, t); drawShieldBubble(f, t); }
   for (const p of projectiles) drawFireball(p, t);
   drawRings();
   drawFx();

@@ -18,7 +18,11 @@
 //   jab / kick / sweep  walk in to the move's furthest reach and mash it (a press every 6 frames,
 //                       about 10 a second, like a person hammering one button)
 //   fireball            throws a fireball whenever it can afford one, otherwise stands
+//   dash                walks in to dash strike range and dash strikes whenever it can afford one
+//   rage                jab spam, raging whenever it can afford it
+//   parry               jab spam, parrying (mashed) whenever it can afford it
 //   mid                 sees REN 14 frames late, blocks 50% of what it sees, punishes 35% of misses
+//                       (and of blocked moves that are -10 or worse, i.e. the dash strike)
 //   good                sees REN 8 frames late, blocks 80%, punishes 60%
 //
 // --set table.key=value edits AI_PRESETS (easy.* / hard.* / rusher.* / turtle.* /
@@ -39,6 +43,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');   // apps/arca
 
 const ROWS = {
   'jab-easy':      { bot: 'jab',      mode: 'easy' },
+  'dash-hard':     { bot: 'dash',     mode: 'hard' },
+  'rage-hard':     { bot: 'rage',     mode: 'hard' },
+  'parry-hard':    { bot: 'parry',    mode: 'hard' },
   'jab-hard':      { bot: 'jab',      mode: 'hard' },
   'kick-hard':     { bot: 'kick',     mode: 'hard' },
   'sweep-hard':    { bot: 'sweep',    mode: 'hard' },
@@ -50,17 +57,17 @@ const ROWS = {
 };
 // The challengers: every bot against each (rows like jab-sensei, good-zoner).
 for (const mode of ['rusher', 'turtle', 'zoner', 'sensei']) {
-  for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'mid', 'good']) ROWS[bot + '-' + mode] = { bot, mode };
+  for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'dash', 'rage', 'parry', 'mid', 'good']) ROWS[bot + '-' + mode] = { bot, mode };
 }
 // Tournament runs: the bot plays all three fights, picking a random upgrade
 // after each win (rows like good-tournament). Reported as runs won, how far
 // runs got, and how long a run lasts in game time (banners and hitstop included).
-for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'mid', 'good']) ROWS[bot + '-tournament'] = { bot, mode: 'tournament' };
+for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'dash', 'rage', 'parry', 'mid', 'good']) ROWS[bot + '-tournament'] = { bot, mode: 'tournament' };
 const LABEL = m => m[0].toUpperCase() + m.slice(1);
 
 // --- args ---
 const args = process.argv.slice(2);
-let matches = 60, first = 1000, rowNames = Object.keys(ROWS), workers = 4;
+let matches = 60, first = 1000, rowNames = Object.keys(ROWS), workers = 4, showPowers = false;
 const sets = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
@@ -72,6 +79,7 @@ for (let i = 0; i < args.length; i++) {
       : Object.keys(ROWS).filter(k => new RegExp('^' + r.replace(/\*/g, '.*') + '$').test(k)));
   }
   else if (a === '--workers') workers = Number(args[++i]);
+  else if (a === '--powers') showPowers = true;
   else if (a === '--set') {
     const [path, v] = args[++i].split('=');
     const [table, ...keys] = path.split('.');
@@ -124,7 +132,7 @@ function playMatch({ bot, mode, seed, sets }) {
     const front = Math.max(...BOXES.stand.hurt.filter(b => b.y < hb.y + hb.h && hb.y < b.y + b.h).map(b => b.x + b.w / 2));
     return (hb.x + hb.w / 2 + front) * FS - 4;
   };
-  const threat = id => (MOVES[id].hitbox.x + MOVES[id].hitbox.w / 2) * FS + 22 * FS + 24;
+  const threat = id => (MOVES[id].hitbox.x + MOVES[id].hitbox.w / 2) * FS + 22 * FS + 24 + (MOVES[id].lunge || 0) * MOVES[id].active;
 
   const SKILL = { mid: { delay: 14, block: 0.5, punish: 0.35 }, good: { delay: 8, block: 0.8, punish: 0.6 } }[bot];
   const hist = [];
@@ -133,6 +141,7 @@ function playMatch({ bot, mode, seed, sets }) {
   let frames = 0;
 
   const reached = [];
+  let parried = 0, lastSeen = null;
   for (;;) {
   while (D.state === 'playing' && frames < 60000) {
     frames++;
@@ -140,8 +149,15 @@ function playMatch({ bot, mode, seed, sets }) {
     const dx = ren.x - me.x, dist = Math.abs(dx), toward = dx >= 0 ? 'right' : 'left', away = dx >= 0 ? 'left' : 'right';
     const hold = {}, press = [];
 
-    if (bot === 'jab' || bot === 'kick' || bot === 'sweep') {
-      const id = bot;
+    if (bot === 'dash') {
+      // the lunge covers about lunge * (startup + active) px, plus the hit's reach
+      const far = reach('dash') + MOVES.dash.lunge * MOVES.dash.active * 0.8;
+      if (dist > far) hold[toward] = true;
+      else if (me.energy >= POWER.dash.cost && frames % 6 === 0) press.push('power6');
+    } else if (bot === 'jab' || bot === 'kick' || bot === 'sweep' || bot === 'rage' || bot === 'parry') {
+      const id = bot === 'rage' || bot === 'parry' ? 'jab' : bot;
+      if (bot === 'rage' && me.rage <= 0 && me.energy >= POWER.rage.cost) press.push('power5');
+      if (bot === 'parry' && me.energy >= POWER.parry.cost && frames % 6 === 3) press.push('power4');
       // presses toward the whole time (a crouch can't walk, so the sweep only crouches in reach)
       if (dist > reach(id)) hold[toward] = true;
       else { if (id === 'sweep') hold.down = true; else hold[toward] = true; if (frames % 6 === 0) press.push(MOVES[id].button); }
@@ -165,6 +181,12 @@ function playMatch({ bot, mode, seed, sets }) {
       if (fb && fb.n !== b.fbN) {
         b.fbN = fb.n;
         if (rnd() < SKILL.block) { b.blockUntil = frames + Math.abs(me.x - fb.x) / Math.abs(fb.vx) + 4; b.blockLow = false; b.plan = null; }
+      }
+      // see a very unsafe attack blocked (-10 or worse: only the dash strike;
+      // kick is -3, sweep -6): roll once to punish it, as a person would
+      if (m && def.hitbox && phase === 'recovery' && m.hit && def.blockstun - def.recovery <= -10 && me.state === 'blockstun' && m.n !== b.unsafeN) {
+        b.unsafeN = m.n;
+        if (rnd() < SKILL.punish) { b.plan = 'jab'; b.planT = 12; b.blockUntil = 0; }
       }
       // see an attack whiff: roll once to punish it
       if (m && def.hitbox && phase === 'recovery' && !m.hit && m.n !== b.whiffN) {
@@ -194,6 +216,8 @@ function playMatch({ bot, mode, seed, sets }) {
 
     for (const k of keys) D.hold(k, !!hold[k]);
     D.step(1, live ? press : []);
+    const lh = D.lastHit;
+    if (lh && lh !== lastSeen) { lastSeen = lh; if (lh.parried && lh.on !== me.name) parried++; }
   }
   if (D.state === 'upgrade') {
     reached.push(D.tour.fight);
@@ -204,7 +228,9 @@ function playMatch({ bot, mode, seed, sets }) {
   }
   for (const k of keys) D.hold(k, false);
   const w = D.match.wins;
-  return { won: w[0] > w[1], rounds: w, fights: D.tour ? D.tour.fight + (w[0] > w[1] ? 1 : 0) : null, seconds: frames / 60, opponents: D.tour && D.tour.ids };
+  const cpuPowers = {};
+  for (const e of D.powerLog) if (e.by !== me.name) cpuPowers[e.id] = (cpuPowers[e.id] || 0) + 1;
+  return { cpuPowers, parried, won: w[0] > w[1], rounds: w, fights: D.tour ? D.tour.fight + (w[0] > w[1] ? 1 : 0) : null, seconds: frames / 60, opponents: D.tour && D.tour.ids };
 }
 
 // --- run ---
@@ -221,8 +247,8 @@ async function freshPage(page) {
 }
 
 console.log(`Dojo Duel balance: ${matches} matches a row (seeds ${first}-${first + matches - 1})` + (sets.length ? ', with ' + sets.map(s => `${[s.table, ...s.keys].join('.')}=${JSON.stringify(s.value)}`).join(' ') : ''));
-console.log('| Matchup | Player match wins | Player round wins |');
-console.log('| --- | --- | --- |');
+console.log('| Matchup | Player match wins | Player round wins |' + (showPowers ? ' CPU powers per match |' : ''));
+console.log('| --- | --- | --- |' + (showPowers ? ' --- |' : ''));
 const tourRows = rowNames.filter(r => ROWS[r].mode === 'tournament');
 rowNames = rowNames.filter(r => ROWS[r].mode !== 'tournament');
 for (const name of rowNames) {
@@ -239,7 +265,12 @@ for (const name of rowNames) {
   const won = results.filter(r => r.won).length;
   const pr = results.reduce((t, r) => t + r.rounds[0], 0), cr = results.reduce((t, r) => t + r.rounds[1], 0);
   const pct = n => Math.round(100 * n) + '%';
-  console.log(`| ${row.bot} vs ${LABEL(row.mode)} | ${pct(won / results.length)} | ${pct(pr / (pr + cr))} |`);
+  // what the CPU spent energy on, per match (last fight only in a long match), and its parries that landed
+  const pw = {};
+  for (const r of results) for (const k in r.cpuPowers) pw[k] = (pw[k] || 0) + r.cpuPowers[k];
+  const per = Object.entries(pw).map(([k, n]) => k + ' ' + (n / results.length).toFixed(1)).join(', ');
+  const par = results.reduce((t, r) => t + r.parried, 0) / results.length;
+  console.log(`| ${row.bot} vs ${LABEL(row.mode)} | ${pct(won / results.length)} | ${pct(pr / (pr + cr))} |` + (showPowers ? ` ${per || '-'}${par ? ', parried ' + par.toFixed(1) : ''} |` : ''));
 }
 if (tourRows.length) {
   console.log('');
