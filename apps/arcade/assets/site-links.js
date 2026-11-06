@@ -13,6 +13,11 @@
 //   window.kbSiteLinks.pill(parent) - small "krishnabuilds" pill that
 //                                     expands to the links when tapped
 //                                     (game pages, via game-embed.js)
+//   window.kbSiteLinks.setHidden(bool) - hide or show every pill (closing
+//                                     an open panel). Opt-in: only used
+//                                     through game-embed.js's
+//                                     kbSetChromeHidden(), which Dojo Duel
+//                                     calls during a fight.
 
 (function () {
   const script = document.currentScript;
@@ -168,6 +173,9 @@
   // opts.align: which edge of the pill the panel lines up with: 'right'
   // (default), 'left' or 'center'.
   // opts.up: true to open the panel above the pill (for bottom corners).
+  const pills = [];
+  let pillsHidden = false;
+
   function pill(parent, opts) {
     opts = opts || {};
     const { host, root } = makeHost();
@@ -209,9 +217,21 @@
     wrap.appendChild(panel);
     root.appendChild(wrap);
     (parent || document.body).appendChild(host);
+    pills.push({ host, close: () => setOpen(false) });
+    if (pillsHidden) setHidden(true);
     return host;
   }
 
-  window.kbSiteLinks = { bar, pill };
+  // visibility rather than display, so a caller's own inline position and
+  // display styles on the host are left alone.
+  function setHidden(hidden) {
+    pillsHidden = !!hidden;
+    for (const p of pills) {
+      if (pillsHidden) p.close();
+      p.host.style.visibility = pillsHidden ? 'hidden' : '';
+    }
+  }
+
+  window.kbSiteLinks = { bar, pill, setHidden };
   if (script && script.dataset.render === 'bar') bar(document.body);
 })();

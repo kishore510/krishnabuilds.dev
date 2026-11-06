@@ -107,6 +107,21 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         no repeats. Sliding on after a walk was tried for Ice and dropped
         (it handed the Rusher its walk-ins). Harness `--arena`; numbers in
         the PR
+- [x] Dojo Duel touch declutter (1.72.0): power loadout (pick 3 of 6 on
+      the title screen, `dojoDuelPowers` in localStorage, default Fireball /
+      Boost / Shield; only those 3 icons in the fight, keys 1-3; the CPU
+      still has all six). Touch buttons outline-only over a 35% fill,
+      brighter while pressed, 44 px minimum; action buttons
+      `clamp(48px, 14vh, 60px)` and down in the bottom-right corner. On
+      touch only, `updateStage` pulls the walls in (at most 140 px a side)
+      so neither fighter walks under the pad or buttons. Opt-in
+      `kbSetChromeHidden()` in game-embed.js (plus `kbSiteLinks.setHidden`)
+      hides the guide link and site-links pill during a fight; no other
+      game calls it. The fight's `--chrome-row` drops to 54 px (the back
+      button); the title / pause / result screens keep the 60 px reserve
+- [ ] Dojo Duel: Tournament upgrades for a power-up outside the loadout
+      (longer / cheaper Boost, cheaper Fireball, longer Shield) can still
+      be offered; skip or re-roll them
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
