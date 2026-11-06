@@ -5,6 +5,7 @@
 //   node apps/arcade/scripts/dojo-duel-balance.mjs                 # every row, 60 matches each
 //   node apps/arcade/scripts/dojo-duel-balance.mjs --matches 20 --rows jab-hard,good-hard --first-seed 2000
 //   node apps/arcade/scripts/dojo-duel-balance.mjs --set hard.counterHits=4 --set hard.counterFrames=150
+//   node apps/arcade/scripts/dojo-duel-balance.mjs --rows '*-turtle,*-zoner' --first-seed 2000
 //
 // It serves apps/arcade on a local port, opens games/dojo-duel in headless
 // Chromium (Playwright), freezes the loop (dojoDuel.paused = true) and steps
@@ -20,8 +21,10 @@
 //   mid                 sees REN 14 frames late, blocks 50% of what it sees, punishes 35% of misses
 //   good                sees REN 8 frames late, blocks 80%, punishes 60%
 //
-// --set table.key=value edits AI_PRESETS (easy.* / hard.*) or POWER.ai (ai.*)
-// in the page before each row, for trying values without editing the game.
+// --set table.key=value edits AI_PRESETS (easy.* / hard.* / rusher.* / turtle.* /
+// zoner.* / sensei.*, and deeper, e.g. sensei.powerAi.fireballRange=200) or
+// POWER.ai (ai.*) in the page before each row, for trying values without
+// editing the game. --rows takes names or * patterns ("*-sensei", "good-*").
 
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -45,6 +48,11 @@ const ROWS = {
   'good-easy':     { bot: 'good',     mode: 'easy' },
   'good-hard':     { bot: 'good',     mode: 'hard' }
 };
+// The challengers: every bot against each (rows like jab-sensei, good-zoner).
+for (const mode of ['rusher', 'turtle', 'zoner', 'sensei']) {
+  for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'mid', 'good']) ROWS[bot + '-' + mode] = { bot, mode };
+}
+const LABEL = m => m[0].toUpperCase() + m.slice(1);
 
 // --- args ---
 const args = process.argv.slice(2);
@@ -54,12 +62,16 @@ for (let i = 0; i < args.length; i++) {
   const a = args[i];
   if (a === '--matches') matches = Number(args[++i]);
   else if (a === '--first-seed') first = Number(args[++i]);
-  else if (a === '--rows') rowNames = args[++i].split(',');
+  else if (a === '--rows') {
+    // names, or patterns with * (e.g. "*-sensei", "good-*")
+    rowNames = args[++i].split(',').flatMap(r => !r.includes('*') ? [r]
+      : Object.keys(ROWS).filter(k => new RegExp('^' + r.replace(/\*/g, '.*') + '$').test(k)));
+  }
   else if (a === '--workers') workers = Number(args[++i]);
   else if (a === '--set') {
     const [path, v] = args[++i].split('=');
-    const [table, key] = path.split('.');
-    sets.push({ table, key, value: JSON.parse(v) });
+    const [table, ...keys] = path.split('.');
+    sets.push({ table, keys, value: JSON.parse(v) });
   } else { console.error('unknown argument ' + a); process.exit(1); }
 }
 for (const r of rowNames) if (!ROWS[r]) { console.error('unknown row ' + r + ' (rows: ' + Object.keys(ROWS).join(', ') + ')'); process.exit(1); }
@@ -82,7 +94,11 @@ const base = `http://127.0.0.1:${server.address().port}/games/dojo-duel/index.ht
 function playMatch({ bot, mode, seed, sets }) {
   const D = window.dojoDuel;
   const { MOVES, BOXES, FS, POWER } = D;
-  for (const s of sets) (s.table === 'ai' ? POWER.ai : D.AI_PRESETS[s.table])[s.key] = s.value;
+  for (const s of sets) {
+    let o = s.table === 'ai' ? POWER.ai : D.AI_PRESETS[s.table];
+    for (const k of s.keys.slice(0, -1)) o = o[k] = o[k] || {};
+    o[s.keys[s.keys.length - 1]] = s.value;
+  }
   D.paused = true;
   D.mode = mode;
   D.seed = seed;
@@ -128,7 +144,7 @@ function playMatch({ bot, mode, seed, sets }) {
     } else {
       // mid / good: plays from a delayed view of REN
       hist.push({ x: ren.x, state: ren.state, move: ren.move && { id: ren.move.id, n: ren.move.n, frame: ren.move.frame, hit: ren.move.hit },
-        fireballs: D.projectiles.filter(p => p.owner === 'REN').map(p => ({ x: p.x, vx: p.vx, n: p.n })) });
+        fireballs: D.projectiles.filter(p => p.owner !== me.name).map(p => ({ x: p.x, vx: p.vx, n: p.n })) });
       if (hist.length > 64) hist.shift();
       const o = hist[Math.max(0, hist.length - SKILL.delay)];
       const odist = Math.abs(o.x - me.x);
@@ -191,7 +207,7 @@ async function freshPage(page) {
   await page.waitForFunction(() => window.dojoDuel);
 }
 
-console.log(`Dojo Duel balance: ${matches} matches a row (seeds ${first}-${first + matches - 1})` + (sets.length ? ', with ' + sets.map(s => `${s.table}.${s.key}=${JSON.stringify(s.value)}`).join(' ') : ''));
+console.log(`Dojo Duel balance: ${matches} matches a row (seeds ${first}-${first + matches - 1})` + (sets.length ? ', with ' + sets.map(s => `${[s.table, ...s.keys].join('.')}=${JSON.stringify(s.value)}`).join(' ') : ''));
 console.log('| Matchup | Player match wins | Player round wins |');
 console.log('| --- | --- | --- |');
 for (const name of rowNames) {
@@ -208,7 +224,7 @@ for (const name of rowNames) {
   const won = results.filter(r => r.won).length;
   const pr = results.reduce((t, r) => t + r.rounds[0], 0), cr = results.reduce((t, r) => t + r.rounds[1], 0);
   const pct = n => Math.round(100 * n) + '%';
-  console.log(`| ${row.bot} vs ${row.mode === 'hard' ? 'Hard' : 'Easy'} | ${pct(won / results.length)} | ${pct(pr / (pr + cr))} |`);
+  console.log(`| ${row.bot} vs ${LABEL(row.mode)} | ${pct(won / results.length)} | ${pct(pr / (pr + cr))} |`);
 }
 await browser.close();
 server.close();

@@ -231,13 +231,23 @@ changes should never need to touch the logic.
 What a player sees, for anyone discussing or changing the game. Numbers
 are the current values in the tables below; check those before quoting.
 
-- **Premise:** you are KAI, fighting the CPU fighter REN in a dojo. It
-  plays in landscape only (portrait shows a rotate prompt and pauses).
+- **Premise:** you are KAI, fighting a CPU fighter in a dojo: REN on Easy
+  and Hard, or one of four challengers. It plays in landscape only
+  (portrait shows a rotate prompt and pauses).
 - **Modes** (title screen picker, then one FIGHT! button): **Easy**,
   **Hard** (REN reacts faster, blocks more, and counters a spammed move),
   and **Practice** (a training dummy instead of REN; T cycles it between
-  stand, block and low block).
-- **Match rules** (`ROUND`): best of 3 rounds with a 60 s clock. Knock REN
+  stand, block and low block). A second row picks a challenger, each with
+  its own name, gi colour and intro line on the title screen:
+  - **Rusher** (GORO, orange): presses in close and attacks a lot, blocks
+    little.
+  - **Turtle** (IWA, green): blocks almost everything, attacks rarely, and
+    counters a repeated move for longer.
+  - **Zoner** (SORA, purple): keeps its distance and spends its energy on
+    fireballs, never on boosts.
+  - **Sensei** (black and gold, the boss): Hard's reactions and counter
+    state, plus more frequent and smarter power-ups (shields earlier).
+- **Match rules** (`ROUND`): best of 3 rounds with a 60 s clock. Knock the CPU
   out, or have more health when time runs out. A draw or double K.O.
   replays the round. Then a You win / You lose screen with Play Again and
   Change opponent.
@@ -254,7 +264,7 @@ are the current values in the tables below; check those before quoting.
   - **Boost** (40): 4 s of faster walking and quicker recovery.
   - **Shield** (60): soaks one hit, or lasts 2 s.
 
-  REN plays by the same energy rules.
+  The CPU plays by the same energy rules.
 - **Controls:**
   - Touch: a left pad to move, jump and crouch; Punch, Kick, Block and
     Power buttons; and three power icons (🔥 ⚡ 🛡️) to pick the power-up
@@ -268,7 +278,8 @@ are the current values in the tables below; check those before quoting.
   fighter white and stagger them. Kicks and K.O.s shake the screen. Comic
   POW! / WHAM! bursts appear on K.O.s and fireball hits.
 - **History:** built in seven steps (1.56.0 to 1.63.0, PRs #54 onward),
-  then the 1.64.0 fix that stops jab spam beating Hard. Step by step in
+  then the 1.64.0 fix that stops jab spam beating Hard, and the four
+  challengers in 1.68.0. Step by step in
   `BACKLOG.md`, player-facing notes in `changelog.html`.
 
 ### File layout (top to bottom)
@@ -308,7 +319,8 @@ are the current values in the tables below; check those before quoting.
   cost and numbers (`fireball`, `boost`, `shield`), and `POWER.ai`, the
   rules for when the CPU reaches for one. Keep `shield.cost` above
   `energy.start * max`, or every round opens with a free shield.
-- **`AI_PRESETS`** — Easy / Hard, in the Air Hockey shape (delay + jitter +
+- **`AI_PRESETS`** — Easy / Hard (REN) and the challengers `rusher`,
+  `turtle`, `zoner`, `sensei`, in the Air Hockey shape (delay + jitter +
   prediction, never a speed multiplier): `reactionFrames` (how old the
   CPU's view of the player is), `thinkInterval`, `error`, `blockChance`,
   `aggression`, `preferredRange`, `antiAirChance`, `powerUse`, and the
@@ -319,7 +331,11 @@ are the current values in the tables below; check those before quoting.
   of that move's reach and throwing a sweep (a kick against a sweep) timed
   for the player walking back in, with a shield when cornered or a
   fireball from range when energy allows. Easy has it off
-  (`counterHits: 0`). The CPU only
+  (`counterHits: 0`). A challenger row also carries `name`, `accent` (title
+  screen), `colors` (gi), `intro`, and optionally `powerAi`, keys that
+  replace `POWER.ai`'s for that opponent only (the Zoner never boosts; the
+  Sensei shields at 40 health). Easy / Hard take REN's look from
+  `REN_LOOK`. The CPU only
   sends the player's own inputs and pays the same energy costs. A reaction
   can only block an attack whose `startup` is at least `reactionFrames`
   (4 blocks the 4-frame jab, 5 can't; above 6 it can't react to sweeps).
@@ -341,13 +357,20 @@ are the current values in the tables below; check those before quoting.
   fireball whenever affordable), a mid-skill bot (sees REN 14 frames late,
   blocks half) and a good bot (8 frames, blocks 80%). Options: `--rows`,
   `--matches`, `--first-seed`, and `--set hard.counterHits=5` (or
-  `easy.*`, `ai.*` for `POWER.ai`) to try a value without editing the game.
+  `easy.*`, `rusher.*`, `sensei.powerAi.fireballRange=200`, `ai.*` for
+  `POWER.ai`) to try a value without editing the game. Every bot has a row
+  against each challenger (`jab-rusher` ... `good-sensei`); `--rows` takes
+  `*` patterns such as `'*-sensei'` or `'good-*'`.
   60 matches a row is about +/-7 points of noise; check a change on a
   second seed range (`--first-seed 2000`) before trusting it.
 - Balance targets (1.64.0, numbers in PR for that version): jab spam vs
   Hard 50% or less, kick / sweep / fireball spam lose to Hard, good bot vs
   Hard 15-35%, mid bot vs Easy above 90%. Jab spam still beats Easy, which
   has no counter state. Jab frame data was deliberately left alone.
+  Challengers (1.68.0): jab / kick / sweep / fireball spam lose to Turtle,
+  Zoner and Sensei, no challenger loses more than 50% to a single spammed
+  move, good bot vs each 15-45%. Mid bot wins little against any of them
+  (2-20%); they are meant to be harder than Easy.
 
 ### Robustness
 

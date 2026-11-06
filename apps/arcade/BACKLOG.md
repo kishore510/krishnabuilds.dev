@@ -67,6 +67,21 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
       thinkInterval 10 -> 14 to keep it beatable. Easy has no counter state
       (jab spam still beats Easy). Harness committed as
       `scripts/dojo-duel-balance.mjs`; numbers in the PR
+- [ ] Dojo Duel: less repetition, four small PRs in order
+  - [x] PR 1 (1.68.0): four challengers as new `AI_PRESETS` rows, each with
+        a name, gi colours, title-screen accent and intro line: Rusher (GORO:
+        aggressive, short range, low block), Turtle (IWA: blocks 90%, long
+        counter state, patient), Zoner (SORA: keeps 230 px away, fireballs
+        only), Sensei (Hard's counter state, more and smarter power-ups). A
+        preset's optional `powerAi` overrides `POWER.ai` for that opponent.
+        Second picker row on the title screen; Easy / Hard / Practice
+        unchanged (REN). Balance harness covers every bot against each
+        (`--rows '*-sensei'`, nested `--set sensei.powerAi.x=`); numbers in
+        the PR
+  - [ ] PR 2: Tournament mode (Rusher, Turtle or Zoner, Sensei; pick an
+        upgrade after each win)
+  - [ ] PR 3: new powers (Parry, Rage, Dash strike)
+  - [ ] PR 4: arenas with one gameplay tweak each (ice, moon, temple)
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,
