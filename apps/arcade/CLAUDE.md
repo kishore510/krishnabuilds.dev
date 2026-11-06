@@ -50,6 +50,9 @@ games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fi
 games/<slug>/index.html       — next game goes here
 ```
 
+This list is not every game. The `GAMES` array in `index.html` is the source
+of truth, and `README.md` lists all 35 with their folders and taglines.
+
 ## Adding a new game
 
 1. Create `games/<slug>/index.html` as a self-contained file (own `<style>`/`<script>`, no shared CSS/JS assumed beyond the embed script below). **Include `<meta name="viewport" content="width=device-width, initial-scale=1">` in `<head>`** — without it, mobile browsers render the page at an implied desktop width and zoom the whole thing out to fit, which shrinks every element uniformly (this cost a long debugging session on Fin Dash's nav bar before the missing tag was found).
@@ -222,6 +225,51 @@ fighter vs the CPU, landscape, fixed 60 Hz simulation on a 640x360 logical
 canvas). It was built in seven small steps (see `BACKLOG.md`); every number
 worth tuning is in one of the tables at the top of the script, so balance
 changes should never need to touch the logic.
+
+### The game at a glance
+
+What a player sees, for anyone discussing or changing the game. Numbers
+are the current values in the tables below; check those before quoting.
+
+- **Premise:** you are KAI, fighting the CPU fighter REN in a dojo. It
+  plays in landscape only (portrait shows a rotate prompt and pauses).
+- **Modes** (title screen picker, then one FIGHT! button): **Easy**,
+  **Hard** (REN reacts faster, blocks more, and counters a spammed move),
+  and **Practice** (a training dummy instead of REN; T cycles it between
+  stand, block and low block).
+- **Match rules** (`ROUND`): best of 3 rounds with a 60 s clock. Knock REN
+  out, or have more health when time runs out. A draw or double K.O.
+  replays the round. Then a You win / You lose screen with Play Again and
+  Change opponent.
+- **Moves** (`MOVES`): Punch and Kick change with stance. Standing gives
+  **Jab** and **Kick**, crouching gives **Low Jab** and **Sweep**, and in
+  the air you get **Air Punch** and **Air Kick**.
+- **Blocking:** hold back, or press Block. Crouch to block a Sweep and
+  stand to block air attacks. Blocked hits still chip a little health.
+- **Energy and power-ups** (`POWER`): a blue meter under each health bar.
+  It starts each round at 35 of 100, refills about 2 a second plus 6 for
+  each hit you land, and stops refilling while you block. It pays for
+  three power-ups:
+  - **Fireball** (40): a projectile that can be blocked.
+  - **Boost** (40): 4 s of faster walking and quicker recovery.
+  - **Shield** (60): soaks one hit, or lasts 2 s.
+
+  REN plays by the same energy rules.
+- **Controls:**
+  - Touch: a left pad to move, jump and crouch; Punch, Kick, Block and
+    Power buttons; and three power icons (🔥 ⚡ 🛡️) to pick the power-up
+    before pressing Power.
+  - Keyboard: arrows or W A S D to move, J punch, K kick, L block, and 1 / 2
+    / 3 for the power-ups.
+  - Other keys: M mutes, H shows hitboxes, T sets the Practice dummy,
+    Escape resumes.
+  - The How to play panel opens on the first visit, and "?" brings it back.
+- **Feel** (`FX`): hits freeze the action briefly (hitstop), flash the
+  fighter white and stagger them. Kicks and K.O.s shake the screen. Comic
+  POW! / WHAM! bursts appear on K.O.s and fireball hits.
+- **History:** built in seven steps (1.56.0 to 1.63.0, PRs #54 onward),
+  then the 1.64.0 fix that stops jab spam beating Hard. Step by step in
+  `BACKLOG.md`, player-facing notes in `changelog.html`.
 
 ### File layout (top to bottom)
 

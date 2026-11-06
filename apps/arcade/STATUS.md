@@ -1,7 +1,21 @@
 # Krishnabuilds Arcade — Status
 
-Last updated: 2026-07-15, Fuseblock phases 1-4 complete (core loop, bot tiers +
-levels, power-ups, polish) + played-count fix + changelog page
+Last updated: 2026-11-06, Dojo Duel finished (1.64.0) and card art for every
+game (1.67.0). Entries below 2026-11-06 stop at 2026-07-15; for what shipped
+in between, see `changelog.html` and `BACKLOG.md`.
+
+## Dojo Duel and card art (2026-11-05/06)
+- Dojo Duel, a landscape 1v1 fighter (KAI vs the CPU fighter REN, best of 3,
+  Easy / Hard / Practice), built in seven steps (1.56.0 to 1.63.0, PRs #54
+  onward), then 1.64.0 so jab spam no longer beats Hard. What the game is to
+  play, its tuning tables and the balance harness are in `CLAUDE.md`, "Dojo
+  Duel notes"; the step-by-step list is in `BACKLOG.md`.
+- Card art: every landing page card now shows an SVG picture of its game
+  instead of a single emoji (pilot 1.65.0, then 1.66.0 and 1.67.0; 35 files,
+  103.6 KB). Style rules in `CLAUDE.md`, "Card art"; checked by
+  `scripts/card-art-check.mjs`.
+- `README.md` rewritten: it listed only Fin Dash and had stale setup notes;
+  it now lists all 35 games and points to `CLAUDE.md`.
 
 ## Fuseblock fix-forward + phases 2-4 (2026-07-15, later in the day)
 - Fix-forward pass on Phase 1 issues found in playtesting: d-pad hit zones
