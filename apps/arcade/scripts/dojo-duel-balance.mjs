@@ -52,6 +52,10 @@ const ROWS = {
 for (const mode of ['rusher', 'turtle', 'zoner', 'sensei']) {
   for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'mid', 'good']) ROWS[bot + '-' + mode] = { bot, mode };
 }
+// Tournament runs: the bot plays all three fights, picking a random upgrade
+// after each win (rows like good-tournament). Reported as runs won, how far
+// runs got, and how long a run lasts in game time (banners and hitstop included).
+for (const bot of ['jab', 'kick', 'sweep', 'fireball', 'mid', 'good']) ROWS[bot + '-tournament'] = { bot, mode: 'tournament' };
 const LABEL = m => m[0].toUpperCase() + m.slice(1);
 
 // --- args ---
@@ -128,7 +132,9 @@ function playMatch({ bot, mode, seed, sets }) {
   const keys = ['left', 'right', 'up', 'down', 'block'];
   let frames = 0;
 
-  while (D.state === 'playing' && frames < 40000) {
+  const reached = [];
+  for (;;) {
+  while (D.state === 'playing' && frames < 60000) {
     frames++;
     const live = D.match.phase === 'fight';
     const dx = ren.x - me.x, dist = Math.abs(dx), toward = dx >= 0 ? 'right' : 'left', away = dx >= 0 ? 'left' : 'right';
@@ -189,9 +195,16 @@ function playMatch({ bot, mode, seed, sets }) {
     for (const k of keys) D.hold(k, !!hold[k]);
     D.step(1, live ? press : []);
   }
+  if (D.state === 'upgrade') {
+    reached.push(D.tour.fight);
+    D.pickUpgrade(Math.floor(rnd() * D.tour.choices.length));
+    continue;
+  }
+  break;
+  }
   for (const k of keys) D.hold(k, false);
   const w = D.match.wins;
-  return { won: w[0] > w[1], rounds: w };
+  return { won: w[0] > w[1], rounds: w, fights: D.tour ? D.tour.fight + (w[0] > w[1] ? 1 : 0) : null, seconds: frames / 60, opponents: D.tour && D.tour.ids };
 }
 
 // --- run ---
@@ -210,6 +223,8 @@ async function freshPage(page) {
 console.log(`Dojo Duel balance: ${matches} matches a row (seeds ${first}-${first + matches - 1})` + (sets.length ? ', with ' + sets.map(s => `${[s.table, ...s.keys].join('.')}=${JSON.stringify(s.value)}`).join(' ') : ''));
 console.log('| Matchup | Player match wins | Player round wins |');
 console.log('| --- | --- | --- |');
+const tourRows = rowNames.filter(r => ROWS[r].mode === 'tournament');
+rowNames = rowNames.filter(r => ROWS[r].mode !== 'tournament');
 for (const name of rowNames) {
   const row = ROWS[name];
   await Promise.all(pages.map(freshPage));   // a clean page per row, so --set edits never leak between rows
@@ -225,6 +240,25 @@ for (const name of rowNames) {
   const pr = results.reduce((t, r) => t + r.rounds[0], 0), cr = results.reduce((t, r) => t + r.rounds[1], 0);
   const pct = n => Math.round(100 * n) + '%';
   console.log(`| ${row.bot} vs ${LABEL(row.mode)} | ${pct(won / results.length)} | ${pct(pr / (pr + cr))} |`);
+}
+if (tourRows.length) {
+  console.log('');
+  console.log('| Tournament | Runs won | Won fight 1 | Won fight 2 | Run length: median / longest | Runs that reached the Sensei: median length |');
+  console.log('| --- | --- | --- | --- | --- | --- |');
+}
+for (const name of tourRows) {
+  const row = ROWS[name];
+  await Promise.all(pages.map(freshPage));
+  const seeds = Array.from({ length: matches }, (_, i) => first + i);
+  const results = [];
+  await Promise.all(pages.map(async page => {
+    while (seeds.length) results.push(await page.evaluate(playMatch, { ...row, seed: seeds.shift(), sets }));
+  }));
+  const pct = n => Math.round(100 * n / results.length) + '%';
+  const secs = results.map(r => r.seconds).sort((a, b) => a - b);
+  const full = results.filter(r => r.fights >= 2).map(r => r.seconds).sort((a, b) => a - b);
+  const mmss = t => Math.floor(t / 60) + ':' + String(Math.round(t % 60)).padStart(2, '0');
+  console.log(`| ${row.bot} | ${pct(results.filter(r => r.fights >= 3).length)} | ${pct(results.filter(r => r.fights >= 1).length)} | ${pct(results.filter(r => r.fights >= 2).length)} | ${mmss(secs[secs.length >> 1])} / ${mmss(secs[secs.length - 1])} | ${full.length ? mmss(full[full.length >> 1]) + ' (' + full.length + ' runs)' : '-'} |`);
 }
 await browser.close();
 server.close();
