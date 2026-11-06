@@ -275,6 +275,27 @@
     cursor: pointer;
   }
   #arenaBtn:disabled { cursor: default; opacity: 0.75; }
+  /* Arena button and power loadout share a row to keep the title short */
+  #setupRow { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; gap: calc(4px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1)); margin-top: calc(5px * var(--game-scale, 1)); }
+  #setupRow #arenaBtn { margin-top: 0; }
+  /* Power loadout: pick 3 of the 6 power-ups for the fight (keys 1-3) */
+  #loadout { display: flex; align-items: center; gap: calc(5px * var(--game-scale, 1)); }
+  #loadout .lbl { font-size: calc(11px * var(--game-scale, 1)); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-right: calc(2px * var(--game-scale, 1)); }
+  #loadout button {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 17px;
+    line-height: 1;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.4);
+    background: rgba(10,8,6,0.6);
+    cursor: pointer;
+  }
+  #loadout button span { display: block; opacity: 0.4; filter: grayscale(0.8); }
+  #loadout button[aria-pressed="true"] { border-color: #ffd32a; background: rgba(255,211,42,0.3); }
+  #loadout button[aria-pressed="true"] span { opacity: 1; filter: none; }
+  #loadoutNote { margin: calc(2px * var(--game-scale, 1)) 0 0; font-size: calc(10.5px * var(--game-scale, 1)); opacity: 0.85; }
   #resultBack {
     margin-top: calc(10px * var(--game-scale, 1));
     font-size: calc(12px * var(--game-scale, 1));
@@ -312,17 +333,21 @@
 
   /* --- Touch controls ---
      Fixed to the viewport, not the canvas, so on wide phones they sit in
-     the dark side margins and cover less of the arena. The bottom
-     --chrome-row px of the screen is left empty for the shared chrome
-     that landscape mode floats there (round back button bottom-left,
-     site-links pill bottom-centre, guide link bottom-right), so none of
-     it can ever overlap a control. */
+     the dark side margins and cover less of the arena. Only shown in a
+     fight, when the site-links pill and guide link are hidden (see
+     updateControls), so the only bottom chrome left is the round back
+     button bottom-left: the pad keeps --chrome-row clear above it, and the
+     buttons on the right sit right down in the corner. Idle controls are
+     outlines over a light fill so the fighters show through; they
+     brighten while pressed. Every tap target is at least 44 px. */
   #controls {
-    --chrome-row: 60px;
-    --pad: clamp(112px, 36vh, 156px);
-    --btn: clamp(52px, 16vh, 68px);
-    --gap: 10px;
-    --pw: 44px;      /* power icons: never under 44 px, the minimum touch target */
+    --chrome-row: 54px;   /* the back button: 40 px + its 10 px offset + 4 px */
+    --edge: 10px;         /* the right-hand cluster's gap to the screen edges */
+    --pad: clamp(104px, 33vh, 144px);
+    --btn: clamp(48px, 14vh, 60px);
+    --gap: 8px;
+    --pw: 44px;           /* power icons: never under 44 px, the minimum touch target */
+    --idle: rgba(10,8,6,0.35);
     position: fixed;
     inset: 0;
     pointer-events: none;
@@ -337,12 +362,13 @@
     width: var(--pad);
     height: var(--pad);
     border-radius: 50%;
-    background: rgba(10,8,6,0.5);
-    border: 2px solid rgba(255,255,255,0.5);
+    background: var(--idle);
+    border: 2px solid rgba(255,255,255,0.45);
     box-sizing: border-box;
     pointer-events: auto;
     touch-action: none;
   }
+  #pad.lit { background: rgba(10,8,6,0.55); border-color: rgba(255,255,255,0.8); }
   #pad .arrow {
     position: absolute;
     width: 30%;
@@ -350,7 +376,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.7);
     font-size: calc(var(--pad) * 0.15);
     border-radius: 50%;
   }
@@ -366,15 +392,15 @@
     left: 33%;
     top: 33%;
     border-radius: 50%;
-    background: rgba(255,255,255,0.25);
-    border: 2px solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.6);
     box-sizing: border-box;
     pointer-events: none;
   }
   #actions {
     position: absolute;
-    right: calc(16px + 2 * var(--pw) + 6px + var(--gap) + env(safe-area-inset-right, 0px));
-    bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
+    right: calc(var(--edge) + var(--pw) + var(--gap) + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--edge) + env(safe-area-inset-bottom, 0px));
     display: grid;
     grid-template-columns: var(--btn) var(--btn);
     grid-template-rows: var(--btn) var(--btn);
@@ -388,33 +414,26 @@
     font-size: calc(var(--btn) * 0.22);
     font-weight: 800;
     color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     border-radius: 50%;
-    background: rgba(10,8,6,0.55);
-    border: 3px solid var(--c);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.45);
+    background: var(--idle);
+    border: 2.5px solid var(--c);
     padding: 0;
     cursor: pointer;
   }
-  .act.lit { background: var(--c); color: #1a1008; transform: scale(0.94); }
-  /* Power icons: a column right of the Power button, bottom-aligned with it.
-     Tap one to select it; Power fires the selected one. */
+  .act.lit { background: var(--c); color: #1a1008; text-shadow: none; box-shadow: 0 0 12px var(--c); transform: scale(0.94); }
+  /* The fight's three power icons (the title screen loadout): a column
+     right of the Power button, filled bottom-up in key order 1-3. Tap one
+     to select it; Power fires the selected one. */
   #powers {
     position: absolute;
-    right: calc(16px + env(safe-area-inset-right, 0px));
-    bottom: calc(var(--chrome-row) + env(safe-area-inset-bottom, 0px));
-    display: grid;
-    grid-template-columns: var(--pw) var(--pw);
-    grid-template-rows: var(--pw) var(--pw) var(--pw);
+    right: calc(var(--edge) + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--edge) + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column-reverse;
     gap: 6px;
     pointer-events: none;
   }
-  /* two columns, each filled bottom-up: 🔥 ⚡ 🛡️ on the outside (keys 1-3), ✋ 💢 💨 inside (4-6) */
-  #powers .pw:nth-child(1) { grid-area: 3 / 2; }
-  #powers .pw:nth-child(2) { grid-area: 2 / 2; }
-  #powers .pw:nth-child(3) { grid-area: 1 / 2; }
-  #powers .pw:nth-child(4) { grid-area: 3 / 1; }
-  #powers .pw:nth-child(5) { grid-area: 2 / 1; }
-  #powers .pw:nth-child(6) { grid-area: 1 / 1; }
   .pw {
     pointer-events: auto;
     touch-action: none;
@@ -424,17 +443,16 @@
     font-size: 20px;
     line-height: 1;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.55);
-    background: rgba(10,8,6,0.55);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.45);
+    border: 2px solid rgba(255,255,255,0.5);
+    background: var(--idle);
     cursor: pointer;
     position: relative;
   }
-  .pw[aria-checked="true"] { border: 3px solid #ffd32a; background: rgba(255,211,42,0.38); box-shadow: 0 0 10px rgba(255,211,42,0.75); }
+  .pw[aria-checked="true"] { border: 3px solid #ffd32a; background: rgba(255,211,42,0.3); }
+  .pw.lit { background: rgba(255,211,42,0.6); box-shadow: 0 0 10px rgba(255,211,42,0.75); }
   /* dim the icon, not the border, so a selected icon stays highlighted */
   .pw span { display: block; transition: opacity 0.15s; }
   .pw.dim span { opacity: 0.32; filter: grayscale(0.9); }
-  .pw.dim { background: rgba(10,8,6,0.3); }
 
   #rotateHint {
     display: none;
@@ -486,7 +504,19 @@
       <button type="button" role="radio" data-mode="sensei" aria-checked="false" style="--c:#ffd166">Sensei</button>
     </div>
     <p id="modeNote"></p>
+    <div id="setupRow">
     <button id="arenaBtn" type="button">Arena: Dojo</button>
+    <div id="loadout" role="group" aria-label="Power-ups for the fight, pick 3">
+      <span class="lbl" aria-hidden="true">Powers</span>
+      <button type="button" data-power="fireball" aria-pressed="false" aria-label="Fireball"><span>🔥</span></button>
+      <button type="button" data-power="boost" aria-pressed="false" aria-label="Boost"><span>⚡</span></button>
+      <button type="button" data-power="shield" aria-pressed="false" aria-label="Shield"><span>🛡️</span></button>
+      <button type="button" data-power="parry" aria-pressed="false" aria-label="Parry"><span>✋</span></button>
+      <button type="button" data-power="rage" aria-pressed="false" aria-label="Rage"><span>💢</span></button>
+      <button type="button" data-power="dash" aria-pressed="false" aria-label="Dash strike"><span>💨</span></button>
+    </div>
+    </div>
+    <p id="loadoutNote"></p>
     <button id="startBtn" type="button" data-kb-play>FIGHT!</button>
     <button id="howBtn" type="button" aria-haspopup="dialog" aria-label="How to play">?</button>
   </div>
@@ -498,9 +528,9 @@
       <b>Move, jump, crouch</b><span>Left pad</span><span>Arrows or W A S D</span>
       <b>Punch / Kick</b><span>Punch / Kick</span><span>J / K</span>
       <b>Block</b><span>Hold back, or Block</span><span>Hold back, or L</span>
-      <b>Power-up</b><span>Pick 🔥 ⚡ 🛡️ ✋ 💢 💨, then Power</span><span>1 to 6</span>
+      <b>Power-up</b><span>Pick an icon, then Power</span><span>1 to 3</span>
     </div>
-    <p class="small">Crouch + Kick sweeps (block it crouching). The blue meter pays for power-ups: Fireball, Boost, Shield, Parry (time it as a hit lands to stun the attacker), Rage (hit harder, take more) and Dash strike (a lunging punch, unsafe if blocked). M mutes, H shows hitboxes, T sets the Practice dummy.</p>
+    <p class="small">Crouch + Kick sweeps (block it crouching). The blue meter pays for power-ups: Fireball, Boost, Shield, Parry (time it as a hit lands to stun the attacker), Rage (hit harder, take more) and Dash strike (a lunging punch, unsafe if blocked). Pick the 3 you take into the fight under Powers on the title screen. M mutes, H shows hitboxes, T sets the Practice dummy.</p>
     <button id="howClose" type="button">Got it</button>
   </div>
   <div id="pause" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
@@ -536,6 +566,7 @@
     <button class="act" type="button" data-act="block" style="--c:#4bb3fd">Block</button>
     <button class="act" type="button" data-act="power" style="--c:#ffd32a">Power</button>
   </div>
+  <!-- all six icons live here; setLoadout() keeps only the loadout's three in the DOM -->
   <div id="powers" role="radiogroup" aria-label="Power-up">
     <button class="pw" type="button" role="radio" data-power="fireball" aria-label="Fireball" aria-checked="true"><span>🔥</span></button>
     <button class="pw" type="button" role="radio" data-power="boost" aria-label="Speed boost" aria-checked="false"><span>⚡</span></button>
@@ -578,7 +609,11 @@ const controls = document.getElementById('controls');
 const topBtns = document.getElementById('topBtns');
 const pad = document.getElementById('pad');
 const knob = document.getElementById('knob');
+const powersEl = document.getElementById('powers');
+const actionsEl = document.getElementById('actions');
 const powerBtns = document.querySelectorAll('#powers .pw');
+const loadoutBtns = document.querySelectorAll('#loadout button');
+const loadoutNote = document.getElementById('loadoutNote');
 
 // --- Energy and power-ups. Every energy value, cost, duration and speed
 // lives here, so it can be tuned without touching the logic. Durations are
@@ -662,8 +697,13 @@ const POWER = {
     dashMax: 175
   }
 };
-const POWER_IDS = ['fireball', 'boost', 'shield', 'parry', 'rage', 'dash'];   // keys 1-6
+const POWER_IDS = ['fireball', 'boost', 'shield', 'parry', 'rage', 'dash'];   // fixed order (press('power1'..'power6'), the balance harness)
 const POWER_NAMES = { fireball: 'Fireball', boost: 'Boost', shield: 'Shield', parry: 'Parry', rage: 'Rage', dash: 'Dash strike' };
+// The player's loadout: the 3 power-ups picked on the title screen, the only
+// ones shown in the fight, on keys 1-3 in POWER_IDS order. Remembered in
+// localStorage. The CPU is unaffected and can use all six.
+const LOADOUT_SIZE = 3;
+const LOADOUT_DEFAULT = ['fireball', 'boost', 'shield'];
 const MOVE_POWERS = ['fireball', 'parry', 'dash'];   // power-ups that are moves: they take the frame like an attack
 
 // --- CPU AI difficulty. Same shape as Air Hockey (delay + jitter +
@@ -967,8 +1007,9 @@ function overlaps(a, b) {
 }
 
 const HALF_W = BOXES.stand.push.w * FS / 2;
-function clampToWalls(f) { f.x = Math.max(WALL_L + HALF_W, Math.min(WALL_R - HALF_W, f.x)); }
-function atWall(f) { return f.x <= WALL_L + HALF_W + 0.01 || f.x >= WALL_R - HALF_W - 0.01; }
+// stageL / stageR are WALL_L / WALL_R, pulled in with the touch controls (updateStage)
+function clampToWalls(f) { f.x = Math.max(stageL + HALF_W, Math.min(stageR - HALF_W, f.x)); }
+function atWall(f) { return f.x <= stageL + HALF_W + 0.01 || f.x >= stageR - HALF_W - 0.01; }
 
 let moveSerial = 0;   // tags each attack, so the CPU decides once per attack it sees
 function startMove(f, id) {
@@ -1363,7 +1404,7 @@ const KEYMAP = {
   ArrowUp: 'up', KeyW: 'up',
   ArrowDown: 'down', KeyS: 'down',
   KeyJ: 'punch', KeyK: 'kick', KeyL: 'block',
-  Digit1: 'power1', Digit2: 'power2', Digit3: 'power3', Digit4: 'power4', Digit5: 'power5', Digit6: 'power6',
+  Digit1: 'slot1', Digit2: 'slot2', Digit3: 'slot3',   // the loadout's three power-ups
   // the numeric keypad's arrows (Num Lock off reports these codes on some keyboards)
   Numpad4: 'left', Numpad6: 'right', Numpad8: 'up', Numpad2: 'down'
 };
@@ -1374,7 +1415,7 @@ const KEYMAP_BY_KEY = {
   ArrowUp: 'up', Up: 'up', ArrowDown: 'down', Down: 'down',
   a: 'left', d: 'right', w: 'up', s: 'down', j: 'punch', k: 'kick', l: 'block',
   A: 'left', D: 'right', W: 'up', S: 'down', J: 'punch', K: 'kick', L: 'block',
-  1: 'power1', 2: 'power2', 3: 'power3', 4: 'power4', 5: 'power5', 6: 'power6'
+  1: 'slot1', 2: 'slot2', 3: 'slot3'
 };
 const KEYMAP_BY_KEYCODE = { 37: 'left', 38: 'up', 39: 'right', 40: 'down', 100: 'left', 104: 'up', 102: 'right', 98: 'down' };
 function keyName(e) {
@@ -1385,14 +1426,17 @@ const keyHeld = {};
 const touchHeld = {};
 const pressed = {};
 let selectedPower = 'fireball';   // what the touch Power button fires
+let loadout = LOADOUT_DEFAULT.slice();   // set from localStorage by setLoadout() at start-up
 function held(name) {
-  if (name === 'power') return POWER_IDS.some((id, i) => keyHeld['power' + (i + 1)]) || !!touchHeld.power;
+  if (name === 'power') return [1, 2, 3].some(n => keyHeld['slot' + n]) || !!touchHeld.power;
   return !!(keyHeld[name] || touchHeld[name]);
 }
-// power1..6 are keys 1-6; plain 'power' is the touch button (the selected icon).
+// slot1..3 are keys 1-3 (the loadout); plain 'power' is the touch button (the
+// selected icon); power1..6 name a power-up directly, for the balance harness.
 function press(name) {
   if (name === 'punch' || name === 'kick') pressed[name] = true;
   else if (name === 'power') pressed.power = selectedPower;
+  else if (/^slot[1-3]$/.test(name)) pressed.power = loadout[Number(name[4]) - 1] || null;
   else if (/^power[1-6]$/.test(name)) pressed.power = POWER_IDS[Number(name[5]) - 1];
 }
 function readInput() {
@@ -1408,7 +1452,7 @@ function clearInput() {
   pressed.punch = pressed.kick = false;
   pressed.power = null;
   setPad(0, 0, false);
-  document.querySelectorAll('.act.lit').forEach(b => b.classList.remove('lit'));
+  document.querySelectorAll('.act.lit, .pw.lit').forEach(b => b.classList.remove('lit'));
 }
 
 window.addEventListener('keydown', (e) => {
@@ -1453,6 +1497,7 @@ function setPad(nx, ny, active) {
   }
   touchHeld.left = left; touchHeld.right = right; touchHeld.up = up; touchHeld.down = down;
   for (const k in padArrows) padArrows[k].classList.toggle('lit', touchHeld[k]);
+  pad.classList.toggle('lit', !!active);
   const m = Math.min(1, Math.hypot(nx, ny)) || 0;
   const ang = Math.atan2(ny, nx);
   const kx = active ? Math.cos(ang) * m * 80 : 0;
@@ -1510,10 +1555,41 @@ function selectPower(id) {
   powerBtns.forEach(b => b.setAttribute('aria-checked', String(b.dataset.power === id)));
 }
 powerBtns.forEach((btn) => {
-  btn.addEventListener('pointerdown', (e) => { e.preventDefault(); selectPower(btn.dataset.power); });
+  btn.addEventListener('pointerdown', (e) => { e.preventDefault(); selectPower(btn.dataset.power); btn.classList.add('lit'); });
+  for (const type of ['pointerup', 'pointercancel', 'pointerleave']) btn.addEventListener(type, () => btn.classList.remove('lit'));
 });
 function syncPowerBtns() {
-  powerBtns.forEach(b => b.classList.toggle('dim', !canAfford(player, b.dataset.power)));
+  for (const b of powersEl.children) b.classList.toggle('dim', !canAfford(player, b.dataset.power));
+}
+// Loadout: the title screen's six toggles, always exactly LOADOUT_SIZE on.
+// Picking another when the loadout is full drops the one picked longest ago.
+let loadoutPicks = [];   // the loadout in the order it was picked (oldest first)
+function setLoadout(ids, save) {
+  const valid = ids.filter((id, i) => POWER_IDS.includes(id) && ids.indexOf(id) === i);
+  if (valid.length !== LOADOUT_SIZE) return false;
+  loadoutPicks = valid.slice();
+  loadout = POWER_IDS.filter(id => valid.includes(id));   // keys 1-3 in a fixed order
+  if (save) { try { localStorage.setItem('dojoDuelPowers', loadout.join(',')); } catch (e) {} }
+  loadoutBtns.forEach(b => b.setAttribute('aria-pressed', String(loadout.includes(b.dataset.power))));
+  loadoutNote.textContent = loadout.map((id, i) => (i + 1) + ' ' + POWER_NAMES[id]).join(' \u00b7 ');
+  // the fight shows only these three icons, key 1 at the bottom
+  powersEl.replaceChildren(...loadout.map(id => [...powerBtns].find(b => b.dataset.power === id)));
+  if (!loadout.includes(selectedPower)) selectPower(loadout[0]);
+  return true;
+}
+loadoutBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.power;
+    let picks = loadoutPicks.filter(p => p !== id);
+    if (picks.length === loadoutPicks.length) picks = picks.concat(id).slice(-LOADOUT_SIZE);   // picked: add it, dropping the oldest
+    else picks = picks.concat(POWER_IDS.find(p => !loadoutPicks.includes(p)));               // unpicked: the first free one fills the gap
+    setLoadout(picks, true);
+  });
+});
+function loadSavedLoadout() {
+  let saved = null;
+  try { saved = localStorage.getItem('dojoDuelPowers'); } catch (e) {}
+  if (!saved || !setLoadout(saved.split(','), false)) setLoadout(LOADOUT_DEFAULT, false);
 }
 controls.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -1528,6 +1604,31 @@ function updateControls() {
   // Mute / Boxes / Dummy are for the fight; on the start, pause and result
   // screens they would sit over the text (H and M still work there).
   topBtns.style.display = fighting ? '' : 'none';
+  // The site-links pill and guide link (game-embed.js) sit over the floor,
+  // so they hide for the fight and come back on every other screen. The
+  // back button stays. Before game-embed.js has loaded this is a no-op,
+  // which is fine: that's the title screen, where they show.
+  window.kbSetChromeHidden?.(fighting);
+  updateStage();
+}
+
+// Touch only: how far the fighters may walk towards the screen edges, so
+// neither ends up behind the pad or the buttons. A fighter's whole body
+// stays clear of them, but each side gives up at most STAGE_MAX_INSET of
+// the arena. Without the touch controls the walls are WALL_L / WALL_R.
+const STAGE_MAX_INSET = 140;   // logical px per side
+let stageL = WALL_L, stageR = WALL_R;
+function updateStage() {
+  stageL = WALL_L;
+  stageR = WALL_R;
+  if (!controls.classList.contains('on')) return;
+  const c = canvas.getBoundingClientRect();
+  if (!c.width) return;
+  const k = c.width / W;   // css px per logical px
+  const padRight = (pad.getBoundingClientRect().right - c.left) / k;
+  const btnsLeft = (Math.min(actionsEl.getBoundingClientRect().left, powersEl.getBoundingClientRect().left) - c.left) / k;
+  stageL = Math.min(WALL_L + STAGE_MAX_INSET, Math.max(WALL_L, padRight));
+  stageR = Math.max(WALL_R - STAGE_MAX_INSET, Math.min(WALL_R, btnsLeft));
 }
 
 // --- Opponent mode: Easy or Hard CPU, or Practice against the training
@@ -2051,7 +2152,7 @@ syncMuteBtn();
 
 // --- Layout ---
 let renderScale = 1;
-const CHROME_ROW = 60;   // px; matches #controls --chrome-row
+const CHROME_ROW = 60;   // px kept clear for the bottom chrome (back button, site-links pill, guide link) on the non-fight screens
 function fitCanvas() {
   const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
   const scale = Math.min(window.innerWidth / W, (window.innerHeight - reserved) / H);
@@ -2073,7 +2174,7 @@ function checkOrientation() {
   rotateHint.style.display = portrait ? 'flex' : 'none';
   if (portrait) pauseGame();   // the fight can't be seen behind the hint
 }
-function handleResize() { fitCanvas(); checkOrientation(); }
+function handleResize() { fitCanvas(); checkOrientation(); updateStage(); }
 window.addEventListener('resize', handleResize);
 // Some browsers fire orientationchange before the new size is known, so
 // fit again once the rotation has settled.
@@ -3064,6 +3165,9 @@ window.dojoDuel = {
   get projectiles() { return projectiles.map(p => ({ owner: p.owner.name, x: p.x, y: p.y, vx: p.vx, n: p.n, box: fireballBox(p) })); },
   get powerLog() { return powerLog.slice(); },
   get selectedPower() { return selectedPower; },
+  get loadout() { return loadout.slice(); },
+  set loadout(ids) { setLoadout(ids, false); },
+  get stage() { return { left: stageL, right: stageR }; },
   selectPower, blocking,
   get lastHit() { return lastHit; },
   get fx() { return { hitstop, shake, sparks: sparks.length, bursts: bursts.map(b => ({ word: b.word, scale: b.scale, x: b.x, y: b.y, top: b.top })), flash: [player.flash, cpu.flash] }; },
@@ -3083,6 +3187,7 @@ window.dojoDuel = {
   MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, POWER, TOURNAMENT, UPGRADES, ARENAS, FS, FLOOR, MAX_HEALTH
 };
 
+loadSavedLoadout();
 resetFighters();
 resetAi();
 setMode('easy');

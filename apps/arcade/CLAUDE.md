@@ -32,7 +32,7 @@ node -e "new Function(require('fs').readFileSync('index.html','utf8').match(/<sc
 ```
 index.html                    — landing page; lists every game as a "cartridge" card
 assets/game-embed.js          — shared chrome every game page includes (nav bar, support link)
-assets/site-links.js          — link home + app switcher (bar on the landing page, pill via game-embed.js); app list must match packages/ui
+assets/site-links.js          — link home + app switcher (bar on the landing page, pill via game-embed.js); app list must match packages/ui. Opt-in `kbSetChromeHidden(bool)` (game-embed.js) hides the guide link and pill; only Dojo Duel calls it
 assets/version.js             — single source of truth for the displayed version string
 assets/art/<slug>.svg         — optional card pictures for the landing page (see "Card art")
 games/fin-dash/index.html     — Fin Dash (canvas, single-tap flap physics)
@@ -293,12 +293,25 @@ are the current values in the tables below; check those before quoting.
   The CPU plays by the same energy rules. REN (Easy, Hard) only uses the
   first three; the challengers use the new ones too (GORO dashes and rages,
   IWA and SORA parry, the Sensei uses all three).
+- **Power loadout:** the player takes 3 of the 6 into a fight, picked under
+  Powers on the title screen (next to the Arena button; default Fireball,
+  Boost, Shield; remembered). Picking a fourth drops the oldest pick, and
+  tapping a picked one swaps in the first unpicked one. Only
+  those 3 show in the fight, on keys 1-3 in the order above. The CPU is
+  unaffected and still has all six.
 - **Controls:**
   - Touch: a left pad to move, jump and crouch; Punch, Kick, Block and
-    Power buttons; and six power icons in two columns (🔥 ⚡ 🛡️ outside, ✋ 💢
-    💨 inside) to pick the power-up before pressing Power.
+    Power buttons in the bottom-right corner; and the loadout's three power
+    icons in a column beside them (key 1 at the bottom) to pick the
+    power-up before pressing Power. Idle controls are outlines over a light
+    fill and brighten while pressed; tap targets are 44 px or more. On touch
+    only the fighters can't walk under the pad or buttons (the walls move
+    in, at most 140 px a side).
+  - The site-links pill and Get the guide link hide during a fight and
+    come back on the title, pause, upgrade and result screens; the round
+    back button always stays.
   - Keyboard: arrows or W A S D to move, J punch, K kick, L block, and 1 to
-    6 for the power-ups.
+    3 for the loadout's power-ups.
   - Other keys: M mutes, H shows hitboxes, T sets the Practice dummy,
     Escape resumes.
   - The How to play panel opens on the first visit, and "?" brings it back.
@@ -308,25 +321,30 @@ are the current values in the tables below; check those before quoting.
 - **History:** built in seven steps (1.56.0 to 1.63.0, PRs #54 onward),
   then the 1.64.0 fix that stops jab spam beating Hard, the four
   challengers in 1.68.0, Tournament mode in 1.69.0, Parry / Rage / Dash
-  strike in 1.70.0 and arenas in 1.71.0. Step by step in
+  strike in 1.70.0, arenas in 1.71.0 and the touch declutter (power
+  loadout, lighter controls, chrome hidden in a fight) in 1.72.0. Step by step in
   `BACKLOG.md`, player-facing notes in `changelog.html`.
 
 ### File layout (top to bottom)
 
 - **CSS:** title / How to play / pause / result screens (they pad their
   bottom by `--chrome-overlap` so nothing sits under the shared bottom
-  chrome), the in-fight top buttons, then the touch controls. `#controls`
-  is fixed to the viewport and keeps a 60 px `--chrome-row` free at the
-  bottom for the fullscreen back button, site-links pill and guide link.
+  chrome; `CHROME_ROW`, 60 px), the in-fight top buttons, then the touch
+  controls. `#controls` is fixed to the viewport and only shows in a fight,
+  when the pill and guide link are hidden: the pad keeps a 54 px
+  `--chrome-row` free for the back button under it, and the buttons on the
+  right sit `--edge` (10 px) from the corner.
 - **HTML:** `#rotateHint`, then `#wrap` (canvas, `#topBtns`, `#overlay`
-  title screen with the "?" button, `#howto`, `#pause`, `#upgrade` (the
+  title screen with the "?" button and the `#loadout` picker, `#howto`, `#pause`, `#upgrade` (the
   tournament upgrade pick), `#result`), then
-  `#controls` (pad, four action buttons, six power icons in a 2x3 grid).
+  `#controls` (pad, four action buttons, `#powers` holding the six icons;
+  `setLoadout` keeps the loadout's three in the DOM).
 - **Script, in order:** the tuning tables `POWER`, `AI_PRESETS`,
   `TOURNAMENT`, `UPGRADES`, arena
   constants, `MOVE`, `ARENAS`, `FX`, `ROUND`, `BOXES`, `MOVES`; then fighter update
   (`updateFighter`), energy and fireballs, hits (`applyHit`, `canBlock`),
-  hit effects, input (keyboard maps, touch pad, buttons), opponent modes,
+  hit effects, input (keyboard maps, touch pad, buttons, loadout,
+  `updateControls` and the touch-only `updateStage` walls), opponent modes,
   the seeded RNG, the CPU AI (`aiInput`), debug overlay, audio, layout
   (`fitCanvas`), drawing, then the game state, loop, pause and the
   `window.dojoDuel` test handle.
@@ -402,7 +420,11 @@ are the current values in the tables below; check those before quoting.
 ### Testing and balance
 
 - `?seed=N` fixes the AI's RNG, `?debug=1` (or H) shows boxes and state,
-  `?touch=1` forces the touch controls. `window.dojoDuel` exposes the
+  `?touch=1` forces the touch controls. Keys 1-3 press `slot1`-`slot3`
+  (the loadout); `press('power1')`..`('power6')` still name a power-up
+  directly, which the balance harness uses, whatever the loadout.
+  `dojoDuel.loadout` and `dojoDuel.stage` (the touch walls) are on the
+  handle too. `window.dojoDuel` exposes the
   state, tables, `paused` + `step(n, keys)` for frame-stepping, `hold()` /
   `press()` for input, plus `pauseGame` / `resumeGame` and the audio
   context. Nothing in the game uses it.
@@ -465,7 +487,8 @@ are the current values in the tables below; check those before quoting.
   pad, Punch / Kick / Block and the power icons work together.
 - Storage: `sessionStorage` `dojoDuelDebug`, `dojoDuelMuted`;
   `localStorage` `dojoDuelHowtoSeen` (the How to play panel opens by itself
-  until it's dismissed once).
+  until it's dismissed once) and `dojoDuelPowers` (the loadout, e.g.
+  `fireball,boost,shield`; anything invalid falls back to the default).
 
 ## Mobile-first constraints learned the hard way
 

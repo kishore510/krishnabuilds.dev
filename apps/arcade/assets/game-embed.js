@@ -37,6 +37,12 @@
 //     to the games list. Also runs automatically on 'fullscreenchange' if
 //     the player exits some other way (Android back gesture, Esc), so
 //     orientation lock never gets stuck.
+//
+// Opt-in, for any game:
+//   window.kbSetChromeHidden(bool) - true hides the guide link and the
+//     site-links pill (never the back button or navbar); false shows them
+//     again. Nothing changes unless a game calls it, and it doesn't change
+//     kbBottomReserve. Dojo Duel calls it to clear the floor during a fight.
 
 (function () {
   const script = document.currentScript;
@@ -213,6 +219,13 @@
   coffee.textContent = 'Want to build your own? Get the guide';
   document.body.appendChild(coffee);
 
+  let chromeHidden = false;
+  window.kbSetChromeHidden = function (hidden) {
+    chromeHidden = !!hidden;
+    coffee.style.visibility = chromeHidden ? 'hidden' : '';
+    window.kbSiteLinks?.setHidden?.(chromeHidden);
+  };
+
   // Site links (home + app switcher) from site-links.js, as a collapsed
   // pill. Normal games get it inside the navbar, which already has its own
   // reserved space, so it can't cover the game. Fullscreen-mode games have
@@ -236,6 +249,8 @@
       pill.style.cssText = 'position:fixed;z-index:999;left:50%;transform:translateX(-50%);' +
         'bottom:calc(4px + env(safe-area-inset-bottom, 0px));';
     }
+    // a game that hid the chrome before this script loaded
+    if (chromeHidden) window.kbSiteLinks.setHidden(true);
   };
   document.head.appendChild(siteLinksScript);
 
