@@ -247,6 +247,18 @@ are the current values in the tables below; check those before quoting.
     fireballs, never on boosts.
   - **Sensei** (black and gold, the boss): Hard's reactions and counter
     state, plus more frequent and smarter power-ups (shields earlier).
+
+  **Tournament** (first row, `TOURNAMENT` / `UPGRADES`): three fights in a
+  row, GORO, then IWA or SORA (random; `?seed=N` repeats it), then the
+  Sensei. One round wins each of the first two fights; the Sensei is best of
+  3. After each won fight the player picks 1 of 3 random upgrades (longer
+  Boost or Shield, cheaper Boost or Fireball, faster energy, +20 health, more
+  energy at the start of each round). They last for the run, apply only to
+  KAI and show as icons under KAI's name, with FIGHT n/3 under the clock.
+  A loss ends the run (Knocked out), beating the Sensei makes you Champion;
+  either way Play Again starts a fresh run. A run that reaches the Sensei
+  takes about 2.5 minutes of game time; the most it can take is 5 rounds of
+  60 s plus banners.
 - **Match rules** (`ROUND`): best of 3 rounds with a 60 s clock. Knock the CPU
   out, or have more health when time runs out. A draw or double K.O.
   replays the round. Then a You win / You lose screen with Play Again and
@@ -278,8 +290,8 @@ are the current values in the tables below; check those before quoting.
   fighter white and stagger them. Kicks and K.O.s shake the screen. Comic
   POW! / WHAM! bursts appear on K.O.s and fireball hits.
 - **History:** built in seven steps (1.56.0 to 1.63.0, PRs #54 onward),
-  then the 1.64.0 fix that stops jab spam beating Hard, and the four
-  challengers in 1.68.0. Step by step in
+  then the 1.64.0 fix that stops jab spam beating Hard, the four
+  challengers in 1.68.0 and Tournament mode in 1.69.0. Step by step in
   `BACKLOG.md`, player-facing notes in `changelog.html`.
 
 ### File layout (top to bottom)
@@ -290,9 +302,11 @@ are the current values in the tables below; check those before quoting.
   is fixed to the viewport and keeps a 60 px `--chrome-row` free at the
   bottom for the fullscreen back button, site-links pill and guide link.
 - **HTML:** `#rotateHint`, then `#wrap` (canvas, `#topBtns`, `#overlay`
-  title screen with the "?" button, `#howto`, `#pause`, `#result`), then
+  title screen with the "?" button, `#howto`, `#pause`, `#upgrade` (the
+  tournament upgrade pick), `#result`), then
   `#controls` (pad, four action buttons, three power icons).
-- **Script, in order:** the tuning tables `POWER`, `AI_PRESETS`, arena
+- **Script, in order:** the tuning tables `POWER`, `AI_PRESETS`,
+  `TOURNAMENT`, `UPGRADES`, arena
   constants, `MOVE`, `FX`, `ROUND`, `BOXES`, `MOVES`; then fighter update
   (`updateFighter`), energy and fireballs, hits (`applyHit`, `canBlock`),
   hit effects, input (keyboard maps, touch pad, buttons), opponent modes,
@@ -339,6 +353,19 @@ are the current values in the tables below; check those before quoting.
   sends the player's own inputs and pays the same energy costs. A reaction
   can only block an attack whose `startup` is at least `reactionFrames`
   (4 blocks the 4-frame jab, 5 can't; above 6 it can't react to sweeps).
+- **`TOURNAMENT`** — the run: `fights` (each a `pool` of `AI_PRESETS` ids,
+  one drawn per run with the run's seeded RNG, and `wins`, rounds needed),
+  `choices` (upgrades offered after a win, never one already taken) and
+  `pickDelayMs` (the cards ignore taps this long, so a punch mashed at the
+  K.O. can't pick one).
+- **`UPGRADES`** — each row's `mods` are summed into `player.mods` (the CPU
+  keeps `NO_MODS`): `fireballCost` / `boostCost`, `boostFrames` /
+  `shieldFrames`, `regen` (per second), `health` (max), `startEnergy`.
+  `text` builds the card's line from `POWER`, so it stays right when POWER
+  changes. Keep `energy.start * max + startEnergy` below `shield.cost`.
+  The game reads costs, durations and health through `powerCost(f, id)`,
+  `maxHealth(f)` and `f.mods`; `opponent` is the preset the CPU plays (the
+  mode, or the current fight's) and `tour` the run (null outside it).
 
 ### Testing and balance
 
@@ -360,7 +387,11 @@ are the current values in the tables below; check those before quoting.
   `easy.*`, `rusher.*`, `sensei.powerAi.fireballRange=200`, `ai.*` for
   `POWER.ai`) to try a value without editing the game. Every bot has a row
   against each challenger (`jab-rusher` ... `good-sensei`); `--rows` takes
-  `*` patterns such as `'*-sensei'` or `'good-*'`.
+  `*` patterns such as `'*-sensei'` or `'good-*'`. Tournament rows
+  (`good-tournament` etc.) play whole runs, picking a random upgrade after
+  each win, and report runs won, how many won fight 1 and fight 2, and run
+  length in game time. `window.dojoDuel` has `tour`, `opponent` and
+  `pickUpgrade(i)` for this.
   60 matches a row is about +/-7 points of noise; check a change on a
   second seed range (`--first-seed 2000`) before trusting it.
 - Balance targets (1.64.0, numbers in PR for that version): jab spam vs
@@ -371,6 +402,9 @@ are the current values in the tables below; check those before quoting.
   Zoner and Sensei, no challenger loses more than 50% to a single spammed
   move, good bot vs each 15-45%. Mid bot wins little against any of them
   (2-20%); they are meant to be harder than Easy.
+  Tournament (1.69.0) has no target yet. The good bot wins about 3-4% of
+  runs, mostly because the single-round fights are a coin flip it often
+  loses.
 
 ### Robustness
 

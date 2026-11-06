@@ -78,8 +78,14 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         unchanged (REN). Balance harness covers every bot against each
         (`--rows '*-sensei'`, nested `--set sensei.powerAi.x=`); numbers in
         the PR
-  - [ ] PR 2: Tournament mode (Rusher, Turtle or Zoner, Sensei; pick an
-        upgrade after each win)
+  - [x] PR 2 (1.69.0): Tournament mode. `TOURNAMENT` table (three fights:
+        rusher, turtle or zoner, sensei; 1 / 1 / 2 rounds to win) and
+        `UPGRADES` table (seven player-only upgrades summed into
+        `player.mods`: costs, durations, regen, health, start energy). Pick 1
+        of 3 after each won fight (cards ignore taps for 0.7 s), icons under
+        KAI's name and FIGHT n/3 under the clock. ?seed=N repeats the
+        opponent draw and the offers. Harness rows `*-tournament`
+        (runs won, how far, run length); numbers in the PR
   - [ ] PR 3: new powers (Parry, Rage, Dash strike)
   - [ ] PR 4: arenas with one gameplay tweak each (ice, moon, temple)
 

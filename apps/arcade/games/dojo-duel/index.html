@@ -33,7 +33,7 @@
   }
 
   /* --- Title, How to play and result screens --- */
-  #overlay, #result, #howto, #pause {
+  #overlay, #result, #howto, #pause, #upgrade {
     position: absolute;
     inset: 0;
     display: flex;
@@ -57,12 +57,36 @@
   }
   /* Centred when it fits, scrollable from the top when it doesn't
      (justify-content: center would push the top out of reach). */
-  #overlay > *, #result > *, #howto > *, #pause > * { flex-shrink: 0; }
-  #overlay > :first-child, #result > :first-child, #howto > :first-child, #pause > :first-child { margin-top: auto; }
-  #overlay > :last-child, #result > :last-child, #howto > :last-child, #pause > :last-child { margin-bottom: auto; }
+  #overlay > *, #result > *, #howto > *, #pause > *, #upgrade > * { flex-shrink: 0; }
+  #overlay > :first-child, #result > :first-child, #howto > :first-child, #pause > :first-child, #upgrade > :first-child { margin-top: auto; }
+  #overlay > :last-child, #result > :last-child, #howto > :last-child, #pause > :last-child, #upgrade > :last-child { margin-bottom: auto; }
   #overlay > #startBtn { margin-bottom: auto; }   /* the "?" after it is absolutely placed */
-  #result, #howto, #pause { display: none; }
-  #result.on, #howto.on, #pause.on { display: flex; }
+  #result, #howto, #pause, #upgrade { display: none; }
+  #result.on, #howto.on, #pause.on, #upgrade.on { display: flex; }
+  /* Tournament upgrade pick: three cards in a row */
+  #upgrade h1 { margin: 0 0 4px; font-size: calc(28px * var(--game-scale, 1)); letter-spacing: 0.04em; color: #ffcf5a; }
+  #upgrade p { margin: 2px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; }
+  #upCards { display: flex; gap: calc(10px * var(--game-scale, 1)); margin-top: calc(10px * var(--game-scale, 1)); }
+  .upCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(3px * var(--game-scale, 1));
+    width: calc(150px * var(--game-scale, 1));
+    min-height: 44px;
+    padding: calc(10px * var(--game-scale, 1)) calc(8px * var(--game-scale, 1));
+    font: inherit;
+    color: #fff;
+    background: rgba(10,8,6,0.75);
+    border: 2px solid #ffcf5a;
+    border-radius: calc(12px * var(--game-scale, 1));
+    cursor: pointer;
+  }
+  .upCard:active { background: rgba(255,207,90,0.35); }
+  .upCard:disabled { opacity: 0.55; cursor: default; }
+  .upCard .ic { font-size: calc(26px * var(--game-scale, 1)); line-height: 1.1; }
+  .upCard b { font-size: calc(14px * var(--game-scale, 1)); color: #ffcf5a; }
+  .upCard .tx { font-size: calc(11px * var(--game-scale, 1)); opacity: 0.9; line-height: 1.3; }
   #pause { z-index: 8; }
   #pause p { margin: 3px 0; font-size: calc(12px * var(--game-scale, 1)); opacity: 0.9; }
   #result h1, #pause h1, #howto h2 { margin: 0 0 4px; font-size: calc(30px * var(--game-scale, 1)); letter-spacing: 0.04em; }
@@ -431,6 +455,7 @@
       <button type="button" role="radio" data-mode="easy" aria-checked="true">Easy</button>
       <button type="button" role="radio" data-mode="hard" aria-checked="false">Hard</button>
       <button type="button" role="radio" data-mode="practice" aria-checked="false">Practice</button>
+      <button type="button" role="radio" data-mode="tournament" aria-checked="false">Tournament</button>
     </div>
     <div id="opps" role="radiogroup" aria-label="Challenger">
       <button type="button" role="radio" data-mode="rusher" aria-checked="false" style="--c:#ffa94d">Rusher</button>
@@ -459,6 +484,11 @@
     <h1 id="pauseTitle">Paused</h1>
     <p>The clock is stopped. Ready when you are.</p>
     <button id="resumeBtn" type="button">Resume</button>
+  </div>
+  <div id="upgrade" role="dialog" aria-modal="true" aria-labelledby="upTitle">
+    <h1 id="upTitle">You win!</h1>
+    <p id="upNext"></p>
+    <div id="upCards"></div>
   </div>
   <div id="result">
     <h1 id="resultTitle">You win</h1>
@@ -510,6 +540,10 @@ const menuBtn = document.getElementById('menuBtn');
 const pauseEl = document.getElementById('pause');
 const resumeBtn = document.getElementById('resumeBtn');
 const modeNote = document.getElementById('modeNote');
+const upgradeEl = document.getElementById('upgrade');
+const upTitle = document.getElementById('upTitle');
+const upNext = document.getElementById('upNext');
+const upCards = document.getElementById('upCards');
 const muteBtn = document.getElementById('muteBtn');
 const debugBtn = document.getElementById('debugBtn');
 const dummyBtn = document.getElementById('dummyBtn');
@@ -625,6 +659,48 @@ const AI_PRESETS = {
             colors: { gi: '#2b2b2f', giDark: '#151518', band: '#ffd166', belt: '#ffd166', skin: '#c98d62' } }
 };
 
+// --- Tournament: three fights in a row against the challengers above. Each
+// fight's opponent is drawn from its pool with the AI's seeded RNG (so
+// ?seed=N repeats a run). wins = rounds needed to take that fight. Lose a
+// fight and the run is over; win the last and you're champion. Either way
+// the next run starts from fight 1 with no upgrades.
+const TOURNAMENT = {
+  fights: [
+    { pool: ['rusher'], wins: 1 },
+    { pool: ['turtle', 'zoner'], wins: 1 },
+    { pool: ['sensei'], wins: 2 }      // best of 3
+  ],
+  choices: 3,                          // upgrades offered after each win (never one you already have)
+  pickDelayMs: 700                     // the cards ignore taps this long, so a punch mashed at the K.O. can't pick one
+};
+// Upgrades: after each won fight (but the last) the player picks one of
+// TOURNAMENT.choices, drawn at random. They last for the run and only
+// apply to the player. Each row's mods are added to the player's
+// numbers; text says what it does to the current POWER values.
+//   fireballCost / boostCost  energy cost change
+//   boostFrames / shieldFrames  extra duration, frames
+//   regen        extra energy per second
+//   health       extra max health (the round starts full)
+//   startEnergy  extra energy at the start of each round (keep start +
+//                this below POWER.shield.cost, or rounds open with a free shield)
+const UPGRADES = [
+  { id: 'longBoost',  icon: '\u26a1', name: 'Long Boost',   mods: { boostFrames: 120 },
+    text: u => 'Boost lasts ' + (POWER.boost.frames + u.mods.boostFrames) / 60 + ' s, not ' + POWER.boost.frames / 60 + '.' },
+  { id: 'cheapBoost', icon: '\ud83d\udc5f', name: 'Light Feet',   mods: { boostCost: -10 },
+    text: u => 'Boost costs ' + (POWER.boost.cost + u.mods.boostCost) + ' energy, not ' + POWER.boost.cost + '.' },
+  { id: 'cheapFire',  icon: '\ud83d\udd25', name: 'Hot Hands',    mods: { fireballCost: -10 },
+    text: u => 'Fireballs cost ' + (POWER.fireball.cost + u.mods.fireballCost) + ' energy, not ' + POWER.fireball.cost + '.' },
+  { id: 'fastRegen',  icon: '\ud83d\udd0b', name: 'Quick Charge', mods: { regen: 1 },
+    text: u => 'Energy refills ' + Math.round(100 * u.mods.regen / POWER.energy.regen) + '% faster.' },
+  { id: 'tough',      icon: '\u2764\ufe0f', name: 'Tough',        mods: { health: 20 },
+    text: u => '+' + u.mods.health + ' health every round.' },
+  { id: 'headStart',  icon: '\ud83c\udf05', name: 'Head Start',   mods: { startEnergy: 15 },
+    text: u => 'Start each round with ' + u.mods.startEnergy + ' more energy.' },
+  { id: 'longShield', icon: '\ud83d\udee1\ufe0f', name: 'Long Shield',  mods: { shieldFrames: 90 },
+    text: u => 'Shield lasts ' + (POWER.shield.frames + u.mods.shieldFrames) / 60 + ' s, not ' + POWER.shield.frames / 60 + '.' }
+];
+const NO_MODS = { fireballCost: 0, boostCost: 0, shieldCost: 0, boostFrames: 0, shieldFrames: 0, regen: 0, health: 0, startEnergy: 0 };
+
 // --- Arena (logical pixels; the canvas is scaled to fit) ---
 const W = 640, H = 360;
 const FLOOR = 316;              // y of the fighters' feet
@@ -733,8 +809,11 @@ function movePhase(f) {
 }
 
 function makeFighter(name, colors) {
-  return { name, colors, x: 0, y: FLOOR, vx: 0, vy: 0, facing: 1 };
+  return { name, colors, x: 0, y: FLOOR, vx: 0, vy: 0, facing: 1, mods: NO_MODS };
 }
+// Tournament upgrades (only ever on the player; the CPU keeps NO_MODS).
+function maxHealth(f) { return MAX_HEALTH + f.mods.health; }
+function powerCost(f, id) { return POWER[id].cost + (f.mods[id + 'Cost'] || 0); }
 const player = makeFighter('KAI', { gi: '#2f6fd6', giDark: '#1f4c99', band: '#ffffff', belt: '#1a1a1a', skin: '#e8b98f' });
 const REN_LOOK = { name: 'REN', accent: '#ff8a7a', colors: { gi: '#d6453a', giDark: '#99302a', band: '#1a1a1a', belt: '#5a3a1a', skin: '#c98d62' } };
 const cpu = makeFighter(REN_LOOK.name, REN_LOOK.colors);
@@ -746,8 +825,8 @@ function resetFighters() {
       state: 'idle', stateFrames: 0, stun: 0, landLag: MOVE.landLag,
       jumpDir: 0, walkPhase: 0, crouched: false, airAttackUsed: false,
       move: null, buffer: null, inp: NO_INPUT, jumps: 0,
-      health: MAX_HEALTH, healthLag: MAX_HEALTH, lastHitFrame: -9999, hitCooldown: 0, flash: 0,
-      energy: POWER.energy.max * POWER.energy.start, noEnergy: 0, powerBuffer: null, boost: 0, shield: 0
+      health: maxHealth(f), healthLag: maxHealth(f), lastHitFrame: -9999, hitCooldown: 0, flash: 0,
+      energy: POWER.energy.max * POWER.energy.start + f.mods.startEnergy, noEnergy: 0, powerBuffer: null, boost: 0, shield: 0
     });
   }
   lastHit = null;
@@ -922,7 +1001,7 @@ function underAttack(f, opp) {
 const FIREBALL_GUARD = 120;   // px: holding back with a fireball this close stands in guard
 let projectiles = [];          // { owner, x, y, vx, def, hit, n, t }
 let powerLog = [];             // every power-up used this match, for the debug overlay and automated checks
-function canAfford(f, id) { return f.energy >= POWER[id].cost; }
+function canAfford(f, id) { return f.energy >= powerCost(f, id); }
 function hasFireball(f) { return projectiles.some(p => p.owner === f); }
 function incoming(p, f) { return Math.sign(f.x - p.x) === Math.sign(p.vx); }
 function refusePower(f) {
@@ -935,11 +1014,11 @@ function refusePower(f) {
 function usePower(f, id) {
   if (!canAfford(f, id)) { refusePower(f); return false; }
   if (id === 'fireball' && hasFireball(f)) return false;
-  f.energy -= POWER[id].cost;
+  f.energy -= powerCost(f, id);
   powerLog.push({ by: f.name, id, frame: simFrame });
   if (id === 'fireball') { startMove(f, 'fireball'); sfx('fireCast'); }
-  else if (id === 'boost') { f.boost = POWER.boost.frames; sfx('boost'); ringFx(f, '255,211,42'); }
-  else if (id === 'shield') { f.shield = POWER.shield.frames; sfx('shield'); ringFx(f, '120,205,255'); }
+  else if (id === 'boost') { f.boost = POWER.boost.frames + f.mods.boostFrames; sfx('boost'); ringFx(f, '255,211,42'); }
+  else if (id === 'shield') { f.shield = POWER.shield.frames + f.mods.shieldFrames; sfx('shield'); ringFx(f, '120,205,255'); }
   return true;
 }
 function spawnFireball(f) {
@@ -959,7 +1038,7 @@ function blocking(f) {
   return !!f.inp.block || (f.state === 'crouch' && f.inp.h === -f.facing);
 }
 function regenEnergy(f) {
-  if (!blocking(f)) f.energy = Math.min(POWER.energy.max, f.energy + POWER.energy.regen / 60);
+  if (!blocking(f)) f.energy = Math.min(POWER.energy.max, f.energy + (POWER.energy.regen + f.mods.regen) / 60);
 }
 // Fireballs fly, then hit (or are blocked by, or soaked by a shield on) the
 // other fighter once and vanish. Two fireballs that meet cancel out.
@@ -1323,20 +1402,27 @@ const MODE_NOTES = {
   hard: 'REN reacts fast, blocks most attacks and punishes misses.',
   practice: 'A training dummy that never attacks: stand, block, or low block.'
 };
-const MODE_LABELS = { easy: 'Easy', hard: 'Hard', practice: 'Practice', rusher: 'Rusher', turtle: 'Turtle', zoner: 'Zoner', sensei: 'Sensei' };
+const MODE_LABELS = { easy: 'Easy', hard: 'Hard', practice: 'Practice', tournament: 'Tournament', rusher: 'Rusher', turtle: 'Turtle', zoner: 'Zoner', sensei: 'Sensei' };
+MODE_NOTES.tournament = 'Three fights in a row: ' + TOURNAMENT.fights.map(f => f.pool.map(id => AI_PRESETS[id].name).join(' or ')).join(', then ') +
+  '. Pick an upgrade after each win.';
 let mode = 'easy';
+let opponent = 'easy';   // the AI_PRESETS row the CPU plays: the mode, or the current tournament fight's
 const modeBtns = document.querySelectorAll('#modes button, #opps button');
 const versusCpu = document.querySelector('#versus .ren');
 // The CPU's name and colours: a challenger's own, otherwise REN's.
 function opponentLook(m) { return AI_PRESETS[m] && AI_PRESETS[m].name ? AI_PRESETS[m] : REN_LOOK; }
-function setMode(m) {
-  mode = m;
-  modeBtns.forEach(b => b.setAttribute('aria-checked', String(b.dataset.mode === m)));
-  const look = opponentLook(m);
+function setOpponent(id) {
+  opponent = id;
+  const look = opponentLook(id);
   cpu.name = look.name;
   cpu.colors = look.colors;
   versusCpu.textContent = look.name;
   versusCpu.style.color = look.accent;
+}
+function setMode(m) {
+  mode = m;
+  modeBtns.forEach(b => b.setAttribute('aria-checked', String(b.dataset.mode === m)));
+  setOpponent(m === 'tournament' ? TOURNAMENT.fights[0].pool[0] : m);
   modeNote.textContent = MODE_NOTES[m] || AI_PRESETS[m].intro;
   dummyBtn.style.display = m === 'practice' ? '' : 'none';
 }
@@ -1364,8 +1450,8 @@ function makeRng(seed) {
 const seedParam = /[?&]seed=(\d+)/.exec(location.search);
 let seedOverride = seedParam ? Number(seedParam[1]) : null;
 let aiSeed = 0, rnd = makeRng(0);
-function seedAi() {
-  aiSeed = seedOverride !== null ? seedOverride : (Math.random() * 4294967296) >>> 0;
+function seedAi(fixed) {
+  aiSeed = fixed !== undefined ? fixed >>> 0 : seedOverride !== null ? seedOverride : (Math.random() * 4294967296) >>> 0;
   rnd = makeRng(aiSeed);
 }
 
@@ -1432,7 +1518,7 @@ const AI_FREE = ['idle', 'walk', 'crouch', 'guard'];
 function decide(d, hold) { ai.decision = d; ai.hold = hold || 0; }
 
 function aiInput() {
-  const P = AI_PRESETS[mode];
+  const P = AI_PRESETS[opponent];
   const o = aiView(P);
   const me = cpu;
   const inp = { h: 0, up: false, down: false, block: false, punch: false, kick: false };
@@ -2058,8 +2144,8 @@ function drawHud() {
     ctx.fillStyle = '#5a1a14';
     ctx.fillRect(x, y, barW, barH);
     // bars drain toward the centre, like most fighting games
-    const lagW = barW * f.healthLag / MAX_HEALTH;
-    const hpW = barW * f.health / MAX_HEALTH;
+    const lagW = barW * f.healthLag / maxHealth(f);
+    const hpW = barW * f.health / maxHealth(f);
     ctx.fillStyle = '#ff6b4a';
     ctx.fillRect(align === 'left' ? x + barW - lagW : x, y, lagW, barH);
     ctx.fillStyle = '#f2c14e';
@@ -2072,7 +2158,7 @@ function drawHud() {
     ctx.fillText(f.name, align === 'left' ? x : x + barW, y + barH + 15);
     // round win markers, under the bar's inner end
     const won = wins[f === player ? 0 : 1];
-    for (let i = 0; i < ROUND.winsNeeded; i++) {
+    for (let i = 0; i < winsNeeded(); i++) {
       const mx = align === 'left' ? x + barW - 7 - i * 17 : x + 7 + i * 17;
       ctx.beginPath();
       ctx.arc(mx, y + barH + 20, 5.5, 0, Math.PI * 2);
@@ -2083,6 +2169,7 @@ function drawHud() {
       ctx.stroke();
     }
   }
+  if (tour) drawTourHud(16, y + barH + 30);
   // round clock, top centre
   const secs = Math.ceil(clock / 60);
   ctx.fillStyle = 'rgba(0,0,0,0.6)';
@@ -2092,6 +2179,28 @@ function drawHud() {
   ctx.textBaseline = 'middle';
   ctx.fillStyle = secs <= 10 && phase === 'fight' ? '#ff6b4a' : '#fff';
   ctx.fillText(String(secs), W / 2, 21);
+}
+
+// Tournament: which fight this is (under the clock) and the upgrades won
+// so far (icons under KAI's name).
+function drawTourHud(x, y) {
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+  ctx.font = '800 9px system-ui, -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(W / 2 - 30, 36, 60, 13);
+  ctx.fillStyle = '#ffcf5a';
+  ctx.fillText('FIGHT ' + (tour.fight + 1) + '/' + TOURNAMENT.fights.length, W / 2, 43);
+  ctx.textAlign = 'left';
+  ctx.font = '13px system-ui, -apple-system, sans-serif';
+  tour.upgrades.forEach((u, i) => {
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.beginPath();
+    ctx.arc(x + 9 + i * 21, y + 9, 9.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText(u.icon, x + 2.5 + i * 21, y + 9.5);
+  });
 }
 
 // Energy meter, under the health bar and filling the same way (toward the
@@ -2110,7 +2219,7 @@ function drawEnergy(f, x, y, w, align) {
   ctx.fillRect(align === 'left' ? x + w - ew : x, y, ew, ENERGY_H);
   ctx.fillStyle = 'rgba(0,0,0,0.55)';
   for (const id of POWER_IDS) {
-    const tx = w * POWER[id].cost / E.max;
+    const tx = w * powerCost(f, id) / E.max;
     ctx.fillRect(align === 'left' ? x + w - tx - 0.75 : x + tx - 0.75, y, 1.5, ENERGY_H);
   }
   if (f.noEnergy > 0) {
@@ -2224,7 +2333,10 @@ function drawRings() {
 // The big centre banner for the current round phase, or null.
 function bannerText() {
   const name = (w) => (w === 0 ? player : cpu).name;
-  if (phase === 'intro') return phaseFrames < ROUND.introFrames ? { text: 'ROUND ' + round, t: phaseFrames } : { text: 'FIGHT!', t: phaseFrames - ROUND.introFrames };
+  if (phase === 'intro') {
+    const sub = tour ? 'Fight ' + (tour.fight + 1) + ' of ' + TOURNAMENT.fights.length + ': ' + cpu.name : undefined;
+    return phaseFrames < ROUND.introFrames ? { text: 'ROUND ' + round, sub, t: phaseFrames } : { text: 'FIGHT!', t: phaseFrames - ROUND.introFrames };
+  }
   const sub = roundWinner < 0 ? 'Draw: replay the round' : name(roundWinner) + ' wins the round';
   if (phase === 'ko') return { text: roundWinner < 0 ? 'DOUBLE K.O.' : 'K.O.', sub, t: phaseFrames };
   if (phase === 'timeup') return { text: 'TIME!', sub, t: phaseFrames };
@@ -2278,8 +2390,8 @@ function debugLines() {
   lines.push('round ' + round + ' ' + phase + ' f' + phaseFrames + '   clock ' + (clock / 60).toFixed(2) + 's   wins ' + wins[0] + '-' + wins[1] + '   hitstop ' + hitstop);
   if (mode === 'practice') lines.push('cpu practice dummy ' + DUMMY_MODES[dummyIndex].id);
   else {
-    const P = AI_PRESETS[mode];
-    lines.push('cpu ' + mode + ' seed ' + aiSeed + '   decision ' + aiLabel() + '   last power ' + ai.lastPower);
+    const P = AI_PRESETS[opponent];
+    lines.push('cpu ' + opponent + ' seed ' + aiSeed + '   decision ' + aiLabel() + '   last power ' + ai.lastPower);
     lines.push('    react ' + P.reactionFrames + 'f (sees f' + aiView(P).frame + ')  reacts in ' +
       Math.max(0, playerChangeFrame + P.reactionFrames - simFrame) + 'f  think ' + Math.max(0, ai.think) + 'f  range ' + Math.round(ai.range) +
       (ai.counterT > 0 ? '  countering ' + MOVES[ai.counterMove].name + ' ' + ai.counterT + 'f' : ''));
@@ -2438,7 +2550,7 @@ function draw(t) {
 }
 
 // --- Game state and loop ---
-let state = 'menu'; // 'menu' | 'playing' | 'result'
+let state = 'menu'; // 'menu' | 'playing' | 'upgrade' (between tournament fights) | 'result'
 let simFrame = 0;
 // Within 'playing', each round runs intro (Round N, Fight!) -> fight ->
 // ko or timeup (banner) -> next round, or the result screen.
@@ -2511,27 +2623,57 @@ function endRound(kind, winner) {
   sfx(kind === 'ko' ? 'ko' : 'bell');
 }
 function nextRound() {
-  if (wins[0] >= ROUND.winsNeeded || wins[1] >= ROUND.winsNeeded) { showResult(); return; }
+  if (wins[0] >= winsNeeded() || wins[1] >= winsNeeded()) { fightOver(); return; }
   if (roundWinner >= 0) round++;   // a draw replays the same round
   beginRound();
+}
+// A fight is decided: the result screen, or in a tournament the upgrade
+// pick before the next fight.
+function fightOver() {
+  if (tour && wins[0] > wins[1] && tour.fight < TOURNAMENT.fights.length - 1) showUpgrades();
+  else showResult();
 }
 function showResult() {
   state = 'result';
   const won = wins[0] > wins[1];
   resultTitle.textContent = won ? 'You win' : 'You lose';
   resultScore.textContent = player.name + ' ' + wins[0] + ' \u2013 ' + wins[1] + ' ' + cpu.name + ' \u00b7 ' + MODE_LABELS[mode];
+  if (tour) {
+    resultTitle.textContent = won ? 'Champion!' : 'Knocked out';
+    const names = tour.ids.map(id => AI_PRESETS[id].name);
+    resultScore.textContent = (won ? 'You beat ' + names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] + '.'
+      : 'Lost to ' + cpu.name + ' in fight ' + (tour.fight + 1) + ' of ' + TOURNAMENT.fights.length + '.') +
+      (tour.upgrades.length ? ' Upgrades: ' + tour.upgrades.map(u => u.icon + ' ' + u.name).join(', ') + '.' : '') +
+      ' Play Again starts a new run.';
+  }
   resultEl.classList.add('on');
   clearInput();
   updateControls();
   sfx(won ? 'win' : 'lose');
 }
 
+// --- Tournament run state: null outside Tournament mode ---
+// { seed, rng, ids (opponent per fight), fight (index), upgrades, choices }
+let tour = null;
 function startGame() {
+  tour = null;
+  player.mods = NO_MODS;
+  if (mode === 'tournament') {
+    seedAi();   // the run's seed (?seed=N fixes it): picks the opponents and the upgrade offers
+    const r = makeRng(aiSeed ^ 0x5bd1e995);
+    tour = { seed: aiSeed, rng: r, fight: 0, upgrades: [], choices: [],
+      ids: TOURNAMENT.fights.map(f => f.pool[Math.floor(r() * f.pool.length)]) };
+  } else setOpponent(mode);
+  startFight();
+}
+function winsNeeded() { return tour ? TOURNAMENT.fights[tour.fight].wins : ROUND.winsNeeded; }
+function startFight() {
+  if (tour) setOpponent(tour.ids[tour.fight]);
   round = 1;
   wins = [0, 0];
   simFrame = 0;
   powerLog = [];
-  seedAi();
+  if (tour) seedAi(tour.seed + tour.fight); else seedAi();
   beginRound();
   clearInput();
   state = 'playing';
@@ -2540,7 +2682,50 @@ function startGame() {
   howto.classList.remove('on');
   overlay.style.display = 'none';
   resultEl.classList.remove('on');
+  upgradeEl.classList.remove('on');
   updateControls();
+}
+// Upgrade pick between tournament fights: TOURNAMENT.choices random
+// upgrades the player doesn't have yet.
+function showUpgrades() {
+  state = 'upgrade';
+  const left = UPGRADES.filter(u => !tour.upgrades.includes(u));
+  tour.choices = [];
+  while (tour.choices.length < TOURNAMENT.choices && left.length) tour.choices.push(left.splice(Math.floor(tour.rng() * left.length), 1)[0]);
+  upTitle.textContent = 'You beat ' + cpu.name + '!';
+  const next = AI_PRESETS[tour.ids[tour.fight + 1]], nw = TOURNAMENT.fights[tour.fight + 1].wins;
+  upNext.textContent = 'Next: ' + next.name + (nw > 1 ? ' (best of ' + (2 * nw - 1) + ')' : '') + '. Pick an upgrade for the rest of the run.';
+  upCards.replaceChildren(...tour.choices.map((u, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'upCard';
+    b.innerHTML = '<span class="ic"></span><b></b><span class="tx"></span>';
+    b.querySelector('.ic').textContent = u.icon;
+    b.querySelector('b').textContent = u.name;
+    b.querySelector('.tx').textContent = u.text(u);
+    b.disabled = true;
+    b.addEventListener('click', () => pickUpgrade(i));
+    return b;
+  }));
+  upgradeEl.classList.add('on');
+  clearInput();
+  updateControls();
+  sfx('win');
+  setTimeout(() => {
+    upCards.querySelectorAll('button').forEach(b => { b.disabled = false; });
+    if (state === 'upgrade' && upCards.firstChild) upCards.firstChild.focus();
+  }, TOURNAMENT.pickDelayMs);
+}
+function pickUpgrade(i) {
+  if (state !== 'upgrade') return;
+  const u = tour.choices[i];
+  tour.upgrades.push(u);
+  const mods = { ...NO_MODS };
+  for (const t of tour.upgrades) for (const k in t.mods) mods[k] += t.mods[k];
+  player.mods = mods;
+  tour.fight++;
+  ensureAudio();
+  startFight();
 }
 
 for (const btn of [startBtn, againBtn]) {
@@ -2552,6 +2737,9 @@ for (const btn of [startBtn, againBtn]) {
 }
 menuBtn.addEventListener('click', () => {
   state = 'menu';
+  tour = null;
+  player.mods = NO_MODS;
+  setMode(mode);
   resultEl.classList.remove('on');
   overlay.style.display = '';
   resetFighters();
@@ -2632,10 +2820,13 @@ window.dojoDuel = {
   pauseGame, resumeGame,
   get dummy() { return DUMMY_MODES[dummyIndex].id; },
   get mode() { return mode; },
+  get opponent() { return opponent; },
+  get tour() { return tour && { fight: tour.fight, ids: tour.ids.slice(), upgrades: tour.upgrades.map(u => u.id), choices: tour.choices.map(u => u.id), seed: tour.seed }; },
+  pickUpgrade,
   set mode(m) { setMode(m); },
   get seed() { return aiSeed; },
   set seed(v) { seedOverride = v === null ? null : Number(v); },
-  get ai() { return { decision: ai.decision, label: aiLabel(), think: ai.think, range: ai.range, seenFrame: mode === 'practice' ? null : aiView(AI_PRESETS[mode]).frame, countering: ai.counterT > 0 ? ai.counterMove : null }; },
+  get ai() { return { decision: ai.decision, label: aiLabel(), think: ai.think, range: ai.range, seenFrame: mode === 'practice' ? null : aiView(AI_PRESETS[opponent]).frame, countering: ai.counterT > 0 ? ai.counterMove : null }; },
   hold(name, on) { keyHeld[name] = !!on; },
   get projectiles() { return projectiles.map(p => ({ owner: p.owner.name, x: p.x, y: p.y, vx: p.vx, n: p.n, box: fireballBox(p) })); },
   get powerLog() { return powerLog.slice(); },
@@ -2656,7 +2847,7 @@ window.dojoDuel = {
   reset() { resetFighters(); clearInput(); },
   startGame,
   player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
-  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, POWER, FS, FLOOR, MAX_HEALTH
+  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, POWER, TOURNAMENT, UPGRADES, FS, FLOOR, MAX_HEALTH
 };
 
 resetFighters();
