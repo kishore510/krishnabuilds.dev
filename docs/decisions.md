@@ -217,3 +217,15 @@ Each app card on the Portal gets an illustrative, hand-written SVG preview (not 
 ## 2026-11-05 — Stickyard and Sumyard join the shared kb-theme cookie
 
 Stickyard (0.45.0) and Sumyard (0.32.0) follow Chalkline: the theme lives only in the shared `kb-theme` cookie on `.krishnabuilds.dev`, read and written through `getTheme`/`setTheme` in packages/ui, so a theme chosen in any app carries over. On first load, a Light or Dark choice stored under the app's old localStorage key is written to the cookie, unless the cookie already holds a choice from another app, which wins; the old key is removed only once the cookie holds the choice. Each pre-paint script reads the cookie first and falls back to the old key until the move has run. Both apps still set `data-theme` for System, because their own tokens need it. In Sumyard, Clear all data now leaves the theme alone (it belongs to every app), while backups still record it and a restore sets it; its storage guard allows only reading the cookie with the pre-paint pattern.
+
+## 2026-11-04 — Stonks rebuild is shelved, may be revisited
+
+Supersedes the Stonks rebuild decisions of 2026-10-24 and 2026-10-30 (GitHub Actions cron, Cloudflare D1, read-only Worker dashboard, narrow-schema guidance). The rebuild will not be built now.
+
+What was proven: Spike 1 showed the nightly fetch works from a GitHub-hosted runner (about 6,200 tickers in 11 to 14 minutes across several runs on three trading days, no rate limiting, 100% data or legitimately empty). Spike 2 showed D1 sizing is manageable with a narrow schema, with the database size cap on the Free plan the main constraint for a full-universe import. The pattern (Actions cron, D1, read-only Worker) is reusable for other apps.
+
+Why shelved: the screening idea itself is not something I want to build or run. Replacement ideas (grid carbon, allotment weather, river levels, train and road data) were also assessed and not pursued, each because it had interesting data but no decision it would help me make.
+
+Revisit only if: there is a specific question or decision the app would help with, and the data to answer it is available without a paid plan or a hand-built data source. Starting point if revisited: the spike findings in docs/plan.md and the entries above; nothing in the repo needs restoring.
+
+The running job on the Raspberry Pi and its old data are handled manually and are not part of this repo change.

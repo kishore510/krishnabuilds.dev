@@ -35,17 +35,41 @@ Rule for `packages/ui`: only extract a component once it is duplicated in two ap
   - [x] Sumyard (type scale and spacing base only; keeps its own palette and radii)
   - [x] Arcade (committed copy of the shared CSS with a drift check; site links bar sizes only)
 
-## Week 3 — Close out Stonks, switch off the Pi
+## Week 3: Stonks shelved, close out
 
-Stonks is retired, not rebuilt (see `docs/decisions.md`).
+Shelved 2026-11-04, see decisions.md. Original slice plan kept below for reference only.
 
 - [x] Spike 1: nightly data fetch from GitHub Actions
   - **PASS.** About 6,200 tickers fetched from a GitHub-hosted runner in 11 to 14 minutes, with no rate limiting
 - [x] Spike 2: D1 limits against the nightly row count plus history
   - **PASS with a narrow schema** (see "Stonks D1 schema keeps the daily table narrow" in `docs/decisions.md`). Writes had plenty of headroom; database size was the constraint
-- [x] Decision: retire Stonks
-- [ ] Archive the old Stonks data and scripts outside the repo
-- [ ] Check nothing else runs on the Pi
+- [x] Decision: shelve Stonks (2026-11-04)
+- Spike 3 ideas (weather, carbon, river, rail, road) were not pursued; see decisions.md
+- [ ] Archive old Stonks data and scripts outside the repo
+- [ ] Check nothing else depends on the Pi
+- [ ] Decide: switch off the Pi or leave Stonks running there
+- [ ] Archive the old docs repo
+
+### Archived: original Stonks plan (not active)
+
+#### Phase A: Plan and spec
+
+- [ ] Write `docs/stonks-spec.md` in my own words from the existing docs: purpose, pipeline, features, signal rules, outcomes definition, weekly digest, data model. No secrets, hostnames or real data
+- [x] Decide: keep historical Stonks data in D1 or start fresh
+  - Start fresh: D1 starts empty and nothing is imported from the Pi (see `docs/decisions.md`)
+
+#### Phase C: Build in thin vertical slices (each is its own small PR)
+
+- [ ] Slice 1: scaffold `apps/stonks`, D1 schema and migrations, path-filtered CI, one ingest run writing a small sample to D1
+- [ ] Slice 2: full nightly ingest on GitHub Actions cron, storing per-rule results per row; run history and error log
+- [ ] Slice 3: derived outcomes and control-group baseline as SQL views
+- [ ] Slice 4: read-only Worker dashboard (latest signals, history, outcomes vs baseline) on the shared tokens and site header
+- [ ] Decide public vs Cloudflare Access before going live; add Stonks to the app list when live
+- [ ] Slice 5: weekly digest (SQL aggregates plus two Claude calls a week, stored; dashboard never calls Claude) and email heartbeat
+
+#### Phase D: Cutover
+
+- [ ] Run new setup alongside the Pi and confirm parity
 - [ ] Switch off the Pi
 - [ ] Archive the old docs repo
 
