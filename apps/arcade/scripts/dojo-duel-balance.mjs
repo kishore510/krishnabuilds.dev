@@ -25,8 +25,10 @@
 //                       (and of blocked moves that are -10 or worse, i.e. the dash strike)
 //   good                sees REN 8 frames late, blocks 80%, punishes 60%
 //
+// --arena ice|moon|temple plays every non-tournament row in that arena (default dojo).
 // --set table.key=value edits AI_PRESETS (easy.* / hard.* / rusher.* / turtle.* /
-// zoner.* / sensei.*, and deeper, e.g. sensei.powerAi.fireballRange=200) or
+// zoner.* / sensei.*, and deeper, e.g. sensei.powerAi.fireballRange=200), ARENAS
+// (ice.mods.walkCarry=0.8) or
 // POWER.ai (ai.*) in the page before each row, for trying values without
 // editing the game. --rows takes names or * patterns ("*-sensei", "good-*").
 
@@ -67,7 +69,7 @@ const LABEL = m => m[0].toUpperCase() + m.slice(1);
 
 // --- args ---
 const args = process.argv.slice(2);
-let matches = 60, first = 1000, rowNames = Object.keys(ROWS), workers = 4, showPowers = false;
+let matches = 60, first = 1000, rowNames = Object.keys(ROWS), workers = 4, showPowers = false, arena = 'dojo';
 const sets = [];
 for (let i = 0; i < args.length; i++) {
   const a = args[i];
@@ -80,6 +82,7 @@ for (let i = 0; i < args.length; i++) {
   }
   else if (a === '--workers') workers = Number(args[++i]);
   else if (a === '--powers') showPowers = true;
+  else if (a === '--arena') arena = args[++i];
   else if (a === '--set') {
     const [path, v] = args[++i].split('=');
     const [table, ...keys] = path.split('.');
@@ -103,16 +106,17 @@ const base = `http://127.0.0.1:${server.address().port}/games/dojo-duel/index.ht
 
 // --- one match, run entirely inside the page ---
 // Returns { won, rounds: [playerRounds, cpuRounds] }.
-function playMatch({ bot, mode, seed, sets }) {
+function playMatch({ bot, mode, seed, sets, arena }) {
   const D = window.dojoDuel;
   const { MOVES, BOXES, FS, POWER } = D;
   for (const s of sets) {
-    let o = s.table === 'ai' ? POWER.ai : D.AI_PRESETS[s.table];
+    let o = s.table === 'ai' ? POWER.ai : D.ARENAS[s.table] || D.AI_PRESETS[s.table];
     for (const k of s.keys.slice(0, -1)) o = o[k] = o[k] || {};
     o[s.keys[s.keys.length - 1]] = s.value;
   }
   D.paused = true;
   D.mode = mode;
+  D.arena = arena;   // ignored by Tournament, which draws one per fight
   D.seed = seed;
   D.startGame();
   const me = D.player, ren = D.cpu;
@@ -246,7 +250,7 @@ async function freshPage(page) {
   await page.waitForFunction(() => window.dojoDuel);
 }
 
-console.log(`Dojo Duel balance: ${matches} matches a row (seeds ${first}-${first + matches - 1})` + (sets.length ? ', with ' + sets.map(s => `${[s.table, ...s.keys].join('.')}=${JSON.stringify(s.value)}`).join(' ') : ''));
+console.log(`Dojo Duel balance: ${matches} matches a row (seeds ${first}-${first + matches - 1})` + (arena !== 'dojo' ? ', arena ' + arena : '') + (sets.length ? ', with ' + sets.map(s => `${[s.table, ...s.keys].join('.')}=${JSON.stringify(s.value)}`).join(' ') : ''));
 console.log('| Matchup | Player match wins | Player round wins |' + (showPowers ? ' CPU powers per match |' : ''));
 console.log('| --- | --- | --- |' + (showPowers ? ' --- |' : ''));
 const tourRows = rowNames.filter(r => ROWS[r].mode === 'tournament');
@@ -259,7 +263,7 @@ for (const name of rowNames) {
   await Promise.all(pages.map(async page => {
     while (seeds.length) {
       const seed = seeds.shift();
-      results.push(await page.evaluate(playMatch, { ...row, seed, sets }));
+      results.push(await page.evaluate(playMatch, { ...row, seed, sets, arena }));
     }
   }));
   const won = results.filter(r => r.won).length;
@@ -283,12 +287,12 @@ for (const name of tourRows) {
   const seeds = Array.from({ length: matches }, (_, i) => first + i);
   const results = [];
   await Promise.all(pages.map(async page => {
-    while (seeds.length) results.push(await page.evaluate(playMatch, { ...row, seed: seeds.shift(), sets }));
+    while (seeds.length) results.push(await page.evaluate(playMatch, { ...row, seed: seeds.shift(), sets, arena }));
   }));
   const pct = n => Math.round(100 * n / results.length) + '%';
   const secs = results.map(r => r.seconds).sort((a, b) => a - b);
   const full = results.filter(r => r.fights >= 2).map(r => r.seconds).sort((a, b) => a - b);
-  const mmss = t => Math.floor(t / 60) + ':' + String(Math.round(t % 60)).padStart(2, '0');
+  const mmss = t => { t = Math.round(t); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
   console.log(`| ${row.bot} | ${pct(results.filter(r => r.fights >= 3).length)} | ${pct(results.filter(r => r.fights >= 1).length)} | ${pct(results.filter(r => r.fights >= 2).length)} | ${mmss(secs[secs.length >> 1])} / ${mmss(secs[secs.length - 1])} | ${full.length ? mmss(full[full.length >> 1]) + ' (' + full.length + ' runs)' : '-'} |`);
 }
 await browser.close();

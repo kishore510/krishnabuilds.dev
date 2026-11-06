@@ -259,6 +259,13 @@ are the current values in the tables below; check those before quoting.
   either way Play Again starts a fresh run. A run that reaches the Sensei
   takes about 2.5 minutes of game time; the most it can take is 5 rounds of
   60 s plus banners.
+- **Arenas** (`ARENAS`): an Arena button under the opponent pickers cycles
+  where you fight. Each recolours the dojo and changes one thing, for both
+  fighters: 🏯 **Dojo** (the original, no change), 🧊 **Ice Dojo** (hits
+  and blocks slide you about 3x as far), 🌙 **Moon Dojo** (low gravity:
+  higher, floatier jumps) and ⛩️ **Temple** (energy refills 50% faster).
+  Tournament puts each fight in a different random arena. Round 1's banner
+  names the arena.
 - **Match rules** (`ROUND`): best of 3 rounds with a 60 s clock. Knock the CPU
   out, or have more health when time runs out. A draw or double K.O.
   replays the round. Then a You win / You lose screen with Play Again and
@@ -300,8 +307,8 @@ are the current values in the tables below; check those before quoting.
   POW! / WHAM! bursts appear on K.O.s and fireball hits.
 - **History:** built in seven steps (1.56.0 to 1.63.0, PRs #54 onward),
   then the 1.64.0 fix that stops jab spam beating Hard, the four
-  challengers in 1.68.0, Tournament mode in 1.69.0 and Parry / Rage / Dash
-  strike in 1.70.0. Step by step in
+  challengers in 1.68.0, Tournament mode in 1.69.0, Parry / Rage / Dash
+  strike in 1.70.0 and arenas in 1.71.0. Step by step in
   `BACKLOG.md`, player-facing notes in `changelog.html`.
 
 ### File layout (top to bottom)
@@ -317,7 +324,7 @@ are the current values in the tables below; check those before quoting.
   `#controls` (pad, four action buttons, six power icons in a 2x3 grid).
 - **Script, in order:** the tuning tables `POWER`, `AI_PRESETS`,
   `TOURNAMENT`, `UPGRADES`, arena
-  constants, `MOVE`, `FX`, `ROUND`, `BOXES`, `MOVES`; then fighter update
+  constants, `MOVE`, `ARENAS`, `FX`, `ROUND`, `BOXES`, `MOVES`; then fighter update
   (`updateFighter`), energy and fireballs, hits (`applyHit`, `canBlock`),
   hit effects, input (keyboard maps, touch pad, buttons), opponent modes,
   the seeded RNG, the CPU AI (`aiInput`), debug overlay, audio, layout
@@ -385,6 +392,13 @@ are the current values in the tables below; check those before quoting.
   `maxHealth(f)` and `f.mods`; `opponent` is the preset the CPU plays (the
   mode, or the current fight's) and `tour` the run (null outside it).
 
+- **`ARENAS`** — `name`, `icon`, `tweak` (the short line on the Arena
+  button and round banner), `mods` (any of `gravityMul`, `jumpVyMul`,
+  `friction`, `regenMul`, merged over `ARENA_BASE` into `arenaMods` by
+  `useArena`; physics reads `gravity()`, `arenaMods.*`), `palette` (the
+  colours `drawArena` uses) and `decor` (`stars`, `shine` or none). No
+  visual-only arenas: each new one needs a tweak.
+
 ### Testing and balance
 
 - `?seed=N` fixes the AI's RNG, `?debug=1` (or H) shows boxes and state,
@@ -414,6 +428,8 @@ are the current values in the tables below; check those before quoting.
   parry) cover the new powers; mid and good also punish a blocked move at
   -10 or worse (only the dash strike). `--powers` adds a column of what
   the CPU spent energy on per match and how many hits it parried.
+  `--arena ice` plays the rows in that arena, and `--set ice.mods.friction=0.9`
+  edits one. `?arena=moon` picks one in the page.
   60 matches a row is about +/-7 points of noise; check a change on a
   second seed range (`--first-seed 2000`) before trusting it.
 - Balance targets (1.64.0, numbers in PR for that version): jab spam vs
@@ -426,6 +442,11 @@ are the current values in the tables below; check those before quoting.
   (2-20%); they are meant to be harder than Easy.
   New powers (1.70.0): the same challenger targets hold, and dash, rage
   and parry spam lose to every opponent.
+  Arenas (1.71.0): spam still loses everywhere. Ice makes REN and the
+  challengers easier for the good bot (20-43%). Moon matches the Dojo,
+  because neither the CPU nor the bots jump. Temple takes the good bot
+  below 15% against Zoner and Sensei, because the bots never spend energy
+  and the CPU does.
   Tournament (1.69.0) has no target yet. The good bot wins about 3-4% of
   runs, mostly because the single-round fights are a coin flip it often
   loses.

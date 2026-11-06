@@ -98,7 +98,15 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         count their lunge in the threat ranges. Harness: dash / rage / parry
         spam bots, `--powers`, bots punish blocked moves at -10 or worse
         (only the dash strike); numbers in the PR
-  - [ ] PR 4: arenas with one gameplay tweak each (ice, moon, temple)
+  - [x] PR 4 (1.71.0): `ARENAS` table, a palette (and small decor) plus
+        one gameplay tweak each, through `arenaMods`: Ice (`friction` 0.94:
+        knockback slides about 3x as far), Moon (gravity x0.65, jump speed
+        x0.85: peak 131 px vs 117, 54 frames in the air vs 41), Temple
+        (energy regen x1.5). The Dojo is unchanged. Title-screen Arena
+        button cycles them (`?arena=ice`); Tournament draws one per fight,
+        no repeats. Sliding on after a walk was tried for Ice and dropped
+        (it handed the Rusher its walk-ins). Harness `--arena`; numbers in
+        the PR
 
 - [ ] Plot Defender tuning pass — play it for real (each of the 4 maps),
       adjust wave/economy numbers based on actual feel now that maps,

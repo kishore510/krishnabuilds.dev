@@ -261,6 +261,20 @@
   #opps button[aria-checked="true"] { background: var(--c); color: #1a1008; }
   #modeNote { min-height: 1.3em; margin: calc(3px * var(--game-scale, 1)) 0 0; font-size: calc(11px * var(--game-scale, 1)); opacity: 0.85; }
   #menuBtn { margin-top: calc(10px * var(--game-scale, 1)); }
+  #arenaBtn {
+    margin-top: calc(4px * var(--game-scale, 1));
+    min-height: 32px;
+    font: inherit;
+    font-size: calc(11.5px * var(--game-scale, 1));
+    font-weight: 700;
+    padding: calc(3px * var(--game-scale, 1)) calc(14px * var(--game-scale, 1));
+    border-radius: calc(16px * var(--game-scale, 1));
+    border: 2px dashed rgba(255,255,255,0.6);
+    background: rgba(10,8,6,0.6);
+    color: #fff;
+    cursor: pointer;
+  }
+  #arenaBtn:disabled { cursor: default; opacity: 0.75; }
   #resultBack {
     margin-top: calc(10px * var(--game-scale, 1));
     font-size: calc(12px * var(--game-scale, 1));
@@ -472,6 +486,7 @@
       <button type="button" role="radio" data-mode="sensei" aria-checked="false" style="--c:#ffd166">Sensei</button>
     </div>
     <p id="modeNote"></p>
+    <button id="arenaBtn" type="button">Arena: Dojo</button>
     <button id="startBtn" type="button" data-kb-play>FIGHT!</button>
     <button id="howBtn" type="button" aria-haspopup="dialog" aria-label="How to play">?</button>
   </div>
@@ -775,6 +790,40 @@ const MOVE = {
   friction: 0.82   // knockback slide decay per frame on the ground
 };
 
+// --- Arenas. Each one recolours the dojo (palette) and changes one thing
+// about how the fight plays (mods). Picked on the title screen, or drawn at
+// random for each tournament fight (never the same twice in a run). The
+// Dojo is the original and has no tweak.
+//   mods (only the ones given change; both fighters are affected the same):
+//     gravityMul  x MOVE.gravity            jumpVyMul  x MOVE.jumpVy
+//     friction    knockback slide decay per frame (MOVE.friction otherwise;
+//                 0.94 slides about 3x as far as 0.82)
+//     regenMul    x POWER.energy.regen
+// (Sliding on after a walk was tried for ice and dropped: even a little made
+// the Rusher's walk-ins land far more often; see the 1.71.0 PR.)
+//   palette: wallTop / wallBottom (back wall gradient), screen / frame (the
+//   paper screens), pillar, banner / emblem, floorTop / floorBottom,
+//   plank (floor lines), marker (the edge markers); decor: '' | 'stars' | 'shine'
+const ARENAS = {
+  dojo: { name: 'Dojo', icon: '\ud83c\udfef', tweak: 'no tweak', mods: {},
+    palette: { wallTop: '#3b2a1c', wallBottom: '#5c4128', screen: '#e9dcc0', frame: '#6b4a2e', pillar: '#2a1c10', banner: '#8c1d18', emblem: '#f2c14e',
+               floorTop: '#9c6b3c', floorBottom: '#6e4624', plank: 'rgba(40,22,10,0.45)', marker: 'rgba(242,193,78,0.5)' }, decor: '' },
+  ice: { name: 'Ice Dojo', icon: '\ud83e\uddca', tweak: 'slippery: hits slide you far', mods: { friction: 0.94 },
+    palette: { wallTop: '#1d3550', wallBottom: '#2f5577', screen: '#dff1fb', frame: '#4f7fa6', pillar: '#16283d', banner: '#2a6fb0', emblem: '#e8f6ff',
+               floorTop: '#c6e6f6', floorBottom: '#86b8d6', plank: 'rgba(255,255,255,0.5)', marker: 'rgba(230,248,255,0.75)' }, decor: 'shine' },
+  moon: { name: 'Moon Dojo', icon: '\ud83c\udf19', tweak: 'low gravity: floaty jumps', mods: { gravityMul: 0.65, jumpVyMul: 0.85 },
+    palette: { wallTop: '#0e0f24', wallBottom: '#26284a', screen: '#1b1e3d', frame: '#4a4d78', pillar: '#08091a', banner: '#4b3f8f', emblem: '#f4f1d0',
+               floorTop: '#a9a9b6', floorBottom: '#6c6c7a', plank: 'rgba(30,30,50,0.35)', marker: 'rgba(244,241,208,0.6)' }, decor: 'stars' },
+  temple: { name: 'Temple', icon: '\u26e9\ufe0f', tweak: 'energy refills 50% faster', mods: { regenMul: 1.5 },
+    palette: { wallTop: '#5a1410', wallBottom: '#8a2a1a', screen: '#f3e2b0', frame: '#b8862b', pillar: '#6e170f', banner: '#d4a021', emblem: '#6e170f',
+               floorTop: '#8a7660', floorBottom: '#54473a', plank: 'rgba(30,20,10,0.4)', marker: 'rgba(212,160,33,0.6)' }, decor: '' }
+};
+const ARENA_IDS = Object.keys(ARENAS);
+const ARENA_BASE = { gravityMul: 1, jumpVyMul: 1, friction: MOVE.friction, regenMul: 1 };
+let arenaId = 'dojo', arenaMods = ARENA_BASE;
+function useArena(id) { arenaId = id; arenaMods = Object.assign({}, ARENA_BASE, ARENAS[id].mods); }
+function gravity() { return MOVE.gravity * arenaMods.gravityMul; }
+
 // --- Hit feel. Every effect value lives here so it can be tuned in one
 // place. Durations are simulation frames (60 a second); sizes are arena px.
 // None of this changes damage, stun or ranges, and none of it is shown on
@@ -959,7 +1008,7 @@ function updateFighter(f, opp, inp) {
       f.move.frame++;
       if (f.move.frame >= f.move.def.startup + f.move.def.active) f.move = null;
     }
-    f.vy += MOVE.gravity;
+    f.vy += gravity();
     f.x += f.vx;
     f.y += f.vy;
     if (f.y >= FLOOR) {
@@ -976,13 +1025,13 @@ function updateFighter(f, opp, inp) {
 
   // ground slide from knockback
   f.x += f.vx;
-  f.vx *= MOVE.friction;
+  f.vx *= arenaMods.friction;
   if (Math.abs(f.vx) < 0.05) f.vx = 0;
 
   let free = false;
   if (f.state === 'jumpsquat') {
     if (f.stateFrames >= MOVE.jumpSquat) {
-      f.vy = MOVE.jumpVy;
+      f.vy = MOVE.jumpVy * arenaMods.jumpVyMul;
       f.vx = f.jumpDir * MOVE.jumpVx;
       f.crouched = false;
       enterState(f, 'air');
@@ -1108,7 +1157,7 @@ function blocking(f) {
   return !!f.inp.block || (f.state === 'crouch' && f.inp.h === -f.facing);
 }
 function regenEnergy(f) {
-  if (!blocking(f)) f.energy = Math.min(POWER.energy.max, f.energy + (POWER.energy.regen + f.mods.regen) / 60);
+  if (!blocking(f)) f.energy = Math.min(POWER.energy.max, f.energy + (POWER.energy.regen * arenaMods.regenMul + f.mods.regen) / 60);
 }
 // Fireballs fly, then hit (or are blocked by, or soaked by a shield on) the
 // other fighter once and vanish. Two fireballs that meet cancel out.
@@ -1518,6 +1567,23 @@ function setMode(m) {
   dummyBtn.style.display = m === 'practice' ? '' : 'none';
 }
 modeBtns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+// Arena picker on the title screen: one button cycles through ARENAS
+// (?arena=ice etc. picks one). Tournament draws its own, one per fight.
+const arenaBtn = document.getElementById('arenaBtn');
+const arenaParam = /[?&]arena=(\w+)/.exec(location.search);
+let pickedArena = arenaParam && ARENAS[arenaParam[1]] ? arenaParam[1] : 'dojo';
+function syncArenaBtn() {
+  const A = ARENAS[pickedArena];
+  arenaBtn.disabled = mode === 'tournament';
+  arenaBtn.textContent = mode === 'tournament' ? 'Arena: a different one each fight'
+    : 'Arena: ' + A.icon + ' ' + A.name + (A.tweak !== 'no tweak' ? ' \u00b7 ' + A.tweak : '') + '  \u25b8';
+  if (state === 'menu') useArena(mode === 'tournament' ? 'dojo' : pickedArena);
+}
+arenaBtn.addEventListener('click', () => {
+  pickedArena = ARENA_IDS[(ARENA_IDS.indexOf(pickedArena) + 1) % ARENA_IDS.length];
+  syncArenaBtn();
+});
+modeBtns.forEach(b => b.addEventListener('click', syncArenaBtn));
 let dummyIndex = 0;
 function cycleDummy() {
   if (mode !== 'practice') return;
@@ -1644,8 +1710,8 @@ function aiInput() {
     // Predict where the jumper will be when a jab started now goes active.
     const k = P.reactionFrames + MOVES.jab.startup;
     const px = o.x + o.vx * k;
-    const py = Math.min(FLOOR, o.y + o.vy * k + MOVE.gravity * k * (k + 1) / 2);
-    const vyNow = o.vy + MOVE.gravity * k;
+    const py = Math.min(FLOOR, o.y + o.vy * k + gravity() * k * (k + 1) / 2);
+    const vyNow = o.vy + gravity() * k;
     const lift = FLOOR - py;
     if (vyNow > 0 && lift > 12 && lift < 80 && Math.abs(px - me.x) < reach('jab') + 6) {
       inp.punch = true;
@@ -2016,18 +2082,27 @@ window.addEventListener('kb-navbar-ready', fitCanvas);
 
 // --- Drawing ---
 function drawArena() {
+  const P = ARENAS[arenaId].palette, decor = ARENAS[arenaId].decor;
   // back wall
   const wall = ctx.createLinearGradient(0, 0, 0, FLOOR);
-  wall.addColorStop(0, '#3b2a1c');
-  wall.addColorStop(1, '#5c4128');
+  wall.addColorStop(0, P.wallTop);
+  wall.addColorStop(1, P.wallBottom);
   ctx.fillStyle = wall;
   ctx.fillRect(0, 0, W, FLOOR);
-  // paper screens between pillars
+  // paper screens between pillars (a night sky with stars on the moon)
   for (let i = 0; i < 4; i++) {
     const x = 40 + i * 145, w = 120;
-    ctx.fillStyle = '#e9dcc0';
+    ctx.fillStyle = P.screen;
     ctx.fillRect(x, 70, w, 170);
-    ctx.strokeStyle = '#6b4a2e';
+    if (decor === 'stars') {
+      ctx.fillStyle = 'rgba(255,255,240,0.85)';
+      for (let k = 0; k < 9; k++) {
+        const sx = x + 8 + ((k * 37 + i * 53) % (w - 16)), sy = 78 + ((k * 61 + i * 29) % 152);
+        ctx.fillRect(sx, sy, k % 3 ? 1.5 : 2.5, k % 3 ? 1.5 : 2.5);
+      }
+      if (i === 3) { ctx.fillStyle = '#f4f1d0'; ctx.beginPath(); ctx.arc(x + 84, 104, 16, 0, Math.PI * 2); ctx.fill(); }
+    }
+    ctx.strokeStyle = P.frame;
     ctx.lineWidth = 3;
     ctx.strokeRect(x, 70, w, 170);
     ctx.lineWidth = 1.5;
@@ -2039,27 +2114,27 @@ function drawArena() {
     }
   }
   // pillars and beam
-  ctx.fillStyle = '#2a1c10';
+  ctx.fillStyle = P.pillar;
   for (let i = 0; i < 5; i++) ctx.fillRect(22 + i * 145, 40, 14, FLOOR - 40);
   ctx.fillRect(0, 40, W, 16);
   ctx.fillRect(0, 240, W, 10);
   // hanging banner with a plain emblem
-  ctx.fillStyle = '#8c1d18';
+  ctx.fillStyle = P.banner;
   ctx.fillRect(296, 56, 48, 74);
   ctx.beginPath();
   ctx.moveTo(296, 130); ctx.lineTo(320, 118); ctx.lineTo(344, 130); ctx.closePath();
-  ctx.fillStyle = '#5c4128';
+  ctx.fillStyle = P.wallBottom;
   ctx.fill();
-  ctx.strokeStyle = '#f2c14e';
+  ctx.strokeStyle = P.emblem;
   ctx.lineWidth = 3;
   ctx.beginPath(); ctx.arc(320, 86, 13, 0, Math.PI * 2); ctx.stroke();
   // floor planks
   const floor = ctx.createLinearGradient(0, FLOOR - 6, 0, H);
-  floor.addColorStop(0, '#9c6b3c');
-  floor.addColorStop(1, '#6e4624');
+  floor.addColorStop(0, P.floorTop);
+  floor.addColorStop(1, P.floorBottom);
   ctx.fillStyle = floor;
   ctx.fillRect(0, FLOOR - 6, W, H - FLOOR + 6);
-  ctx.strokeStyle = 'rgba(40,22,10,0.45)';
+  ctx.strokeStyle = P.plank;
   ctx.lineWidth = 1;
   for (let i = -6; i <= 6; i++) {
     ctx.beginPath();
@@ -2068,8 +2143,17 @@ function drawArena() {
     ctx.stroke();
   }
   ctx.beginPath(); ctx.moveTo(0, FLOOR + 18); ctx.lineTo(W, FLOOR + 18); ctx.stroke();
+  // ice: a few glossy streaks on the floor
+  if (decor === 'shine') {
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    for (const [x, y, l] of [[90, FLOOR + 8, 60], [250, FLOOR + 30, 90], [430, FLOOR + 12, 70], [540, FLOOR + 36, 50]]) {
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + l, y - 3); ctx.stroke();
+    }
+  }
   // arena edge markers
-  ctx.fillStyle = 'rgba(242,193,78,0.5)';
+  ctx.fillStyle = P.marker;
   ctx.fillRect(WALL_L - 2, FLOOR - 6, 4, H - FLOOR + 6);
   ctx.fillRect(WALL_R - 2, FLOOR - 6, 4, H - FLOOR + 6);
 }
@@ -2475,7 +2559,9 @@ function drawRings() {
 function bannerText() {
   const name = (w) => (w === 0 ? player : cpu).name;
   if (phase === 'intro') {
-    const sub = tour ? 'Fight ' + (tour.fight + 1) + ' of ' + TOURNAMENT.fights.length + ': ' + cpu.name : undefined;
+    const A = ARENAS[arenaId];
+    const where = A.name + (A.tweak !== 'no tweak' ? ' \u00b7 ' + A.tweak : '');
+    const sub = tour ? 'Fight ' + (tour.fight + 1) + ' of ' + TOURNAMENT.fights.length + ': ' + cpu.name + ' in the ' + where : round === 1 ? where : undefined;
     return phaseFrames < ROUND.introFrames ? { text: 'ROUND ' + round, sub, t: phaseFrames } : { text: 'FIGHT!', t: phaseFrames - ROUND.introFrames };
   }
   const sub = roundWinner < 0 ? 'Draw: replay the round' : name(roundWinner) + ' wins the round';
@@ -2804,12 +2890,15 @@ function startGame() {
     const r = makeRng(aiSeed ^ 0x5bd1e995);
     tour = { seed: aiSeed, rng: r, fight: 0, upgrades: [], choices: [],
       ids: TOURNAMENT.fights.map(f => f.pool[Math.floor(r() * f.pool.length)]) };
-  } else setOpponent(mode);
+    // an arena per fight, never the same one twice in a run
+    const left = ARENA_IDS.slice();
+    tour.arenas = TOURNAMENT.fights.map(() => left.splice(Math.floor(r() * left.length), 1)[0]);
+  } else { setOpponent(mode); useArena(pickedArena); }
   startFight();
 }
 function winsNeeded() { return tour ? TOURNAMENT.fights[tour.fight].wins : ROUND.winsNeeded; }
 function startFight() {
-  if (tour) setOpponent(tour.ids[tour.fight]);
+  if (tour) { setOpponent(tour.ids[tour.fight]); useArena(tour.arenas[tour.fight]); }
   round = 1;
   wins = [0, 0];
   simFrame = 0;
@@ -2881,6 +2970,7 @@ menuBtn.addEventListener('click', () => {
   tour = null;
   player.mods = NO_MODS;
   setMode(mode);
+  syncArenaBtn();
   resultEl.classList.remove('on');
   overlay.style.display = '';
   resetFighters();
@@ -2962,7 +3052,9 @@ window.dojoDuel = {
   get dummy() { return DUMMY_MODES[dummyIndex].id; },
   get mode() { return mode; },
   get opponent() { return opponent; },
-  get tour() { return tour && { fight: tour.fight, ids: tour.ids.slice(), upgrades: tour.upgrades.map(u => u.id), choices: tour.choices.map(u => u.id), seed: tour.seed }; },
+  get arena() { return arenaId; },
+  set arena(id) { pickedArena = id; syncArenaBtn(); useArena(id); },
+  get tour() { return tour && { fight: tour.fight, ids: tour.ids.slice(), upgrades: tour.upgrades.map(u => u.id), choices: tour.choices.map(u => u.id), arenas: tour.arenas.slice(), seed: tour.seed }; },
   pickUpgrade,
   set mode(m) { setMode(m); },
   get seed() { return aiSeed; },
@@ -2988,12 +3080,13 @@ window.dojoDuel = {
   reset() { resetFighters(); clearInput(); },
   startGame,
   player, cpu, held, press, hurtboxes, activeHitbox, overlaps, debugLines, cycleDummy,
-  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, POWER, TOURNAMENT, UPGRADES, FS, FLOOR, MAX_HEALTH
+  MOVE, MOVES, BOXES, FX, ROUND, AI_PRESETS, POWER, TOURNAMENT, UPGRADES, ARENAS, FS, FLOOR, MAX_HEALTH
 };
 
 resetFighters();
 resetAi();
 setMode('easy');
+syncArenaBtn();
 updateControls();
 handleResize();
 if (!howtoSeen()) showHowto(true);
