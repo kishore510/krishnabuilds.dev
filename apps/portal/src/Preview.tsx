@@ -68,6 +68,24 @@ const previews: Record<string, () => React.JSX.Element> = {
       <rect className="pv-text" x="124" y="132" width="64" height="8" rx="4" />
     </>
   ),
+  // An illustrated map: a coastline, a dashed route between pins and a marker.
+  "Story Maps": () => (
+    <>
+      <path className="pv-box" d="M28 24h176c-8 22 6 40-6 58s-34 22-28 40c4 12 18 14 22 22H28z" />
+      <path className="pv-box" d="M226 118c10-6 22-4 28 6s-2 20-14 18-20-14-14-24z" />
+      <path className="pv-accent-stroke pv-accent-stroke--wide pv-line--dash" d="M70 50c34 6 60 18 72 40s30 30 52 30 30 10 40 10" />
+      {[
+        [70, 50],
+        [142, 90],
+        [196, 120],
+      ].map(([x, y]) => (
+        <circle key={`${x}-${y}`} className="pv-box" cx={x} cy={y} r="7" />
+      ))}
+      <circle className="pv-accent-fill" cx="238" cy="130" r="7" />
+      <rect className="pv-text" x="236" y="30" width="56" height="8" rx="4" />
+      <rect className="pv-text" x="236" y="46" width="40" height="8" rx="4" />
+    </>
+  ),
 };
 
 export function Preview({ name }: { name: string }) {
