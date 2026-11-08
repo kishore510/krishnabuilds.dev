@@ -20,7 +20,7 @@
     drag: 0.0125,             // quadratic drag: a = drag * |v| * v
     magnus: 0.0011,           // lift: a = magnus * spin * |v|, at right angles to v
     spinDecay: 0.15,          // spin lost per second (fraction)
-    restitution: 0.75,        // vertical bounce: vz' = -e * vz
+    restitution: 0.82,        // vertical bounce: vz' = -e * vz (lively, so the ball stays playable longer)
     friction: 0.6,            // court grip during the bounce (sliding friction)
     spinInertia: 0.55,        // I = k m r^2 for a tennis ball
     ballRadius: 0.033,        // m

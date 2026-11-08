@@ -27,7 +27,8 @@ test('a dropped ball bounces back to e^2 of its height (no drag)', () => {
   const noDrag = Object.assign({}, C, { drag: 0 });
   const peak = dropBall(h0, noDrag);
   const expected = r + (h0 - r) * C.restitution ** 2;
-  assert.ok(Math.abs(peak - expected) < 0.02, `peak ${peak} vs ${expected}`);
+  // Within 2%: the fixed 1/120 s step snaps the landing to the surface.
+  assert.ok(Math.abs(peak - expected) < 0.02 * expected, `peak ${peak} vs ${expected}`);
   // With drag it comes up a little lower, as a real ball does.
   const withDrag = dropBall(h0);
   assert.ok(withDrag < peak && withDrag > peak * 0.9, `with drag ${withDrag}`);
