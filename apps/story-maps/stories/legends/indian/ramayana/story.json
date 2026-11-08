@@ -1,0 +1,2014 @@
+{
+  "id": "ramayana",
+  "title": "Rama’s Journey",
+  "description": "An illustrated map of the Ramayana: Rama’s journey from Ayodhya to Lanka and home, chapter by chapter.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "Tradition",
+  "mapLabel": "Illustrated map showing the route of Rama, Hanuman and Ravana across India and Sri Lanka",
+  "note": "Places follow traditional associations; scholars and regional traditions differ, and “Lanka” is traditionally identified with Sri Lanka. The map is stylised and not to scale. Kingdom regions are painted loosely, and each appears only while it plays a part in the story. The timeline follows the Valmiki Ramayana’s rough durations (ages are approximate), and the last year of exile is enlarged so its chapters fit.",
+  "phases": {
+    "prelude": {
+      "name": "Before the exile",
+      "color": "#8fcf8a"
+    },
+    "palace": {
+      "name": "The palace",
+      "color": "#f2c14e"
+    },
+    "exile": {
+      "name": "Exile in the forest",
+      "color": "#e0573a"
+    },
+    "taken": {
+      "name": "Sita is taken",
+      "color": "#a678e0"
+    },
+    "search": {
+      "name": "The search",
+      "color": "#f29a2e"
+    },
+    "war": {
+      "name": "The war for Lanka",
+      "color": "#4fc3b0"
+    },
+    "home": {
+      "name": "Homecoming",
+      "color": "#ffd166"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#d9432a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "march": {
+      "color": "#d9432a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "search": {
+      "color": "#f29a2e",
+      "width": 2.6,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "leap": {
+      "color": "#ff8a1f",
+      "width": 3.6,
+      "dash": "11 4",
+      "cap": "butt"
+    },
+    "ravana": {
+      "color": "#5b2a86",
+      "width": 3,
+      "dash": "1 6",
+      "cap": "round"
+    },
+    "bridge": {
+      "color": "#fff1b8",
+      "width": 5.5,
+      "dash": "0.1 6",
+      "cap": "round"
+    },
+    "fly": {
+      "color": "#ffe08a",
+      "width": 3.4,
+      "dash": "0.1 7.5",
+      "cap": "round"
+    }
+  },
+  "travellers": {
+    "rama": {
+      "name": "Rama",
+      "icon": "prince"
+    },
+    "hanuman": {
+      "name": "Hanuman",
+      "icon": "vanara-hero"
+    },
+    "ravana": {
+      "name": "Ravana",
+      "icon": "demon-king"
+    },
+    "pushpaka": {
+      "name": "The Pushpaka Vimana",
+      "icon": "sky-chariot"
+    }
+  },
+  "places": {
+    "ayodhya": {
+      "name": "Ayodhya",
+      "at": [
+        82.2,
+        26.8
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "buxar": {
+      "name": "Siddhashrama",
+      "at": [
+        84,
+        25.57
+      ],
+      "glyph": "sacred-fire",
+      "label": "bottom"
+    },
+    "mithila": {
+      "name": "Mithila",
+      "at": [
+        85.9,
+        26.73
+      ],
+      "glyph": "great-bow",
+      "label": "right"
+    },
+    "sring": {
+      "name": "Sringaverapura",
+      "at": [
+        81.6,
+        25.6
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "chitra": {
+      "name": "Chitrakoot",
+      "at": [
+        80.85,
+        25.2
+      ],
+      "glyph": "hermitage",
+      "label": "left"
+    },
+    "dandaka": {
+      "name": "Dandakaranya",
+      "at": [
+        81.5,
+        20.5
+      ],
+      "glyph": "forest",
+      "label": "right"
+    },
+    "panchavati": {
+      "name": "Panchavati",
+      "at": [
+        73.79,
+        20
+      ],
+      "glyph": "deer",
+      "label": "left"
+    },
+    "lepakshi": {
+      "name": "Lepakshi",
+      "at": [
+        77.6,
+        13.83
+      ],
+      "glyph": "great-bird",
+      "label": "right"
+    },
+    "kishkindha": {
+      "name": "Kishkindha",
+      "at": [
+        76.46,
+        15.33
+      ],
+      "glyph": "vanara",
+      "label": "left"
+    },
+    "mahendra": {
+      "name": "Mahendragiri",
+      "at": [
+        77.5,
+        8.3
+      ],
+      "glyph": "mountain",
+      "label": "left"
+    },
+    "lanka": {
+      "name": "Lanka",
+      "at": [
+        80.6,
+        7.4
+      ],
+      "glyph": "golden-city",
+      "label": "right"
+    },
+    "rameswaram": {
+      "name": "Rameswaram",
+      "at": [
+        79.3,
+        9.28
+      ],
+      "glyph": "shrine",
+      "label": "top"
+    },
+    "setu-landing": {
+      "name": "Setu landing",
+      "at": [
+        79.85,
+        9.05
+      ],
+      "hidden": true
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 29,
+        "color": "rgba(143,207,138,.4)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(224,87,58,.3)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 9,
+        "text": "Age 0"
+      },
+      {
+        "at": 20,
+        "text": "16"
+      },
+      {
+        "at": 29,
+        "text": "Exile"
+      },
+      {
+        "at": 40,
+        "text": "Yr 1"
+      },
+      {
+        "at": 60,
+        "text": "Yr 10"
+      },
+      {
+        "at": 70,
+        "text": "Yr 13"
+      },
+      {
+        "at": 100,
+        "text": "Yr 14"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "ayodhya",
+      "phase": "prelude",
+      "title": "A curse by the Sarayu",
+      "native": "सरयू",
+      "when": "Before Rama’s birth",
+      "at": 3,
+      "camera": {
+        "at": [
+          82.2,
+          26.4
+        ],
+        "width": 13
+      },
+      "legs": [],
+      "text": "Long before his sons are born, young Dasharatha hunts by the Sarayu at night. Hearing a sound like an elephant drinking, he shoots, and kills Shravana Kumara, who was fetching water for his blind parents. Dying of grief, they curse the king to die mourning a son. The curse comes true years later.",
+      "today": "Traditionally on the banks of the Sarayu near Ayodhya."
+    },
+    {
+      "place": "ayodhya",
+      "phase": "prelude",
+      "title": "Four sons",
+      "native": "अयोध्या",
+      "when": "Rama is born",
+      "at": 9,
+      "camera": {
+        "at": [
+          82.2,
+          26.4
+        ],
+        "width": 13
+      },
+      "legs": [],
+      "text": "Childless, Dasharatha holds a great fire ritual (yajna). The sacred offering is shared among his queens, and four sons are born: Rama to Kaushalya, Bharata to Kaikeyi, and the twins Lakshmana and Shatrughna to Sumitra. In the tradition, the gods had begged Vishnu to be born as a man to end Ravana’s tyranny.",
+      "today": "Today: Ayodhya, Uttar Pradesh."
+    },
+    {
+      "place": "buxar",
+      "phase": "prelude",
+      "title": "Guarding the yajna",
+      "native": "सिद्धाश्रम",
+      "when": "Rama, about 15",
+      "at": 17,
+      "camera": {
+        "at": [
+          83.2,
+          26.2
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "ayodhya",
+          "to": "buxar",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Sage Vishwamitra asks Dasharatha to lend him the boy Rama, with Lakshmana, to guard his fire ritual (yajna). On the way they kill the demoness Tataka and receive divine weapons. At the hermitage Rama kills Subahu and drives off Maricha, who had been defiling the rites.",
+      "today": "Traditionally Siddhashrama, today Buxar, Bihar."
+    },
+    {
+      "place": "mithila",
+      "phase": "prelude",
+      "title": "The bow of Shiva",
+      "native": "मिथिला",
+      "when": "Rama, about 16",
+      "at": 23,
+      "camera": {
+        "at": [
+          84.6,
+          26.2
+        ],
+        "width": 11.5
+      },
+      "legs": [
+        {
+          "from": "buxar",
+          "to": "mithila",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": -0.14
+        }
+      ],
+      "text": "Vishwamitra leads them on to Mithila. On the way, Rama’s arrival frees Ahalya from her long curse. King Janaka has promised his daughter Sita to whoever can string Shiva’s great bow. Rama lifts it and it breaks. Rama marries Sita, and his three brothers marry Sita’s sister Urmila and her two cousins on the same day.",
+      "today": "Traditionally Janakpur in Nepal. Sitamarhi in Bihar also claims Sita’s birthplace."
+    },
+    {
+      "place": "ayodhya",
+      "phase": "palace",
+      "title": "The night before the crown",
+      "native": "अयोध्या",
+      "when": "Rama, about 25",
+      "at": 29,
+      "camera": {
+        "at": [
+          83,
+          25.5
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "mithila",
+          "to": "ayodhya",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "The brothers return to Ayodhya with their brides, and years of happiness follow. Then Rama is to be crowned. Queen Kaikeyi calls in two old boons from King Dasharatha: her son Bharata is to be king, and Rama must spend fourteen years in the forest. Rama accepts without protest. With Sita and Lakshmana, he leaves the city.",
+      "today": "Today: Ayodhya, Uttar Pradesh."
+    },
+    {
+      "place": "sring",
+      "phase": "exile",
+      "title": "The crossing of the Ganga",
+      "native": "शृंगवेरपुर",
+      "when": "Exile, day 1",
+      "at": 33,
+      "camera": {
+        "at": [
+          81.5,
+          25.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "ayodhya",
+          "to": "sring",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": 0.14
+        }
+      ],
+      "text": "On the bank of the Ganga the exiles meet Guha, king of the boatmen. He ferries them across and offers his own kingdom as shelter. Rama sets aside his royal clothes and ties his hair in the matted locks of an ascetic.",
+      "today": "Traditionally Sringaverapura, today Singraur near Prayagraj, Uttar Pradesh."
+    },
+    {
+      "place": "chitra",
+      "phase": "exile",
+      "title": "A hut among the hills",
+      "native": "चित्रकूट",
+      "when": "Exile, first weeks",
+      "at": 37,
+      "camera": {
+        "at": [
+          80.5,
+          24.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "sring",
+          "to": "chitra",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": -0.18
+        }
+      ],
+      "text": "The three settle at Chitrakoot. Bharata arrives with the whole court to bring Rama home. Rama keeps his father’s word and refuses. Bharata takes Rama’s sandals back to Ayodhya and rules in their name, waiting out the fourteen years.",
+      "today": "Today: Chitrakoot, on the Uttar Pradesh and Madhya Pradesh border."
+    },
+    {
+      "place": "dandaka",
+      "phase": "exile",
+      "title": "Into the great forest",
+      "native": "दण्डकारण्य",
+      "when": "Exile, years 1 to 10",
+      "at": 44,
+      "camera": {
+        "at": [
+          79.5,
+          22
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "chitra",
+          "to": "dandaka",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": 0.14
+        }
+      ],
+      "text": "Years pass in the Dandaka forest, moving from one sage’s hermitage to the next. Rama promises the sages protection from the demons who wreck their rites. He and Lakshmana fight them off, and the forest grows more dangerous.",
+      "today": "Traditionally a forest belt across Chhattisgarh, Odisha and Maharashtra."
+    },
+    {
+      "place": "panchavati",
+      "phase": "taken",
+      "title": "The golden deer",
+      "native": "पंचवटी",
+      "when": "Exile, years 10 to 13",
+      "at": 62,
+      "camera": {
+        "at": [
+          76,
+          16
+        ],
+        "width": 28.5
+      },
+      "legs": [
+        {
+          "from": "dandaka",
+          "to": "panchavati",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": -0.12
+        },
+        {
+          "from": "panchavati",
+          "to": "lanka",
+          "traveller": "ravana",
+          "style": "ravana",
+          "bend": 0.18
+        }
+      ],
+      "text": "At Panchavati, beside the Godavari, they build a home. Surpanakha’s humiliation brings Ravana’s attention. A golden deer, the demon Maricha in disguise, lures Rama away, and Lakshmana follows. Ravana seizes Sita and carries her through the sky to Lanka.",
+      "today": "Today: Panchavati, Nashik, Maharashtra."
+    },
+    {
+      "place": "lepakshi",
+      "phase": "taken",
+      "title": "The fall of Jatayu",
+      "native": "लेपाक्षी",
+      "when": "Exile, year 13",
+      "at": 72,
+      "camera": {
+        "at": [
+          76,
+          16
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "panchavati",
+          "to": "lepakshi",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rama and Lakshmana return to an empty hut and search south. They find the vulture Jatayu, mortally wounded after trying to stop Ravana. With his last breath he tells them which way Ravana flew. Rama performs his funeral rites.",
+      "today": "Tradition places this at Lepakshi, Andhra Pradesh."
+    },
+    {
+      "place": "kishkindha",
+      "phase": "search",
+      "title": "Hanuman and the vanara king",
+      "native": "किष्किन्धा",
+      "when": "Exile, final year",
+      "at": 77,
+      "camera": {
+        "at": [
+          76.8,
+          14.6
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "lepakshi",
+          "to": "kishkindha",
+          "traveller": "rama",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Near Lake Pampa the old ascetic Shabari offers Rama berries, and Hanuman, minister of the exiled Sugriva, meets the brothers. Rama and Sugriva pledge friendship. Rama defeats Vali, Sugriva takes the throne, and the vanaras scatter in every direction to find Sita.",
+      "today": "Today: the Hampi and Anegundi area, Karnataka."
+    },
+    {
+      "place": "mahendra",
+      "phase": "search",
+      "title": "The southern search party",
+      "native": "महेन्द्रगिरि",
+      "when": "Exile, final year",
+      "at": 83,
+      "camera": {
+        "at": [
+          77,
+          11.5
+        ],
+        "width": 17
+      },
+      "legs": [
+        {
+          "from": "kishkindha",
+          "to": "mahendra",
+          "traveller": "hanuman",
+          "style": "search",
+          "bend": -0.1
+        }
+      ],
+      "text": "The southern party under Angada and Hanuman reaches the sea. Sampati, Jatayu’s brother, can see Lanka a hundred yojanas across the water. Jambavan reminds Hanuman of the strength he has forgotten, and the mountain shakes as Hanuman prepares to leap.",
+      "today": "Traditionally the Mahendragiri hills of the far south."
+    },
+    {
+      "place": "lanka",
+      "phase": "search",
+      "title": "Hanuman crosses the sea",
+      "native": "लंका",
+      "when": "Exile, final year",
+      "at": 88,
+      "camera": {
+        "at": [
+          79,
+          9
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "mahendra",
+          "to": "lanka",
+          "traveller": "hanuman",
+          "style": "leap",
+          "bend": 0.3
+        }
+      ],
+      "text": "Hanuman leaps across the ocean, past Surasa and Simhika, and lands in Lanka. In the Ashoka grove he finds Sita and gives her Rama’s ring. Captured, he lets Ravana’s guards set his tail alight, and burns much of the city before returning.",
+      "today": "Traditionally Sri Lanka, identified with Ravana’s Lanka."
+    },
+    {
+      "place": "rameswaram",
+      "phase": "war",
+      "title": "A bridge across the sea",
+      "native": "रामेश्वरम्",
+      "when": "Exile, final year",
+      "at": 92,
+      "camera": {
+        "at": [
+          77.6,
+          11.8
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "kishkindha",
+          "to": "rameswaram",
+          "traveller": "rama",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rama marches south with the vanara army to the shore at Rameswaram. Ravana’s brother Vibhishana, who had urged Ravana to return Sita, joins Rama. Nala directs the army as they lay stones on the water, and the Setu begins to rise toward Lanka.",
+      "today": "Today: Rameswaram, Tamil Nadu. The shoals are known as Ram Setu or Adam’s Bridge."
+    },
+    {
+      "place": "lanka",
+      "phase": "war",
+      "title": "The war for Lanka",
+      "native": "लंका",
+      "when": "Exile, final months",
+      "at": 96,
+      "camera": {
+        "at": [
+          80,
+          8.5
+        ],
+        "width": 11.5
+      },
+      "legs": [
+        {
+          "from": "rameswaram",
+          "to": "setu-landing",
+          "traveller": "rama",
+          "style": "bridge",
+          "bend": 0
+        },
+        {
+          "from": "setu-landing",
+          "to": "lanka",
+          "traveller": "rama",
+          "style": "march",
+          "bend": 0.05
+        }
+      ],
+      "text": "The armies cross the Setu and meet before the golden city. Kumbhakarna and Indrajit fall. At last Rama faces Ravana and ends him, a victory remembered each year at Dussehra. Vibhishana is crowned king of Lanka, and Sita is free.",
+      "today": "Traditionally the highlands and coast of Sri Lanka."
+    },
+    {
+      "place": "ayodhya",
+      "phase": "home",
+      "title": "The return",
+      "native": "अयोध्या",
+      "when": "Exile ends, year 14",
+      "at": 99,
+      "camera": {
+        "at": [
+          81,
+          17
+        ],
+        "width": 21.5
+      },
+      "legs": [
+        {
+          "from": "lanka",
+          "to": "ayodhya",
+          "traveller": "pushpaka",
+          "style": "fly",
+          "bend": 0.12
+        }
+      ],
+      "text": "The fourteen years are over. Rama, Sita and Lakshmana fly home in the Pushpaka Vimana. Ayodhya lights rows of lamps to welcome them, remembered as the origin of Diwali. Bharata returns the sandals, and Rama is crowned.",
+      "today": "Today: Ayodhya, where the story began."
+    }
+  ],
+  "effects": [
+    {
+      "type": "lamps",
+      "place": "ayodhya",
+      "steps": [
+        15
+      ]
+    }
+  ],
+  "realms": {
+    "toggle": "Kingdoms",
+    "mainHeading": "Main realms",
+    "minorHeading": "Also named in the epic",
+    "items": [
+      {
+        "id": "kosala",
+        "name": "Kosala",
+        "native": "कोसल",
+        "color": "#ffb300",
+        "active": [
+          [
+            0,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Kosala",
+          "at": [
+            82.4,
+            27.7
+          ]
+        },
+        "area": [
+          [
+            80.8,
+            28
+          ],
+          [
+            82.8,
+            28.2
+          ],
+          [
+            84,
+            27.2
+          ],
+          [
+            83.9,
+            26.4
+          ],
+          [
+            82.6,
+            26.1
+          ],
+          [
+            81.2,
+            26.3
+          ],
+          [
+            80.5,
+            27
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Ikshvaku, the Solar dynasty (also called the Raghu line)",
+          "Capital": "Ayodhya",
+          "Today": "Eastern Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Dasharatha"
+          },
+          {
+            "from": 5,
+            "text": "Dasharatha, who dies of grief days after Rama leaves"
+          },
+          {
+            "from": 6,
+            "text": "Bharata, ruling as regent in Rama’s name from Nandigram"
+          },
+          {
+            "from": 15,
+            "text": "Rama, newly crowned"
+          }
+        ],
+        "role": "Home kingdom of the heroes. A succession crisis here starts the exile.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Dasharatha married Kaikeyi of Kekaya"
+          },
+          {
+            "from": 3,
+            "text": "Allied with Videha through the four royal weddings"
+          },
+          {
+            "from": 5,
+            "text": "Befriended by Guha of the Nishadas"
+          },
+          {
+            "from": 10,
+            "text": "Rama pledges friendship with Sugriva of Kishkindha"
+          },
+          {
+            "from": 13,
+            "text": "Vibhishana of Lanka joins Rama’s side"
+          }
+        ]
+      },
+      {
+        "id": "videha",
+        "name": "Videha",
+        "native": "विदेह",
+        "color": "#2fa36b",
+        "active": [
+          [
+            3,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Videha",
+          "at": [
+            85.8,
+            27.55
+          ]
+        },
+        "area": [
+          [
+            84.8,
+            27.4
+          ],
+          [
+            86.6,
+            27.5
+          ],
+          [
+            87.3,
+            26.6
+          ],
+          [
+            86.7,
+            25.9
+          ],
+          [
+            85.2,
+            25.9
+          ],
+          [
+            84.6,
+            26.6
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Videha, the house of Janaka (traditionally descended from Nimi)",
+          "Capital": "Mithila",
+          "Today": "North Bihar and eastern Nepal"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Janaka, also called Seeradhwaja"
+          }
+        ],
+        "role": "Sita’s homeland. Its king’s bow contest leads to the marriage alliance with Kosala.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Sita and Urmila marry Rama and Lakshmana"
+          },
+          {
+            "from": 3,
+            "text": "Janaka’s brother Kushadhvaja of Sankasya gives his daughters Mandavi and Shrutakirti to Bharata and Shatrughna"
+          },
+          {
+            "from": 3,
+            "text": "Welcomes Vishwamitra and the two princes as guests"
+          }
+        ]
+      },
+      {
+        "id": "kekaya",
+        "name": "Kekaya",
+        "native": "केकय",
+        "color": "#e8574a",
+        "active": [
+          [
+            1,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Kekaya",
+          "at": [
+            73.3,
+            32.4
+          ]
+        },
+        "area": [
+          [
+            71.8,
+            33.2
+          ],
+          [
+            74.2,
+            33.6
+          ],
+          [
+            75.2,
+            32.2
+          ],
+          [
+            74.2,
+            31
+          ],
+          [
+            72.4,
+            31.2
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Kekaya",
+          "Capital": "Rajagriha (also called Girivraja)",
+          "Today": "Traditionally the north-west Punjab region"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Ashvapati, Kaikeyi’s father"
+          }
+        ],
+        "role": "Queen Kaikeyi’s kingdom. Bharata is away here with his uncle Yudhajit when the exile is ordered.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Kaikeyi, its princess, is Dasharatha’s queen"
+          },
+          {
+            "from": 1,
+            "text": "Tradition says Dasharatha pledged the throne to Kaikeyi’s son at the marriage"
+          },
+          {
+            "from": 4,
+            "text": "Bharata and Shatrughna are away here as the crowning is planned"
+          },
+          {
+            "from": 6,
+            "text": "Messengers bring Bharata home after Dasharatha’s death"
+          }
+        ]
+      },
+      {
+        "id": "nishada",
+        "name": "Nishada land",
+        "native": "निषाद",
+        "color": "#1aa6b7",
+        "active": [
+          [
+            5,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Nishada land",
+          "at": [
+            81.6,
+            24.95
+          ]
+        },
+        "area": [
+          [
+            81,
+            25.95
+          ],
+          [
+            82.1,
+            26
+          ],
+          [
+            82.4,
+            25.4
+          ],
+          [
+            81.7,
+            25
+          ],
+          [
+            81.1,
+            25.2
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Nishada, a forest river-people",
+          "Capital": "Sringaverapura",
+          "Today": "Singraur near Prayagraj, Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 5,
+            "text": "Guha, chief of the Nishadas"
+          }
+        ],
+        "role": "Guards the crossing of the Ganga at the edge of Kosala.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Guha ferries Rama across and offers his kingdom as shelter"
+          },
+          {
+            "from": 6,
+            "text": "Guha first suspects Bharata, then helps his army cross the Ganga"
+          }
+        ]
+      },
+      {
+        "id": "janasthana",
+        "name": "Janasthana",
+        "native": "जनस्थान",
+        "color": "#8e44ad",
+        "active": [
+          [
+            8,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Janasthana",
+          "at": [
+            74.6,
+            21.15
+          ]
+        },
+        "area": [
+          [
+            73.2,
+            20.9
+          ],
+          [
+            74.8,
+            21
+          ],
+          [
+            75.4,
+            19.9
+          ],
+          [
+            74.6,
+            19
+          ],
+          [
+            73.4,
+            19.3
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Rakshasa outpost of Ravana’s Lanka",
+          "Capital": "A fortified camp near Panchavati",
+          "Today": "Traditionally the Nashik area, Maharashtra"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Khara, Ravana’s kinsman, with his commander Dushana"
+          }
+        ],
+        "role": "Ravana’s forward post in Dandaka. Its fall after Surpanakha’s humiliation turns Ravana against Rama.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Garrisoned by 14,000 rakshasas loyal to Ravana"
+          },
+          {
+            "from": 8,
+            "text": "Destroyed by Rama after it attacks his hermitage"
+          }
+        ]
+      },
+      {
+        "id": "kishkindha",
+        "name": "Kishkindha",
+        "native": "किष्किन्धा",
+        "color": "#c0602a",
+        "active": [
+          [
+            10,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Vanara realm",
+          "at": [
+            76.4,
+            16.35
+          ]
+        },
+        "area": [
+          [
+            75.4,
+            16.3
+          ],
+          [
+            77.4,
+            16.2
+          ],
+          [
+            77.8,
+            14.8
+          ],
+          [
+            76.6,
+            13.9
+          ],
+          [
+            75.3,
+            14.4
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Vanara, the monkey-folk",
+          "Capital": "Kishkindha",
+          "Today": "The Hampi and Anegundi region, Karnataka"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Vali at first, then Sugriva after Rama’s help"
+          },
+          {
+            "from": 11,
+            "text": "Sugriva"
+          }
+        ],
+        "role": "Hanuman’s kingdom. Its army becomes Rama’s army.",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Sugriva shelters on Rishyamukha hill, in fear of his brother Vali"
+          },
+          {
+            "from": 10,
+            "text": "Rama and Sugriva pledge friendship; Rama defeats Vali"
+          },
+          {
+            "from": 11,
+            "text": "Search parties are sent out in all four directions"
+          },
+          {
+            "from": 13,
+            "text": "Its army marches with Rama to the sea"
+          }
+        ]
+      },
+      {
+        "id": "pandya",
+        "name": "Pandya",
+        "native": "पाण्ड्य",
+        "color": "#2f6fdb",
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Pandya",
+          "at": [
+            77.2,
+            10.75
+          ]
+        },
+        "area": [
+          [
+            77.3,
+            10.2
+          ],
+          [
+            78.8,
+            10.2
+          ],
+          [
+            79.1,
+            9.3
+          ],
+          [
+            78,
+            8.4
+          ],
+          [
+            77.4,
+            8.9
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Pandya",
+          "Capital": "Kavata, the golden-gated city, in Valmiki’s account",
+          "Today": "Southern Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "One of the southern lands Sugriva tells the search parties to scour for Sita.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Named alongside the Chola and Kerala lands in Sugriva’s search instructions"
+          }
+        ]
+      },
+      {
+        "id": "lanka",
+        "name": "Lanka",
+        "native": "लंका",
+        "color": "#d63b6b",
+        "active": [
+          [
+            1,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Ravana’s realm",
+          "at": [
+            80.5,
+            5.35
+          ]
+        },
+        "area": [
+          [
+            79.9,
+            9.7
+          ],
+          [
+            80.7,
+            9.3
+          ],
+          [
+            81.6,
+            7.8
+          ],
+          [
+            81.4,
+            6.4
+          ],
+          [
+            80.4,
+            5.9
+          ],
+          [
+            79.8,
+            6.9
+          ],
+          [
+            79.8,
+            8.6
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Rakshasa; Ravana descends from the sage Pulastya",
+          "Capital": "Lanka",
+          "Today": "Traditionally Sri Lanka"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Ravana, the ten-headed"
+          },
+          {
+            "from": 14,
+            "text": "Vibhishana, crowned after Ravana’s fall"
+          }
+        ],
+        "role": "The antagonist’s kingdom, where Sita is held.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Ravana’s tyranny over gods and men is why the gods ask Vishnu to be born as Rama"
+          },
+          {
+            "from": 8,
+            "text": "Ravana abducts Sita from Panchavati"
+          },
+          {
+            "from": 13,
+            "text": "Ravana’s brother Vibhishana defects to Rama"
+          },
+          {
+            "from": 14,
+            "text": "Vibhishana is crowned king of Lanka"
+          }
+        ]
+      },
+      {
+        "id": "kashi",
+        "name": "Kashi",
+        "native": "काशी",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            1,
+            1
+          ],
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Kashi",
+          "at": [
+            83.2,
+            25.35
+          ]
+        },
+        "area": [
+          [
+            82.6,
+            25.9
+          ],
+          [
+            83.8,
+            25.8
+          ],
+          [
+            83.9,
+            25
+          ],
+          [
+            83,
+            24.8
+          ],
+          [
+            82.5,
+            25.2
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Varanasi (traditional)",
+          "Today": "Around Varanasi, Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Not named; the epic calls him gracious in speech"
+          }
+        ],
+        "role": "Named as a guest kingdom at Dasharatha’s great ritual, and again as an eastern land to search for Sita.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Its king is invited to Dasharatha’s great ritual"
+          },
+          {
+            "from": 10,
+            "text": "Sugriva names it among the eastern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "anga",
+        "name": "Anga",
+        "native": "अंग",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            1,
+            1
+          ],
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Anga",
+          "at": [
+            87,
+            25.05
+          ]
+        },
+        "area": [
+          [
+            86.6,
+            25.6
+          ],
+          [
+            87.9,
+            25.5
+          ],
+          [
+            88,
+            24.7
+          ],
+          [
+            87,
+            24.3
+          ],
+          [
+            86.4,
+            24.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Champa (traditional)",
+          "Today": "Eastern Bihar and western Bengal"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Romapada (also Lomapada), a friend of Dasharatha"
+          }
+        ],
+        "role": "Home of the sage Rishyashringa, who is later brought to Ayodhya to perform the ritual for sons.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Romapada is Dasharatha’s friend and is invited to the ritual"
+          },
+          {
+            "from": 1,
+            "text": "Rishyashringa, married to Shanta, Dasharatha’s daughter raised by Romapada, conducts the ritual"
+          },
+          {
+            "from": 10,
+            "text": "Sugriva names it among the eastern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "magadha",
+        "name": "Magadha",
+        "native": "मगध",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            1,
+            1
+          ],
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Magadha",
+          "at": [
+            86,
+            24.15
+          ]
+        },
+        "area": [
+          [
+            84.3,
+            25.3
+          ],
+          [
+            85.5,
+            25.2
+          ],
+          [
+            85.7,
+            24.4
+          ],
+          [
+            84.6,
+            24.2
+          ],
+          [
+            84.2,
+            24.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Girivraja, today Rajgir (traditional)",
+          "Today": "South Bihar"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "Named as a guest kingdom at Dasharatha’s great ritual, and again as an eastern land to search.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Its king is invited to Dasharatha’s great ritual"
+          },
+          {
+            "from": 10,
+            "text": "Sugriva names it among the eastern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "sindhu",
+        "name": "Sindhu-Sauvira",
+        "native": "सिन्धु-सौवीर",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            1,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Sindhu-Sauvira",
+          "at": [
+            68.9,
+            27
+          ]
+        },
+        "area": [
+          [
+            67.5,
+            27.8
+          ],
+          [
+            70,
+            28
+          ],
+          [
+            70.4,
+            25.8
+          ],
+          [
+            68.4,
+            24.8
+          ],
+          [
+            67.2,
+            26
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "Sindh and southern Punjab, Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "A western kingdom named among those invited to Dasharatha’s great ritual.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Its king is invited to Dasharatha’s great ritual"
+          }
+        ]
+      },
+      {
+        "id": "saurashtra",
+        "name": "Saurashtra",
+        "native": "सौराष्ट्र",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            1,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Saurashtra",
+          "at": [
+            70.2,
+            21.7
+          ]
+        },
+        "area": [
+          [
+            69.2,
+            22.2
+          ],
+          [
+            70.8,
+            22.5
+          ],
+          [
+            71.2,
+            21.2
+          ],
+          [
+            70,
+            20.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "The Kathiawar peninsula, Gujarat"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "A western kingdom named among those invited to Dasharatha’s great ritual.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Its king is invited to Dasharatha’s great ritual"
+          }
+        ]
+      },
+      {
+        "id": "kuru",
+        "name": "Kuru",
+        "native": "कुरु",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Kuru",
+          "at": [
+            76.8,
+            29.25
+          ]
+        },
+        "area": [
+          [
+            76,
+            29.8
+          ],
+          [
+            77.6,
+            29.9
+          ],
+          [
+            77.9,
+            28.5
+          ],
+          [
+            76.6,
+            28.3
+          ],
+          [
+            75.9,
+            29
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "Around Delhi and Haryana"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "Named among the northern lands the search parties must scour for Sita.",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Sugriva names it among the northern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "kamboja",
+        "name": "Kamboja",
+        "native": "कम्बोज",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Kamboja",
+          "at": [
+            70.9,
+            34.7
+          ]
+        },
+        "area": [
+          [
+            69.6,
+            35.2
+          ],
+          [
+            71.8,
+            35.4
+          ],
+          [
+            72.2,
+            34.2
+          ],
+          [
+            70.4,
+            34
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "Traditionally the far north-west, beyond the Indus"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "Named among the far northern lands the search parties must scour.",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Sugriva names it among the northern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "vidarbha",
+        "name": "Vidarbha",
+        "native": "विदर्भ",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Vidarbha",
+          "at": [
+            78.4,
+            20.75
+          ]
+        },
+        "area": [
+          [
+            77.2,
+            21.4
+          ],
+          [
+            79.4,
+            21.5
+          ],
+          [
+            79.9,
+            20.2
+          ],
+          [
+            78.4,
+            19.5
+          ],
+          [
+            77,
+            20.2
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Kundina (traditional)",
+          "Today": "Eastern Maharashtra"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "A southern land named in the instructions to the search party led by Angada and Hanuman.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Sugriva names it among the southern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "kalinga",
+        "name": "Kalinga",
+        "native": "कलिंग",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Kalinga",
+          "at": [
+            85,
+            20.4
+          ]
+        },
+        "area": [
+          [
+            84,
+            21
+          ],
+          [
+            86,
+            21
+          ],
+          [
+            86.2,
+            19.6
+          ],
+          [
+            84.8,
+            18.8
+          ],
+          [
+            83.8,
+            19.6
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "The Odisha coast"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "A southern land named in the instructions to the search party.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Sugriva names it among the southern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "andhra",
+        "name": "Andhra",
+        "native": "आन्ध्र",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Andhra",
+          "at": [
+            79.6,
+            17.7
+          ]
+        },
+        "area": [
+          [
+            78.2,
+            18.2
+          ],
+          [
+            80.6,
+            18.3
+          ],
+          [
+            81,
+            16.6
+          ],
+          [
+            79.4,
+            15.8
+          ],
+          [
+            78,
+            16.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "Telangana and Andhra Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "A southern land named in the instructions to the search party.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Sugriva names it among the southern lands to search"
+          }
+        ]
+      },
+      {
+        "id": "chola",
+        "name": "Chola",
+        "native": "चोल",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Chola",
+          "at": [
+            79.3,
+            11.65
+          ]
+        },
+        "area": [
+          [
+            78.7,
+            11.9
+          ],
+          [
+            79.9,
+            11.8
+          ],
+          [
+            79.9,
+            10.3
+          ],
+          [
+            78.8,
+            10.4
+          ],
+          [
+            78.4,
+            11.1
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "The Kaveri delta, Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "Named with Pandya and Kerala among the far southern lands on the search route.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Named alongside Pandya and Kerala in Sugriva’s search instructions"
+          }
+        ]
+      },
+      {
+        "id": "kerala",
+        "name": "Kerala",
+        "native": "केरल",
+        "color": "#6b7bd6",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Kerala",
+          "at": [
+            75,
+            10.9
+          ]
+        },
+        "area": [
+          [
+            75.6,
+            12
+          ],
+          [
+            76.6,
+            11.4
+          ],
+          [
+            77,
+            9.2
+          ],
+          [
+            76.2,
+            9.4
+          ],
+          [
+            75.6,
+            10.6
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "The Kerala coast"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in the epic"
+          }
+        ],
+        "role": "Named with Pandya and Chola among the far southern lands on the search route.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Named alongside Pandya and Chola in Sugriva’s search instructions"
+          }
+        ]
+      }
+    ]
+  }
+}
