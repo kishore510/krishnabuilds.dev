@@ -25,8 +25,8 @@
     spinInertia: 0.55,        // I = k m r^2 for a tennis ball
     ballRadius: 0.033,        // m
     netStopKeep: 0.12,        // speed kept when the ball runs into the net
-    netClipKeep: 0.55,        // horizontal speed kept when it clips the tape
-    netClipPop: 1.2,          // upward speed added by a tape clip (m/s)
+    netClipKeep: 0.4,         // horizontal speed kept when it clips the tape (net cords drop short)
+    netClipPop: 0.8,          // upward speed added by a tape clip (m/s)
     contactHeight: 1.0,       // where shots are struck (m)
     nearContactY: 22.1,       // hitter positions (m from far baseline)
     farContactY: 1.66,
@@ -224,6 +224,27 @@
       magnetMs: 40,             // racket head snaps onto the ball this close to contact
       cueLead: 0.3,             // swing cue fades in this long before the ideal tap (s)
       missMs: 900,              // miss reason label time
+    },
+
+    // --- Match (Stage 3) ----------------------------------------------------
+    // A set is won at `games` with a two-game lead, or by the tie-break at
+    // tiebreakAt-all (first to tbPoints, win by two). The match is won at
+    // ceil(bestOf / 2) sets, so best-of-3 only needs a new row here.
+    match: {
+      formats: {
+        quick:    { label: 'Quick',    bestOf: 1, games: 3, tiebreakAt: 3, tbPoints: 7 },
+        standard: { label: 'Standard', bestOf: 1, games: 6, tiebreakAt: 6, tbPoints: 7 },
+      },
+      defaultFormat: 'quick',
+      firstServer: 'near',      // 'near' (you), 'far' or 'random' (seeded)
+      preServe: 0.6,            // players placed before each serve (s)
+      callTime: 0.9,            // result label (WINNER, OUT, ...) (s)
+      bannerTime: 1.3,          // score banner (s)
+      faultTime: 0.8,           // FAULT / LET label before the next serve (s)
+      offCourt: 6,              // past a baseline by this (or 9 m wide) after a good bounce: past the receiver
+      maxPoint: 10,             // s a ball may stay live after a good bounce before the hitter wins it (safety)
+      rallySoft: 20,            // shots; past this the CPU's error chance grows by its rallyRamp a shot
+      rallyCap: 30,             // the CPU's shot at this count is a forced error, and it stops playing after it
     },
   };
 
@@ -1194,11 +1215,156 @@
     return ev;
   }
 
+  // ---------------------------------------------------------------------
+  // Match rules (Stage 3): scoring, serve legality and the point referee.
+  // Players are indexed 0 = near (you), 1 = far (the CPU).
+  // ---------------------------------------------------------------------
+  const SIDES = ['near', 'far'];
+  const POINT_NAMES = ['0', '15', '30', '40'];
+
+  function createScore(formatKey, cfg, firstServer) {
+    cfg = cfg || CONFIG;
+    const key = cfg.match.formats[formatKey] ? formatKey : cfg.match.defaultFormat;
+    return {
+      format: key, f: cfg.match.formats[key],
+      sets: [[0, 0]], tbScores: [null], points: [0, 0], tiebreak: false, tbFirst: null,
+      server: firstServer || 0, setsWon: [0, 0], winner: null,
+    };
+  }
+
+  // Who serves the next point. In a game it's the game's server; in a
+  // tie-break the player whose turn it was serves one point, then the
+  // serve changes every two points.
+  function serverOf(sc) {
+    if (!sc.tiebreak) return sc.server;
+    const n = sc.points[0] + sc.points[1];
+    if (n === 0) return sc.tbFirst;
+    return Math.floor((n - 1) / 2) % 2 === 0 ? 1 - sc.tbFirst : sc.tbFirst;
+  }
+
+  // Deuce court after an even number of points in the game (or tie-break).
+  function courtOf(sc) { return (sc.points[0] + sc.points[1]) % 2 === 0 ? 'deuce' : 'ad'; }
+
+  // Record a point for `who`. Returns the events it caused, in order:
+  // point, then game / tiebreak / set / match as they happen.
+  function pointWon(sc, who) {
+    if (sc.winner != null) return [];
+    const ev = [{ type: 'point', who }], p = sc.points, other = 1 - who;
+    p[who]++;
+    const need = sc.tiebreak ? sc.f.tbPoints : 4;
+    if (p[who] >= need && p[who] - p[other] >= 2) winGame(sc, who, ev);
+    return ev;
+  }
+
+  function winGame(sc, who, ev) {
+    const si = sc.sets.length - 1, g = sc.sets[si], F = sc.f, tb = sc.tiebreak;
+    g[who]++;
+    if (tb) sc.tbScores[si] = sc.points.slice();
+    sc.points = [0, 0];
+    ev.push({ type: 'game', who, tiebreak: tb, games: g.slice() });
+    // After a tie-break the receiver of its first point serves next, as if
+    // the tie-break had been one game.
+    sc.server = tb ? 1 - sc.tbFirst : 1 - sc.server;
+    sc.tiebreak = false;
+    if (tb || (g[who] >= F.games && g[who] - g[1 - who] >= 2)) {
+      sc.setsWon[who]++;
+      ev.push({ type: 'set', who, games: g.slice(), tb: sc.tbScores[si] });
+      if (sc.setsWon[who] >= Math.ceil(F.bestOf / 2)) {
+        sc.winner = who;
+        ev.push({ type: 'match', who });
+      } else { sc.sets.push([0, 0]); sc.tbScores.push(null); }
+    } else if (g[0] === F.tiebreakAt && g[1] === F.tiebreakAt) {
+      sc.tiebreak = true; sc.tbFirst = sc.server;
+      ev.push({ type: 'tiebreak' });
+    }
+  }
+
+  // The points as a player would call them, server first ("30–15",
+  // "DEUCE", "ADV YOU"); a tie-break counts 1, 2, 3.
+  function pointsText(sc, names) {
+    names = names || ['YOU', 'CPU'];
+    const p = sc.points, s = serverOf(sc), r = 1 - s;
+    if (sc.tiebreak) return p[s] + '–' + p[r];
+    if (p[0] >= 3 && p[1] >= 3) return p[0] === p[1] ? 'DEUCE' : 'ADV ' + names[p[0] > p[1] ? 0 : 1];
+    return POINT_NAMES[p[s]] + '–' + POINT_NAMES[p[r]];
+  }
+
+  // The service box a serve from `serverSide` into `court` must land in.
+  // Deuce court: the server stands to the right of the centre mark (as
+  // they face the net) and serves across into the receiver's right box.
+  function serviceBox(serverSide, court) {
+    const sgn = serverSide === 'near' ? 1 : -1, toX = court === 'deuce' ? -sgn : sgn;
+    const yNear = serverSide === 'near' ? COURT.netY - COURT.serviceFromNet : COURT.netY;
+    return {
+      minX: toX > 0 ? 0 : -COURT.singlesHalf, maxX: toX > 0 ? COURT.singlesHalf : 0,
+      minY: yNear, maxY: yNear + COURT.serviceFromNet,
+    };
+  }
+
+  // A serve's first bounce: 'IN' (lines count), 'OUT_LONG' (past the
+  // service line), 'OUT_WIDE' (past the sideline or the centre line) or
+  // 'NET' (on the server's side).
+  function judgeServe(X, Y, serverSide, court) {
+    const box = serviceBox(serverSide, court);
+    const farHalf = Y <= COURT.netY;
+    if ((serverSide === 'near') !== farHalf) return 'NET';
+    if (Y < box.minY || Y > box.maxY) return 'OUT_LONG';
+    if (X < box.minX || X > box.maxX) return 'OUT_WIDE';
+    return 'IN';
+  }
+
+  // The referee for one point. It is told about every contact (refHit) and
+  // reads the ball's events (refBall); either may end the point.
+  //   { type: 'point', winner, reason: 'ACE' | 'WINNER' | 'OUT' | 'NET', by }
+  //   { type: 'fault', reason: 'OUT' | 'NET' }  (the match decides double faults)
+  //   { type: 'let' }
+  // by = the player whose shot decided it.
+  function createRally(server, court) {
+    return { server, court, hitter: server, serve: true, hits: 0, touched: false, bounced: false, over: null };
+  }
+
+  function refHit(r, who) {
+    if (r.over) return;
+    if (r.hits > 0 && who !== r.hitter) { r.serve = false; r.touched = true; }
+    r.hitter = who; r.hits++; r.bounced = false;
+  }
+
+  function refBall(r, ball, events, cfg) {
+    cfg = cfg || CONFIG;
+    if (r.over || r.hits === 0) return r.over;
+    const h = r.hitter, o = 1 - h;
+    const end = (winner, reason) => { r.over = { type: 'point', winner, reason, by: h }; };
+    for (const e of events) {
+      if (r.over) break;
+      if (e.type === 'net' && e.stopped) {
+        if (r.serve) r.over = { type: 'fault', reason: 'NET', by: h };
+        else end(o, 'NET');
+      } else if (e.type === 'bounce' && e.n === 1 && !r.bounced) {
+        if (r.serve) {
+          const res = ball.phase === 'net' ? 'NET' : judgeServe(e.X, e.Y, SIDES[h], r.court);
+          if (res !== 'IN') r.over = { type: 'fault', reason: res === 'NET' ? 'NET' : 'OUT', by: h };
+          else if (ball.touchedNet) r.over = { type: 'let', by: h };
+          else r.bounced = true;
+        } else if (e.result !== 'IN') end(o, e.result === 'NET' ? 'NET' : 'OUT');
+        else r.bounced = true;
+      } else if (e.type === 'bounce' && r.bounced) {
+        end(h, r.serve && !r.touched ? 'ACE' : 'WINNER');
+      }
+    }
+    if (!r.over && r.bounced) {
+      const off = ball.Y < -cfg.match.offCourt || ball.Y > COURT.length + cfg.match.offCourt || Math.abs(ball.X) > 9;
+      if (ball.rolling || off || ball.t > cfg.match.maxPoint) end(h, r.serve && !r.touched ? 'ACE' : 'WINNER');
+    }
+    return r.over;
+  }
+
   const api = {
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
     simulate, solveShot, shotFromAngle, rng, createMachine, machineStep,
     strokeFor, swingPhase, swingPreset, timingScore, zoneOf, contactFor, timingFor, strokeLabel, predictFor, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
     playerBounds, tracePath, predictCrossing, predictContact, reachPlan, assistTarget, missReason, MISS_TEXT,
+    SIDES, createScore, serverOf, courtOf, pointWon, pointsText, serviceBox, judgeServe,
+    createRally, refHit, refBall,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TennisEngine = api;

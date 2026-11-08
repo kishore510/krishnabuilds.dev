@@ -829,3 +829,237 @@ test('net play is deterministic', () => {
   assert.deepEqual(a, b);
   assert.ok(a.some(l => l.includes('"kind":"volley"') || l.includes('"stroke":"volley"')));
 });
+
+// ---------------------------------------------------------------------
+// Stage 3: match rules and scoring
+// ---------------------------------------------------------------------
+const win = (sc, who, n) => { const ev = []; for (let i = 0; i < n; i++) ev.push(...E.pointWon(sc, who)); return ev; };
+const games = (sc, who, n) => { for (let i = 0; i < n; i++) win(sc, who, 4); };
+
+test('scoring: a love game goes 15, 30, 40, game', () => {
+  const sc = E.createScore('quick');
+  const said = [];
+  for (let i = 0; i < 3; i++) { E.pointWon(sc, 0); said.push(E.pointsText(sc)); }
+  assert.deepEqual(said, ['15–0', '30–0', '40–0']);
+  const ev = E.pointWon(sc, 0);
+  assert.ok(ev.some(e => e.type === 'game' && e.who === 0));
+  assert.deepEqual(sc.sets[0], [1, 0]);
+  assert.deepEqual(sc.points, [0, 0]);
+});
+
+test('scoring: deuce, advantage, back to deuce, then a game from advantage', () => {
+  const sc = E.createScore('quick');
+  win(sc, 0, 3); win(sc, 1, 3);
+  assert.equal(E.pointsText(sc), 'DEUCE');
+  E.pointWon(sc, 1); assert.equal(E.pointsText(sc), 'ADV CPU');
+  E.pointWon(sc, 0); assert.equal(E.pointsText(sc), 'DEUCE');
+  E.pointWon(sc, 0); assert.equal(E.pointsText(sc), 'ADV YOU');
+  assert.deepEqual(sc.sets[0], [0, 0]);
+  const ev = E.pointWon(sc, 0);
+  assert.ok(ev.some(e => e.type === 'game' && e.who === 0));
+  assert.deepEqual(sc.sets[0], [1, 0]);
+});
+
+test('scoring: the score is called server first', () => {
+  const sc = E.createScore('quick', C, 1);   // the CPU serves
+  E.pointWon(sc, 0);
+  assert.equal(E.pointsText(sc), '0–15');
+});
+
+test('scoring: Quick sets end 3-1 or 4-2, never 3-2', () => {
+  const a = E.createScore('quick');
+  games(a, 0, 2); games(a, 1, 1);
+  const ev = win(a, 0, 4);
+  assert.ok(ev.some(e => e.type === 'set' && e.who === 0));
+  assert.deepEqual(a.sets[0], [3, 1]);
+  assert.equal(a.winner, 0);
+
+  const b = E.createScore('quick');
+  games(b, 0, 2); games(b, 1, 2); games(b, 0, 1);
+  assert.deepEqual(b.sets[0], [3, 2]);
+  assert.equal(b.winner, null);
+  games(b, 0, 1);
+  assert.deepEqual(b.sets[0], [4, 2]);
+  assert.equal(b.winner, 0);
+});
+
+test('scoring: Standard sets 6-4 and 7-5', () => {
+  const a = E.createScore('standard');
+  games(a, 1, 4); games(a, 0, 6);
+  assert.deepEqual(a.sets[0], [6, 4]); assert.equal(a.winner, 0);
+  const b = E.createScore('standard');
+  games(b, 0, 5); games(b, 1, 5); games(b, 1, 1);
+  assert.equal(b.winner, null);
+  games(b, 1, 1);
+  assert.deepEqual(b.sets[0], [5, 7]); assert.equal(b.winner, 1);
+});
+
+test('tie-break at 6-6: 7-5 wins the set 7-6', () => {
+  const sc = E.createScore('standard');
+  for (let i = 0; i < 6; i++) { games(sc, 0, 1); games(sc, 1, 1); }
+  assert.equal(sc.tiebreak, true);
+  win(sc, 0, 5); win(sc, 1, 5);
+  assert.equal(E.pointsText(sc).split('–').map(Number).sort().join(), '5,5');
+  win(sc, 0, 1);
+  assert.equal(sc.winner, null);
+  const ev = win(sc, 0, 1);
+  assert.ok(ev.some(e => e.type === 'set' && e.tb && e.tb[0] === 7 && e.tb[1] === 5));
+  assert.deepEqual(sc.sets[0], [7, 6]);
+  assert.equal(sc.winner, 0);
+});
+
+test('tie-break needs two clear: 6-6 goes on to 8-6', () => {
+  const sc = E.createScore('quick');
+  for (let i = 0; i < 3; i++) { games(sc, 0, 1); games(sc, 1, 1); }
+  assert.equal(sc.tiebreak, true);
+  win(sc, 0, 6); win(sc, 1, 6);
+  win(sc, 1, 1); assert.equal(sc.winner, null);   // 6-7
+  win(sc, 0, 1); assert.equal(sc.winner, null);   // 7-7
+  win(sc, 0, 1); assert.equal(sc.winner, null);   // 8-7
+  win(sc, 0, 1);                                   // 9-7
+  assert.deepEqual(sc.sets[0], [4, 3]);
+  assert.deepEqual(sc.tbScores[0], [9, 7]);
+  assert.equal(sc.winner, 0);
+});
+
+test('match end: no more points count once it is won', () => {
+  const sc = E.createScore('quick');
+  games(sc, 1, 3);
+  assert.equal(sc.winner, 1);
+  assert.deepEqual(E.pointWon(sc, 0), []);
+  assert.deepEqual(sc.sets[0], [0, 3]);
+});
+
+test('best-of-3 is ready: two sets win it', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, {
+    formats: Object.assign({}, C.match.formats, { bo3: { label: 'Bo3', bestOf: 3, games: 3, tiebreakAt: 3, tbPoints: 7 } }) }) });
+  const sc = E.createScore('bo3', cfg);
+  games(sc, 0, 3); assert.equal(sc.winner, null); assert.equal(sc.sets.length, 2);
+  games(sc, 1, 3); assert.equal(sc.winner, null);
+  games(sc, 0, 3); assert.equal(sc.winner, 0);
+  assert.deepEqual(sc.setsWon, [2, 1]);
+});
+
+test('serve: the server alternates each game; courts alternate each point', () => {
+  const sc = E.createScore('standard', C, 0);
+  const servers = [];
+  for (let g = 0; g < 4; g++) { servers.push(E.serverOf(sc)); win(sc, g % 2, 4); }
+  assert.deepEqual(servers, [0, 1, 0, 1]);
+  const courts = [];
+  for (let i = 0; i < 5; i++) { courts.push(E.courtOf(sc)); E.pointWon(sc, i % 2); }
+  assert.deepEqual(courts, ['deuce', 'ad', 'deuce', 'ad', 'deuce']);
+});
+
+test('serve: tie-break order is one point, then two each; the next set follows on', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, {
+    formats: { bo3: { label: 'Bo3', bestOf: 3, games: 3, tiebreakAt: 3, tbPoints: 7 } } }) });
+  const sc = E.createScore('bo3', cfg, 0);
+  for (let i = 0; i < 3; i++) { win(sc, E.serverOf(sc), 4); win(sc, E.serverOf(sc), 4); }
+  assert.equal(sc.tiebreak, true);
+  const first = E.serverOf(sc), order = [];
+  for (let i = 0; i < 7; i++) { order.push(E.serverOf(sc)); E.pointWon(sc, 0); }
+  const o = 1 - first;
+  assert.deepEqual(order, [first, o, o, first, first, o, o]);
+  assert.equal(sc.tiebreak, false);
+  assert.equal(E.serverOf(sc), o, 'the receiver of the first tie-break point serves the next set');
+});
+
+test('serve boxes: diagonal, deuce on the server\'s right', () => {
+  const nd = E.serviceBox('near', 'deuce'), na = E.serviceBox('near', 'ad');
+  assert.ok(nd.maxX === 0 && nd.maxY === COURT.netY);   // far court, left as the near player sees it
+  assert.ok(na.minX === 0);
+  const fd = E.serviceBox('far', 'deuce');
+  assert.ok(fd.minX === 0 && fd.minY === COURT.netY);   // near court, the far server's right is -X
+  const svc = COURT.netY - COURT.serviceFromNet;
+  assert.equal(E.judgeServe(-2, svc + 1, 'near', 'deuce'), 'IN');
+  assert.equal(E.judgeServe(-2, svc, 'near', 'deuce'), 'IN');            // on the line
+  assert.equal(E.judgeServe(-2, svc - 0.05, 'near', 'deuce'), 'OUT_LONG');
+  assert.equal(E.judgeServe(2, svc + 1, 'near', 'deuce'), 'OUT_WIDE');   // wrong box
+  assert.equal(E.judgeServe(-4.2, svc + 1, 'near', 'deuce'), 'OUT_WIDE');
+  assert.equal(E.judgeServe(-2, COURT.netY + 1, 'near', 'deuce'), 'NET');
+});
+
+// Play one ball for the referee: launched from `from` with `shot`.
+function refPlay(r, ball, cfg) {
+  cfg = cfg || C;
+  for (let i = 0; i < 2400 && !r.over; i++) E.refBall(r, ball, E.step(ball, cfg), cfg);
+  return r.over;
+}
+function servePlay(target, opts) {
+  opts = opts || {};
+  const r = E.createRally(0, opts.court || 'deuce');
+  const ball = E.createBall();
+  const from = { side: 'near', X: 0.8, Y: COURT.length - 0.2, H: 2.7 };
+  let shot = opts.shot || E.solveShot(from, target, 'flat', C, { clearNet: true });
+  E.launch(ball, from, shot);
+  E.refHit(r, 0);
+  return { r, ball, over: refPlay(r, ball) };
+}
+
+test('point: a rally ball that bounces twice is a WINNER for the hitter', () => {
+  const r = E.createRally(0, 'deuce'); r.serve = false;
+  const ball = E.createBall();
+  E.launch(ball, near(0), E.solveShot(near(0), { X: 1, Y: 4 }, 'top', C));
+  E.refHit(r, 0); r.serve = false; r.hits = 3;
+  assert.deepEqual(refPlay(r, ball), { type: 'point', winner: 0, reason: 'WINNER', by: 0 });
+});
+
+test('point: out long and out wide are OUT; into the net is NET', () => {
+  for (const [target, reason] of [[{ X: 0, Y: -1.5 }, 'OUT'], [{ X: 5.2, Y: 5 }, 'OUT']]) {
+    const r = E.createRally(1, 'deuce');
+    const ball = E.createBall();
+    E.launch(ball, near(0), E.solveShot(near(0), target, 'flat', C, { clearNet: true }));
+    E.refHit(r, 1); E.refHit(r, 0);       // the far player served, the near player returns
+    const o = refPlay(r, ball);
+    assert.equal(o.reason, reason); assert.equal(o.winner, 1); assert.equal(o.by, 0);
+  }
+  const r = E.createRally(1, 'deuce');
+  const ball = E.createBall();
+  E.launch(ball, near(0), E.shotFromAngle(near(0), { X: 0, Y: 4 }, C.shots.flat, -6));
+  E.refHit(r, 1); E.refHit(r, 0);
+  const o = refPlay(r, ball);
+  assert.equal(o.reason, 'NET'); assert.equal(o.winner, 1);
+});
+
+test('serve: in the box and untouched is an ACE', () => {
+  const { over } = servePlay({ X: -2, Y: COURT.netY - COURT.serviceFromNet + 0.8 });
+  assert.deepEqual(over, { type: 'point', winner: 0, reason: 'ACE', by: 0 });
+});
+
+test('serve: long, wide or wrong box is a FAULT; into the net is a NET fault', () => {
+  const svc = COURT.netY - COURT.serviceFromNet;
+  assert.deepEqual(servePlay({ X: -2, Y: svc - 1.5 }).over, { type: 'fault', reason: 'OUT', by: 0 });
+  assert.deepEqual(servePlay({ X: 2, Y: svc + 1 }).over, { type: 'fault', reason: 'OUT', by: 0 });
+  const from = { side: 'near', X: 0.8, Y: COURT.length - 0.2, H: 2.7 };
+  const into = E.shotFromAngle(from, { X: -2, Y: svc }, C.shots.flat, -9);
+  assert.deepEqual(servePlay(null, { shot: into }).over, { type: 'fault', reason: 'NET', by: 0 });
+});
+
+test('serve: a net cord that lands in the box is a LET; one that lands out is a fault', () => {
+  const from = { side: 'near', X: 0.8, Y: COURT.length - 0.2, H: 2.7 };
+  const target = { X: -1.5, Y: COURT.netY - 3 };
+  let let_ = null, cordOut = null;
+  // Search launch angles for a tape clip; keep one that lands in and one out.
+  for (let a = -8; a < 2 && !(let_ && cordOut); a += 0.02) {
+    for (const speed of [20, 26, 32, 38]) {
+      const shot = E.shotFromAngle(from, target, Object.assign({}, C.shots.flat, { speed }), a);
+      const s = E.simulate(from, shot, C);
+      if (!s.ball.touchedNet || s.net || !s.firstBounce) continue;
+      const res = E.judgeServe(s.firstBounce.X, s.firstBounce.Y, 'near', 'deuce');
+      if (res === 'IN' && !let_) let_ = shot;
+      if (res !== 'IN' && res !== 'NET' && !cordOut) cordOut = shot;
+    }
+  }
+  assert.ok(let_, 'found a let');
+  assert.deepEqual(servePlay(null, { shot: let_ }).over, { type: 'let', by: 0 });
+  if (cordOut) assert.equal(servePlay(null, { shot: cordOut }).over.type, 'fault');
+});
+
+test('point: after a return the serve is no longer an ace', () => {
+  const r = E.createRally(1, 'deuce');
+  E.refHit(r, 1); E.refHit(r, 0);
+  assert.equal(r.serve, false); assert.equal(r.touched, true);
+  const ball = E.createBall();
+  E.launch(ball, near(0), E.solveShot(near(0), { X: 0, Y: 4 }, 'top', C));
+  assert.equal(refPlay(r, ball).reason, 'WINNER');
+});
