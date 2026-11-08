@@ -249,3 +249,7 @@ Tennis draws the player, ball and racket at sizes set in `CONFIG.render` (canvas
 Swing timing is judged on the tap, against the ideal tap (the moment that makes contact land as the ball reaches the player's contact plane). Early taps inside a buffer are queued and fire at the ideal moment. Late taps shorten the backswing, so contact still lands on time up to 90 ms late. Before this, contact came a fixed 160 ms after the tap, so tapping when the ball reached the player was always a late whiff, and that was most of the misses. A Perfect still needs the tap within 35 ms.
 
 Practice feeds are chosen to be reachable from wherever the player stands: each candidate's flight is traced, and it has to come to a hittable height at a stance the player can run to in time. The same trace drives the landing ring, the swing cue, the soft assist and the miss reasons.
+
+## 2026-11-08 — Tennis Stage 2.2: the drop shot's bounce uses a per-shot grip
+
+The drop shot is physics, not a scripted arc, but backspin alone couldn't kill its bounce: the court's sliding friction caps how much speed a bounce can take off, whatever the spin. A shot can now carry `grip`, which multiplies the bounce friction for that ball. Only the drop sets it (2.2). This is the one physics change; everything else about the drop (speed that scales with the distance to the target, angles, backspin, landing band, risk) is CONFIG. The drop's bounce peaks at about half of topspin's from the same spot, and its second bounce comes about a third as far on.

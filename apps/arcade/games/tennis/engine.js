@@ -42,6 +42,13 @@
       flat: { name: 'FLAT DRIVE', speed: 30, spin: 40, angles: [-2, 12], depth: 3.0 },
       top:  { name: 'TOPSPIN',    speed: 26, spin: 260, angles: [0, 20], depth: 3.5 },
       lob:  { name: 'LOB',        speed: 17.5, spin: -40, angles: [12, 30], depth: 2.5 },
+      // Drop shot: soft, heavy backspin, lands just past the net (depth =
+      // net - 2.5 m). Its speed scales with the distance to the target,
+      // as sqrt(distance / speedRef) within speedClamp, so it lands short
+      // from anywhere. grip multiplies the court's bounce friction, so the
+      // backspin checks the ball up instead of kicking on.
+      drop: { name: 'DROP', speed: 12.5, spin: -300, angles: [0, 32], depth: 23.77 / 2 - 2.5,
+        speedRef: 12.5, speedClamp: [0.7, 1.25], grip: 2.2 },
     },
 
     machine: {
@@ -69,7 +76,11 @@
     // Swing timing (s), from the prototype's keyframes (tau -0.16, 0, 0.18,
     // 0.6). Contact is `backswing` seconds after the swing starts. A late
     // tap shortens the backswing, down to minBackswing (see timing).
-    swing: { backswing: 0.16, minBackswing: 0.07, follow: 0.18, recovery: 0.42 },
+    // Presets override these per shot (drop) or stroke (volley, smash).
+    swing: {
+      backswing: 0.16, minBackswing: 0.07, follow: 0.18, recovery: 0.42,
+      drop: { backswing: 0.12, minBackswing: 0.06, follow: 0.12, recovery: 0.36 },
+    },
 
     // Tap timing, in ms from the ideal tap (the ball reaches the contact
     // plane `backswing` later). Early taps inside buffer + earlyGrace are
@@ -110,6 +121,14 @@
       mishitChance: 0.6,        // chance at q = 0, scaling to 0 at mishitBelow
     },
 
+    // Drop shot placement and risk. Target: pastNet metres past the net
+    // (the stick's up/down moves it by up to nudge within band). Off
+    // Perfect, a drop either falls short by up to `short` m at q = 0 with
+    // no net lift (it can clip or find the net), or floats: launched up to
+    // `lift` degrees higher with only spinKeep of its backspin. netShare is
+    // the chance it's the short kind.
+    drop: { pastNet: 2.5, band: [1.5, 3.5], nudge: 1.0, short: 2.6, lift: 13, spinKeep: 0.4, netShare: 0.5 },
+
     // Joystick at contact -> target on the far court.
     aim: {
       x: 3.4,                   // full left/right puts the target this far from centre (m)
@@ -124,10 +143,12 @@
       delay: 1.6,               // delay after each point (s)
       width: 2.5,               // lands within +-this of the centre line (m)
       pace: 0.7,                // default speed multiplier (1 = match pace)
-      minPace: { lob: 0.9 },    // a lob slower than this can't reach the baseline
+      minPace: { lob: 0.9, drop: 1 }, // slower than this can't reach (lob) or cross the net (drop)
       // Angle ranges the solver searches for feeds (wider than the shots',
       // so slow feeds still reach). Below each shot's maximum-range angle.
-      angles: { flat: [-2, 22], top: [0, 38], lob: [12, 38] },
+      angles: { flat: [-2, 22], top: [0, 38], lob: [12, 38], drop: [0, 34] },
+      // Auto cycles through these feed modes.
+      auto: ['flat', 'top', 'lob', 'drop'],
       tries: 14,                // candidates per pace step before taking the best one
       slower: [1, 0.8, 0.65, 0.5],// if none is reachable, try again this much slower...
       slowAngles: [10, 40],     // ...searching these (higher, longer-hanging) angles
@@ -198,6 +219,7 @@
     return {
       X: 0, Y: 0, H: 0, vx: 0, vy: 0, vz: 0,
       spin: 0, ax: 0, ay: -1,      // spin axis direction (unit, horizontal)
+      grip: 1,                     // bounce friction multiplier (drop shot)
       side: 'near', phase: 'idle', bounces: 0, touchedNet: false, rolling: false,
       t: 0, result: null,
     };
@@ -211,7 +233,7 @@
     ball.ax = shot.vx / u; ball.ay = shot.vy / u;
     ball.side = from.side;
     ball.phase = 'flight'; ball.bounces = 0; ball.touchedNet = false; ball.rolling = false;
-    ball.t = 0; ball.result = null;
+    ball.t = 0; ball.result = null; ball.grip = shot.grip || 1;
   }
 
   function bounce(ball, cfg) {
@@ -222,7 +244,7 @@
     const u = ball.vx * ball.ax + ball.vy * ball.ay;
     const lx = ball.vx - u * ball.ax, ly = ball.vy - u * ball.ay;
     const slip = u - r * ball.spin;          // contact point velocity
-    const maxDu = cfg.friction * (1 + e) * vzIn;
+    const maxDu = cfg.friction * (ball.grip || 1) * (1 + e) * vzIn;
     const rollDu = k * Math.abs(slip) / (1 + k); // change that reaches rolling
     const du = -Math.sign(slip) * Math.min(maxDu, rollDu);
     const u2 = u + du;
@@ -336,7 +358,7 @@
     const d = Math.hypot(dx, dy) || 1;
     const a = angleDeg * Math.PI / 180;
     const hs = def.speed * Math.cos(a);
-    return { vx: hs * dx / d, vy: hs * dy / d, vz: def.speed * Math.sin(a), spin: def.spin };
+    return { vx: hs * dx / d, vy: hs * dy / d, vz: def.speed * Math.sin(a), spin: def.spin, grip: def.grip || 1 };
   }
 
   // Aim solver: find the launch angle (within the shot's range) whose first
@@ -348,6 +370,10 @@
     if (opts && opts.speedMul) def = Object.assign({}, def, { speed: def.speed * opts.speedMul });
     if (opts && opts.angles) def = Object.assign({}, def, { angles: opts.angles });
     const want = Math.hypot(target.X - from.X, target.Y - from.Y);
+    if (def.speedRef) {
+      const k = Math.sqrt(want / def.speedRef), c = def.speedClamp || [0, Infinity];
+      def = Object.assign({}, def, { speed: def.speed * Math.max(c[0], Math.min(c[1], k)) });
+    }
     const dist = (ang) => {
       const s = simulate(from, shotFromAngle(from, target, def, ang), cfg);
       if (!s.firstBounce) return -1; // stopped by the net: counts as short
@@ -493,11 +519,20 @@
     return dx >= (cfg || CONFIG).contact.backhandBelow ? 'fh' : 'bh';
   }
 
+  // The swing timing for a shot and stroke kind ('ground', 'volley',
+  // 'smash'): the base swing with the kind's (or the shot's) preset on top.
+  function swingPreset(cfg, shot, kind) {
+    const sw = (cfg || CONFIG).swing;
+    const over = kind && kind !== 'ground' ? sw[kind] : sw[shot];
+    return Object.assign({ backswing: sw.backswing, minBackswing: sw.minBackswing, follow: sw.follow, recovery: sw.recovery }, over || {});
+  }
+
   // Swing phase `e` seconds after the swing starts, with backswing `bs`
-  // (default: the full one). 'contact' is the instant of contact, reported
-  // for one display frame or so.
-  function swingPhase(e, cfg, bs) {
-    const s = (cfg || CONFIG).swing;
+  // (default: the full one) and pre's follow / recovery (default: the
+  // base swing's). 'contact' is the instant of contact, reported for one
+  // display frame or so.
+  function swingPhase(e, cfg, bs, pre) {
+    const s = Object.assign({}, (cfg || CONFIG).swing, pre && pre.follow != null ? { follow: pre.follow, recovery: pre.recovery } : {});
     if (bs == null) bs = s.backswing;
     if (e == null || e < 0) return 'ready';
     if (e < bs) return 'backswing';
@@ -574,6 +609,7 @@
   // Where a return should land, from the stick and the contact judgement.
   // Returns { target, pace, mishit }. Uses rand only for a possible mishit.
   function aimReturn(j, stick, shotKey, cfg, rand) {
+    if (shotKey === 'drop') return aimDrop(j, stick, cfg, rand);
     const a = cfg.aim, q = cfg.quality, def = cfg.shots[shotKey];
     const jx = clamp(stick.x || 0, -1, 1), jy = clamp(stick.y || 0, -1, 1);
     let X = jx * a.x;
@@ -593,6 +629,42 @@
     }
     const pace = j.perfect ? q.perfectPace : q.paceMin + (1 - q.paceMin) * j.quality;
     return { target: { X, Y }, pace, mishit };
+  }
+
+  // A drop: pastNet metres over the net, nudged by the stick within the
+  // band. Off Perfect it risks falling short into the net (POOR only: no
+  // net lift) or floating up with less backspin.
+  function aimDrop(j, stick, cfg, rand) {
+    const d = cfg.drop, q = cfg.quality, F = j.stroke === 'fh' ? 1 : -1;
+    const jx = clamp(stick.x || 0, -1, 1), jy = clamp(stick.y || 0, -1, 1);
+    let X = jx * cfg.aim.x;
+    const past = clamp(d.pastNet - jy * d.nudge, d.band[0], d.band[1]);
+    let Y = COURT.netY - past;
+    const out = { target: null, pace: 1, mishit: null, lift: 0, spinMul: 1, noClear: false, risk: null };
+    if (!j.perfect) {
+      X += F * j.pull * q.maxPull;
+      const bad = 1 - j.quality;
+      if (rand() < d.netShare) {
+        out.risk = 'short';
+        Y += bad * d.short;
+        out.noClear = j.quality < q.good;
+      } else {
+        out.risk = 'float';
+        out.lift = bad * d.lift;
+        out.spinMul = d.spinKeep + (1 - d.spinKeep) * j.quality;
+      }
+    }
+    out.target = { X, Y };
+    return out;
+  }
+
+  // Tilt a solved shot `deg` degrees up (same speed and direction).
+  function liftShot(shot, deg) {
+    const v = Math.hypot(shot.vx, shot.vy, shot.vz), h = Math.hypot(shot.vx, shot.vy) || 1;
+    const a = (shot.angle + deg) * Math.PI / 180;
+    return Object.assign({}, shot, {
+      vx: shot.vx / h * v * Math.cos(a), vy: shot.vy / h * v * Math.cos(a), vz: v * Math.sin(a), angle: shot.angle + deg,
+    });
   }
 
   // A launched ball's whole flight, one sample per physics step, with the
@@ -706,9 +778,11 @@
 
   // Plan a tap: when the swing starts and how long its backswing is.
   function planSwing(pr, r) {
-    const cfg = pr.cfg, sw = cfg.swing, T = cfg.timing;
+    const cfg = pr.cfg, T = cfg.timing;
     const pred = predictContact(pr);
-    const plan = { shot: r.shot, tap: r.t, start: r.t, bs: sw.backswing, tapErr: null, kind: pred.kind, predX: pred.X };
+    const sw = swingPreset(cfg, r.shot, pred.stroke || 'ground');
+    const plan = { shot: r.shot, tap: r.t, start: r.t, bs: sw.backswing, tapErr: null, kind: pred.kind, predX: pred.X,
+      stroke: pred.stroke || 'ground', follow: sw.follow, recovery: sw.recovery };
     if (pred.kind === 'ok') {
       const ideal = pred.t - sw.backswing;
       plan.tapErr = (r.t - ideal) * 1000;
@@ -723,15 +797,15 @@
     const guessX = plan.predX != null ? plan.predX : b.phase === 'idle' ? b.X : b.X + b.vx * plan.bs;
     pr.swing = {
       t0: plan.start, bs: plan.bs, shot: plan.shot, done: false, stroke: strokeFor(guessX - pr.player.X, pr.cfg),
-      result: null, tapErr: plan.tapErr, kind: plan.kind,
+      result: null, tapErr: plan.tapErr, kind: plan.kind, strokeKind: plan.stroke, follow: plan.follow, recovery: plan.recovery,
     };
     pr.pending = null;
-    ev.push({ type: 'swing', shot: plan.shot, t: plan.start, tap: plan.tap, tapErr: plan.tapErr, bs: plan.bs });
+    ev.push({ type: 'swing', shot: plan.shot, t: plan.start, tap: plan.tap, tapErr: plan.tapErr, bs: plan.bs, stroke: plan.stroke });
   }
 
   function swinging(pr) {
     const s = pr.swing;
-    return pr.pending != null || swingPhase(s.t0 == null ? null : pr.t - s.t0, pr.cfg, s.bs) !== 'ready';
+    return pr.pending != null || swingPhase(s.t0 == null ? null : pr.t - s.t0, pr.cfg, s.bs, s) !== 'ready';
   }
 
   // Move v towards target; accelerate when pushing on, decelerate when
@@ -749,7 +823,7 @@
     if (m > 1) { sx /= m; sy /= m; }
     if (m < pl.deadzone) { sx = 0; sy = 0; }
     const s = pr.swing;
-    const ph = swingPhase(s.t0 == null ? null : pr.t - s.t0, cfg, s.bs);
+    const ph = swingPhase(s.t0 == null ? null : pr.t - s.t0, cfg, s.bs, s);
     const k = (ph === 'backswing' || ph === 'contact' || ph === 'follow-through') ? pl.swingMove : 1;
     let tx = sx * pl.speedX * k, ty = sy * pl.speedY * k;
     // Assist: only on an idle stick axis, while a fed ball is inbound and
@@ -779,8 +853,14 @@
   // Feed a ball the player can reach from where they stand. Candidates
   // move from a normal deep feed towards one landing in front of the
   // player; the first reachable one goes (or the best of them).
+  function pickFeed(pr) {
+    if (pr.mode !== 'auto') return pr.mode;
+    const list = pr.cfg.feed.auto;
+    return list[pr.cycle++ % list.length];
+  }
+
   function feed(pr, ev) {
-    const cfg = pr.cfg, R = pr.rand, key = pickShot(pr), def = cfg.shots[key], FD = cfg.feed, p = pr.player;
+    const cfg = pr.cfg, R = pr.rand, key = pickFeed(pr), def = cfg.shots[key], FD = cfg.feed, p = pr.player;
     const from = { side: 'far', X: (R() - 0.5) * 2, Y: cfg.farContactY, H: cfg.contactHeight };
     const opts = { speedMul: feedPace(pr, key), angles: FD.angles[key], clearNet: true };
     let best = null;
@@ -845,7 +925,7 @@
     while (pr.queue.length && pr.queue[0].t < t1) {
       const r = pr.queue.shift();
       const s = pr.swing;
-      if (pr.pending || swingPhase(s.t0 == null ? null : r.t - s.t0, cfg, s.bs) !== 'ready') continue;
+      if (pr.pending || swingPhase(s.t0 == null ? null : r.t - s.t0, cfg, s.bs, s) !== 'ready') continue;
       const plan = planSwing(pr, r);
       if (plan.tapErr != null) { pr.taps.n++; pr.taps.sum += plan.tapErr; }
       if (plan.start < t1) startSwing(pr, plan, ev);
@@ -902,11 +982,13 @@
       if (j.contact) {
         const aim = aimReturn(j, stick, s.shot, cfg, pr.rand);
         const from = { side: 'near', X: bs.X, Y: bs.Y, H: bs.H };
-        const shot = solveShot(from, aim.target, s.shot, cfg, { speedMul: aim.pace, clearNet: true });
+        let shot = solveShot(from, aim.target, s.shot, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles });
+        if (aim.lift) shot = liftShot(shot, aim.lift);
+        if (aim.spinMul != null && aim.spinMul !== 1) shot = Object.assign({}, shot, { spin: shot.spin * aim.spinMul });
         launch(b, from, shot);
         pr.hitBy = 'player'; pr.shotKey = s.shot; pr.aim = { target: aim.target, miss: aim.mishit }; pr.path = null;
         ev.push(Object.assign({ type: 'hit', by: 'player', side: 'near', X: from.X, Y: from.Y, H: from.H,
-          shot: s.shot, angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit,
+          shot: s.shot, angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit, risk: aim.risk || null,
           stick: { x: stick.x || 0, y: stick.y || 0 } }, j));
       } else {
         if (live) { pr.whiffed = true; countMiss(pr, j.reason); }
@@ -932,7 +1014,7 @@
   const api = {
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
     simulate, solveShot, shotFromAngle, rng, createMachine, machineStep,
-    strokeFor, swingPhase, timingScore, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
+    strokeFor, swingPhase, swingPreset, timingScore, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
     playerBounds, tracePath, predictCrossing, predictContact, reachPlan, assistTarget, missReason, MISS_TEXT,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

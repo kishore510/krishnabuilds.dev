@@ -218,7 +218,7 @@ function trial({ seed = 3, mode = 'top', offMs = 0, dx = 0, stick = { x: 0, y: 0
   const pr = quiet(seed, mode);
   feedFirst(pr);
   pr.player.X = ideal.X - C.contact.side + dx;
-  const tap = ideal.t - C.swing.backswing + offMs / 1000;
+  const tap = ideal.t - E.swingPreset(C, shot).backswing + offMs / 1000;
   E.requestSwing(pr, shot, tap);
   let contact = null, ret = null, swing = null;
   for (let i = 0; i < 120 * 8 && !ret; i++) {
@@ -535,7 +535,7 @@ test('practice is deterministic: same seed, inputs and steps give the same resul
     const log = [];
     for (let i = 0; i < 120 * 20; i++) {
       const stick = { x: Math.sin(i / 50), y: Math.cos(i / 90) * 0.5 };
-      if (i % 97 === 0) E.requestSwing(pr, ['top', 'flat', 'lob'][i % 3], pr.t + 0.003);
+      if (i % 97 === 0) E.requestSwing(pr, ['top', 'flat', 'lob', 'drop'][i % 4], pr.t + 0.003);
       for (const e of E.practiceStep(pr, { stick: i % 400 < 200 ? stick : {} })) {
         if (e.type !== 'bounce' || e.n === 1) log.push(JSON.stringify(e));
       }
@@ -547,5 +547,111 @@ test('practice is deterministic: same seed, inputs and steps give the same resul
     const a = run(assist), b = run(assist);
     assert.deepEqual(a, b);
     assert.ok(a.some(l => l.includes('"type":"swing"')));
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Stage 2.2: drop shot.
+// ---------------------------------------------------------------------------
+const pastNet = Y => COURT.netY - Y;
+
+// First bounce, net clearance, and the bounce after it (peak height and
+// how far on the second bounce or roll-out is).
+function flight(from, shot) {
+  const b = E.createBall();
+  E.launch(b, from, shot);
+  let b1 = null, b2 = null, peak = 0, clear = Infinity, pY = b.Y;
+  while (b.t < 6 && !b2) {
+    const ev = E.step(b);
+    if (!b1 && (pY - COURT.netY) * (b.Y - COURT.netY) <= 0) clear = b.H - E.netHeight(b.X);
+    pY = b.Y;
+    for (const e of ev) if (e.type === 'bounce') { if (e.n === 1) b1 = { X: e.X, Y: e.Y, result: e.result }; else b2 = { Y: e.Y }; }
+    if (b1 && !b2) peak = Math.max(peak, b.H);
+    if (b1 && !b2 && b.rolling) b2 = { Y: b.Y };
+  }
+  return { b1, b2, peak, clear, net: b.touchedNet, ball: b };
+}
+
+test('a drop lands within the configured band past the net', () => {
+  const d = C.drop;
+  for (const [X, Y] of [[0, 25], [0, 24.2], [3, 24.2], [-3, 22], [0, 19], [2, 16]]) {
+    const from = { side: 'near', X, Y, H: 0.9 };
+    const shot = E.solveShot(from, { X: 0, Y: COURT.netY - d.pastNet }, 'drop', C, { clearNet: true });
+    const f = flight(from, shot);
+    assert.ok(f.b1 && f.b1.result === 'IN', `from ${X}, ${Y}`);
+    const p = pastNet(f.b1.Y);
+    assert.ok(p >= d.band[0] && p <= d.band[1], `from ${X}, ${Y}: ${p.toFixed(2)} m past the net`);
+    assert.ok(f.clear > 0 && f.clear < 0.3, `tight over the tape: ${f.clear.toFixed(2)}`);
+  }
+  // In play, from a fed ball, with the stick nudging it within the band.
+  for (const [stick, lo, hi] of [[{ x: 0, y: 0 }, d.band[0], d.band[1]], [{ x: 0, y: -1 }, d.pastNet, d.band[1] + 0.4], [{ x: 0, y: 1 }, d.band[0] - 0.3, d.pastNet]]) {
+    const { contact, ret } = trial({ shot: 'drop', stick });
+    assert.equal(contact.band, 'PERFECT');
+    assert.equal(contact.shot, 'drop');
+    const p = pastNet(ret.Y);
+    assert.equal(ret.result, 'IN');
+    assert.ok(p >= lo && p <= hi, `stick ${stick.y}: ${p.toFixed(2)} m past the net`);
+  }
+  const L = trial({ shot: 'drop', stick: { x: -1, y: 0 } }).ret, R = trial({ shot: 'drop', stick: { x: 1, y: 0 } }).ret;
+  assert.ok(L.X < -2 && R.X > 2, `left ${L.X}, right ${R.X}`);
+});
+
+test('a drop\'s bounce is lower and shorter than topspin\'s at the same landing spot', () => {
+  const from = { side: 'near', X: 0, Y: 22, H: 0.9 }, target = { X: 0, Y: COURT.netY - 2.5 };
+  const drop = flight(from, E.solveShot(from, target, 'drop', C, { clearNet: true }));
+  const top = flight(from, E.solveShot(from, target, 'top', C, { speedMul: 0.55, angles: [-5, 30], clearNet: true }));
+  assert.ok(Math.abs(drop.b1.Y - top.b1.Y) < 0.6, `same spot: ${drop.b1.Y.toFixed(2)} vs ${top.b1.Y.toFixed(2)}`);
+  assert.ok(drop.peak < top.peak * 0.7, `peak ${drop.peak.toFixed(2)} vs topspin ${top.peak.toFixed(2)}`);
+  const dropOn = drop.b1.Y - drop.b2.Y, topOn = top.b1.Y - top.b2.Y;
+  assert.ok(dropOn < topOn * 0.5, `second bounce ${dropOn.toFixed(2)} m on vs topspin ${topOn.toFixed(2)} m`);
+});
+
+test('a poor drop hits the net or lands outside the band; a perfect one does neither', () => {
+  const d = C.drop, from = { side: 'near', X: 0.5, Y: 23.5, H: 0.9 };
+  const poor = { stroke: 'fh', perfect: false, quality: 0.15, pull: 0, band: 'POOR' };
+  const kinds = new Set();
+  for (let seed = 1; seed <= 24; seed++) {
+    const aim = E.aimReturn(poor, {}, 'drop', C, E.rng(seed));
+    kinds.add(aim.risk);
+    let shot = E.solveShot(from, aim.target, 'drop', C, { speedMul: aim.pace, clearNet: !aim.noClear });
+    if (aim.lift) shot = Object.assign({}, shot, liftBy(shot, aim.lift));
+    shot.spin *= aim.spinMul;
+    const f = flight(from, shot);
+    const p = f.b1 ? pastNet(f.b1.Y) : null;
+    const fault = f.net || !f.b1 || f.b1.result !== 'IN' || p < d.band[0] || p > d.band[1];
+    assert.ok(fault, `seed ${seed} ${aim.risk}: landed ${p && p.toFixed(2)} m past the net`);
+  }
+  assert.deepEqual([...kinds].sort(), ['float', 'short']);
+  const perfect = E.aimReturn({ stroke: 'fh', perfect: true, quality: 1, pull: 0 }, {}, 'drop', C, E.rng(1));
+  assert.equal(perfect.risk, null);
+});
+function liftBy(shot, deg) {
+  const v = Math.hypot(shot.vx, shot.vy, shot.vz), h = Math.hypot(shot.vx, shot.vy), a = (shot.angle + deg) * Math.PI / 180;
+  return { vx: shot.vx / h * v * Math.cos(a), vy: shot.vy / h * v * Math.cos(a), vz: v * Math.sin(a) };
+}
+
+test('the drop swing is a shorter, softer preset of the same state machine', () => {
+  const base = E.swingPreset(C, 'top'), drop = E.swingPreset(C, 'drop');
+  assert.ok(drop.backswing < base.backswing && drop.follow < base.follow);
+  const r = trial({ shot: 'drop', offMs: 0 });
+  assert.ok(Math.abs(r.swing.bs - drop.backswing) < 1e-9);
+  assert.equal(r.contact.type, 'hit');
+});
+
+test('machine drop feeds are reachable and land short', () => {
+  const B = E.playerBounds();
+  for (const pace of [C.feed.pace, 1]) {
+    for (const [X, Y] of [[0, B.maxY], [B.minX, 24.2], [B.maxX, 20], [0, B.minY]]) {
+      for (const seed of [1, 2, 3]) {
+        const pr = quiet(seed, 'drop');
+        pr.pace = pace; pr.player.X = X; pr.player.Y = Y;
+        const hit = feedFirst(pr);
+        assert.equal(hit.shot, 'drop');
+        assert.ok(hit.reachable, `${pace} from (${X}, ${Y}) seed ${seed}`);
+        assert.ok(hit.landing.Y - COURT.netY < 6, `lands ${(hit.landing.Y - COURT.netY).toFixed(1)} m past the net`);
+      }
+      const e = botRally(4, 'drop', X, Y, pace);
+      assert.equal(e && e.type, 'hit', `bot from (${X}, ${Y}): ${e && (e.reason || e.type)}`);
+    }
   }
 });
