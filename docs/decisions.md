@@ -271,3 +271,17 @@ Faults come from execution, not dice: the serve aims inside the box by a margin 
 Three physics tweaks came with it: a livelier bounce (restitution 0.82, so the ball stays playable longer), a softer net cord (so a let can happen), and the aim solver searches again when a tape clip had fooled it.
 
 The game is on the Arcade landing list from 1.73.0, and its tests run in CI from this stage: the Arcade package has a `test` script (`node --test scripts/tennis.test.js`), which the existing `pnpm turbo run test` step in `ci.yml` picks up. No workflow changed.
+
+## 2026-11-08 — Story Maps: engine inside the app, Play group, all rights reserved
+
+Story Maps (`apps/story-maps`, story-maps.krishnabuilds.dev) is a static site: a small Node build reads `manifest.json` and writes a hub page and one self-contained HTML page per story, deployed as a Worker serving static assets like the other apps.
+
+The map engine is a workspace package inside the app, `apps/story-maps/engine` (`@krishnabuilds/story-maps-engine`), listed explicitly in `pnpm-workspace.yaml` as Stickyard's `shared` is. Only Story Maps uses it, so under the "extract once two apps need it" rule it moves to `packages/` only when a second app needs it. A new story is new data, never new engine code.
+
+Story Maps joins the Play group on the Portal; no new group.
+
+No licence file: all rights reserved, as for the rest of the repo, stated in the app README. Any third-party art or data needs its own attribution.
+
+Fonts are the one exception to the self-contained-page rule. Yatra One and Tiro Devanagari Hindi (SIL OFL 1.1, from Fontsource) are served as same-origin woff2 files in `dist/fonts/`, Latin and Devanagari subsets only, with `unicode-range`, `font-display: swap` and a serif fallback stack. Inlining them would add hundreds of KB to every page; as files they are cached across pages, and no external font request is made. The OFL texts ship next to the files.
+
+Pages inline a copy of the `kb-theme` pre-paint script, because they can't import `packages/ui`. A Story Maps test runs that copy against the real `getTheme` and `setTheme` and fails if they drift.

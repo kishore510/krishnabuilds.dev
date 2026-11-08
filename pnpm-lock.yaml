@@ -293,6 +293,38 @@ importers:
         specifier: 4.147.0
         version: 4.147.0(@types/node@24.19.2)
 
+  apps/story-maps:
+    devDependencies:
+      '@fontsource/tiro-devanagari-hindi':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@fontsource/yatra-one':
+        specifier: 5.3.0
+        version: 5.3.0
+      '@krishnabuilds/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@krishnabuilds/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@types/node':
+        specifier: 24.19.2
+        version: 24.19.2
+      eslint:
+        specifier: 10.13.0
+        version: 10.13.0(jiti@2.7.0)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vitest:
+        specifier: 4.1.11
+        version: 4.1.11(@types/node@24.19.2)(happy-dom@20.14.5)(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0))
+      wrangler:
+        specifier: 4.152.0
+        version: 4.152.0(@types/node@24.19.2)
+
+  apps/story-maps/engine: {}
+
   apps/sumyard:
     dependencies:
       '@fontsource-variable/inter':
@@ -978,6 +1010,12 @@ packages:
 
   '@fontsource-variable/source-serif-4@5.3.0':
     resolution: {integrity: sha512-9vch9WqxjaaA+1o9Ur8pOgIGbCYLjRReOUel23A6lOpD1syptgjtkORevvNmldJ5kGXQL29onQUqI5Ltz0s3bQ==}
+
+  '@fontsource/tiro-devanagari-hindi@5.3.0':
+    resolution: {integrity: sha512-nlREPH/UItPmrRg2RY4O/oQNBtbwAzKyHk3ZexW1b75p8YrjmhdiPWOg9rm6dyM5v8FnIR392BG3Fdhu3+wTkg==}
+
+  '@fontsource/yatra-one@5.3.0':
+    resolution: {integrity: sha512-4lCIB+rkftIhBDklcZUgYFtzqNVIcAb+hdMGb6eDHtCH26cg2KU9lPWpZZScCaDlEfBpBxcElfVW4Plxx+R1MA==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -3430,6 +3468,10 @@ snapshots:
   '@fontsource-variable/nunito@5.3.0': {}
 
   '@fontsource-variable/source-serif-4@5.3.0': {}
+
+  '@fontsource/tiro-devanagari-hindi@5.3.0': {}
+
+  '@fontsource/yatra-one@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:
