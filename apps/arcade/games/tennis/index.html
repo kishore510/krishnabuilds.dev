@@ -170,6 +170,7 @@
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
     transition: transform 0.05s ease;
   }
+  .shot.off { opacity: 0.3; }
   .shot.pressed { background: var(--c); color: #0d1322; transform: scale(0.93); box-shadow: 0 0 16px var(--c); }
   .shot small { font-size: 10px; font-weight: 700; opacity: 0.65; display: none; }
   @media (hover: hover) and (pointer: fine) { .shot small { display: block; } }
@@ -212,7 +213,8 @@
   const E = window.TennisEngine, CFG = E.CONFIG, COURT = E.COURT;
 
   // --- URL options: ?debug=1 overlay, ?slow=0.3 time scale,
-  // ?feed=<mode>, ?pace=slow|match, ?assist=off|light|strong -------------
+  // ?feed=<mode>, ?pace=slow|match, ?assist=off|light|strong,
+  // ?seed=N (repeatable practice feeds and matches), ?serve=1 serve drill -
   const qs = new URLSearchParams(location.search);
   const DEBUG = qs.get('debug') === '1';
   const SLOW = Math.min(2, Math.max(0.05, parseFloat(qs.get('slow')) || 1));
@@ -307,12 +309,36 @@
   }
 
   // --- Game state ----------------------------------------------------------
-  const pr = E.createPractice((Date.now() & 0xffff) + 1);
-  const ball = pr.ball, me = pr.player;
+  // mode: 'practice' (the ball machine), 'drill' (serve practice, ?serve=1)
+  // or 'match'. pr is the near player's state in either: the practice
+  // state, or the match's near actor (same shape), so drawing and input
+  // read it the same way.
+  const SEED = parseInt(qs.get('seed'), 10);
+  const seedNow = () => Number.isFinite(SEED) ? SEED : (Date.now() & 0xffff) + 1;
+  const practice = E.createPractice(seedNow());
+  let mode = 'practice', match = null;
+  let pr = practice, ball = pr.ball, me = pr.player;
+  function startMode(next, opts) {
+    mode = next;
+    if (next === 'practice') pr = practice;
+    else {
+      match = E.createMatch(Object.assign({ seed: seedNow(), serveDrill: next === 'drill' }, opts || {}));
+      pr = match.actors[0];
+      pr.assist = practice.assist;
+    }
+    ball = pr.ball; me = pr.player;
+    landing = null; contactPt = null; trail = []; racketTrail = []; lastHit = null;
+    pop.life = 0; call.life = 0; tag.life = 0; big.life = 0;
+    acc = 0; anchor = { real: performance.now(), sim: pr.t, rate: SLOW };
+    settings.querySelectorAll('.row[data-k="mode"], .row[data-k="pace"]').forEach(r => { r.style.display = next === 'practice' ? '' : 'none'; });
+  }
+  const inMatch = () => mode !== 'practice';
   let clock = 0, hitStop = 0, shake = 0, cheer = 0, flash = 0;
   let trail = [], parts = [], fx = [], racketTrail = [];
   let pop = { txt: '', sub: '', life: 0, col: '#fff', big: false }, call = { txt: '', life: 0, x: 0, y: 0, col: '#fff' };
   let tag = { txt: '', life: 0, col: '#fff' };
+  // Match calls (WINNER, OUT, FAULT, ...) and the score banner.
+  let big = { txt: '', sub: '', life: 0, col: '#fff', banner: false };
   let squash = { t: 0, kind: 'hit' }, ballRot = 0;
   let lastResult = '-', lastAngle = null, lastHit = null, fps = 0, fpsAcc = 0, fpsN = 0, stepsLast = 0;
   let landing = null, contactPt = null;
@@ -336,7 +362,7 @@
       const q = Pm(e.X, e.Y, e.H);
       squash = { t: 0.08, kind: 'hit' };
       lastAngle = e.angle; trail = [];
-      if (e.by === 'machine') { landing = e.landing; contactPt = null; burst(q[0], q[1], 4, 0.5); return; }
+      if (e.by === 'machine' || e.who === 1) { landing = e.landing || pathLanding(); contactPt = null; burst(q[0], q[1], 4, 0.5); return; }
       // The player's contact: hit-stop, shake, flash, stroke label.
       lastHit = e; landing = null;
       contactPt = { X: e.X, Y: e.Y, H: e.H, t0: pr.swing.t0 };
@@ -356,6 +382,29 @@
       }
       const side = e.stroke === 'fh' ? 'FOREHAND' : 'BACKHAND';
       tag = { txt: smash ? 'OVERHEAD' : e.kind === 'volley' ? side + ' VOLLEY' : side, life: 1, col: e.stroke === 'fh' ? '#ffd166' : '#7fe3ff' };
+    } else if (e.type === 'serve') {
+      trail = []; squash = { t: 0.08, kind: 'hit' };
+      const q = Pm(e.X, e.Y, e.H);
+      if (e.who === 1) { landing = pathLanding(); burst(q[0], q[1], 5, 0.7); return; }
+      landing = null; lastHit = null;
+      hitStop = e.perfect ? 0.06 : 0.035; shake = e.perfect ? 0.14 : 0.06;
+      fx.push({ x: q[0], y: q[1], l: 1 });
+      burst(q[0], q[1], e.perfect ? 12 : 7, 1);
+      if (e.perfect) { flash = 1; pop = { txt: 'PERFECT', sub: e.label, life: 1.1, col: '#ffe066', big: true }; }
+      else pop = { txt: e.label, sub: e.quality >= CFG.quality.good ? '' : e.errMs < 0 ? 'EARLY' : 'LATE', life: 1.1, col: SHOT_COL[e.shot], big: false };
+      tag = { txt: e.serveNo === 1 ? '1ST SERVE' : '2ND SERVE', life: 0.9, col: '#ffd166' };
+    } else if (e.type === 'retoss') {
+      if (match && match.serve.server === 0) tag = { txt: e.why === 'early' ? 'TOO EARLY' : e.why === 'late' ? 'TOO LATE' : 'TAP AT THE TOP', life: 0.9, col: '#ff9f9f' };
+    } else if (e.type === 'fault' || e.type === 'let') {
+      big = { txt: e.type === 'let' ? 'LET' : 'FAULT', sub: e.type === 'let' ? 'REPLAY THE SERVE' : 'SECOND SERVE', life: CFG.match.faultTime, col: '#ff9f43', banner: false };
+      shake = Math.max(shake, 0.06);
+    } else if (e.type === 'pointEnd') {
+      const mine = e.winner === 0;
+      big = { txt: e.reason, sub: mode === 'drill' ? '' : mine ? 'POINT YOU' : 'POINT CPU', life: CFG.match.callTime, col: mine ? '#8ef0a0' : '#ff6b5e', banner: false };
+      if (mine) cheer = 1;
+      landing = null;
+    } else if (e.type === 'banner') {
+      if (mode !== 'drill') big = { txt: e.banner.title, sub: e.banner.sub, life: CFG.match.bannerTime, col: '#fff', banner: true };
     } else if (e.type === 'whiff') {
       lastHit = e;
       if (e.live) missTag(e.reason, e);
@@ -389,7 +438,17 @@
     if (!(ts > 0)) ts = performance.now();
     return anchor.sim + Math.max(0, ts - anchor.real) / 1000 * anchor.rate;
   }
-  function swing(shot, ts) { E.requestSwing(pr, shot, simTimeAt(ts)); }
+  function swing(shot, ts) {
+    if (inMatch()) E.matchSwing(match, shot, simTimeAt(ts));
+    else E.requestSwing(pr, shot, simTimeAt(ts));
+  }
+  // Where the ball the opponent just hit will bounce (match), for the ring.
+  function pathLanding() {
+    const p = match && match.path;
+    if (!p) return null;
+    for (let i = 1; i < p.length; i++) if (p[i - 1].phase === 'flight' && p[i].phase !== 'flight') return { X: p[i].X, Y: p[i].Y, t: p[i].t };
+    return null;
+  }
 
   // --- Input: touch (pointer events, multi-touch) --------------------------
   const active = new Map(); // pointerId -> role, for the debug overlay
@@ -468,9 +527,9 @@
         const b = document.querySelector('.shot[data-shot="' + SHOT_KEYS[e.code] + '"]');
         b.classList.add('pressed'); setTimeout(() => b.classList.remove('pressed'), 120);
       }
-    } else if (e.code === 'KeyM' && !e.repeat) {
+    } else if (e.code === 'KeyM' && !e.repeat && !inMatch()) {
       const order = [...settings.querySelectorAll('.row[data-k="mode"] button')].map(b => b.dataset.v);
-      setFeed(order[(order.indexOf(pr.mode) + 1) % order.length]);
+      setFeed(order[(order.indexOf(practice.mode) + 1) % order.length]);
     }
   });
   window.addEventListener('keyup', e => { if (MOVE_KEYS[e.code]) keys.delete(MOVE_KEYS[e.code]); });
@@ -495,9 +554,13 @@
   function store(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
   function stored(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
   function mark(k, v) { settings.querySelectorAll('.row[data-k="' + k + '"] button').forEach(o => o.classList.toggle('on', o.dataset.v === v)); }
-  function setFeed(mode) { pr.mode = mode; mark('mode', mode); }
-  function setPace(v, save) { if (!PACES[v]) return; pr.pace = PACES[v]; mark('pace', v); if (save) store('tennisPace', v); }
-  function setAssist(v, save) { if (!(v in CFG.assist.speed)) return; pr.assist = v; mark('assist', v); if (save) store('tennisAssist', v); }
+  function setFeed(v) { practice.mode = v; mark('mode', v); }
+  function setPace(v, save) { if (!PACES[v]) return; practice.pace = PACES[v]; mark('pace', v); if (save) store('tennisPace', v); }
+  function setAssist(v, save) {
+    if (!(v in CFG.assist.speed)) return;
+    practice.assist = v; if (match) match.actors[0].assist = v;
+    mark('assist', v); if (save) store('tennisAssist', v);
+  }
   // Open: the game pauses (see frame) and held input is dropped.
   let settingsOpen = false;
   function showSettings(on) {
@@ -557,7 +620,7 @@
 
   // Landing marker: a faint ring where the fed ball will bounce.
   function drawLanding() {
-    if (!landing || pr.hitBy !== 'machine' || pr.t > landing.t + 0.15) return;
+    if (!landing || !E.incoming(pr) || pr.t > landing.t + 0.15) return;
     const [x, y, s] = Pm(landing.X, landing.Y, 0), rx = 0.45 * MX * s;
     const a = pr.t > landing.t ? 0.45 * (1 - (pr.t - landing.t) / 0.15) : 0.45;
     g.strokeStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')'; g.lineWidth = 1.5;
@@ -567,7 +630,7 @@
   // Swing cue: a glow at the player's feet that builds over cueLead before
   // the ideal tap and peaks through the Perfect window.
   function cueLevel() {
-    if (!pr.live || pr.hitBy !== 'machine' || pr.whiffed || pr.pending) return 0;
+    if (!E.incoming(pr) || pr.whiffed || pr.pending) return 0;
     const sw = pr.swing;
     if (sw.t0 != null && E.swingPhase(pr.t - sw.t0, CFG, sw.bs, sw) !== 'ready') return 0;
     const pred = E.predictContact(pr);
@@ -655,7 +718,7 @@
   // ball just before, the contact point just after (hits only).
   function magnetTarget(tau) {
     if (Math.abs(tau) * 1000 > RC.magnetMs || pr.swing.t0 == null) return null;
-    if (tau < 0) return pr.live && pr.hitBy === 'machine' ? Pm(ball.X, ball.Y, ball.H) : null;
+    if (tau < 0) return E.incoming(pr) ? Pm(ball.X, ball.Y, ball.H) : null;
     return contactPt && contactPt.t0 === pr.swing.t0 ? Pm(contactPt.X, contactPt.Y, contactPt.H) : null;
   }
 
@@ -739,8 +802,9 @@
     figure(me.X, me.Y, palN, false, swingTau(), F, Math.hypot(me.vx, me.vy), true, pr.swing.t0 != null ? pr.swing.strokeKind : 'ground');
   }
   function drawFar() {
-    // Static stand-in: no opponent until a later stage.
-    figure(0, CFG.farContactY - 0.6, palF, true, -0.6, -1, 0, false);
+    if (!inMatch()) { figure(0, CFG.farContactY - 0.6, palF, true, -0.6, -1, 0, false); return; } // practice: a stand-in
+    const o = match.actors[1], p = E.toReal(o, o.player);
+    figure(p.X, p.Y, palF, true, -0.6, -1, Math.hypot(o.player.vx, o.player.vy), false);
   }
 
   function drawFx() {
@@ -763,6 +827,12 @@
   }
 
   function drawLabels() {
+    if (big.life > 0) {
+      const a = Math.min(1, big.life * 3), y = big.banner ? 250 : 210;
+      if (big.banner) { g.globalAlpha = a * 0.75; g.fillStyle = '#0d1322'; g.fillRect(0, y - 30, W, big.sub ? 50 : 40); g.globalAlpha = 1; }
+      outlinedText(big.txt, W / 2, y, big.banner ? 24 : 30, big.col, a);
+      if (big.sub) outlinedText(big.sub, W / 2, y + 17, 12, '#e7ebf3', a);
+    }
     if (pop.life > 0) {
       // Above the net, unless the player is up there: then the empty court below.
       const headY = Pm(me.X, me.Y, 0)[1] - RC.playerH * Pm(me.X, me.Y, 0)[2];
@@ -780,9 +850,51 @@
   function drawHud() {
     g.fillStyle = '#0d1322'; g.fillRect(0, 0, W, 34);
     g.font = 'bold 13px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#fff';
-    g.textAlign = 'left'; g.fillText(pr.mode === 'auto' ? 'PRACTICE' : 'FEED ' + pr.mode.toUpperCase(), 42, 22);
-    g.textAlign = 'right'; g.fillText('RALLY ' + pr.rally + '  BEST ' + pr.best, W - 12, 22);
+    if (mode === 'drill') {
+      g.textAlign = 'left'; g.fillText('SERVE DRILL', 42, 22);
+      g.textAlign = 'right'; g.fillText((match.serveNo === 1 ? '1ST' : '2ND') + ' SERVE · ' + E.matchCourt(match).toUpperCase(), W - 12, 22);
+      return;
+    }
+    if (mode === 'match') { drawScoreboard(); return; }
+    g.textAlign = 'left'; g.fillText(practice.mode === 'auto' ? 'PRACTICE' : 'FEED ' + practice.mode.toUpperCase(), 42, 22);
+    g.textAlign = 'right'; g.fillText('RALLY ' + practice.rally + '  BEST ' + practice.best, W - 12, 22);
   }
+  // Two rows, YOU and CPU: sets (when more than one), games, points; a
+  // ball by the server.
+  function drawScoreboard() {
+    const sc = match.score, si = E.matchServer(match), names = ['YOU', 'CPU'];
+    const pts = i => {
+      const p = sc.points;
+      if (sc.tiebreak) return String(p[i]);
+      if (p[0] >= 3 && p[1] >= 3) return p[i] > p[1 - i] ? 'AD' : p[0] === p[1] ? '40' : '';
+      return ['0', '15', '30', '40'][p[i]];
+    };
+    g.font = 'bold 11px ui-monospace, Menlo, Consolas, monospace';
+    for (let i = 0; i < 2; i++) {
+      const y = 14 + i * 13;
+      g.textAlign = 'left'; g.fillStyle = i === 0 ? '#ffb4ad' : '#ffe08a';
+      g.fillText(names[i], 42, y);
+      if (si === i && match.phase !== 'over') { g.fillStyle = '#d8ec3a'; g.beginPath(); g.arc(80, y - 4, 3, 0, 7); g.fill(); }
+      g.fillStyle = '#fff';
+      sc.sets.forEach((set, k) => { g.textAlign = 'center'; g.fillText(String(set[i]), 100 + k * 18, y); });
+      g.textAlign = 'right'; g.fillStyle = '#d8ec3a'; g.fillText(pts(i), W - 12, y);
+    }
+    g.textAlign = 'right'; g.fillStyle = 'rgba(255,255,255,.55)'; g.font = 'bold 9px system-ui, sans-serif';
+    g.fillText((sc.tiebreak ? 'TIE-BREAK · ' : '') + sc.f.label.toUpperCase(), W - 46, 14);
+  }
+
+  // Match lines for the debug overlay: score state, server, serve number,
+  // phase, rally and (with a CPU) its level and predicted contact.
+  function matchDebug() {
+    const sc = match.score, S = match.serve, r = match.rally;
+    const lines = [
+      'score sets ' + JSON.stringify(sc.sets) + ' pts ' + sc.points.join('-') + (sc.tiebreak ? ' TB' : '') + '  "' + E.pointsText(sc) + '"  ' + sc.format,
+      'server ' + (E.matchServer(match) === 0 ? 'YOU' : 'CPU') + '  serve ' + match.serveNo + '  court ' + E.matchCourt(match) + '  phase ' + match.phase + (S ? ' / ' + S.state : ''),
+      'rally ' + (r ? r.hits + ' shots, hitter ' + (r.hitter === 0 ? 'YOU' : 'CPU') + (r.serve ? ' (serve)' : '') + (r.bounced ? ' bounced' : '') : '-') + '  longest ' + match.longest,
+    ];
+    return lines.concat(cpuDebug());
+  }
+  function cpuDebug() { return []; }
 
   function drawDebug() {
     const v = Math.hypot(ball.vx, ball.vy, ball.vz), h = lastHit, sw = pr.swing;
@@ -796,14 +908,14 @@
       'm  X ' + ball.X.toFixed(2) + ' Y ' + ball.Y.toFixed(2) + ' H ' + ball.H.toFixed(2) + '  ' + (v * 3.6).toFixed(0) + ' km/h',
       'spin ' + (ball.spin * 60 / (2 * Math.PI)).toFixed(0) + ' rpm  angle ' + (lastAngle != null ? lastAngle.toFixed(1) + '°' : '-') + '  call ' + lastResult,
       'player X ' + me.X.toFixed(2) + ' Y ' + me.Y.toFixed(2) + '  v ' + me.vx.toFixed(1) + ', ' + me.vy.toFixed(1) + '  net ' + zoneD.toFixed(1) + ' m',
-      'zone ' + E.zoneOf(me.Y) + '  next ' + (predNow.kind === 'ok' ? predNow.stroke.toUpperCase() : predNow.kind) + '  feed ' + pr.mode,
+      'zone ' + E.zoneOf(me.Y) + '  next ' + (predNow.kind === 'ok' ? predNow.stroke.toUpperCase() : predNow.kind) + (inMatch() ? '' : '  feed ' + practice.mode),
       'swing ' + ph + (sw.shot ? ' (' + sw.shot + ')' : '') + '  ' + (sw.stroke === 'bh' ? 'BACKHAND' : 'FOREHAND') + '  bs ' + Math.round(sw.bs * 1000) + ' ms',
-      'pace x' + pr.pace + '  assist ' + pr.assist + '  taps ' + pr.taps.n + ' avg ' + (pr.taps.n ? (pr.taps.sum / pr.taps.n > 0 ? '+' : '') + Math.round(pr.taps.sum / pr.taps.n) + ' ms' : '-'),
+      (inMatch() ? '' : 'pace x' + practice.pace + '  ') + 'assist ' + pr.assist + '  taps ' + pr.taps.n + ' avg ' + (pr.taps.n ? (pr.taps.sum / pr.taps.n > 0 ? '+' : '') + Math.round(pr.taps.sum / pr.taps.n) + ' ms' : '-'),
       'misses ' + misses,
       h ? 'timing ' + (h.errMs > 0 ? '+' : '') + h.errMs.toFixed(0) + ' ms ' + (h.errMs < 0 ? 'early' : 'late') + '  reach ' + h.lat.toFixed(2) + ' m  dist ' + h.dist.toFixed(2) : 'timing -',
       h ? 'quality ' + h.quality.toFixed(2) + ' ' + h.band + (h.reason ? ' (' + h.reason + ')' : '') + (h.mishit ? ' mishit ' + h.mishit : '') + (h.pace ? '  pace x' + h.pace.toFixed(2) : '') : 'quality -',
       'touches ' + (roles.length ? roles.join(', ') : 'none') + '  stick ' + currentStick().x.toFixed(2) + ', ' + currentStick().y.toFixed(2),
-    ];
+    ].concat(inMatch() ? matchDebug() : []);
     const top = 38;
     g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, top, 352, lines.length * 12 + 6);
     g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#9ef'; g.textAlign = 'left';
@@ -835,7 +947,7 @@
       outlinedText('→ ' + E.MISS_TEXT[pred.kind], Pm(me.X, me.Y, 0)[0], Pm(me.X, me.Y, 0)[1] + 16, 10, '#ff5ec4', 1);
     }
     // Assist target (stance).
-    const at = pr.assist !== 'off' && pr.live && pr.hitBy === 'machine' ? E.assistTarget(pr) : null;
+    const at = pr.assist !== 'off' && E.incoming(pr) ? E.assistTarget(pr) : null;
     if (at) {
       const q = Pm(at.X, at.Y, 0);
       g.strokeStyle = '#8ef0a0'; g.lineWidth = 1.5; g.strokeRect(q[0] - 3, q[1] - 3, 6, 6);
@@ -852,7 +964,8 @@
   }
 
   // --- Main loop: fixed 1/120 s steps, accumulator, rAF rendering --------
-  let acc = 0, last = performance.now(), running = true;
+  let acc = 0, last = performance.now(), running = true, dimmed = false;
+  const bLob = document.getElementById('bLob'), bDrop = document.getElementById('bDrop');
   function frame(now) {
     if (!running) return;
     const real = Math.min(0.1, (now - last) / 1000); last = now;
@@ -868,7 +981,7 @@
     } else {
       acc += dt;
       while (acc >= CFG.dt && stepsLast < 30) {
-        const ev = E.practiceStep(pr, { stick });
+        const ev = inMatch() ? E.matchStep(match, { stick }) : E.practiceStep(pr, { stick });
         for (const e of ev) onEvent(e);
         acc -= CFG.dt; stepsLast++;
         if (hitStop > 0) break; // freeze here; the leftover time carries on after
@@ -882,7 +995,7 @@
     parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; p.l -= dt * 1.6; });
     parts = parts.filter(p => p.l > 0);
     fx.forEach(f => f.l -= dt * 4.5); fx = fx.filter(f => f.l > 0);
-    pop.life -= dt; call.life -= dt; tag.life -= dt; shake = Math.max(0, shake - real); squash.t -= fdt;
+    pop.life -= dt; call.life -= dt; tag.life -= dt; big.life -= dt; shake = Math.max(0, shake - real); squash.t -= fdt;
     flash = Math.max(0, flash - real * 6);
     cheer = Math.max(0, cheer - dt * 0.4);
 
@@ -907,6 +1020,9 @@
     if (flash > 0) { g.fillStyle = 'rgba(255,240,180,' + (flash * 0.22).toFixed(2) + ')'; g.fillRect(0, 34, W, H - 34); }
     drawHud();
     if (DEBUG) drawDebug();
+    // Serving: only Flat and Topspin serve, so Lob and Drop dim.
+    const serving = inMatch() && match.serve && match.serve.server === 0 && (match.phase === 'pre' || match.phase === 'serve');
+    if (serving !== dimmed) { dimmed = serving; bLob.classList.toggle('off', serving); bDrop.classList.toggle('off', serving); }
     requestAnimationFrame(frame);
   }
 
@@ -925,8 +1041,9 @@
   window.addEventListener('blur', () => { keys.clear(); });
 
   fitCanvas();
+  if (qs.get('serve') === '1') startMode('drill');
   // Small test handle for headless checks.
-  window.tennis = { practice: pr, engine: E };
+  window.tennis = { practice, engine: E, get match() { return match; }, get mode() { return mode; }, startMode };
   requestAnimationFrame(frame);
 })();
 </script>

@@ -52,6 +52,11 @@
       // Overhead smash (any button, high ball near the net): fast, steep
       // downward launch, deep target.
       smash: { name: 'SMASH', speed: 34, spin: 30, angles: [-28, 4], depth: 4.5 },
+      // Serves (Stage 3), struck from about 2.7 m. Flat: fast and low over
+      // the net. Kick: slower, heavy topspin, higher over the net and up
+      // off the bounce.
+      serveFlat: { name: 'FLAT SERVE', speed: 44, spin: 30, angles: [-12, 6] },
+      serveKick: { name: 'KICK SERVE', speed: 33, spin: 320, angles: [-6, 16] },
     },
 
     machine: {
@@ -246,6 +251,30 @@
       rallySoft: 20,            // shots; past this the CPU's error chance grows by its rallyRamp a shot
       rallyCap: 30,             // the CPU's shot at this count is a forced error, and it stops playing after it
     },
+
+    // Serve: the toss goes up by itself after autoToss (or on the first
+    // tap); tap Flat or Topspin as the ball peaks. Contact comes backswing
+    // later. Timing (ms from the peak) sets quality q, which sets pace and
+    // scatter; past missMs the swing misses the toss and it's tossed again
+    // (no fault). The stick aims within the box: x across it, y deeper
+    // (up) or shorter, kept `margin` inside the lines, then scattered by
+    // spread + spreadPoor * (1 - q) metres and angleErr * (1 - q) degrees.
+    serve: {
+      stand: { behind: 0.3, offX: 0.8 },     // server: behind the baseline, off the centre mark
+      receive: { behind: 1.0, offX: 2.3 },   // receiver's starting spot
+      hand: { side: 0.25, ahead: 0.35, H: 1.8 }, // toss release, from the server's feet
+      tossVz: 4.6,              // m/s up: peaks about 1.08 m above the hand
+      autoToss: 0.8,            // s before the toss goes up by itself
+      retossDelay: 0.5,
+      backswing: 0.18,
+      perfectMs: 45, missMs: 240,
+      q: [[45, 0.95], [110, 0.7], [200, 0.3], [240, 0.1]],
+      paceMin: 0.82, perfectPace: 1.05,
+      shots: { flat: 'serveFlat', top: 'serveKick' }, // button -> CONFIG.shots key (Lob and Drop don't serve)
+      first:  { margin: 0.25, pace: 1.0,  spread: 0.25, spreadPoor: 1.1, angleErr: 2.2 },
+      second: { margin: 0.8,  pace: 0.85, spread: 0.15, spreadPoor: 0.7, angleErr: 1.2 },
+      band: 1.6,                // depth range the stick covers inside the margin (m)
+    },
   };
 
   // Real court dimensions (m), measured to the outside of the lines.
@@ -328,7 +357,7 @@
   function step(ball, cfg) {
     cfg = cfg || CONFIG;
     const ev = [];
-    if (ball.phase === 'idle') return ev;
+    if (ball.phase === 'idle' || ball.phase === 'held') return ev; // held: in the server's hand
     const dt = cfg.dt, r = cfg.ballRadius;
     if (ball.rolling) {
       // Resting on the court: roll to a stop, no more bounces.
@@ -464,6 +493,17 @@
         const own = s.firstBounce && s.firstBounce.result === 'NET'; // bounced on the hitter's side
         if (!s.net && !s.ball.touchedNet && !own) break;
         angle += 0.25;
+      }
+      // A tape clip pops the ball up and can land it long, which fools the
+      // bisection near the net. If the cleared angle now lands short of the
+      // target, search again between it and the top of the range.
+      if (rising && angle < def.angles[1]) {
+        const d = dist(angle);
+        if (d > 0 && d < want - 0.3) {
+          let a = angle, b = def.angles[1];
+          for (let i = 0; i < 24; i++) { const mid = (a + b) / 2; if (dist(mid) < want) a = mid; else b = mid; }
+          angle = (a + b) / 2;
+        }
       }
     }
     return Object.assign(shotFromAngle(from, target, def, angle), { angle, key: shotKey });
@@ -858,8 +898,13 @@
     }
     return predictCrossing(path, p.Y - cfg.contact.ahead);
   }
+  // Is a ball on its way to this player? Practice: fed by the machine;
+  // match: hit by the opponent.
+  function incoming(pr) { return pr.live && pr.hitBy != null && pr.hitBy !== 'player'; }
   function predictContact(pr) {
-    if (!pr.live || pr.hitBy !== 'machine') return { kind: 'none' };
+    if (!incoming(pr)) return { kind: 'none' };
+    // A serve must bounce before it's returned.
+    if (pr.mustBounce) return predictCrossing(pr.path, pr.player.Y - pr.cfg.contact.ahead);
     return predictFor(pr.path, pr.player, pr.cfg);
   }
 
@@ -917,7 +962,7 @@
       return { X: clamp(pred.X - F * c.side, B.minX, B.maxX), Y: p.Y, stroke: pred.stroke };
     }
     let best = null, bestD = Infinity;
-    for (const kind of KINDS) {
+    for (const kind of pr.mustBounce ? ['ground'] : KINDS) {
       const c = contactFor(cfg, kind);
       for (const s of pr.path || []) {
         if (s.t <= pr.t + cfg.swing.backswing || !inBand(s, cfg, kind)) continue;
@@ -1006,7 +1051,7 @@
     // Assist: only on an idle stick axis, while a fed ball is inbound and
     // the swing hasn't started.
     const aSpeed = cfg.assist.speed[pr.assist] || 0;
-    if (aSpeed > 0 && pr.live && pr.hitBy === 'machine' && !pr.whiffed && ph === 'ready' && !(s.t0 != null && !s.done)) {
+    if (aSpeed > 0 && incoming(pr) && !pr.whiffed && ph === 'ready' && !(s.t0 != null && !s.done)) {
       const tgt = assistTarget(pr);
       if (tgt) {
         if (Math.abs(stick.x || 0) < pl.deadzone) tx = clamp((tgt.X - p.X) * cfg.assist.gain, -aSpeed, aSpeed);
@@ -1116,6 +1161,33 @@
     pr.misses[reason] = (pr.misses[reason] || 0) + 1;
   }
 
+  // The contact instant of pr's swing, if it falls in the step that ends
+  // at t1: judge it and, on a hit, aim and solve the return in pr's own
+  // frame (nothing is launched). adjust(aim, j) may change the aim first
+  // (the CPU's margins and scatter). Returns null (no contact this step)
+  // or { j, bs, live } plus { aim, shot, from } on a hit.
+  function swingContact(pr, stick, t1, live, adjust) {
+    const cfg = pr.cfg, b = pr.ball, s = pr.swing;
+    if (s.done || s.t0 == null || t1 < s.t0 + s.bs) return null;
+    s.done = true;
+    const back = s.t0 + s.bs - t1; // <= 0: rewind to the exact instant
+    const bs = {
+      X: b.X + b.vx * back, Y: b.Y + b.vy * back, H: Math.max(cfg.ballRadius, b.H + b.vz * back), vy: b.vy,
+      live, phase: b.phase,
+    };
+    const j = judgeContact(bs, pr.player, cfg, { tapErr: s.tapErr, kind: s.kind, stroke: s.strokeKind });
+    s.stroke = j.stroke; s.result = j; pr.last = j;
+    const out = { j, bs, live };
+    if (!j.contact) return out;
+    let aim = aimReturn(j, stick, s.shot, cfg, pr.rand, Math.hypot(b.vx, b.vy, b.vz));
+    if (adjust) aim = adjust(aim, j) || aim;
+    const from = { side: 'near', X: bs.X, Y: bs.Y, H: bs.H };
+    let shot = solveShot(from, aim.target, aim.defKey, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles });
+    if (aim.lift) shot = liftShot(shot, aim.lift);
+    if (aim.spinMul != null && aim.spinMul !== 1) shot = Object.assign({}, shot, { spin: shot.spin * aim.spinMul });
+    return Object.assign(out, { aim, shot, from });
+  }
+
   // Advance practice by one fixed step. input = { stick: {x, y} } with x,y
   // in -1..1 (y -1 = up = towards the net). Returns events for the renderer.
   function practiceStep(pr, input) {
@@ -1173,22 +1245,11 @@
 
     // Contact instant reached this step?
     const s = pr.swing;
-    if (!s.done && s.t0 != null && t1 >= s.t0 + s.bs) {
-      s.done = true;
-      const back = s.t0 + s.bs - t1; // <= 0: rewind to the exact instant
-      const live = pr.live && pr.hitBy === 'machine';
-      const bs = {
-        X: b.X + b.vx * back, Y: b.Y + b.vy * back, H: Math.max(cfg.ballRadius, b.H + b.vz * back), vy: b.vy,
-        live, phase: b.phase,
-      };
-      const j = judgeContact(bs, pr.player, cfg, { tapErr: s.tapErr, kind: s.kind, stroke: s.strokeKind });
-      s.stroke = j.stroke; s.result = j; pr.last = j;
+    const c = swingContact(pr, stick, t1, pr.live && pr.hitBy === 'machine');
+    if (c) {
+      const j = c.j, live = c.live;
       if (j.contact) {
-        const aim = aimReturn(j, stick, s.shot, cfg, pr.rand, Math.hypot(b.vx, b.vy, b.vz));
-        const from = { side: 'near', X: bs.X, Y: bs.Y, H: bs.H };
-        let shot = solveShot(from, aim.target, aim.defKey, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles });
-        if (aim.lift) shot = liftShot(shot, aim.lift);
-        if (aim.spinMul != null && aim.spinMul !== 1) shot = Object.assign({}, shot, { spin: shot.spin * aim.spinMul });
+        const { aim, shot, from } = c;
         launch(b, from, shot);
         pr.hitBy = 'player'; pr.shotKey = s.shot; pr.aim = { target: aim.target, miss: aim.mishit }; pr.path = null;
         ev.push(Object.assign({ type: 'hit', by: 'player', side: 'near', X: from.X, Y: from.Y, H: from.H,
@@ -1358,6 +1419,376 @@
     return r.over;
   }
 
+  // ---------------------------------------------------------------------
+  // Match play (Stage 3). Both players are "actors" shaped like practice
+  // state, so planSwing, movePlayer, predictContact, assistTarget and
+  // swingContact work on them unchanged. Each actor sees the court in its
+  // own frame: the near player's is the real one; the far player's is
+  // turned 180 degrees (X -> -X, Y -> length - Y), so it too stands at
+  // the bottom and hits up the court. The physics is symmetric under that
+  // turn, so the far player plays with exactly the same physics, shots and
+  // aim solver as the near one.
+  // ---------------------------------------------------------------------
+  function mirrorBallInto(dst, b) {
+    Object.assign(dst, b);
+    dst.X = -b.X; dst.Y = COURT.length - b.Y; dst.vx = -b.vx; dst.vy = -b.vy; dst.ax = -b.ax; dst.ay = -b.ay;
+    dst.side = b.side === 'near' ? 'far' : 'near';
+    return dst;
+  }
+  function mirrorPath(path) {
+    return path.map(s => ({ t: s.t, X: -s.X, Y: COURT.length - s.Y, H: s.H, vy: -s.vy, phase: s.phase }));
+  }
+  // An actor's own-frame point in real court coordinates (and back: the
+  // turn is its own inverse).
+  function toReal(a, p) { return a.side === 'near' ? { X: p.X, Y: p.Y } : { X: -p.X, Y: COURT.length - p.Y }; }
+
+  // Standard normal from the seeded RNG (Box-Muller).
+  function gauss(R) { let u = 0; while (u === 0) u = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * R()); }
+
+  function createActor(m, side, ctl) {
+    const cfg = m.cfg, pl = cfg.player;
+    return {
+      side, idx: side === 'near' ? 0 : 1, ctl, cfg, rand: m.rand, t: 0,
+      ball: side === 'near' ? m.ball : createBall(),
+      player: { X: pl.startX, Y: pl.startY, vx: 0, vy: 0 },
+      swing: { t0: null, bs: cfg.swing.backswing, shot: null, done: true, stroke: 'fh', result: null },
+      pending: null, queue: [], live: false, hitBy: null, whiffed: false, mustBounce: false, path: null,
+      assist: ctl === 'human' ? cfg.assist.level : 'off', taps: { n: 0, sum: 0 }, misses: {}, last: null,
+      stick: { x: 0, y: 0 }, cpu: null,
+    };
+  }
+
+  function newStats() { return { points: 0, aces: 0, doubleFaults: 0, winners: 0, errors: 0, serves: 0, firstIn: 0 }; }
+
+  // opts: { seed, format, near: 'human' | 'none' | CPU level, far: ...,
+  // serveDrill (true: the near player serves every point, no score) }.
+  function createMatch(opts, cfg) {
+    opts = opts || {}; cfg = cfg || CONFIG;
+    const rand = rng(opts.seed == null ? 1 : opts.seed);
+    const m = {
+      cfg, rand, t: 0, ball: createBall(), path: null,
+      phase: 'pre', timer: 0, serveNo: 1, serve: null, rally: null, call: null, banner: null,
+      stats: [newStats(), newStats()], longest: 0, points: 0, drill: !!opts.serveDrill, drillN: 0,
+      humanStick: { x: 0, y: 0 }, winner: null,
+    };
+    m.actors = [createActor(m, 'near', opts.near || 'human'), createActor(m, 'far', opts.far || 'none')];
+    m.actors.forEach(a => { if (CPU_LEVELS && cfg.cpu && cfg.cpu[a.ctl]) a.cpu = createCpu(m, a); });
+    const fs = cfg.match.firstServer;
+    const first = m.drill ? 0 : fs === 'far' ? 1 : fs === 'random' ? (rand() < 0.5 ? 0 : 1) : 0;
+    m.score = createScore(opts.format || cfg.match.defaultFormat, cfg, first);
+    startPoint(m);
+    return m;
+  }
+
+  function matchServer(m) { return m.drill ? 0 : serverOf(m.score); }
+  function matchCourt(m) { return m.drill ? (m.drillN % 2 ? 'ad' : 'deuce') : courtOf(m.score); }
+
+  // Where the server's toss is released, in the server's own frame.
+  function handPos(cfg, a) {
+    const h = cfg.serve.hand;
+    return { X: a.player.X + h.side, Y: a.player.Y - h.ahead, H: h.H };
+  }
+
+  function resetActor(a) {
+    a.live = false; a.hitBy = null; a.whiffed = false; a.mustBounce = false; a.path = null;
+    a.pending = null; a.queue = [];
+    a.swing = { t0: null, bs: a.cfg.swing.backswing, shot: null, done: true, stroke: 'fh', result: null };
+    a.player.vx = 0; a.player.vy = 0;
+    if (a.cpu) cpuReset(a);
+  }
+
+  // A new point: first serve, players to their spots.
+  function startPoint(m) { m.serveNo = 1; placeForServe(m); }
+
+  function placeForServe(m) {
+    const cfg = m.cfg, sv = cfg.serve, si = matchServer(m), court = matchCourt(m), sgn = court === 'deuce' ? 1 : -1;
+    m.actors.forEach(a => {
+      resetActor(a);
+      const spot = a.idx === si ? sv.stand : sv.receive;
+      a.player.X = sgn * spot.offX; a.player.Y = COURT.length + spot.behind;
+    });
+    const srv = m.actors[si], hp = handPos(cfg, srv), rp = toReal(srv, hp), b = m.ball;
+    Object.assign(b, createBall(), { X: rp.X, Y: rp.Y, H: hp.H, phase: 'held', side: srv.side });
+    m.rally = null; m.path = null;
+    m.phase = 'pre'; m.timer = cfg.match.preServe;
+    m.serve = { server: si, court, state: 'wait', wait: 0, tossT0: null, peakT: null, tap: null };
+  }
+
+  function beginServe(m) {
+    m.phase = 'serve';
+    m.serve.state = 'wait'; m.serve.wait = m.cfg.serve.autoToss;
+  }
+
+  // Throw the toss up from the server's hand (sim time m.t).
+  function tossNow(m, ev) {
+    const cfg = m.cfg, S = m.serve, srv = m.actors[S.server], hp = handPos(cfg, srv), rp = toReal(srv, hp), b = m.ball;
+    Object.assign(b, createBall(), { X: rp.X, Y: rp.Y, H: hp.H, vz: cfg.serve.tossVz, phase: 'toss', side: srv.side });
+    // Time to the top of the toss, with drag, as the ball will fly it.
+    const c = Object.assign({}, b);
+    let n = 0;
+    while (c.vz > 0 && n < 400) { step(c, cfg); n++; }
+    S.state = 'toss'; S.tossT0 = m.t; S.peakT = n * cfg.dt; S.tap = null;
+    ev.push({ type: 'toss', who: S.server });
+  }
+
+  function retoss(m, ev, why) {
+    const cfg = m.cfg, S = m.serve, srv = m.actors[S.server], hp = handPos(cfg, srv), rp = toReal(srv, hp);
+    Object.assign(m.ball, createBall(), { X: rp.X, Y: rp.Y, H: hp.H, phase: 'held', side: srv.side });
+    S.state = 'wait'; S.wait = cfg.serve.retossDelay; S.tap = null;
+    ev.push({ type: 'retoss', who: S.server, why });
+  }
+
+  // A shot button during a match. The serving player's first tap throws
+  // the toss; the next Flat or Topspin tap is the serve. Otherwise it's a
+  // swing, timed exactly as in practice.
+  function matchSwing(m, shot, t) {
+    const me = m.actors[0];
+    if (me.ctl !== 'human' || m.phase === 'over') return;
+    t = t == null ? m.t : t;
+    const S = m.serve;
+    if (S && S.server === 0 && (m.phase === 'pre' || m.phase === 'serve')) {
+      if (m.phase !== 'serve') return;
+      if (S.state === 'wait') { tossNow(m, m.pendingEv || (m.pendingEv = [])); return; }
+      if (S.state === 'toss' && !S.tap && m.cfg.serve.shots[shot]) {
+        S.tap = { shot, t: t - m.cfg.timing.inputLagMs / 1000, stick: null };
+      }
+      return;
+    }
+    requestSwing(me, shot, t);
+  }
+
+  // The serve's contact: judge the timing, aim in the box, scatter and
+  // launch. Returns true if a ball was served.
+  function serveContact(m, t1, ev) {
+    const cfg = m.cfg, SV = cfg.serve, S = m.serve, a = m.actors[S.server], b = m.ball;
+    const errMs = (S.tap.t - (S.tossT0 + S.peakT)) * 1000, ae = Math.abs(errMs);
+    if (ae > SV.missMs) { retoss(m, ev, errMs < 0 ? 'early' : 'late'); return false; }
+    const back = S.tap.t + SV.backswing - t1; // <= 0: rewind to the contact instant
+    const own = a.side === 'near' ? { X: b.X, Y: b.Y } : { X: -b.X, Y: COURT.length - b.Y };
+    const from = { side: 'near', X: own.X, Y: own.Y, H: Math.max(1.2, b.H + b.vz * back) };
+    const perfect = ae <= SV.perfectMs, q = perfect ? 1 : table(SV.q, ae);
+    const sv = m.serveNo === 1 ? SV.first : SV.second;
+    const stick = S.tap.stick || (a.ctl === 'human' ? m.humanStick : { x: 0, y: 0 });
+    const sx = clamp(stick.x || 0, -1, 1), sy = clamp(stick.y || 0, -1, 1);
+    let margin = sv.margin;
+    if (a.cpu) margin = Math.max(margin, a.cpu.lv.serveMargin + (m.serveNo === 1 ? 0 : 0.3));
+    const box = serviceBox('near', S.court);
+    let X = lerp(box.minX + margin, box.maxX - margin, (sx + 1) / 2);
+    let Y = box.minY + margin + SV.band * (sy + 1) / 2;
+    const target = { X, Y }, sigma = sv.spread + sv.spreadPoor * (1 - q);
+    X += gauss(m.rand) * sigma; Y += gauss(m.rand) * sigma;
+    const pace = (perfect ? SV.perfectPace : SV.paceMin + (1 - SV.paceMin) * q) * sv.pace;
+    const key = SV.shots[S.tap.shot];
+    let shot = solveShot(from, { X, Y }, key, cfg, { speedMul: pace, clearNet: true });
+    const tilt = gauss(m.rand) * sv.angleErr * (1 - q);
+    if (tilt) shot = liftShot(shot, tilt);
+    const real = a.side === 'near' ? shot : Object.assign({}, shot, { vx: -shot.vx, vy: -shot.vy });
+    const rf = toReal(a, from);
+    launch(b, { side: a.side, X: rf.X, Y: rf.Y, H: from.H }, real);
+    a.swing = { t0: S.tap.t, bs: SV.backswing, shot: S.tap.shot, done: true, stroke: 'fh', result: null,
+      strokeKind: 'smash', follow: cfg.swing.smash.follow, recovery: cfg.swing.smash.recovery };
+    m.stats[a.idx].serves++;
+    m.rally = createRally(S.server, S.court);
+    refHit(m.rally, S.server);
+    m.phase = 'rally';
+    afterHit(m, a);
+    ev.push({ type: 'serve', who: a.idx, side: a.side, shot: S.tap.shot, label: cfg.shots[key].name, serveNo: m.serveNo,
+      errMs, quality: q, perfect, pace, X: rf.X, Y: rf.Y, H: from.H, target: toReal(a, target), aimed: toReal(a, { X, Y }) });
+    return true;
+  }
+
+  // After a's contact: the ball is on its way to the other player.
+  function afterHit(m, a) {
+    const o = m.actors[1 - a.idx];
+    a.live = false; a.hitBy = 'player'; a.path = null; a.mustBounce = false;
+    const path = tracePath(m.ball, m.t, m.cfg);
+    m.path = path;
+    o.live = true; o.hitBy = 'opponent'; o.whiffed = false; o.mustBounce = !!(m.rally && m.rally.serve);
+    o.path = o.side === 'near' ? path : mirrorPath(path);
+    if (o.cpu) cpuIncoming(m, o);
+    if (a.cpu) cpuHit(m, a);
+  }
+
+  // A rally contact for actor a (its swing reached contact this step).
+  function actorContact(m, a, t1, ev) {
+    const cfg = m.cfg, r = m.rally;
+    const capped = a.ctl !== 'human' && r && r.hits >= cfg.match.rallyCap;
+    const live = m.phase === 'rally' && incoming(a) && !capped;
+    const c = swingContact(a, a.stick, t1, live, a.cpu ? (aim, j) => cpuAim(m, a, aim, j) : null);
+    if (!c) return;
+    const j = c.j;
+    if (!j.contact) {
+      if (live) { a.whiffed = true; countMiss(a, j.reason); }
+      ev.push(Object.assign({ type: 'whiff', who: a.idx, side: a.side, live }, j));
+      return;
+    }
+    const rf = toReal(a, c.from), real = a.side === 'near' ? c.shot : Object.assign({}, c.shot, { vx: -c.shot.vx, vy: -c.shot.vy });
+    launch(m.ball, { side: a.side, X: rf.X, Y: rf.Y, H: c.from.H }, real);
+    refHit(r, a.idx);
+    afterHit(m, a);
+    ev.push(Object.assign({ type: 'hit', who: a.idx, side: a.side, by: a.side, X: rf.X, Y: rf.Y, H: c.from.H,
+      shot: a.swing.shot, label: strokeLabel(j.kind, a.swing.shot, cfg), angle: c.shot.angle,
+      target: toReal(a, c.aim.target), pace: c.aim.pace, mishit: c.aim.mishit, risk: c.aim.risk || null, rally: r.hits }, j));
+  }
+
+  // The referee's decision: a let or a fault replays the serve, anything
+  // else is a point.
+  function resolve(m, o, ev) {
+    const cfg = m.cfg, si = m.serve.server;
+    if (o.type === 'let') {
+      endLive(m);
+      m.call = { label: 'LET', winner: null, by: si };
+      m.phase = 'fault'; m.timer = cfg.match.faultTime;
+      ev.push({ type: 'let', who: si });
+    } else if (o.type === 'fault') {
+      if (m.serveNo === 1) {
+        endLive(m);
+        m.serveNo = 2;
+        m.call = { label: 'FAULT', winner: null, by: si };
+        m.phase = 'fault'; m.timer = cfg.match.faultTime;
+        ev.push({ type: 'fault', who: si, reason: o.reason });
+      } else pointEnd(m, 1 - si, 'DOUBLE FAULT', si, ev);
+    } else {
+      if (m.serveNo === 1) m.stats[si].firstIn++; // a point (not a fault) on the first serve: it went in
+      pointEnd(m, o.winner, o.reason, o.by, ev);
+    }
+  }
+
+  function endLive(m) { m.actors.forEach(a => { a.live = false; a.pending = null; a.queue = []; }); }
+
+  function pointEnd(m, winner, reason, by, ev) {
+    const cfg = m.cfg, st = m.stats, hits = m.rally ? m.rally.hits : 0;
+    endLive(m);
+    st[winner].points++;
+    if (reason === 'ACE') st[by].aces++;
+    if (reason === 'DOUBLE FAULT') st[by].doubleFaults++;
+    if ((reason === 'WINNER' || reason === 'ACE') && by === winner) st[winner].winners++;
+    if ((reason === 'OUT' || reason === 'NET' || reason === 'DOUBLE FAULT') && by !== winner) st[by].errors++;
+    m.longest = Math.max(m.longest, hits);
+    m.points++;
+    if (m.drill) m.drillN++;
+    const sev = m.drill ? [] : pointWon(m.score, winner);
+    m.call = { label: reason, winner, by, hits };
+    m.banner = bannerFor(m, sev);
+    m.phase = 'call'; m.timer = cfg.match.callTime;
+    ev.push({ type: 'pointEnd', winner, reason, by, hits, score: sev });
+  }
+
+  // The score banner after a point: { title, sub }.
+  function bannerFor(m, sev) {
+    const names = ['YOU', 'CPU'], sc = m.score;
+    if (m.drill) return { title: m.call.label, sub: '' };
+    const has = t => sev.find(e => e.type === t);
+    const set = has('set'), game = has('game');
+    if (has('match')) return { title: (sc.winner === 0 ? 'YOU WIN' : 'CPU WINS'), sub: setsText(sc) };
+    if (set) return { title: 'SET ' + names[set.who], sub: setsText(sc) };
+    if (game) {
+      const g = game.games;
+      return { title: 'GAME ' + names[game.who], sub: (has('tiebreak') ? 'TIE-BREAK · ' : '') + 'GAMES ' + g[0] + '–' + g[1] };
+    }
+    return { title: pointsText(sc, names), sub: sc.tiebreak ? 'TIE-BREAK' : '' };
+  }
+
+  // Sets as "4–2" or "7–6 (7–5)", the near player first.
+  function setsText(sc) {
+    return sc.sets.map((g, i) => {
+      if (g[0] === 0 && g[1] === 0 && i === sc.sets.length - 1 && i > 0) return null;
+      const tb = sc.tbScores[i];
+      return g[0] + '–' + g[1] + (tb ? ' (' + tb[0] + '–' + tb[1] + ')' : '');
+    }).filter(Boolean).join('  ');
+  }
+
+  // Taps queued for an actor that fall inside this step (as practice).
+  function actorTaps(a, t1, ev) {
+    a.queue.sort((p, q) => p.t - q.t);
+    const sev = [];
+    while (a.queue.length && a.queue[0].t < t1) {
+      const r = a.queue.shift(), s = a.swing;
+      if (a.pending || swingPhase(s.t0 == null ? null : r.t - s.t0, a.cfg, s.bs, s) !== 'ready') continue;
+      const plan = planSwing(a, r);
+      if (plan.tapErr != null) { a.taps.n++; a.taps.sum += plan.tapErr; }
+      if (plan.start < t1) startSwing(a, plan, sev);
+      else a.pending = plan;
+    }
+    if (a.pending && a.pending.start < t1) startSwing(a, a.pending, sev);
+    for (const e of sev) ev.push(Object.assign(e, { who: a.idx, side: a.side }));
+  }
+
+  function canMove(m, a) {
+    if (m.phase === 'pre' || m.phase === 'over' || m.phase === 'fault') return false;
+    if (m.phase === 'serve') return a.idx !== m.serve.server && a.ctl === 'human';
+    return true;
+  }
+
+  // Advance the match one fixed step. input = { stick } for the near
+  // (human) player. Returns events for the renderer.
+  function matchStep(m, input) {
+    const cfg = m.cfg, dt = cfg.dt, t1 = m.t + dt, b = m.ball;
+    const ev = m.pendingEv || [];
+    m.pendingEv = null;
+    m.humanStick = (input && input.stick) || { x: 0, y: 0 };
+    const A = m.actors;
+    for (const a of A) {
+      a.t = m.t;
+      if (a.side === 'far') mirrorBallInto(a.ball, b);
+      a.stick = a.ctl === 'human' ? m.humanStick : { x: 0, y: 0 };
+      if (a.cpu) cpuThink(m, a, t1, ev);
+    }
+    for (const a of A) actorTaps(a, t1, ev);
+
+    // Phase clock.
+    if (m.phase !== 'rally' && m.phase !== 'serve' && m.phase !== 'over') {
+      m.timer -= dt;
+      if (m.timer <= 0) {
+        if (m.phase === 'pre') beginServe(m);
+        else if (m.phase === 'fault') { placeForServe(m); }
+        else if (m.phase === 'call') { m.phase = 'banner'; m.timer = cfg.match.bannerTime; ev.push({ type: 'banner', banner: m.banner }); }
+        else if (m.phase === 'banner') {
+          if (m.score.winner != null) { m.phase = 'over'; m.winner = m.score.winner; ev.push({ type: 'matchOver', winner: m.winner }); }
+          else startPoint(m);
+        }
+      }
+    }
+    if (m.phase === 'serve' && m.serve.state === 'wait') {
+      m.serve.wait -= dt;
+      if (m.serve.wait <= 0 && !(A[m.serve.server].ctl === 'none')) tossNow(m, ev);
+    }
+
+    for (const a of A) {
+      if (canMove(m, a)) movePlayer(a, a.stick, dt);
+      else { a.player.vx = 0; a.player.vy = 0; }
+    }
+
+    // Ball and referee.
+    const bev = step(b, cfg);
+    for (const e of bev) ev.push(e);
+    if (m.phase === 'rally' && m.rally) {
+      const o = refBall(m.rally, b, bev, cfg);
+      if (o) resolve(m, o, ev);
+      else if (b.t > cfg.match.maxPoint + 4) pointEnd(m, m.rally.hitter, 'WINNER', m.rally.hitter, ev);
+    }
+    m.t = t1;
+    for (const a of A) { a.t = t1; if (a.side === 'far') mirrorBallInto(a.ball, b); }
+
+    // The serve: contact, or a toss that comes down unhit.
+    if (m.phase === 'serve' && m.serve.state === 'toss') {
+      const S = m.serve;
+      if (S.tap && t1 >= S.tap.t + cfg.serve.backswing) serveContact(m, t1, ev);
+      else if (!S.tap && b.vz < 0 && b.H < cfg.serve.hand.H - 0.25) retoss(m, ev, 'drop');
+    }
+    for (const a of A) actorContact(m, a, t1, ev);
+    return ev;
+  }
+
+  // CPU opponent hooks (filled in below when the CPU is defined).
+  const CPU_LEVELS = null;
+  function createCpu() { return null; }
+  function cpuReset() {}
+  function cpuThink() {}
+  function cpuIncoming() {}
+  function cpuHit() {}
+  function cpuAim(m, a, aim) { return aim; }
+
   const api = {
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
     simulate, solveShot, shotFromAngle, rng, createMachine, machineStep,
@@ -1365,6 +1796,7 @@
     playerBounds, tracePath, predictCrossing, predictContact, reachPlan, assistTarget, missReason, MISS_TEXT,
     SIDES, createScore, serverOf, courtOf, pointWon, pointsText, serviceBox, judgeServe,
     createRally, refHit, refBall,
+    createMatch, matchStep, matchSwing, matchServer, matchCourt, setsText, mirrorPath, toReal, incoming,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TennisEngine = api;
