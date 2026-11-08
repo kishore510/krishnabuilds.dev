@@ -285,3 +285,10 @@ No licence file: all rights reserved, as for the rest of the repo, stated in the
 Fonts are the one exception to the self-contained-page rule. Yatra One and Tiro Devanagari Hindi (SIL OFL 1.1, from Fontsource) are served as same-origin woff2 files in `dist/fonts/`, Latin and Devanagari subsets only, with `unicode-range`, `font-display: swap` and a serif fallback stack. Inlining them would add hundreds of KB to every page; as files they are cached across pages, and no external font request is made. The OFL texts ship next to the files.
 
 Pages inline a copy of the `kb-theme` pre-paint script, because they can't import `packages/ui`. A Story Maps test runs that copy against the real `getTheme` and `setTheme` and fails if they drift.
+
+## 2026-11-08 — Explore, a fifth landing page group, for Story Maps
+
+The Portal gets a fifth group, Explore, after Play. Story Maps moves there instead of Play: it is read, not played, and listing legends and archaeology next to the games would make it look like a game. Explore is a verb like the other four, and fits a map you explore and stories you explore. This supersedes the group choice in the Story Maps entry above. With five groups the cap from "Portal structure: grouped apps with story pages" is reached, so a sixth needs its own decision.
+
+Story Maps is listed as "building" until its first story is built, so its card and its entry in the site header menu show without a link, and SiteLinks and Arcade's site-links.js leave it out.
+

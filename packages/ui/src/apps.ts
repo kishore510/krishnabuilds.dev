@@ -1,7 +1,7 @@
 // The list of apps on krishnabuilds.dev. The single source for both the site
 // header menu and the Portal's landing page cards.
 
-export type AppGroup = "create" | "calculate" | "play" | "tinker";
+export type AppGroup = "create" | "calculate" | "play" | "explore" | "tinker";
 
 export type AppStatus = "live" | "beta" | "building" | "idea";
 
@@ -19,6 +19,7 @@ export const groups: { id: AppGroup; label: string }[] = [
   { id: "create", label: "Create" },
   { id: "calculate", label: "Calculate" },
   { id: "play", label: "Play" },
+  { id: "explore", label: "Explore" },
   { id: "tinker", label: "Tinker" },
 ];
 
@@ -66,5 +67,13 @@ export const apps: AppEntry[] = [
     group: "calculate",
     status: "live",
     stack: ["React", "TypeScript", "Cloudflare"],
+  },
+  {
+    name: "Story Maps",
+    blurb: "Illustrated maps that follow a story across the land, one chapter at a time.",
+    url: "https://story-maps.krishnabuilds.dev",
+    group: "explore",
+    status: "building",
+    stack: ["HTML", "SVG", "Cloudflare"],
   },
 ];

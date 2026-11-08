@@ -6,13 +6,14 @@ import { Footer } from "./Footer";
 import { inline, Markdown } from "./Markdown";
 
 const packages = ["tokens", "ui", "config"];
-const appFolders = ["portal", "chalkline", "stickyard", "sumyard", "arcade"];
+const appFolders = ["portal", "chalkline", "stickyard", "sumyard", "arcade", "story-maps"];
 const domains = [
   "krishnabuilds.dev",
   "arcade.krishnabuilds.dev",
   "chalkline.krishnabuilds.dev",
   "stickyard.krishnabuilds.dev (+ relay)",
   "sumyard.krishnabuilds.dev",
+  "story-maps.krishnabuilds.dev",
 ];
 
 // Hand-written SVG, drawn with the shared tokens (.dg-* classes in styles.css).
@@ -20,12 +21,12 @@ function Diagram() {
   return (
     <svg
       className="diagram"
-      viewBox="0 0 320 512"
+      viewBox="0 0 320 542"
       role="img"
       aria-labelledby="diagram-title"
     >
       <title id="diagram-title">
-        One public repo with shared packages (tokens, ui, config) and five apps.
+        One public repo with shared packages (tokens, ui, config) and six apps.
         GitHub Actions runs CI on every pull request and a path-filtered deploy
         per app, to one Cloudflare Worker per app on its own subdomain.
       </title>
@@ -66,7 +67,7 @@ function Diagram() {
       </text>
       <path className="dg-arrow" d="M160 284v20" />
       <path className="dg-head" d="M160 312l-5-8h10z" />
-      <rect className="dg-group" x="8" y="312" width="304" height="192" rx="10" />
+      <rect className="dg-group" x="8" y="312" width="304" height="222" rx="10" />
       <text className="dg-title" x="20" y="334">
         Cloudflare · one Worker per app
       </text>
