@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- First story map: Rama’s Journey (the Ramayana), 16 chapters with routes, a timeline, Play/Back/Next and a kingdoms layer.
+- The engine (`engine/src`) draws any story from data: a basemap, the story's own `story.json` and the shared art library.
+- Story Maps is live on the krishnabuilds.dev app list and in the site links.
+
 ## 0.1.0
 
 - New app: hub page listing Legends, Chronicles and Deep Time, with eight stories marked coming soon.

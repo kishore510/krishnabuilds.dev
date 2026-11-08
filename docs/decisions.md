@@ -292,3 +292,11 @@ The Portal gets a fifth group, Explore, after Play. Story Maps moves there inste
 
 Story Maps is listed as "building" until its first story is built, so its card and its entry in the site header menu show without a link, and SiteLinks and Arcade's site-links.js leave it out.
 
+## 2026-11-08 — Story Maps engine: three kinds of data, drawn in the browser
+
+A built story is three kinds of data, read by one engine (`apps/story-maps/engine/src`): a **basemap** (`basemaps/<id>.json`: coastlines, rivers, ranges, forests, washes, labels), shared by every story set in the same region; the story's own **`story.json`** (places, steps, routes, travellers, timeline, realms, effects); and the shared **art library** (`art/glyphs.json`: hand-drawn SVG glyphs and traveller icons). A new story is new data; a new drawing goes in the art library, not in engine code. Rama's Journey and the planned Indian legends share the `south-asia` basemap.
+
+The build checks each built story with the engine's own `validate` (places, phases, routes, realms, timeline order, cards at most about 60 words) and stops on any problem. It inlines the engine and the story's data into the story page, which draws the map in the browser. Drawing the SVG at build time was not done: the player measures the routes in the browser anyway, and the page stays one self-contained file.
+
+The engine was written fresh from the rules in `apps/story-maps/CLAUDE.md`, using `docs/reference/rama-journey-map.html` for look and behaviour. That file's story text, places, kingdoms and drawings were moved into the data files; its code was not copied, and the Google Fonts and blur filter are gone. Story Maps is listed as live from 0.2.0.
+

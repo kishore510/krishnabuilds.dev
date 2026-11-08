@@ -79,7 +79,7 @@ describe("site links in the menu", () => {
     await openMenu();
     const [home, ...apps] = links();
     expect(home?.getAttribute("href")).toBe("https://krishnabuilds.dev");
-    expect(apps.map((a) => a.textContent)).toEqual(["Arcade", "Chalkline", "Stickyard", "Sumyard"]);
+    expect(apps.map((a) => a.textContent)).toEqual(["Arcade", "Chalkline", "Stickyard", "Sumyard", "Story Maps"]);
     for (const a of apps) {
       const current = a.textContent === "Stickyard";
       expect(a.getAttribute("aria-current"), a.textContent ?? "").toBe(current ? "page" : null);

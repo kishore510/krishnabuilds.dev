@@ -29,7 +29,7 @@
     { name: 'Chalkline', url: 'https://chalkline.krishnabuilds.dev', status: 'live' },
     { name: 'Stickyard', url: 'https://stickyard.krishnabuilds.dev', status: 'live' },
     { name: 'Sumyard', url: 'https://sumyard.krishnabuilds.dev', status: 'live' },
-    { name: 'Story Maps', url: 'https://story-maps.krishnabuilds.dev', status: 'building' },
+    { name: 'Story Maps', url: 'https://story-maps.krishnabuilds.dev', status: 'live' },
   ];
   const CURRENT = 'Arcade';
   const HOME_URL = 'https://krishnabuilds.dev';

@@ -73,7 +73,7 @@ export const apps: AppEntry[] = [
     blurb: "Illustrated maps that follow a story across the land, one chapter at a time.",
     url: "https://story-maps.krishnabuilds.dev",
     group: "explore",
-    status: "building",
+    status: "live",
     stack: ["HTML", "SVG", "Cloudflare"],
   },
 ];

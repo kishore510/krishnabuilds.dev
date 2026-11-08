@@ -1,0 +1,688 @@
+/* Story Maps engine: the story page. Colours come from src/theme.css
+   (--sm-*), so light and dark follow the kb-theme cookie. The map itself
+   keeps its painted colours in both themes. */
+
+html,
+body.sm-story-page {
+  height: 100%;
+}
+
+body.sm-story-page {
+  overflow: hidden;
+  min-height: 0;
+  background: var(--sm-panel);
+  padding: env(safe-area-inset-top, 0px) 0 0;
+}
+
+.sm-story-page button {
+  font-family: var(--sm-font-head);
+}
+
+.sm-app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* top bar and timeline */
+.sm-bar {
+  flex: none;
+  position: relative;
+  z-index: 6;
+  background: var(--sm-panel);
+  border-bottom: 1px solid var(--sm-line);
+  padding: 8px 14px 4px;
+}
+.sm-bar-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.sm-back {
+  font-family: var(--sm-font-head);
+  font-size: 18px;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--sm-muted);
+  padding: 4px 6px 4px 0;
+}
+.sm-back:hover {
+  color: var(--sm-saffron);
+}
+.sm-bar h1 {
+  font-size: 19px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.sm-when {
+  margin-left: auto;
+  font-family: var(--sm-font-head);
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--sm-saffron);
+  text-align: right;
+}
+.sm-timeline {
+  position: relative;
+  height: 46px;
+  margin: 6px 10px 0;
+  touch-action: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sm-track,
+.sm-fill {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  height: 8px;
+  border-radius: 5px;
+}
+.sm-track {
+  right: 0;
+}
+.sm-fill {
+  width: var(--x, 0%);
+  background: linear-gradient(90deg, #8fcf8a 0, #f2c14e 60%, #e0573a);
+}
+.sm-dot {
+  position: absolute;
+  top: 14px;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border-radius: 50%;
+  background: var(--phase);
+  border: 2px solid var(--sm-panel);
+  opacity: 0.5;
+}
+.sm-dot.on {
+  opacity: 1;
+}
+.sm-head {
+  position: absolute;
+  top: 14px;
+  left: var(--x, 0%);
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  background: #f2c14e;
+  border: 3px solid #1b1209;
+  box-shadow: 0 0 0 2px #f2c14e, 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.sm-tick {
+  position: absolute;
+  top: 27px;
+  transform: translateX(-50%);
+  font-family: var(--sm-font-head);
+  font-size: 11px;
+  line-height: 1.1;
+  color: var(--sm-muted);
+  white-space: nowrap;
+}
+.sm-tick.end {
+  transform: translateX(-100%);
+}
+
+/* map stage */
+.sm-main {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.sm-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #12395c;
+  contain: layout paint;
+}
+#sm-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.sm-chip {
+  position: absolute;
+  top: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 193, 78, 0.6);
+  background: rgba(14, 28, 46, 0.84);
+  color: #f3e9d2;
+  font-family: var(--sm-font-head);
+  font-size: 14px;
+}
+.sm-counter {
+  left: 10px;
+  padding: 3px 12px;
+}
+.sm-overview {
+  right: 10px;
+  padding: 4px 14px;
+  cursor: pointer;
+}
+.sm-realm-toggle {
+  left: 10px;
+  top: 44px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.sm-realm-toggle[aria-pressed="true"] {
+  background: #f2c14e;
+  border-color: #f2c14e;
+  color: #1b1209;
+}
+.sm-overview:hover,
+.sm-realm-toggle:hover {
+  filter: brightness(1.15);
+}
+
+/* story sheet: a bottom sheet on phones, a side panel from 900px */
+.sm-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 74%;
+  background: var(--sm-panel);
+  border-top: 3px solid var(--sm-gold);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -10px 26px rgba(0, 0, 0, 0.32);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.sm-sheet-fixed {
+  flex: none;
+  padding: 0 14px;
+}
+.sm-grip {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+.sm-grip span {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  width: 46px;
+  height: 5px;
+  margin-left: -23px;
+  border-radius: 3px;
+  background: var(--sm-muted);
+  opacity: 0.55;
+}
+.sm-controls {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+.sm-controls button {
+  font-size: 16px;
+  padding: 9px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sm-lapis);
+  background: transparent;
+  color: var(--sm-ink);
+  cursor: pointer;
+}
+.sm-controls button.sm-play {
+  background: var(--sm-lapis);
+  color: var(--sm-lapis-ink);
+}
+.sm-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.sm-controls button:not(:disabled):hover {
+  filter: brightness(1.12);
+}
+.sm-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 16px 14px;
+}
+.sm-sheet.open .sm-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.sm-sheet.moving .sm-scroll {
+  overflow: hidden;
+}
+.sm-sheet:not(.open) .sm-scroll {
+  cursor: pointer;
+}
+
+.sm-phase {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--sm-font-head);
+  font-size: 14px;
+  color: var(--sm-muted);
+}
+.sm-phase i {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--sm-panel), 0 0 0 3px var(--sm-muted);
+}
+.sm-source {
+  font-size: 12px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--sm-chip);
+  color: var(--sm-ink);
+}
+.sm-native {
+  margin: 0 0 0 auto;
+  font-family: var(--sm-font-body);
+  font-size: 17px;
+  color: var(--sm-saffron);
+}
+.sm-step h2 {
+  font-size: 24px;
+  margin: 4px 0 0;
+}
+.sm-text {
+  margin: 8px 0 0;
+  font-size: 16px;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sm-sheet.open .sm-text {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+.sm-more {
+  display: none;
+}
+.sm-sheet.open .sm-more {
+  display: block;
+}
+.sm-today {
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--sm-line);
+  color: var(--sm-muted);
+  font-size: 15px;
+  font-style: italic;
+}
+.sm-chapters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+.sm-chapters button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--phase);
+  background: var(--sm-chip);
+  color: var(--sm-ink);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sm-chapters button.seen {
+  background: color-mix(in srgb, var(--phase) 35%, var(--sm-chip));
+}
+.sm-chapters button[aria-current="step"] {
+  background: var(--phase);
+  color: #1b1209;
+  transform: scale(1.14);
+}
+.sm-footnote {
+  margin: 14px 0 0;
+  color: var(--sm-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* realms */
+.sm-realm-box h3,
+.sm-realm-card h3 {
+  font-family: var(--sm-font-head);
+  font-weight: 400;
+  font-size: 15px;
+  margin: 14px 0 6px;
+  color: var(--sm-muted);
+}
+.sm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sm-chip-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 8px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sm-line);
+  background: var(--sm-chip);
+  color: var(--sm-ink);
+  font-size: 14px;
+  cursor: pointer;
+}
+.sm-chip-button i {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.sm-realm-card {
+  display: none;
+}
+.sm-sheet.realm-view .sm-step {
+  display: none;
+}
+.sm-sheet.realm-view .sm-realm-card {
+  display: block;
+}
+.sm-realm-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sm-swatch {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--sm-panel), 0 0 0 3px var(--sm-muted);
+}
+.sm-realm-name {
+  font-family: var(--sm-font-head);
+  font-size: 24px;
+  line-height: 1.15;
+}
+.sm-realm-head .sm-native {
+  margin: 0;
+}
+.sm-realm-close {
+  margin-left: auto;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sm-lapis);
+  background: transparent;
+  color: var(--sm-ink);
+  font-size: 14px;
+  cursor: pointer;
+}
+.sm-realm-ruler {
+  margin: 8px 0 0;
+}
+.sm-sheet:not(.open) .sm-realm-ruler {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sm-sheet:not(.open) .sm-realm-details {
+  display: none;
+}
+.sm-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 14px;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.sm-facts dt {
+  font-family: var(--sm-font-head);
+  font-size: 14px;
+  color: var(--sm-muted);
+}
+.sm-facts dd {
+  margin: 0;
+}
+.sm-realm-card p,
+.sm-realm-card ul {
+  font-size: 16px;
+  line-height: 1.5;
+}
+.sm-realm-card ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.sm-realm-card li {
+  margin: 0 0 6px;
+}
+
+@media (min-width: 900px) {
+  .sm-bar {
+    padding: 12px 24px 6px;
+  }
+  .sm-bar h1 {
+    font-size: 24px;
+  }
+  .sm-when {
+    font-size: 18px;
+  }
+  .sm-timeline {
+    height: 50px;
+    margin: 8px 14px 0;
+  }
+  .sm-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 430px;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .sm-stage {
+    position: relative;
+    inset: auto;
+  }
+  .sm-sheet {
+    position: relative;
+    height: 100%;
+    max-height: none;
+    border-top: 0;
+    border-left: 3px solid var(--sm-gold);
+    border-radius: 0;
+    box-shadow: none;
+    padding-bottom: 0;
+  }
+  .sm-grip {
+    display: none;
+  }
+  .sm-sheet-fixed {
+    padding-top: 16px;
+  }
+  .sm-scroll {
+    overflow-y: auto;
+    padding: 0 20px 20px;
+    cursor: default !important;
+  }
+  .sm-step h2 {
+    font-size: 30px;
+  }
+  .sm-text,
+  .sm-sheet .sm-realm-ruler {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+    font-size: 17px;
+    line-height: 1.6;
+    margin-top: 10px;
+  }
+  .sm-more,
+  .sm-sheet .sm-realm-details {
+    display: block;
+  }
+}
+
+/* map parts (SVG) */
+.sm-legs,
+.sm-pin,
+.sm-marker,
+.sm-effect {
+  pointer-events: none;
+}
+.sm-pin {
+  transition: opacity 0.5s;
+}
+.sm-pin.future {
+  opacity: 0.5;
+}
+.sm-disc {
+  fill: #f6e6c0;
+  stroke: #7a3b12;
+  stroke-width: 1.6;
+}
+.sm-pin.active .sm-disc {
+  stroke: #d9432a;
+  stroke-width: 2.6;
+}
+.sm-pulse {
+  fill: none;
+  stroke: #ffd166;
+  stroke-width: 2.2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* Runs twice, then stops: no infinite SVG animation. */
+.sm-pin.active .sm-pulse {
+  animation: sm-pulse 1.9s ease-out 2;
+}
+@keyframes sm-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+.sm-pin-label {
+  font-family: var(--sm-font-head);
+  font-size: 10.5px;
+  fill: #fff6dc;
+  stroke: #1b1209;
+  stroke-width: 3.2px;
+  paint-order: stroke;
+  stroke-linejoin: round;
+}
+.sm-sea-label {
+  font-family: var(--sm-font-body);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  fill: #a9c8e4;
+  opacity: 0.65;
+}
+.sm-range-label {
+  font-family: var(--sm-font-body);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  fill: #5d6a80;
+  opacity: 0.85;
+}
+.sm-river-label {
+  font-family: var(--sm-font-body);
+  font-style: italic;
+  font-size: 8.5px;
+  fill: #1f5f8b;
+  stroke: #f6e6c0;
+  stroke-width: 2.2px;
+  paint-order: stroke;
+  opacity: 0.9;
+}
+.sm-effect {
+  opacity: 0;
+  transition: opacity 1s;
+}
+.sm-effect.on {
+  opacity: 1;
+}
+/* Three flickers, then still. */
+.sm-effect.on .flame {
+  animation: sm-flicker 1.3s ease-in-out 3;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.sm-effect g:nth-child(2n) .flame {
+  animation-delay: 0.35s;
+}
+@keyframes sm-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(0.85, 1.2);
+  }
+}
+.sm-realms .sm-realm {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+.sm-realms.on .sm-realm.active {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.sm-realm:hover .sm-realm-shape {
+  fill-opacity: 0.42;
+}
+.sm-realm.selected .sm-realm-shape {
+  fill-opacity: 0.46;
+  stroke-width: 3;
+  stroke-opacity: 0.9;
+  stroke-dasharray: none;
+}
+.sm-realm-label {
+  font-family: var(--sm-font-head);
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  fill: #fff;
+  stroke: #1b1209;
+  stroke-width: 3px;
+  paint-order: stroke;
+  stroke-linejoin: round;
+}
+.sm-realm-label.minor {
+  font-size: 9px;
+  fill-opacity: 0.95;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-pin.active .sm-pulse,
+  .sm-effect.on .flame {
+    animation: none;
+  }
+  .sm-pin,
+  .sm-effect,
+  .sm-realms .sm-realm {
+    transition: none;
+  }
+}
