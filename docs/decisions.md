@@ -241,3 +241,21 @@ Physics tests live in apps/arcade/scripts/tennis.test.js (node:test, no dependen
 The tennis touch controls (a floating joystick on the left, Topspin, Flat and Lob buttons on the right) sit in a deck below the court, not over it. The near player is drawn at the bottom of the court, so thumbs on the canvas would hide them. The deck's top overlaps only the canvas's decorative ad-board strip, so the court still fills most of a portrait phone.
 
 Swing timing uses each tap's own event timestamp, mapped to simulation time, rather than the frame that handles the tap. A frame hiccup therefore doesn't change whether a shot was early or late. The swing state machine, contact judgement, quality and aiming live in engine.js and are covered by the headless tests. Player returns ask the aim solver to clear the net (`clearNet`): a deep, hard-hit flat ball from a low contact has no angle that both clears the tape and lands at the requested depth, so it is lifted to clear and lands a little longer.
+
+## 2026-11-08 — Tennis Stage 2.1: drawn sizes set directly, tap timing judged on the tap
+
+Tennis draws the player, ball and racket at sizes set in `CONFIG.render` (canvas px at the near baseline, scaled by perspective), not derived from real metres. The physics stays in metres. At true scale the ball is about 1/27 of the player's height, and on a phone it either vanishes or, as before, gets enlarged until it dwarfs the racket. The arcade compromise is about 1:9 (85 px player, 9 px ball, 22 px racket head).
+
+Swing timing is judged on the tap, against the ideal tap (the moment that makes contact land as the ball reaches the player's contact plane). Early taps inside a buffer are queued and fire at the ideal moment. Late taps shorten the backswing, so contact still lands on time up to 90 ms late. Before this, contact came a fixed 160 ms after the tap, so tapping when the ball reached the player was always a late whiff, and that was most of the misses. A Perfect still needs the tap within 35 ms.
+
+Practice feeds are chosen to be reachable from wherever the player stands: each candidate's flight is traced, and it has to come to a hittable height at a stance the player can run to in time. The same trace drives the landing ring, the swing cue, the soft assist and the miss reasons.
+
+## 2026-11-08 — Tennis Stage 2.2: the drop shot's bounce uses a per-shot grip
+
+The drop shot is physics, not a scripted arc, but backspin alone couldn't kill its bounce: the court's sliding friction caps how much speed a bounce can take off, whatever the spin. A shot can now carry `grip`, which multiplies the bounce friction for that ball. Only the drop sets it (2.2). This is the one physics change; everything else about the drop (speed that scales with the distance to the target, angles, backspin, landing band, risk) is CONFIG. The drop's bounce peaks at about half of topspin's from the same spot, and its second bounce comes about a third as far on.
+
+## 2026-11-08 — Tennis Stage 2.3: the stroke is chosen by the situation, settings pause the game
+
+Tennis net play keeps the four shot buttons. The engine picks the stroke from where the player stands and what the ball will do: a ball that reaches a player in MID or NET (within 10.4 m of the net) before bouncing is a volley, or a smash if it's high; anything else is a groundstroke after the bounce. The choice is made when the tap is planned, from the traced flight, so the swing's length (volley 70 ms backswing, smash 140 ms, groundstroke 160 ms) and timing windows match the stroke. Volleys and smashes have their own contact points, windows and reach in CONFIG, and the aim solver handles high contacts, downward launches and net clearance.
+
+The settings (feed, pace, assist) are a pop-up from the gear button that pauses the game, not a row over the court: an always-open row hid the far end, where the opponent will be.

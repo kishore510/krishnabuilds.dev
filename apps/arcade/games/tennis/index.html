@@ -39,30 +39,69 @@
     touch-action: none;
   }
 
-  /* Ball machine feed selector: only with ?machine=1 or ?debug=1. */
-  #feed {
+  /* Settings (gear in the HUD): ball machine feed, pace and assist. Open
+     from the start with ?machine=1 or ?debug=1. */
+  #gear {
     position: absolute;
-    left: 0; right: 0;
-    top: calc(40px * var(--game-scale, 1));
-    display: none;
-    justify-content: center;
-    gap: 6px;
+    left: calc(4px * var(--game-scale, 1));
+    top: calc(3px * var(--game-scale, 1));
+    width: calc(30px * var(--game-scale, 1));
+    height: calc(28px * var(--game-scale, 1));
+    padding: 0;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.55);
+    background: #18223a;
+    color: #fff;
+    font-size: calc(16px * var(--game-scale, 1));
+    line-height: 1;
+    cursor: pointer;
     z-index: 2;
   }
-  #feed.show { display: flex; }
-  #feed button {
+  #gear.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
+  /* Settings pop-up: covers the court only while open, and the game
+     pauses under it. Done or a tap outside the card closes it. */
+  #settings {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5,8,16,0.72);
+    border-radius: 12px;
+    z-index: 4;
+  }
+  #settings.show { display: flex; }
+  #settings .card {
+    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+    padding: 14px 12px;
+    border-radius: 14px;
+    background: #18223a;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    max-width: calc(100% - 24px);
+  }
+  #settings h2 { margin: 0 0 2px; font-size: 15px; font-weight: 800; color: #fff; text-align: center; letter-spacing: 0.06em; }
+  #settings .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  #settings .row span {
+    width: 52px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.75);
+  }
+  #settings .row .more { width: 52px; }
+  #settings button {
     font: inherit;
     font-weight: 700;
-    font-size: 12px;
-    min-height: 32px;
-    padding: 6px 11px;
-    border-radius: 16px;
+    font-size: 13px;
+    min-height: 40px;
+    padding: 6px 12px;
+    border-radius: 20px;
     border: 1.5px solid rgba(255,255,255,0.45);
-    background: rgba(13,19,34,0.85);
+    background: rgba(13,19,34,0.88);
     color: #eee;
     cursor: pointer;
   }
-  #feed button.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
+  #settings #done { margin-top: 4px; background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
+  #settings button.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
 
   /* Control deck below the court. Its top overlaps the canvas's ad-board
      strip (nothing to play there), set from fitCanvas(). */
@@ -134,22 +173,32 @@
   .shot.pressed { background: var(--c); color: #0d1322; transform: scale(0.93); box-shadow: 0 0 16px var(--c); }
   .shot small { font-size: 10px; font-weight: 700; opacity: 0.65; display: none; }
   @media (hover: hover) and (pointer: fine) { .shot small { display: block; } }
-  #bTop  { --c: #7fe3ff; width: 76px; height: 76px; right: 14px; bottom: 12px; font-size: 13px; }
-  #bFlat { --c: #ffd166; width: 62px; height: 62px; right: 104px; bottom: 16px; }
-  #bLob  { --c: #c3a6ff; width: 62px; height: 62px; right: 44px; bottom: 96px; }
+  /* Four shots as a face-button arc under the right thumb (160 x 156 px,
+     every button 60 px or more, gaps 8 px or more). */
+  #bTop  { --c: #7fe3ff; width: 72px; height: 72px; right: 12px; bottom: 12px; font-size: 12px; }
+  #bFlat { --c: #ffd166; width: 64px; height: 64px; right: 96px; bottom: 14px; }
+  #bLob  { --c: #c3a6ff; width: 64px; height: 64px; right: 16px; bottom: 92px; }
+  #bDrop { --c: #ff8fc8; width: 60px; height: 60px; right: 90px; bottom: 86px; }
 </style>
 </head>
 <body>
 <div id="wrap">
   <canvas id="c"></canvas>
-  <div id="feed">
-    <button data-s="auto" class="on">Auto</button>
-    <button data-s="flat">Flat</button>
-    <button data-s="top">Topspin</button>
-    <button data-s="lob">Lob</button>
+  <button id="gear" aria-label="Settings" aria-expanded="false">⚙</button>
+  <div id="settings" role="dialog" aria-label="Settings">
+    <div class="card">
+      <h2>SETTINGS</h2>
+      <div class="row" data-k="mode"><span>FEED</span><button data-v="auto">Auto</button><button data-v="flat">Flat</button><button data-v="top">Top</button><button data-v="lob">Lob</button></div>
+      <div class="row" data-k="mode"><span class="more"></span><button data-v="drop">Drop</button><button data-v="short">Short</button></div>
+      <div class="row" data-k="mode"><span class="more"></span><button data-v="volley">Volley</button><button data-v="overhead">Overhead</button></div>
+      <div class="row" data-k="pace"><span>PACE</span><button data-v="slow">Slow</button><button data-v="match">Match</button></div>
+      <div class="row" data-k="assist"><span>ASSIST</span><button data-v="off">Off</button><button data-v="light">Light</button><button data-v="strong">Strong</button></div>
+      <button id="done">Done</button>
+    </div>
   </div>
   <div id="deck">
     <div id="stickZone"><div id="stickBase"><div id="stickKnob"></div><div id="stickLabel">MOVE · AIM</div></div></div>
+    <button class="shot" id="bDrop" data-shot="drop">DROP<small>H</small></button>
     <button class="shot" id="bLob" data-shot="lob">LOB<small>L</small></button>
     <button class="shot" id="bFlat" data-shot="flat">FLAT<small>K</small></button>
     <button class="shot" id="bTop" data-shot="top">TOPSPIN<small>J</small></button>
@@ -162,11 +211,12 @@
   'use strict';
   const E = window.TennisEngine, CFG = E.CONFIG, COURT = E.COURT;
 
-  // --- URL options: ?debug=1 overlay, ?slow=0.3 time scale, ?machine=1 ----
+  // --- URL options: ?debug=1 overlay, ?slow=0.3 time scale,
+  // ?feed=<mode>, ?pace=slow|match, ?assist=off|light|strong -------------
   const qs = new URLSearchParams(location.search);
   const DEBUG = qs.get('debug') === '1';
   const SLOW = Math.min(2, Math.max(0.05, parseFloat(qs.get('slow')) || 1));
-  const SHOW_FEED = DEBUG || qs.get('machine') === '1';
+  const RC = CFG.render;
 
   // --- Canvas, deck and fit (same pattern as Fin Dash) --------------------
   const W = 360, H = 500;
@@ -265,12 +315,20 @@
   let tag = { txt: '', life: 0, col: '#fff' };
   let squash = { t: 0, kind: 'hit' }, ballRot = 0;
   let lastResult = '-', lastAngle = null, lastHit = null, fps = 0, fpsAcc = 0, fpsN = 0, stepsLast = 0;
+  let landing = null, contactPt = null;
 
-  const SHOT_COL = { flat: '#ffd166', top: '#7fe3ff', lob: '#c3a6ff' };
+  const SHOT_COL = { flat: '#ffd166', top: '#7fe3ff', lob: '#c3a6ff', drop: '#ff8fc8' };
   const CALL = { IN: ['IN', '#8ef0a0'], OUT_LONG: ['OUT', '#ff6b5e'], OUT_WIDE: ['WIDE', '#ff6b5e'], NET: ['NET', '#ff9f43'] };
 
   function burst(x, y, n, spread) {
     for (let i = 0; i < n; i++) parts.push({ x, y, vx: (Math.random() - 0.5) * 140 * spread, vy: (Math.random() - 0.8) * 90 * spread, l: 0.8, c: '255,255,255' });
+  }
+
+  function missTag(reason, j) {
+    const txt = E.MISS_TEXT[reason];
+    if (!txt) return;
+    tag = { txt, life: RC.missMs / 1000, col: '#ff9f9f' };
+    if (DEBUG) console.log('[tennis] miss', txt, j ? { errMs: Math.round(j.errMs), lat: +j.lat.toFixed(2), H: +j.H.toFixed(2) } : '(no swing)');
   }
 
   function onEvent(e) {
@@ -278,25 +336,32 @@
       const q = Pm(e.X, e.Y, e.H);
       squash = { t: 0.08, kind: 'hit' };
       lastAngle = e.angle; trail = [];
-      if (e.by === 'machine') { burst(q[0], q[1], 4, 0.5); return; }
+      if (e.by === 'machine') { landing = e.landing; contactPt = null; burst(q[0], q[1], 4, 0.5); return; }
       // The player's contact: hit-stop, shake, flash, stroke label.
-      lastHit = e;
-      hitStop = 0.05; shake = 0.14;
-      fx.push({ x: q[0], y: q[1], l: 1 });
-      burst(q[0], q[1], e.perfect ? 12 : 7, 1);
+      lastHit = e; landing = null;
+      contactPt = { X: e.X, Y: e.Y, H: e.H, t0: pr.swing.t0 };
+      // Feel by stroke: soft for drops and volleys, big for smashes.
+      const smash = e.kind === 'smash', soft = !smash && (e.shot === 'drop' || e.kind === 'volley');
+      hitStop = smash ? 0.08 : soft ? 0.025 : 0.05; shake = smash ? 0.22 : soft ? 0.05 : 0.14;
+      fx.push({ x: q[0], y: q[1], l: soft ? 0.6 : 1 });
+      burst(q[0], q[1], (e.perfect || smash ? 12 : 7) >> (soft ? 1 : 0), smash ? 1.4 : soft ? 0.5 : 1);
+      const label = e.label || CFG.shots[e.shot].name;
       if (e.perfect) {
         flash = 1;
-        pop = { txt: 'PERFECT', sub: CFG.shots[e.shot].name, life: 1.1, col: '#ffe066', big: true };
+        pop = { txt: 'PERFECT', sub: label, life: 1.1, col: '#ffe066', big: true };
       } else {
         const hint = e.band === 'GOOD' ? '' : (e.errMs < 0 ? 'EARLY' : 'LATE');
-        pop = { txt: CFG.shots[e.shot].name, sub: hint, life: 1.1, col: SHOT_COL[e.shot], big: false };
+        if (smash) flash = 0.6;
+        pop = { txt: label, sub: hint, life: 1.1, col: smash ? '#ff9f43' : SHOT_COL[e.shot], big: smash };
       }
-      tag = { txt: e.stroke === 'fh' ? 'FOREHAND' : 'BACKHAND', life: 1, col: e.stroke === 'fh' ? '#ffd166' : '#7fe3ff' };
+      const side = e.stroke === 'fh' ? 'FOREHAND' : 'BACKHAND';
+      tag = { txt: smash ? 'OVERHEAD' : e.kind === 'volley' ? side + ' VOLLEY' : side, life: 1, col: e.stroke === 'fh' ? '#ffd166' : '#7fe3ff' };
     } else if (e.type === 'whiff') {
       lastHit = e;
-      if (e.live) tag = { txt: 'WHIFF', life: 1, col: '#c9ced8' };
+      if (e.live) missTag(e.reason, e);
     } else if (e.type === 'missed') {
-      if (!e.whiffed) tag = { txt: 'MISSED', life: 1, col: '#c9ced8' };
+      if (!e.whiffed) missTag(e.reason);
+      landing = null;
     } else if (e.type === 'bounce') {
       const q = Pm(e.X, e.Y, 0);
       squash = { t: 0.06, kind: 'bounce' };
@@ -393,7 +458,7 @@
   // --- Input: keyboard fallback --------------------------------------------
   const keys = new Set();
   const MOVE_KEYS = { ArrowLeft: 'l', KeyA: 'l', ArrowRight: 'r', KeyD: 'r', ArrowUp: 'u', KeyW: 'u', ArrowDown: 'd', KeyS: 'd' };
-  const SHOT_KEYS = { KeyJ: 'top', KeyK: 'flat', KeyL: 'lob' };
+  const SHOT_KEYS = { KeyH: 'drop', KeyJ: 'top', KeyK: 'flat', KeyL: 'lob' };
   window.addEventListener('keydown', e => {
     if (MOVE_KEYS[e.code]) { keys.add(MOVE_KEYS[e.code]); e.preventDefault(); }
     else if (SHOT_KEYS[e.code]) {
@@ -403,8 +468,8 @@
         const b = document.querySelector('.shot[data-shot="' + SHOT_KEYS[e.code] + '"]');
         b.classList.add('pressed'); setTimeout(() => b.classList.remove('pressed'), 120);
       }
-    } else if (e.code === 'KeyM' && SHOW_FEED && !e.repeat) {
-      const order = ['auto', 'flat', 'top', 'lob'];
+    } else if (e.code === 'KeyM' && !e.repeat) {
+      const order = [...settings.querySelectorAll('.row[data-k="mode"] button')].map(b => b.dataset.v);
       setFeed(order[(order.indexOf(pr.mode) + 1) % order.length]);
     }
   });
@@ -423,58 +488,139 @@
     document.querySelectorAll('.shot').forEach(b => b._release());
   }
 
-  // --- Ball machine feed selector (?machine=1) ------------------------------
-  const feedRow = document.getElementById('feed');
-  const feedBtns = feedRow.querySelectorAll('button');
-  function setFeed(mode) { pr.mode = mode; feedBtns.forEach(o => o.classList.toggle('on', o.dataset.s === mode)); }
-  if (SHOW_FEED) feedRow.classList.add('show');
-  feedBtns.forEach(b => b.addEventListener('click', () => setFeed(b.dataset.s)));
+  // --- Settings: feed, pace, assist (gear in the HUD) -----------------------
+  // Pace and assist are remembered (localStorage); the feed resets to Auto.
+  const settings = document.getElementById('settings'), gear = document.getElementById('gear');
+  const PACES = { slow: CFG.feed.pace, match: 1 };
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
+  function stored(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
+  function mark(k, v) { settings.querySelectorAll('.row[data-k="' + k + '"] button').forEach(o => o.classList.toggle('on', o.dataset.v === v)); }
+  function setFeed(mode) { pr.mode = mode; mark('mode', mode); }
+  function setPace(v, save) { if (!PACES[v]) return; pr.pace = PACES[v]; mark('pace', v); if (save) store('tennisPace', v); }
+  function setAssist(v, save) { if (!(v in CFG.assist.speed)) return; pr.assist = v; mark('assist', v); if (save) store('tennisAssist', v); }
+  // Open: the game pauses (see frame) and held input is dropped.
+  let settingsOpen = false;
+  function showSettings(on) {
+    settingsOpen = on;
+    settings.classList.toggle('show', on); gear.classList.toggle('on', on); gear.setAttribute('aria-expanded', on);
+    if (on) dropInput();
+  }
+  setFeed('auto');
+  if (qs.get('feed') && settings.querySelector('.row[data-k="mode"] button[data-v="' + qs.get('feed') + '"]')) setFeed(qs.get('feed'));
+  setPace('slow'); setPace(stored('tennisPace')); setPace(qs.get('pace'));
+  setAssist(CFG.assist.level); setAssist(stored('tennisAssist')); setAssist(qs.get('assist'));
+  showSettings(false);
+  gear.addEventListener('click', () => showSettings(!settingsOpen));
+  document.getElementById('done').addEventListener('click', () => showSettings(false));
+  settings.addEventListener('click', e => { if (e.target === settings) showSettings(false); });
+  settings.querySelectorAll('.row').forEach(row => row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    const k = row.dataset.k, v = b.dataset.v;
+    if (k === 'mode') setFeed(v); else if (k === 'pace') setPace(v, true); else setAssist(v, true);
+  })));
 
   // --- Drawing the ball ---------------------------------------------------
   // A ball rolling far beyond the far baseline (no opponent returns it yet)
   // leaves the projection; don't draw it there.
   const ballGone = () => ball.phase === 'idle' || ball.Y < -8;
+  // Ball size: set directly in CONFIG.render (not from metres), larger
+  // near the camera, never below ballMin.
+  function ballD(Y) {
+    const z = Math.max(0, Math.min(1, Y / COURT.length));
+    return Math.max(RC.ballMin, RC.ballFar + (RC.ballNear - RC.ballFar) * z);
+  }
   function drawShadow() {
     if (ballGone()) return;
-    const sp = Pm(ball.X, ball.Y, 0), hw = ball.H * CFG.hScale;
-    g.fillStyle = 'rgba(0,0,0,' + (0.38 / (1 + hw)).toFixed(2) + ')';
-    g.beginPath(); g.ellipse(sp[0], sp[1], 6 * sp[2] * (1 + hw * 0.15), 2.6 * sp[2], 0, 0, 7); g.fill();
+    const sp = Pm(ball.X, ball.Y, 0), hw = ball.H * CFG.hScale, d = ballD(ball.Y);
+    const w = Math.max(RC.shadowMin, d * (1 + hw * 0.15));
+    g.fillStyle = 'rgba(0,0,0,' + Math.max(0.3, 0.5 / (1 + hw)).toFixed(2) + ')';
+    g.beginPath(); g.ellipse(sp[0], sp[1], w / 2, w * 0.2, 0, 0, 7); g.fill();
   }
   function drawBall() {
     if (ballGone()) return;
+    const d = ballD(ball.Y), r = d / 2;
     trail.forEach((q, i) => {
-      g.fillStyle = 'rgba(216,236,58,' + (0.07 * (i + 1)).toFixed(2) + ')';
-      g.beginPath(); g.arc(q[0], q[1], 4.5 * q[2], 0, 7); g.fill();
+      const k = (i + 1) / (trail.length + 1);
+      g.fillStyle = 'rgba(216,236,58,' + (0.35 * k).toFixed(2) + ')';
+      g.beginPath(); g.arc(q[0], q[1], r * (0.45 + 0.4 * k), 0, 7); g.fill();
     });
-    const [x, y, s] = Pm(ball.X, ball.Y, ball.H);
+    const [x, y] = Pm(ball.X, ball.Y, ball.H);
     let sxF = 1, syF = 1;
     if (squash.t > 0) {
       const k = squash.t / (squash.kind === 'hit' ? 0.08 : 0.06);
       sxF = 1 + 0.3 * k; syF = 1 - 0.28 * k;
     }
-    g.fillStyle = '#d8ec3a'; g.strokeStyle = '#8a9a1a'; g.lineWidth = 1;
-    g.beginPath(); g.ellipse(x, y, 6.2 * s * sxF, 6.2 * s * syF, 0, 0, 7); g.fill(); g.stroke();
-    g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 1.2;
-    g.beginPath(); g.arc(x, y, 4 * s, 2.4 + ballRot, 4.2 + ballRot); g.stroke();
+    g.fillStyle = '#d8ec3a'; g.strokeStyle = '#fff'; g.lineWidth = 1.5;
+    g.beginPath(); g.ellipse(x, y, r * sxF, r * syF, 0, 0, 7); g.fill(); g.stroke();
+    g.strokeStyle = 'rgba(110,128,20,.9)'; g.lineWidth = 1;
+    g.beginPath(); g.arc(x, y, r * 0.62, 2.4 + ballRot, 4.2 + ballRot); g.stroke();
+  }
+
+  // Landing marker: a faint ring where the fed ball will bounce.
+  function drawLanding() {
+    if (!landing || pr.hitBy !== 'machine' || pr.t > landing.t + 0.15) return;
+    const [x, y, s] = Pm(landing.X, landing.Y, 0), rx = 0.45 * MX * s;
+    const a = pr.t > landing.t ? 0.45 * (1 - (pr.t - landing.t) / 0.15) : 0.45;
+    g.strokeStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')'; g.lineWidth = 1.5;
+    g.beginPath(); g.ellipse(x, y, rx, rx * 0.32, 0, 0, 7); g.stroke();
+  }
+
+  // Swing cue: a glow at the player's feet that builds over cueLead before
+  // the ideal tap and peaks through the Perfect window.
+  function cueLevel() {
+    if (!pr.live || pr.hitBy !== 'machine' || pr.whiffed || pr.pending) return 0;
+    const sw = pr.swing;
+    if (sw.t0 != null && E.swingPhase(pr.t - sw.t0, CFG, sw.bs, sw) !== 'ready') return 0;
+    const pred = E.predictContact(pr);
+    if (pred.kind !== 'ok') return 0;
+    const lead = pred.t - E.swingPreset(CFG, 'top', pred.stroke).backswing - (pr.t + acc), pm = CFG.timing.perfectMs / 1000;
+    if (lead > RC.cueLead || lead < -pm - 0.1) return 0;
+    if (lead >= 0) return 1 - lead / RC.cueLead;
+    return lead >= -pm ? 1 : 1 + (lead + pm) / 0.1;
+  }
+  function drawCue() {
+    const k = cueLevel();
+    if (k <= 0) return;
+    const [x, y, s] = Pm(me.X, me.Y, 0), rx = 0.55 * FK * s;
+    g.fillStyle = 'rgba(255,224,102,' + (0.12 + 0.3 * k).toFixed(2) + ')';
+    g.beginPath(); g.ellipse(x, y, rx * (1 + 0.25 * k), rx * 0.34 * (1 + 0.25 * k), 0, 0, 7); g.fill();
+    g.strokeStyle = 'rgba(255,224,102,' + (0.3 + 0.6 * k).toFixed(2) + ')'; g.lineWidth = 1 + 1.5 * k;
+    g.stroke();
   }
 
   // --- Placeholder players (simple shapes; jointed art is Stage 4) ---------
   const palN = { shirt: '#e8483b', short: '#1c2640', skin: '#e0ac82', hair: '#2a1a10', cap: '#f4f4f0', frame: '#111' };
   const palF = { shirt: '#f2c94c', short: '#222a3a', skin: '#8d5a3b', hair: '#1a1008', cap: '#2b3a67', frame: '#c0392b' };
 
-  // Racket hand pose along the swing, tau = seconds from contact (the
-  // prototype's -0.6 ready, -0.16 take-back, 0 contact, 0.18 finish, 0.6
-  // ready). [tau, hand out to the stroke side (m), hand height (m),
-  // racket angle (deg, 0 = pointing out to the side, 90 = up)].
-  const POSE = [
-    [-0.6, 0.15, 1.0, 70],
-    [-0.16, 0.5, 1.35, 125],
-    [-0.05, 0.45, 0.85, -35],
-    [0, 0.35, 1.0, 0],
-    [0.18, -0.15, 1.5, 160],
-    [0.6, 0.15, 1.0, 70],
-  ];
-  function pose(tau) {
+  // Figures are drawn in their own "figure metres" (a 1.79 m figure), at
+  // FK px per figure metre at the near baseline: CONFIG.render.playerH sets
+  // the drawn height directly, apart from the court's metres.
+  const FIG_H = 1.79, FK = RC.playerH / FIG_H;
+  const R_LEN = RC.racketLen * RC.playerH / FK;      // racket length (figure m)
+  const R_HEAD = RC.racketHead / 2 / FK;             // head half-length (figure m)
+  const R_REACH = R_LEN - R_HEAD;                    // hand to head centre
+  // A stroke kind's ideal contact point (CONFIG.contact), as the near
+  // player's figure sees it: side and height in court metres, plus `ahead`
+  // up the screen; and the pose row that puts the racket head centre on it
+  // with the racket at `ang` degrees.
+  function contactRow(kind, ang) {
+    const c = E.contactFor(CFG, kind);
+    const fx = c.side * MX / FK, fy = (c.height * MH + (YB - YT) * c.ahead / COURT.length) / FK, a = ang * Math.PI / 180;
+    return [0, fx - R_REACH * Math.cos(a), fy - R_REACH * Math.sin(a), ang];
+  }
+  // Racket hand pose along the swing, tau = seconds from contact. [tau,
+  // hand out to the stroke side, hand height (figure m), racket angle
+  // (deg, 0 = pointing out to the side, 90 = up)]. Placeholders for the
+  // volley punch and the overhead; jointed poses come with the Stage 4 art.
+  const READY = [-0.6, 0.2, 1.0, 70], READY_END = [0.6, 0.2, 1.0, 70];
+  const POSES = {
+    ground: [READY, [-0.16, 0.55, 1.35, 125], [-0.05, 0.42, 0.98, -55], contactRow('ground', -35), [0.18, -0.15, 1.5, 160], READY_END],
+    // Short punch: barely any take-back, a firm block, a short finish.
+    volley: [READY, [-0.16, 0.45, 1.2, 80], [-0.04, 0.35, 1.0, 35], contactRow('volley', 20), [0.12, 0.3, 1.05, 10], READY_END],
+    // Overhead: racket up behind the head, reach up, finish down across.
+    smash: [READY, [-0.16, 0.05, 1.85, 150], [-0.05, 0.08, 1.6, 115], contactRow('smash', 80), [0.2, -0.25, 0.9, -110], READY_END],
+  };
+  function pose(tau, kind) {
+    const POSE = POSES[kind] || POSES.ground;
     if (tau <= POSE[0][0]) return POSE[0];
     for (let i = 0; i < POSE.length - 1; i++) {
       const a = POSE[i], b = POSE[i + 1];
@@ -485,10 +631,10 @@
     }
     return POSE[POSE.length - 1];
   }
-  // The swing's time from contact. The 0.16 s backswing squeezes the
-  // prototype's take-back and forward swing into the time the tap allows.
+  // The swing's time from contact. The backswing (shortened for a late
+  // tap) squeezes the prototype's take-back and forward swing.
   function swingTau() {
-    const s = pr.swing, bs = CFG.swing.backswing;
+    const s = pr.swing, bs = s.bs;
     if (s.t0 == null) return -0.6;
     const e = pr.t + acc - s.t0;
     if (e < 0) return -0.6;
@@ -505,22 +651,30 @@
     g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
   }
 
+  // Where the near player's racket head should snap to near contact: the
+  // ball just before, the contact point just after (hits only).
+  function magnetTarget(tau) {
+    if (Math.abs(tau) * 1000 > RC.magnetMs || pr.swing.t0 == null) return null;
+    if (tau < 0) return pr.live && pr.hitBy === 'machine' ? Pm(ball.X, ball.Y, ball.H) : null;
+    return contactPt && contactPt.t0 === pr.swing.t0 ? Pm(contactPt.X, contactPt.Y, contactPt.H) : null;
+  }
+
   // One figure. front = facing the camera (far player). F = stroke side
   // (+1 to the right of the screen).
-  function figure(X, Y, pal, front, tau, F, speed, isNear) {
-    const [fx, fy, s] = Pm(X, Y, 0), mx = MX * s, mh = MH * s;
-    const pt = (lat, h) => [fx + lat * mx, fy - h * mh];
+  function figure(X, Y, pal, front, tau, F, speed, isNear, kind) {
+    const [fx, fy, s] = Pm(X, Y, 0), u = FK * s;
+    const pt = (lat, h) => [fx + lat * u, fy - h * u];
     // Shadow.
     g.fillStyle = 'rgba(0,0,0,.3)';
-    g.beginPath(); g.ellipse(fx, fy, 0.42 * mx, 0.13 * mh, 0, 0, 7); g.fill();
+    g.beginPath(); g.ellipse(fx, fy, 0.42 * u, 0.13 * u, 0, 0, 7); g.fill();
     // Legs with a little stride while moving.
     const stride = Math.min(1, speed / 3);
     for (const sg of [-1, 1]) {
       const ph = clock * 14 + (sg > 0 ? Math.PI : 0);
       const lift = stride * Math.max(0, Math.sin(ph)) * 0.08;
       const foot = pt(sg * 0.2 + stride * Math.cos(ph) * 0.06, lift);
-      seg(pt(sg * 0.11, 0.8), foot, 0.11 * mx, pal.skin);
-      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(foot[0], foot[1], 0.09 * mx, 0.05 * mh, 0, 0, 7); g.fill();
+      seg(pt(sg * 0.11, 0.8), foot, 0.11 * u, pal.skin);
+      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(foot[0], foot[1], 0.09 * u, 0.05 * u, 0, 0, 7); g.fill();
     }
     // Shorts and shirt.
     const hipL = pt(-0.19, 0.92), hipR = pt(0.19, 0.72);
@@ -530,46 +684,59 @@
     g.beginPath(); g.moveTo(t1[0], t1[1]); g.lineTo(t2[0], t2[1]); g.lineTo(t3[0], t3[1]); g.lineTo(t4[0], t4[1]); g.closePath(); g.fill(); g.stroke();
     if (!front) {
       const n = pt(0, 1.12);
-      g.fillStyle = '#fff'; g.font = 'bold ' + (0.3 * mh).toFixed(1) + 'px sans-serif'; g.textAlign = 'center';
-      g.fillText('7', n[0], n[1] + 0.1 * mh);
+      g.fillStyle = '#fff'; g.font = 'bold ' + (0.3 * u).toFixed(1) + 'px sans-serif'; g.textAlign = 'center';
+      g.fillText('7', n[0], n[1] + 0.1 * u);
     }
     // Head.
-    const hd = pt(0, 1.66), r = 0.13 * mh;
+    const hd = pt(0, 1.66), r = 0.13 * u;
     g.fillStyle = front ? pal.skin : pal.hair; g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = 1.2;
     g.beginPath(); g.arc(hd[0], hd[1], r, 0, 7); g.fill(); g.stroke();
     g.fillStyle = pal.cap; g.beginPath(); g.arc(hd[0], hd[1] - 0.15 * r, r * 1.04, Math.PI, 0); g.fill();
     if (front) { g.fillStyle = '#111'; g.fillRect(hd[0] - 0.45 * r, hd[1] + 0.2 * r, 0.2 * r, 0.2 * r); g.fillRect(hd[0] + 0.25 * r, hd[1] + 0.2 * r, 0.2 * r, 0.2 * r); }
     // Racket arm. The near player's view mirrors left/right for a backhand.
-    const p = pose(tau), a = p[3] * Math.PI / 180;
+    const p = pose(tau, kind), a = p[3] * Math.PI / 180;
     const sh = pt(F * 0.22, 1.42), hand = pt(F * p[1], p[2]);
-    const dir = [F * Math.cos(a), Math.sin(a)];
-    const throat = pt(F * p[1] + dir[0] * 0.25, p[2] + dir[1] * 0.25);
-    const head = pt(F * p[1] + dir[0] * 0.47, p[2] + dir[1] * 0.47);
-    seg(sh, hand, 0.08 * mx, pal.skin);
+    let head = pt(F * p[1] + F * Math.cos(a) * R_REACH, p[2] + Math.sin(a) * R_REACH);
+    if (isNear) {
+      const m = magnetTarget(tau);
+      if (m && Math.hypot(m[0] - head[0], m[1] - head[1]) < 1.2 * RC.racketHead) {
+        const w = 1 - Math.abs(tau) * 1000 / RC.magnetMs;
+        head = [head[0] + (m[0] - head[0]) * w, head[1] + (m[1] - head[1]) * w];
+      }
+    }
+    const rot = Math.atan2(head[1] - hand[1], head[0] - hand[0]);
+    const shaft = (R_LEN - 2 * R_HEAD) * u;
+    const throat = [hand[0] + Math.cos(rot) * shaft, hand[1] + Math.sin(rot) * shaft];
+    seg(sh, hand, 0.08 * u, pal.skin);
     if (isNear) {
       if (tau > -0.18 && tau < 0.22 && pr.swing.t0 != null) racketTrail.push(head);
       else if (racketTrail.length) racketTrail.shift();
       if (racketTrail.length > 10) racketTrail.shift();
       for (let i = 1; i < racketTrail.length; i++) {
         const k = i / racketTrail.length;
-        g.strokeStyle = 'rgba(255,255,255,' + (k * 0.6).toFixed(2) + ')'; g.lineWidth = k * 0.2 * mx; g.lineCap = 'round';
+        g.strokeStyle = 'rgba(255,255,255,' + (k * 0.6).toFixed(2) + ')'; g.lineWidth = k * 0.2 * u; g.lineCap = 'round';
         g.beginPath(); g.moveTo(racketTrail[i - 1][0], racketTrail[i - 1][1]); g.lineTo(racketTrail[i][0], racketTrail[i][1]); g.stroke();
       }
     }
-    g.strokeStyle = '#2a2a2a'; g.lineWidth = 0.05 * mx;
+    g.strokeStyle = '#2a2a2a'; g.lineWidth = 0.05 * u;
     g.beginPath(); g.moveTo(hand[0], hand[1]); g.lineTo(throat[0], throat[1]); g.stroke();
-    const rot = Math.atan2(head[1] - hand[1], head[0] - hand[0]);
     const sq = Math.abs(tau) < 0.04 ? 0.85 : 1;
     g.save(); g.translate(head[0], head[1]); g.rotate(rot);
-    g.fillStyle = 'rgba(255,255,255,.3)'; g.strokeStyle = pal.frame; g.lineWidth = 0.05 * mx;
-    g.beginPath(); g.ellipse(0, 0, 0.2 * mx, 0.15 * mx * sq, 0, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = 'rgba(255,255,255,.3)'; g.strokeStyle = pal.frame; g.lineWidth = Math.max(1.2, 0.05 * u);
+    g.beginPath(); g.ellipse(0, 0, R_HEAD * u, 0.75 * R_HEAD * u * sq, 0, 0, 7); g.fill(); g.stroke();
     g.restore();
-    g.fillStyle = pal.skin; g.beginPath(); g.arc(hand[0], hand[1], 0.05 * mx, 0, 7); g.fill();
+    g.fillStyle = pal.skin; g.beginPath(); g.arc(hand[0], hand[1], 0.05 * u, 0, 7); g.fill();
   }
 
   function drawNear() {
-    const F = pr.swing.stroke === 'bh' ? -1 : 1;
-    figure(me.X, me.Y, palN, false, swingTau(), F, Math.hypot(me.vx, me.vy), true);
+    // Mid-swing: the swing's side. Ready: face the predicted contact's side.
+    let stroke = pr.swing.stroke;
+    if (swingTau() <= -0.6 || swingTau() >= 0.6) {
+      const pred = E.predictContact(pr);
+      if (pred.kind === 'ok' && pred.t > pr.t) stroke = E.strokeFor(pred.X - me.X);
+    }
+    const F = stroke === 'bh' ? -1 : 1;
+    figure(me.X, me.Y, palN, false, swingTau(), F, Math.hypot(me.vx, me.vy), true, pr.swing.t0 != null ? pr.swing.strokeKind : 'ground');
   }
   function drawFar() {
     // Static stand-in: no opponent until a later stage.
@@ -591,62 +758,92 @@
 
   function outlinedText(txt, x, y, size, col, alpha) {
     g.globalAlpha = Math.max(0, alpha); g.font = 'bold ' + size + 'px system-ui, sans-serif'; g.textAlign = 'center';
-    g.lineWidth = 4; g.strokeStyle = '#0d1322'; g.fillStyle = col;
+    g.lineWidth = 4; g.lineJoin = 'round'; g.strokeStyle = '#0d1322'; g.fillStyle = col;
     g.strokeText(txt, x, y); g.fillText(txt, x, y); g.globalAlpha = 1;
   }
 
   function drawLabels() {
     if (pop.life > 0) {
-      const y = 225 - (1.1 - pop.life) * 18, a = Math.min(1, pop.life);
+      // Above the net, unless the player is up there: then the empty court below.
+      const headY = Pm(me.X, me.Y, 0)[1] - RC.playerH * Pm(me.X, me.Y, 0)[2];
+      const y = (headY < 300 ? 380 : 225) - (1.1 - pop.life) * 18, a = Math.min(1, pop.life);
       outlinedText(pop.txt, W / 2, y, pop.big ? 30 : 20, pop.col, a);
       if (pop.sub) outlinedText(pop.sub, W / 2, y + (pop.big ? 20 : 18), 12, pop.big ? '#fff' : '#e7ebf3', a);
     }
     if (call.life > 0) outlinedText(call.txt, Math.min(W - 40, Math.max(40, call.x)), Math.max(130, call.y - 18 - (1.1 - call.life) * 12), 15, call.col, Math.min(1, call.life * 1.5));
     if (tag.life > 0) {
-      const q = Pm(me.X, me.Y, 2.2);
-      outlinedText(tag.txt, Math.min(W - 45, Math.max(45, q[0])), q[1] - (1 - tag.life) * 14, 13, tag.col, Math.min(1, tag.life * 1.5));
+      const q = Pm(me.X, me.Y, 0), top = q[1] - RC.playerH * q[2] - 8;
+      outlinedText(tag.txt, Math.min(W - 60, Math.max(60, q[0])), top - (1 - Math.min(1, tag.life)) * 14, 14, tag.col, Math.min(1, tag.life * 1.5));
     }
   }
 
   function drawHud() {
     g.fillStyle = '#0d1322'; g.fillRect(0, 0, W, 34);
     g.font = 'bold 13px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#fff';
-    g.textAlign = 'left'; g.fillText(SHOW_FEED ? 'FEED ' + pr.mode.toUpperCase() : 'PRACTICE', 12, 22);
+    g.textAlign = 'left'; g.fillText(pr.mode === 'auto' ? 'PRACTICE' : 'FEED ' + pr.mode.toUpperCase(), 42, 22);
     g.textAlign = 'right'; g.fillText('RALLY ' + pr.rally + '  BEST ' + pr.best, W - 12, 22);
   }
 
   function drawDebug() {
     const v = Math.hypot(ball.vx, ball.vy, ball.vz), h = lastHit, sw = pr.swing;
-    const ph = E.swingPhase(sw.t0 == null ? null : pr.t - sw.t0);
+    const ph = pr.pending ? 'queued' : E.swingPhase(sw.t0 == null ? null : pr.t - sw.t0, CFG, sw.bs, sw);
+    const B = E.playerBounds(), zoneD = me.Y - COURT.netY, predNow = E.predictContact(pr);
+    const misses = Object.keys(pr.misses).map(k => k + ' ' + pr.misses[k]).join('  ') || 'none';
     const roles = [...active.values()];
     const lines = [
       'FPS ' + fps.toFixed(0) + '  steps/frame ' + stepsLast + '  slow ' + SLOW + '  t ' + pr.t.toFixed(2),
       'ball ' + ball.phase + '  by ' + (pr.hitBy || '-') + (pr.live ? ' live' : '') + '  shot ' + (pr.shotKey || '-'),
       'm  X ' + ball.X.toFixed(2) + ' Y ' + ball.Y.toFixed(2) + ' H ' + ball.H.toFixed(2) + '  ' + (v * 3.6).toFixed(0) + ' km/h',
       'spin ' + (ball.spin * 60 / (2 * Math.PI)).toFixed(0) + ' rpm  angle ' + (lastAngle != null ? lastAngle.toFixed(1) + '°' : '-') + '  call ' + lastResult,
-      'player X ' + me.X.toFixed(2) + ' Y ' + me.Y.toFixed(2) + '  v ' + me.vx.toFixed(1) + ', ' + me.vy.toFixed(1),
-      'swing ' + ph + (sw.shot ? ' (' + sw.shot + ')' : '') + '  ' + (sw.stroke === 'bh' ? 'BACKHAND' : 'FOREHAND'),
+      'player X ' + me.X.toFixed(2) + ' Y ' + me.Y.toFixed(2) + '  v ' + me.vx.toFixed(1) + ', ' + me.vy.toFixed(1) + '  net ' + zoneD.toFixed(1) + ' m',
+      'zone ' + E.zoneOf(me.Y) + '  next ' + (predNow.kind === 'ok' ? predNow.stroke.toUpperCase() : predNow.kind) + '  feed ' + pr.mode,
+      'swing ' + ph + (sw.shot ? ' (' + sw.shot + ')' : '') + '  ' + (sw.stroke === 'bh' ? 'BACKHAND' : 'FOREHAND') + '  bs ' + Math.round(sw.bs * 1000) + ' ms',
+      'pace x' + pr.pace + '  assist ' + pr.assist + '  taps ' + pr.taps.n + ' avg ' + (pr.taps.n ? (pr.taps.sum / pr.taps.n > 0 ? '+' : '') + Math.round(pr.taps.sum / pr.taps.n) + ' ms' : '-'),
+      'misses ' + misses,
       h ? 'timing ' + (h.errMs > 0 ? '+' : '') + h.errMs.toFixed(0) + ' ms ' + (h.errMs < 0 ? 'early' : 'late') + '  reach ' + h.lat.toFixed(2) + ' m  dist ' + h.dist.toFixed(2) : 'timing -',
       h ? 'quality ' + h.quality.toFixed(2) + ' ' + h.band + (h.reason ? ' (' + h.reason + ')' : '') + (h.mishit ? ' mishit ' + h.mishit : '') + (h.pace ? '  pace x' + h.pace.toFixed(2) : '') : 'quality -',
       'touches ' + (roles.length ? roles.join(', ') : 'none') + '  stick ' + currentStick().x.toFixed(2) + ', ' + currentStick().y.toFixed(2),
     ];
-    const top = SHOW_FEED ? 74 : 38; // below the feed row
-    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, top, 300, lines.length * 12 + 6);
+    const top = 38;
+    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, top, 352, lines.length * 12 + 6);
     g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#9ef'; g.textAlign = 'left';
     lines.forEach((l, i) => g.fillText(l, 8, top + 12 + i * 12));
-    // Reach zone at contact height on the ideal contact plane: forehand
-    // (yellow) and backhand (cyan) spans, with the ideal points.
-    const c = CFG.contact, py = me.Y - c.ahead;
-    for (const [F, col] of [[1, '#ffd166'], [-1, '#7fe3ff']]) {
-      const a = Pm(me.X + F * c.side - c.reach, py, c.height), b = Pm(me.X + F * c.side + c.reach, py, c.height);
-      const m = Pm(me.X + F * c.side, py, c.height);
-      g.strokeStyle = col; g.globalAlpha = 0.55; g.lineWidth = 2;
-      g.beginPath(); g.moveTo(a[0], a[1] + (F > 0 ? -2 : 2)); g.lineTo(b[0], b[1] + (F > 0 ? -2 : 2)); g.stroke();
-      g.globalAlpha = 1; g.beginPath(); g.arc(m[0], m[1], 3, 0, 7); g.stroke();
+    // Reach zone on the ground: an ellipse on the contact plane spanning
+    // both ideal points plus reach; ideal points (forehand yellow, backhand
+    // cyan) at contact height.
+    const c = CFG.contact, py = me.Y - c.ahead, rx = c.side + c.reach;
+    g.strokeStyle = 'rgba(158,238,255,.7)'; g.lineWidth = 1.5;
+    g.beginPath();
+    for (let i = 0; i <= 32; i++) {
+      const a = i / 32 * Math.PI * 2, q = Pm(me.X + Math.cos(a) * rx, py + Math.sin(a) * 0.6, 0);
+      i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]);
     }
-    const split = Pm(me.X + c.backhandBelow, py, 0);
-    g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 1;
-    g.beginPath(); g.moveTo(split[0], split[1]); g.lineTo(split[0], split[1] - 12); g.stroke();
+    g.stroke();
+    for (const [F, col] of [[1, '#ffd166'], [-1, '#7fe3ff']]) {
+      const m = Pm(me.X + F * c.side, py, c.height);
+      g.strokeStyle = col; g.lineWidth = 1.5; g.beginPath(); g.arc(m[0], m[1], 3, 0, 7); g.stroke();
+    }
+    // Predicted contact point: cross at its height, dot on the ground.
+    const pred = E.predictContact(pr);
+    if (pred.kind === 'ok' && pred.t > pr.t) {
+      const q = Pm(pred.X, pred.Y, pred.H), q0 = Pm(pred.X, pred.Y, 0);
+      g.strokeStyle = '#ff5ec4'; g.lineWidth = 1.5;
+      g.beginPath(); g.moveTo(q[0] - 5, q[1] - 5); g.lineTo(q[0] + 5, q[1] + 5); g.moveTo(q[0] + 5, q[1] - 5); g.lineTo(q[0] - 5, q[1] + 5); g.stroke();
+      g.setLineDash([2, 3]); g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q0[0], q0[1]); g.stroke(); g.setLineDash([]);
+      g.fillStyle = '#ff5ec4'; g.beginPath(); g.arc(q0[0], q0[1], 2.5, 0, 7); g.fill();
+    } else if (pred.kind === 'deep' || pred.kind === 'short') {
+      outlinedText('→ ' + E.MISS_TEXT[pred.kind], Pm(me.X, me.Y, 0)[0], Pm(me.X, me.Y, 0)[1] + 16, 10, '#ff5ec4', 1);
+    }
+    // Assist target (stance).
+    const at = pr.assist !== 'off' && pr.live && pr.hitBy === 'machine' ? E.assistTarget(pr) : null;
+    if (at) {
+      const q = Pm(at.X, at.Y, 0);
+      g.strokeStyle = '#8ef0a0'; g.lineWidth = 1.5; g.strokeRect(q[0] - 3, q[1] - 3, 6, 6);
+    }
+    // Movement bounds.
+    g.strokeStyle = 'rgba(255,255,255,.25)'; g.setLineDash([4, 4]); g.lineWidth = 1;
+    const b1 = Pm(B.minX, B.minY, 0), b2 = Pm(B.maxX, B.minY, 0), b3 = Pm(B.maxX, B.maxY, 0), b4 = Pm(B.minX, B.maxY, 0);
+    g.beginPath(); g.moveTo(b1[0], b1[1]); g.lineTo(b2[0], b2[1]); g.lineTo(b3[0], b3[1]); g.lineTo(b4[0], b4[1]); g.closePath(); g.stroke(); g.setLineDash([]);
     if (pr.aim && ball.phase === 'flight') {
       const q = Pm(pr.aim.target.X, pr.aim.target.Y, 0);
       g.strokeStyle = pr.aim.miss ? '#ff6b5e' : '#8ef0a0'; g.lineWidth = 1.5;
@@ -662,9 +859,11 @@
     fpsAcc += real; fpsN++;
     if (fpsAcc >= 0.5) { fps = fpsN / fpsAcc; fpsAcc = 0; fpsN = 0; }
 
-    const dt = real * SLOW, stick = currentStick();
+    const dt = settingsOpen ? 0 : real * SLOW, stick = currentStick();
     stepsLast = 0;
-    if (hitStop > 0) {
+    if (settingsOpen) {
+      // Paused under the settings pop-up.
+    } else if (hitStop > 0) {
       hitStop -= real;
     } else {
       acc += dt;
@@ -675,11 +874,11 @@
         if (hitStop > 0) break; // freeze here; the leftover time carries on after
       }
     }
-    anchor = { real: now, sim: pr.t + acc, rate: hitStop > 0 ? 0 : SLOW };
+    anchor = { real: now, sim: pr.t + acc, rate: hitStop > 0 || settingsOpen ? 0 : SLOW };
     const fdt = hitStop > 0 ? 0 : dt;
     clock += fdt;
     ballRot += ball.spin * fdt * 0.05;
-    if (stepsLast && ball.phase !== 'idle') { trail.push(Pm(ball.X, ball.Y, ball.H)); if (trail.length > 6) trail.shift(); }
+    if (stepsLast && ball.phase !== 'idle') { trail.push(Pm(ball.X, ball.Y, ball.H)); if (trail.length > RC.trail) trail.shift(); }
     parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; p.l -= dt * 1.6; });
     parts = parts.filter(p => p.l > 0);
     fx.forEach(f => f.l -= dt * 4.5); fx = fx.filter(f => f.l > 0);
@@ -690,13 +889,17 @@
     g.save();
     if (shake > 0) g.translate((Math.random() - 0.5) * 5 * shake / 0.14, (Math.random() - 0.5) * 5 * shake / 0.14);
     drawBg();
+    drawLanding();
     drawFar();
     const farSide = ball.Y < COURT.netY;
     if (farSide) { drawShadow(); drawBall(); }
     drawNet();
+    drawCue();
+    // The near player is always in front of the net. The ball is drawn over
+    // them even when it's further up the court, so their body never hides it.
     if (!farSide) {
-      drawShadow();
-      if (ball.Y < me.Y) { drawBall(); drawNear(); } else { drawNear(); drawBall(); }
+      if (ball.Y < me.Y) { drawShadow(); drawNear(); } else { drawNear(); drawShadow(); }
+      drawBall();
     } else drawNear();
     drawFx();
     drawLabels();
