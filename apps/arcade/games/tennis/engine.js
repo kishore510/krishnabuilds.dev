@@ -49,6 +49,9 @@
       // backspin checks the ball up instead of kicking on.
       drop: { name: 'DROP', speed: 12.5, spin: -300, angles: [0, 32], depth: 23.77 / 2 - 2.5,
         speedRef: 12.5, speedClamp: [0.7, 1.25], grip: 2.2 },
+      // Overhead smash (any button, high ball near the net): fast, steep
+      // downward launch, deep target.
+      smash: { name: 'SMASH', speed: 34, spin: 30, angles: [-28, 4], depth: 4.5 },
     },
 
     machine: {
@@ -80,7 +83,14 @@
     swing: {
       backswing: 0.16, minBackswing: 0.07, follow: 0.18, recovery: 0.42,
       drop: { backswing: 0.12, minBackswing: 0.06, follow: 0.12, recovery: 0.36 },
+      volley: { backswing: 0.07, minBackswing: 0.04, follow: 0.10, recovery: 0.25 },
+      smash: { backswing: 0.14, minBackswing: 0.07, follow: 0.20, recovery: 0.40 },
     },
+
+    // Court zones by the player's distance to the net (m): NET within
+    // `net`, BACK from `back` (1.5 m inside the baseline) back, MID between.
+    // Volleys and smashes are only played from MID and NET.
+    zones: { net: 3.0, back: 10.4 },
 
     // Tap timing, in ms from the ideal tap (the ball reaches the contact
     // plane `backswing` later). Early taps inside buffer + earlyGrace are
@@ -96,6 +106,13 @@
       lateQ: [[35, 0.95], [90, 0.7], [170, 0.3], [200, 0.05]],
       earlyPull: 0.3,           // sideways pull (fraction of maxPull) in the early grace
       inputLagMs: 0,            // subtracted from every tap (display / touch lag)
+      // The ball arrives faster at the net, so volley windows are wider in ms.
+      volley: {
+        perfectMs: 40, goodMs: 100, poorMs: 180, lateGraceMs: 30,
+        earlyQ: [[40, 0.8], [150, 0.8], [180, 0.35]],
+        lateQ: [[40, 0.95], [100, 0.7], [180, 0.3], [210, 0.05]],
+      },
+      smash: {},
     },
 
     // Where the ball should be at contact, relative to the player (m).
@@ -106,6 +123,10 @@
       reach: 1.3,               // lateral reach around the ideal point
       minH: 0.15, maxH: 2.4,    // below: TOO SHORT, above: TOO DEEP
       backhandBelow: -0.25,     // ball X - player X below this: backhand
+      // Volleys: taken further in front, a little higher, wider reach.
+      volley: { side: 0.9, ahead: 0.7, height: 1.2, reach: 1.5, minH: 0.3, maxH: 2.0 },
+      // Smash: a high ball, almost overhead.
+      smash: { side: 0.3, ahead: 0.4, height: 2.6, reach: 1.2, minH: 2.0, maxH: 3.4 },
     },
 
     // Timing score and distance -> quality 0..1 -> what the shot does.
@@ -127,7 +148,24 @@
     // no net lift (it can clip or find the net), or floats: launched up to
     // `lift` degrees higher with only spinKeep of its backspin. netShare is
     // the chance it's the short kind.
-    drop: { pastNet: 2.5, band: [1.5, 3.5], nudge: 1.0, short: 2.6, lift: 13, spinKeep: 0.4, netShare: 0.5 },
+    drop: { pastNet: 2.5, band: [1.5, 3.5], nudge: 1.0, x: 2.6, short: 2.6, lift: 13, spinKeep: 0.4, netShare: 0.5 },
+
+    // Volleys: pace = shot speed * mix[0] + incoming ball speed * mix[1]
+    // (mostly the incoming ball's pace). depth as for shots; Topspin is
+    // the angled volley (angledX from centre, the stick or stroke side
+    // picks the side). angles = the solver's range from a high contact.
+    volley: {
+      mix: { flat: [0.45, 0.35], top: [0.42, 0.3], drop: [0.9, 0.03], lob: [0.85, 0.05] },
+      depth: { flat: 3.5, top: 7.5, lob: 2.5 },
+      angledX: 3.6,
+      // The lob volley goes up steeply: above its maximum-range angle, where
+      // a higher angle lands shorter.
+      angles: { flat: [-14, 28], top: [-14, 30], drop: [-8, 32], lob: [46, 80] },
+      lowSlow: 0.5,             // flat / topspin volleys below the tape in the NET zone lose pace in proportion, to this at most
+    },
+    // Smash risk and reward: bigger pull when mistimed, more pace when
+    // Perfect, mishits from a higher quality.
+    smash: { pullMul: 1.5, perfectPace: 1.15, mishitBelow: 0.45 },
 
     // Joystick at contact -> target on the far court.
     aim: {
@@ -147,8 +185,17 @@
       // Angle ranges the solver searches for feeds (wider than the shots',
       // so slow feeds still reach). Below each shot's maximum-range angle.
       angles: { flat: [-2, 22], top: [0, 38], lob: [12, 38], drop: [0, 34] },
+      // Feed modes beyond the four shots. land: metres past the net;
+      // behind: lands this far behind the player (so it reaches them before
+      // bouncing); prefer: with the player at MID or NET, look for a feed
+      // they can play this way first; angles: the solver's range.
+      modes: {
+        short: { shot: 'drop', land: 5.0 },  // a low, short ball that dies before the baseline
+        volley: { shot: 'flat', behind: 4.5, prefer: 'volley' },
+        overhead: { shot: 'lob', behind: 1.5, prefer: 'smash', angles: [46, 68], pace: 1 },
+      },
       // Auto cycles through these feed modes.
-      auto: ['flat', 'top', 'lob', 'drop'],
+      auto: ['flat', 'top', 'lob', 'drop', 'short'],
       tries: 14,                // candidates per pace step before taking the best one
       slower: [1, 0.8, 0.65, 0.5],// if none is reachable, try again this much slower...
       slowAngles: [10, 40],     // ...searching these (higher, longer-hanging) angles
@@ -391,9 +438,10 @@
     // (too much pace for the depth), lift it until the ball clears; it then
     // lands a little longer than asked.
     if (opts && opts.clearNet) {
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 64; i++) {
         const s = simulate(from, shotFromAngle(from, target, def, angle), cfg);
-        if (!s.net && !s.ball.touchedNet) break;
+        const own = s.firstBounce && s.firstBounce.result === 'NET'; // bounced on the hitter's side
+        if (!s.net && !s.ball.touchedNet && !own) break;
         angle += 0.25;
       }
     }
@@ -552,8 +600,30 @@
   }
 
   // Timing score 0..1 for a tap `err` ms from the ideal tap.
-  function timingScore(err, cfg) {
-    const T = (cfg || CONFIG).timing, a = Math.abs(err);
+  // Court zone for a player at Y: 'NET', 'MID' or 'BACK'.
+  function zoneOf(Y, cfg) {
+    const z = (cfg || CONFIG).zones, d = Y - COURT.netY;
+    return d <= z.net ? 'NET' : d >= z.back ? 'BACK' : 'MID';
+  }
+  // Contact geometry and timing windows for a stroke kind ('ground',
+  // 'volley', 'smash'): the base values with the kind's overrides.
+  function contactFor(cfg, kind) {
+    const c = (cfg || CONFIG).contact;
+    return Object.assign({}, c, kind && kind !== 'ground' ? c[kind] : {});
+  }
+  function timingFor(cfg, kind) {
+    const T = (cfg || CONFIG).timing;
+    return Object.assign({}, T, kind && kind !== 'ground' ? T[kind] : {});
+  }
+  // On-screen name of a stroke.
+  function strokeLabel(kind, shot, cfg) {
+    if (kind === 'smash') return 'SMASH';
+    if (kind === 'volley') return shot === 'drop' ? 'DROP VOLLEY' : shot === 'lob' ? 'LOB VOLLEY' : 'VOLLEY';
+    return (cfg || CONFIG).shots[shot].name;
+  }
+
+  function timingScore(err, cfg, kind) {
+    const T = timingFor(cfg, kind), a = Math.abs(err);
     if (a <= T.perfectMs) return 1;
     return table(err < 0 ? T.earlyQ : T.lateQ, a);
   }
@@ -573,7 +643,8 @@
   // out on your left, move left).
   function judgeContact(b, p, cfg, tm) {
     cfg = cfg || CONFIG;
-    const c = cfg.contact, q = cfg.quality, T = cfg.timing;
+    const kind = (tm && tm.stroke) || 'ground';
+    const c = contactFor(cfg, kind), q = cfg.quality, T = timingFor(cfg, kind);
     const stroke = strokeFor(b.X - p.X, cfg), F = stroke === 'fh' ? 1 : -1;
     const idealX = p.X + F * c.side, lat = Math.abs(b.X - idealX);
     const planeY = p.Y - c.ahead;
@@ -582,12 +653,15 @@
     else errMs = b.vy > 0.5 ? (b.Y - planeY) / b.vy * 1000 : (b.Y < planeY ? -9999 : 9999);
     errMs = clamp(errMs, -9999, 9999);
     const live = b.live != null ? b.live : !!b.hittable;
-    const hittable = b.hittable != null ? b.hittable : live && b.phase === 'bounced';
+    // Groundstrokes need the bounce; volleys and smashes take the ball in
+    // the air on the player's half (or just after a bounce).
+    const hittable = b.hittable != null ? b.hittable
+      : live && (b.phase === 'bounced' || (kind !== 'ground' && b.phase === 'flight' && b.Y > COURT.netY));
     const dist = Math.hypot(lat, 0.5 * (b.H - c.height));
-    const out = { stroke, errMs, dist, lat, H: b.H, contact: false, reason: null, quality: 0, band: 'WHIFF', perfect: false, pull: 0 };
-    const kind = tm && tm.kind;
+    const out = { stroke, kind, errMs, dist, lat, H: b.H, Y: b.Y, contact: false, reason: null, quality: 0, band: 'WHIFF', perfect: false, pull: 0 };
+    const pk = tm && tm.kind;
     if (!live) out.reason = 'none';
-    else if (kind === 'deep' || kind === 'short') out.reason = kind;
+    else if (pk === 'deep' || pk === 'short') out.reason = pk;
     else if (errMs < -(T.bufferMs + T.earlyGraceMs)) out.reason = 'early';
     else if (errMs > T.poorMs + T.lateGraceMs) out.reason = 'late';
     else if (!hittable) out.reason = b.phase === 'flight' ? 'early' : 'short';
@@ -597,7 +671,7 @@
     if (out.reason) return out;
     out.contact = true;
     out.perfect = Math.abs(errMs) <= T.perfectMs && dist <= q.perfectDist;
-    out.quality = out.perfect ? 1 : clamp(timingScore(errMs, cfg) * (1 - q.wDist * Math.min(1, dist / c.reach)), 0, 1);
+    out.quality = out.perfect ? 1 : clamp(timingScore(errMs, cfg, kind) * (1 - q.wDist * Math.min(1, dist / c.reach)), 0, 1);
     out.band = out.perfect ? 'PERFECT' : out.quality >= q.good ? 'GOOD' : 'POOR';
     // Sideways pull: a buffered early tap fires on time (no pull); the
     // early grace pulls a little; late pushes more the later it is.
@@ -608,21 +682,54 @@
 
   // Where a return should land, from the stick and the contact judgement.
   // Returns { target, pace, mishit }. Uses rand only for a possible mishit.
-  function aimReturn(j, stick, shotKey, cfg, rand) {
-    if (shotKey === 'drop') return aimDrop(j, stick, cfg, rand);
-    const a = cfg.aim, q = cfg.quality, def = cfg.shots[shotKey];
+  // Returns { target, pace (speed multiplier), mishit, defKey (the shot
+  // definition to solve with), angles (solver range, optional), and for a
+  // drop lift / spinMul / noClear / risk }. incoming = speed of the ball
+  // at contact (m/s), for volleys.
+  function aimReturn(j, stick, shotKey, cfg, rand, incoming) {
+    const kind = j.kind || 'ground';
+    if (kind === 'volley') {
+      const v = cfg.volley, def = cfg.shots[shotKey], mix = v.mix[shotKey];
+      let speedMul = mix[0] + mix[1] * (incoming || 0) / def.speed;
+      // A volley from below the tape has to be lifted, so it can't be hit hard.
+      const atNet = j.Y == null || j.Y - COURT.netY <= cfg.zones.net;
+      if (atNet && (shotKey === 'flat' || shotKey === 'top') && j.H < COURT.netCentre) speedMul *= Math.max(v.lowSlow, j.H / COURT.netCentre);
+      if (shotKey === 'drop') return Object.assign(aimDrop(j, stick, cfg, rand), { pace: speedMul, angles: v.angles.drop, defKey: 'drop' });
+      const out = aimDeep(j, stick, cfg, rand, v.depth[shotKey], 1, cfg.quality.mishitBelow);
+      if (shotKey === 'top') {
+        // Angled volley: wide to the side the stick (or the stroke) picks.
+        const side = Math.sign(stick.x || 0) || (j.stroke === 'fh' ? 1 : -1);
+        out.target.X = side * v.angledX + (out.target.X - clamp(stick.x || 0, -1, 1) * cfg.aim.x);
+      }
+      out.pace *= speedMul; out.angles = v.angles[shotKey]; out.defKey = shotKey;
+      return out;
+    }
+    if (kind === 'smash') {
+      const sm = cfg.smash, out = aimDeep(j, stick, cfg, rand, cfg.shots.smash.depth, sm.pullMul, sm.mishitBelow);
+      if (j.perfect) out.pace = sm.perfectPace;
+      out.defKey = 'smash';
+      return out;
+    }
+    if (shotKey === 'drop') return Object.assign(aimDrop(j, stick, cfg, rand), { defKey: 'drop' });
+    return Object.assign(aimDeep(j, stick, cfg, rand, cfg.shots[shotKey].depth, 1, cfg.quality.mishitBelow), { defKey: shotKey });
+  }
+
+  // A deep target at `depth` (m from the far baseline), aimed by the
+  // stick, pulled and shortened by poor contact, sometimes mishit.
+  function aimDeep(j, stick, cfg, rand, depth, pullMul, mishitBelow) {
+    const a = cfg.aim, q = cfg.quality;
     const jx = clamp(stick.x || 0, -1, 1), jy = clamp(stick.y || 0, -1, 1);
     let X = jx * a.x;
-    let Y = def.depth - Math.max(0, -jy) * a.deeper + Math.max(0, jy) * a.shorter;
+    let Y = depth - Math.max(0, -jy) * a.deeper + Math.max(0, jy) * a.shorter;
     const F = j.stroke === 'fh' ? 1 : -1;
     if (!j.perfect) {
       // Early pulls a forehand left and a backhand right; late the opposite.
-      X += F * j.pull * q.maxPull;
+      X += F * j.pull * q.maxPull * pullMul;
       Y += (1 - j.quality) * q.maxShort;
     }
     Y = Math.min(Y, COURT.netY - 1.5);
     let mishit = null;
-    if (j.quality < q.mishitBelow && rand() < q.mishitChance * (q.mishitBelow - j.quality) / q.mishitBelow) {
+    if (j.quality < mishitBelow && rand() < q.mishitChance * (mishitBelow - j.quality) / mishitBelow) {
       mishit = rand() < 0.5 ? 'long' : 'wide';
       if (mishit === 'long') Y = -1.5;
       else X = Math.sign(X || F) * (COURT.singlesHalf + 0.9);
@@ -637,7 +744,7 @@
   function aimDrop(j, stick, cfg, rand) {
     const d = cfg.drop, q = cfg.quality, F = j.stroke === 'fh' ? 1 : -1;
     const jx = clamp(stick.x || 0, -1, 1), jy = clamp(stick.y || 0, -1, 1);
-    let X = jx * cfg.aim.x;
+    let X = jx * d.x;
     const past = clamp(d.pastNet - jy * d.nudge, d.band[0], d.band[1]);
     let Y = COURT.netY - past;
     const out = { target: null, pace: 1, mishit: null, lift: 0, spinMul: 1, noClear: false, risk: null };
@@ -681,76 +788,125 @@
     return pts;
   }
 
-  // When and where the fed ball crosses the plane Y = planeY after its
-  // bounce. kind: 'ok' (with t, X, H, vy; t may be in the past), 'deep' (it
-  // only crosses before bouncing: it gets past you), 'short' (it dies first),
-  // 'none' (no fed ball in play).
-  function predictCrossing(path, planeY) {
-    if (!path) return { kind: 'none' };
-    let unbounced = false;
+  // When and where the ball on `path` crosses the plane Y = planeY, in the
+  // wanted phase ('bounced' or 'flight'). Returns the crossing ({t, X, Y,
+  // H, vy}; t may be in the past) or null, and notes an unbounced
+  // crossing on `seen`.
+  function crossAt(path, planeY, phase, seen) {
     for (let i = 1; i < path.length; i++) {
       const a = path[i - 1], b = path[i];
       if (a.Y < planeY && b.Y >= planeY) {
-        if (b.phase !== 'bounced') { unbounced = true; continue; }
+        if (b.phase !== phase) { if (seen && b.phase === 'flight') seen.unbounced = true; continue; }
         const f = (planeY - a.Y) / (b.Y - a.Y);
-        return { kind: 'ok', t: lerp(a.t, b.t, f), X: lerp(a.X, b.X, f), Y: planeY, H: lerp(a.H, b.H, f), vy: b.vy };
+        return { t: lerp(a.t, b.t, f), X: lerp(a.X, b.X, f), Y: planeY, H: lerp(a.H, b.H, f), vy: b.vy };
       }
     }
-    return { kind: unbounced ? 'deep' : 'short' };
+    return null;
+  }
+
+  // Groundstroke crossing of planeY. kind: 'ok' (with t, X, Y, H, vy),
+  // 'deep' (it only crosses before bouncing: it gets past you), 'short'
+  // (it dies first), 'none' (no path).
+  function predictCrossing(path, planeY) {
+    if (!path) return { kind: 'none' };
+    const seen = {};
+    const x = crossAt(path, planeY, 'bounced', seen);
+    if (x) return Object.assign({ kind: 'ok', stroke: 'ground' }, x);
+    return { kind: seen.unbounced ? 'deep' : 'short' };
+  }
+
+  // The contact a player at p would make with the ball on `path`, by
+  // situation: in MID or NET, a ball that reaches them before bouncing is
+  // a volley, or a smash if it's high; otherwise a groundstroke after the
+  // bounce. Adds stroke ('ground', 'volley', 'smash') to predictCrossing's
+  // result.
+  function predictFor(path, p, cfg) {
+    cfg = cfg || CONFIG;
+    if (!path) return { kind: 'none' };
+    if (zoneOf(p.Y, cfg) !== 'BACK') {
+      const v = contactFor(cfg, 'volley'), sm = contactFor(cfg, 'smash');
+      const xv = crossAt(path, p.Y - v.ahead, 'flight');
+      if (xv && xv.H >= sm.minH) {
+        const xs = crossAt(path, p.Y - sm.ahead, 'flight');
+        if (xs) return Object.assign({ kind: 'ok', stroke: 'smash' }, xs);
+      }
+      if (xv && xv.H >= v.minH) return Object.assign({ kind: 'ok', stroke: 'volley' }, xv);
+      const g = predictCrossing(path, p.Y - contactFor(cfg, 'ground').ahead);
+      if (g.kind === 'ok' || !xv) return g;
+      return Object.assign({ kind: 'ok', stroke: 'volley' }, xv); // too low, and it never comes up
+    }
+    return predictCrossing(path, p.Y - cfg.contact.ahead);
   }
   function predictContact(pr) {
     if (!pr.live || pr.hitBy !== 'machine') return { kind: 'none' };
-    return predictCrossing(pr.path, pr.player.Y - pr.cfg.contact.ahead);
+    return predictFor(pr.path, pr.player, pr.cfg);
   }
 
-  // Is a sample hittable at a comfortable height?
-  function inBand(s, cfg) {
-    const c = cfg.contact, m = cfg.feed.hMargin;
-    return s.phase === 'bounced' && s.H >= c.minH + m && s.H <= c.maxH - m;
+  // Is a sample hittable at a comfortable height as this stroke kind?
+  function inBand(s, cfg, kind) {
+    const c = contactFor(cfg, kind || 'ground'), m = cfg.feed.hMargin;
+    const phaseOk = kind && kind !== 'ground' ? s.phase === 'flight' && s.Y > COURT.netY : s.phase === 'bounced';
+    return phaseOk && s.H >= c.minH + m && s.H <= c.maxH - m;
   }
+
+  const KINDS = ['ground', 'volley', 'smash'];
 
   // Can a player at `from` (at sim time tNow) get to a stance that puts
   // some hittable point of `path` at their ideal contact point, before the
-  // swing has to start? Returns the plan with the most time to spare
-  // ({ X, Y, t, slack }, slack in s, >= 0 means reachable), or null if
-  // no point of the path is hittable from inside the movement bounds.
+  // swing has to start? Groundstrokes after the bounce from anywhere;
+  // volleys and smashes before it, from MID or NET. Returns the plan with
+  // the most time to spare ({ X, Y, t, slack, F, stroke, byStroke }, slack
+  // in s, >= 0 means reachable; byStroke = the best plan per stroke kind),
+  // or null if no point of the path is hittable from inside the bounds.
   function reachPlan(path, from, cfg, tNow) {
     cfg = cfg || CONFIG;
-    const c = cfg.contact, pl = cfg.player, B = playerBounds(cfg);
+    const pl = cfg.player, B = playerBounds(cfg);
     let best = null;
-    for (let i = 0; i < path.length; i += 2) {
-      const s = path[i];
-      if (!inBand(s, cfg)) continue;
-      for (const F of [1, -1]) {
-        const X = s.X - F * c.side, Y = s.Y + c.ahead;
-        if (X < B.minX || X > B.maxX || Y < B.minY || Y > B.maxY) continue;
-        const need = Math.max(Math.abs(X - from.X) / pl.speedX, Math.abs(Y - from.Y) / pl.speedY) + cfg.feed.reaction;
-        const slack = s.t - tNow - cfg.swing.backswing - need;
-        if (!best || slack > best.slack) best = { X, Y, t: s.t, slack, F };
+    const byStroke = {};
+    for (const kind of KINDS) {
+      const c = contactFor(cfg, kind), bs = swingPreset(cfg, 'top', kind).backswing;
+      for (let i = 0; i < path.length; i += 2) {
+        const s = path[i];
+        if (!inBand(s, cfg, kind)) continue;
+        if (kind === 'volley' && s.H >= contactFor(cfg, 'smash').minH) continue; // that's a smash
+        for (const F of [1, -1]) {
+          const X = s.X - F * c.side, Y = s.Y + c.ahead;
+          if (X < B.minX || X > B.maxX || Y < B.minY || Y > B.maxY) continue;
+          if (kind !== 'ground' && zoneOf(Y, cfg) === 'BACK') continue;
+          const need = Math.max(Math.abs(X - from.X) / pl.speedX, Math.abs(Y - from.Y) / pl.speedY) + cfg.feed.reaction;
+          const slack = s.t - tNow - bs - need;
+          const plan = { X, Y, t: s.t, slack, F, stroke: kind };
+          if (!byStroke[kind] || slack > byStroke[kind].slack) byStroke[kind] = plan;
+          if (!best || slack > best.slack) best = plan;
+        }
       }
     }
+    if (best) best.byStroke = byStroke;
     return best;
   }
 
   // Assist target: the stance for the predicted contact. Stay at this
   // depth if the ball will be at a good height here; otherwise the nearest
-  // depth where it is.
+  // stance (any stroke kind) where it is.
   function assistTarget(pr) {
-    const cfg = pr.cfg, c = cfg.contact, p = pr.player, B = playerBounds(cfg);
+    const cfg = pr.cfg, p = pr.player, B = playerBounds(cfg);
     const pred = predictContact(pr);
-    if (pred.kind === 'ok' && pred.t > pr.t && inBand(Object.assign({ phase: 'bounced' }, pred), cfg)) {
-      const F = strokeFor(pred.X - p.X, cfg) === 'fh' ? 1 : -1;
-      return { X: clamp(pred.X - F * c.side, B.minX, B.maxX), Y: p.Y };
+    if (pred.kind === 'ok' && pred.t > pr.t && inBand(Object.assign({ phase: pred.stroke === 'ground' ? 'bounced' : 'flight' }, pred), cfg, pred.stroke)) {
+      const c = contactFor(cfg, pred.stroke), F = strokeFor(pred.X - p.X, cfg) === 'fh' ? 1 : -1;
+      return { X: clamp(pred.X - F * c.side, B.minX, B.maxX), Y: p.Y, stroke: pred.stroke };
     }
     let best = null, bestD = Infinity;
-    for (const s of pr.path || []) {
-      if (s.t <= pr.t + cfg.swing.backswing || !inBand(s, cfg)) continue;
-      const Y = s.Y + c.ahead;
-      if (Y < B.minY || Y > B.maxY) continue;
-      const F = strokeFor(s.X - p.X, cfg) === 'fh' ? 1 : -1;
-      const X = clamp(s.X - F * c.side, B.minX, B.maxX);
-      const d = Math.abs(Y - p.Y) + 0.3 * Math.abs(X - p.X);
-      if (d < bestD) { bestD = d; best = { X, Y }; }
+    for (const kind of KINDS) {
+      const c = contactFor(cfg, kind);
+      for (const s of pr.path || []) {
+        if (s.t <= pr.t + cfg.swing.backswing || !inBand(s, cfg, kind)) continue;
+        const Y = s.Y + c.ahead;
+        if (Y < B.minY || Y > B.maxY || (kind !== 'ground' && zoneOf(Y, cfg) === 'BACK')) continue;
+        const F = strokeFor(s.X - p.X, cfg) === 'fh' ? 1 : -1;
+        const X = clamp(s.X - F * c.side, B.minX, B.maxX);
+        const d = Math.abs(Y - p.Y) + 0.3 * Math.abs(X - p.X);
+        if (d < bestD) { bestD = d; best = { X, Y, stroke: kind }; }
+      }
     }
     return best;
   }
@@ -859,32 +1015,53 @@
     return list[pr.cycle++ % list.length];
   }
 
+  // Feed a ball the player can reach from where they stand. Candidates
+  // move from the mode's usual target towards one landing in front of the
+  // player (or, for volley and overhead feeds, just behind them); then
+  // slower, higher ones. The first one with time to spare goes, else the
+  // best. Volley and overhead feeds to a player at MID or NET look for one
+  // they can volley or smash first.
   function feed(pr, ev) {
-    const cfg = pr.cfg, R = pr.rand, key = pickFeed(pr), def = cfg.shots[key], FD = cfg.feed, p = pr.player;
+    const cfg = pr.cfg, R = pr.rand, FD = cfg.feed, p = pr.player;
+    const mode = pickFeed(pr), spec = FD.modes[mode] || { shot: mode }, key = spec.shot, def = cfg.shots[key];
     const from = { side: 'far', X: (R() - 0.5) * 2, Y: cfg.farContactY, H: cfg.contactHeight };
-    const opts = { speedMul: feedPace(pr, key), angles: FD.angles[key], clearNet: true };
-    let best = null;
-    for (let n = 0; n < FD.tries * FD.slower.length && !(best && best.slack >= FD.margin); n++) {
+    const pace = spec.pace || feedPace(pr, key);
+    const opts = { clearNet: true };
+    const prefer = spec.prefer && zoneOf(p.Y, cfg) !== 'BACK' ? spec.prefer : null;
+    const ok = c => c && c.slack >= FD.margin;
+    let best = null, bestPref = null;
+    for (let n = 0; n < FD.tries * FD.slower.length && !(prefer ? ok(bestPref) : ok(best)); n++) {
       const i = n % FD.tries, k = i / (FD.tries - 1);
       const step = Math.floor(n / FD.tries);
-      opts.speedMul = feedPace(pr, key) * FD.slower[step];
-      opts.angles = step ? FD.slowAngles : FD.angles[key];
-      const deepY = COURT.length - (def.depth + (R() - 0.5) * 1.5), deepX = (R() * 2 - 1) * FD.width;
-      const nearY = clamp(p.Y - FD.leadIn, COURT.netY + 2, COURT.length - 1);
-      const target = { X: lerp(deepX, clamp(p.X, -FD.width, FD.width), k), Y: lerp(deepY, nearY, k) };
+      opts.speedMul = pace * FD.slower[step];
+      opts.angles = spec.angles || (step ? FD.slowAngles : FD.angles[key]);
+      const deepX = (R() * 2 - 1) * FD.width, jitter = (R() - 0.5) * 1.5;
+      let baseY, nearY;
+      if (spec.behind != null) {
+        baseY = clamp(p.Y + spec.behind + jitter * 0.5, COURT.netY + 3, COURT.length - 0.6);
+        nearY = clamp(p.Y + 0.8, COURT.netY + 2, COURT.length - 0.6);
+      } else {
+        baseY = spec.land != null ? COURT.netY + spec.land + jitter * 0.5 : COURT.length - (def.depth + jitter);
+        nearY = clamp(p.Y - FD.leadIn, COURT.netY + 2, COURT.length - 1);
+      }
+      const target = { X: lerp(deepX, clamp(p.X, -FD.width, FD.width), k), Y: lerp(baseY, nearY, k) };
       const shot = solveShot(from, target, key, cfg, opts);
       const b = createBall();
       launch(b, from, shot);
       const path = tracePath(b, pr.t, cfg);
       const plan = reachPlan(path, p, cfg, pr.t);
       const slack = plan ? plan.slack : -Infinity;
-      if (!best || slack > best.slack) best = { target, shot, path, slack, plan };
+      const cand = { target, shot, path, slack, plan };
+      if (!best || slack > best.slack) best = cand;
+      const ps = prefer && plan && plan.byStroke[prefer];
+      if (ps && (!bestPref || ps.slack > bestPref.slack)) bestPref = Object.assign({}, cand, { slack: ps.slack });
     }
+    if (prefer && ok(bestPref)) best = bestPref;
     launch(pr.ball, from, best.shot);
     pr.path = best.path; pr.crossing = null; pr.prevRel = null;
     pr.live = true; pr.hitBy = 'machine'; pr.whiffed = false;
     pr.shotKey = key; pr.aim = { target: best.target, miss: null };
-    ev.push({ type: 'hit', by: 'machine', side: 'far', X: from.X, Y: from.Y, H: from.H, shot: key, angle: best.shot.angle,
+    ev.push({ type: 'hit', by: 'machine', side: 'far', X: from.X, Y: from.Y, H: from.H, shot: key, mode, angle: best.shot.angle,
       landing: firstBounce(best.path), reachable: best.slack >= FD.margin });
   }
 
@@ -898,9 +1075,15 @@
   // Why a fed ball the player never hit got away, from where it crossed
   // their contact plane (or didn't).
   function missReason(pr) {
-    const cfg = pr.cfg, c = cfg.contact, x = pr.crossing;
+    const cfg = pr.cfg, x = pr.crossing;
     if (!x) return 'short';
-    if (x.phase !== 'bounced' || x.H > c.maxH) return 'deep';
+    let kind = 'ground';
+    if (x.phase !== 'bounced') {
+      if (zoneOf(x.pY, cfg) === 'BACK') return 'deep';  // past you before bouncing
+      kind = x.H >= contactFor(cfg, 'smash').minH ? 'smash' : 'volley';
+    }
+    const c = contactFor(cfg, kind);
+    if (x.H > c.maxH) return 'deep';
     if (x.H < c.minH) return 'short';
     const F = strokeFor(x.X - x.pX, cfg) === 'fh' ? 1 : -1, idealX = x.pX + F * c.side;
     if (Math.abs(x.X - idealX) > c.reach) return x.X < idealX ? 'left' : 'right';
@@ -962,7 +1145,7 @@
     if (pr.live && pr.hitBy === 'machine') {
       const rel = b.Y - (pr.player.Y - cfg.contact.ahead);
       if (!pr.crossing && pr.prevRel != null && pr.prevRel < 0 && rel >= 0) {
-        pr.crossing = { X: b.X, H: b.H, phase: b.phase, pX: pr.player.X };
+        pr.crossing = { X: b.X, H: b.H, phase: b.phase, pX: pr.player.X, pY: pr.player.Y };
       }
       pr.prevRel = rel;
     }
@@ -977,18 +1160,18 @@
         X: b.X + b.vx * back, Y: b.Y + b.vy * back, H: Math.max(cfg.ballRadius, b.H + b.vz * back), vy: b.vy,
         live, phase: b.phase,
       };
-      const j = judgeContact(bs, pr.player, cfg, { tapErr: s.tapErr, kind: s.kind });
+      const j = judgeContact(bs, pr.player, cfg, { tapErr: s.tapErr, kind: s.kind, stroke: s.strokeKind });
       s.stroke = j.stroke; s.result = j; pr.last = j;
       if (j.contact) {
-        const aim = aimReturn(j, stick, s.shot, cfg, pr.rand);
+        const aim = aimReturn(j, stick, s.shot, cfg, pr.rand, Math.hypot(b.vx, b.vy, b.vz));
         const from = { side: 'near', X: bs.X, Y: bs.Y, H: bs.H };
-        let shot = solveShot(from, aim.target, s.shot, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles });
+        let shot = solveShot(from, aim.target, aim.defKey, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles });
         if (aim.lift) shot = liftShot(shot, aim.lift);
         if (aim.spinMul != null && aim.spinMul !== 1) shot = Object.assign({}, shot, { spin: shot.spin * aim.spinMul });
         launch(b, from, shot);
         pr.hitBy = 'player'; pr.shotKey = s.shot; pr.aim = { target: aim.target, miss: aim.mishit }; pr.path = null;
         ev.push(Object.assign({ type: 'hit', by: 'player', side: 'near', X: from.X, Y: from.Y, H: from.H,
-          shot: s.shot, angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit, risk: aim.risk || null,
+          shot: s.shot, label: strokeLabel(j.kind, s.shot, cfg), angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit, risk: aim.risk || null,
           stick: { x: stick.x || 0, y: stick.y || 0 } }, j));
       } else {
         if (live) { pr.whiffed = true; countMiss(pr, j.reason); }
@@ -1014,7 +1197,7 @@
   const api = {
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
     simulate, solveShot, shotFromAngle, rng, createMachine, machineStep,
-    strokeFor, swingPhase, swingPreset, timingScore, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
+    strokeFor, swingPhase, swingPreset, timingScore, zoneOf, contactFor, timingFor, strokeLabel, predictFor, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
     playerBounds, tracePath, predictCrossing, predictContact, reachPlan, assistTarget, missReason, MISS_TEXT,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

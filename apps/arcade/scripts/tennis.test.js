@@ -213,11 +213,11 @@ function idealContact(seed, mode) {
 // `stick` from the swing on (it also moves the player a little, as it would
 // in play). Returns the swing, the contact or whiff event and, if it was
 // hit, the return's first bounce.
-function trial({ seed = 3, mode = 'top', offMs = 0, dx = 0, stick = { x: 0, y: 0 }, shot = 'top' } = {}) {
+function trial({ seed = 3, mode = 'top', offMs = 0, dx = 0, px = null, stick = { x: 0, y: 0 }, shot = 'top' } = {}) {
   const ideal = idealContact(seed, mode);
   const pr = quiet(seed, mode);
   feedFirst(pr);
-  pr.player.X = ideal.X - C.contact.side + dx;
+  pr.player.X = px != null ? px : ideal.X - C.contact.side + dx;
   const tap = ideal.t - E.swingPreset(C, shot).backswing + offMs / 1000;
   E.requestSwing(pr, shot, tap);
   let contact = null, ret = null, swing = null;
@@ -295,10 +295,17 @@ test('reach zone: inside is a hit, outside is TOO FAR LEFT / RIGHT', () => {
   const near = trial({ dx: 0.6 });
   assert.equal(near.contact.type, 'hit');
   assert.ok(near.contact.quality < 1);
+  // A feed near the middle, so the player can stand well off either side.
+  let seed = 1;
+  while (Math.abs(idealContact(seed, 'top').X) > 1.2) seed++;
+  const X = idealContact(seed, 'top').X, off = C.contact.side + C.contact.reach + 0.6;
   // Player further left: the ball is out on their right, beyond reach.
-  const far = trial({ dx: -(C.contact.reach + 0.6) });
-  assert.equal(far.contact.type, 'whiff');
-  assert.equal(far.contact.reason, 'right');
+  const right = trial({ seed, px: X - off });
+  assert.equal(right.contact.type, 'whiff');
+  assert.equal(right.contact.reason, 'right');
+  const left = trial({ seed, px: X + off });
+  assert.equal(left.contact.type, 'whiff');
+  assert.equal(left.contact.reason, 'left');
 });
 
 test('each miss reason is returned for crafted cases', () => {
@@ -320,7 +327,7 @@ test('each miss reason is returned for crafted cases', () => {
   // A ball never swung at: why it got away.
   const pr = E.createPractice(1);
   const why = x => { pr.crossing = x; return E.missReason(pr); };
-  const cx = { X: c.side, H: 1, phase: 'bounced', pX: 0 };
+  const cx = { X: c.side, H: 1, phase: 'bounced', pX: 0, pY: 24 };
   assert.equal(why(Object.assign({}, cx)), 'noswing');
   assert.equal(why(Object.assign({}, cx, { phase: 'flight' })), 'deep');
   assert.equal(why(Object.assign({}, cx, { H: c.maxH + 0.2 })), 'deep');
@@ -413,7 +420,9 @@ test('a swing runs ready, backswing, contact, follow-through, recovery, ready', 
 });
 
 test('a ball the player never swings at is missed with a reason and resets the rally', () => {
-  const pr = quiet(3, 'auto');
+  // Strong assist puts the player in reach; they just don't swing.
+  const pr = E.createPractice(3);
+  pr.assist = 'strong';
   pr.rally = 4;
   let missed = null;
   for (let i = 0; i < 120 * 6 && !missed; i++) for (const e of E.practiceStep(pr, {})) if (e.type === 'missed') missed = e;
@@ -448,18 +457,20 @@ test('machine feeds are always reachable from anywhere in the player\'s range', 
 });
 
 // A bot that runs to the reach plan's stance and taps at the ideal moment.
-function botRally(seed, mode, X, Y, pace) {
+function botRally(seed, mode, X, Y, pace, stroke, shot) {
   const pr = quiet(seed, mode);
   pr.pace = pace; pr.player.X = X; pr.player.Y = Y;
   feedFirst(pr);
-  const plan = E.reachPlan(pr.path, pr.player, C, pr.t);
+  const best = E.reachPlan(pr.path, pr.player, C, pr.t);
+  const plan = stroke ? best.byStroke[stroke] : best;
   let tapped = false, out = null;
   for (let i = 0; i < 120 * 6 && !out; i++) {
     const p = pr.player, dx = plan.X - p.X, dy = plan.Y - p.Y;
     const stick = { x: clampN(dx * 3), y: clampN(dy * 3 * C.player.speedX / C.player.speedY) };
     const pred = E.predictContact(pr);
-    if (!tapped && pred.kind === 'ok' && Math.hypot(dx, dy) < 0.15 && pr.t >= pred.t - C.swing.backswing - 0.1) {
-      E.requestSwing(pr, 'top', pred.t - C.swing.backswing);
+    const bs = E.swingPreset(C, shot || 'top', pred.stroke).backswing;
+    if (!tapped && pred.kind === 'ok' && Math.hypot(dx, dy) < 0.15 && pr.t >= pred.t - bs - 0.1) {
+      E.requestSwing(pr, shot || 'top', pred.t - bs);
       tapped = true;
     }
     for (const e of E.practiceStep(pr, { stick: tapped ? {} : stick })) {
@@ -654,4 +665,166 @@ test('machine drop feeds are reachable and land short', () => {
       assert.equal(e && e.type, 'hit', `bot from (${X}, ${Y}): ${e && (e.reason || e.type)}`);
     }
   }
+});
+
+// ---------------------------------------------------------------------------
+// Stage 2.3: net play.
+// ---------------------------------------------------------------------------
+// A straight-line test path from Y0 to Y1 towards the near baseline,
+// bouncing at bounceY (or never), with height H(Y).
+function linePath({ X = 0.9, Y0 = 6, Y1 = 26, bounceY = null, H }) {
+  const pts = [];
+  for (let i = 0; i <= 400; i++) {
+    const Y = Y0 + (Y1 - Y0) * i / 400;
+    pts.push({ t: i * 0.004, X, Y, H: H(Y), vy: 20, phase: bounceY != null && Y >= bounceY ? 'bounced' : 'flight' });
+  }
+  return pts;
+}
+
+test('zones by distance to the net', () => {
+  const n = COURT.netY;
+  assert.equal(E.zoneOf(n + 1), 'NET');
+  assert.equal(E.zoneOf(n + C.zones.net), 'NET');
+  assert.equal(E.zoneOf(n + C.zones.net + 0.1), 'MID');
+  assert.equal(E.zoneOf(n + 6.4), 'MID');            // the service line
+  assert.equal(E.zoneOf(n + C.zones.back - 0.1), 'MID');
+  assert.equal(E.zoneOf(n + C.zones.back), 'BACK');
+  assert.equal(E.zoneOf(24.2), 'BACK');
+  assert.equal(E.zoneOf(E.playerBounds().minY), 'NET');
+});
+
+test('stroke by situation: volley, groundstroke or smash', () => {
+  const n = COURT.netY, at = Y => ({ X: 0, Y });
+  const air = linePath({ H: () => 1.1 });                       // never bounces on the way
+  assert.equal(E.predictFor(air, at(n + 2)).stroke, 'volley');  // NET
+  assert.equal(E.predictFor(air, at(n + 6)).stroke, 'volley');  // MID
+  assert.equal(E.predictFor(air, at(24.2)).kind, 'deep');       // BACK: it gets past you
+  const bounced = linePath({ bounceY: n + 1, H: () => 1.0 });   // bounces in front
+  const g = E.predictFor(bounced, at(n + 3));
+  assert.equal(g.kind, 'ok');
+  assert.equal(g.stroke, 'ground');
+  assert.equal(E.predictFor(bounced, at(24.2)).stroke, 'ground');
+  const high = linePath({ H: () => 2.6 });
+  assert.equal(E.predictFor(high, at(n + 2)).stroke, 'smash');
+  assert.equal(E.predictFor(high, at(n + 7)).stroke, 'smash');
+  // The forehand / backhand rule holds for volleys too.
+  const p = { X: 0, Y: n + 2 }, b = { Y: n + 2 - C.contact.volley.ahead, H: 1.2, vy: 20, live: true, phase: 'flight' };
+  const vb = E.judgeContact(Object.assign({ X: -0.9 }, b), p, C, { kind: 'ok', tapErr: 0, stroke: 'volley' });
+  assert.equal(vb.stroke, 'bh'); assert.equal(vb.kind, 'volley'); assert.equal(vb.contact, true);
+  const vf = E.judgeContact(Object.assign({ X: 0.9 }, b), p, C, { kind: 'ok', tapErr: 0, stroke: 'volley' });
+  assert.equal(vf.stroke, 'fh'); assert.equal(vf.band, 'PERFECT');
+  // An unbounced ball is no groundstroke.
+  assert.equal(E.judgeContact(Object.assign({ X: 0.9 }, b), p, C, { kind: 'ok', tapErr: 0 }).reason, 'early');
+  assert.equal(E.strokeLabel('volley', 'top'), 'VOLLEY');
+  assert.equal(E.strokeLabel('volley', 'drop'), 'DROP VOLLEY');
+  assert.equal(E.strokeLabel('smash', 'lob'), 'SMASH');
+});
+
+test('volley swing is shorter than a groundstroke; volley windows are no harsher', () => {
+  const total = p => p.backswing + p.follow + p.recovery;
+  const g = E.swingPreset(C, 'top'), v = E.swingPreset(C, 'top', 'volley'), sm = E.swingPreset(C, 'flat', 'smash');
+  assert.ok(v.backswing < g.backswing / 2, `volley backswing ${v.backswing}`);
+  assert.ok(total(v) < total(g) * 0.6);
+  assert.ok(sm.backswing <= g.backswing);
+  const gt = E.timingFor(C), vt = E.timingFor(C, 'volley');
+  assert.ok(vt.perfectMs >= gt.perfectMs && vt.goodMs >= gt.goodMs && vt.poorMs >= gt.poorMs);
+  assert.ok(vt.bufferMs >= gt.bufferMs);
+});
+
+test('the aim solver lands volleys and smashes in the court over the net', () => {
+  const n = COURT.netY, perfect = { stroke: 'fh', perfect: true, quality: 1, pull: 0, kind: 'volley' };
+  for (const Y of [n + 1.2, n + 2.5, n + 5, n + 8]) {
+    for (const X of [-3, 0, 3]) {
+      for (const H of [0.5, 1.0, 1.7]) {
+        for (const shot of ['flat', 'top', 'drop', 'lob']) {
+          for (const sx of [-1, 0, 1]) {
+            const aim = E.aimReturn(Object.assign({ H, Y }, perfect), { x: sx, y: 0 }, shot, C, E.rng(1), 18);
+            const from = { side: 'near', X, Y, H };
+            const s = E.simulate(from, E.solveShot(from, aim.target, aim.defKey, C, { speedMul: aim.pace, angles: aim.angles, clearNet: true }));
+            assert.ok(s.firstBounce && !s.net && !s.ball.touchedNet, `${shot} volley from ${X}, ${(Y - n).toFixed(1)} m, ${H} m`);
+            assert.equal(s.firstBounce.result, 'IN', `${shot} volley from ${X}, ${(Y - n).toFixed(1)} m, ${H} m, stick ${sx}: ${s.firstBounce.X.toFixed(1)}, ${s.firstBounce.Y.toFixed(1)}`);
+          }
+        }
+      }
+      for (const H of [2.1, 2.6, 3.2]) {
+        for (const sx of [-1, 0, 1]) {
+          const aim = E.aimReturn(Object.assign({}, perfect, { kind: 'smash' }), { x: sx, y: 0 }, 'flat', C, E.rng(1));
+          const from = { side: 'near', X, Y, H };
+          const shot = E.solveShot(from, aim.target, aim.defKey, C, { speedMul: aim.pace, clearNet: true });
+          const s = E.simulate(from, shot);
+          assert.ok(shot.angle < 0, `a smash goes down: ${shot.angle.toFixed(1)}°`);
+          assert.ok(s.firstBounce && !s.ball.touchedNet && s.firstBounce.result === 'IN', `smash from ${X}, ${(Y - n).toFixed(1)} m, ${H} m`);
+        }
+      }
+    }
+  }
+  // Volleys take their pace from the incoming ball.
+  const slow = E.aimReturn(perfect, {}, 'flat', C, E.rng(1), 10), fast = E.aimReturn(perfect, {}, 'flat', C, E.rng(1), 30);
+  assert.ok(fast.pace > slow.pace);
+});
+
+test('volley and overhead feeds are reachable, and volleyed or smashed from the net', () => {
+  const B = E.playerBounds(), n = COURT.netY;
+  for (const mode of ['volley', 'overhead']) {
+    const want = mode === 'volley' ? 'volley' : 'smash';
+    for (const pace of [C.feed.pace, 1]) {
+      for (const [X, Y] of [[0, B.minY], [B.minX, n + 2.5], [B.maxX, n + 6], [0, 24.2], [B.minX, B.maxY]]) {
+        for (const seed of [1, 2]) {
+          const pr = quiet(seed, mode);
+          pr.pace = pace; pr.player.X = X; pr.player.Y = Y;
+          const hit = feedFirst(pr);
+          assert.ok(hit.reachable, `${mode} ${pace} from (${X}, ${Y}) seed ${seed}`);
+          if (E.zoneOf(Y) !== 'BACK') {
+            const plan = E.reachPlan(pr.path, pr.player, C, pr.path[0].t);
+            assert.ok(plan.byStroke[want] && plan.byStroke[want].slack >= 0, `${mode} from (${X}, ${Y}): no ${want}`);
+          }
+        }
+      }
+      for (const [X, Y] of [[0, n + 2], [-2, n + 4]]) {
+        for (const shot of ['flat', 'top', 'drop', 'lob']) {
+          const e = botRally(3, mode, X, Y, pace, want, shot);
+          assert.equal(e && e.type, 'hit', `${mode} ${shot} from (${X}, ${Y}): ${e && (e.reason || e.type)}`);
+          assert.equal(e.kind, want);
+          assert.equal(e.label, E.strokeLabel(want, shot));
+        }
+      }
+    }
+  }
+});
+
+test('a short ball makes the player step up; assist and movement get them there', () => {
+  for (const seed of [1, 2, 3]) {
+    const pr = E.createPractice(seed);
+    pr.mode = 'short'; pr.assist = 'strong';
+    const hit = feedFirst(pr);
+    assert.ok(hit.reachable);
+    assert.ok(hit.landing.Y - COURT.netY < 7, `lands ${(hit.landing.Y - COURT.netY).toFixed(1)} m past the net`);
+    const y0 = pr.player.Y;
+    for (let i = 0; i < 120 * 3 && !pr.crossing; i++) E.practiceStep(pr, {});
+    assert.ok(y0 - pr.player.Y > 2, `stepped up ${(y0 - pr.player.Y).toFixed(2)} m`);
+    const e = botRally(seed, 'short', 0, 24.2, C.feed.pace);
+    assert.equal(e && e.type, 'hit', `bot: ${e && (e.reason || e.type)}`);
+  }
+  assert.ok(C.feed.auto.includes('short'), 'Auto mixes in short balls');
+});
+
+test('net play is deterministic', () => {
+  function run() {
+    const log = [];
+    for (const mode of ['volley', 'overhead', 'short']) {
+      const pr = E.createPractice(21);
+      pr.mode = mode; pr.player.Y = COURT.netY + 2.5;
+      for (let i = 0; i < 120 * 12; i++) {
+        if (i % 61 === 0) E.requestSwing(pr, ['top', 'flat', 'lob', 'drop'][i % 4], pr.t + 0.002);
+        for (const e of E.practiceStep(pr, { stick: { x: Math.sin(i / 40) * 0.3, y: 0 } })) {
+          if (e.type !== 'bounce' || e.n === 1) log.push(JSON.stringify(e));
+        }
+      }
+      log.push(JSON.stringify([pr.player, pr.ball, pr.misses]));
+    }
+    return log;
+  }
+  const a = run(), b = run();
+  assert.deepEqual(a, b);
+  assert.ok(a.some(l => l.includes('"kind":"volley"') || l.includes('"stroke":"volley"')));
 });

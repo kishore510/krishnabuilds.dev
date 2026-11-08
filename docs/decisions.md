@@ -253,3 +253,9 @@ Practice feeds are chosen to be reachable from wherever the player stands: each 
 ## 2026-11-08 — Tennis Stage 2.2: the drop shot's bounce uses a per-shot grip
 
 The drop shot is physics, not a scripted arc, but backspin alone couldn't kill its bounce: the court's sliding friction caps how much speed a bounce can take off, whatever the spin. A shot can now carry `grip`, which multiplies the bounce friction for that ball. Only the drop sets it (2.2). This is the one physics change; everything else about the drop (speed that scales with the distance to the target, angles, backspin, landing band, risk) is CONFIG. The drop's bounce peaks at about half of topspin's from the same spot, and its second bounce comes about a third as far on.
+
+## 2026-11-08 — Tennis Stage 2.3: the stroke is chosen by the situation, settings pause the game
+
+Tennis net play keeps the four shot buttons. The engine picks the stroke from where the player stands and what the ball will do: a ball that reaches a player in MID or NET (within 10.4 m of the net) before bouncing is a volley, or a smash if it's high; anything else is a groundstroke after the bounce. The choice is made when the tap is planned, from the traced flight, so the swing's length (volley 70 ms backswing, smash 140 ms, groundstroke 160 ms) and timing windows match the stroke. Volleys and smashes have their own contact points, windows and reach in CONFIG, and the aim solver handles high contacts, downward launches and net clearance.
+
+The settings (feed, pace, assist) are a pop-up from the gear button that pauses the game, not a row over the court: an always-open row hid the far end, where the opponent will be.
