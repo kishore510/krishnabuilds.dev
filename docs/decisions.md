@@ -259,3 +259,13 @@ The drop shot is physics, not a scripted arc, but backspin alone couldn't kill i
 Tennis net play keeps the four shot buttons. The engine picks the stroke from where the player stands and what the ball will do: a ball that reaches a player in MID or NET (within 10.4 m of the net) before bouncing is a volley, or a smash if it's high; anything else is a groundstroke after the bounce. The choice is made when the tap is planned, from the traced flight, so the swing's length (volley 70 ms backswing, smash 140 ms, groundstroke 160 ms) and timing windows match the stroke. Volleys and smashes have their own contact points, windows and reach in CONFIG, and the aim solver handles high contacts, downward launches and net clearance.
 
 The settings (feed, pace, assist) are a pop-up from the gear button that pauses the game, not a row over the court: an always-open row hid the far end, where the opponent will be.
+
+## 2026-11-08 — Tennis Stage 3: a real match, the CPU plays by the player's rules
+
+Tennis now has matches against a CPU (Quick: one set, first to 3 games, tie-break at 3-3; Standard: first to 6, tie-break at 6-6), with the start menu, pause and match-over screens. Practice (the ball machine) stays, from the menu.
+
+The far player sees the court turned 180 degrees, so it runs through the same swing planning, contact judgement, aim solver and physics as the near player; the physics is symmetric under that turn, so nothing is approximated. The CPU only moves a stick and taps shot buttons at times drawn from its difficulty's timing distribution. Difficulty is reaction delay, a speed cap (never above the player's), prediction error, timing spread, an unforced-error rate and aim margin and scatter, in the Air Hockey shape (delay, jitter, prediction), never a speed multiplier. A rally cap (the CPU's 30th shot is always out) means no point lasts forever.
+
+Faults come from execution, not dice: the serve aims inside the box by a margin and is scattered by an amount that grows as the timing gets worse. Rules (scoring, serve order, the point referee) are pure functions with their own tests, and a seeded match is fully repeatable.
+
+Three physics tweaks came with it: a livelier bounce (restitution 0.82, so the ball stays playable longer), a softer net cord (so a let can happen), and the aim solver searches again when a tape clip had fooled it.
