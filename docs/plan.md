@@ -118,6 +118,10 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [ ] Consider moving the site into a public/ folder instead of using .assetsignore
 - [ ] Generate the site-links app list from the shared list instead of duplicating it
 
+### Story Maps
+
+- [x] Scaffold `apps/story-maps` and deploy to story-maps.krishnabuilds.dev (0.1.0); next: add it to the Portal app list as building, then the engine and the first story
+
 ### Stickyard
 
 - [x] Deploy web to stickyard.krishnabuilds.dev and the relay Worker from Actions; add the new origin to ALLOWED_ORIGINS

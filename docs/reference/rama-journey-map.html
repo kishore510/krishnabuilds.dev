@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rama’s Journey: an illustrated map of the Ramayana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ece3cf; --panel:#faf4e4; --ink:#1d2433; --muted:#566074; --line:rgba(29,36,51,.16);
+  --accent:#b5301a; --btn-bg:#1d2f4a; --btn-ink:#fbf3dc; --chip:#e4d8bb;
+  --head:'Yatra One',Georgia,'Times New Roman',serif;
+  --body:'Tiro Devanagari Hindi',Georgia,'Times New Roman',serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a1727; --panel:#122941; --ink:#f3e9d2; --muted:#a9b9cf; --line:rgba(243,233,210,.18);
+    --accent:#ff8a5c; --btn-bg:#f2c14e; --btn-ink:#1b1209; --chip:#1c3a5b;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a1727; --panel:#122941; --ink:#f3e9d2; --muted:#a9b9cf; --line:rgba(243,233,210,.18);
+  --accent:#ff8a5c; --btn-bg:#f2c14e; --btn-ink:#1b1209; --chip:#1c3a5b;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;height:100%;overflow:hidden;background:var(--panel);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--panel);z-index:20}
+button{font-family:var(--head)}
+button:focus-visible{outline:3px solid #ffd166;outline-offset:2px}
+
+.app{height:100%;display:flex;flex-direction:column}
+
+/* timeline strip */
+.top{flex:none;background:var(--panel);border-bottom:1px solid var(--line);padding:8px 14px 4px;position:relative;z-index:6}
+.toprow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.toprow h1{font-family:var(--head);font-weight:400;font-size:19px;line-height:1.2;margin:0;white-space:nowrap}
+.elapsed{font-family:var(--head);font-size:15px;color:var(--accent);text-align:right;line-height:1.2}
+.tl{position:relative;height:46px;margin:6px 10px 0;touch-action:none;cursor:pointer;-webkit-user-select:none;user-select:none}
+.track{position:absolute;left:0;right:0;top:10px;height:8px;border-radius:5px;
+  background:linear-gradient(90deg,rgba(143,207,138,.4) 0 29%,rgba(224,87,58,.3) 29% 100%)}
+.fill{position:absolute;left:0;top:10px;height:8px;border-radius:5px;width:var(--x,0%);background:linear-gradient(90deg,#8fcf8a 0,#f2c14e 60%,#e0573a)}
+.tdot{position:absolute;top:14px;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--ph);border:2px solid var(--panel);opacity:.5}
+.tdot.on{opacity:1}
+.thead{position:absolute;top:14px;left:var(--x,0%);width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:#f2c14e;border:3px solid #1b1209;box-shadow:0 0 0 2px #f2c14e,0 2px 6px rgba(0,0,0,.4)}
+.tick{position:absolute;top:27px;transform:translateX(-50%);font-family:var(--head);font-size:11px;color:var(--muted);white-space:nowrap;line-height:1.1}
+.tick.end{transform:translateX(-100%)}
+
+/* map stage */
+.main{flex:1;min-height:0;position:relative}
+.stage{position:absolute;inset:0;background:#12395c;overflow:hidden;contain:layout paint}
+#map{position:absolute;inset:0;width:100%;height:100%;display:block}
+.counter,.overview{position:absolute;top:10px;background:rgba(14,28,46,.84);color:#f3e9d2;border:1px solid rgba(242,193,78,.6);border-radius:999px;font-family:var(--head);font-size:14px}
+.counter{left:10px;padding:3px 12px}
+.overview{right:10px;padding:4px 14px;cursor:pointer}
+.overview:hover{filter:brightness(1.15)}
+
+/* story sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;max-height:74%;
+  background:var(--panel);border-radius:18px 18px 0 0;border-top:3px solid #c58a2c;box-shadow:0 -10px 26px rgba(0,0,0,.32);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.sheetfix{flex:none;padding:0 14px}
+.grip{display:block;width:100%;height:34px;border:0;background:transparent;cursor:pointer;touch-action:none;padding:0;position:relative}
+.grip span{position:absolute;left:50%;top:14px;width:46px;height:5px;margin-left:-23px;border-radius:3px;background:var(--muted);opacity:.55}
+.ctl{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:8px;padding-bottom:8px}
+.ctl button{font-size:16px;padding:9px 8px;border-radius:999px;border:1.5px solid var(--btn-bg);background:transparent;color:var(--ink);cursor:pointer}
+.ctl button.play{background:var(--btn-bg);color:var(--btn-ink)}
+.ctl button:disabled{opacity:.4;cursor:default}
+.ctl button:not(:disabled):hover{filter:brightness(1.12)}
+.sheetscroll{flex:1 1 auto;min-height:0;overflow:hidden;padding:0 16px 14px}
+.sheet.open .sheetscroll{overflow-y:auto;overscroll-behavior:contain}
+.phase{display:flex;align-items:center;gap:8px;font-family:var(--head);font-size:14px;color:var(--muted)}
+.phase i{width:11px;height:11px;border-radius:50%;background:var(--ph,#f2c14e);display:inline-block;box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--ph,#f2c14e)}
+.phase .dev{margin:0 0 0 auto;color:var(--accent);font-family:var(--body);font-size:17px}
+h2{font-family:var(--head);font-weight:400;font-size:24px;line-height:1.15;margin:4px 0 0}
+.story{margin:8px 0 0;font-size:16px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sheet.open .story{display:block;-webkit-line-clamp:unset;overflow:visible}
+.sheet.moving .sheetscroll{overflow:hidden}
+.sheet:not(.open) .sheetscroll{cursor:pointer}
+.sbody{display:none}
+.sheet.open .sbody{display:block}
+.today{margin:12px 0 0;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:15px;font-style:italic}
+.chapters{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+.chapters button{width:34px;height:34px;border-radius:50%;border:2px solid var(--ph);background:var(--chip);color:var(--ink);font-size:14px;cursor:pointer;padding:0;line-height:1}
+.chapters button[aria-current="step"]{background:var(--ph);color:#1b1209;transform:scale(1.14)}
+.chapters button.seen{background:color-mix(in srgb,var(--ph) 35%,var(--chip))}
+.foot{margin:14px 0 0;color:var(--muted);font-size:13px;line-height:1.45}
+
+@media (min-width:900px){
+  .top{padding:12px 24px 6px}
+  .toprow h1{font-size:24px}
+  .elapsed{font-size:18px}
+  .tl{margin:8px 14px 0;height:50px}
+  .main{display:grid;grid-template-columns:minmax(0,1fr) 430px;grid-template-rows:minmax(0,1fr)}
+  .stage{position:relative;inset:auto}
+  .sheet{position:relative;max-height:none;height:100%;border-radius:0;border-top:0;border-left:3px solid #c58a2c;box-shadow:none;padding-bottom:0}
+  .grip{display:none}
+  .sheetfix{padding-top:16px}
+  .sheetscroll{overflow-y:auto;flex:1;padding:0 20px 20px}
+  .story{display:block;-webkit-line-clamp:unset;font-size:17px;line-height:1.6;overflow:visible;margin-top:10px}
+  h2{font-size:30px}
+  .sheetscroll{cursor:default!important}
+  .sbody{display:block}
+  .sheet.kview .kdetails{display:block}
+  .sheet.kview .kruler{display:block;-webkit-line-clamp:unset;overflow:visible}
+}
+
+/* kingdoms */
+.kingtog{position:absolute;left:10px;top:44px;padding:4px 12px;border-radius:999px;border:1px solid rgba(242,193,78,.6);background:rgba(14,28,46,.84);color:#f3e9d2;font-family:var(--head);font-size:14px;cursor:pointer}
+.kingtog[aria-pressed="true"]{background:#f2c14e;color:#1b1209;border-color:#f2c14e}
+#legs,.pin,#marker,.diyas{pointer-events:none}
+.kings .king{opacity:0;pointer-events:none;transition:opacity .5s}
+.kings.on .king.act{opacity:1;pointer-events:auto;cursor:pointer}
+.king:hover .kshape{fill-opacity:.42}
+.king.sel .kshape{fill-opacity:.46;stroke-width:3;stroke-opacity:.9;stroke-dasharray:none}
+.klbl.t2{font-size:9px;fill-opacity:.95}
+.klbl{font-family:var(--head);font-size:10.5px;fill:#fff;stroke:#1b1209;stroke-width:3px;paint-order:stroke;stroke-linejoin:round;letter-spacing:.03em}
+.kcard{display:none}
+.sheet.kview .phase,.sheet.kview h2,.sheet.kview .story,.sheet.kview .sbody{display:none}
+.sheet.kview .kcard{display:block}
+.khead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kswatch{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--muted)}
+.kname{font-family:var(--head);font-size:24px;line-height:1.15}
+.kdev{margin:0;color:var(--accent);font-size:18px}
+.kclose{margin-left:auto;font-size:14px;padding:5px 12px;border-radius:999px;border:1.5px solid var(--btn-bg);background:transparent;color:var(--ink);cursor:pointer}
+.kruler{margin:8px 0 0;font-size:16px;line-height:1.5}
+.sheet:not(.open) .kruler{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sheet:not(.open) .kdetails{display:none}
+.kfacts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:12px 0 0;font-size:15px;line-height:1.45}
+.kfacts dt{color:var(--muted);font-family:var(--head);font-size:14px}
+.kfacts dd{margin:0}
+.kcard h3,.kbox h3{font-family:var(--head);font-weight:400;font-size:15px;margin:14px 0 6px;color:var(--muted)}
+.kcard p.krole{margin:0;font-size:16px;line-height:1.5}
+.kcard ul{margin:0;padding-left:20px;font-size:16px;line-height:1.45}
+.kcard li{margin:0 0 6px}
+.kchips{display:flex;flex-wrap:wrap;gap:6px}
+.kchip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;border-radius:999px;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);font-size:14px;cursor:pointer}
+.kchip i{width:11px;height:11px;border-radius:50%;display:inline-block}
+
+/* svg parts */
+.pin{transition:opacity .5s}
+.pin.future{opacity:.5}
+.pin .disc{fill:#f6e6c0;stroke:#7a3b12;stroke-width:1.6}
+.pin.active .disc{stroke:#d9432a;stroke-width:2.6}
+.pin .pulse{fill:none;stroke:#ffd166;stroke-width:2.2;opacity:0;transform-box:fill-box;transform-origin:center}
+.pin.active .pulse{animation:pulse 1.9s ease-out 2}
+@keyframes pulse{0%{transform:scale(1);opacity:.95}100%{transform:scale(2);opacity:0}}
+.lbl{font-family:var(--head);font-size:10.5px;fill:#fff6dc;stroke:#1b1209;stroke-width:3.2px;paint-order:stroke;stroke-linejoin:round}
+.sealbl{font-family:var(--body);font-style:italic;font-size:12px;fill:#a9c8e4;opacity:.65;letter-spacing:.12em}
+.rivlbl{font-family:var(--body);font-style:italic;font-size:8.5px;fill:#1f5f8b;stroke:#f6e6c0;stroke-width:2.2px;paint-order:stroke;opacity:.9}
+.diyas{opacity:0;transition:opacity 1s}
+.diyas.on{opacity:1}
+.diyas.on .flame{animation:flick 1.3s ease-in-out 3;transform-box:fill-box;transform-origin:50% 100%}
+.diyas .flame:nth-child(2n){animation-delay:.35s}
+@keyframes flick{0%,100%{transform:scale(1,1)}50%{transform:scale(.85,1.2)}}
+@media (prefers-reduced-motion: reduce){
+  .pin.active .pulse,.diyas.on .flame{animation:none}
+  .pin,.diyas{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="toprow"><h1>Rama’s Journey</h1><div class="elapsed" id="elapsed"></div></div>
+    <div class="tl" id="tl" role="group" aria-label="Story timeline. Tap or drag to jump to a chapter.">
+      <div class="track"></div><div class="fill"></div><div class="thead"></div>
+    </div>
+  </header>
+  <div class="main">
+    <div class="stage" id="stage">
+      <svg id="map" viewBox="0 0 600 680" role="img" aria-label="Illustrated map showing the route of Rama, Hanuman and Ravana across India and Sri Lanka"></svg>
+      <div class="counter" id="counter">1 of 16</div>
+      <button class="overview" id="overview" type="button">Whole map</button>
+      <button class="kingtog" id="kingtog" type="button" aria-pressed="false">Kingdoms off</button>
+    </div>
+    <section class="sheet" id="sheet" aria-live="polite" aria-label="Story">
+      <div class="sheetfix">
+        <button class="grip" id="grip" type="button" aria-expanded="false" aria-controls="sscroll" aria-label="Show full story"><span></span></button>
+        <div class="ctl" role="group" aria-label="Journey controls">
+          <button type="button" id="prev">Back</button>
+          <button type="button" id="play" class="play">Play</button>
+          <button type="button" id="next">Next</button>
+        </div>
+      </div>
+      <div class="sheetscroll" id="sscroll">
+        <div class="phase"><i id="phDot"></i><span id="phName"></span><p class="dev" id="dev"></p></div>
+        <h2 id="title"></h2>
+        <p class="story" id="story"></p>
+        <div class="sbody">
+          <p class="today" id="today"></p>
+          <div class="kbox" id="kbox" hidden><h3>Main realms</h3><div class="kchips" id="kchips"></div><h3 id="kh2">Also named in the epic</h3><div class="kchips" id="kchips2"></div></div>
+          <nav class="chapters" id="chapters" aria-label="Chapters"></nav>
+          <p class="foot">Places follow traditional associations; scholars and regional traditions differ, and “Lanka” is traditionally identified with Sri Lanka. The map is stylised and not to scale. Kingdom regions are painted loosely, and each appears only while it plays a part in the story. The timeline follows the Valmiki Ramayana’s rough durations (ages are approximate), and the last year of exile is enlarged so its chapters fit.</p>
+        </div>
+        <div class="kcard" id="kcard">
+          <div class="khead"><i class="kswatch" id="kSw"></i><span class="kname" id="kName"></span><p class="kdev" id="kDev"></p><button type="button" class="kclose" id="kClose">Back to story</button></div>
+          <p class="kruler" id="kRuler"></p>
+          <div class="kdetails">
+            <dl class="kfacts" id="kFacts"></dl>
+            <h3>Role in the story</h3><p class="krole" id="kRole"></p>
+            <h3>Alliances and ties so far</h3><ul id="kAllies"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var W=600,H=680;
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function P(lo,la){return [(lo-68)*20,(37.2-la)*20];}
+function f(n){return Math.round(n*10)/10;}
+function rng(seed){var s=seed;return function(){s=(s*1664525+1013904223)%4294967296;return s/4294967296;};}
+
+function smooth(pts,closed){
+  var n=pts.length,d='';
+  function g(i){return closed?pts[(i+n)%n]:pts[Math.max(0,Math.min(n-1,i))];}
+  d+='M'+f(pts[0][0])+' '+f(pts[0][1]);
+  var last=closed?n:n-1;
+  for(var i=0;i<last;i++){
+    var p0=g(i-1),p1=g(i),p2=g(i+1),p3=g(i+2);
+    var c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6];
+    var c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+    d+='C'+f(c1[0])+' '+f(c1[1])+' '+f(c2[0])+' '+f(c2[1])+' '+f(p2[0])+' '+f(p2[1]);
+  }
+  return closed?d+'Z':d;
+}
+function px(list){return list.map(function(p){return P(p[0],p[1]);});}
+
+/* ---------- geography ---------- */
+var coast=[[98,16.5],[95.4,15.9],[94.3,18.2],[93.4,20.2],[92.3,21.7],[91.2,22.4],[90.3,21.9],[89.2,21.7],[87.6,21.5],[86.8,20.6],[85.5,19.8],[84.7,19.0],[83.5,18.0],[82.3,16.8],[81.3,16.0],[80.3,15.2],[80.2,13.4],[80.1,12.2],[79.8,11.3],[79.85,10.35],[79.2,9.95],[79.0,9.5],[79.35,9.3],[78.4,9.0],[77.55,8.08],[77.0,8.5],[76.4,9.5],[76.0,10.5],[75.4,12.0],[74.7,13.5],[74.1,15.0],[73.5,16.8],[73.0,18.5],[72.8,19.7],[72.75,20.7],[72.6,21.4],[72.55,22.1],[72.1,21.4],[71.2,20.8],[70.2,20.9],[69.3,21.9],[69.0,22.3],[69.9,22.8],[68.5,23.3],[68.2,23.7],[67.4,24.2],[66.4,25.2],[64.5,25.3],[61.6,25.2],[58,25.6]];
+var landD=smooth(px(coast),false);
+(function(){var a=P(58,45),b=P(106,45),c=P(106,16.5);landD+='L'+a[0]+' '+a[1]+'L'+b[0]+' '+b[1]+'L'+c[0]+' '+c[1]+'Z';})();
+var lankaD=smooth(px([[80.05,9.85],[80.6,9.5],[81.2,8.6],[81.75,7.5],[81.8,6.8],[81.3,6.2],[80.6,5.93],[80.05,6.05],[79.85,6.9],[79.8,7.8],[79.95,8.7],[79.75,9.2]]),true);
+
+var him=[[62,36],[70,36],[73,36.6],[75,36.2],[77,35.5],[79,34.2],[78.9,32.6],[80.2,31],[81.5,30.2],[84,28.8],[88,28.1],[90.5,28.2],[93,28.6],[96,29.2],[106,30]];
+var himPx=px(him);
+var plateauD=(function(){
+  var d=smooth(himPx,false);
+  var a=P(106,45),b=P(58,45),c=P(58,36);
+  return d+'L'+a[0]+' '+a[1]+'L'+b[0]+' '+b[1]+'L'+c[0]+' '+c[1]+'Z';
+})();
+
+/* ---------- small illustration helpers ---------- */
+function peak(x,y,s){
+  var w=s*.9;
+  return '<path d="M'+f(x-w)+' '+f(y)+'L'+f(x-w*.15)+' '+f(y-s)+'L'+f(x+w*.3)+' '+f(y-s*.7)+'L'+f(x+w)+' '+f(y)+'Z" fill="#7f8ea6"/>'+
+    '<path d="M'+f(x-w*.15)+' '+f(y-s)+'L'+f(x+w*.3)+' '+f(y-s*.7)+'L'+f(x+w)+' '+f(y)+'L'+f(x+w*.2)+' '+f(y)+'Z" fill="#566684" opacity=".55"/>'+
+    '<path d="M'+f(x-w*.15)+' '+f(y-s)+'L'+f(x-w*.5)+' '+f(y-s*.5)+'L'+f(x-w*.25)+' '+f(y-s*.55)+'L'+f(x-w*.05)+' '+f(y-s*.4)+'L'+f(x+w*.15)+' '+f(y-s*.6)+'L'+f(x+w*.3)+' '+f(y-s*.7)+'Z" fill="#fff"/>';
+}
+function tree(x,y,s,c){
+  return '<path d="M'+f(x)+' '+f(y-9*s)+'L'+f(x-5*s)+' '+f(y-2*s)+'H'+f(x+5*s)+'ZM'+f(x)+' '+f(y-5*s)+'L'+f(x-6.5*s)+' '+f(y+2*s)+'H'+f(x+6.5*s)+'Z" fill="'+c+'"/>'+
+    '<rect x="'+f(x-s)+'" y="'+f(y+2*s)+'" width="'+f(2*s)+'" height="'+f(3*s)+'" fill="#5a3516"/>';
+}
+function mound(x,y,s,c){
+  return '<path d="M'+f(x-6*s)+' '+f(y)+'q'+f(6*s)+' '+f(-10*s)+' '+f(12*s)+' 0z" fill="'+c+'" stroke="#7a4a1f" stroke-width=".6"/>';
+}
+function along(pts,step,cb){
+  var carry=0;
+  for(var i=0;i<pts.length-1;i++){
+    var a=pts[i],b=pts[i+1];
+    var dx=b[0]-a[0],dy=b[1]-a[1],len=Math.sqrt(dx*dx+dy*dy);
+    var t=carry;
+    while(t<len){cb(a[0]+dx*t/len,a[1]+dy*t/len);t+=step;}
+    carry=t-len;
+  }
+}
+
+/* ---------- glyphs for place pins (range about -12..12) ---------- */
+var glyph={
+ayodhya:'<path d="M-10 9V1h20v8z" fill="#f4e2b4" stroke="#7a3b12" stroke-width=".8"/><path d="M-11 1 0 -7 11 1z" fill="#d9432a" stroke="#7a3b12" stroke-width=".8"/><path d="M-3 9V5a3 3 0 0 1 6 0v4z" fill="#6b3a1a"/><path d="M0 -7V-12" stroke="#7a3b12" stroke-width="1"/><path d="M0 -12l5 1.8-5 1.8z" fill="#f2c14e"/>',
+boat:'<path d="M-10 3Q0 11 10 3Z" fill="#8a4f1c" stroke="#4a2a10" stroke-width=".8"/><path d="M0 2V-10L8 1Z" fill="#f4e2b4" stroke="#7a3b12" stroke-width=".7"/><path d="M0 2V-9L-6 1Z" fill="#e9c98a" stroke="#7a3b12" stroke-width=".7"/><path d="M-10 9q2.5-2 5 0t5 0t5 0t5 0" fill="none" stroke="#3f8fc4" stroke-width="1.2"/>',
+chitra:'<path d="M-12 9 -4 -5 2 3 6 -2 12 9z" fill="#6b8f5a" stroke="#3b5a30" stroke-width=".7"/><path d="M-6 9V3l6-6 6 6v6z" fill="#d9a066" stroke="#7a4a1f" stroke-width=".7"/><path d="M-8 3 0 -6 8 3z" fill="#8a5a2b" stroke="#5a3516" stroke-width=".7"/><path d="M-1.5 9V5h3v4z" fill="#5a3516"/>',
+dandaka:'<g transform="translate(-6 2) scale(.8)">'+tree(0,0,1,'#2f6b3d')+'</g><g transform="translate(7 3) scale(.8)">'+tree(0,0,1,'#3f7d4e')+'</g><g transform="translate(0 4)">'+tree(0,0,1.1,'#2c5e3a')+'</g>',
+deer:'<ellipse cx="-1" cy="1" rx="8" ry="4" fill="#f2c14e" stroke="#8a5a10" stroke-width=".7"/><path d="M-6 4V10M6 4V10M-3 5V10M3 5V10" stroke="#8a5a10" stroke-width="1.2"/><path d="M6 -1 9 -7" stroke="#8a5a10" stroke-width="2.4" stroke-linecap="round"/><circle cx="9.5" cy="-8" r="2.6" fill="#f2c14e" stroke="#8a5a10" stroke-width=".7"/><path d="M8.5 -10.5 7 -14M10.5 -10.5 12 -14M7 -14 5.5 -12.5M12 -14 13 -12" fill="none" stroke="#6b3a1a" stroke-width=".9"/><circle cx="-4" cy="0" r=".9" fill="#fff"/><circle cx="0" cy="-1" r=".9" fill="#fff"/><circle cx="2" cy="2" r=".9" fill="#fff"/>',
+bird:'<path d="M0 0Q-8 -12 -16 -6Q-10 -3 -12 3Q-5 0 0 6Q5 0 12 3Q10 -3 16 -6Q8 -12 0 0Z" fill="#9a6b45" stroke="#4a2a14" stroke-width=".9" transform="scale(.8)"/><circle cx="0" cy="-3" r="2.6" fill="#e8d3b0" stroke="#4a2a14" stroke-width=".6"/><path d="M1.5 -3 4.5 -2 1.5 -1z" fill="#f2c14e"/>',
+monkey:'<circle cx="-9" cy="-1" r="3.4" fill="#a8652a" stroke="#4a2a14" stroke-width=".6"/><circle cx="9" cy="-1" r="3.4" fill="#a8652a" stroke="#4a2a14" stroke-width=".6"/><circle r="9" fill="#b5783a" stroke="#4a2a14" stroke-width=".8"/><ellipse cx="0" cy="3" rx="5.6" ry="4.6" fill="#f1c795"/><circle cx="-3" cy="-2" r="1.3" fill="#1b1209"/><circle cx="3" cy="-2" r="1.3" fill="#1b1209"/><path d="M-2 4.5Q0 6 2 4.5" fill="none" stroke="#5a3516" stroke-width=".9"/>',
+mahendra:'<path d="M-13 9 -2 -8 4 0 8 -4 13 9z" fill="#8c7a6a" stroke="#4a3d32" stroke-width=".8"/><path d="M-2 -8 -5 -3 -2.5 -4.2 0 -2 1.2 -5z" fill="#fff"/><path d="M8 -3Q4.5 -7 8 -12Q9 -8.5 12 -7.5Q13.5 -3 8 -3Z" fill="#ff8a1f" stroke="#b34a00" stroke-width=".6"/>',
+lanka:'<path d="M-11 9V0l3-6 3 6v9z" fill="#f2c14e" stroke="#8a4f1c" stroke-width=".8"/><path d="M-3 9V-7l3-6 3 6V9z" fill="#ffd166" stroke="#8a4f1c" stroke-width=".8"/><path d="M5 9V2l3-5 3 5v7z" fill="#f2c14e" stroke="#8a4f1c" stroke-width=".8"/><path d="M-1 9V5h2v4z" fill="#8a4f1c"/>',
+fire:'<path d="M-9 9h18l-2-5h-14z" fill="#b9824a" stroke="#5a3516" stroke-width=".8"/><path d="M0 3Q-7 -2 -3 -9Q-2 -5 0 -6Q0 -11 3 -12Q8 -5 0 3Z" fill="#ff8a1f" stroke="#b34a00" stroke-width=".7"/><path d="M0 2Q-3 -2 0 -5Q3 -2 0 2Z" fill="#ffd166"/>',
+bow:'<path d="M-6 -10Q10 0 -6 10" fill="none" stroke="#5a3516" stroke-width="2"/><path d="M-6 -10V10" stroke="#e9d5a8" stroke-width=".9"/><path d="M-11 0H9" stroke="#8a4f1c" stroke-width="1.2"/><path d="M9 0 5 -3v6z" fill="#8a4f1c"/>',
+linga:'<ellipse cx="0" cy="7" rx="10" ry="3.6" fill="#c9c1b4" stroke="#6b6358" stroke-width=".8"/><path d="M-4.2 7V-4a4.2 4.2 0 0 1 8.4 0V7z" fill="#5a5a66" stroke="#2a2a33" stroke-width=".8"/><path d="M-4 -1h8M-4 1.5h8M-4 4h8" stroke="#f1ece0" stroke-width=".9"/><circle cx="-9" cy="-8" r="1.6" fill="#fff"/><circle cx="9" cy="-6" r="1.6" fill="#fff"/>'
+};
+
+/* ---------- places and story ---------- */
+var places={
+ ayodhya:{ll:[82.2,26.8],name:'Ayodhya',g:'ayodhya',lab:'l'},
+ buxar:{ll:[84.0,25.57],name:'Siddhashrama',g:'fire',lab:'b'},
+ mithila:{ll:[85.9,26.73],name:'Mithila',g:'bow',lab:'r'},
+ sring:{ll:[81.6,25.6],name:'Sringaverapura',g:'boat',lab:'r'},
+ chitra:{ll:[80.85,25.2],name:'Chitrakoot',g:'chitra',lab:'l'},
+ dandaka:{ll:[81.5,20.5],name:'Dandakaranya',g:'dandaka',lab:'r'},
+ panchavati:{ll:[73.79,20.0],name:'Panchavati',g:'deer',lab:'l'},
+ lepakshi:{ll:[77.6,13.83],name:'Lepakshi',g:'bird',lab:'r'},
+ kishkindha:{ll:[76.46,15.33],name:'Kishkindha',g:'monkey',lab:'l'},
+ mahendra:{ll:[77.5,8.3],name:'Mahendragiri',g:'mahendra',lab:'l'},
+ lanka:{ll:[80.6,7.4],name:'Lanka',g:'lanka',lab:'r'},
+ rameswaram:{ll:[79.3,9.28],name:'Rameswaram',g:'linga',lab:'t'}
+};
+var TALAI=[79.85,9.05];
+var PH={
+ prelude:{n:'Before the exile',c:'#8fcf8a'},
+ palace:{n:'The palace',c:'#f2c14e'},
+ exile:{n:'Exile in the forest',c:'#e0573a'},
+ taken:{n:'Sita is taken',c:'#a678e0'},
+ search:{n:'The search',c:'#f29a2e'},
+ war:{n:'The war for Lanka',c:'#4fc3b0'},
+ home:{n:'Homecoming',c:'#ffd166'}
+};
+var STYLES={
+ walk:{c:'#d9432a',w:3.2,dash:'9 5',cap:'butt'},
+ march:{c:'#d9432a',w:3.2,dash:'9 5',cap:'butt'},
+ search:{c:'#f29a2e',w:2.6,dash:'3 5',cap:'round'},
+ leap:{c:'#ff8a1f',w:3.6,dash:'11 4',cap:'butt'},
+ ravana:{c:'#5b2a86',w:3,dash:'1 6',cap:'round'},
+ bridge:{c:'#fff1b8',w:5.5,dash:'0.1 6',cap:'round'},
+ fly:{c:'#ffe08a',w:3.4,dash:'0.1 7.5',cap:'round'}
+};
+var steps=[
+ {place:'ayodhya',ph:'prelude',title:'A curse by the Sarayu',dev:'सरयू',cam:[82.2,26.4,260],legs:[],
+  text:'Long before his sons are born, young Dasharatha hunts by the Sarayu at night. Hearing a sound like an elephant drinking, he shoots, and kills Shravana Kumara, who was fetching water for his blind parents. Dying of grief, they curse the king to die mourning a son. The curse comes true years later.',
+  today:'Traditionally on the banks of the Sarayu near Ayodhya.'},
+ {place:'ayodhya',ph:'prelude',title:'Four sons',dev:'अयोध्या',cam:[82.2,26.4,260],legs:[],
+  text:'Childless, Dasharatha holds a great fire ritual (yajna). The sacred offering is shared among his queens, and four sons are born: Rama to Kaushalya, Bharata to Kaikeyi, and the twins Lakshmana and Shatrughna to Sumitra. In the tradition, the gods had begged Vishnu to be born as a man to end Ravana’s tyranny.',
+  today:'Today: Ayodhya, Uttar Pradesh.'},
+ {place:'buxar',ph:'prelude',title:'Guarding the yajna',dev:'सिद्धाश्रम',cam:[83.2,26.2,220],
+  legs:[{a:'ayodhya',b:'buxar',k:'rama',s:'walk',bend:.12}],
+  text:'Sage Vishwamitra asks Dasharatha to lend him the boy Rama, with Lakshmana, to guard his fire ritual (yajna). On the way they kill the demoness Tataka and receive divine weapons. At the hermitage Rama kills Subahu and drives off Maricha, who had been defiling the rites.',
+  today:'Traditionally Siddhashrama, today Buxar, Bihar.'},
+ {place:'mithila',ph:'prelude',title:'The bow of Shiva',dev:'मिथिला',cam:[84.6,26.2,230],
+  legs:[{a:'buxar',b:'mithila',k:'rama',s:'walk',bend:-.14}],
+  text:'Vishwamitra leads them on to Mithila. On the way, Rama’s arrival frees Ahalya from her long curse. King Janaka has promised his daughter Sita to whoever can string Shiva’s great bow. Rama lifts it and it breaks. Rama marries Sita, and his three brothers marry Sita’s sister Urmila and her two cousins on the same day.',
+  today:'Traditionally Janakpur in Nepal. Sitamarhi in Bihar also claims Sita’s birthplace.'},
+ {place:'ayodhya',ph:'palace',title:'The night before the crown',dev:'अयोध्या',cam:[83,25.5,300],
+  legs:[{a:'mithila',b:'ayodhya',k:'rama',s:'walk',bend:.12}],
+  text:'The brothers return to Ayodhya with their brides, and years of happiness follow. Then Rama is to be crowned. Queen Kaikeyi calls in two old boons from King Dasharatha: her son Bharata is to be king, and Rama must spend fourteen years in the forest. Rama accepts without protest. With Sita and Lakshmana, he leaves the city.',
+  today:'Today: Ayodhya, Uttar Pradesh.'},
+ {place:'sring',ph:'exile',title:'The crossing of the Ganga',dev:'शृंगवेरपुर',cam:[81.5,25.5,200],
+  legs:[{a:'ayodhya',b:'sring',k:'rama',s:'walk',bend:.14}],
+  text:'On the bank of the Ganga the exiles meet Guha, king of the boatmen. He ferries them across and offers his own kingdom as shelter. Rama sets aside his royal clothes and ties his hair in the matted locks of an ascetic.',
+  today:'Traditionally Sringaverapura, today Singraur near Prayagraj, Uttar Pradesh.'},
+ {place:'chitra',ph:'exile',title:'A hut among the hills',dev:'चित्रकूट',cam:[80.5,24.6,200],
+  legs:[{a:'sring',b:'chitra',k:'rama',s:'walk',bend:-.18}],
+  text:'The three settle at Chitrakoot. Bharata arrives with the whole court to bring Rama home. Rama keeps his father’s word and refuses. Bharata takes Rama’s sandals back to Ayodhya and rules in their name, waiting out the fourteen years.',
+  today:'Today: Chitrakoot, on the Uttar Pradesh and Madhya Pradesh border.'},
+ {place:'dandaka',ph:'exile',title:'Into the great forest',dev:'दण्डकारण्य',cam:[79.5,22,360],
+  legs:[{a:'chitra',b:'dandaka',k:'rama',s:'walk',bend:.14}],
+  text:'Years pass in the Dandaka forest, moving from one sage’s hermitage to the next. Rama promises the sages protection from the demons who wreck their rites. He and Lakshmana fight them off, and the forest grows more dangerous.',
+  today:'Traditionally a forest belt across Chhattisgarh, Odisha and Maharashtra.'},
+ {place:'panchavati',ph:'taken',title:'The golden deer',dev:'पंचवटी',cam:[76,16,570],
+  legs:[{a:'dandaka',b:'panchavati',k:'rama',s:'walk',bend:-.12},{a:'panchavati',b:'lanka',k:'ravana',s:'ravana',bend:.18}],
+  text:'At Panchavati, beside the Godavari, they build a home. Surpanakha’s humiliation brings Ravana’s attention. A golden deer, the demon Maricha in disguise, lures Rama away, and Lakshmana follows. Ravana seizes Sita and carries her through the sky to Lanka.',
+  today:'Today: Panchavati, Nashik, Maharashtra.'},
+ {place:'lepakshi',ph:'taken',title:'The fall of Jatayu',dev:'लेपाक्षी',cam:[76,16,360],
+  legs:[{a:'panchavati',b:'lepakshi',k:'rama',s:'walk',bend:.1}],
+  text:'Rama and Lakshmana return to an empty hut and search south. They find the vulture Jatayu, mortally wounded after trying to stop Ravana. With his last breath he tells them which way Ravana flew. Rama performs his funeral rites.',
+  today:'Tradition places this at Lepakshi, Andhra Pradesh.'},
+ {place:'kishkindha',ph:'search',title:'Hanuman and the vanara king',dev:'किष्किन्धा',cam:[76.8,14.6,300],
+  legs:[{a:'lepakshi',b:'kishkindha',k:'rama',s:'walk',bend:.1}],
+  text:'Near Lake Pampa the old ascetic Shabari offers Rama berries, and Hanuman, minister of the exiled Sugriva, meets the brothers. Rama and Sugriva pledge friendship. Rama defeats Vali, Sugriva takes the throne, and the vanaras scatter in every direction to find Sita.',
+  today:'Today: the Hampi and Anegundi area, Karnataka.'},
+ {place:'mahendra',ph:'search',title:'The southern search party',dev:'महेन्द्रगिरि',cam:[77,11.5,340],
+  legs:[{a:'kishkindha',b:'mahendra',k:'hanuman',s:'search',bend:-.1}],
+  text:'The southern party under Angada and Hanuman reaches the sea. Sampati, Jatayu’s brother, can see Lanka a hundred yojanas across the water. Jambavan reminds Hanuman of the strength he has forgotten, and the mountain shakes as Hanuman prepares to leap.',
+  today:'Traditionally the Mahendragiri hills of the far south.'},
+ {place:'lanka',ph:'search',title:'Hanuman crosses the sea',dev:'लंका',cam:[79,9,300],
+  legs:[{a:'mahendra',b:'lanka',k:'hanuman',s:'leap',bend:.3}],
+  text:'Hanuman leaps across the ocean, past Surasa and Simhika, and lands in Lanka. In the Ashoka grove he finds Sita and gives her Rama’s ring. Captured, he lets Ravana’s guards set his tail alight, and burns much of the city before returning.',
+  today:'Traditionally Sri Lanka, identified with Ravana’s Lanka.'},
+ {place:'rameswaram',ph:'war',title:'A bridge across the sea',dev:'रामेश्वरम्',cam:[77.6,11.8,360],
+  legs:[{a:'kishkindha',b:'rameswaram',k:'rama',s:'march',bend:.1}],
+  text:'Rama marches south with the vanara army to the shore at Rameswaram. Ravana’s brother Vibhishana, who had urged Ravana to return Sita, joins Rama. Nala directs the army as they lay stones on the water, and the Setu begins to rise toward Lanka.',
+  today:'Today: Rameswaram, Tamil Nadu. The shoals are known as Ram Setu or Adam’s Bridge.'},
+ {place:'lanka',ph:'war',title:'The war for Lanka',dev:'लंका',cam:[80,8.5,230],
+  legs:[{a:'rameswaram',b:TALAI,k:'rama',s:'bridge',bend:0},{a:TALAI,b:'lanka',k:'rama',s:'march',bend:.05}],
+  text:'The armies cross the Setu and meet before the golden city. Kumbhakarna and Indrajit fall. At last Rama faces Ravana and ends him, a victory remembered each year at Dussehra. Vibhishana is crowned king of Lanka, and Sita is free.',
+  today:'Traditionally the highlands and coast of Sri Lanka.'},
+ {place:'ayodhya',ph:'home',title:'The return',dev:'अयोध्या',cam:[81,17,430],
+  legs:[{a:'lanka',b:'ayodhya',k:'pushpaka',s:'fly',bend:.12}],
+  text:'The fourteen years are over. Rama, Sita and Lakshmana fly home in the Pushpaka Vimana. Ayodhya lights rows of lamps to welcome them, remembered as the origin of Diwali. Bharata returns the sandals, and Rama is crowned.',
+  today:'Today: Ayodhya, where the story began.'}
+];
+var N=steps.length;
+
+/* ---------- kingdoms (tradition; regions are loose) ---------- */
+var KINGS=[
+ {id:'kosala',name:'Kosala',dev:'कोसल',c:'#ffb300',act:[0,15],lab:[82.4,27.7,'Kosala'],
+  poly:[[80.8,28.0],[82.8,28.2],[84.0,27.2],[83.9,26.4],[82.6,26.1],[81.2,26.3],[80.5,27.0]],
+  capital:'Ayodhya',dynasty:'Ikshvaku, the Solar dynasty (also called the Raghu line)',today:'Eastern Uttar Pradesh',
+  rulers:[[0,'Dasharatha'],[5,'Dasharatha, who dies of grief days after Rama leaves'],[6,'Bharata, ruling as regent in Rama’s name from Nandigram'],[15,'Rama, newly crowned']],
+  role:'Home kingdom of the heroes. A succession crisis here starts the exile.',
+  allies:[[0,'Dasharatha married Kaikeyi of Kekaya'],[3,'Allied with Videha through the four royal weddings'],[5,'Befriended by Guha of the Nishadas'],[10,'Rama pledges friendship with Sugriva of Kishkindha'],[13,'Vibhishana of Lanka joins Rama’s side']]},
+ {id:'videha',name:'Videha',dev:'विदेह',c:'#2fa36b',act:[3,4],lab:[85.8,27.55,'Videha'],
+  poly:[[84.8,27.4],[86.6,27.5],[87.3,26.6],[86.7,25.9],[85.2,25.9],[84.6,26.6]],
+  capital:'Mithila',dynasty:'Videha, the house of Janaka (traditionally descended from Nimi)',today:'North Bihar and eastern Nepal',
+  rulers:[[3,'Janaka, also called Seeradhwaja']],
+  role:'Sita’s homeland. Its king’s bow contest leads to the marriage alliance with Kosala.',
+  allies:[[3,'Sita and Urmila marry Rama and Lakshmana'],[3,'Janaka’s brother Kushadhvaja of Sankasya gives his daughters Mandavi and Shrutakirti to Bharata and Shatrughna'],[3,'Welcomes Vishwamitra and the two princes as guests']]},
+ {id:'kekaya',name:'Kekaya',dev:'केकय',c:'#e8574a',act:[1,6],lab:[73.3,32.4,'Kekaya'],
+  poly:[[71.8,33.2],[74.2,33.6],[75.2,32.2],[74.2,31.0],[72.4,31.2]],
+  capital:'Rajagriha (also called Girivraja)',dynasty:'Kekaya',today:'Traditionally the north-west Punjab region',
+  rulers:[[1,'Ashvapati, Kaikeyi’s father']],
+  role:'Queen Kaikeyi’s kingdom. Bharata is away here with his uncle Yudhajit when the exile is ordered.',
+  allies:[[1,'Kaikeyi, its princess, is Dasharatha’s queen'],[1,'Tradition says Dasharatha pledged the throne to Kaikeyi’s son at the marriage'],[4,'Bharata and Shatrughna are away here as the crowning is planned'],[6,'Messengers bring Bharata home after Dasharatha’s death']]},
+ {id:'nishada',name:'Nishada land',dev:'निषाद',c:'#1aa6b7',act:[5,6],lab:[81.6,24.95,'Nishada land'],
+  poly:[[81.0,25.95],[82.1,26.0],[82.4,25.4],[81.7,25.0],[81.1,25.2]],
+  capital:'Sringaverapura',dynasty:'Nishada, a forest river-people',today:'Singraur near Prayagraj, Uttar Pradesh',
+  rulers:[[5,'Guha, chief of the Nishadas']],
+  role:'Guards the crossing of the Ganga at the edge of Kosala.',
+  allies:[[5,'Guha ferries Rama across and offers his kingdom as shelter'],[6,'Guha first suspects Bharata, then helps his army cross the Ganga']]},
+ {id:'janasthana',name:'Janasthana',dev:'जनस्थान',c:'#8e44ad',act:[8,8],lab:[74.6,21.15,'Janasthana'],
+  poly:[[73.2,20.9],[74.8,21.0],[75.4,19.9],[74.6,19.0],[73.4,19.3]],
+  capital:'A fortified camp near Panchavati',dynasty:'Rakshasa outpost of Ravana’s Lanka',today:'Traditionally the Nashik area, Maharashtra',
+  rulers:[[8,'Khara, Ravana’s kinsman, with his commander Dushana']],
+  role:'Ravana’s forward post in Dandaka. Its fall after Surpanakha’s humiliation turns Ravana against Rama.',
+  allies:[[8,'Garrisoned by 14,000 rakshasas loyal to Ravana'],[8,'Destroyed by Rama after it attacks his hermitage']]},
+ {id:'kishkindha',name:'Kishkindha',dev:'किष्किन्धा',c:'#c0602a',act:[10,14],lab:[76.4,16.35,'Vanara realm'],
+  poly:[[75.4,16.3],[77.4,16.2],[77.8,14.8],[76.6,13.9],[75.3,14.4]],
+  capital:'Kishkindha',dynasty:'Vanara, the monkey-folk',today:'The Hampi and Anegundi region, Karnataka',
+  rulers:[[10,'Vali at first, then Sugriva after Rama’s help'],[11,'Sugriva']],
+  role:'Hanuman’s kingdom. Its army becomes Rama’s army.',
+  allies:[[10,'Sugriva shelters on Rishyamukha hill, in fear of his brother Vali'],[10,'Rama and Sugriva pledge friendship; Rama defeats Vali'],[11,'Search parties are sent out in all four directions'],[13,'Its army marches with Rama to the sea']]},
+ {id:'pandya',name:'Pandya',dev:'पाण्ड्य',c:'#2f6fdb',act:[11,11],lab:[77.2,10.75,'Pandya'],
+  poly:[[77.3,10.2],[78.8,10.2],[79.1,9.3],[78.0,8.4],[77.4,8.9]],
+  capital:'Kavata, the golden-gated city, in Valmiki’s account',dynasty:'Pandya',today:'Southern Tamil Nadu',
+  rulers:[[11,'Not named in the epic']],
+  role:'One of the southern lands Sugriva tells the search parties to scour for Sita.',
+  allies:[[11,'Named alongside the Chola and Kerala lands in Sugriva’s search instructions']]},
+ {id:'lanka',name:'Lanka',dev:'लंका',c:'#d63b6b',act:[1,15],lab:[80.5,5.35,'Ravana’s realm'],
+  poly:[[79.9,9.7],[80.7,9.3],[81.6,7.8],[81.4,6.4],[80.4,5.9],[79.8,6.9],[79.8,8.6]],
+  capital:'Lanka',dynasty:'Rakshasa; Ravana descends from the sage Pulastya',today:'Traditionally Sri Lanka',
+  rulers:[[1,'Ravana, the ten-headed'],[14,'Vibhishana, crowned after Ravana’s fall']],
+  role:'The antagonist’s kingdom, where Sita is held.',
+  allies:[[1,'Ravana’s tyranny over gods and men is why the gods ask Vishnu to be born as Rama'],[8,'Ravana abducts Sita from Panchavati'],[13,'Ravana’s brother Vibhishana defects to Rama'],[14,'Vibhishana is crowned king of Lanka']]},
+ /* tier 2: other realms the epic names, mostly in lists */
+ {id:'kashi',name:'Kashi',dev:'काशी',t:2,c:'#6b7bd6',act:[[1,1],[10,10]],lab:[83.2,25.35,'Kashi'],
+  poly:[[82.6,25.9],[83.8,25.8],[83.9,25.0],[83.0,24.8],[82.5,25.2]],
+  capital:'Varanasi (traditional)',dynasty:'Not named in the epic',today:'Around Varanasi, Uttar Pradesh',
+  rulers:[[1,'Not named; the epic calls him gracious in speech']],
+  role:'Named as a guest kingdom at Dasharatha’s great ritual, and again as an eastern land to search for Sita.',
+  allies:[[1,'Its king is invited to Dasharatha’s great ritual'],[10,'Sugriva names it among the eastern lands to search']]},
+ {id:'anga',name:'Anga',dev:'अंग',t:2,c:'#6b7bd6',act:[[1,1],[10,10]],lab:[87.0,25.05,'Anga'],
+  poly:[[86.6,25.6],[87.9,25.5],[88.0,24.7],[87.0,24.3],[86.4,24.8]],
+  capital:'Champa (traditional)',dynasty:'Not named in the epic',today:'Eastern Bihar and western Bengal',
+  rulers:[[1,'Romapada (also Lomapada), a friend of Dasharatha']],
+  role:'Home of the sage Rishyashringa, who is later brought to Ayodhya to perform the ritual for sons.',
+  allies:[[1,'Romapada is Dasharatha’s friend and is invited to the ritual'],[1,'Rishyashringa, married to Shanta, Dasharatha’s daughter raised by Romapada, conducts the ritual'],[10,'Sugriva names it among the eastern lands to search']]},
+ {id:'magadha',name:'Magadha',dev:'मगध',t:2,c:'#6b7bd6',act:[[1,1],[10,10]],lab:[86.0,24.15,'Magadha'],
+  poly:[[84.3,25.3],[85.5,25.2],[85.7,24.4],[84.6,24.2],[84.2,24.8]],
+  capital:'Girivraja, today Rajgir (traditional)',dynasty:'Not named in the epic',today:'South Bihar',
+  rulers:[[1,'Not named in the epic']],
+  role:'Named as a guest kingdom at Dasharatha’s great ritual, and again as an eastern land to search.',
+  allies:[[1,'Its king is invited to Dasharatha’s great ritual'],[10,'Sugriva names it among the eastern lands to search']]},
+ {id:'sindhu',name:'Sindhu-Sauvira',dev:'सिन्धु-सौवीर',t:2,c:'#6b7bd6',act:[1,1],lab:[68.9,27.0,'Sindhu-Sauvira'],
+  poly:[[67.5,27.8],[70.0,28.0],[70.4,25.8],[68.4,24.8],[67.2,26.0]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'Sindh and southern Punjab, Pakistan',
+  rulers:[[1,'Not named in the epic']],
+  role:'A western kingdom named among those invited to Dasharatha’s great ritual.',
+  allies:[[1,'Its king is invited to Dasharatha’s great ritual']]},
+ {id:'saurashtra',name:'Saurashtra',dev:'सौराष्ट्र',t:2,c:'#6b7bd6',act:[1,1],lab:[70.2,21.7,'Saurashtra'],
+  poly:[[69.2,22.2],[70.8,22.5],[71.2,21.2],[70.0,20.8]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'The Kathiawar peninsula, Gujarat',
+  rulers:[[1,'Not named in the epic']],
+  role:'A western kingdom named among those invited to Dasharatha’s great ritual.',
+  allies:[[1,'Its king is invited to Dasharatha’s great ritual']]},
+ {id:'kuru',name:'Kuru',dev:'कुरु',t:2,c:'#6b7bd6',act:[10,10],lab:[76.8,29.25,'Kuru'],
+  poly:[[76.0,29.8],[77.6,29.9],[77.9,28.5],[76.6,28.3],[75.9,29.0]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'Around Delhi and Haryana',
+  rulers:[[10,'Not named in the epic']],
+  role:'Named among the northern lands the search parties must scour for Sita.',
+  allies:[[10,'Sugriva names it among the northern lands to search']]},
+ {id:'kamboja',name:'Kamboja',dev:'कम्बोज',t:2,c:'#6b7bd6',act:[10,10],lab:[70.9,34.7,'Kamboja'],
+  poly:[[69.6,35.2],[71.8,35.4],[72.2,34.2],[70.4,34.0]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'Traditionally the far north-west, beyond the Indus',
+  rulers:[[10,'Not named in the epic']],
+  role:'Named among the far northern lands the search parties must scour.',
+  allies:[[10,'Sugriva names it among the northern lands to search']]},
+ {id:'vidarbha',name:'Vidarbha',dev:'विदर्भ',t:2,c:'#6b7bd6',act:[11,11],lab:[78.4,20.75,'Vidarbha'],
+  poly:[[77.2,21.4],[79.4,21.5],[79.9,20.2],[78.4,19.5],[77.0,20.2]],
+  capital:'Kundina (traditional)',dynasty:'Not named in the epic',today:'Eastern Maharashtra',
+  rulers:[[11,'Not named in the epic']],
+  role:'A southern land named in the instructions to the search party led by Angada and Hanuman.',
+  allies:[[11,'Sugriva names it among the southern lands to search']]},
+ {id:'kalinga',name:'Kalinga',dev:'कलिंग',t:2,c:'#6b7bd6',act:[11,11],lab:[85.0,20.4,'Kalinga'],
+  poly:[[84.0,21.0],[86.0,21.0],[86.2,19.6],[84.8,18.8],[83.8,19.6]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'The Odisha coast',
+  rulers:[[11,'Not named in the epic']],
+  role:'A southern land named in the instructions to the search party.',
+  allies:[[11,'Sugriva names it among the southern lands to search']]},
+ {id:'andhra',name:'Andhra',dev:'आन्ध्र',t:2,c:'#6b7bd6',act:[11,11],lab:[79.6,17.7,'Andhra'],
+  poly:[[78.2,18.2],[80.6,18.3],[81.0,16.6],[79.4,15.8],[78.0,16.8]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'Telangana and Andhra Pradesh',
+  rulers:[[11,'Not named in the epic']],
+  role:'A southern land named in the instructions to the search party.',
+  allies:[[11,'Sugriva names it among the southern lands to search']]},
+ {id:'chola',name:'Chola',dev:'चोल',t:2,c:'#6b7bd6',act:[11,11],lab:[79.3,11.65,'Chola'],
+  poly:[[78.7,11.9],[79.9,11.8],[79.9,10.3],[78.8,10.4],[78.4,11.1]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'The Kaveri delta, Tamil Nadu',
+  rulers:[[11,'Not named in the epic']],
+  role:'Named with Pandya and Kerala among the far southern lands on the search route.',
+  allies:[[11,'Named alongside Pandya and Kerala in Sugriva’s search instructions']]},
+ {id:'kerala',name:'Kerala',dev:'केरल',t:2,c:'#6b7bd6',act:[11,11],lab:[75.0,10.9,'Kerala'],
+  poly:[[75.6,12.0],[76.6,11.4],[77.0,9.2],[76.2,9.4],[75.6,10.6]],
+  capital:'Not named in the epic',dynasty:'Not named in the epic',today:'The Kerala coast',
+  rulers:[[11,'Not named in the epic']],
+  role:'Named with Pandya and Chola among the far southern lands on the search route.',
+  allies:[[11,'Named alongside Pandya and Chola in Sugriva’s search instructions']]}
+];
+
+
+function pt(x){return typeof x==='string'?P(places[x].ll[0],places[x].ll[1]):P(x[0],x[1]);}
+
+/* ---------- build the map ---------- */
+var svg=document.getElementById('map');
+var out=[];
+out.push('<defs>'+
+ '<linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f4f78"/><stop offset=".55" stop-color="#15385c"/><stop offset="1" stop-color="#0d2642"/></linearGradient>'+
+ '<linearGradient id="landG" gradientUnits="userSpaceOnUse" x1="0" y1="120" x2="0" y2="640"><stop offset="0" stop-color="#ecc77c"/><stop offset=".5" stop-color="#e2ac5f"/><stop offset="1" stop-color="#d79c58"/></linearGradient>'+
+ '<filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>'+
+ '<clipPath id="landclip"><path d="'+landD+'"/><path d="'+lankaD+'"/></clipPath>'+
+ '</defs>');
+out.push('<rect x="-900" y="-900" width="2400" height="2500" fill="url(#seaG)"/>');
+
+/* waves */
+(function(){
+  var r=rng(11),s='';
+  for(var i=0;i<70;i++){
+    var x=-120+r()*840,y=-20+r()*740;
+    s+='<path d="M'+f(x)+' '+f(y)+'q3 -3 6 0t6 0" fill="none" stroke="#8fc0e4" stroke-width=".9" opacity="'+f(.18+r()*.25)+'"/>';
+  }
+  out.push('<g>'+s+'</g>');
+})();
+/* ships */
+out.push('<g transform="translate('+P(70.8,17.5).map(f).join(' ')+') scale(.9)" opacity=".9">'+glyph.boat+'</g>');
+out.push('<g transform="translate('+P(86.6,15.2).map(f).join(' ')+') scale(.8)" opacity=".9">'+glyph.boat+'</g>');
+out.push('<g transform="translate('+P(75.2,5.2).map(f).join(' ')+') scale(.8)" opacity=".85">'+glyph.boat+'</g>');
+
+/* shallows + land */
+out.push('<g fill="none" stroke-linejoin="round" stroke="#4f9fd0"><path d="'+landD+'" stroke-width="15" opacity=".25"/><path d="'+landD+'" stroke-width="7" opacity=".35"/>'+
+ '<path d="'+lankaD+'" stroke-width="15" opacity=".25"/><path d="'+lankaD+'" stroke-width="7" opacity=".35"/></g>');
+out.push('<path d="'+landD+'" fill="url(#landG)" stroke="#8a4f1c" stroke-width="1.6" stroke-linejoin="round"/>');
+out.push('<path d="'+lankaD+'" fill="url(#landG)" stroke="#8a4f1c" stroke-width="1.6" stroke-linejoin="round"/>');
+
+/* painted terrain */
+(function(){
+  var blobs=[
+   [82.5,26.4,150,34,'#79a352',.5,8],[73.5,30.5,70,30,'#8fb35e',.4,0],[71.5,27,55,45,'#f6dc9c',.75,0],
+   [77.5,17.5,120,70,'#c98d4a',.4,0],[81.3,20.6,62,52,'#2f6b3d',.5,0],[74.3,14.5,22,110,'#3f7d4e',.45,-12],
+   [76.6,10.3,25,50,'#3f7d4e',.45,-25],[93,26,50,45,'#3f7d4e',.5,0],[88.8,22.5,45,22,'#5a9a5a',.45,0],
+   [80.7,7.5,30,50,'#4f9150',.45,0],[80.5,12.5,18,60,'#6aa05a',.3,10]
+  ];
+  var s='',gd='';
+  blobs.forEach(function(b,n){
+    var c=P(b[0],b[1]);
+    gd+='<radialGradient id="bg'+n+'"><stop offset="0" stop-color="'+b[4]+'" stop-opacity="'+Math.min(1,b[5]*1.25)+'"/><stop offset=".55" stop-color="'+b[4]+'" stop-opacity="'+f(b[5]*.7)+'"/><stop offset="1" stop-color="'+b[4]+'" stop-opacity="0"/></radialGradient>';
+    s+='<ellipse cx="'+f(c[0])+'" cy="'+f(c[1])+'" rx="'+f(b[2]*1.3)+'" ry="'+f(b[3]*1.3)+'" fill="url(#bg'+n+')" transform="rotate('+b[6]+' '+f(c[0])+' '+f(c[1])+')"/>';
+  });
+  out.push('<g clip-path="url(#landclip)"><defs>'+gd+'</defs>'+s+'<path d="'+plateauD+'" fill="#d5ccba"/><path d="'+plateauD+'" fill="#ffffff" opacity=".18" transform="translate(0 -6)"/></g>');
+})();
+
+/* rivers */
+(function(){
+  var rivers=[
+   [[78.5,30.5],[78.6,29.3],[79.8,27.6],[80.4,26.5],[81.85,25.45],[83,25.3],[85.1,25.6],[87,25.0],[88.3,24],[89.5,23],[90.3,22.2]],
+   [[78.0,30.6],[77.2,28.6],[78,27.2],[79.5,26.2],[80.6,25.8],[81.85,25.45]],
+   [[80.3,29.6],[81.0,28.1],[82.2,26.8],[83.5,26.2],[84.5,26.0]],
+   [[73.5,19.95],[74.8,19.4],[76.5,19.0],[78.4,18.9],[79.7,18.6],[80.8,17.5],[81.7,16.9],[82.3,16.7]],
+   [[81.7,22.7],[79.9,22.8],[78,22.4],[76.4,22.1],[74.6,21.8],[73,21.7]]
+  ];
+  var s='';
+  rivers.forEach(function(r){var d=smooth(px(r),false);s+='<path d="'+d+'" fill="none" stroke="#2b7fb4" stroke-width="3.2" stroke-linecap="round" opacity=".5"/><path d="'+d+'" fill="none" stroke="#7cc3ea" stroke-width="1.8" stroke-linecap="round"/>';});
+  out.push('<g>'+s+'</g>');
+  var l1=P(84.3,25.9),l2=P(76.6,19.35),l3=P(77.3,22.55);
+  out.push('<text class="rivlbl" x="'+f(l1[0])+'" y="'+f(l1[1])+'">Ganga</text><text class="rivlbl" x="'+f(l2[0])+'" y="'+f(l2[1])+'">Godavari</text><text class="rivlbl" x="'+f(l3[0])+'" y="'+f(l3[1])+'">Narmada</text>');
+})();
+
+/* mountains, hills, forests */
+(function(){
+  var r=rng(5),s='';
+  var pts=himPx.slice(0,13);
+  along(pts,13,function(x,y){s+=peak(x+(r()-.5)*5,y+9+r()*4,15+r()*9);});
+  var lower=pts.map(function(p){return [p[0],p[1]+15];});
+  along(lower,17,function(x,y){s+=peak(x+(r()-.5)*6,y+6,9+r()*5).replace(/#7f8ea6/g,'#8aa07e').replace(/#566684/g,'#4f6a47');});
+  out.push('<g>'+s+'</g>');
+  var h='';
+  var vind=px([[73.5,22.9],[75.5,23.2],[77.5,23.1],[79.5,22.9],[81.5,22.6],[83.5,22.3]]);
+  along(vind,10,function(x,y){h+=mound(x,y+(r()-.5)*6,.9+r()*.5,'#b9824a');});
+  var wg=px([[73.3,18.9],[73.6,17.3],[74.0,16],[74.5,14.7],[75.0,13.5],[75.5,12.2],[76.0,11],[76.6,10]]);
+  along(wg,9,function(x,y){h+=mound(x+6,y+(r()-.5)*4,.9+r()*.4,'#7fa06a');});
+  var eg=px([[82.4,18.4],[81,16.8],[79.4,14.6],[78.7,12.6]]);
+  along(eg,10,function(x,y){h+=mound(x,y,.8+r()*.4,'#a98a54');});
+  out.push('<g>'+h+'</g>');
+  var t='';
+  function cluster(lo,la,count,rad,cols){
+    var c=P(lo,la);
+    for(var i=0;i<count;i++){
+      var a=r()*6.283,d=Math.sqrt(r())*rad;
+      t+=tree(c[0]+Math.cos(a)*d,c[1]+Math.sin(a)*d*.85,.7+r()*.35,cols[Math.floor(r()*cols.length)]);
+    }
+  }
+  var g=['#2f6b3d','#3f7d4e','#2c5e3a'];
+  cluster(81.3,20.6,30,48,g);cluster(79,19.4,10,26,g);cluster(80.6,24.7,8,16,g);cluster(73.9,20.5,7,16,g);
+  cluster(76.5,9.6,10,16,g);cluster(89,22.3,9,20,g);cluster(93,25.8,14,30,g);cluster(75.2,13.2,8,14,g);cluster(83.5,21.2,8,22,g);
+  t=t.replace(/>/g,'>');
+  out.push('<g>'+t+'</g>');
+})();
+
+/* kingdoms layer */
+(function(){
+  var ks='';
+  KINGS.forEach(function(k){
+    var d=smooth(px(k.poly),true),l=P(k.lab[0],k.lab[1]);
+    var t2=k.t===2;
+    ks+='<g class="king'+(t2?' t2':'')+'" data-id="'+k.id+'"><path class="kshape" d="'+d+'" fill="'+k.c+'" fill-opacity="'+(t2?'.24':'.38')+'" stroke="#2a1608" stroke-opacity="'+(t2?'.4':'.55')+'" stroke-width="'+(t2?'1.3':'1.8')+'" stroke-dasharray="'+(t2?'2 4':'5 4')+'" stroke-linejoin="round"/>'+
+      '<text class="klbl'+(t2?' t2':'')+'" x="'+f(l[0])+'" y="'+f(l[1])+'" text-anchor="middle">'+k.lab[2]+'</text></g>';
+  });
+  out.push('<g id="kings" class="kings">'+ks+'</g>');
+})();
+
+/* labels for seas and the range */
+(function(){
+  var a=P(69.4,15.8),b=P(85.8,13.2),c=P(76.8,4.4),d=P(84.6,31.3);
+  out.push('<text class="sealbl" x="'+f(a[0])+'" y="'+f(a[1])+'">Arabian Sea</text><text class="sealbl" x="'+f(b[0])+'" y="'+f(b[1])+'">Bay of Bengal</text><text class="sealbl" x="'+f(c[0])+'" y="'+f(c[1])+'">Indian Ocean</text><text class="sealbl" style="fill:#5d6a80;opacity:.85" x="'+f(d[0])+'" y="'+f(d[1])+'">Himalaya</text>');
+  var q=P(59.6,6.6);
+  out.push('<g transform="translate('+f(q[0])+' '+f(q[1])+')" opacity=".8"><circle r="22" fill="none" stroke="#f2c14e" stroke-width="1"/><path d="M0 -26 5 -5 26 0 5 5 0 26 -5 5 -26 0 -5 -5Z" fill="#f2c14e" stroke="#1b1209" stroke-width=".8"/><path d="M0 -14 3 -3 14 0 3 3 0 14 -3 3 -14 0 -3 -3Z" fill="#d9432a"/><text x="0" y="-31" text-anchor="middle" class="lbl" style="font-size:9px">N</text></g>');
+})();
+
+/* route legs */
+var legs=[];
+var legSvg='';
+var k=0;
+steps.forEach(function(st,si){
+  st.legObjs=[];
+  st.legs.forEach(function(lg){
+    var a=pt(lg.a),b=pt(lg.b);
+    var dx=b[0]-a[0],dy=b[1]-a[1],len=Math.sqrt(dx*dx+dy*dy)||1;
+    var mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+    var cx=mx+(-dy/len)*len*lg.bend,cy=my+(dx/len)*len*lg.bend;
+    var d='M'+f(a[0])+' '+f(a[1])+'Q'+f(cx)+' '+f(cy)+' '+f(b[0])+' '+f(b[1]);
+    var S=STYLES[lg.s];
+    legSvg+='<g class="leg" data-k="'+k+'" style="visibility:hidden"><path class="geo" d="'+d+'" fill="none" stroke="#1b0f06" stroke-opacity=".6" stroke-width="'+(S.w+3)+'" stroke-dasharray="'+S.dash+'" stroke-linecap="'+S.cap+'"/>'+
+      '<path class="col" d="'+d+'" fill="none" stroke="'+S.c+'" stroke-width="'+S.w+'" stroke-dasharray="'+S.dash+'" stroke-linecap="'+S.cap+'"/></g>';
+    var obj={step:si,kind:lg.k,style:lg.s,idx:k};
+    legs.push(obj);st.legObjs.push(obj);k++;
+  });
+});
+out.push('<g id="legs">'+legSvg+'</g>');
+
+/* pins */
+(function(){
+  var s='';
+  Object.keys(places).forEach(function(id){
+    var p=places[id],c=P(p.ll[0],p.ll[1]);
+    var lx=0,ly=0,an='middle';
+    if(p.lab==='r'){lx=19;ly=4;an='start';}
+    if(p.lab==='l'){lx=-19;ly=4;an='end';}
+    if(p.lab==='t'){lx=0;ly=-20;an='middle';}
+    if(p.lab==='b'){lx=0;ly=28;an='middle';}
+    s+='<g class="pin future" data-id="'+id+'" transform="translate('+f(c[0])+' '+f(c[1])+')"><circle class="pulse" r="15"/><circle class="disc" r="14"/><g transform="scale(.92)">'+glyph[p.g]+'</g>'+
+       '<text class="lbl" x="'+lx+'" y="'+ly+'" text-anchor="'+an+'">'+p.name+'</text></g>';
+  });
+  out.push(s);
+  var ay=P(82.2,26.8),dy='';
+  [[-18,-22],[0,-28],[18,-22],[30,-8]].forEach(function(o){
+    dy+='<g transform="translate('+o[0]+' '+o[1]+')"><circle r="7" fill="rgba(255,209,102,.4)"/><path d="M-4 0Q0 5 4 0Z" fill="#c9702a"/><path class="flame" d="M0 -1Q-3 -5 0 -9Q3 -5 0 -1Z" fill="#ffd166"/></g>';
+  });
+  out.push('<g class="diyas" id="diyas" transform="translate('+f(ay[0])+' '+f(ay[1])+')">'+dy+'</g>');
+})();
+
+/* marker */
+out.push('<g id="marker"><circle r="15" fill="rgba(255,209,102,.4)"/>'+
+ '<g data-k="rama"><circle r="10" fill="#fff3d6" stroke="#d9432a" stroke-width="2"/><circle cx="-1" cy="-4.5" r="2.4" fill="#3a6fb5"/><path d="M-1 -2 -4.5 6.5h7z" fill="#3a6fb5"/><path d="M5 -7Q10.5 0 5 7" fill="none" stroke="#5a3516" stroke-width="1.4"/><path d="M5 -7V7" stroke="#5a3516" stroke-width=".6"/></g>'+
+ '<g data-k="hanuman"><circle r="10" fill="#ffb347" stroke="#b34a00" stroke-width="2"/><circle cx="-2" cy="1.5" r="3.4" fill="#d9432a"/><path d="M-5 6 4 -4" stroke="#5a3516" stroke-width="2" stroke-linecap="round"/><circle cx="5" cy="-5" r="3.2" fill="#f2c14e" stroke="#8a4f1c" stroke-width=".8"/></g>'+
+ '<g data-k="ravana"><circle r="10" fill="#3b1a5a" stroke="#a678e0" stroke-width="2"/><path d="M-6 -1V-6.5L-3 -3.5 0 -8 3 -3.5 6 -6.5V-1Z" fill="#f2c14e"/><circle cx="0" cy="2.5" r="3.8" fill="#e0a070"/></g>'+
+ '<g data-k="pushpaka"><circle r="10" fill="#fff0b8" stroke="#c98b1a" stroke-width="2"/><path d="M-9 0 -3 -3.5 0 1 3 -3.5 9 0 3 3.5 -3 3.5Z" fill="#f2c14e" stroke="#8a4f1c" stroke-width=".8"/><rect x="-3" y="-1" width="6" height="4.4" rx="1" fill="#d9432a"/></g>'+
+ '</g>');
+
+svg.innerHTML=out.join('');
+
+/* measure legs; reveal by building a dash array (no masks, which are slow on phones) */
+Array.prototype.forEach.call(svg.querySelectorAll('.leg'),function(g){
+  var lg=legs[+g.getAttribute('data-k')];
+  lg.g=g;lg.geo=g.querySelector('.geo');lg.col=g.querySelector('.col');
+  lg.L=lg.geo.getTotalLength();
+  lg.full=STYLES[lg.style].dash;
+  lg.pat=lg.full.split(' ').map(Number);
+  lg.p=-1;
+});
+function dashFor(lg,p){
+  var v=lg.L*p,pat=lg.pat,arr=[],acc=0,i=0,big=lg.L+60;
+  while(i<4000){
+    var seg=pat[i%pat.length];
+    if(i%2===0){
+      if(acc+seg>=v){arr.push(Math.max(0.05,v-acc));arr.push(big);break;}
+      arr.push(seg);acc+=seg;
+    }else{
+      if(acc+seg>=v){arr.push(big);break;}
+      arr.push(seg);acc+=seg;
+    }
+    i++;
+  }
+  return arr.join(' ');
+}
+function setProg(lg,p){
+  if(p===lg.p)return;
+  lg.p=p;
+  if(p<=0){lg.g.style.visibility='hidden';return;}
+  lg.g.style.visibility='';
+  var d=p>=1?lg.full:dashFor(lg,p);
+  lg.geo.style.strokeDasharray=d;lg.col.style.strokeDasharray=d;
+}
+
+var marker=document.getElementById('marker');
+var mkKinds={};
+Array.prototype.forEach.call(marker.querySelectorAll('g[data-k]'),function(g){mkKinds[g.getAttribute('data-k')]=g;});
+function setKind(kd){Object.keys(mkKinds).forEach(function(n){mkKinds[n].style.display=(n===kd)?'':'none';});}
+function markerTo(x,y){marker.setAttribute('transform','translate('+f(x)+' '+f(y)+')');}
+function markerOn(lg,p){var pnt=lg.geo.getPointAtLength(lg.L*p);markerTo(pnt.x,pnt.y);}
+
+/* ---------- camera ---------- */
+var stage=document.getElementById('stage'),sheet=document.getElementById('sheet');
+var desk=window.matchMedia('(min-width:900px)');
+function cover(){return desk.matches?0:sheet.offsetHeight;}
+var cam={x:300,y:340,w:600};
+function adj(c){
+  var cw=stage.clientWidth||390,ch=stage.clientHeight||600,Hv=Math.max(140,ch-cover());
+  return {x:c.x,y:c.y,w:Math.max(c.w,cw*(c.w*H/W)/Hv,cw/2.2)};
+}
+function setView(c){
+  var cw=stage.clientWidth||390,ch=stage.clientHeight||600;
+  var upp=c.w/cw,h=ch*upp,off=(cover()/2)*upp;
+  svg.setAttribute('viewBox',f(c.x-c.w/2)+' '+f(c.y-h/2+off)+' '+f(c.w)+' '+f(h));
+}
+function camOf(i){var c=steps[i].cam,p=P(c[0],c[1]);return adj({x:p[0],y:p[1],w:c[2]});}
+function fullCam(){return adj({x:300,y:340,w:600});}
+function lerp(a,b,t){return a+(b-a)*t;}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+var camRaf=0;
+function tweenCam(target,dur){
+  cancelAnimationFrame(camRaf);
+  if(reduce||!dur){cam=target;setView(cam);return;}
+  var c0={x:cam.x,y:cam.y,w:cam.w},t0=performance.now();
+  (function step(now){
+    var e=ease(Math.min(1,(now-t0)/dur));
+    cam={x:lerp(c0.x,target.x,e),y:lerp(c0.y,target.y,e),w:lerp(c0.w,target.w,e)};
+    setView(cam);
+    if(e<1)camRaf=requestAnimationFrame(step);
+  })(t0);
+}
+
+/* ---------- timeline data ---------- */
+var TX=[3,9,17,23,29,33,37,44,62,72,77,83,88,92,96,99];
+var WHEN=['Before Rama’s birth','Rama is born','Rama, about 15','Rama, about 16','Rama, about 25','Exile, day 1','Exile, first weeks','Exile, years 1 to 10','Exile, years 10 to 13','Exile, year 13','Exile, final year','Exile, final year','Exile, final year','Exile, final year','Exile, final months','Exile ends, year 14'];
+var TICKS=[[9,'Age 0'],[20,'16'],[29,'Exile'],[40,'Yr 1'],[60,'Yr 10'],[70,'Yr 13'],[100,'Yr 14']];
+
+/* ---------- UI ---------- */
+var elTitle=document.getElementById('title'),elDev=document.getElementById('dev'),elStory=document.getElementById('story'),
+    elToday=document.getElementById('today'),elPhName=document.getElementById('phName'),elPhDot=document.getElementById('phDot'),
+    elCount=document.getElementById('counter'),elWhen=document.getElementById('elapsed'),btnPlay=document.getElementById('play'),
+    btnPrev=document.getElementById('prev'),btnNext=document.getElementById('next'),btnOv=document.getElementById('overview'),
+    elCh=document.getElementById('chapters'),diyas=document.getElementById('diyas'),sscroll=document.getElementById('sscroll'),
+    grip=document.getElementById('grip'),tl=document.getElementById('tl');
+var chBtns=[],tlDots=[];
+steps.forEach(function(st,i){
+  var b=document.createElement('button');
+  b.type='button';b.textContent=String(i+1);b.setAttribute('aria-label','Step '+(i+1)+': '+st.title);b.title=st.title;
+  b.style.setProperty('--ph',PH[st.ph].c);
+  b.addEventListener('click',function(){stopPlay();goTo(i);});
+  elCh.appendChild(b);chBtns.push(b);
+  var d=document.createElement('i');d.className='tdot';d.style.left=TX[i]+'%';d.style.setProperty('--ph',PH[st.ph].c);
+  tl.appendChild(d);tlDots.push(d);
+});
+TICKS.forEach(function(t){
+  var e=document.createElement('span');e.className='tick'+(t[0]>=100?' end':'');e.style.left=t[0]+'%';e.textContent=t[1];tl.appendChild(e);
+});
+
+var cur=-1,anim=null,playing=false,timer=null,headX=TX[0];
+var kingsOn=false,selK=null;
+function setHead(x){headX=x;tl.style.setProperty('--x',f(x)+'%');}
+
+function renderCard(i){
+  var s=steps[i],ph=PH[s.ph];
+  elTitle.textContent=s.title;elDev.textContent=s.dev;elStory.textContent=s.text;elToday.textContent=s.today;
+  elPhName.textContent=ph.n;elPhDot.style.setProperty('--ph',ph.c);elPhDot.style.background=ph.c;
+  elCount.textContent=(i+1)+' of '+N;elWhen.textContent=WHEN[i];
+  btnPrev.disabled=i===0;btnNext.disabled=i===N-1;
+  chBtns.forEach(function(b,j){
+    if(j===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+    b.classList.toggle('seen',j<i);
+  });
+  tlDots.forEach(function(d,j){d.classList.toggle('on',j<=i);});
+  sscroll.scrollTop=0;
+  updateKings(i);
+}
+function updatePins(i){
+  var visited={};
+  for(var j=0;j<=i;j++)visited[steps[j].place]=true;
+  Array.prototype.forEach.call(svg.querySelectorAll('.pin'),function(p){
+    var id=p.getAttribute('data-id');
+    p.classList.toggle('future',!visited[id]);
+    p.classList.toggle('active',id===steps[i].place);
+  });
+  diyas.classList.toggle('on',i===N-1);
+}
+function setPlayLabel(){
+  btnPlay.textContent=playing?'Pause':(cur===N-1&&!anim?'Replay':'Play');
+}
+function stopPlay(){playing=false;clearTimeout(timer);setPlayLabel();}
+
+function goTo(i,opts){
+  opts=opts||{};
+  i=Math.max(0,Math.min(N-1,i));
+  if(anim){cancelAnimationFrame(anim.raf);anim=null;}
+  clearTimeout(timer);
+  cancelAnimationFrame(camRaf);
+  closeKingdom();
+  var h0=headX;
+  cur=i;
+  var st=steps[i];
+  renderCard(i);updatePins(i);
+  legs.forEach(function(l){setProg(l,l.step<i?1:0);});
+  var target=camOf(i),ls=st.legObjs,h1=TX[i];
+  var instant=opts.instant||reduce;
+  var pl=places[st.place];
+  if(!ls.length){
+    var q=P(pl.ll[0],pl.ll[1]);setKind('rama');markerTo(q[0],q[1]);
+    if(instant){cam=target;setView(cam);setHead(h1);setPlayLabel();finish();return;}
+  }else{
+    setKind(ls[0].kind);markerOn(ls[0],0);
+    if(instant){
+      ls.forEach(function(l){setProg(l,1);});
+      var last=ls[ls.length-1];setKind(last.kind);markerOn(last,1);
+      cam=target;setView(cam);setHead(h1);setPlayLabel();finish();return;
+    }
+  }
+  var c0={x:cam.x,y:cam.y,w:cam.w},t0=performance.now();
+  var lead=ls.length?650:0;
+  var durs=ls.map(function(l){return Math.min(3300,Math.max(1000,l.L/0.1));});
+  var total=durs.reduce(function(a,b){return a+b;},0);
+  var camDur=1500,span=Math.max(camDur,lead+total),end=span+200;
+  anim={raf:0};
+  setPlayLabel();
+  function frame(now){
+    var t=now-t0;
+    var ce=ease(Math.min(1,t/camDur));
+    cam={x:lerp(c0.x,target.x,ce),y:lerp(c0.y,target.y,ce),w:lerp(c0.w,target.w,ce)};
+    setView(cam);
+    setHead(lerp(h0,h1,ease(Math.min(1,t/span))));
+    var tt=t-lead,acc=0,active=-1;
+    for(var m=0;m<ls.length;m++){
+      var d=durs[m];
+      if(tt>=acc+d){setProg(ls[m],1);}
+      else if(tt>acc){setProg(ls[m],ease((tt-acc)/d));}
+      else{setProg(ls[m],0);}
+      if(active<0&&tt<acc+d)active=m;
+      acc+=d;
+    }
+    if(ls.length){
+      var idx=active<0?ls.length-1:active;
+      var st0=0;for(var z=0;z<idx;z++)st0+=durs[z];
+      var p=active<0?1:Math.max(0,Math.min(1,(tt-st0)/durs[idx]));
+      p=ease(p);
+      setKind(ls[idx].kind);markerOn(ls[idx],p);
+    }
+    if(t<end){anim.raf=requestAnimationFrame(frame);}
+    else{anim=null;cam=target;setView(cam);setHead(h1);setPlayLabel();finish();}
+  }
+  anim.raf=requestAnimationFrame(frame);
+}
+function finish(){
+  if(!playing)return;
+  if(cur>=N-1){playing=false;setPlayLabel();return;}
+  var hold=reduce?3500:1800+steps[cur].text.length*9;
+  timer=setTimeout(function(){goTo(cur+1);},hold);
+}
+function startPlay(){
+  if(cur>=N-1&&!anim){playing=true;goTo(0);return;}
+  playing=true;setPlayLabel();
+  if(!anim){clearTimeout(timer);timer=setTimeout(function(){goTo(cur+1);},300);}
+}
+
+btnPlay.addEventListener('click',function(){if(playing)stopPlay();else startPlay();});
+btnNext.addEventListener('click',function(){stopPlay();goTo(cur+1);});
+btnPrev.addEventListener('click',function(){stopPlay();goTo(cur-1);});
+btnOv.addEventListener('click',function(){
+  stopPlay();
+  if(anim){goTo(cur,{instant:true});}
+  tweenCam(fullCam(),1000);
+});
+document.addEventListener('keydown',function(e){
+  if(e.target&&/BUTTON|INPUT|TEXTAREA/.test(e.target.tagName)&&e.key===' ')return;
+  if(e.key==='ArrowRight'){stopPlay();goTo(cur+1);}
+  else if(e.key==='ArrowLeft'){stopPlay();goTo(cur-1);}
+  else if(e.key===' '){e.preventDefault();if(playing)stopPlay();else startPlay();}
+});
+
+/* timeline: tap to jump, drag to scrub */
+function nearest(clientX){
+  var r=tl.getBoundingClientRect(),x=(clientX-r.left)/r.width*100,b=0,bd=1e9;
+  TX.forEach(function(t,i){var dd=Math.abs(t-x);if(dd<bd){bd=dd;b=i;}});
+  return b;
+}
+var down=false,moved=false;
+tl.addEventListener('pointerdown',function(e){down=true;moved=false;try{tl.setPointerCapture(e.pointerId);}catch(_){}stopPlay();});
+tl.addEventListener('pointermove',function(e){
+  if(!down)return;
+  var i=nearest(e.clientX);
+  if(i!==cur){moved=true;goTo(i,{instant:true});}
+});
+tl.addEventListener('pointerup',function(e){
+  if(!down)return;down=false;
+  if(!moved){goTo(nearest(e.clientX));}
+});
+tl.addEventListener('pointercancel',function(){down=false;});
+
+/* story sheet: tap or swipe the grip */
+function refreshCam(smooth){
+  if(cur<0||anim||(drag&&drag.moved))return;
+  tweenCam(camOf(cur),smooth?320:0);
+}
+var sheetEnd=null,main=document.querySelector('.main');
+function finishSheet(){if(sheetEnd){var fn=sheetEnd;sheetEnd=null;fn();}}
+function minH(){
+  var had=sheet.classList.contains('open'),hs=sheet.style.height,mh=sheet.style.maxHeight;
+  sheet.classList.remove('open');sheet.style.height='';sheet.style.maxHeight='';
+  var h=sheet.offsetHeight;
+  if(had)sheet.classList.add('open');
+  sheet.style.height=hs;sheet.style.maxHeight=mh;
+  return h;
+}
+function maxH(){return Math.round(main.clientHeight*0.82);}
+function syncGrip(){
+  var o=sheet.classList.contains('open');
+  grip.setAttribute('aria-expanded',o?'true':'false');
+  grip.setAttribute('aria-label',o?'Drag to resize the story panel, or press to collapse':'Drag to resize the story panel, or press to show the full story');
+}
+function applyH(h,min){
+  h=Math.max(min,Math.min(maxH(),h));
+  if(h<=min+14){sheet.classList.remove('open');sheet.style.height='';sheet.style.maxHeight='';}
+  else{sheet.classList.add('open');sheet.style.maxHeight='none';sheet.style.height=Math.round(h)+'px';}
+  syncGrip();
+  return h;
+}
+function openTarget(){
+  var hs=sheet.style.height,mh=sheet.style.maxHeight,had=sheet.classList.contains('open');
+  sheet.classList.add('open');sheet.style.height='';sheet.style.maxHeight='none';
+  var nat=sheet.offsetHeight;
+  sheet.classList.toggle('open',had);sheet.style.height=hs;sheet.style.maxHeight=mh;
+  return Math.min(nat,Math.round(main.clientHeight*0.6));
+}
+function animateTo(target){
+  finishSheet();
+  var min=minH(),h0=sheet.offsetHeight;
+  var collapsing=target<=min+14;
+  var h1=collapsing?min:Math.min(maxH(),Math.max(min+30,target));
+  if(reduce||h0===h1){applyH(h1,min);refreshCam(true);return;}
+  sheet.classList.add('open','moving');
+  sheet.style.maxHeight='none';
+  sheet.style.height=h0+'px';
+  void sheet.offsetHeight;
+  sheet.style.transition='height .38s cubic-bezier(.22,.8,.24,1)';
+  sheet.style.height=h1+'px';
+  var done=false,tm;
+  function end(){
+    if(done)return;done=true;clearTimeout(tm);
+    sheet.removeEventListener('transitionend',onTe);
+    sheet.style.transition='';
+    sheet.classList.remove('moving');
+    applyH(h1,min);
+    sheetEnd=null;refreshCam(true);
+  }
+  function onTe(e){if(e.target===sheet&&e.propertyName==='height')end();}
+  sheet.addEventListener('transitionend',onTe);
+  tm=setTimeout(end,520);
+  sheetEnd=end;
+}
+function toggleSheet(){
+  var min=minH();
+  if(sheet.classList.contains('open')&&sheet.offsetHeight>min+14)animateTo(min);
+  else animateTo(openTarget());
+}
+document.getElementById('sscroll').addEventListener('click',function(){
+  if(!desk.matches&&!sheet.classList.contains('open'))animateTo(openTarget());
+});
+
+/* drag the handle to set the panel height anywhere you like; tap it to toggle */
+var drag=null,kt=null;
+grip.addEventListener('pointerdown',function(e){
+  finishSheet();
+  drag={y0:e.clientY,h0:sheet.offsetHeight,min:minH(),moved:false};
+  try{grip.setPointerCapture(e.pointerId);}catch(_){}
+});
+grip.addEventListener('pointermove',function(e){
+  if(!drag)return;
+  var dy=drag.y0-e.clientY;
+  if(!drag.moved&&Math.abs(dy)>5)drag.moved=true;
+  if(drag.moved)applyH(drag.h0+dy,drag.min);
+});
+function endDrag(){
+  if(!drag)return;
+  var d=drag;drag=null;
+  if(!d.moved)toggleSheet();else refreshCam(true);
+}
+grip.addEventListener('pointerup',endDrag);
+grip.addEventListener('pointercancel',function(){drag=null;});
+grip.addEventListener('click',function(e){if(e.detail===0)toggleSheet();});
+grip.addEventListener('keydown',function(e){
+  if(e.key!=='ArrowUp'&&e.key!=='ArrowDown')return;
+  e.preventDefault();
+  var min=minH();
+  applyH(sheet.offsetHeight+(e.key==='ArrowUp'?48:-48),min);
+  clearTimeout(kt);kt=setTimeout(function(){refreshCam(true);},220);
+});
+
+/* kingdoms: toggle, regions, info card */
+var KMAP={};KINGS.forEach(function(k){KMAP[k.id]=k;});
+var kingsEl=svg.querySelector('#kings'),kbox=document.getElementById('kbox'),kchips=document.getElementById('kchips'),kchips2=document.getElementById('kchips2'),
+    kingTog=document.getElementById('kingtog');
+function kActive(k,i){
+  var a=k.act;
+  if(typeof a[0]==='number')return i>=a[0]&&i<=a[1];
+  for(var j=0;j<a.length;j++){if(i>=a[j][0]&&i<=a[j][1])return true;}
+  return false;
+}
+function latestOf(list,i){var r=null;list.forEach(function(x){if(x[0]<=i)r=x;});return r;}
+function updateKings(i){
+  kingsEl.classList.toggle('on',kingsOn);
+  Array.prototype.forEach.call(kingsEl.querySelectorAll('.king'),function(g){
+    g.classList.toggle('act',kActive(KMAP[g.getAttribute('data-id')],i));
+  });
+  kchips.innerHTML='';kchips2.innerHTML='';
+  var any=false,any2=false;
+  if(kingsOn){
+    KINGS.forEach(function(k){
+      if(!kActive(k,i))return;
+      var b=document.createElement('button');b.type='button';b.className='kchip';
+      var dot=document.createElement('i');dot.style.background=k.c;
+      b.appendChild(dot);b.appendChild(document.createTextNode(k.name));
+      b.addEventListener('click',function(){openKingdom(k.id);});
+      if(k.t===2){kchips2.appendChild(b);any2=true;}else{kchips.appendChild(b);any=true;}
+    });
+  }
+  kchips.style.display=any?'':'none';
+  document.getElementById('kh2').style.display=any2?'':'none';
+  kchips2.style.display=any2?'':'none';
+  kbox.hidden=!(kingsOn&&(any||any2));
+}
+function addRow(dl,label,val){
+  var dt=document.createElement('dt'),dd=document.createElement('dd');
+  dt.textContent=label;dd.textContent=val;dl.appendChild(dt);dl.appendChild(dd);
+}
+function renderKingdom(k){
+  var i=cur,r=latestOf(k.rulers,i);
+  document.getElementById('kSw').style.background=k.c;
+  document.getElementById('kName').textContent=k.name;
+  document.getElementById('kDev').textContent=k.dev;
+  document.getElementById('kRuler').textContent='Ruler at this point: '+(r?r[1]:'not named');
+  var dl=document.getElementById('kFacts');dl.innerHTML='';
+  addRow(dl,'Dynasty',k.dynasty);addRow(dl,'Capital',k.capital);addRow(dl,'Today',k.today);
+  document.getElementById('kRole').textContent=k.role;
+  var ul=document.getElementById('kAllies');ul.innerHTML='';
+  k.allies.forEach(function(a){if(a[0]<=i){var li=document.createElement('li');li.textContent=a[1];ul.appendChild(li);}});
+}
+function openKingdom(id){
+  var k=KMAP[id];if(!k||!kingsOn||!kActive(k,cur))return;
+  stopPlay();
+  selK=id;renderKingdom(k);
+  sheet.classList.add('kview');
+  Array.prototype.forEach.call(kingsEl.querySelectorAll('.king'),function(g){g.classList.toggle('sel',g.getAttribute('data-id')===id);});
+  sscroll.scrollTop=0;
+  if(!desk.matches&&sheet.offsetHeight<minH()+60)animateTo(openTarget());
+}
+function closeKingdom(){
+  if(!selK)return;
+  selK=null;sheet.classList.remove('kview');
+  Array.prototype.forEach.call(kingsEl.querySelectorAll('.king'),function(g){g.classList.remove('sel');});
+}
+kingTog.addEventListener('click',function(){
+  kingsOn=!kingsOn;
+  kingTog.setAttribute('aria-pressed',kingsOn?'true':'false');
+  kingTog.textContent=kingsOn?'Kingdoms on':'Kingdoms off';
+  if(!kingsOn)closeKingdom();
+  updateKings(cur<0?0:cur);
+});
+document.getElementById('kClose').addEventListener('click',closeKingdom);
+svg.addEventListener('click',function(e){
+  var g=e.target&&e.target.closest?e.target.closest('.king'):null;
+  if(g)openKingdom(g.getAttribute('data-id'));
+});
+var rfp=false;
+function refreshSoon(){
+  if(rfp)return;rfp=true;
+  requestAnimationFrame(function(){rfp=false;refreshCam(false);});
+}
+window.addEventListener('resize',function(){
+  if(!desk.matches&&sheet.classList.contains('open')&&!sheetEnd){applyH(sheet.offsetHeight,minH());}
+  refreshSoon();
+});
+if(window.ResizeObserver){new ResizeObserver(refreshSoon).observe(stage);}
+if(desk.addEventListener){desk.addEventListener('change',function(){if(desk.matches){sheet.style.height='';sheet.style.maxHeight='';}refreshSoon();});}
+
+setHead(TX[0]);
+goTo(0,{instant:true});
+})();
+</script>
+</body>
+</html>
