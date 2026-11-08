@@ -27,7 +27,8 @@ test('a dropped ball bounces back to e^2 of its height (no drag)', () => {
   const noDrag = Object.assign({}, C, { drag: 0 });
   const peak = dropBall(h0, noDrag);
   const expected = r + (h0 - r) * C.restitution ** 2;
-  assert.ok(Math.abs(peak - expected) < 0.02, `peak ${peak} vs ${expected}`);
+  // Within 2%: the fixed 1/120 s step snaps the landing to the surface.
+  assert.ok(Math.abs(peak - expected) < 0.02 * expected, `peak ${peak} vs ${expected}`);
   // With drag it comes up a little lower, as a real ball does.
   const withDrag = dropBall(h0);
   assert.ok(withDrag < peak && withDrag > peak * 0.9, `with drag ${withDrag}`);
@@ -827,4 +828,543 @@ test('net play is deterministic', () => {
   const a = run(), b = run();
   assert.deepEqual(a, b);
   assert.ok(a.some(l => l.includes('"kind":"volley"') || l.includes('"stroke":"volley"')));
+});
+
+// ---------------------------------------------------------------------
+// Stage 3: match rules and scoring
+// ---------------------------------------------------------------------
+const win = (sc, who, n) => { const ev = []; for (let i = 0; i < n; i++) ev.push(...E.pointWon(sc, who)); return ev; };
+const games = (sc, who, n) => { for (let i = 0; i < n; i++) win(sc, who, 4); };
+
+test('scoring: a love game goes 15, 30, 40, game', () => {
+  const sc = E.createScore('quick');
+  const said = [];
+  for (let i = 0; i < 3; i++) { E.pointWon(sc, 0); said.push(E.pointsText(sc)); }
+  assert.deepEqual(said, ['15–0', '30–0', '40–0']);
+  const ev = E.pointWon(sc, 0);
+  assert.ok(ev.some(e => e.type === 'game' && e.who === 0));
+  assert.deepEqual(sc.sets[0], [1, 0]);
+  assert.deepEqual(sc.points, [0, 0]);
+});
+
+test('scoring: deuce, advantage, back to deuce, then a game from advantage', () => {
+  const sc = E.createScore('quick');
+  win(sc, 0, 3); win(sc, 1, 3);
+  assert.equal(E.pointsText(sc), 'DEUCE');
+  E.pointWon(sc, 1); assert.equal(E.pointsText(sc), 'ADV CPU');
+  E.pointWon(sc, 0); assert.equal(E.pointsText(sc), 'DEUCE');
+  E.pointWon(sc, 0); assert.equal(E.pointsText(sc), 'ADV YOU');
+  assert.deepEqual(sc.sets[0], [0, 0]);
+  const ev = E.pointWon(sc, 0);
+  assert.ok(ev.some(e => e.type === 'game' && e.who === 0));
+  assert.deepEqual(sc.sets[0], [1, 0]);
+});
+
+test('scoring: the score is called server first', () => {
+  const sc = E.createScore('quick', C, 1);   // the CPU serves
+  E.pointWon(sc, 0);
+  assert.equal(E.pointsText(sc), '0–15');
+});
+
+test('scoring: Quick sets end 3-1 or 4-2, never 3-2', () => {
+  const a = E.createScore('quick');
+  games(a, 0, 2); games(a, 1, 1);
+  const ev = win(a, 0, 4);
+  assert.ok(ev.some(e => e.type === 'set' && e.who === 0));
+  assert.deepEqual(a.sets[0], [3, 1]);
+  assert.equal(a.winner, 0);
+
+  const b = E.createScore('quick');
+  games(b, 0, 2); games(b, 1, 2); games(b, 0, 1);
+  assert.deepEqual(b.sets[0], [3, 2]);
+  assert.equal(b.winner, null);
+  games(b, 0, 1);
+  assert.deepEqual(b.sets[0], [4, 2]);
+  assert.equal(b.winner, 0);
+});
+
+test('scoring: Standard sets 6-4 and 7-5', () => {
+  const a = E.createScore('standard');
+  games(a, 1, 4); games(a, 0, 6);
+  assert.deepEqual(a.sets[0], [6, 4]); assert.equal(a.winner, 0);
+  const b = E.createScore('standard');
+  games(b, 0, 5); games(b, 1, 5); games(b, 1, 1);
+  assert.equal(b.winner, null);
+  games(b, 1, 1);
+  assert.deepEqual(b.sets[0], [5, 7]); assert.equal(b.winner, 1);
+});
+
+test('tie-break at 6-6: 7-5 wins the set 7-6', () => {
+  const sc = E.createScore('standard');
+  for (let i = 0; i < 6; i++) { games(sc, 0, 1); games(sc, 1, 1); }
+  assert.equal(sc.tiebreak, true);
+  win(sc, 0, 5); win(sc, 1, 5);
+  assert.equal(E.pointsText(sc).split('–').map(Number).sort().join(), '5,5');
+  win(sc, 0, 1);
+  assert.equal(sc.winner, null);
+  const ev = win(sc, 0, 1);
+  assert.ok(ev.some(e => e.type === 'set' && e.tb && e.tb[0] === 7 && e.tb[1] === 5));
+  assert.deepEqual(sc.sets[0], [7, 6]);
+  assert.equal(sc.winner, 0);
+});
+
+test('tie-break needs two clear: 6-6 goes on to 8-6', () => {
+  const sc = E.createScore('quick');
+  for (let i = 0; i < 3; i++) { games(sc, 0, 1); games(sc, 1, 1); }
+  assert.equal(sc.tiebreak, true);
+  win(sc, 0, 6); win(sc, 1, 6);
+  win(sc, 1, 1); assert.equal(sc.winner, null);   // 6-7
+  win(sc, 0, 1); assert.equal(sc.winner, null);   // 7-7
+  win(sc, 0, 1); assert.equal(sc.winner, null);   // 8-7
+  win(sc, 0, 1);                                   // 9-7
+  assert.deepEqual(sc.sets[0], [4, 3]);
+  assert.deepEqual(sc.tbScores[0], [9, 7]);
+  assert.equal(sc.winner, 0);
+});
+
+test('match end: no more points count once it is won', () => {
+  const sc = E.createScore('quick');
+  games(sc, 1, 3);
+  assert.equal(sc.winner, 1);
+  assert.deepEqual(E.pointWon(sc, 0), []);
+  assert.deepEqual(sc.sets[0], [0, 3]);
+});
+
+test('best-of-3 is ready: two sets win it', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, {
+    formats: Object.assign({}, C.match.formats, { bo3: { label: 'Bo3', bestOf: 3, games: 3, tiebreakAt: 3, tbPoints: 7 } }) }) });
+  const sc = E.createScore('bo3', cfg);
+  games(sc, 0, 3); assert.equal(sc.winner, null); assert.equal(sc.sets.length, 2);
+  games(sc, 1, 3); assert.equal(sc.winner, null);
+  games(sc, 0, 3); assert.equal(sc.winner, 0);
+  assert.deepEqual(sc.setsWon, [2, 1]);
+});
+
+test('serve: the server alternates each game; courts alternate each point', () => {
+  const sc = E.createScore('standard', C, 0);
+  const servers = [];
+  for (let g = 0; g < 4; g++) { servers.push(E.serverOf(sc)); win(sc, g % 2, 4); }
+  assert.deepEqual(servers, [0, 1, 0, 1]);
+  const courts = [];
+  for (let i = 0; i < 5; i++) { courts.push(E.courtOf(sc)); E.pointWon(sc, i % 2); }
+  assert.deepEqual(courts, ['deuce', 'ad', 'deuce', 'ad', 'deuce']);
+});
+
+test('serve: tie-break order is one point, then two each; the next set follows on', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, {
+    formats: { bo3: { label: 'Bo3', bestOf: 3, games: 3, tiebreakAt: 3, tbPoints: 7 } } }) });
+  const sc = E.createScore('bo3', cfg, 0);
+  for (let i = 0; i < 3; i++) { win(sc, E.serverOf(sc), 4); win(sc, E.serverOf(sc), 4); }
+  assert.equal(sc.tiebreak, true);
+  const first = E.serverOf(sc), order = [];
+  for (let i = 0; i < 7; i++) { order.push(E.serverOf(sc)); E.pointWon(sc, 0); }
+  const o = 1 - first;
+  assert.deepEqual(order, [first, o, o, first, first, o, o]);
+  assert.equal(sc.tiebreak, false);
+  assert.equal(E.serverOf(sc), o, 'the receiver of the first tie-break point serves the next set');
+});
+
+test('serve boxes: diagonal, deuce on the server\'s right', () => {
+  const nd = E.serviceBox('near', 'deuce'), na = E.serviceBox('near', 'ad');
+  assert.ok(nd.maxX === 0 && nd.maxY === COURT.netY);   // far court, left as the near player sees it
+  assert.ok(na.minX === 0);
+  const fd = E.serviceBox('far', 'deuce');
+  assert.ok(fd.minX === 0 && fd.minY === COURT.netY);   // near court, the far server's right is -X
+  const svc = COURT.netY - COURT.serviceFromNet;
+  assert.equal(E.judgeServe(-2, svc + 1, 'near', 'deuce'), 'IN');
+  assert.equal(E.judgeServe(-2, svc, 'near', 'deuce'), 'IN');            // on the line
+  assert.equal(E.judgeServe(-2, svc - 0.05, 'near', 'deuce'), 'OUT_LONG');
+  assert.equal(E.judgeServe(2, svc + 1, 'near', 'deuce'), 'OUT_WIDE');   // wrong box
+  assert.equal(E.judgeServe(-4.2, svc + 1, 'near', 'deuce'), 'OUT_WIDE');
+  assert.equal(E.judgeServe(-2, COURT.netY + 1, 'near', 'deuce'), 'NET');
+});
+
+// Play one ball for the referee: launched from `from` with `shot`.
+function refPlay(r, ball, cfg) {
+  cfg = cfg || C;
+  for (let i = 0; i < 2400 && !r.over; i++) E.refBall(r, ball, E.step(ball, cfg), cfg);
+  return r.over;
+}
+function servePlay(target, opts) {
+  opts = opts || {};
+  const r = E.createRally(0, opts.court || 'deuce');
+  const ball = E.createBall();
+  const from = { side: 'near', X: 0.8, Y: COURT.length - 0.2, H: 2.7 };
+  let shot = opts.shot || E.solveShot(from, target, 'flat', C, { clearNet: true });
+  E.launch(ball, from, shot);
+  E.refHit(r, 0);
+  return { r, ball, over: refPlay(r, ball) };
+}
+
+test('point: a rally ball that bounces twice is a WINNER for the hitter', () => {
+  const r = E.createRally(0, 'deuce'); r.serve = false;
+  const ball = E.createBall();
+  E.launch(ball, near(0), E.solveShot(near(0), { X: 1, Y: 4 }, 'top', C));
+  E.refHit(r, 0); r.serve = false; r.hits = 3;
+  assert.deepEqual(refPlay(r, ball), { type: 'point', winner: 0, reason: 'WINNER', by: 0 });
+});
+
+test('point: out long and out wide are OUT; into the net is NET', () => {
+  for (const [target, reason] of [[{ X: 0, Y: -1.5 }, 'OUT'], [{ X: 5.2, Y: 5 }, 'OUT']]) {
+    const r = E.createRally(1, 'deuce');
+    const ball = E.createBall();
+    E.launch(ball, near(0), E.solveShot(near(0), target, 'flat', C, { clearNet: true }));
+    E.refHit(r, 1); E.refHit(r, 0);       // the far player served, the near player returns
+    const o = refPlay(r, ball);
+    assert.equal(o.reason, reason); assert.equal(o.winner, 1); assert.equal(o.by, 0);
+  }
+  const r = E.createRally(1, 'deuce');
+  const ball = E.createBall();
+  E.launch(ball, near(0), E.shotFromAngle(near(0), { X: 0, Y: 4 }, C.shots.flat, -6));
+  E.refHit(r, 1); E.refHit(r, 0);
+  const o = refPlay(r, ball);
+  assert.equal(o.reason, 'NET'); assert.equal(o.winner, 1);
+});
+
+test('serve: in the box and untouched is an ACE', () => {
+  const { over } = servePlay({ X: -2, Y: COURT.netY - COURT.serviceFromNet + 0.8 });
+  assert.deepEqual(over, { type: 'point', winner: 0, reason: 'ACE', by: 0 });
+});
+
+test('serve: long, wide or wrong box is a FAULT; into the net is a NET fault', () => {
+  const svc = COURT.netY - COURT.serviceFromNet;
+  assert.deepEqual(servePlay({ X: -2, Y: svc - 1.5 }).over, { type: 'fault', reason: 'OUT', by: 0 });
+  assert.deepEqual(servePlay({ X: 2, Y: svc + 1 }).over, { type: 'fault', reason: 'OUT', by: 0 });
+  const from = { side: 'near', X: 0.8, Y: COURT.length - 0.2, H: 2.7 };
+  const into = E.shotFromAngle(from, { X: -2, Y: svc }, C.shots.flat, -9);
+  assert.deepEqual(servePlay(null, { shot: into }).over, { type: 'fault', reason: 'NET', by: 0 });
+});
+
+test('serve: a net cord that lands in the box is a LET; one that lands out is a fault', () => {
+  const from = { side: 'near', X: 0.8, Y: COURT.length - 0.2, H: 2.7 };
+  const target = { X: -1.5, Y: COURT.netY - 3 };
+  let let_ = null, cordOut = null;
+  // Search launch angles for a tape clip; keep one that lands in and one out.
+  for (let a = -8; a < 2 && !(let_ && cordOut); a += 0.02) {
+    for (const speed of [20, 26, 32, 38]) {
+      const shot = E.shotFromAngle(from, target, Object.assign({}, C.shots.flat, { speed }), a);
+      const s = E.simulate(from, shot, C);
+      if (!s.ball.touchedNet || s.net || !s.firstBounce) continue;
+      const res = E.judgeServe(s.firstBounce.X, s.firstBounce.Y, 'near', 'deuce');
+      if (res === 'IN' && !let_) let_ = shot;
+      if (res !== 'IN' && res !== 'NET' && !cordOut) cordOut = shot;
+    }
+  }
+  assert.ok(let_, 'found a let');
+  assert.deepEqual(servePlay(null, { shot: let_ }).over, { type: 'let', by: 0 });
+  if (cordOut) assert.equal(servePlay(null, { shot: cordOut }).over.type, 'fault');
+});
+
+test('point: after a return the serve is no longer an ace', () => {
+  const r = E.createRally(1, 'deuce');
+  E.refHit(r, 1); E.refHit(r, 0);
+  assert.equal(r.serve, false); assert.equal(r.touched, true);
+  const ball = E.createBall();
+  E.launch(ball, near(0), E.solveShot(near(0), { X: 0, Y: 4 }, 'top', C));
+  assert.equal(refPlay(r, ball).reason, 'WINNER');
+});
+
+// ---------------------------------------------------------------------
+// Stage 3: the serve
+// ---------------------------------------------------------------------
+// Step until the next serve, tap `shot` errMs from the toss's peak, and
+// play on until the serve is decided (fault, let, point) or re-tossed.
+function serveOnce(m, shot, errMs, stick, cap) {
+  const out = [];
+  for (let i = 0; i < (cap || 3000); i++) {
+    if (m.phase === 'serve' && m.serve.state === 'toss' && !m.serve.tap && m.serve.server === 0) {
+      E.matchSwing(m, shot, m.serve.tossT0 + m.serve.peakT + errMs / 1000);
+    }
+    for (const e of E.matchStep(m, { stick: stick || { x: 0, y: 0 } })) {
+      if (['serve', 'fault', 'let', 'pointEnd', 'retoss'].includes(e.type)) out.push(e);
+    }
+    if (out.some(e => e.type !== 'serve')) break;
+  }
+  return out;
+}
+const lastOf = a => a[a.length - 1];
+const withServe = over => Object.assign({}, C, { serve: Object.assign({}, C.serve, over) });
+
+test('serve: the toss goes up by itself and peaks above the server', () => {
+  const m = E.createMatch({ seed: 3, serveDrill: true });
+  let peak = 0, tossed = false;
+  for (let i = 0; i < 240; i++) {
+    for (const e of E.matchStep(m, {})) if (e.type === 'toss') tossed = true;
+    if (m.ball.phase === 'toss') peak = Math.max(peak, m.ball.H);
+  }
+  assert.ok(tossed);
+  assert.ok(peak > 2.7 && peak < 3.1, `peak ${peak}`);
+  assert.ok(Math.abs(m.serve.peakT - C.serve.tossVz / C.gravity) < 0.03);
+});
+
+test('serve: the first tap tosses; an untouched toss is tossed again, no fault', () => {
+  const m = E.createMatch({ seed: 3, serveDrill: true });
+  while (m.phase !== 'serve') E.matchStep(m, {});
+  E.matchSwing(m, 'flat');
+  assert.equal(m.serve.state, 'toss');
+  assert.equal(m.serve.tap, null, 'the tossing tap is not the serve');
+  const ev = E.matchStep(m, {});
+  assert.ok(ev.some(e => e.type === 'toss'));
+  let re = null;
+  for (let i = 0; i < 300 && !re; i++) re = E.matchStep(m, {}).find(e => e.type === 'retoss');
+  assert.ok(re, 're-tossed');
+  assert.equal(m.serveNo, 1);
+  assert.equal(m.phase, 'serve');
+});
+
+test('serve: a swing far off the peak misses the toss and re-tosses', () => {
+  const m = E.createMatch({ seed: 5, serveDrill: true });
+  const r = serveOnce(m, 'flat', -C.serve.missMs - 40);
+  assert.equal(lastOf(r).type, 'retoss');
+  assert.equal(m.serveNo, 1);
+});
+
+test('serve: well timed serves land in the box; flat is faster, kick bounces higher', () => {
+  const sum = { flat: { in: 0, v: 0, peak: 0 }, top: { in: 0, v: 0, peak: 0 } };
+  for (const shot of ['flat', 'top']) for (let seed = 1; seed <= 15; seed++) {
+    const m = E.createMatch({ seed, serveDrill: true });
+    let v = 0, bounced = false, peak = 0;
+    const out = [];
+    for (let i = 0; i < 3000 && !out.some(e => e.type !== 'serve'); i++) {
+      if (m.phase === 'serve' && m.serve.state === 'toss' && !m.serve.tap) E.matchSwing(m, shot, m.serve.tossT0 + m.serve.peakT);
+      for (const e of E.matchStep(m, {})) {
+        if (e.type === 'serve') v = Math.hypot(m.ball.vx, m.ball.vy, m.ball.vz);
+        if (e.type === 'bounce') bounced = true;
+        if (['serve', 'fault', 'let', 'pointEnd'].includes(e.type)) out.push(e);
+      }
+      if (bounced && m.ball.Y > 0) peak = Math.max(peak, m.ball.H);
+    }
+    const end = lastOf(out);
+    if (end.type === 'pointEnd' && end.reason === 'ACE') sum[shot].in++;
+    sum[shot].v += v / 15; sum[shot].peak += peak / 15;
+  }
+  assert.equal(sum.flat.in, 15); assert.equal(sum.top.in, 15);
+  assert.ok(sum.flat.v > sum.top.v + 6, JSON.stringify(sum));
+  assert.ok(sum.top.peak > sum.flat.peak + 0.2, JSON.stringify(sum));
+});
+
+test('serve: timing quality sets the fault rate; the kick is safer than the flat', () => {
+  const faults = (shot, err) => {
+    let n = 0;
+    for (let seed = 1; seed <= 40; seed++) {
+      const r = serveOnce(E.createMatch({ seed, serveDrill: true }), shot, err);
+      if (lastOf(r).type === 'fault') n++;
+    }
+    return n;
+  };
+  const perfect = faults('flat', 0), late = faults('flat', 180), kickLate = faults('top', 180);
+  assert.ok(perfect <= 2, `perfect ${perfect}`);
+  assert.ok(late >= 15, `late ${late}`);
+  assert.ok(kickLate < late, `kick ${kickLate} vs flat ${late}`);
+});
+
+test('serve: the joystick aims within the box', () => {
+  const land = sx => {
+    const m = E.createMatch({ seed: 9, serveDrill: true });
+    let x = null;
+    for (let i = 0; i < 3000 && x == null; i++) {
+      if (m.phase === 'serve' && m.serve.state === 'toss' && !m.serve.tap) E.matchSwing(m, 'top', m.serve.tossT0 + m.serve.peakT);
+      for (const e of E.matchStep(m, { stick: { x: sx, y: 0 } })) if (e.type === 'bounce' && e.n === 1) x = e.X;
+    }
+    return x;
+  };
+  const L = land(-1), M = land(0), R = land(1);
+  assert.ok(L < M - 1 && M < R - 1, `${L} ${M} ${R}`);
+  // Deuce court: the box left of the centre line (even a perfect serve
+  // scatters by `spread`, so allow a little over the line).
+  assert.ok(L > -COURT.singlesHalf && R < C.serve.first.spread, `${L} ${R}`);
+});
+
+test('serve: a fault gives a second serve; two faults are a double fault', () => {
+  // Aim outside the box on purpose: every serve is a fault.
+  const cfg = withServe({ first: Object.assign({}, C.serve.first, { margin: -1.5 }), second: Object.assign({}, C.serve.second, { margin: -1.5 }) });
+  const m = E.createMatch({ seed: 2, near: 'human', far: 'none' }, cfg);
+  const a = serveOnce(m, 'flat', 0);
+  assert.equal(lastOf(a).type, 'fault');
+  assert.equal(m.serveNo, 2);
+  const b = serveOnce(m, 'flat', 0);
+  const end = lastOf(b);
+  assert.equal(end.type, 'pointEnd'); assert.equal(end.reason, 'DOUBLE FAULT');
+  assert.equal(end.winner, 1);
+  assert.deepEqual(m.score.points, [0, 1]);
+  assert.equal(m.stats[0].doubleFaults, 1); assert.equal(m.stats[0].errors, 1);
+});
+
+test('serve: the second serve is safer than the first', () => {
+  const sv = C.serve;
+  assert.ok(sv.second.margin > sv.first.margin && sv.second.spread < sv.first.spread && sv.second.pace < sv.first.pace);
+});
+
+test('serve: courts alternate each point, the server each game, players placed diagonally', () => {
+  const m = E.createMatch({ seed: 4, near: 'human', far: 'none' });
+  const courts = [];
+  for (let p = 0; p < 4; p++) {
+    while (m.phase !== 'serve') E.matchStep(m, {});
+    courts.push(m.serve.court);
+    const me = m.actors[0].player, them = m.actors[1].player;
+    const sgn = m.serve.court === 'deuce' ? 1 : -1;
+    assert.equal(Math.sign(me.X), sgn); assert.equal(Math.sign(them.X), sgn);  // both on their own right (deuce)
+    const r = serveOnce(m, 'top', 0);
+    assert.equal(lastOf(r).reason, 'ACE');
+  }
+  assert.deepEqual(courts, ['deuce', 'ad', 'deuce', 'ad']);
+  assert.deepEqual(m.score.sets[0], [1, 0]);
+  while (m.phase !== 'pre' && m.phase !== 'serve') E.matchStep(m, {});
+  assert.equal(E.matchServer(m), 1);
+  assert.equal(m.serve.server, 1);
+});
+
+test('serve: the receiver (far, mirrored) predicts a groundstroke after the bounce', () => {
+  const m = E.createMatch({ seed: 6, serveDrill: true });
+  let pred = null;
+  for (let i = 0; i < 3000 && !pred; i++) {
+    if (m.phase === 'serve' && m.serve.state === 'toss' && !m.serve.tap) E.matchSwing(m, 'top', m.serve.tossT0 + m.serve.peakT);
+    for (const e of E.matchStep(m, {})) if (e.type === 'serve') pred = E.predictContact(m.actors[1]);
+  }
+  const far = m.actors[1];
+  assert.equal(far.mustBounce, true);
+  assert.equal(pred.kind, 'ok'); assert.equal(pred.stroke, 'ground');
+  // The far player's plane, back in real coordinates, is near the far baseline.
+  const real = E.toReal(far, pred);
+  assert.ok(real.Y < 2.5 && real.Y > -1.5, `crosses at real Y ${real.Y}`);
+});
+
+// ---------------------------------------------------------------------
+// Stage 3: the CPU opponent and whole matches
+// ---------------------------------------------------------------------
+// Play seeded CPU-vs-CPU matches; returns totals and every point's events.
+function cpuMatches(near, far, seeds, format, cfg) {
+  const out = { wins: [0, 0], points: [0, 0], maxHits: 0, unfinished: 0, logs: [] };
+  for (const seed of seeds) {
+    const m = E.createMatch({ seed, near, far, format }, cfg);
+    const log = [];
+    for (let i = 0; i < 120 * 60 * 40 && m.phase !== 'over'; i++) {
+      for (const e of E.matchStep(m, {})) {
+        if (e.type === 'pointEnd') { out.points[e.winner]++; out.maxHits = Math.max(out.maxHits, e.hits); log.push(e.winner + e.reason + e.hits); }
+      }
+    }
+    if (m.phase === 'over') out.wins[m.winner]++; else out.unfinished++;
+    out.logs.push(log.join(','));
+  }
+  return out;
+}
+
+test('CPU: levels are ordered, and none is faster or quicker to swing than the player can be', () => {
+  const L = C.cpu;
+  for (const k of ['easy', 'medium', 'hard']) assert.ok(L[k].speedMul <= 1 && L[k].reaction > 0 && L[k].tapSd > 0, k);
+  assert.ok(L.easy.reaction > L.medium.reaction && L.medium.reaction > L.hard.reaction);
+  assert.ok(L.easy.predictErr > L.medium.predictErr && L.medium.predictErr > L.hard.predictErr);
+  assert.ok(L.easy.tapSd > L.medium.tapSd && L.medium.tapSd > L.hard.tapSd);
+  assert.ok(L.easy.errorRate > L.medium.errorRate && L.medium.errorRate > L.hard.errorRate);
+  assert.ok(L.easy.mercyAim > 0 && L.medium.mercyAim === 0 && L.hard.mercyAim === 0);
+});
+
+test('CPU: deterministic for a seed', () => {
+  const a = cpuMatches('hard', 'medium', [11], 'quick');
+  const b = cpuMatches('hard', 'medium', [11], 'quick');
+  assert.equal(a.logs[0], b.logs[0]);
+  const c = cpuMatches('hard', 'medium', [12], 'quick');
+  assert.notEqual(a.logs[0], c.logs[0]);
+});
+
+test('CPU: Hard beats Easy over many seeded points, and no rally runs past the cap', () => {
+  const r = cpuMatches('hard', 'easy', [1, 2, 3, 4, 5, 6], 'quick');
+  const share = r.points[0] / (r.points[0] + r.points[1]);
+  assert.ok(r.points[0] + r.points[1] >= 80, `points ${r.points}`);
+  assert.ok(share >= 0.65, `Hard won ${(share * 100).toFixed(0)}% of points`);
+  assert.equal(r.wins[0], 6);
+  assert.ok(r.maxHits <= C.match.rallyCap, `longest rally ${r.maxHits}`);
+  // Swapping ends changes nothing: the far end plays by the same rules.
+  const s = cpuMatches('easy', 'hard', [1, 2, 3], 'quick');
+  assert.ok(s.points[1] / (s.points[0] + s.points[1]) >= 0.65, `far Hard ${s.points}`);
+});
+
+test('CPU: the rally cap ends a long point even between two steady CPUs', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, { rallySoft: 6, rallyCap: 10 }) });
+  const r = cpuMatches('hard', 'hard', [1, 2], 'quick', cfg);
+  assert.ok(r.maxHits <= 10, `longest rally ${r.maxHits}`);
+  assert.equal(r.unfinished, 0);
+});
+
+test('CPU: Hard returns a reachable drop shot with high probability', () => {
+  let reachable = 0, returned = 0;
+  for (let seed = 1; seed <= 40; seed++) {
+    const m = E.createMatch({ seed, near: 'none', far: 'hard' });
+    const R = E.rng(seed * 7);
+    const from = { X: (R() - 0.5) * 2, Y: C.nearContactY, H: 1 };
+    const target = { X: (R() * 2 - 1) * 2.6, Y: COURT.netY - (1.5 + 2 * R()) };
+    const shot = E.solveShot(Object.assign({ side: 'near' }, from), target, 'drop', C, { clearNet: true });
+    E.launchFor(m, 0, from, shot);
+    const far = m.actors[1], lv = C.cpu.hard;
+    // Reachable: a stance it can run to (one stick, as a person) with its
+    // reaction and 0.1 s to spare.
+    const plan = E.reachPlan(far.path, far.player, C, m.t, { euclid: true, reaction: lv.reaction, speedMul: lv.speedMul });
+    if (!plan || plan.slack < 0.1) continue;
+    reachable++;
+    let hit = false;
+    for (let i = 0; i < 1200 && !hit; i++) {
+      const ev = E.matchStep(m, {});
+      if (ev.some(e => e.type === 'hit' && e.who === 1)) hit = true;
+      if (ev.some(e => e.type === 'pointEnd')) break;
+    }
+    if (hit) returned++;
+  }
+  assert.ok(reachable >= 15, `reachable ${reachable}`);
+  assert.ok(returned / reachable >= 0.9, `returned ${returned} of ${reachable}`);
+});
+
+test('CPU: it comes to the net and volleys or smashes when it is there', () => {
+  let netShots = 0;
+  for (const seed of [1, 2, 3]) {
+    const m = E.createMatch({ seed, near: 'medium', far: 'hard' });
+    for (let i = 0; i < 120 * 60 * 6 && m.phase !== 'over'; i++) {
+      for (const e of E.matchStep(m, {})) if (e.type === 'hit' && e.who === 1 && (e.kind === 'volley' || e.kind === 'smash')) netShots++;
+    }
+  }
+  assert.ok(netShots >= 3, `net shots ${netShots}`);
+});
+
+test('a full seeded match always ends with a winner (Quick and Standard)', () => {
+  const q = cpuMatches('medium', 'easy', [21, 22, 23, 24], 'quick');
+  assert.equal(q.unfinished, 0);
+  assert.equal(q.wins[0] + q.wins[1], 4);
+  const s = cpuMatches('hard', 'easy', [31], 'standard');
+  assert.equal(s.unfinished, 0); assert.equal(s.wins[0] + s.wins[1], 1);
+});
+
+test('a match is deterministic: same seed, same points and score', () => {
+  const run = () => {
+    const m = E.createMatch({ seed: 77, near: 'easy', far: 'medium' });
+    const log = [];
+    for (let i = 0; i < 120 * 60 * 20 && m.phase !== 'over'; i++) {
+      for (const e of E.matchStep(m, {})) if (e.type === 'hit' || e.type === 'serve' || e.type === 'pointEnd') log.push(e.type + e.who + (e.reason || '') + (e.X != null ? e.X.toFixed(4) : ''));
+    }
+    return { log: log.join('|'), sets: JSON.stringify(m.score.sets), stats: JSON.stringify(m.stats) };
+  };
+  assert.deepEqual(run(), run());
+});
+
+test('a person returns the CPU\'s serve with the existing swing, buffering and assist', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, { firstServer: 'far' }) });
+  let returned = 0, serves = 0;
+  for (let seed = 1; seed <= 12; seed++) {
+    const m = E.createMatch({ seed, near: 'human', far: 'hard' }, cfg);
+    m.actors[0].assist = 'strong';
+    let tapped = false, done = false;
+    for (let i = 0; i < 120 * 8 && !done; i++) {
+      const me = m.actors[0];
+      const pred = E.predictContact(me);
+      // A good player: taps 100 ms early (buffered) whenever a contact is on.
+      if (!tapped && pred.kind === 'ok' && m.t >= pred.t - E.swingPreset(C, 'top', pred.stroke).backswing - 0.1) {
+        E.matchSwing(m, 'top', m.t); tapped = true;
+      }
+      for (const e of E.matchStep(m, {})) {
+        if (e.type === 'serve') serves++;
+        if (e.type === 'hit' && e.who === 0) { returned++; done = true; }
+        if (e.type === 'fault' || e.type === 'let') tapped = false;
+        if (e.type === 'pointEnd') done = true;
+      }
+    }
+  }
+  assert.ok(returned >= 10, `returned ${returned} of ${serves} serves`);
 });

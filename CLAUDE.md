@@ -12,7 +12,7 @@ Guidance for Claude (and humans) working in this repo.
 | **Chalkline** | Simple app, migrating in week 2 |
 | **Stickyard** | Simple app, migrating in week 2 |
 | **Sumyard** | Simple app, migrating in week 2 |
-| **Arcade** | Games (35). Game list in `apps/arcade/README.md`; maintainer notes, incl. Dojo Duel, in `apps/arcade/CLAUDE.md` |
+| **Arcade** | Games (36). Game list in `apps/arcade/README.md`; maintainer notes, incl. Dojo Duel, in `apps/arcade/CLAUDE.md` |
 | **Stonks** | Portfolio tracker: GitHub Actions cron + D1 + read-only Worker dashboard |
 
 The Android allotment app is a **separate repo** and does not live here.
