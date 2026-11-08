@@ -229,3 +229,9 @@ Why shelved: the screening idea itself is not something I want to build or run. 
 Revisit only if: there is a specific question or decision the app would help with, and the data to answer it is available without a paid plan or a hand-built data source. Starting point if revisited: the spike findings in docs/plan.md and the entries above; nothing in the repo needs restoring.
 
 The running job on the Raspberry Pi and its old data are handled manually and are not part of this repo change.
+
+## 2026-11-08 — Tennis game: two-file layout, logic tested headless
+
+The Arcade tennis game (apps/arcade/games/tennis/) has its logic in a pure engine.js (no DOM) and its page, rendering and input in index.html. engine.js is a plain script that sets window.TennisEngine in the browser and uses module.exports in Node, so there is no type="module", no build step and it still works from a local file. It is the first Arcade game with a second JS file; the rule that games are single index.html files is relaxed only for logic that needs headless tests.
+
+Physics tests live in apps/arcade/scripts/tennis.test.js (node:test, no dependencies), which the deploy already ignores. They are run by file path and are not in CI until Stage 3. The game is reachable by direct URL only until Stage 3: no landing-list entry, no data-kb-play and no version bump before then.
