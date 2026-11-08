@@ -9,57 +9,150 @@
     margin: 0;
     height: 100%;
     background: #0b1120;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     overflow: hidden;
-    touch-action: manipulation;
+    overscroll-behavior: none;
+    /* A game page: no scroll, zoom, text selection or long-press menu. */
+    touch-action: none;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     box-sizing: border-box;
     padding-top: var(--kb-navbar-h, 0px);
     padding-bottom: var(--kb-bottom-reserve, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
-  #wrap { position: relative; }
+  #wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
   canvas {
     display: block;
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     background: #18223a;
+    touch-action: none;
   }
-  #shots {
+
+  /* Ball machine feed selector: only with ?machine=1 or ?debug=1. */
+  #feed {
     position: absolute;
     left: 0; right: 0;
-    bottom: calc(14px * var(--game-scale, 1));
-    display: flex;
+    top: calc(40px * var(--game-scale, 1));
+    display: none;
     justify-content: center;
-    gap: calc(6px * var(--game-scale, 1));
+    gap: 6px;
+    z-index: 2;
   }
-  #shots button {
+  #feed.show { display: flex; }
+  #feed button {
     font: inherit;
     font-weight: 700;
-    font-size: calc(12px * var(--game-scale, 1));
-    padding: calc(8px * var(--game-scale, 1)) calc(11px * var(--game-scale, 1));
-    border-radius: calc(16px * var(--game-scale, 1));
-    border: calc(1.5px * var(--game-scale, 1)) solid rgba(255,255,255,0.45);
-    background: rgba(13,19,34,0.75);
+    font-size: 12px;
+    min-height: 32px;
+    padding: 6px 11px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(255,255,255,0.45);
+    background: rgba(13,19,34,0.85);
     color: #eee;
     cursor: pointer;
   }
-  #shots button.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
+  #feed button.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
+
+  /* Control deck below the court. Its top overlaps the canvas's ad-board
+     strip (nothing to play there), set from fitCanvas(). */
+  #deck {
+    position: relative;
+    height: 164px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: content-box;
+    touch-action: none;
+    z-index: 3;
+  }
+  #stickZone {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 50%;
+    touch-action: none;
+  }
+  #stickBase {
+    position: absolute;
+    width: 112px; height: 112px;
+    margin: -56px 0 0 -56px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.55);
+    background: rgba(13,19,34,0.55);
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  #stickKnob {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 52px; height: 52px;
+    margin: -26px 0 0 -26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    border: 2px solid rgba(255,255,255,0.75);
+    box-sizing: border-box;
+  }
+  #stickBase.active { border-color: #fff; background: rgba(13,19,34,0.7); }
+  #stickBase.active #stickKnob { background: rgba(255,255,255,0.75); }
+  #stickLabel {
+    position: absolute;
+    left: 0; right: 0; top: 100%;
+    margin-top: 2px;
+    text-align: center;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.55);
+  }
+  .shot {
+    position: absolute;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 3px solid var(--c);
+    background: rgba(13,19,34,0.88);
+    color: var(--c);
+    font: inherit;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    touch-action: none;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    transition: transform 0.05s ease;
+  }
+  .shot.pressed { background: var(--c); color: #0d1322; transform: scale(0.93); box-shadow: 0 0 16px var(--c); }
+  .shot small { font-size: 10px; font-weight: 700; opacity: 0.65; display: none; }
+  @media (hover: hover) and (pointer: fine) { .shot small { display: block; } }
+  #bTop  { --c: #7fe3ff; width: 76px; height: 76px; right: 14px; bottom: 12px; font-size: 13px; }
+  #bFlat { --c: #ffd166; width: 62px; height: 62px; right: 104px; bottom: 16px; }
+  #bLob  { --c: #c3a6ff; width: 62px; height: 62px; right: 44px; bottom: 96px; }
 </style>
 </head>
 <body>
 <div id="wrap">
   <canvas id="c"></canvas>
-  <div id="shots">
+  <div id="feed">
     <button data-s="auto" class="on">Auto</button>
     <button data-s="flat">Flat</button>
     <button data-s="top">Topspin</button>
     <button data-s="lob">Lob</button>
+  </div>
+  <div id="deck">
+    <div id="stickZone"><div id="stickBase"><div id="stickKnob"></div><div id="stickLabel">MOVE · AIM</div></div></div>
+    <button class="shot" id="bLob" data-shot="lob">LOB<small>L</small></button>
+    <button class="shot" id="bFlat" data-shot="flat">FLAT<small>K</small></button>
+    <button class="shot" id="bTop" data-shot="top">TOPSPIN<small>J</small></button>
   </div>
 </div>
 
@@ -69,19 +162,22 @@
   'use strict';
   const E = window.TennisEngine, CFG = E.CONFIG, COURT = E.COURT;
 
-  // --- URL options: ?debug=1 overlay, ?slow=0.3 time scale ---------------
+  // --- URL options: ?debug=1 overlay, ?slow=0.3 time scale, ?machine=1 ----
   const qs = new URLSearchParams(location.search);
   const DEBUG = qs.get('debug') === '1';
   const SLOW = Math.min(2, Math.max(0.05, parseFloat(qs.get('slow')) || 1));
+  const SHOW_FEED = DEBUG || qs.get('machine') === '1';
 
-  // --- Canvas and fit (same pattern as Fin Dash) -------------------------
+  // --- Canvas, deck and fit (same pattern as Fin Dash) --------------------
   const W = 360, H = 500;
+  const OVERLAP = 56; // canvas px at the bottom (ad board) the deck may cover
   const canvas = document.getElementById('c'), g = canvas.getContext('2d');
-  const wrap = document.getElementById('wrap');
+  const wrap = document.getElementById('wrap'), deck = document.getElementById('deck');
+  let scale = 1;
   function fitCanvas() {
     const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
-    const availH = window.innerHeight - reserved;
-    const scale = Math.min(window.innerWidth / W, availH / H);
+    const availH = window.innerHeight - reserved - deck.offsetHeight;
+    scale = Math.max(0.3, Math.min(window.innerWidth / W, availH / (H - OVERLAP)));
     const dpr = window.devicePixelRatio || 1;
     canvas.style.width = (W * scale) + 'px';
     canvas.style.height = (H * scale) + 'px';
@@ -89,10 +185,12 @@
     canvas.height = Math.round(H * scale * dpr);
     g.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
     wrap.style.setProperty('--game-scale', scale);
+    deck.style.width = Math.min(window.innerWidth, Math.max(W * scale, 340), 480) + 'px';
+    deck.style.marginTop = (-OVERLAP * scale) + 'px';
+    resetStick();
   }
   window.addEventListener('resize', fitCanvas);
   window.addEventListener('kb-navbar-ready', fitCanvas);
-  fitCanvas();
 
   // --- Projection (from the prototype) ----------------------------------
   const YT = 120, YB = 410;
@@ -101,6 +199,8 @@
     return [W / 2 + x * W * 0.46 * s, YT + (YB - YT) * z - h * 70 * s, s];
   }
   function Pm(X, Y, Hm) { const w = E.toWorld(X, Y, Hm); return P(w.x, w.z, w.h); }
+  // Pixels per metre at projection scale s (across, and up).
+  const MX = W * 0.46 / COURT.doublesHalf, MH = CFG.hScale * 70;
 
   // --- Static scenery ----------------------------------------------------
   const crowd = [], cp = ['#7a8bb5', '#b5707a', '#c9b36e', '#6fa58a', '#8f7ab5'];
@@ -157,64 +257,191 @@
   }
 
   // --- Game state ----------------------------------------------------------
-  const mc = E.createMachine((Date.now() & 0xffff) + 1);
-  const ball = mc.ball;
-  let clock = 0, hitStop = 0, shake = 0, cheer = 0;
-  let trail = [], parts = [], fx = [], pop = { txt: '', life: 0, col: '#fff' }, call = { txt: '', life: 0, x: 0, y: 0, col: '#fff' };
-  let squash = { t: 0, kind: 'hit' }, ballRot = 0, rally = 0, best = 0;
-  let lastCross = null, lastResult = '-', lastAngle = null, fps = 0, fpsAcc = 0, fpsN = 0, stepsLast = 0;
+  const pr = E.createPractice((Date.now() & 0xffff) + 1);
+  const ball = pr.ball, me = pr.player;
+  let clock = 0, hitStop = 0, shake = 0, cheer = 0, flash = 0;
+  let trail = [], parts = [], fx = [], racketTrail = [];
+  let pop = { txt: '', sub: '', life: 0, col: '#fff', big: false }, call = { txt: '', life: 0, x: 0, y: 0, col: '#fff' };
+  let tag = { txt: '', life: 0, col: '#fff' };
+  let squash = { t: 0, kind: 'hit' }, ballRot = 0;
+  let lastResult = '-', lastAngle = null, lastHit = null, fps = 0, fpsAcc = 0, fpsN = 0, stepsLast = 0;
 
   const SHOT_COL = { flat: '#ffd166', top: '#7fe3ff', lob: '#c3a6ff' };
   const CALL = { IN: ['IN', '#8ef0a0'], OUT_LONG: ['OUT', '#ff6b5e'], OUT_WIDE: ['WIDE', '#ff6b5e'], NET: ['NET', '#ff9f43'] };
 
+  function burst(x, y, n, spread) {
+    for (let i = 0; i < n; i++) parts.push({ x, y, vx: (Math.random() - 0.5) * 140 * spread, vy: (Math.random() - 0.8) * 90 * spread, l: 0.8, c: '255,255,255' });
+  }
+
   function onEvent(e) {
     if (e.type === 'hit') {
       const q = Pm(e.X, e.Y, e.H);
-      hitStop = 0.05; shake = 0.14; squash = { t: 0.08, kind: 'hit' };
+      squash = { t: 0.08, kind: 'hit' };
+      lastAngle = e.angle; trail = [];
+      if (e.by === 'machine') { burst(q[0], q[1], 4, 0.5); return; }
+      // The player's contact: hit-stop, shake, flash, stroke label.
+      lastHit = e;
+      hitStop = 0.05; shake = 0.14;
       fx.push({ x: q[0], y: q[1], l: 1 });
-      for (let i = 0; i < 7; i++) parts.push({ x: q[0], y: q[1], vx: (Math.random() - 0.5) * 140, vy: (Math.random() - 0.8) * 90, l: 0.8, c: '255,255,255' });
-      pop = { txt: CFG.shots[e.shot].name, life: 1.1, col: SHOT_COL[e.shot] };
-      lastAngle = e.angle;
-      trail = [];
+      burst(q[0], q[1], e.perfect ? 12 : 7, 1);
+      if (e.perfect) {
+        flash = 1;
+        pop = { txt: 'PERFECT', sub: CFG.shots[e.shot].name, life: 1.1, col: '#ffe066', big: true };
+      } else {
+        const hint = e.band === 'GOOD' ? '' : (e.errMs < 0 ? 'EARLY' : 'LATE');
+        pop = { txt: CFG.shots[e.shot].name, sub: hint, life: 1.1, col: SHOT_COL[e.shot], big: false };
+      }
+      tag = { txt: e.stroke === 'fh' ? 'FOREHAND' : 'BACKHAND', life: 1, col: e.stroke === 'fh' ? '#ffd166' : '#7fe3ff' };
+    } else if (e.type === 'whiff') {
+      lastHit = e;
+      if (e.live) tag = { txt: 'WHIFF', life: 1, col: '#c9ced8' };
+    } else if (e.type === 'missed') {
+      if (!e.whiffed) tag = { txt: 'MISSED', life: 1, col: '#c9ced8' };
     } else if (e.type === 'bounce') {
       const q = Pm(e.X, e.Y, 0);
       squash = { t: 0.06, kind: 'bounce' };
       const n = Math.min(12, 4 + Math.round(e.impact));
       for (let i = 0; i < n; i++) parts.push({ x: q[0], y: q[1], vx: (Math.random() - 0.5) * 90 * q[2], vy: -Math.random() * 70 * q[2], l: 1, c: '220,235,255' });
-      if (e.result) {
-        lastResult = e.result;
-        const c = CALL[e.result];
-        call = { txt: c[0], life: 1.1, x: q[0], y: q[1], col: c[1] };
-        if (e.result !== 'IN') { shake = 0.1; }
-      }
+    } else if (e.type === 'return') {
+      lastResult = e.result;
+      const q = Pm(e.X, e.Y, 0), c = CALL[e.result];
+      call = { txt: c[0], life: 1.1, x: q[0], y: q[1], col: c[1] };
+      if (e.result !== 'IN') shake = Math.max(shake, 0.1);
+      if (e.rally >= 6) cheer = 1;
     } else if (e.type === 'net') {
-      if (e.stopped) shake = 0.12;
+      if (e.stopped) shake = Math.max(shake, 0.12);
       const q = Pm(e.X, e.Y, e.H);
       for (let i = 0; i < 5; i++) parts.push({ x: q[0], y: q[1], vx: (Math.random() - 0.5) * 60, vy: -Math.random() * 40, l: 0.7, c: '255,255,255' });
-    } else if (e.type === 'cross') {
-      lastCross = e.t; rally++; best = Math.max(best, rally);
-      if (rally >= 6) cheer = 1;
-    } else if (e.type === 'reset') {
-      rally = 0;
     }
   }
 
-  // --- Shot buttons -------------------------------------------------------
-  const btns = document.querySelectorAll('#shots button');
-  btns.forEach(b => b.addEventListener('click', () => {
-    mc.mode = b.dataset.s;
-    btns.forEach(o => o.classList.toggle('on', o === b));
-  }));
+  // --- Input: time mapping -------------------------------------------------
+  // Each frame records where sim time was at that real time and how fast it
+  // runs, so a tap's own event timestamp maps to the sim instant it
+  // happened, however late the frame that handles it is.
+  let anchor = { real: performance.now(), sim: 0, rate: SLOW };
+  function simTimeAt(ts) {
+    if (!(ts > 0)) ts = performance.now();
+    return anchor.sim + Math.max(0, ts - anchor.real) / 1000 * anchor.rate;
+  }
+  function swing(shot, ts) { E.requestSwing(pr, shot, simTimeAt(ts)); }
+
+  // --- Input: touch (pointer events, multi-touch) --------------------------
+  const active = new Map(); // pointerId -> role, for the debug overlay
+  const zone = document.getElementById('stickZone');
+  const base = document.getElementById('stickBase'), knob = document.getElementById('stickKnob');
+  const TRAVEL = 44;
+  let touchStick = { x: 0, y: 0 }, stickId = null, centre = { x: 0, y: 0 };
+
+  function restPos() { return { x: 80, y: zone.clientHeight - 74 }; }
+  function placeBase(c) { base.style.left = c.x + 'px'; base.style.top = c.y + 'px'; }
+  function setKnob(dx, dy) { knob.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; }
+  function resetStick() {
+    stickId = null; touchStick = { x: 0, y: 0 };
+    base.classList.remove('active'); setKnob(0, 0); placeBase(restPos());
+  }
+  function moveStick(e) {
+    const r = zone.getBoundingClientRect();
+    let dx = e.clientX - r.left - centre.x, dy = e.clientY - r.top - centre.y;
+    const d = Math.hypot(dx, dy);
+    if (d > TRAVEL) { dx *= TRAVEL / d; dy *= TRAVEL / d; }
+    setKnob(dx, dy);
+    touchStick = { x: dx / TRAVEL, y: dy / TRAVEL };
+  }
+  zone.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    if (stickId !== null) return;
+    try { zone.setPointerCapture(e.pointerId); } catch (_) {}
+    stickId = e.pointerId; active.set(e.pointerId, 'stick');
+    const r = zone.getBoundingClientRect();
+    // The stick centres where the thumb lands (kept fully inside the zone).
+    centre = {
+      x: Math.min(r.width - 56, Math.max(56, e.clientX - r.left)),
+      y: Math.min(r.height - 56, Math.max(56, e.clientY - r.top)),
+    };
+    placeBase(centre); base.classList.add('active');
+    moveStick(e);
+  });
+  zone.addEventListener('pointermove', e => { if (e.pointerId === stickId) moveStick(e); });
+  function endStick(e) {
+    active.delete(e.pointerId);
+    if (e.pointerId === stickId) resetStick();
+  }
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => zone.addEventListener(t, endStick));
+
+  document.querySelectorAll('.shot').forEach(btn => {
+    const shot = btn.dataset.shot, held = new Set();
+    btn.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      try { btn.setPointerCapture(e.pointerId); } catch (_) {}
+      held.add(e.pointerId); active.set(e.pointerId, shot);
+      btn.classList.add('pressed');
+      swing(shot, e.timeStamp);
+    });
+    const up = e => {
+      held.delete(e.pointerId); active.delete(e.pointerId);
+      if (!held.size) btn.classList.remove('pressed');
+    };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => btn.addEventListener(t, up));
+    btn.addEventListener('click', e => e.preventDefault());
+    btn._release = () => { held.clear(); btn.classList.remove('pressed'); };
+  });
+
+  ['contextmenu', 'selectstart', 'dblclick'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+  document.addEventListener('gesturestart', e => e.preventDefault());
+
+  // --- Input: keyboard fallback --------------------------------------------
+  const keys = new Set();
+  const MOVE_KEYS = { ArrowLeft: 'l', KeyA: 'l', ArrowRight: 'r', KeyD: 'r', ArrowUp: 'u', KeyW: 'u', ArrowDown: 'd', KeyS: 'd' };
+  const SHOT_KEYS = { KeyJ: 'top', KeyK: 'flat', KeyL: 'lob' };
+  window.addEventListener('keydown', e => {
+    if (MOVE_KEYS[e.code]) { keys.add(MOVE_KEYS[e.code]); e.preventDefault(); }
+    else if (SHOT_KEYS[e.code]) {
+      e.preventDefault();
+      if (!e.repeat) {
+        swing(SHOT_KEYS[e.code], e.timeStamp);
+        const b = document.querySelector('.shot[data-shot="' + SHOT_KEYS[e.code] + '"]');
+        b.classList.add('pressed'); setTimeout(() => b.classList.remove('pressed'), 120);
+      }
+    } else if (e.code === 'KeyM' && SHOW_FEED && !e.repeat) {
+      const order = ['auto', 'flat', 'top', 'lob'];
+      setFeed(order[(order.indexOf(pr.mode) + 1) % order.length]);
+    }
+  });
+  window.addEventListener('keyup', e => { if (MOVE_KEYS[e.code]) keys.delete(MOVE_KEYS[e.code]); });
+
+  function currentStick() {
+    if (stickId !== null) return touchStick;
+    let x = (keys.has('r') ? 1 : 0) - (keys.has('l') ? 1 : 0), y = (keys.has('d') ? 1 : 0) - (keys.has('u') ? 1 : 0);
+    const m = Math.hypot(x, y);
+    if (m > 1) { x /= m; y /= m; }
+    return { x, y };
+  }
+
+  function dropInput() {
+    resetStick(); keys.clear(); active.clear();
+    document.querySelectorAll('.shot').forEach(b => b._release());
+  }
+
+  // --- Ball machine feed selector (?machine=1) ------------------------------
+  const feedRow = document.getElementById('feed');
+  const feedBtns = feedRow.querySelectorAll('button');
+  function setFeed(mode) { pr.mode = mode; feedBtns.forEach(o => o.classList.toggle('on', o.dataset.s === mode)); }
+  if (SHOW_FEED) feedRow.classList.add('show');
+  feedBtns.forEach(b => b.addEventListener('click', () => setFeed(b.dataset.s)));
 
   // --- Drawing the ball ---------------------------------------------------
+  // A ball rolling far beyond the far baseline (no opponent returns it yet)
+  // leaves the projection; don't draw it there.
+  const ballGone = () => ball.phase === 'idle' || ball.Y < -8;
   function drawShadow() {
-    if (ball.phase === 'idle') return;
+    if (ballGone()) return;
     const sp = Pm(ball.X, ball.Y, 0), hw = ball.H * CFG.hScale;
     g.fillStyle = 'rgba(0,0,0,' + (0.38 / (1 + hw)).toFixed(2) + ')';
     g.beginPath(); g.ellipse(sp[0], sp[1], 6 * sp[2] * (1 + hw * 0.15), 2.6 * sp[2], 0, 0, 7); g.fill();
   }
   function drawBall() {
-    if (ball.phase === 'idle') return;
+    if (ballGone()) return;
     trail.forEach((q, i) => {
       g.fillStyle = 'rgba(216,236,58,' + (0.07 * (i + 1)).toFixed(2) + ')';
       g.beginPath(); g.arc(q[0], q[1], 4.5 * q[2], 0, 7); g.fill();
@@ -231,6 +458,124 @@
     g.beginPath(); g.arc(x, y, 4 * s, 2.4 + ballRot, 4.2 + ballRot); g.stroke();
   }
 
+  // --- Placeholder players (simple shapes; jointed art is Stage 4) ---------
+  const palN = { shirt: '#e8483b', short: '#1c2640', skin: '#e0ac82', hair: '#2a1a10', cap: '#f4f4f0', frame: '#111' };
+  const palF = { shirt: '#f2c94c', short: '#222a3a', skin: '#8d5a3b', hair: '#1a1008', cap: '#2b3a67', frame: '#c0392b' };
+
+  // Racket hand pose along the swing, tau = seconds from contact (the
+  // prototype's -0.6 ready, -0.16 take-back, 0 contact, 0.18 finish, 0.6
+  // ready). [tau, hand out to the stroke side (m), hand height (m),
+  // racket angle (deg, 0 = pointing out to the side, 90 = up)].
+  const POSE = [
+    [-0.6, 0.15, 1.0, 70],
+    [-0.16, 0.5, 1.35, 125],
+    [-0.05, 0.45, 0.85, -35],
+    [0, 0.35, 1.0, 0],
+    [0.18, -0.15, 1.5, 160],
+    [0.6, 0.15, 1.0, 70],
+  ];
+  function pose(tau) {
+    if (tau <= POSE[0][0]) return POSE[0];
+    for (let i = 0; i < POSE.length - 1; i++) {
+      const a = POSE[i], b = POSE[i + 1];
+      if (tau <= b[0]) {
+        const f = (tau - a[0]) / (b[0] - a[0]);
+        return a.map((v, j) => v + (b[j] - v) * f);
+      }
+    }
+    return POSE[POSE.length - 1];
+  }
+  // The swing's time from contact. The 0.16 s backswing squeezes the
+  // prototype's take-back and forward swing into the time the tap allows.
+  function swingTau() {
+    const s = pr.swing, bs = CFG.swing.backswing;
+    if (s.t0 == null) return -0.6;
+    const e = pr.t + acc - s.t0;
+    if (e < 0) return -0.6;
+    const prep = bs * 0.56;
+    if (e < prep) return -0.6 + (e / prep) * 0.44;
+    if (e < bs) return -0.16 + (e - prep) / (bs - prep) * 0.16;
+    return Math.min(0.6, e - bs);
+  }
+
+  function seg(a, b, w, col) {
+    g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = w + 1.8; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+    g.strokeStyle = col; g.lineWidth = w;
+    g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+  }
+
+  // One figure. front = facing the camera (far player). F = stroke side
+  // (+1 to the right of the screen).
+  function figure(X, Y, pal, front, tau, F, speed, isNear) {
+    const [fx, fy, s] = Pm(X, Y, 0), mx = MX * s, mh = MH * s;
+    const pt = (lat, h) => [fx + lat * mx, fy - h * mh];
+    // Shadow.
+    g.fillStyle = 'rgba(0,0,0,.3)';
+    g.beginPath(); g.ellipse(fx, fy, 0.42 * mx, 0.13 * mh, 0, 0, 7); g.fill();
+    // Legs with a little stride while moving.
+    const stride = Math.min(1, speed / 3);
+    for (const sg of [-1, 1]) {
+      const ph = clock * 14 + (sg > 0 ? Math.PI : 0);
+      const lift = stride * Math.max(0, Math.sin(ph)) * 0.08;
+      const foot = pt(sg * 0.2 + stride * Math.cos(ph) * 0.06, lift);
+      seg(pt(sg * 0.11, 0.8), foot, 0.11 * mx, pal.skin);
+      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(foot[0], foot[1], 0.09 * mx, 0.05 * mh, 0, 0, 7); g.fill();
+    }
+    // Shorts and shirt.
+    const hipL = pt(-0.19, 0.92), hipR = pt(0.19, 0.72);
+    g.fillStyle = pal.short; g.fillRect(hipL[0], hipL[1], hipR[0] - hipL[0], hipR[1] - hipL[1]);
+    const t1 = pt(-0.2, 0.9), t2 = pt(0.2, 0.9), t3 = pt(0.24, 1.45), t4 = pt(-0.24, 1.45);
+    g.fillStyle = pal.shirt; g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = 1.2;
+    g.beginPath(); g.moveTo(t1[0], t1[1]); g.lineTo(t2[0], t2[1]); g.lineTo(t3[0], t3[1]); g.lineTo(t4[0], t4[1]); g.closePath(); g.fill(); g.stroke();
+    if (!front) {
+      const n = pt(0, 1.12);
+      g.fillStyle = '#fff'; g.font = 'bold ' + (0.3 * mh).toFixed(1) + 'px sans-serif'; g.textAlign = 'center';
+      g.fillText('7', n[0], n[1] + 0.1 * mh);
+    }
+    // Head.
+    const hd = pt(0, 1.66), r = 0.13 * mh;
+    g.fillStyle = front ? pal.skin : pal.hair; g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = 1.2;
+    g.beginPath(); g.arc(hd[0], hd[1], r, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = pal.cap; g.beginPath(); g.arc(hd[0], hd[1] - 0.15 * r, r * 1.04, Math.PI, 0); g.fill();
+    if (front) { g.fillStyle = '#111'; g.fillRect(hd[0] - 0.45 * r, hd[1] + 0.2 * r, 0.2 * r, 0.2 * r); g.fillRect(hd[0] + 0.25 * r, hd[1] + 0.2 * r, 0.2 * r, 0.2 * r); }
+    // Racket arm. The near player's view mirrors left/right for a backhand.
+    const p = pose(tau), a = p[3] * Math.PI / 180;
+    const sh = pt(F * 0.22, 1.42), hand = pt(F * p[1], p[2]);
+    const dir = [F * Math.cos(a), Math.sin(a)];
+    const throat = pt(F * p[1] + dir[0] * 0.25, p[2] + dir[1] * 0.25);
+    const head = pt(F * p[1] + dir[0] * 0.47, p[2] + dir[1] * 0.47);
+    seg(sh, hand, 0.08 * mx, pal.skin);
+    if (isNear) {
+      if (tau > -0.18 && tau < 0.22 && pr.swing.t0 != null) racketTrail.push(head);
+      else if (racketTrail.length) racketTrail.shift();
+      if (racketTrail.length > 10) racketTrail.shift();
+      for (let i = 1; i < racketTrail.length; i++) {
+        const k = i / racketTrail.length;
+        g.strokeStyle = 'rgba(255,255,255,' + (k * 0.6).toFixed(2) + ')'; g.lineWidth = k * 0.2 * mx; g.lineCap = 'round';
+        g.beginPath(); g.moveTo(racketTrail[i - 1][0], racketTrail[i - 1][1]); g.lineTo(racketTrail[i][0], racketTrail[i][1]); g.stroke();
+      }
+    }
+    g.strokeStyle = '#2a2a2a'; g.lineWidth = 0.05 * mx;
+    g.beginPath(); g.moveTo(hand[0], hand[1]); g.lineTo(throat[0], throat[1]); g.stroke();
+    const rot = Math.atan2(head[1] - hand[1], head[0] - hand[0]);
+    const sq = Math.abs(tau) < 0.04 ? 0.85 : 1;
+    g.save(); g.translate(head[0], head[1]); g.rotate(rot);
+    g.fillStyle = 'rgba(255,255,255,.3)'; g.strokeStyle = pal.frame; g.lineWidth = 0.05 * mx;
+    g.beginPath(); g.ellipse(0, 0, 0.2 * mx, 0.15 * mx * sq, 0, 0, 7); g.fill(); g.stroke();
+    g.restore();
+    g.fillStyle = pal.skin; g.beginPath(); g.arc(hand[0], hand[1], 0.05 * mx, 0, 7); g.fill();
+  }
+
+  function drawNear() {
+    const F = pr.swing.stroke === 'bh' ? -1 : 1;
+    figure(me.X, me.Y, palN, false, swingTau(), F, Math.hypot(me.vx, me.vy), true);
+  }
+  function drawFar() {
+    // Static stand-in: no opponent until a later stage.
+    figure(0, CFG.farContactY - 0.6, palF, true, -0.6, -1, 0, false);
+  }
+
   function drawFx() {
     fx.forEach(f => {
       const e = 1 - f.l;
@@ -245,36 +590,66 @@
   }
 
   function outlinedText(txt, x, y, size, col, alpha) {
-    g.globalAlpha = alpha; g.font = 'bold ' + size + 'px system-ui, sans-serif'; g.textAlign = 'center';
+    g.globalAlpha = Math.max(0, alpha); g.font = 'bold ' + size + 'px system-ui, sans-serif'; g.textAlign = 'center';
     g.lineWidth = 4; g.strokeStyle = '#0d1322'; g.fillStyle = col;
     g.strokeText(txt, x, y); g.fillText(txt, x, y); g.globalAlpha = 1;
+  }
+
+  function drawLabels() {
+    if (pop.life > 0) {
+      const y = 225 - (1.1 - pop.life) * 18, a = Math.min(1, pop.life);
+      outlinedText(pop.txt, W / 2, y, pop.big ? 30 : 20, pop.col, a);
+      if (pop.sub) outlinedText(pop.sub, W / 2, y + (pop.big ? 20 : 18), 12, pop.big ? '#fff' : '#e7ebf3', a);
+    }
+    if (call.life > 0) outlinedText(call.txt, Math.min(W - 40, Math.max(40, call.x)), Math.max(130, call.y - 18 - (1.1 - call.life) * 12), 15, call.col, Math.min(1, call.life * 1.5));
+    if (tag.life > 0) {
+      const q = Pm(me.X, me.Y, 2.2);
+      outlinedText(tag.txt, Math.min(W - 45, Math.max(45, q[0])), q[1] - (1 - tag.life) * 14, 13, tag.col, Math.min(1, tag.life * 1.5));
+    }
   }
 
   function drawHud() {
     g.fillStyle = '#0d1322'; g.fillRect(0, 0, W, 34);
     g.font = 'bold 13px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#fff';
-    g.textAlign = 'left'; g.fillText('BALL MACHINE', 12, 22);
-    g.textAlign = 'right'; g.fillText('RALLY ' + rally + '  BEST ' + best, W - 12, 22);
+    g.textAlign = 'left'; g.fillText(SHOW_FEED ? 'FEED ' + pr.mode.toUpperCase() : 'PRACTICE', 12, 22);
+    g.textAlign = 'right'; g.fillText('RALLY ' + pr.rally + '  BEST ' + pr.best, W - 12, 22);
   }
 
   function drawDebug() {
-    const w = E.toWorld(ball.X, ball.Y, ball.H);
-    const v = Math.hypot(ball.vx, ball.vy, ball.vz);
+    const v = Math.hypot(ball.vx, ball.vy, ball.vz), h = lastHit, sw = pr.swing;
+    const ph = E.swingPhase(sw.t0 == null ? null : pr.t - sw.t0);
+    const roles = [...active.values()];
     const lines = [
-      'FPS ' + fps.toFixed(0) + '  steps/frame ' + stepsLast + '  slow ' + SLOW,
-      'phase ' + ball.phase + (mc.dying ? ' (resetting)' : '') + '  shot ' + (mc.shotKey || '-'),
-      'world x ' + w.x.toFixed(2) + ' z ' + w.z.toFixed(2) + ' h ' + w.h.toFixed(2),
-      'm  X ' + ball.X.toFixed(2) + ' Y ' + ball.Y.toFixed(2) + ' H ' + ball.H.toFixed(2),
-      'v ' + ball.vx.toFixed(1) + ', ' + ball.vy.toFixed(1) + ', ' + ball.vz.toFixed(1) + ' m/s  ' + (v * 3.6).toFixed(0) + ' km/h',
-      'spin ' + (ball.spin * 60 / (2 * Math.PI)).toFixed(0) + ' rpm  bounces ' + ball.bounces + (ball.touchedNet ? '  net' : ''),
-      'angle ' + (lastAngle != null ? lastAngle.toFixed(1) + '°' : '-') + '  last call ' + lastResult + '  cross ' + (lastCross != null ? lastCross.toFixed(2) + 's' : '-'),
+      'FPS ' + fps.toFixed(0) + '  steps/frame ' + stepsLast + '  slow ' + SLOW + '  t ' + pr.t.toFixed(2),
+      'ball ' + ball.phase + '  by ' + (pr.hitBy || '-') + (pr.live ? ' live' : '') + '  shot ' + (pr.shotKey || '-'),
+      'm  X ' + ball.X.toFixed(2) + ' Y ' + ball.Y.toFixed(2) + ' H ' + ball.H.toFixed(2) + '  ' + (v * 3.6).toFixed(0) + ' km/h',
+      'spin ' + (ball.spin * 60 / (2 * Math.PI)).toFixed(0) + ' rpm  angle ' + (lastAngle != null ? lastAngle.toFixed(1) + '°' : '-') + '  call ' + lastResult,
+      'player X ' + me.X.toFixed(2) + ' Y ' + me.Y.toFixed(2) + '  v ' + me.vx.toFixed(1) + ', ' + me.vy.toFixed(1),
+      'swing ' + ph + (sw.shot ? ' (' + sw.shot + ')' : '') + '  ' + (sw.stroke === 'bh' ? 'BACKHAND' : 'FOREHAND'),
+      h ? 'timing ' + (h.errMs > 0 ? '+' : '') + h.errMs.toFixed(0) + ' ms ' + (h.errMs < 0 ? 'early' : 'late') + '  reach ' + h.lat.toFixed(2) + ' m  dist ' + h.dist.toFixed(2) : 'timing -',
+      h ? 'quality ' + h.quality.toFixed(2) + ' ' + h.band + (h.reason ? ' (' + h.reason + ')' : '') + (h.mishit ? ' mishit ' + h.mishit : '') + (h.pace ? '  pace x' + h.pace.toFixed(2) : '') : 'quality -',
+      'touches ' + (roles.length ? roles.join(', ') : 'none') + '  stick ' + currentStick().x.toFixed(2) + ', ' + currentStick().y.toFixed(2),
     ];
-    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, 38, 268, lines.length * 12 + 6);
+    const top = SHOW_FEED ? 74 : 38; // below the feed row
+    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, top, 300, lines.length * 12 + 6);
     g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#9ef'; g.textAlign = 'left';
-    lines.forEach((l, i) => g.fillText(l, 8, 50 + i * 12));
-    if (mc.aim && ball.phase === 'flight') {
-      const q = Pm(mc.aim.target.X, mc.aim.target.Y, 0);
-      g.strokeStyle = mc.aim.miss ? '#ff6b5e' : '#8ef0a0'; g.lineWidth = 1.5;
+    lines.forEach((l, i) => g.fillText(l, 8, top + 12 + i * 12));
+    // Reach zone at contact height on the ideal contact plane: forehand
+    // (yellow) and backhand (cyan) spans, with the ideal points.
+    const c = CFG.contact, py = me.Y - c.ahead;
+    for (const [F, col] of [[1, '#ffd166'], [-1, '#7fe3ff']]) {
+      const a = Pm(me.X + F * c.side - c.reach, py, c.height), b = Pm(me.X + F * c.side + c.reach, py, c.height);
+      const m = Pm(me.X + F * c.side, py, c.height);
+      g.strokeStyle = col; g.globalAlpha = 0.55; g.lineWidth = 2;
+      g.beginPath(); g.moveTo(a[0], a[1] + (F > 0 ? -2 : 2)); g.lineTo(b[0], b[1] + (F > 0 ? -2 : 2)); g.stroke();
+      g.globalAlpha = 1; g.beginPath(); g.arc(m[0], m[1], 3, 0, 7); g.stroke();
+    }
+    const split = Pm(me.X + c.backhandBelow, py, 0);
+    g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(split[0], split[1]); g.lineTo(split[0], split[1] - 12); g.stroke();
+    if (pr.aim && ball.phase === 'flight') {
+      const q = Pm(pr.aim.target.X, pr.aim.target.Y, 0);
+      g.strokeStyle = pr.aim.miss ? '#ff6b5e' : '#8ef0a0'; g.lineWidth = 1.5;
       g.beginPath(); g.moveTo(q[0] - 5, q[1] - 2); g.lineTo(q[0] + 5, q[1] + 2); g.moveTo(q[0] + 5, q[1] - 2); g.lineTo(q[0] - 5, q[1] + 2); g.stroke();
     }
   }
@@ -287,52 +662,68 @@
     fpsAcc += real; fpsN++;
     if (fpsAcc >= 0.5) { fps = fpsN / fpsAcc; fpsAcc = 0; fpsN = 0; }
 
-    const dt = real * SLOW;
+    const dt = real * SLOW, stick = currentStick();
     stepsLast = 0;
     if (hitStop > 0) {
       hitStop -= real;
     } else {
       acc += dt;
       while (acc >= CFG.dt && stepsLast < 30) {
-        const ev = E.machineStep(mc);
+        const ev = E.practiceStep(pr, { stick });
         for (const e of ev) onEvent(e);
         acc -= CFG.dt; stepsLast++;
-        if (hitStop > 0) { acc = 0; break; }
+        if (hitStop > 0) break; // freeze here; the leftover time carries on after
       }
     }
-    clock += dt;
-    ballRot += ball.spin * dt * 0.05;
+    anchor = { real: now, sim: pr.t + acc, rate: hitStop > 0 ? 0 : SLOW };
+    const fdt = hitStop > 0 ? 0 : dt;
+    clock += fdt;
+    ballRot += ball.spin * fdt * 0.05;
     if (stepsLast && ball.phase !== 'idle') { trail.push(Pm(ball.X, ball.Y, ball.H)); if (trail.length > 6) trail.shift(); }
     parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; p.l -= dt * 1.6; });
     parts = parts.filter(p => p.l > 0);
     fx.forEach(f => f.l -= dt * 4.5); fx = fx.filter(f => f.l > 0);
-    pop.life -= dt; call.life -= dt; shake = Math.max(0, shake - real); squash.t -= dt;
+    pop.life -= dt; call.life -= dt; tag.life -= dt; shake = Math.max(0, shake - real); squash.t -= fdt;
+    flash = Math.max(0, flash - real * 6);
     cheer = Math.max(0, cheer - dt * 0.4);
 
     g.save();
     if (shake > 0) g.translate((Math.random() - 0.5) * 5 * shake / 0.14, (Math.random() - 0.5) * 5 * shake / 0.14);
     drawBg();
+    drawFar();
     const farSide = ball.Y < COURT.netY;
     if (farSide) { drawShadow(); drawBall(); }
     drawNet();
-    if (!farSide) { drawShadow(); drawBall(); }
+    if (!farSide) {
+      drawShadow();
+      if (ball.Y < me.Y) { drawBall(); drawNear(); } else { drawNear(); drawBall(); }
+    } else drawNear();
     drawFx();
-    if (pop.life > 0) outlinedText(pop.txt, W / 2, 225 - (1.1 - pop.life) * 18, 20, pop.col, Math.min(1, pop.life));
-    if (call.life > 0) outlinedText(call.txt, Math.min(W - 40, Math.max(40, call.x)), Math.max(130, call.y - 18 - (1.1 - call.life) * 12), 15, call.col, Math.min(1, call.life * 1.5));
+    drawLabels();
     g.restore();
+    if (flash > 0) { g.fillStyle = 'rgba(255,240,180,' + (flash * 0.22).toFixed(2) + ')'; g.fillRect(0, 34, W, H - 34); }
     drawHud();
     if (DEBUG) drawDebug();
     requestAnimationFrame(frame);
   }
 
-  // Pause while the tab is hidden; resume without a time jump.
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { running = false; }
-    else if (!running) { running = true; last = performance.now(); acc = 0; requestAnimationFrame(frame); }
-  });
+  // Pause while hidden or on iOS lock/app switch; drop held input and
+  // resume without a time jump.
+  function pause() { running = false; dropInput(); }
+  function resume() {
+    if (running || document.hidden) return;
+    running = true; last = performance.now(); acc = 0;
+    anchor = { real: last, sim: pr.t, rate: SLOW };
+    requestAnimationFrame(frame);
+  }
+  document.addEventListener('visibilitychange', () => { document.hidden ? pause() : resume(); });
+  window.addEventListener('pagehide', pause);
+  window.addEventListener('pageshow', resume);
+  window.addEventListener('blur', () => { keys.clear(); });
 
+  fitCanvas();
   // Small test handle for headless checks.
-  window.tennis = { machine: mc, engine: E };
+  window.tennis = { practice: pr, engine: E };
   requestAnimationFrame(frame);
 })();
 </script>

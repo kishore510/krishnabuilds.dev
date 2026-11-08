@@ -235,3 +235,9 @@ The running job on the Raspberry Pi and its old data are handled manually and ar
 The Arcade tennis game (apps/arcade/games/tennis/) has its logic in a pure engine.js (no DOM) and its page, rendering and input in index.html. engine.js is a plain script that sets window.TennisEngine in the browser and uses module.exports in Node, so there is no type="module", no build step and it still works from a local file. It is the first Arcade game with a second JS file; the rule that games are single index.html files is relaxed only for logic that needs headless tests.
 
 Physics tests live in apps/arcade/scripts/tennis.test.js (node:test, no dependencies), which the deploy already ignores. They are run by file path and are not in CI until Stage 3. The game is reachable by direct URL only until Stage 3: no landing-list entry, no data-kb-play and no version bump before then.
+
+## 2026-11-08 — Tennis Stage 2: controls below the court, swing timing from event timestamps
+
+The tennis touch controls (a floating joystick on the left, Topspin, Flat and Lob buttons on the right) sit in a deck below the court, not over it. The near player is drawn at the bottom of the court, so thumbs on the canvas would hide them. The deck's top overlaps only the canvas's decorative ad-board strip, so the court still fills most of a portrait phone.
+
+Swing timing uses each tap's own event timestamp, mapped to simulation time, rather than the frame that handles the tap. A frame hiccup therefore doesn't change whether a shot was early or late. The swing state machine, contact judgement, quality and aiming live in engine.js and are covered by the headless tests. Player returns ask the aim solver to clear the net (`clearNet`): a deep, hard-hit flat ball from a low contact has no angle that both clears the tape and lands at the requested depth, so it is lifted to clear and lands a little longer.
