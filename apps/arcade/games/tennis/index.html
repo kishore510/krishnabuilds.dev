@@ -245,7 +245,7 @@
   window.addEventListener('kb-navbar-ready', fitCanvas);
 
   // --- Projection (from the prototype) ----------------------------------
-  const YT = 120, YB = 410;
+  const YT = 128, YB = 410; // YT leaves room for a far player behind the baseline under the ad board
   function P(x, z, h) {
     const s = 0.42 + 0.58 * z;
     return [W / 2 + x * W * 0.46 * s, YT + (YB - YT) * z - h * 70 * s, s];
@@ -696,8 +696,9 @@
   }
   // The swing's time from contact. The backswing (shortened for a late
   // tap) squeezes the prototype's take-back and forward swing.
-  function swingTau() {
-    const s = pr.swing, bs = s.bs;
+  function swingTau(s) {
+    s = s || pr.swing;
+    const bs = s.bs;
     if (s.t0 == null) return -0.6;
     const e = pr.t + acc - s.t0;
     if (e < 0) return -0.6;
@@ -803,8 +804,15 @@
   }
   function drawFar() {
     if (!inMatch()) { figure(0, CFG.farContactY - 0.6, palF, true, -0.6, -1, 0, false); return; } // practice: a stand-in
-    const o = match.actors[1], p = E.toReal(o, o.player);
-    figure(p.X, p.Y, palF, true, -0.6, -1, Math.hypot(o.player.vx, o.player.vy), false);
+    // The CPU faces the camera, so its forehand side is on the screen's left.
+    const o = match.actors[1], p = E.toReal(o, o.player), sw = o.swing;
+    let stroke = sw.stroke;
+    const tau = swingTau(sw);
+    if (tau <= -0.6 || tau >= 0.6) {
+      const pred = E.predictContact(o);
+      if (pred.kind === 'ok' && pred.t > o.t) stroke = E.strokeFor(pred.X - o.player.X);
+    }
+    figure(p.X, p.Y, palF, true, tau, stroke === 'bh' ? 1 : -1, Math.hypot(o.player.vx, o.player.vy), false, sw.t0 != null ? sw.strokeKind || 'ground' : 'ground');
   }
 
   function drawFx() {
@@ -894,7 +902,22 @@
     ];
     return lines.concat(cpuDebug());
   }
-  function cpuDebug() { return []; }
+  function cpuDebug() {
+    const o = match.actors[1];
+    if (!o.cpu) return ['cpu none'];
+    const c = o.cpu, p = c.predPt;
+    return ['cpu ' + c.lv.label + (c.net ? ' (net)' : '') + '  predicted ' + (p ? 'X ' + p.X.toFixed(2) + ' Y ' + p.Y.toFixed(2) + ' H ' + p.H.toFixed(2) : '-') +
+      '  tap ' + (c.tapErr > 0 ? '+' : '') + Math.round(c.tapErr) + ' ms'];
+  }
+  // The CPU's predicted contact point (with its error): a cyan cross.
+  function drawCpuPred() {
+    const o = match && match.actors[1], p = o && o.cpu && o.cpu.predPt;
+    if (!p) return;
+    const q = Pm(p.X, p.Y, p.H), q0 = Pm(p.X, p.Y, 0);
+    g.strokeStyle = '#5ee0ff'; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(q[0] - 4, q[1] - 4); g.lineTo(q[0] + 4, q[1] + 4); g.moveTo(q[0] + 4, q[1] - 4); g.lineTo(q[0] - 4, q[1] + 4); g.stroke();
+    g.setLineDash([2, 3]); g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q0[0], q0[1]); g.stroke(); g.setLineDash([]);
+  }
 
   function drawDebug() {
     const v = Math.hypot(ball.vx, ball.vy, ball.vz), h = lastHit, sw = pr.swing;
@@ -952,6 +975,7 @@
       const q = Pm(at.X, at.Y, 0);
       g.strokeStyle = '#8ef0a0'; g.lineWidth = 1.5; g.strokeRect(q[0] - 3, q[1] - 3, 6, 6);
     }
+    if (inMatch()) drawCpuPred();
     // Movement bounds.
     g.strokeStyle = 'rgba(255,255,255,.25)'; g.setLineDash([4, 4]); g.lineWidth = 1;
     const b1 = Pm(B.minX, B.minY, 0), b2 = Pm(B.maxX, B.minY, 0), b3 = Pm(B.maxX, B.maxY, 0), b4 = Pm(B.minX, B.maxY, 0);
@@ -1042,6 +1066,7 @@
 
   fitCanvas();
   if (qs.get('serve') === '1') startMode('drill');
+  else if (qs.get('match') === '1') startMode('match', { far: CFG.cpu[qs.get('level')] ? qs.get('level') : CFG.cpu.defaultLevel, format: qs.get('format') || undefined });
   // Small test handle for headless checks.
   window.tennis = { practice, engine: E, get match() { return match; }, get mode() { return mode; }, startMode };
   requestAnimationFrame(frame);

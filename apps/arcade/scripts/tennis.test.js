@@ -1228,3 +1228,143 @@ test('serve: the receiver (far, mirrored) predicts a groundstroke after the boun
   const real = E.toReal(far, pred);
   assert.ok(real.Y < 2.5 && real.Y > -1.5, `crosses at real Y ${real.Y}`);
 });
+
+// ---------------------------------------------------------------------
+// Stage 3: the CPU opponent and whole matches
+// ---------------------------------------------------------------------
+// Play seeded CPU-vs-CPU matches; returns totals and every point's events.
+function cpuMatches(near, far, seeds, format, cfg) {
+  const out = { wins: [0, 0], points: [0, 0], maxHits: 0, unfinished: 0, logs: [] };
+  for (const seed of seeds) {
+    const m = E.createMatch({ seed, near, far, format }, cfg);
+    const log = [];
+    for (let i = 0; i < 120 * 60 * 40 && m.phase !== 'over'; i++) {
+      for (const e of E.matchStep(m, {})) {
+        if (e.type === 'pointEnd') { out.points[e.winner]++; out.maxHits = Math.max(out.maxHits, e.hits); log.push(e.winner + e.reason + e.hits); }
+      }
+    }
+    if (m.phase === 'over') out.wins[m.winner]++; else out.unfinished++;
+    out.logs.push(log.join(','));
+  }
+  return out;
+}
+
+test('CPU: levels are ordered, and none is faster or quicker to swing than the player can be', () => {
+  const L = C.cpu;
+  for (const k of ['easy', 'medium', 'hard']) assert.ok(L[k].speedMul <= 1 && L[k].reaction > 0 && L[k].tapSd > 0, k);
+  assert.ok(L.easy.reaction > L.medium.reaction && L.medium.reaction > L.hard.reaction);
+  assert.ok(L.easy.predictErr > L.medium.predictErr && L.medium.predictErr > L.hard.predictErr);
+  assert.ok(L.easy.tapSd > L.medium.tapSd && L.medium.tapSd > L.hard.tapSd);
+  assert.ok(L.easy.errorRate > L.medium.errorRate && L.medium.errorRate > L.hard.errorRate);
+  assert.ok(L.easy.mercyAim > 0 && L.medium.mercyAim === 0 && L.hard.mercyAim === 0);
+});
+
+test('CPU: deterministic for a seed', () => {
+  const a = cpuMatches('hard', 'medium', [11], 'quick');
+  const b = cpuMatches('hard', 'medium', [11], 'quick');
+  assert.equal(a.logs[0], b.logs[0]);
+  const c = cpuMatches('hard', 'medium', [12], 'quick');
+  assert.notEqual(a.logs[0], c.logs[0]);
+});
+
+test('CPU: Hard beats Easy over many seeded points, and no rally runs past the cap', () => {
+  const r = cpuMatches('hard', 'easy', [1, 2, 3, 4, 5, 6], 'quick');
+  const share = r.points[0] / (r.points[0] + r.points[1]);
+  assert.ok(r.points[0] + r.points[1] >= 80, `points ${r.points}`);
+  assert.ok(share >= 0.65, `Hard won ${(share * 100).toFixed(0)}% of points`);
+  assert.equal(r.wins[0], 6);
+  assert.ok(r.maxHits <= C.match.rallyCap, `longest rally ${r.maxHits}`);
+  // Swapping ends changes nothing: the far end plays by the same rules.
+  const s = cpuMatches('easy', 'hard', [1, 2, 3], 'quick');
+  assert.ok(s.points[1] / (s.points[0] + s.points[1]) >= 0.65, `far Hard ${s.points}`);
+});
+
+test('CPU: the rally cap ends a long point even between two steady CPUs', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, { rallySoft: 6, rallyCap: 10 }) });
+  const r = cpuMatches('hard', 'hard', [1, 2], 'quick', cfg);
+  assert.ok(r.maxHits <= 10, `longest rally ${r.maxHits}`);
+  assert.equal(r.unfinished, 0);
+});
+
+test('CPU: Hard returns a reachable drop shot with high probability', () => {
+  let reachable = 0, returned = 0;
+  for (let seed = 1; seed <= 40; seed++) {
+    const m = E.createMatch({ seed, near: 'none', far: 'hard' });
+    const R = E.rng(seed * 7);
+    const from = { X: (R() - 0.5) * 2, Y: C.nearContactY, H: 1 };
+    const target = { X: (R() * 2 - 1) * 2.6, Y: COURT.netY - (1.5 + 2 * R()) };
+    const shot = E.solveShot(Object.assign({ side: 'near' }, from), target, 'drop', C, { clearNet: true });
+    E.launchFor(m, 0, from, shot);
+    const far = m.actors[1], lv = C.cpu.hard;
+    // Reachable: a stance it can run to (one stick, as a person) with its
+    // reaction and 0.1 s to spare.
+    const plan = E.reachPlan(far.path, far.player, C, m.t, { euclid: true, reaction: lv.reaction, speedMul: lv.speedMul });
+    if (!plan || plan.slack < 0.1) continue;
+    reachable++;
+    let hit = false;
+    for (let i = 0; i < 1200 && !hit; i++) {
+      const ev = E.matchStep(m, {});
+      if (ev.some(e => e.type === 'hit' && e.who === 1)) hit = true;
+      if (ev.some(e => e.type === 'pointEnd')) break;
+    }
+    if (hit) returned++;
+  }
+  assert.ok(reachable >= 15, `reachable ${reachable}`);
+  assert.ok(returned / reachable >= 0.9, `returned ${returned} of ${reachable}`);
+});
+
+test('CPU: it comes to the net and volleys or smashes when it is there', () => {
+  let netShots = 0;
+  for (const seed of [1, 2, 3]) {
+    const m = E.createMatch({ seed, near: 'medium', far: 'hard' });
+    for (let i = 0; i < 120 * 60 * 6 && m.phase !== 'over'; i++) {
+      for (const e of E.matchStep(m, {})) if (e.type === 'hit' && e.who === 1 && (e.kind === 'volley' || e.kind === 'smash')) netShots++;
+    }
+  }
+  assert.ok(netShots >= 3, `net shots ${netShots}`);
+});
+
+test('a full seeded match always ends with a winner (Quick and Standard)', () => {
+  const q = cpuMatches('medium', 'easy', [21, 22, 23, 24], 'quick');
+  assert.equal(q.unfinished, 0);
+  assert.equal(q.wins[0] + q.wins[1], 4);
+  const s = cpuMatches('hard', 'easy', [31], 'standard');
+  assert.equal(s.unfinished, 0); assert.equal(s.wins[0] + s.wins[1], 1);
+});
+
+test('a match is deterministic: same seed, same points and score', () => {
+  const run = () => {
+    const m = E.createMatch({ seed: 77, near: 'easy', far: 'medium' });
+    const log = [];
+    for (let i = 0; i < 120 * 60 * 20 && m.phase !== 'over'; i++) {
+      for (const e of E.matchStep(m, {})) if (e.type === 'hit' || e.type === 'serve' || e.type === 'pointEnd') log.push(e.type + e.who + (e.reason || '') + (e.X != null ? e.X.toFixed(4) : ''));
+    }
+    return { log: log.join('|'), sets: JSON.stringify(m.score.sets), stats: JSON.stringify(m.stats) };
+  };
+  assert.deepEqual(run(), run());
+});
+
+test('a person returns the CPU\'s serve with the existing swing, buffering and assist', () => {
+  const cfg = Object.assign({}, C, { match: Object.assign({}, C.match, { firstServer: 'far' }) });
+  let returned = 0, serves = 0;
+  for (let seed = 1; seed <= 12; seed++) {
+    const m = E.createMatch({ seed, near: 'human', far: 'hard' }, cfg);
+    m.actors[0].assist = 'strong';
+    let tapped = false, done = false;
+    for (let i = 0; i < 120 * 8 && !done; i++) {
+      const me = m.actors[0];
+      const pred = E.predictContact(me);
+      // A good player: taps 100 ms early (buffered) whenever a contact is on.
+      if (!tapped && pred.kind === 'ok' && m.t >= pred.t - E.swingPreset(C, 'top', pred.stroke).backswing - 0.1) {
+        E.matchSwing(m, 'top', m.t); tapped = true;
+      }
+      for (const e of E.matchStep(m, {})) {
+        if (e.type === 'serve') serves++;
+        if (e.type === 'hit' && e.who === 0) { returned++; done = true; }
+        if (e.type === 'fault' || e.type === 'let') tapped = false;
+        if (e.type === 'pointEnd') done = true;
+      }
+    }
+  }
+  assert.ok(returned >= 10, `returned ${returned} of ${serves} serves`);
+});

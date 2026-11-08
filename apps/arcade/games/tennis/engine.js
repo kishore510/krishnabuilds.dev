@@ -275,6 +275,47 @@
       second: { margin: 0.8,  pace: 0.85, spread: 0.15, spreadPoor: 0.7, angleErr: 1.2 },
       band: 1.6,                // depth range the stick covers inside the margin (m)
     },
+
+    // CPU opponent, per difficulty. It plays through the same inputs as a
+    // person (a stick and timed shot taps) and the same physics, shots and
+    // aim solver; harder means quicker and more accurate, never faster
+    // than the player can move.
+    //   reaction    s after the opponent's contact before it starts moving
+    //   speedMul    fraction of the player's top speed (<= 1)
+    //   predictErr  m of error in where it thinks it should stand, rolled
+    //               each shot; `refine` of it fades as the ball arrives
+    //   tapMean/Sd  ms; its tap timing error is drawn from N(mean, sd)
+    //   errorRate   chance a shot is an unforced error (long, wide or net),
+    //               x0.5 off a perfect contact up to x2.5 off a poor one
+    //   aimMargin   m inside the sidelines it aims; aimSpread m of scatter;
+    //               deep  how far up it pushes the stick (deeper) on drives
+    //   paceMul     pace on its shots; topShare topspin vs flat when deep
+    //   approachRate chance it follows a short ball (contact within
+    //               approachDepth m of the net) in; netY where it stands then
+    //   lobRate     chance it lobs an opponent at the net (else a pass)
+    //   dropRate    chance of a drop (or drop volley) when it can
+    //   firstFlat / secondFlat  chance a serve is flat (else kick)
+    //   serveAimX   how far across the box it aims (stick, 0..1)
+    //   serveMargin m inside the box lines on a first serve (+0.3 second)
+    //   mercyAim    Easy only: aim pulled this far towards the player
+    //   rallyRamp   extra error chance a shot past match.rallySoft
+    cpu: {
+      easy:   { label: 'Easy', reaction: 0.32, speedMul: 0.80, predictErr: 1.2, refine: 0.5, tapMean: 25, tapSd: 80,
+                errorRate: 0.12, aimMargin: 1.6, aimSpread: 0.9, deep: 0, paceMul: 0.85, topShare: 0.7,
+                approachRate: 0.15, approachDepth: 7.5, netY: 3.2, lobRate: 0.15, dropRate: 0.02,
+                firstFlat: 0.3, secondFlat: 0.05, serveAimX: 0.4, serveMargin: 0.9, mercyAim: 0.35, rallyRamp: 0.04 },
+      medium: { label: 'Medium', reaction: 0.24, speedMul: 0.92, predictErr: 0.7, refine: 0.6, tapMean: 10, tapSd: 55,
+                errorRate: 0.08, aimMargin: 1.1, aimSpread: 0.55, deep: 0.3, paceMul: 0.93, topShare: 0.6,
+                approachRate: 0.45, approachDepth: 7.5, netY: 3.0, lobRate: 0.25, dropRate: 0.05,
+                firstFlat: 0.5, secondFlat: 0.1, serveAimX: 0.7, serveMargin: 0.6, mercyAim: 0, rallyRamp: 0.04 },
+      hard:   { label: 'Hard', reaction: 0.16, speedMul: 1.0, predictErr: 0.35, refine: 0.75, tapMean: 0, tapSd: 32,
+                errorRate: 0.045, aimMargin: 0.7, aimSpread: 0.35, deep: 0.6, paceMul: 1.0, topShare: 0.5,
+                approachRate: 0.75, approachDepth: 7.5, netY: 2.8, lobRate: 0.35, dropRate: 0.08,
+                firstFlat: 0.7, secondFlat: 0.15, serveAimX: 0.9, serveMargin: 0.4, mercyAim: 0, rallyRamp: 0.04 },
+      defaultLevel: 'medium',
+      brake: 0.7,               // fraction of the player's deceleration it plans to stop with
+      homeBehind: 0.4,          // baseline home: this far behind the baseline
+    },
   };
 
   // Real court dimensions (m), measured to the outside of the lines.
@@ -924,7 +965,11 @@
   // the most time to spare ({ X, Y, t, slack, F, stroke, byStroke }, slack
   // in s, >= 0 means reachable; byStroke = the best plan per stroke kind),
   // or null if no point of the path is hittable from inside the bounds.
-  function reachPlan(path, from, cfg, tNow) {
+  // opts.score(plan, sample) ranks plans instead of slack (the CPU);
+  // opts.speedMul / opts.reaction replace the player's speed and reaction;
+  // opts.euclid times a diagonal run as the stick really allows (one
+  // stick, magnitude at most 1) instead of both axes at full speed.
+  function reachPlan(path, from, cfg, tNow, opts) {
     cfg = cfg || CONFIG;
     const pl = cfg.player, B = playerBounds(cfg);
     let best = null;
@@ -939,11 +984,14 @@
           const X = s.X - F * c.side, Y = s.Y + c.ahead;
           if (X < B.minX || X > B.maxX || Y < B.minY || Y > B.maxY) continue;
           if (kind !== 'ground' && zoneOf(Y, cfg) === 'BACK') continue;
-          const need = Math.max(Math.abs(X - from.X) / pl.speedX, Math.abs(Y - from.Y) / pl.speedY) + cfg.feed.reaction;
+          const sm = (opts && opts.speedMul) || 1, react = opts && opts.reaction != null ? opts.reaction : cfg.feed.reaction;
+          const tx = Math.abs(X - from.X) / (pl.speedX * sm), ty = Math.abs(Y - from.Y) / (pl.speedY * sm);
+          const need = (opts && opts.euclid ? Math.hypot(tx, ty) : Math.max(tx, ty)) + react;
           const slack = s.t - tNow - bs - need;
           const plan = { X, Y, t: s.t, slack, F, stroke: kind };
-          if (!byStroke[kind] || slack > byStroke[kind].slack) byStroke[kind] = plan;
-          if (!best || slack > best.slack) best = plan;
+          plan.score = opts && opts.score ? opts.score(plan, s) : slack;
+          if (!byStroke[kind] || plan.score > byStroke[kind].score) byStroke[kind] = plan;
+          if (!best || plan.score > best.score) best = plan;
         }
       }
     }
@@ -1614,7 +1662,8 @@
     const cfg = m.cfg, r = m.rally;
     const capped = a.ctl !== 'human' && r && r.hits >= cfg.match.rallyCap;
     const live = m.phase === 'rally' && incoming(a) && !capped;
-    const c = swingContact(a, a.stick, t1, live, a.cpu ? (aim, j) => cpuAim(m, a, aim, j) : null);
+    const aimStick = a.cpu ? a.cpu.aimStick || { x: 0, y: 0 } : a.stick;
+    const c = swingContact(a, aimStick, t1, live, a.cpu ? (aim, j) => cpuAim(m, a, aim, j) : null);
     if (!c) return;
     const j = c.j;
     if (!j.contact) {
@@ -1629,6 +1678,18 @@
     ev.push(Object.assign({ type: 'hit', who: a.idx, side: a.side, by: a.side, X: rf.X, Y: rf.Y, H: c.from.H,
       shot: a.swing.shot, label: strokeLabel(j.kind, a.swing.shot, cfg), angle: c.shot.angle,
       target: toReal(a, c.aim.target), pace: c.aim.pace, mishit: c.aim.mishit, risk: c.aim.risk || null, rally: r.hits }, j));
+  }
+
+  // Tests: put a live rally ball in play, struck by `who` from `from`
+  // (real coordinates) with `shot`, as if it were the rally's hits-th shot.
+  function launchFor(m, who, from, shot, hits) {
+    const a = m.actors[who];
+    m.actors.forEach(resetActor);
+    launch(m.ball, Object.assign({ side: a.side }, from), shot);
+    m.rally = createRally(1 - who, 'deuce');
+    m.rally.serve = false; m.rally.touched = true; m.rally.hitter = who; m.rally.hits = hits || 2;
+    m.phase = 'rally';
+    afterHit(m, a);
   }
 
   // The referee's decision: a let or a fault replays the serve, anything
@@ -1755,7 +1816,7 @@
     }
 
     for (const a of A) {
-      if (canMove(m, a)) movePlayer(a, a.stick, dt);
+      if (canMove(m, a)) movePlayer(a, a.cpu ? a.move || { x: 0, y: 0 } : a.stick, dt);
       else { a.player.vx = 0; a.player.vy = 0; }
     }
 
@@ -1780,14 +1841,177 @@
     return ev;
   }
 
-  // CPU opponent hooks (filled in below when the CPU is defined).
-  const CPU_LEVELS = null;
-  function createCpu() { return null; }
-  function cpuReset() {}
-  function cpuThink() {}
-  function cpuIncoming() {}
-  function cpuHit() {}
-  function cpuAim(m, a, aim) { return aim; }
+  // ---------------------------------------------------------------------
+  // CPU opponent. Everything it does goes through its actor's stick and
+  // shot taps, in its own frame, like a person playing that end.
+  // ---------------------------------------------------------------------
+  const CPU_LEVELS = ['easy', 'medium', 'hard'];
+
+  function createCpu(m, a) {
+    const c = { level: a.ctl, lv: m.cfg.cpu[a.ctl] };
+    cpuResetState(m.cfg, c);
+    return c;
+  }
+  function cpuResetState(cfg, c) {
+    Object.assign(c, { net: false, recover: { X: 0, Y: COURT.length + cfg.cpu.homeBehind }, react: Infinity,
+      err: { x: 0, y: 0 }, tapErr: 0, tapped: false, shotKey: null, total: null, predPt: null, plan: null });
+  }
+  function cpuReset(a) { cpuResetState(a.cfg, a.cpu); }
+
+  // The opponent's position in a's frame (they stand on the far half).
+  function oppPos(m, a) {
+    const o = m.actors[1 - a.idx].player;
+    return { X: -o.X, Y: COURT.length - o.Y };
+  }
+
+  // A ball is on its way: roll this shot's perception and timing errors.
+  function cpuIncoming(m, a) {
+    const c = a.cpu, lv = c.lv, R = m.rand;
+    c.react = m.t + lv.reaction; c.plan = null;
+    c.err = { x: gauss(R) * lv.predictErr, y: gauss(R) * lv.predictErr * 0.5 };
+    c.tapErr = lv.tapMean + gauss(R) * lv.tapSd;
+    c.tapped = false; c.shotKey = null; c.total = null;
+  }
+
+  // After its own contact: recover towards the middle of the opponent's
+  // angles (or to the net, after an approach).
+  function cpuHit(m, a) {
+    const c = a.cpu, cfg = m.cfg, tx = c.lastTarget ? c.lastTarget.X : 0;
+    c.recover = c.net ? { X: clamp(tx * 0.3, -2, 2), Y: COURT.netY + c.lv.netY }
+      : { X: clamp(tx * 0.25, -1.5, 1.5), Y: COURT.length + cfg.cpu.homeBehind };
+    c.tapped = false; c.shotKey = null; c.predPt = null;
+  }
+
+  // Shot choice for the contact `pred` (its stroke is set by the
+  // situation, as for a person). Also picks the aim stick and whether to
+  // come in.
+  function cpuChoose(m, a, pred) {
+    const c = a.cpu, lv = c.lv, R = m.rand, cfg = m.cfg, op = oppPos(m, a);
+    const oppAtNet = COURT.netY - op.Y < cfg.zones.back;
+    const away = -Math.sign(op.X || (R() - 0.5)), me = a.player;
+    let shot, sx = (R() * 2 - 1) * 0.85, sy = 0;
+    if (pred.stroke === 'smash') { shot = 'flat'; sx = away * (0.5 + 0.4 * R()); c.net = true; }
+    else if (pred.stroke === 'volley') {
+      shot = R() < lv.dropRate ? 'drop' : R() < 0.4 ? 'top' : 'flat';
+      sx = away * (0.3 + 0.6 * R()); c.net = true;
+    } else {
+      const inside = pred.Y - COURT.netY < lv.approachDepth;
+      if (oppAtNet && R() < lv.lobRate) { shot = 'lob'; sx = away * 0.5 * R(); }
+      else if (oppAtNet) { shot = R() < 0.5 ? 'top' : 'flat'; sx = away * (0.75 + 0.2 * R()); }
+      else if (me.Y - COURT.netY < cfg.zones.back + 1 && COURT.netY - op.Y > cfg.zones.back && R() < lv.dropRate) { shot = 'drop'; sx = away * R(); }
+      else { shot = R() < lv.topShare ? 'top' : 'flat'; sx = clamp(sx + away * 0.3, -1, 1); }
+      c.net = inside && shot !== 'lob' && shot !== 'drop' && R() < lv.approachRate;
+    }
+    // Its margin limits where it means to aim (the stick), before timing
+    // quality pulls and shortens the shot exactly as it does a person's.
+    const xm = (COURT.singlesHalf - lv.aimMargin) / cfg.aim.x;
+    if (shot !== 'drop') sy = -lv.deep;
+    c.aimStick = { x: clamp(sx, -xm, xm), y: sy };
+    return shot;
+  }
+
+  // The CPU's margins, scatter, pace, mercy and rally pressure applied to
+  // an aim from aimReturn (its own frame: the target is on the far half).
+  function cpuAim(m, a, aim, j) {
+    const c = a.cpu, lv = c.lv, R = m.rand, cfg = m.cfg, t = Object.assign({}, aim.target);
+    const drop = aim.defKey === 'drop';
+    const sp = drop ? lv.aimSpread * 0.4 : lv.aimSpread;
+    t.X += gauss(R) * sp; t.Y = Math.min(COURT.netY - 1.5, t.Y + gauss(R) * sp);
+    if (lv.mercyAim) t.X = lerp(t.X, oppPos(m, a).X, lv.mercyAim);
+    const out = Object.assign({}, aim, { target: t, pace: aim.pace * lv.paceMul });
+    // Unforced errors: errorRate a shot, more off a poor contact; and
+    // rally pressure: past rallySoft the chance grows each shot, and the
+    // shot that would reach rallyCap is always one (long).
+    const hits = m.rally ? m.rally.hits : 0, M = cfg.match, q = j ? j.quality : 1;
+    let p = lv.errorRate * (0.5 + 2 * (1 - q));
+    if (hits > M.rallySoft) p += (hits - M.rallySoft) * lv.rallyRamp;
+    const kind = hits + 1 >= M.rallyCap ? 'long' : R() < p ? ['long', 'wide', 'net'][Math.floor(R() * 3)] : null;
+    if (kind) {
+      const base = { mishit: kind, noClear: false, lift: 0, spinMul: 1, defKey: drop ? 'flat' : out.defKey, angles: drop ? null : out.angles };
+      if (kind === 'long') Object.assign(out, base, { target: { X: t.X, Y: -0.8 - R() * 1.5 } });
+      else if (kind === 'wide') Object.assign(out, base, { target: { X: Math.sign(t.X || (R() - 0.5)) * (COURT.singlesHalf + 0.3 + R()), Y: t.Y } });
+      else Object.assign(out, base, { noClear: true, lift: -(2 + 4 * R()) });
+    }
+    c.lastTarget = out.target;
+    return out;
+  }
+
+  function cpuThink(m, a, t1) {
+    const c = a.cpu, lv = c.lv, cfg = m.cfg, S = m.serve, R = m.rand;
+    a.stick = { x: 0, y: 0 };
+    // Serving: toss by itself, tap from its timing distribution.
+    if (m.phase === 'serve' && S.server === a.idx) {
+      if (S.state === 'toss' && !S.tap) {
+        const flat = R() < (m.serveNo === 1 ? lv.firstFlat : lv.secondFlat);
+        const err = lv.tapMean + gauss(R) * lv.tapSd;
+        S.tap = { shot: flat ? 'flat' : 'top', t: S.tossT0 + S.peakT + err / 1000,
+          stick: { x: (R() * 2 - 1) * lv.serveAimX, y: (R() * 2 - 1) * 0.5 } };
+      }
+      return;
+    }
+    if (m.phase !== 'rally') return;
+    const capped = m.rally && m.rally.hits >= cfg.match.rallyCap;
+    let tgt = c.recover;
+    c.predPt = null;
+    if (incoming(a) && !a.whiffed && !capped) {
+      const pred = predictContact(a);
+      if (m.t < c.react) tgt = null;   // still reacting
+      else {
+        // Stay at this depth if the ball comes to it at a good height;
+        // otherwise (a short ball, a drop) run to the stance with the most
+        // time to spare, preferring a groundstroke.
+        let at = null;
+        // A stance it chose for this ball is kept while it can still get there.
+        if (c.plan) {
+          const pl = cfg.player, p = c.plan;
+          const need = Math.hypot((p.X - a.player.X) / (pl.speedX * lv.speedMul), (p.Y - a.player.Y) / (pl.speedY * lv.speedMul));
+          if (p.t - m.t - swingPreset(cfg, 'top', p.stroke).backswing - need >= -0.02) at = p;
+        }
+        if (!at && pred.kind === 'ok' && inBand(Object.assign({ phase: pred.stroke === 'ground' ? 'bounced' : 'flight' }, pred), cfg, pred.stroke)) at = assistTarget(a);
+        if (!at) {
+          // Among stances it can reach with time to spare, the one where
+          // the ball is nearest its ideal contact height; else the most
+          // time to spare. Volleys only when it's coming in.
+          const pl = reachPlan(a.path, a.player, cfg, m.t, { speedMul: lv.speedMul, reaction: 0, euclid: true, score: (p, smp) =>
+            (p.slack >= 0.12 ? 10 - Math.abs(smp.H - contactFor(cfg, p.stroke).height) : p.slack) - (p.stroke !== 'ground' && !c.net ? 3 : 0) });
+          at = pl && (a.mustBounce ? pl.byStroke.ground : pl) || null;
+          c.plan = at;
+        }
+        if (at) {
+          const remain = pred.kind === 'ok' ? Math.max(0, pred.t - m.t) : 0.4;
+          if (c.total == null) c.total = Math.max(0.3, remain);
+          const k = (1 - lv.refine) + lv.refine * clamp(remain / c.total, 0, 1);
+          tgt = { X: at.X + c.err.x * k, Y: at.Y + c.err.y * k };
+          if (pred.kind === 'ok') c.predPt = Object.assign(toReal(a, { X: pred.X + c.err.x * k, Y: pred.Y + c.err.y * k }), { H: pred.H });
+        }
+      }
+      // Tap when its (imperfect) timing says so.
+      const s = a.swing;
+      const ready = !a.pending && (s.t0 == null || swingPhase(m.t - s.t0, cfg, s.bs, s) === 'ready');
+      if (!c.tapped && ready && pred.kind === 'ok' && m.t >= c.react) {
+        const shot = c.shotKey || (c.shotKey = cpuChoose(m, a, pred));
+        const tapT = pred.t - swingPreset(cfg, shot, pred.stroke).backswing + c.tapErr / 1000;
+        if (t1 >= tapT) {
+          requestSwing(a, shot, Math.max(tapT, m.t - 0.15));
+          c.tapped = true;
+        }
+      }
+    }
+    // Head straight for the target: the stick points along the time it
+    // needs on each axis, full on until it's close, then eases off.
+    if (tgt) {
+      const pl = cfg.player, ux = (tgt.X - a.player.X) / pl.speedX, uy = (tgt.Y - a.player.Y) / pl.speedY;
+      const d = Math.hypot(tgt.X - a.player.X, tgt.Y - a.player.Y);
+      const n = Math.hypot(ux, uy);
+      // Full on, braking only as late as its deceleration allows (at full
+      // stick it runs d / n m/s this way); never inside the stick's
+      // deadzone until it's within 5 cm.
+      const vWant = Math.sqrt(2 * pl.decel * cfg.cpu.brake * d);
+      const mag = d < 0.05 ? 0 : Math.max(pl.deadzone + 0.02, Math.min(1, vWant * n / d));
+      const k = n > 1e-6 ? mag / n : 0;
+      a.move = { x: ux * k * lv.speedMul, y: uy * k * lv.speedMul };
+    } else a.move = { x: 0, y: 0 };
+  }
 
   const api = {
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
@@ -1796,7 +2020,7 @@
     playerBounds, tracePath, predictCrossing, predictContact, reachPlan, assistTarget, missReason, MISS_TEXT,
     SIDES, createScore, serverOf, courtOf, pointWon, pointsText, serviceBox, judgeServe,
     createRally, refHit, refBall,
-    createMatch, matchStep, matchSwing, matchServer, matchCourt, setsText, mirrorPath, toReal, incoming,
+    createMatch, matchStep, matchSwing, launchFor, matchServer, matchCourt, setsText, mirrorPath, toReal, incoming,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TennisEngine = api;
