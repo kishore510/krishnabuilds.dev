@@ -50,6 +50,62 @@
       restartDelay: 1.1,      // pause after a dead ball (s)
       firstDelay: 0.6,
     },
+
+    // --- Practice mode (Stage 2) ------------------------------------------
+    // The near player. Positions in metres (see Units above), speeds in m/s,
+    // accel/decel in m/s^2. Stick y up (-1) moves towards the net.
+    player: {
+      startX: 0, startY: 24.2,  // 0.4 m behind the baseline
+      minX: -6.0, maxX: 6.0,
+      minY: 22.6, maxY: 25.3,   // limited forward/back
+      speedX: 6.5, speedY: 3.0,
+      accel: 30,                // speeding up
+      decel: 45,                // stopping or turning (stick released or reversed)
+      deadzone: 0.15,           // stick magnitude below this is ignored
+      swingMove: 0.3,           // movement scale during backswing and follow-through
+    },
+
+    // Swing timing (s), from the prototype's keyframes (tau -0.16, 0, 0.18,
+    // 0.6). Contact is the instant `backswing` seconds after the tap.
+    swing: { backswing: 0.16, follow: 0.18, recovery: 0.42 },
+
+    // Where the ball should be at contact, relative to the player (m).
+    contact: {
+      side: 0.7,                // ideal contact point, this far to the stroke side
+      ahead: 0.5,               // ...and this far in front (towards the net)
+      height: 1.0,              // ideal height
+      reach: 1.0,               // lateral reach around the ideal point
+      minH: 0.2, maxH: 2.3,     // outside these heights: whiff
+      backhandBelow: -0.25,     // ball X - player X below this: backhand
+    },
+
+    // Timing error and distance -> quality 0..1 -> what the shot does.
+    quality: {
+      whiffMs: 140,             // |timing error| above this: whiff
+      perfectMs: 25, perfectDist: 0.35,
+      wTime: 0.65, wDist: 0.35, // q = 1 - wTime*|err|/whiffMs - wDist*dist/reach
+      good: 0.65, ok: 0.35,     // band thresholds (below ok: POOR)
+      paceMin: 0.85,            // speed multiplier at q = 0 (1 at q = 1)
+      perfectPace: 1.12,        // speed multiplier for PERFECT
+      maxPull: 2.8,             // sideways miss at the timing limit (m)
+      maxShort: 4.5,            // depth lost at q = 0 (m)
+      mishitBelow: 0.3,         // below this q a shot can be mishit out
+      mishitChance: 0.6,        // chance at q = 0, scaling to 0 at mishitBelow
+    },
+
+    // Joystick at contact -> target on the far court.
+    aim: {
+      x: 3.4,                   // full left/right puts the target this far from centre (m)
+      deeper: 1.5,              // full up: this much deeper than the shot's depth
+      shorter: 4.0,             // full down: this much shorter
+    },
+
+    // The ball machine in practice feeds from the far end only.
+    feed: {
+      first: 0.8,               // delay before the first ball (s)
+      delay: 1.6,               // delay after each point (s)
+      width: 2.5,               // lands within +-this of the centre line (m)
+    },
   };
 
   // Real court dimensions (m), measured to the outside of the lines.
@@ -235,9 +291,10 @@
   // Aim solver: find the launch angle (within the shot's range) whose first
   // bounce lands at the target depth. Bisection on angle; the landing
   // distance is monotonic across each shot's range.
-  function solveShot(from, target, shotKey, cfg) {
+  function solveShot(from, target, shotKey, cfg, opts) {
     cfg = cfg || CONFIG;
-    const def = cfg.shots[shotKey];
+    let def = cfg.shots[shotKey];
+    if (opts && opts.speedMul) def = Object.assign({}, def, { speed: def.speed * opts.speedMul });
     const want = Math.hypot(target.X - from.X, target.Y - from.Y);
     const dist = (ang) => {
       const s = simulate(from, shotFromAngle(from, target, def, ang), cfg);
@@ -251,7 +308,17 @@
       const mid = (lo + hi) / 2, dm = dist(mid);
       if ((dm < want) === rising) lo = mid; else hi = mid;
     }
-    const angle = (lo + hi) / 2;
+    let angle = (lo + hi) / 2;
+    // opts.clearNet: if the best angle still finds the net or the tape
+    // (too much pace for the depth), lift it until the ball clears; it then
+    // lands a little longer than asked.
+    if (opts && opts.clearNet) {
+      for (let i = 0; i < 24; i++) {
+        const s = simulate(from, shotFromAngle(from, target, def, angle), cfg);
+        if (!s.net && !s.ball.touchedNet) break;
+        angle += 0.25;
+      }
+    }
     return Object.assign(shotFromAngle(from, target, def, angle), { angle, key: shotKey });
   }
 
@@ -354,9 +421,220 @@
     return ev;
   }
 
+  // ---------------------------------------------------------------------
+  // Practice mode: the machine feeds from the far end; the near player
+  // moves, swings and returns. Swing requests carry their own sim time, so
+  // the outcome doesn't depend on which frame the input arrived in.
+  // ---------------------------------------------------------------------
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  // Forehand unless the ball is clearly on the player's left.
+  function strokeFor(dx, cfg) {
+    return dx >= (cfg || CONFIG).contact.backhandBelow ? 'fh' : 'bh';
+  }
+
+  // Swing phase `e` seconds after the tap. 'contact' is the instant of
+  // contact, reported for one display frame or so.
+  function swingPhase(e, cfg) {
+    const s = (cfg || CONFIG).swing;
+    if (e == null || e < 0) return 'ready';
+    if (e < s.backswing) return 'backswing';
+    if (e < s.backswing + 0.02) return 'contact';
+    if (e < s.backswing + s.follow) return 'follow-through';
+    if (e < s.backswing + s.follow + s.recovery) return 'recovery';
+    return 'ready';
+  }
+
+  // Judge a contact. b = ball at the contact instant {X, Y, H, vy, hittable},
+  // p = player {X, Y}. errMs < 0 is early (the ball hasn't reached the ideal
+  // contact plane yet), > 0 late.
+  function judgeContact(b, p, cfg) {
+    cfg = cfg || CONFIG;
+    const c = cfg.contact, q = cfg.quality;
+    const stroke = strokeFor(b.X - p.X, cfg), F = stroke === 'fh' ? 1 : -1;
+    const lat = Math.abs(b.X - (p.X + F * c.side));
+    const planeY = p.Y - c.ahead;
+    let errMs = b.vy > 0.5 ? (b.Y - planeY) / b.vy * 1000 : (b.Y < planeY ? -9999 : 9999);
+    errMs = clamp(errMs, -9999, 9999);
+    const dist = Math.hypot(lat, 0.5 * (b.H - c.height));
+    const out = { stroke, errMs, dist, lat, H: b.H, contact: false, reason: null, quality: 0, band: 'WHIFF', perfect: false };
+    if (!b.hittable) out.reason = 'no ball';
+    else if (errMs < -q.whiffMs) out.reason = 'early';
+    else if (errMs > q.whiffMs) out.reason = 'late';
+    else if (lat > c.reach) out.reason = 'reach';
+    else if (b.H < c.minH) out.reason = 'low';
+    else if (b.H > c.maxH) out.reason = 'high';
+    if (out.reason) return out;
+    out.contact = true;
+    out.perfect = Math.abs(errMs) <= q.perfectMs && dist <= q.perfectDist;
+    out.quality = out.perfect ? 1 : clamp(1 - q.wTime * Math.abs(errMs) / q.whiffMs - q.wDist * Math.min(1, dist / c.reach), 0, 1);
+    out.band = out.perfect ? 'PERFECT' : out.quality >= q.good ? 'GOOD' : out.quality >= q.ok ? 'OK' : 'POOR';
+    return out;
+  }
+
+  // Where a return should land, from the stick and the contact judgement.
+  // Returns { target, pace, mishit }. Uses pr.rand only for a possible mishit.
+  function aimReturn(j, stick, shotKey, cfg, rand) {
+    const a = cfg.aim, q = cfg.quality, def = cfg.shots[shotKey];
+    const jx = clamp(stick.x || 0, -1, 1), jy = clamp(stick.y || 0, -1, 1);
+    let X = jx * a.x;
+    let Y = def.depth - Math.max(0, -jy) * a.deeper + Math.max(0, jy) * a.shorter;
+    const F = j.stroke === 'fh' ? 1 : -1;
+    if (!j.perfect) {
+      // Early pulls a forehand left and a backhand right; late the opposite.
+      X += F * clamp(j.errMs / q.whiffMs, -1, 1) * q.maxPull;
+      Y += (1 - j.quality) * q.maxShort;
+    }
+    Y = Math.min(Y, COURT.netY - 1.5);
+    let mishit = null;
+    if (j.quality < q.mishitBelow && rand() < q.mishitChance * (q.mishitBelow - j.quality) / q.mishitBelow) {
+      mishit = rand() < 0.5 ? 'long' : 'wide';
+      if (mishit === 'long') Y = -1.5;
+      else X = Math.sign(X || F) * (COURT.singlesHalf + 0.9);
+    }
+    const pace = j.perfect ? q.perfectPace : q.paceMin + (1 - q.paceMin) * j.quality;
+    return { target: { X, Y }, pace, mishit };
+  }
+
+  function createPractice(seed, cfg) {
+    cfg = cfg || CONFIG;
+    const pl = cfg.player;
+    return {
+      cfg, rand: rng(seed == null ? 1 : seed), ball: createBall(),
+      mode: 'auto', cycle: 0, t: 0, wait: cfg.feed.first,
+      player: { X: pl.startX, Y: pl.startY, vx: 0, vy: 0 },
+      swing: { t0: null, shot: null, done: true, stroke: 'fh', result: null },
+      queue: [], live: false, hitBy: null, whiffed: false,
+      rally: 0, best: 0, last: null, shotKey: null, aim: null,
+    };
+  }
+
+  // Queue a swing that started at sim time t (pr.t's clock).
+  function requestSwing(pr, shot, t) {
+    pr.queue.push({ shot, t: t == null ? pr.t : t });
+  }
+
+  // Move v towards target; accelerate when pushing on, decelerate when
+  // stopping, slowing or reversing.
+  function approach(v, target, acc, dec, dt) {
+    const stopping = target === 0 || v * target < 0 || Math.abs(target) < Math.abs(v);
+    const r = (stopping ? dec : acc) * dt;
+    return v < target ? Math.min(target, v + r) : Math.max(target, v - r);
+  }
+
+  function movePlayer(pr, stick, dt) {
+    const pl = pr.cfg.player, p = pr.player;
+    let sx = stick.x || 0, sy = stick.y || 0;
+    const m = Math.hypot(sx, sy);
+    if (m > 1) { sx /= m; sy /= m; }
+    if (m < pl.deadzone) { sx = 0; sy = 0; }
+    const ph = swingPhase(pr.swing.t0 == null ? null : pr.t - pr.swing.t0, pr.cfg);
+    const k = (ph === 'backswing' || ph === 'contact' || ph === 'follow-through') ? pl.swingMove : 1;
+    p.vx = approach(p.vx, sx * pl.speedX * k, pl.accel, pl.decel, dt);
+    p.vy = approach(p.vy, sy * pl.speedY * k, pl.accel, pl.decel, dt);
+    p.X += p.vx * dt; p.Y += p.vy * dt;
+    if (p.X < pl.minX || p.X > pl.maxX) { p.X = clamp(p.X, pl.minX, pl.maxX); p.vx = 0; }
+    if (p.Y < pl.minY || p.Y > pl.maxY) { p.Y = clamp(p.Y, pl.minY, pl.maxY); p.vy = 0; }
+  }
+
+  function endPoint(pr) { pr.live = false; pr.wait = pr.cfg.feed.delay; }
+
+  function feed(pr, ev) {
+    const cfg = pr.cfg, R = pr.rand, key = pickShot(pr), def = cfg.shots[key];
+    const from = { side: 'far', X: (R() - 0.5) * 2, Y: cfg.farContactY, H: cfg.contactHeight };
+    const target = { X: (R() * 2 - 1) * cfg.feed.width, Y: COURT.length - (def.depth + (R() - 0.5) * 1.5) };
+    const shot = solveShot(from, target, key, cfg);
+    launch(pr.ball, from, shot);
+    pr.live = true; pr.hitBy = 'machine'; pr.whiffed = false;
+    pr.shotKey = key; pr.aim = { target, miss: null };
+    ev.push({ type: 'hit', by: 'machine', side: 'far', X: from.X, Y: from.Y, H: from.H, shot: key, angle: shot.angle });
+  }
+
+  // Advance practice by one fixed step. input = { stick: {x, y} } with x,y
+  // in -1..1 (y -1 = up = towards the net). Returns events for the renderer.
+  function practiceStep(pr, input) {
+    const cfg = pr.cfg, dt = cfg.dt, sw = cfg.swing, b = pr.ball, ev = [];
+    const stick = (input && input.stick) || { x: 0, y: 0 };
+    const t1 = pr.t + dt;
+
+    // Swings whose tap falls inside this step.
+    pr.queue.sort((a, c) => a.t - c.t);
+    while (pr.queue.length && pr.queue[0].t < t1) {
+      const r = pr.queue.shift();
+      const e = pr.swing.t0 == null ? null : r.t - pr.swing.t0;
+      if (swingPhase(e, cfg) !== 'ready') continue; // still swinging: ignored
+      const guessX = b.phase === 'idle' ? b.X : b.X + b.vx * sw.backswing;
+      pr.swing = { t0: r.t, shot: r.shot, done: false, stroke: strokeFor(guessX - pr.player.X, cfg), result: null };
+      ev.push({ type: 'swing', shot: r.shot, t: r.t });
+    }
+
+    movePlayer(pr, stick, dt);
+
+    if (pr.wait > 0) {
+      pr.wait -= dt;
+      if (pr.wait <= 0) { pr.wait = 0; feed(pr, ev); }
+    }
+
+    // Ball.
+    for (const e of step(b, cfg)) {
+      ev.push(e);
+      if (e.type === 'bounce' && e.n === 1 && pr.live) {
+        if (pr.hitBy === 'player') {
+          if (e.result === 'IN') { pr.rally++; pr.best = Math.max(pr.best, pr.rally); }
+          else pr.rally = 0;
+          ev.push({ type: 'return', result: e.result, X: e.X, Y: e.Y, rally: pr.rally });
+          endPoint(pr);
+        } else if (e.result !== 'IN') {
+          ev.push({ type: 'feedFault', result: e.result });
+          endPoint(pr);
+        }
+      }
+    }
+    pr.t = t1;
+
+    // Contact instant reached this step?
+    const s = pr.swing;
+    if (!s.done && s.t0 != null && t1 >= s.t0 + sw.backswing) {
+      s.done = true;
+      const back = s.t0 + sw.backswing - t1; // <= 0: rewind to the exact instant
+      const bs = {
+        X: b.X + b.vx * back, Y: b.Y + b.vy * back, H: Math.max(cfg.ballRadius, b.H + b.vz * back), vy: b.vy,
+        hittable: pr.live && pr.hitBy === 'machine' && b.phase === 'bounced',
+      };
+      const j = judgeContact(bs, pr.player, cfg);
+      s.stroke = j.stroke; s.result = j; pr.last = j;
+      if (j.contact) {
+        const aim = aimReturn(j, stick, s.shot, cfg, pr.rand);
+        const from = { side: 'near', X: bs.X, Y: bs.Y, H: bs.H };
+        const shot = solveShot(from, aim.target, s.shot, cfg, { speedMul: aim.pace, clearNet: true });
+        launch(b, from, shot);
+        pr.hitBy = 'player'; pr.shotKey = s.shot; pr.aim = { target: aim.target, miss: aim.mishit };
+        ev.push(Object.assign({ type: 'hit', by: 'player', side: 'near', X: from.X, Y: from.Y, H: from.H,
+          shot: s.shot, angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit,
+          stick: { x: stick.x || 0, y: stick.y || 0 } }, j));
+      } else {
+        if (bs.hittable) pr.whiffed = true;
+        ev.push(Object.assign({ type: 'whiff', live: bs.hittable }, j));
+      }
+    }
+
+    // A fed ball that got past the player.
+    if (pr.live && pr.hitBy === 'machine' && s.done) {
+      const off = b.Y > cfg.player.maxY + 2.2 || Math.abs(b.X) > 9 || b.t > 6;
+      if (b.phase === 'dead' || b.phase === 'net' || off) {
+        pr.rally = 0;
+        ev.push({ type: 'missed', whiffed: pr.whiffed });
+        endPoint(pr);
+      }
+    }
+    if (pr.live && pr.hitBy === 'player' && b.t > 6) endPoint(pr);
+    return ev;
+  }
+
   const api = {
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
     simulate, solveShot, shotFromAngle, rng, createMachine, machineStep,
+    strokeFor, swingPhase, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.TennisEngine = api;

@@ -170,3 +170,188 @@ test('a ball at rest stops bouncing', () => {
   assert.equal(b.rolling, true);
   assert.ok(Math.abs(b.H - C.ballRadius) < 1e-9);
 });
+
+// ---------------------------------------------------------------------------
+// Stage 2: practice mode, movement, swing and contact.
+// ---------------------------------------------------------------------------
+
+// Run a practice with no swings and find when (and where) the first fed ball
+// crosses the player's ideal contact plane after its bounce.
+function idealContact(seed, mode) {
+  const pr = E.createPractice(seed);
+  pr.mode = mode;
+  const plane = pr.player.Y - C.contact.ahead;
+  let prevY = null;
+  for (let i = 0; i < 120 * 5; i++) {
+    E.practiceStep(pr, {});
+    const b = pr.ball;
+    if (prevY != null && pr.live && b.phase === 'bounced' && prevY < plane && b.Y >= plane) {
+      const f = (plane - prevY) / (b.Y - prevY);
+      return { t: pr.t - C.dt + f * C.dt, X: b.X - (1 - f) * b.vx * C.dt, H: b.H };
+    }
+    prevY = b.Y;
+  }
+  throw new Error('fed ball never reached the contact plane');
+}
+
+// Same seed again: stand at `dx` from the ideal forehand spot, swing `offMs`
+// late (negative = early), hold `stick` from the tap on (it also moves the
+// player a little, as it would in play). Returns the contact or whiff event
+// and, if it was hit, the return's first bounce.
+function trial({ seed = 3, mode = 'top', offMs = 0, dx = 0, stick = { x: 0, y: 0 }, shot = 'top' } = {}) {
+  const ideal = idealContact(seed, mode);
+  const pr = E.createPractice(seed);
+  pr.mode = mode;
+  pr.player.X = ideal.X - C.contact.side + dx;
+  E.requestSwing(pr, shot, ideal.t - C.swing.backswing + offMs / 1000);
+  let contact = null, ret = null;
+  for (let i = 0; i < 120 * 8 && !ret; i++) {
+    const held = pr.swing.t0 != null ? stick : { x: 0, y: 0 };
+    for (const e of E.practiceStep(pr, { stick: held })) {
+      if (e.type === 'hit' && e.by === 'player') contact = e;
+      if (e.type === 'whiff') contact = e;
+      if (e.type === 'return') ret = e;
+    }
+    if (contact && contact.type === 'whiff') break;
+  }
+  return { contact, ret, pr };
+}
+
+test('swinging at the ideal moment makes a PERFECT contact', () => {
+  for (const mode of ['flat', 'top', 'lob']) {
+    const { contact, ret } = trial({ mode });
+    assert.equal(contact.type, 'hit', `${mode}: ${contact.reason}`);
+    assert.ok(Math.abs(contact.errMs) < 5, `${mode} timing error ${contact.errMs}`);
+    assert.equal(contact.band, 'PERFECT');
+    assert.equal(contact.pace, C.quality.perfectPace);
+    assert.equal(ret.result, 'IN');
+  }
+});
+
+test('early and late swings lose quality step by step, then whiff', () => {
+  for (const sign of [-1, 1]) {
+    let prevQ = 1.01;
+    for (const ms of [0, 40, 80, 120]) {
+      const { contact } = trial({ offMs: sign * ms });
+      assert.equal(contact.type, 'hit', `${sign * ms} ms: ${contact.reason}`);
+      assert.ok(Math.sign(contact.errMs) === sign || ms === 0, `sign of ${contact.errMs}`);
+      assert.ok(Math.abs(Math.abs(contact.errMs) - ms) < 6, `measured ${contact.errMs} for ${sign * ms}`);
+      assert.ok(contact.quality < prevQ, `${sign * ms} ms quality ${contact.quality} not below ${prevQ}`);
+      prevQ = contact.quality;
+    }
+    const { contact } = trial({ offMs: sign * 170 });
+    assert.equal(contact.type, 'whiff');
+    assert.equal(contact.reason, sign < 0 ? 'early' : 'late');
+  }
+});
+
+test('poor timing pulls the shot off line', () => {
+  const ok = trial({}).ret, early = trial({ offMs: -100 }).ret, late = trial({ offMs: 100 }).ret;
+  // Forehand: early pulls left, late pushes right.
+  assert.ok(early.X < ok.X - 1, `early ${early.X} vs ${ok.X}`);
+  assert.ok(late.X > ok.X + 1, `late ${late.X} vs ${ok.X}`);
+});
+
+test('reach zone: a ball outside it is a whiff', () => {
+  const near = trial({ dx: 0.6 });
+  assert.equal(near.contact.type, 'hit');
+  assert.ok(near.contact.quality < 1);
+  // Player further left: the ball is out on their right, beyond reach.
+  const far = trial({ dx: -(C.contact.reach + 0.6) });
+  assert.equal(far.contact.type, 'whiff');
+  assert.equal(far.contact.reason, 'reach');
+  // Unit level: height limits and a missing ball.
+  const p = { X: 0, Y: 24 }, at = { X: 0.7, Y: 23.5, vy: 15, hittable: true };
+  assert.equal(E.judgeContact(Object.assign({}, at, { H: 1 }), p).contact, true);
+  assert.equal(E.judgeContact(Object.assign({}, at, { H: 0.1 }), p).reason, 'low');
+  assert.equal(E.judgeContact(Object.assign({}, at, { H: 2.6 }), p).reason, 'high');
+  assert.equal(E.judgeContact(Object.assign({}, at, { H: 1, hittable: false }), p).reason, 'no ball');
+});
+
+test('forehand on the right and in the middle, backhand clearly on the left', () => {
+  assert.equal(E.strokeFor(0.8), 'fh');
+  assert.equal(E.strokeFor(0), 'fh');
+  assert.equal(E.strokeFor(-0.1), 'fh');
+  assert.equal(E.strokeFor(-1.0), 'bh');
+  const p = { X: 0, Y: 24 }, b = { Y: 23.5, H: 1, vy: 15, hittable: true };
+  assert.equal(E.judgeContact(Object.assign({ X: -0.7 }, b), p).stroke, 'bh');
+  assert.equal(E.judgeContact(Object.assign({ X: -0.7 }, b), p).band, 'PERFECT');
+  assert.equal(E.judgeContact(Object.assign({ X: 0.7 }, b), p).stroke, 'fh');
+});
+
+test('aim: the stick left/right lands the return left/right of centre', () => {
+  for (const shot of ['flat', 'top', 'lob']) {
+    const L = trial({ shot, stick: { x: -1, y: 0 } }).ret;
+    const M = trial({ shot, stick: { x: 0, y: 0 } }).ret;
+    const R = trial({ shot, stick: { x: 1, y: 0 } }).ret;
+    for (const r of [L, M, R]) assert.equal(r.result, 'IN', `${shot} ${r.X}`);
+    assert.ok(L.X < -C.aim.x + 0.5 && L.X > -C.aim.x - 0.5, `${shot} left ${L.X}`);
+    assert.ok(Math.abs(M.X) < 0.5, `${shot} centre ${M.X}`);
+    assert.ok(R.X > C.aim.x - 0.5 && R.X < C.aim.x + 0.5, `${shot} right ${R.X}`);
+  }
+  // Up goes deeper, down shorter.
+  const deep = trial({ stick: { x: 0, y: -1 } }).ret, short = trial({ stick: { x: 0, y: 1 } }).ret;
+  assert.ok(deep.Y < short.Y - 3, `deep ${deep.Y} short ${short.Y}`);
+});
+
+test('the player accelerates, stops and stays inside the bounds', () => {
+  const pr = E.createPractice(1), P = C.player;
+  for (let i = 0; i < 12; i++) E.practiceStep(pr, { stick: { x: 1, y: 0 } }); // 0.1 s
+  assert.ok(pr.player.vx > 0 && pr.player.vx < P.speedX, `vx ${pr.player.vx}`);
+  for (let i = 0; i < 120 * 3; i++) E.practiceStep(pr, { stick: { x: 1, y: -1 } });
+  assert.equal(pr.player.X, P.maxX);
+  assert.equal(pr.player.Y, P.minY);
+  for (let i = 0; i < 6; i++) E.practiceStep(pr, { stick: { x: -0.05, y: 0 } }); // inside the deadzone
+  E.practiceStep(pr, { stick: { x: 1, y: 0 } });
+  pr.player.X = 0;
+  for (let i = 0; i < 120; i++) E.practiceStep(pr, { stick: { x: 1, y: 0 } });
+  assert.ok(Math.abs(pr.player.vx - P.speedX) < 1e-9);
+  let n = 0;
+  while (pr.player.vx > 0 && n < 120) { E.practiceStep(pr, {}); n++; }
+  assert.ok(n * C.dt <= P.speedX / P.decel + 2 * C.dt, `stopped in ${n} steps`);
+});
+
+test('a swing runs ready, backswing, contact, follow-through, recovery, ready', () => {
+  const s = C.swing;
+  assert.equal(E.swingPhase(null), 'ready');
+  assert.equal(E.swingPhase(0.05), 'backswing');
+  assert.equal(E.swingPhase(s.backswing + 0.01), 'contact');
+  assert.equal(E.swingPhase(s.backswing + 0.1), 'follow-through');
+  assert.equal(E.swingPhase(s.backswing + s.follow + 0.1), 'recovery');
+  assert.equal(E.swingPhase(s.backswing + s.follow + s.recovery + 0.01), 'ready');
+  // A second tap during the swing is ignored.
+  const pr = E.createPractice(1);
+  E.requestSwing(pr, 'top', 0.1); E.requestSwing(pr, 'lob', 0.3);
+  const swings = [];
+  for (let i = 0; i < 120; i++) for (const e of E.practiceStep(pr, {})) if (e.type === 'swing') swings.push(e.shot);
+  assert.deepEqual(swings, ['top']);
+});
+
+test('a ball the player never swings at counts as missed and resets the rally', () => {
+  const pr = E.createPractice(3);
+  pr.rally = 4;
+  let missed = null;
+  for (let i = 0; i < 120 * 6 && !missed; i++) for (const e of E.practiceStep(pr, {})) if (e.type === 'missed') missed = e;
+  assert.ok(missed);
+  assert.equal(pr.rally, 0);
+  assert.equal(pr.best, 0);
+});
+
+test('practice is deterministic: same seed, inputs and steps give the same result', () => {
+  function run() {
+    const pr = E.createPractice(11);
+    const log = [];
+    for (let i = 0; i < 120 * 20; i++) {
+      const stick = { x: Math.sin(i / 50), y: Math.cos(i / 90) * 0.5 };
+      if (i % 97 === 0) E.requestSwing(pr, ['top', 'flat', 'lob'][i % 3], pr.t + 0.003);
+      for (const e of E.practiceStep(pr, { stick })) {
+        if (e.type !== 'bounce' || e.n === 1) log.push(JSON.stringify(e));
+      }
+    }
+    log.push(JSON.stringify([pr.player, pr.ball, pr.rally, pr.best]));
+    return log;
+  }
+  const a = run(), b = run();
+  assert.deepEqual(a, b);
+  assert.ok(a.some(l => l.includes('"type":"swing"')));
+});
