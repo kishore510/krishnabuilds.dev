@@ -1,6 +1,6 @@
 # Krishnabuilds Arcade
 
-A small games hub at `arcade.krishnabuilds.dev`: 35 quick browser games,
+A small games hub at `arcade.krishnabuilds.dev`: 36 quick browser games,
 each one a single self-contained HTML file under `games/<slug>/`. Static
 site, no build step. The only backend is a small Cloudflare Worker
 (`src/worker.js`) for the "Played N times" counter.
@@ -60,10 +60,11 @@ array is the source of truth. As of 1.67.0, by category, oldest first:
 - **Salvo** (`games/salvo/`, 2026-07-11): Freely rearrange your fleet, then the enemy board takes over the screen. A CPU that actually targets back.
 - **Castle Hold** (`games/castle-hold/`, 2026-07-12): A siege you never leave the walls for. Place archers, hold the gate, don’t let a single enemy through.
 
-**Sports** (2)
+**Sports** (3)
 
 - **Air Hockey** (`games/air-hockey/`, 2026-07-06): Best of 7 against the CPU. Easy or Hard.
 - **Hoops** (`games/hoops/`, 2026-07-11): Flick to shoot real arc physics — nail the angle and power as the hoop starts drifting.
+- **Tennis** (`games/tennis/`, 2026-11-08): Serve, rally and come to the net in a real match against the CPU. Easy, Medium or Hard; Quick or Standard set; plus a ball-machine practice mode.
 
 **Trivia** (1)
 
@@ -79,7 +80,7 @@ assets/site-links.js    — link home + app switcher
 assets/version.js       — the displayed version string
 assets/art/<slug>.svg   — each game's card picture (rules in CLAUDE.md, "Card art")
 assets/kb-tokens.css    — committed copy of the shared @krishnabuilds/tokens CSS; `pnpm lint` fails if it drifts
-scripts/                — hand-run checks: card-art-check.mjs, dojo-duel-balance.mjs
+scripts/                — hand-run checks: card-art-check.mjs, dojo-duel-balance.mjs; tennis.test.js (node:test, run in CI)
 src/worker.js           — play-count API + static-asset serving
 wrangler.jsonc          — Cloudflare Worker config (deployed from GitHub Actions)
 ```

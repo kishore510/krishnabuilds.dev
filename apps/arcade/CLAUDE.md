@@ -15,7 +15,10 @@ squash merge; deploys run from GitHub Actions on merge to `main`.
 
 ## Commands
 
-There's no build/lint/test tooling — it's plain HTML/CSS/JS. To preview locally:
+There's no build step — it's plain HTML/CSS/JS. The one test suite is
+Tennis's engine tests (`node --test scripts/tennis.test.js` from
+`apps/arcade`, or `pnpm --filter @krishnabuilds/arcade test`), which CI runs.
+To preview locally:
 
 ```
 python3 -m http.server 8080
@@ -50,11 +53,13 @@ games/globe-quiz/index.html   — Globe Quiz (DOM, timed multiple-choice trivia:
 games/fuseblock/index.html    — Fuseblock (canvas, bomb-placement grid arena: 5 bot tiers, roguelike level progression, power-ups)
 games/mosaica/index.html      — Mosaica (canvas, drag-to-column/rotate tetromino stacker, ceramic-tile visual theme; Phase 1 core loop only)
 games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fighter vs CPU; see "Dojo Duel notes" below for its layout and tuning tables)
+games/tennis/index.html       — Tennis (canvas, match vs CPU + ball-machine practice; page, rendering and input)
+games/tennis/engine.js        — Tennis's pure logic (physics, swing, rules, CPU; CONFIG tables at the top), tested by scripts/tennis.test.js
 games/<slug>/index.html       — next game goes here
 ```
 
 This list is not every game. The `GAMES` array in `index.html` is the source
-of truth, and `README.md` lists all 35 with their folders and taglines.
+of truth, and `README.md` lists all 36 with their folders and taglines.
 
 ## Adding a new game
 

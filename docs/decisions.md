@@ -269,3 +269,5 @@ The far player sees the court turned 180 degrees, so it runs through the same sw
 Faults come from execution, not dice: the serve aims inside the box by a margin and is scattered by an amount that grows as the timing gets worse. Rules (scoring, serve order, the point referee) are pure functions with their own tests, and a seeded match is fully repeatable.
 
 Three physics tweaks came with it: a livelier bounce (restitution 0.82, so the ball stays playable longer), a softer net cord (so a let can happen), and the aim solver searches again when a tape clip had fooled it.
+
+The game is on the Arcade landing list from 1.73.0, and its tests run in CI from this stage: the Arcade package has a `test` script (`node --test scripts/tennis.test.js`), which the existing `pnpm turbo run test` step in `ci.yml` picks up. No workflow changed.

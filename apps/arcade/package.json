@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "lint": "node scripts/check-tokens.mjs",
+    "test": "node --test scripts/tennis.test.js",
     "sync-tokens": "pnpm --filter @krishnabuilds/tokens build && node scripts/check-tokens.mjs --write"
   },
   "devDependencies": {
