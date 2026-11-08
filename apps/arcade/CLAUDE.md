@@ -5,7 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A static games hub — no build step, no backend, no package manager. Every
-page is a single self-contained HTML file with inline `<style>`/`<script>`.
+page is a single self-contained HTML file with inline `<style>`/`<script>`
+(one exception: a game whose logic needs headless tests may split it into a
+pure, DOM-free script next to its `index.html`; Tennis's `engine.js` is the
+only one so far, see `docs/decisions.md`, 2026-11-08).
 Live at `arcade.krishnabuilds.dev`. Arcade now lives in the krishnabuilds.dev
 monorepo and follows the root `CLAUDE.md`: work on a branch, open a PR,
 squash merge; deploys run from GitHub Actions on merge to `main`.
@@ -55,7 +58,7 @@ of truth, and `README.md` lists all 35 with their folders and taglines.
 
 ## Adding a new game
 
-1. Create `games/<slug>/index.html` as a self-contained file (own `<style>`/`<script>`, no shared CSS/JS assumed beyond the embed script below). **Include `<meta name="viewport" content="width=device-width, initial-scale=1">` in `<head>`** — without it, mobile browsers render the page at an implied desktop width and zoom the whole thing out to fit, which shrinks every element uniformly (this cost a long debugging session on Fin Dash's nav bar before the missing tag was found).
+1. Create `games/<slug>/index.html` as a self-contained file (own `<style>`/`<script>`, no shared CSS/JS assumed beyond the embed script below). The only allowed split is a pure logic script beside it for headless `node:test` tests, as Tennis does with `engine.js` and `scripts/tennis.test.js`. **Include `<meta name="viewport" content="width=device-width, initial-scale=1">` in `<head>`** — without it, mobile browsers render the page at an implied desktop width and zoom the whole thing out to fit, which shrinks every element uniformly (this cost a long debugging session on Fin Dash's nav bar before the missing tag was found).
 2. Before `</body>`, include the shared chrome:
    ```html
    <script src="../../assets/version.js"></script>
