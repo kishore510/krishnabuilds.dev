@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+
+- New story map in Chronicles: The Maurya Empire. From the Nandas of Magadha and Alexander at the Indus, through Chandragupta, Bindusara and Ashoka's Kalinga war, edicts and dhamma, to the last Maurya about 185 BCE and the rediscovery of Ashoka's inscriptions: 22 chapters on the South Asia map, a Powers layer that grows and shrinks with the empire, and 11 people cards. Chapters are tagged Archaeology, History or Tradition by their sources.
+- Art: new place glyphs (Ashokan pillar, inscribed rock, stupa) and travellers (Greek soldier, war elephant, monk).
+
 ## 0.7.2
 
 - Powers: small holdings (ports and islands) are now small solid markers with a light edge, not large dashed discs, so they no longer look like painted regions. The British Empire's Portuguese, Dutch, French and British ports in India now read as ports.

@@ -1,0 +1,1210 @@
+{
+  "id": "maurya",
+  "title": "The Maurya Empire",
+  "description": "An illustrated map of the Maurya Empire, from Chandragupta’s rise after Alexander’s invasion, through Ashoka’s Kalinga war and his edicts, to its fall about 185 BCE.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "Archaeology",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Maurya Empire from about 345 to 185 BCE",
+  "note": "Based on Ashoka’s inscriptions, archaeology, Greek and Latin writers, and Indian, Jain and Sri Lankan traditions written down centuries later; each chapter says which it follows. Dates are approximate and many are debated. The map is stylised and not to scale, and the empire’s borders, especially in the Deccan and the north-west, are uncertain: the areas under Powers are painted loosely. Numbers from ancient sources, such as the dead of Kalinga, are given as the sources state them.",
+  "places": {
+    "hindu-kush": {
+      "name": "Hindu Kush",
+      "at": [69.5, 35.8],
+      "hidden": true
+    },
+    "beas": {
+      "name": "Beas river",
+      "at": [75.4, 31.6],
+      "hidden": true
+    },
+    "seleucid-west": {
+      "name": "Seleucid lands",
+      "at": [60.0, 31.5],
+      "hidden": true
+    },
+    "deccan": {
+      "name": "The Deccan",
+      "at": [77.0, 17.0],
+      "hidden": true
+    },
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [85.14, 25.61],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [72.83, 33.75],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "kandahar": {
+      "name": "Kandahar",
+      "at": [65.7, 31.6],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "shravanabelagola": {
+      "name": "Shravanabelagola",
+      "at": [76.48, 12.86],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "ujjain": {
+      "name": "Ujjain",
+      "at": [75.78, 23.18],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "dhauli": {
+      "name": "Dhauli (Kalinga)",
+      "at": [85.84, 20.19],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "sarnath": {
+      "name": "Sarnath",
+      "at": [83.03, 25.38],
+      "glyph": "pillar",
+      "label": "bottom"
+    },
+    "lumbini": {
+      "name": "Lumbini",
+      "at": [83.28, 27.47],
+      "glyph": "pillar",
+      "label": "top"
+    },
+    "girnar": {
+      "name": "Girnar",
+      "at": [70.5, 21.53],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "maski": {
+      "name": "Maski",
+      "at": [76.65, 15.96],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "anuradhapura": {
+      "name": "Anuradhapura",
+      "at": [80.4, 8.35],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "kabul": {
+      "name": "Kabul",
+      "at": [69.17, 34.53],
+      "glyph": "crossed-swords",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "chronicle": {
+      "name": "The chronicle",
+      "icon": "scroll"
+    },
+    "greeks": {
+      "name": "Greek and Macedonian troops",
+      "icon": "hoplite"
+    },
+    "army": {
+      "name": "The Maurya army",
+      "icon": "war-elephant"
+    },
+    "envoy": {
+      "name": "An envoy",
+      "icon": "scroll"
+    },
+    "monk": {
+      "name": "A monk",
+      "icon": "monk"
+    },
+    "ashoka": {
+      "name": "Prince Ashoka",
+      "icon": "prince"
+    }
+  },
+  "phases": {
+    "founding": {
+      "name": "Founding an empire",
+      "color": "#4fc3b0"
+    },
+    "growth": {
+      "name": "Bindusara and the young Ashoka",
+      "color": "#f29a2e"
+    },
+    "ashoka": {
+      "name": "Ashoka and dhamma",
+      "color": "#a678e0"
+    },
+    "decline": {
+      "name": "Decline and fall",
+      "color": "#e0573a"
+    },
+    "legacy": {
+      "name": "Rediscovery",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "greek": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 31.7,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 45.4,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 82.0,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 95.7,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "345 BCE"
+      },
+      {
+        "at": 15.7,
+        "text": "322"
+      },
+      {
+        "at": 43.1,
+        "text": "268"
+      },
+      {
+        "at": 79.7,
+        "text": "232 BCE"
+      },
+      {
+        "at": 98.0,
+        "text": "1837 CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "pataliputra",
+      "phase": "founding",
+      "title": "Magadha and the Nandas",
+      "native": "पाटलिपुत्र",
+      "when": "about 345 to 322 BCE",
+      "at": 2.0,
+      "source": "History",
+      "camera": {
+        "at": [83, 25.5],
+        "width": 16
+      },
+      "legs": [],
+      "text": "In the 4th century BCE the strongest kingdom in the Ganges plain is Magadha, ruled from Pataliputra, where the Son river meets the Ganga. Its Nanda kings are famous for their wealth and their huge army; Greek writers say tales of that army helped turn Alexander’s soldiers back. Later Indian stories call the last Nanda greedy and hated.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "taxila",
+      "phase": "founding",
+      "title": "Alexander at the Indus",
+      "native": "तक्षशिला",
+      "when": "326 to 325 BCE",
+      "at": 6.6,
+      "source": "History",
+      "camera": {
+        "at": [72, 32.5],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "hindu-kush",
+          "to": "taxila",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        },
+        {
+          "from": "taxila",
+          "to": "beas",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 326 BCE Alexander of Macedon crosses the Indus. Ambhi, king of Taxila, submits, and at the Hydaspes (Jhelum) river Alexander defeats King Porus, then keeps him as an ally. At the Beas his exhausted army refuses to go further east. Alexander turns back down the Indus, leaving governors (satraps) in the Punjab.",
+      "today": "Today: Taxila, Punjab, Pakistan."
+    },
+    {
+      "place": "taxila",
+      "phase": "founding",
+      "title": "Chandragupta and Chanakya",
+      "native": "चन्द्रगुप्त और चाणक्य",
+      "when": "about 325 BCE",
+      "at": 11.1,
+      "source": "Tradition",
+      "camera": {
+        "at": [74, 31],
+        "width": 16
+      },
+      "legs": [],
+      "text": "Who Chandragupta Maurya was is uncertain. Buddhist texts make him a Moriya of warrior (kshatriya) rank; some later Hindu works call him low-born. Tradition pairs him with Chanakya, a Brahmin teacher of Taxila insulted by the Nanda king, who trains the young man to overthrow him. The Greek writer Plutarch says the young Chandragupta saw Alexander.",
+      "today": "Today: Taxila’s ruins are a World Heritage Site."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "founding",
+      "title": "Chandragupta takes Magadha",
+      "native": "पाटलिपुत्र",
+      "when": "about 322 BCE",
+      "at": 15.7,
+      "source": "History",
+      "camera": {
+        "at": [80, 28],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "taxila",
+          "to": "pataliputra",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.08
+        }
+      ],
+      "text": "Around 322 BCE Chandragupta overthrows the Nandas and takes Pataliputra, founding the Maurya dynasty. Within a few years Alexander’s governors in the Punjab are gone too; the last, Eudemus, leaves about 317 BCE. Historians debate which came first, the Punjab or Magadha, and the exact dates.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "kandahar",
+      "phase": "founding",
+      "title": "Seleucus and the elephants",
+      "when": "about 305 to 303 BCE",
+      "at": 20.3,
+      "source": "History",
+      "camera": {
+        "at": [67, 31],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "seleucid-west",
+          "to": "kandahar",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        }
+      ],
+      "text": "Seleucus, one of Alexander’s generals, now rules his eastern lands. Around 305 BCE he crosses the Indus against Chandragupta. No account of the fighting survives, only the peace: Seleucus gives up Arachosia (around Kandahar) and nearby lands, receives 500 war elephants, and the two kings agree a marriage alliance whose details are unknown.",
+      "today": "Today: Kandahar, Afghanistan."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "founding",
+      "title": "Megasthenes in Pataliputra",
+      "native": "पाटलिपुत्र",
+      "when": "about 300 BCE",
+      "at": 24.9,
+      "source": "History",
+      "camera": {
+        "at": [77, 29],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "kandahar",
+          "to": "pataliputra",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": 0.06
+        }
+      ],
+      "text": "Seleucus sends an ambassador, Megasthenes, to Chandragupta’s court. His book, the Indica, is lost, but later Greek writers quote it: Pataliputra stretches about 15 km along the river, inside a timber wall with 570 towers and 64 gates. Excavations at Kumhrar and Bulandi Bagh in Patna have found a great pillared hall and lines of timber palisade.",
+      "today": "Today: the Kumhrar excavations, Patna."
+    },
+    {
+      "place": "shravanabelagola",
+      "phase": "founding",
+      "title": "A king becomes a monk",
+      "native": "श्रवणबेलगोला",
+      "when": "about 298 BCE",
+      "at": 29.4,
+      "source": "Tradition",
+      "camera": {
+        "at": [80, 19],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "shravanabelagola",
+          "traveller": "monk",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Jain tradition says Chandragupta gives up his throne, follows the Jain teacher Bhadrabahu south during a twelve-year famine, and fasts to death on Chandragiri hill at Shravanabelagola. Inscriptions there, carved many centuries later, remember the story, and a cave on the hill bears Bhadrabahu’s name. Other traditions say nothing of how he died.",
+      "today": "Today: Shravanabelagola, Karnataka, a Jain pilgrimage site."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "growth",
+      "title": "Bindusara",
+      "native": "बिन्दुसार",
+      "when": "about 298 to 273 BCE",
+      "at": 34.0,
+      "source": "History",
+      "camera": {
+        "at": [80, 21],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "deccan",
+          "traveller": "army",
+          "style": "march",
+          "bend": -0.1
+        }
+      ],
+      "text": "Chandragupta’s son Bindusara rules for about 25 years. Greek writers call him Amitrochates, from the Sanskrit Amitraghata, ‘slayer of enemies’. Little is known of his wars, but by the end of his reign the empire reaches deep into the Deccan. A Greek anecdote says he asked the Seleucid king for sweet wine, dried figs and a philosopher.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "ujjain",
+      "phase": "growth",
+      "title": "A prince in Ujjain",
+      "native": "उज्जयिनी",
+      "when": "before 273 BCE",
+      "at": 38.6,
+      "source": "Tradition",
+      "camera": {
+        "at": [78, 24],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "ujjain",
+          "traveller": "ashoka",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Buddhist tradition says Bindusara sent his son Ashoka to put down a revolt at Taxila, then made him governor at Ujjain, capital of Avanti in central India. On the way, at Vidisha, he married Devi, a merchant’s daughter. Their children, Mahinda and Sanghamitta, would later carry Buddhism to Sri Lanka.",
+      "today": "Today: Ujjain, Madhya Pradesh, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "growth",
+      "title": "Ashoka takes the throne",
+      "native": "अशोक",
+      "when": "about 273 to 268 BCE",
+      "at": 43.1,
+      "source": "Tradition",
+      "camera": {
+        "at": [81, 25],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "ujjain",
+          "to": "pataliputra",
+          "traveller": "ashoka",
+          "style": "walk",
+          "bend": -0.1
+        }
+      ],
+      "text": "When Bindusara dies, about 273 BCE, a struggle for the throne follows; Sri Lankan chronicles say Ashoka is crowned four years later. Buddhist stories have him kill 99 brothers, but this is probably legend: one of his own inscriptions mentions the households of his brothers and sisters. The stories remember the young king as ‘fierce Ashoka’ (Chandashoka).",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "dhauli",
+      "phase": "ashoka",
+      "title": "The Kalinga war",
+      "native": "कलिंग",
+      "when": "about 261 BCE",
+      "at": 47.7,
+      "source": "Archaeology",
+      "camera": {
+        "at": [85, 22],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "dhauli",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Eight years after his coronation, Ashoka conquers Kalinga on the eastern coast. His own words, carved on rock, say 150,000 people were carried off, 100,000 killed and many times that number died. He writes of deep remorse. Yet that confession is left out of the edicts carved in Kalinga itself, at Dhauli and Jaugada.",
+      "today": "Today: Dhauli, near Bhubaneswar, Odisha."
+    },
+    {
+      "place": "sarnath",
+      "phase": "ashoka",
+      "title": "Dhamma",
+      "native": "धम्म",
+      "when": "about 260 to 250 BCE",
+      "at": 52.3,
+      "source": "Archaeology",
+      "camera": {
+        "at": [82, 25],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Ashoka becomes a Buddhist lay follower and preaches what he calls dhamma: obedience to parents, generosity, truthfulness, kindness to servants and animals, and respect for every religious sect. He limits the killing of animals, has wells dug and trees planted along roads, and appoints officers of dhamma. His pillar at Sarnath bore the lion capital that is now India’s emblem.",
+      "today": "Today: Sarnath, near Varanasi; the lion capital is in the museum there."
+    },
+    {
+      "place": "lumbini",
+      "phase": "ashoka",
+      "title": "At the Buddha’s birthplace",
+      "native": "लुम्बिनी",
+      "when": "about 249 BCE",
+      "at": 56.9,
+      "source": "Archaeology",
+      "camera": {
+        "at": [83, 26.5],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "sarnath",
+          "to": "lumbini",
+          "traveller": "monk",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "In the 20th year of his reign Ashoka visits Lumbini, where the Buddha was born, and sets up a stone pillar. Its inscription, still in place, says he freed the village from tax and cut its share of the harvest to one eighth. Found in 1896, the pillar fixed the Buddha’s birthplace.",
+      "today": "Today: Lumbini, Nepal."
+    },
+    {
+      "place": "kandahar",
+      "phase": "ashoka",
+      "title": "Edicts in Greek and Aramaic",
+      "when": "about 260 to 250 BCE",
+      "at": 61.4,
+      "source": "Archaeology",
+      "camera": {
+        "at": [67, 31],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "kandahar",
+          "to": "seleucid-west",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": 0.1
+        }
+      ],
+      "text": "At Kandahar, on the empire’s western edge, Ashoka’s words were carved in Greek and Aramaic for local readers; the inscriptions were found in 1958 and 1963. His edicts name five Greek kings to whom he sent envoys, among them Antiochus II of Syria and Ptolemy II of Egypt. Dhamma appears in Greek as eusebeia, ‘piety’.",
+      "today": "Today: Kandahar, Afghanistan."
+    },
+    {
+      "place": "girnar",
+      "phase": "ashoka",
+      "title": "Words on the rock",
+      "native": "गिरनार",
+      "when": "about 257 BCE",
+      "at": 66.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [72, 23],
+        "width": 14
+      },
+      "legs": [],
+      "text": "Fourteen of Ashoka’s major edicts are carved on a great boulder at Girnar, in Gujarat. The same rock carries a Sanskrit inscription of about 150 CE recording repairs to the nearby Sudarshana lake, which it says was built under Chandragupta and given channels under Ashoka. Most of the edicts are in Prakrit, written in the Brahmi script.",
+      "today": "Today: near Junagadh, Gujarat, India."
+    },
+    {
+      "place": "anuradhapura",
+      "phase": "ashoka",
+      "title": "Mahinda in Lanka",
+      "native": "අනුරාධපුරය",
+      "lang": "si",
+      "when": "about 250 BCE",
+      "at": 70.6,
+      "source": "Tradition",
+      "camera": {
+        "at": [79, 12],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "ujjain",
+          "to": "anuradhapura",
+          "traveller": "monk",
+          "style": "walk",
+          "bend": -0.12
+        }
+      ],
+      "text": "Sri Lankan chronicles say Ashoka’s son Mahinda, now a monk, comes to Lanka and converts King Devanampiya Tissa at Mihintale, near Anuradhapura. His sister Sanghamitta, a nun, brings a cutting of the bodhi tree under which the Buddha found enlightenment. A tree in Anuradhapura said to grow from it is still honoured.",
+      "today": "Today: Anuradhapura, Sri Lanka."
+    },
+    {
+      "place": "maski",
+      "phase": "ashoka",
+      "title": "The southern edicts",
+      "native": "मस्की",
+      "when": "about 257 BCE",
+      "at": 75.1,
+      "source": "Archaeology",
+      "camera": {
+        "at": [77, 14],
+        "width": 14
+      },
+      "legs": [],
+      "text": "Minor edicts at Maski, Brahmagiri and other sites in Karnataka mark the empire’s southern edge. Beyond it the edicts name independent peoples, the Cholas, Pandyas, Satiyaputras and Keralaputras, to whom Ashoka sends medical care for people and animals. The Maski edict, found in 1915, was the first to name the king as Asoka.",
+      "today": "Today: Maski, Raichur district, Karnataka."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "ashoka",
+      "title": "Ashoka’s last years",
+      "native": "पाटलिपुत्र",
+      "when": "about 232 BCE",
+      "at": 79.7,
+      "source": "Tradition",
+      "camera": {
+        "at": [83, 25],
+        "width": 14
+      },
+      "legs": [],
+      "text": "Buddhist tradition says Ashoka gave so much to the Buddhist order (sangha) that his ministers and grandson stopped him, until all he had left to give was half an amalaka fruit. It also places a great Buddhist council at Pataliputra in his reign. He dies about 232 BCE, after ruling for some 36 years.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "ujjain",
+      "phase": "decline",
+      "title": "The empire divides",
+      "native": "उज्जयिनी",
+      "when": "about 232 to 200 BCE",
+      "at": 84.3,
+      "source": "Archaeology",
+      "camera": {
+        "at": [80, 25],
+        "width": 20
+      },
+      "legs": [],
+      "text": "After Ashoka the sources disagree. The Puranas list several kings with short reigns. Jain texts praise his grandson Samprati, linked with Ujjain, as a great patron. Another grandson, Dasharatha, left inscriptions dedicating caves in the Nagarjuni hills near Gaya to Ajivika ascetics. Kashmir and the north-west seem to break away under other princes.",
+      "today": "Today: the Nagarjuni caves are beside the Barabar caves, Bihar."
+    },
+    {
+      "place": "kabul",
+      "phase": "decline",
+      "title": "Greeks in the north-west",
+      "when": "about 206 to 180 BCE",
+      "at": 88.9,
+      "source": "History",
+      "camera": {
+        "at": [70, 32],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "hindu-kush",
+          "to": "kabul",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        }
+      ],
+      "text": "Around 206 BCE the Seleucid king Antiochus III crosses the Hindu Kush and renews friendship with an Indian king, Sophagasenus, who gives him elephants; who this king was is unknown. From about 180 BCE Greek kings of Bactria, starting with Demetrius I, push into Gandhara and the Punjab.",
+      "today": "Today: Kabul, Afghanistan."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "decline",
+      "title": "The last Maurya",
+      "native": "पाटलिपुत्र",
+      "when": "about 185 BCE",
+      "at": 93.4,
+      "source": "History",
+      "camera": {
+        "at": [82, 25],
+        "width": 16
+      },
+      "legs": [],
+      "text": "The last Maurya king, Brihadratha, is killed by his own commander, Pushyamitra Shunga, while reviewing the army; the story comes from the 7th-century CE writer Bana, and the Puranas agree that Pushyamitra took the throne. His Shunga dynasty rules a smaller kingdom from Pataliputra and Vidisha. The Maurya Empire, some 140 years old, is over.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "sarnath",
+      "phase": "legacy",
+      "title": "Ashoka rediscovered",
+      "native": "अशोक चक्र",
+      "when": "1837 to 1950 CE",
+      "at": 98.0,
+      "source": "History",
+      "camera": {
+        "at": [80, 22],
+        "width": 26
+      },
+      "legs": [],
+      "text": "For centuries no one could read Ashoka’s inscriptions. In 1837 James Prinsep deciphered the Brahmi script. The edicts’ ‘Devanampiya Piyadasi’, Beloved of the Gods, was linked to Ashoka through the Sri Lankan chronicles, and the Maski edict confirmed it in 1915. India adopted the Sarnath lion capital as its emblem in 1950; Ashoka’s wheel is on its flag.",
+      "today": "Today: Ashoka’s wheel (chakra) is at the centre of India’s flag."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "maurya",
+        "name": "Maurya Empire",
+        "native": "मौर्य साम्राज्य",
+        "color": "#e0892e",
+        "active": [[3, 19]],
+        "label": {
+          "text": "Maurya Empire",
+          "at": [79, 25.5],
+          "moves": [
+            {
+              "from": 10,
+              "at": [78, 21]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [[3, 3]],
+            "areas": [
+              [[71.5, 28.0], [72.0, 32.5], [74.5, 34.0], [77.5, 30.0], [84.0, 27.5], [88.0, 26.5], [89.0, 24.5], [88.0, 22.0], [86.5, 21.5], [85.0, 23.0], [82.01, 24.0], [79.0, 24.0], [76.5, 26.0], [75.49, 28.49]]
+            ]
+          },
+          {
+            "steps": [[4, 6]],
+            "areas": [
+              [[62.0, 25.3], [62.5, 30.0], [64.0, 33.0], [68.0, 35.2], [71.5, 36.0], [74.5, 35.0], [77.0, 32.5], [80.0, 30.0], [83.99, 27.7], [88.5, 26.6], [89.5, 24.5], [88.0, 21.7], [86.6, 21.3], [84.99, 23.0], [82.01, 23.2], [80.0, 22.5], [76.0, 22.0], [72.63, 21.28], [72.5, 22.0], [72.1, 21.4], [70.9, 20.83], [70.2, 20.9], [69.36, 21.83], [69.09, 22.35], [69.81, 22.83], [68.63, 23.25], [66.4, 25.2]]
+            ]
+          },
+          {
+            "steps": [[7, 9]],
+            "areas": [
+              [[62.0, 25.3], [62.5, 30.0], [64.0, 33.0], [68.0, 35.2], [71.5, 36.0], [74.5, 35.0], [77.0, 32.5], [80.0, 30.0], [83.99, 27.7], [88.5, 26.6], [89.5, 24.5], [88.0, 21.7], [86.6, 21.3], [84.99, 23.0], [82.0, 23.2], [80.23, 22.58], [82.5, 21.5], [80.0, 16.0], [78.5, 14.2], [76.5, 13.4], [75.0, 13.8], [73.32, 17.42], [72.86, 19.37], [72.98, 21.31], [72.63, 21.28], [72.54, 21.98], [72.1, 21.4], [71.47, 20.98], [70.2, 20.9], [69.09, 22.35], [69.82, 22.82], [68.63, 23.25], [66.4, 25.2]]
+            ]
+          },
+          {
+            "steps": [[10, 17]],
+            "areas": [
+              [[62.0, 25.3], [62.5, 30.0], [64.0, 33.0], [68.0, 35.2], [71.5, 36.0], [74.5, 35.0], [77.0, 32.5], [80.0, 30.0], [83.99, 27.7], [88.5, 26.6], [89.5, 24.5], [88.0, 21.7], [87.19, 21.46], [86.8, 20.6], [85.5, 19.8], [83.44, 17.94], [82.5, 17.5], [81.2, 17.4], [82.4, 19.5], [82.39, 21.23], [80.0, 16.0], [78.74, 14.49], [80.3, 15.5], [80.18, 13.2], [76.5, 13.1], [75.0, 13.8], [74.6, 14.2], [74.79, 14.27], [73.32, 17.42], [73.0, 18.5], [72.86, 19.37], [72.98, 21.31], [72.63, 21.28], [72.54, 21.98], [72.1, 21.4], [71.47, 20.98], [70.2, 20.9], [69.09, 22.35], [69.82, 22.82], [68.63, 23.25], [66.4, 25.2]]
+            ]
+          },
+          {
+            "steps": [[18, 18]],
+            "areas": [
+              [[74.5, 21.8], [75.5, 26.2], [76.4, 26.24], [75.5, 28.5], [77.5, 30.0], [84.0, 27.5], [88.0, 26.5], [89.0, 24.5], [88.0, 22.0], [86.5, 21.5], [85.0, 23.0], [81.99, 24.0], [80.01, 24.0], [78.5, 22.4]]
+            ]
+          },
+          {
+            "steps": [[19, 19]],
+            "areas": [
+              [[80.0, 27.0], [84.0, 27.3], [88.0, 26.2], [88.2, 24.0], [85.0, 23.5], [81.5, 24.5]]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Pataliputra",
+          "Founded": "About 322 BCE, by Chandragupta",
+          "Ended": "About 185 BCE",
+          "Today": "Most of India, Pakistan and Bangladesh, and parts of Nepal and Afghanistan"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Chandragupta"
+          },
+          {
+            "from": 7,
+            "text": "Bindusara"
+          },
+          {
+            "from": 9,
+            "text": "Ashoka, crowned about 268 BCE"
+          },
+          {
+            "from": 10,
+            "text": "Ashoka"
+          },
+          {
+            "from": 18,
+            "text": "Not certain: the sources name Dasharatha, Samprati and others"
+          },
+          {
+            "from": 19,
+            "text": "Not certain; the line ends with Brihadratha"
+          }
+        ],
+        "role": "The first empire to rule most of the subcontinent, from Afghanistan to Bengal and south into Karnataka.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Makes peace with Seleucus and gains the lands around Kandahar"
+          },
+          {
+            "from": 5,
+            "text": "Receives the Greek ambassador Megasthenes"
+          },
+          {
+            "from": 10,
+            "text": "Conquers Kalinga (about 261 BCE)"
+          },
+          {
+            "from": 13,
+            "text": "Sends envoys to five Greek kings"
+          },
+          {
+            "from": 15,
+            "text": "Sends Buddhist missions, by tradition to Sri Lanka and beyond"
+          }
+        ]
+      },
+      {
+        "id": "nanda",
+        "name": "Nanda kingdom",
+        "native": "नन्द",
+        "color": "#8a6bd1",
+        "active": [[0, 2]],
+        "label": {
+          "text": "Nanda kingdom",
+          "at": [83, 24.5]
+        },
+        "pieces": [
+          {
+            "steps": [[0, 2]],
+            "areas": [
+              [[75.5, 28.5], [77.5, 30.0], [84.0, 27.5], [88.0, 26.5], [89.0, 24.5], [88.0, 22.0], [86.5, 21.5], [85.0, 23.0], [82.01, 24.0], [79.0, 24.0], [76.5, 26.0]]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Pataliputra",
+          "Kingdom": "Magadha",
+          "Known for": "Great wealth and a huge army, say Greek and Indian sources"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "The last Nanda king, named Dhana Nanda in later sources"
+          }
+        ],
+        "role": "Rulers of the Ganges plain, overthrown by Chandragupta.",
+        "ties": []
+      },
+      {
+        "id": "macedonian",
+        "name": "Alexander’s empire",
+        "color": "#4f6fd0",
+        "active": [[1, 2]],
+        "label": {
+          "text": "Alexander’s empire",
+          "at": [70.5, 30]
+        },
+        "pieces": [
+          {
+            "steps": [[1, 2]],
+            "areas": [
+              [[67.02, 24.58], [68.0, 30.0], [69.5, 34.8], [72.0, 35.5], [74.5, 34.0], [76.0, 31.8], [74.5, 30.0], [71.5, 28.0], [68.5, 25.0]]
+            ]
+          }
+        ],
+        "facts": {
+          "Ruler": "Alexander III of Macedon",
+          "In India": "326 to about 317 BCE",
+          "Today": "Pakistan and eastern Afghanistan"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Alexander III"
+          },
+          {
+            "from": 2,
+            "text": "Alexander, until his death in 323 BCE; then his generals"
+          }
+        ],
+        "role": "Alexander crosses the Indus in 326 BCE and leaves governors in the Punjab, who are gone within a decade.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Ambhi of Taxila submits; Porus is defeated at the Hydaspes and kept as an ally"
+          }
+        ]
+      },
+      {
+        "id": "seleucid",
+        "name": "Seleucid Empire",
+        "color": "#4f9fd0",
+        "minor": true,
+        "active": [[4, 19]],
+        "label": {
+          "text": "Seleucid Empire",
+          "at": [61, 33]
+        },
+        "pieces": [
+          {
+            "steps": [[4, 19]],
+            "areas": [
+              [[58.0, 25.6], [58.0, 38.0], [69.0, 38.0], [68.0, 35.2], [63.99, 32.99], [62.5, 30.0], [62.0, 25.3], [61.51, 25.21]]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Seleucia and Antioch",
+          "Founder": "Seleucus I, one of Alexander’s generals",
+          "Today": "Iran, Iraq, Syria and beyond"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Seleucus I"
+          },
+          {
+            "from": 7,
+            "text": "Antiochus I"
+          },
+          {
+            "from": 13,
+            "text": "Antiochus II"
+          },
+          {
+            "from": 17,
+            "text": "Seleucus II"
+          },
+          {
+            "from": 19,
+            "text": "Antiochus III"
+          }
+        ],
+        "role": "The Greek kingdom to the west, which trades land, envoys and gifts with the Mauryas.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Gives up its lands near the Indus for 500 elephants (about 303 BCE)"
+          },
+          {
+            "from": 5,
+            "text": "Sends Megasthenes to Pataliputra"
+          },
+          {
+            "from": 13,
+            "text": "Antiochus II is named in Ashoka’s edicts"
+          },
+          {
+            "from": 19,
+            "text": "Antiochus III receives elephants from an Indian king, Sophagasenus (about 206 BCE)"
+          }
+        ]
+      },
+      {
+        "id": "kalinga",
+        "name": "Kalinga",
+        "native": "कलिंग",
+        "color": "#2fa36b",
+        "minor": true,
+        "active": [[0, 9]],
+        "label": {
+          "text": "Kalinga",
+          "at": [84.5, 20.3]
+        },
+        "pieces": [
+          {
+            "steps": [[0, 9]],
+            "areas": [
+              [[81.2, 17.4], [82.4, 19.5], [82.5, 21.8], [86.59, 21.3], [87.2, 21.5], [86.8, 20.6], [85.5, 19.8], [83.44, 17.94], [82.5, 17.5]]
+            ]
+          }
+        ],
+        "facts": {
+          "Today": "Odisha and northern Andhra Pradesh",
+          "Rulers": "Not named in the sources"
+        },
+        "rulers": [],
+        "role": "A coastal kingdom outside the empire until Ashoka conquers it, about 261 BCE.",
+        "ties": []
+      },
+      {
+        "id": "south",
+        "name": "Southern kingdoms",
+        "color": "#b5a33a",
+        "minor": true,
+        "active": [[7, 21]],
+        "label": {
+          "text": "Southern kingdoms",
+          "at": [78.2, 10.5]
+        },
+        "pieces": [
+          {
+            "steps": [[7, 21]],
+            "areas": [
+              [[74.92, 13.03], [80.2, 13.48], [80.1, 12.2], [79.8, 11.3], [79.85, 10.35], [79.21, 9.95], [79.02, 9.53], [79.35, 9.3], [78.4, 9.0], [77.55, 8.08], [77.0, 8.5]]
+            ]
+          }
+        ],
+        "facts": {
+          "Named in the edicts": "Cholas, Pandyas, Satiyaputras and Keralaputras",
+          "Today": "Tamil Nadu and Kerala"
+        },
+        "rulers": [],
+        "role": "Independent kingdoms beyond the southern border. Ashoka names them as neighbours and sends them medical help and his dhamma.",
+        "ties": []
+      },
+      {
+        "id": "lanka",
+        "name": "Anuradhapura kingdom",
+        "color": "#c2477a",
+        "minor": true,
+        "active": [[15, 21]],
+        "label": {
+          "text": "Anuradhapura kingdom",
+          "at": [80.7, 7.4]
+        },
+        "pieces": [
+          {
+            "steps": [[15, 21]],
+            "areas": [
+              [[79.75, 9.2], [80.05, 9.85], [80.6, 9.5], [81.75, 7.5], [81.8, 6.8], [81.3, 6.2], [80.6, 5.93], [80.05, 6.05], [79.8, 7.8], [79.95, 8.7]]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Anuradhapura",
+          "Today": "Sri Lanka"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Devanampiya Tissa"
+          }
+        ],
+        "role": "The Sri Lankan kingdom that, by tradition, receives Buddhism from Ashoka’s son Mahinda.",
+        "ties": []
+      },
+      {
+        "id": "bactrian",
+        "name": "Greco-Bactrian kingdom",
+        "color": "#5b6fa8",
+        "minor": true,
+        "active": [[19, 21]],
+        "label": {
+          "text": "Greco-Bactrian kingdom",
+          "at": [65, 35]
+        },
+        "pieces": [
+          {
+            "steps": [[19, 21]],
+            "areas": [
+              [[65.3, 34.05], [68.0, 35.2], [71.5, 36.0], [73.5, 34.8], [72.6, 32.8], [70.6, 31.5], [69.3, 33.59], [66.0, 33.0]]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Bactra (Balkh)",
+          "Breaks away from": "The Seleucids, about 250 BCE",
+          "Today": "Afghanistan and Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Euthydemus I, then Demetrius I"
+          }
+        ],
+        "role": "Greek kings of Bactria who push into north-west India from about 180 BCE, as Maurya power fades.",
+        "ties": []
+      },
+      {
+        "id": "shunga",
+        "name": "Shunga dynasty",
+        "native": "शुंग",
+        "color": "#d9432a",
+        "active": [[20, 21]],
+        "label": {
+          "text": "Shunga dynasty",
+          "at": [82, 25]
+        },
+        "pieces": [
+          {
+            "steps": [[20, 21]],
+            "areas": [
+              [[77.5, 26.0], [80.0, 27.3], [84.0, 27.3], [88.0, 26.2], [88.0, 24.2], [85.0, 23.6], [82.01, 24.49], [80.5, 23.3], [77.8, 22.8]]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Pataliputra and Vidisha",
+          "Founded": "About 185 BCE"
+        },
+        "rulers": [
+          {
+            "from": 20,
+            "text": "Pushyamitra Shunga"
+          }
+        ],
+        "role": "Founded by the general who kills the last Maurya, it rules a smaller kingdom in the Ganges plain and central India.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "chandragupta",
+        "name": "Chandragupta Maurya",
+        "native": "चन्द्रगुप्त मौर्य",
+        "life": "ruled about 322 to 298 BCE",
+        "role": "Founder of the Maurya Empire",
+        "steps": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "text": "Chandragupta rises from uncertain origins to rule from Afghanistan to Bengal; Greek writers call him Sandrokottos. He takes Magadha from the Nandas, drives out Alexander’s governors and makes peace with Seleucus. Jain tradition says he ends his life as a monk at Shravanabelagola."
+      },
+      {
+        "id": "chanakya",
+        "name": "Chanakya",
+        "native": "चाणक्य",
+        "life": "4th century BCE",
+        "role": "Brahmin adviser to Chandragupta, in tradition",
+        "steps": [2, 3],
+        "text": "Also called Kautilya or Vishnugupta, Chanakya is remembered as the cunning minister who made Chandragupta king. The Arthashastra, a treatise on running a state, is credited to him, though scholars think it was compiled and revised over later centuries. The Greek writers who knew the court do not mention him."
+      },
+      {
+        "id": "alexander",
+        "name": "Alexander of Macedon",
+        "life": "356 to 323 BCE",
+        "role": "King of Macedon",
+        "steps": [1, 2],
+        "text": "Alexander conquers the Persian Empire and reaches the Indus in 326 BCE. After defeating Porus he wants to march on to the Ganges, but his army refuses at the Beas. He dies in Babylon in 323 BCE, and his generals divide his empire."
+      },
+      {
+        "id": "seleucus",
+        "name": "Seleucus I",
+        "life": "about 358 to 281 BCE",
+        "role": "One of Alexander’s generals; founder of the Seleucid kingdom",
+        "steps": [4, 5],
+        "text": "Seleucus wins Alexander’s eastern lands, from Syria to Bactria. Unable to recover the Indus lands, he makes peace with Chandragupta, trading territory for 500 elephants. The elephants help him win the battle of Ipsus in 301 BCE against his rival Antigonus."
+      },
+      {
+        "id": "megasthenes",
+        "name": "Megasthenes",
+        "life": "about 350 to 290 BCE",
+        "role": "Seleucid ambassador to Chandragupta’s court",
+        "steps": [
+          5
+        ],
+        "text": "A Greek diplomat who lives at Pataliputra, Megasthenes writes the Indica, the fullest early foreign account of India. It survives only in quotations by later writers such as Strabo and Arrian. He describes seven classes of society and city officials, though some of his stories, such as gold-digging ants, are fanciful."
+      },
+      {
+        "id": "bindusara",
+        "name": "Bindusara",
+        "native": "बिन्दुसार",
+        "life": "ruled about 298 to 273 BCE",
+        "role": "Second Maurya emperor",
+        "steps": [7, 8],
+        "text": "Son of Chandragupta and father of Ashoka. Few records of his reign survive, though Greek writers knew him as Amitrochates and Seleucid envoys came to his court. Buddhist texts say he favoured the Ajivikas, a sect of ascetics. By his death the empire covers most of the subcontinent."
+      },
+      {
+        "id": "ashoka",
+        "name": "Ashoka",
+        "native": "अशोक",
+        "life": "ruled about 268 to 232 BCE",
+        "role": "Third Maurya emperor",
+        "steps": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        "text": "His inscriptions call him Devanampiya Piyadasi, ‘Beloved of the Gods, of gracious looks’. After the bloody conquest of Kalinga he turns to Buddhism and to dhamma, and has his ideas carved on rocks and pillars across his empire. Buddhist tradition remembers him as the ideal king."
+      },
+      {
+        "id": "mahinda",
+        "name": "Mahinda",
+        "life": "3rd century BCE",
+        "role": "Buddhist monk; Ashoka’s son, in tradition",
+        "steps": [8, 15],
+        "text": "The Sri Lankan chronicles make Mahinda the son of Ashoka and Devi, ordained as a monk at about 20. He leads the mission that brings Buddhism to Sri Lanka, and Sri Lankans remember his arrival each year at the Poson festival."
+      },
+      {
+        "id": "sanghamitta",
+        "name": "Sanghamitta",
+        "life": "3rd century BCE",
+        "role": "Buddhist nun; Ashoka’s daughter, in tradition",
+        "steps": [8, 15],
+        "text": "Ordained as a nun when her brother becomes a monk, Sanghamitta travels to Lanka with a cutting of the bodhi tree and founds an order of nuns there, according to the Sri Lankan chronicles. She is remembered on the full moon day of Unduvap."
+      },
+      {
+        "id": "pushyamitra",
+        "name": "Pushyamitra Shunga",
+        "native": "पुष्यमित्र शुंग",
+        "life": "ruled about 185 to 149 BCE",
+        "role": "Maurya commander who founds the Shunga dynasty",
+        "steps": [
+          20
+        ],
+        "text": "As commander of the army, Pushyamitra kills the last Maurya and takes the throne. Later Buddhist texts accuse him of persecuting Buddhists, which some historians doubt. A later inscription credits him with two horse sacrifices (ashvamedha), a claim to great royal power."
+      },
+      {
+        "id": "prinsep",
+        "name": "James Prinsep",
+        "life": "1799 to 1840",
+        "role": "Scholar and assay master of the Calcutta Mint",
+        "steps": [
+          21
+        ],
+        "text": "Working in Calcutta, Prinsep deciphers the Brahmi script and helps crack Kharosthi, unlocking Ashoka’s inscriptions and early Indian coins. He reads the edicts in 1837, shortly before illness sends him back to England, where he dies in 1840."
+      }
+    ]
+  }
+}
