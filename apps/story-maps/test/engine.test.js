@@ -37,6 +37,15 @@ describe("engine source", () => {
     expect(css).not.toMatch(/animation[^;]*infinite/);
   });
 
+  it("hides realm details only on a collapsed phone sheet, never in the desktop side panel", () => {
+    // The side panel (900px and up) never gets .open, so a collapsed-sheet rule
+    // outside the phone media query would hide the details on laptops.
+    const css = engineSource[2];
+    const phone = css.match(/@media \(max-width: 899\.98px\) \{[\s\S]*?\n\}/)?.[0] ?? "";
+    expect(phone).toContain(".sm-sheet:not(.open) .sm-realm-details");
+    expect(css.replace(phone, "")).not.toMatch(/:not\(\.open\) \.sm-realm/);
+  });
+
   it("makes no network requests and uses no storage", () => {
     for (const src of engineSource) {
       expect(src).not.toMatch(/https?:\/\//);
