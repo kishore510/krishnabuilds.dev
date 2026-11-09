@@ -151,6 +151,40 @@ body.sm-story-page {
   width: 100%;
   height: 100%;
   display: block;
+  /* The map handles pinch and drag itself, so the page never zooms or scrolls. */
+  touch-action: none;
+  cursor: grab;
+}
+#sm-map.sm-panning {
+  cursor: grabbing;
+}
+.sm-zoom {
+  position: absolute;
+  right: 10px;
+  top: 52px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(242, 193, 78, 0.6);
+  background: rgba(14, 28, 46, 0.84);
+}
+.sm-zoom button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f3e9d2;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sm-zoom button + button {
+  border-top: 1px solid rgba(242, 193, 78, 0.4);
+}
+.sm-zoom button:hover {
+  background: rgba(242, 193, 78, 0.18);
 }
 .sm-chip {
   position: absolute;
