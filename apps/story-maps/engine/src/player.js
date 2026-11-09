@@ -19,6 +19,11 @@
   const $ = (id) => document.getElementById(id);
   const r1 = (n) => Math.round(n * 10) / 10;
   const lerp = (a, b, t) => a + (b - a) * t;
+  /** Native-language text: a step, realm or person may set `lang`; otherwise the story's `nativeLang` (Hindi if unset). */
+  const setNative = (node, item) => {
+    node.textContent = item.native || "";
+    node.lang = item.lang || story.nativeLang || "hi";
+  };
   const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
   // --- build the map --------------------------------------------------------------
@@ -35,6 +40,9 @@
     return { ...leg, g, under, over, length: under.getTotalLength(), pattern: leg.dash.split(/[ ,]+/).map(Number), shown: -1 };
   });
   const legsOf = steps.map((_, i) => legs.filter((l) => l.step === i));
+  // "journey" (the default) keeps earlier chapters' routes on the map; "chapter"
+  // shows only the current chapter's, for stories that are not one journey.
+  const keepRoutes = story.routes !== "chapter";
 
   /** A dash array that draws the first `progress` of the leg in its own dash pattern. */
   function revealDash(leg, progress) {
@@ -190,7 +198,7 @@
     const step = steps[i];
     const phase = story.phases[step.phase];
     el.title.textContent = step.title;
-    el.native.textContent = step.native || "";
+    setNative(el.native, step);
     el.text.textContent = step.text;
     el.today.textContent = step.today || "";
     el.phase.textContent = phase.name;
@@ -253,7 +261,7 @@
     current = i;
     renderCard(i);
     renderPins(i);
-    for (const leg of legs) showLeg(leg, leg.step < i ? 1 : 0);
+    for (const leg of legs) showLeg(leg, keepRoutes && leg.step < i ? 1 : 0);
 
     const target_ = stepCamera(i);
     const mine = legsOf[i];
@@ -568,6 +576,10 @@
   const realmBox = $("sm-realm-box");
   const mainChips = $("sm-main-chips");
   const minorChips = $("sm-minor-chips");
+  // Pieces of a realm that come and go: data-steps is "from-to,from-to".
+  const realmPieces = realmLayer
+    ? [...realmLayer.querySelectorAll(".sm-realm-piece")].map((node) => ({ node, ranges: node.dataset.steps.split(",").map((r) => r.split("-").map(Number)) }))
+    : [];
   const byId = {};
   let realmsOn = false;
   let openRealmId = null;
@@ -579,6 +591,7 @@
     if (!realms) return;
     realmLayer.classList.toggle("on", realmsOn);
     for (const g of realmLayer.querySelectorAll(".sm-realm")) g.classList.toggle("active", activeAt(byId[g.dataset.id], i));
+    for (const p of realmPieces) p.node.classList.toggle("current", p.ranges.some(([a, b]) => i >= a && i <= b));
     mainChips.replaceChildren();
     minorChips.replaceChildren();
     if (realmsOn) {
@@ -613,7 +626,7 @@
     const ruler = latest(realm.rulers, current);
     $("sm-realm-swatch").style.background = realm.color;
     $("sm-realm-name").textContent = realm.name;
-    $("sm-realm-native").textContent = realm.native || "";
+    setNative($("sm-realm-native"), realm);
     $("sm-realm-ruler").textContent = `Ruler at this point: ${ruler ? ruler.text : "not named"}`;
     const facts = $("sm-realm-facts");
     facts.replaceChildren();
@@ -696,7 +709,7 @@
     closePlace();
     openPersonId = id;
     $("sm-person-name").textContent = person.name;
-    $("sm-person-native").textContent = person.native || "";
+    setNative($("sm-person-native"), person);
     $("sm-person-role").textContent = `${person.life}. ${person.role}`;
     $("sm-person-text").textContent = person.text;
     const list = $("sm-person-steps");

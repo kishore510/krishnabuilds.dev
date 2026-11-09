@@ -83,6 +83,24 @@
   const place = (x, y, scale, inner, extra) =>
     `<g transform="translate(${r1(x)} ${r1(y)})${scale === 1 ? "" : ` scale(${scale})`}"${extra || ""}>${inner}</g>`;
 
+  /**
+   * A realm's pieces, each with the step ranges it is shown in. A realm gives
+   * either `area` (one outline for the whole story) or `pieces`:
+   * [{ steps: [[from, to], ...], areas: [outline or { at: [lon, lat], radius: degrees }] }],
+   * so an empire can gain and lose lands chapter by chapter. A dot marks a
+   * holding (a port, an island) too small to outline. The label can move too:
+   * `label.moves` is [{ from: step, at: [lon, lat] }].
+   */
+  function realmPieces(realm, last) {
+    if (!realm.pieces) return [{ steps: [[0, last]], areas: [realm.area] }];
+    return realm.pieces;
+  }
+  function realmLabels(realm, last) {
+    const moves = [{ from: 0, at: realm.label.at }, ...(realm.label.moves || [])];
+    return moves.map((m, n) => ({ at: m.at, steps: [[m.from, n + 1 < moves.length ? moves[n + 1].from - 1 : last]] }));
+  }
+  const stepsAttr = (ranges) => ranges.map(([a, b]) => `${a}-${b}`).join(",");
+
   // --- the map ------------------------------------------------------------------
 
   /**
@@ -94,11 +112,13 @@
     const out = [];
     const [W, H] = basemap.size;
 
-    // Land outlines, closed at the map edge where `extend` says so.
+    // Land outlines, closed at the map edge where `extend` says so. `holes`
+    // (inland seas such as the Caspian) are cut out with the even-odd rule.
     const shapeD = (shape) => {
-      if (shape.closed) return smoothPath(pts(shape.points), true);
+      const holes = (shape.holes || []).map((h) => smoothPath(pts(h), true)).join("");
+      if (shape.closed) return smoothPath(pts(shape.points), true) + holes;
       const tail = pts(shape.extend || []).map(([x, y]) => `L${r1(x)} ${r1(y)}`).join("");
-      return `${smoothPath(pts(shape.points), false)}${tail}Z`;
+      return `${smoothPath(pts(shape.points), false)}${tail}Z${holes}`;
     };
     const lands = basemap.land.shapes.map(shapeD);
     const sea = basemap.sea;
@@ -108,7 +128,7 @@
       "<defs>" +
         `<linearGradient id="sm-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sea.top}"/><stop offset=".55" stop-color="${sea.middle}"/><stop offset="1" stop-color="${sea.bottom}"/></linearGradient>` +
         `<linearGradient id="sm-land" gradientUnits="userSpaceOnUse" x1="0" y1="${r1(H * 0.18)}" x2="0" y2="${r1(H * 0.94)}"><stop offset="0" stop-color="${land.top}"/><stop offset=".5" stop-color="${land.middle}"/><stop offset="1" stop-color="${land.bottom}"/></linearGradient>` +
-        `<clipPath id="sm-landclip">${lands.map((d) => `<path d="${d}"/>`).join("")}</clipPath>` +
+        `<clipPath id="sm-landclip">${lands.map((d) => `<path d="${d}" clip-rule="evenodd"/>`).join("")}</clipPath>` +
         "</defs>",
     );
     out.push(`<rect x="${-W * 1.5}" y="${-H * 1.3}" width="${W * 4}" height="${H * 3.7}" fill="url(#sm-sea)"/>`);
@@ -131,14 +151,15 @@
       out.push(place(x, y, ship.scale, art.glyphs.boat, ' opacity=".9"'));
     }
 
-    // Shallows, then land.
+    // Shallows, then land. A wide map can draw them thinner (sea.shallowsWidth).
+    const shallows = sea.shallowsWidth || 15;
     out.push(
       `<g fill="none" stroke-linejoin="round" stroke="${sea.shallows}">${lands
-        .map((d) => `<path d="${d}" stroke-width="15" opacity=".25"/><path d="${d}" stroke-width="7" opacity=".35"/>`)
+        .map((d) => `<path d="${d}" stroke-width="${shallows}" opacity=".25"/><path d="${d}" stroke-width="${r1(shallows * 0.47)}" opacity=".35"/>`)
         .join("")}</g>`,
     );
     for (const d of lands) {
-      out.push(`<path d="${d}" fill="url(#sm-land)" stroke="${land.edge}" stroke-width="1.6" stroke-linejoin="round"/>`);
+      out.push(`<path d="${d}" fill="url(#sm-land)" fill-rule="evenodd" stroke="${land.edge}" stroke-width="1.6" stroke-linejoin="round"/>`);
     }
 
     // Colour washes and highlands, clipped to the land. Radial gradients, not blur.
@@ -212,17 +233,37 @@
       out.push(`<g>${s}</g>`);
     }
 
-    // Realms (kingdoms): painted loosely, shown only while active.
+    // Realms (kingdoms, empires): painted loosely, shown only while active.
+    // Each piece is shown only in its own steps (see realmPieces).
     if (story.realms) {
+      const last = story.steps.length - 1;
       let s = "";
       for (const realm of story.realms.items) {
-        const d = smoothPath(pts(realm.area), true);
-        const [lx, ly] = P(realm.label.at);
         const minor = realm.minor ? " minor" : "";
-        s +=
-          `<g class="sm-realm${minor}" data-id="${esc(realm.id)}">` +
-          `<path class="sm-realm-shape" d="${d}" fill="${realm.color}" fill-opacity="${realm.minor ? ".24" : ".38"}" stroke="#2a1608" stroke-opacity="${realm.minor ? ".4" : ".55"}" stroke-width="${realm.minor ? "1.3" : "1.8"}" stroke-dasharray="${realm.minor ? "2 4" : "5 4"}" stroke-linejoin="round"/>` +
-          `<text class="sm-realm-label${minor}" x="${r1(lx)}" y="${r1(ly)}" text-anchor="middle">${esc(realm.label.text)}</text></g>`;
+        const style =
+          `fill="${realm.color}" fill-opacity="${realm.minor ? ".24" : ".38"}" stroke="#2a1608" stroke-opacity="${realm.minor ? ".4" : ".55"}" ` +
+          `stroke-width="${realm.minor ? "1.3" : "1.8"}" stroke-dasharray="${realm.minor ? "2 4" : "5 4"}" stroke-linejoin="round"`;
+        const pieces = realmPieces(realm, last)
+          .map((piece) => {
+            const rings = piece.areas.filter((a) => Array.isArray(a));
+            const dots = piece.areas.filter((a) => !Array.isArray(a));
+            const path = rings.length ? `<path class="sm-realm-shape" d="${rings.map((a) => smoothPath(pts(a), true)).join("")}" ${style}/>` : "";
+            const circles = dots
+              .map((dot) => {
+                const [x, y] = P(dot.at);
+                return `<circle class="sm-realm-shape" cx="${r1(x)}" cy="${r1(y)}" r="${r1(dot.radius * basemap.projection.unitsPerDegree)}" ${style}/>`;
+              })
+              .join("");
+            return `<g class="sm-realm-piece" data-steps="${stepsAttr(piece.steps)}">${path}${circles}</g>`;
+          })
+          .join("");
+        const labels = realmLabels(realm, last)
+          .map((l) => {
+            const [lx, ly] = P(l.at);
+            return `<text class="sm-realm-label sm-realm-piece${minor}" data-steps="${stepsAttr(l.steps)}" x="${r1(lx)}" y="${r1(ly)}" text-anchor="middle">${esc(realm.label.text)}</text>`;
+          })
+          .join("");
+        s += `<g class="sm-realm${minor}" data-id="${esc(realm.id)}">${pieces}${labels}</g>`;
       }
       out.push(`<g class="sm-realms">${s}</g>`);
     }
@@ -334,6 +375,12 @@
     need(story.canvas === "geo", `only the geo canvas is built so far, not ${story.canvas}`);
     need(story.basemap === basemap.id, `basemap ${story.basemap} does not match ${basemap.id}`);
     need(SOURCES.includes(story.source), `source must be ${SOURCES.join(" or ")}`);
+    if (story.routes !== undefined) need(["journey", "chapter"].includes(story.routes), "routes must be journey or chapter");
+    const isLang = (v) => typeof v === "string" && /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(v);
+    const langs = [story, ...story.steps, ...((story.realms && story.realms.items) || []), ...((story.people && story.people.items) || [])];
+    for (const item of langs) {
+      for (const key of ["nativeLang", "lang"]) if (item[key] !== undefined) need(isLang(item[key]), `${key} ${item[key]} is not a language tag such as "hi" or "mi"`);
+    }
     for (const key of ["title", "description", "mapLabel", "note"]) need(typeof story[key] === "string" && story[key].trim() !== "", `missing ${key}`);
 
     for (const [id, p] of Object.entries(story.places)) {
@@ -375,7 +422,25 @@
       for (const r of story.realms.items) {
         need(!ids.has(r.id), `realm ${r.id}: duplicate id`);
         ids.add(r.id);
-        need(r.area.length >= 3 && r.area.every(isLonLat), `realm ${r.id}: area needs at least three [lon, lat] points`);
+        const isRing = (a) => Array.isArray(a) && a.length >= 3 && a.every(isLonLat);
+        const isDot = (a) => Boolean(a) && !Array.isArray(a) && isLonLat(a.at) && typeof a.radius === "number" && a.radius > 0;
+        const isRanges = (list) => Array.isArray(list) && list.length > 0 && list.every((x) => Array.isArray(x) && x.length === 2 && Number.isInteger(x[0]) && Number.isInteger(x[1]) && x[0] >= 0 && x[0] <= x[1] && x[1] <= last);
+        need((r.area === undefined) !== (r.pieces === undefined), `realm ${r.id}: give either area or pieces`);
+        if (r.area !== undefined) need(isRing(r.area), `realm ${r.id}: area needs at least three [lon, lat] points`);
+        if (r.pieces !== undefined) {
+          need(Array.isArray(r.pieces) && r.pieces.length > 0, `realm ${r.id}: pieces must list at least one piece`);
+          for (const piece of r.pieces || []) {
+            need(isRanges(piece.steps), `realm ${r.id}: a piece's steps must be [from, to] ranges within the story`);
+            need(Array.isArray(piece.areas) && piece.areas.length > 0, `realm ${r.id}: a piece needs at least one area`);
+            for (const a of piece.areas || []) need(isRing(a) || isDot(a), `realm ${r.id}: an area must be [lon, lat] points or { at, radius }`);
+          }
+        }
+        need(Boolean(r.label) && isLonLat(r.label.at), `realm ${r.id}: label needs text and at`);
+        let lastMove = 0;
+        for (const m of (r.label && r.label.moves) || []) {
+          need(Number.isInteger(m.from) && m.from > lastMove && m.from <= last && isLonLat(m.at), `realm ${r.id}: label moves must be in step order, each with from and at`);
+          lastMove = m.from;
+        }
         need(r.active.every(([a, b]) => a >= 0 && b <= last && a <= b), `realm ${r.id}: active steps out of range`);
         need([...r.rulers, ...r.ties].every((x) => x.from >= 0 && x.from <= last), `realm ${r.id}: ruler or tie step out of range`);
       }
@@ -399,5 +464,5 @@
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
-  Object.assign(SM, { buildMap, cameraFor, validate, smoothPath, seeded, projector, esc });
+  Object.assign(SM, { buildMap, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
 })((globalThis.StoryMap = globalThis.StoryMap || {}));

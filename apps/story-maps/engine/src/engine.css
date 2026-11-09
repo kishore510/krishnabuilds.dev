@@ -735,6 +735,13 @@ body.sm-story-page {
   pointer-events: auto;
   cursor: pointer;
 }
+/* A realm shows only the pieces (and label) for the current step. */
+.sm-realm-piece {
+  display: none;
+}
+.sm-realm-piece.current {
+  display: inline;
+}
 .sm-realm:hover .sm-realm-shape {
   fill-opacity: 0.42;
 }

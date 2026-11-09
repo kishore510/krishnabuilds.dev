@@ -101,4 +101,78 @@ describe("validate", () => {
     expect(problems).toContain("61 words");
     expect(problems).toContain("duplicate id");
   });
+
+  it("catches bad realm pieces", () => {
+    const withRealms = built.find((s) => loadStoryData(s).story.realms);
+    const { story, basemap, art } = structuredClone(loadStoryData(/** @type {any} */ (withRealms)));
+    const last = story.steps.length - 1;
+    const [a, b, c] = story.realms.items;
+    a.pieces = [{ steps: [[0, last + 1]], areas: [{ at: [80, 20], radius: 1 }] }];
+    b.pieces = [{ steps: [[0, 1]], areas: [[[80, 20], [81, 21]]] }];
+    c.pieces = [{ steps: [[0, 1]], areas: [{ at: [80, 20], radius: 0 }] }];
+    delete a.area;
+    delete b.area;
+    const problems = map.validate(story, basemap, art).join("\n");
+    expect(problems).toContain(`realm ${a.id}: a piece's steps must be [from, to] ranges`);
+    expect(problems).toContain(`realm ${b.id}: an area must be`);
+    expect(problems).toContain(`realm ${c.id}: give either area or pieces`);
+    expect(problems).toContain(`realm ${c.id}: an area must be`);
+  });
+
+  it("catches bad label moves, route modes and language tags", () => {
+    const { story, basemap, art } = fresh();
+    story.routes = "trail";
+    story.nativeLang = "Hindi";
+    if (story.realms) story.realms.items[0].label.moves = [{ from: 0, at: [80, 20] }];
+    const problems = map.validate(story, basemap, art).join("\n");
+    expect(problems).toContain("routes must be journey or chapter");
+    expect(problems).toContain("nativeLang Hindi is not a language tag");
+    if (story.realms) expect(problems).toContain("label moves must be in step order");
+  });
+});
+
+describe("buildMap", () => {
+  const entry = built[0];
+
+  it("draws realm pieces with their steps, dots as circles, and moving labels", () => {
+    const { story, basemap, art } = structuredClone(loadStoryData(entry));
+    const last = story.steps.length - 1;
+    story.realms = {
+      toggle: "Powers",
+      mainHeading: "Powers",
+      minorHeading: "Others",
+      items: [
+        {
+          id: "test",
+          name: "Test realm",
+          color: "#d9432a",
+          active: [[0, last]],
+          label: { text: "Test", at: [80, 20], moves: [{ from: 2, at: [82, 22] }] },
+          pieces: [
+            { steps: [[0, 1], [3, 4]], areas: [[[78, 18], [82, 18], [80, 22]], { at: [85, 15], radius: 1 }] },
+            { steps: [[2, last]], areas: [{ at: [86, 16], radius: 0.5 }] },
+          ],
+          facts: {},
+          rulers: [],
+          role: "A test.",
+          ties: [],
+        },
+      ],
+    };
+    expect(map.validate(story, basemap, art)).toEqual([]);
+    const { svg } = map.buildMap(story, basemap, art);
+    expect(svg).toContain('class="sm-realm-piece" data-steps="0-1,3-4"');
+    expect(svg).toContain(`class="sm-realm-piece" data-steps="2-${last}"`);
+    expect(svg).toMatch(/<circle class="sm-realm-shape"[^>]* r="10"/); // 0.5 degrees at 20 units per degree
+    expect(svg).toContain('data-steps="0-1" x=');
+    expect(svg).toContain(`data-steps="2-${last}" x=`);
+  });
+
+  it("cuts holes in land with the even-odd rule", () => {
+    const { story, basemap, art } = structuredClone(loadStoryData(entry));
+    basemap.land.shapes[0].holes = [[[80, 20], [81, 20], [80.5, 21]]];
+    const { svg } = map.buildMap(story, basemap, art);
+    expect(svg).toContain('fill-rule="evenodd"');
+    expect(svg).toContain('clip-rule="evenodd"');
+  });
 });
