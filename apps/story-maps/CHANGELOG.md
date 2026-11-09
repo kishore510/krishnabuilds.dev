@@ -5,7 +5,7 @@
 - New hub: a **Timeline** of dynasties, empires and events, with time running down the page and regions as columns (India split into North & Gangetic, Deccan and Deep South). Scroll through time: a line marks the year, and the strip above lists who ruled at that moment. Four zoom levels, with region filters. Every name is readable; lanes with entries side by side get wider and scroll sideways.
 - **Browse**: every entry as a card, with search, region and kind filters, "Story maps only", sorting, "Pick up where you left off" and "New".
 - **Entry pages** at `/explore/<id>/` for every dynasty, event, legend and route in the new `catalogue.json`: dates, region, a slice of the timeline, its story map (or "to come"), before and after, and who ruled elsewhere at the same time.
-- **Theme picker** in the top bar: Classic (the parchment theme), Night or Auto. It uses the shared `kb-theme` cookie, so the choice carries across krishnabuilds.dev.
+- **Theme picker** in the top bar: Parchment (the cream theme), Night or Auto. It uses the shared `kb-theme` cookie, so the choice carries across krishnabuilds.dev.
 - The catalogue's dates are approximate and still need checking against sources entry by entry.
 
 ## 0.8.0

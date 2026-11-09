@@ -26,7 +26,7 @@ hub/page.html      the shell every page is rendered into
 hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
 hub/hub.js         the hub in the browser: Timeline and Browse
 hub/explore.css    styles for the hub and entry pages
-src/theme-picker.js Classic / Night / Auto picker; test/prepaint.test.js fails if it writes a different cookie from packages/ui
+src/theme-picker.js Parchment / Night / Auto picker; test/prepaint.test.js fails if it writes a different cookie from packages/ui
 src/theme.css      painted theme (saffron, lapis, gold), light and dark
 src/prepaint.js    kb-theme pre-paint script; test/prepaint.test.js fails if it drifts from packages/ui/src/theme.ts
 public/            favicon and apple-touch icon, copied as-is

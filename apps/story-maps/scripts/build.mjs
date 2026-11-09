@@ -142,10 +142,10 @@ function write(path, html) {
   writeFileSync(`${DIST}${path}`, html);
 }
 
-// Classic is the light parchment theme, Night the dark one; Auto follows the device.
+// Parchment is the light cream theme, Night the dark one; Auto follows the device.
 const THEME_PICKER =
   '<div class="sm-theme" role="group" aria-label="Theme">' +
-  [["light", "Classic"], ["dark", "Night"], ["system", "Auto"]]
+  [["light", "Parchment"], ["dark", "Night"], ["system", "Auto"]]
     .map(([value, label]) => `<button type="button" data-kb-theme="${value}" aria-pressed="false">${label}</button>`)
     .join("") +
   "</div>";

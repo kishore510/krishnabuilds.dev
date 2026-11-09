@@ -313,6 +313,6 @@ Every entry gets a static page at `/explore/<id>/`, built at deploy time: dates,
 
 The hub has two views. The Timeline runs time down the page with regions as columns, because a sideways timeline cramps names on a phone; lanes with overlapping entries grow wider and the timeline scrolls sideways instead of shrinking names. Browse lists every entry with search and filters. Search was added now, at about 60 entries, because the owner asked for it with the list view.
 
-A theme picker (Classic, Night, Auto) sits in the Story Maps top bar. Classic and Night are the existing light and dark parchment themes. It writes the shared `kb-theme` cookie with a copy of `setTheme` from `packages/ui`, as the pre-paint script does, and a test fails if the copy writes a different cookie. The story player keeps its own bar without the picker for now.
+A theme picker (Parchment, Night, Auto) sits in the Story Maps top bar. Parchment and Night are the existing light and dark Story Maps themes. Story Maps keeps its own cream parchment palette rather than the shared white one, as Chalkline and Sumyard keep theirs; the shared tokens still supply spacing, type and radii. It writes the shared `kb-theme` cookie with a copy of `setTheme` from `packages/ui`, as the pre-paint script does, and a test fails if the copy writes a different cookie. The story player keeps its own bar without the picker for now.
 
 The first catalogue's dates are textbook approximations and still need checking against sources, entry by entry.

@@ -1,4 +1,4 @@
-// The theme picker in the top bar: Classic (light), Night (dark) or Auto
+// The theme picker in the top bar: Parchment (light), Night (dark) or Auto
 // (follow the device). Inlined at the end of the hub and explore pages by
 // scripts/build.mjs.
 // kbSetTheme must stay in sync with setTheme in packages/ui/src/theme.ts: the
