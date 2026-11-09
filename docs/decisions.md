@@ -304,3 +304,15 @@ The engine was written fresh from the rules in `apps/story-maps/CLAUDE.md`, usin
 
 Stories that span the world (starting with The British Empire) share a `world` basemap. Unlike `south-asia`, its coastlines aren't hand-placed: they are Natural Earth's 1:110m land (public domain), simplified to about 2,500 points, with Antarctica left out and the Bering Strait sliver moved east of 180° so no coast is cut at the map edge. It was converted once with a throwaway script; from now on it is plain data, edited like any other basemap, and the generator is not kept in the repo. Powers areas in world stories are loose, hand-drawn regions cut to the same coastlines. Realms gain `pieces` with step ranges instead of one outline per chapter, so a long story doesn't repeat the same geometry dozens of times.
 
+
+## 2026-11-09 — Story Maps: a catalogue, a timeline hub and entry pages
+
+The Story Maps hub becomes a way to explore a growing list of dynasties, empires and events, not only the stories. A new `apps/story-maps/catalogue.json` holds regions, timeline lanes and entries (dynasty, event, legend, route), each with dates, region and lane. `manifest.json` stays the list of story maps; entries link to stories, and the build fails if any story has no entry. Entries are cheap to add and stories are expensive, so the catalogue can grow well ahead of the maps.
+
+Every entry gets a static page at `/explore/<id>/`, built at deploy time: dates, a to-scale slice of its lane, its story map or "to come", before and after, and who ruled elsewhere at the same time (worked out from the dates, so it needs no upkeep). Real pages rather than in-page routes, so they can be shared and indexed. The pure functions behind them live in `hub/explore.js`, a classic script the build runs in Node and the hub inlines, so the build and the browser never disagree.
+
+The hub has two views. The Timeline runs time down the page with regions as columns, because a sideways timeline cramps names on a phone; lanes with overlapping entries grow wider and the timeline scrolls sideways instead of shrinking names. Browse lists every entry with search and filters. Search was added now, at about 60 entries, because the owner asked for it with the list view.
+
+A theme picker (Parchment, Night, Auto) sits in the Story Maps top bar. Parchment and Night are the existing light and dark Story Maps themes. Story Maps keeps its own cream parchment palette rather than the shared white one, as Chalkline and Sumyard keep theirs; the shared tokens still supply spacing, type and radii. It writes the shared `kb-theme` cookie with a copy of `setTheme` from `packages/ui`, as the pre-paint script does, and a test fails if the copy writes a different cookie. The story player keeps its own bar without the picker for now.
+
+The first catalogue's dates are textbook approximations and still need checking against sources, entry by entry.

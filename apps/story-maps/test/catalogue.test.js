@@ -1,0 +1,118 @@
+import { describe, expect, it } from "vitest";
+
+import { loadCatalogue, loadExplore, validateCatalogue } from "../scripts/catalogue.mjs";
+import { loadManifest } from "../scripts/manifest.mjs";
+
+const catalogue = loadCatalogue();
+const { stories } = loadManifest();
+const X = loadExplore();
+const byId = (id) => catalogue.entries.find((e) => e.id === id);
+
+/** A copy of the catalogue with extra or changed entries. */
+function withEntries(...entries) {
+  return { ...catalogue, entries: [...catalogue.entries, ...entries] };
+}
+
+describe("catalogue.json", () => {
+  it("passes every check", () => {
+    expect(validateCatalogue(catalogue, stories)).toEqual([]);
+  });
+
+  it("links every story in manifest.json from at least one entry", () => {
+    const linked = new Set(catalogue.entries.map((e) => e.story).filter(Boolean));
+    for (const s of stories) expect(linked).toContain(s.id);
+  });
+
+  it("catches bad years, lanes, kinds and links", () => {
+    const problems = validateCatalogue(
+      withEntries(
+        { id: "x-zero", name: "Zero", kind: "dynasty", source: "History", region: "india", lane: "north", from: 0, to: 10 },
+        { id: "x-back", name: "Backwards", kind: "dynasty", source: "History", region: "india", lane: "north", from: 900, to: 800 },
+        { id: "x-lane", name: "Wrong lane", kind: "dynasty", source: "History", region: "india", lane: "china", from: 1, to: 2 },
+        { id: "x-kind", name: "Odd kind", kind: "myth", source: "History", region: "india" },
+        { id: "x-legend", name: "Dated legend", kind: "legend", source: "History", region: "india", from: -500 },
+        { id: "x-event", name: "Long event", kind: "event", source: "History", region: "india", lane: "north", from: 5, to: 9 },
+        { id: "x-story", name: "Lost story", kind: "route", source: "History", region: "across", from: 1, to: 2, story: "nowhere" },
+        { id: "x-after", name: "Lost successor", kind: "dynasty", source: "History", region: "india", lane: "north", from: 1, to: 2, after: ["nobody"] },
+        { id: "x-field", name: "Typo", kind: "dynasty", source: "History", region: "india", lane: "north", from: 1, to: 2, form: 3 },
+      ),
+      stories,
+    ).join("\n");
+    expect(problems).toContain("entry x-zero: from must be a whole year, not 0");
+    expect(problems).toContain("entry x-back: to is before from");
+    expect(problems).toContain("entry x-lane: lane china is not a lane of region india");
+    expect(problems).toContain("entry x-kind: unknown kind myth");
+    expect(problems).toContain("entry x-legend: legends have no dates or lane");
+    expect(problems).toContain("entry x-legend: legends are tagged Tradition");
+    expect(problems).toContain("entry x-event: an event has one year");
+    expect(problems).toContain("entry x-story: unknown story nowhere");
+    expect(problems).toContain("entry x-after: after lists unknown entry nobody");
+    expect(problems).toContain("entry x-field: unknown field form");
+  });
+
+  it("catches a duplicate id and a story no entry links to", () => {
+    const problems = validateCatalogue(withEntries({ ...byId("gupta") }), [...stories, { id: "unlinked" }]).join("\n");
+    expect(problems).toContain("entry gupta: duplicate id");
+    expect(problems).toContain("story unlinked is in manifest.json but no catalogue entry links to it");
+  });
+});
+
+describe("hub/explore.js", () => {
+  it("writes dates the way the cards do", () => {
+    expect(X.rangeText(byId("maurya"))).toBe("c. 322 – c. 185 BCE");
+    expect(X.rangeText(byId("satavahana"))).toBe("c. 100 BCE – c. 220 CE");
+    expect(X.rangeText(byId("mughal"))).toBe("1526 – 1857 CE");
+    expect(X.rangeText(byId("partition"))).toBe("1947 CE");
+    expect(X.rangeText(byId("ramayana"))).toBe("Tradition");
+    expect(X.lengthText(byId("maurya"))).toBe("about 140 years");
+    expect(X.lengthText({ kind: "dynasty", from: -27, to: 476 })).toBe("500 years");
+    expect(X.lengthText({ kind: "dynasty", from: -10, to: 10 })).toBe("19 years");
+  });
+
+  it("finds named and unnamed neighbours", () => {
+    const named = X.neighbours(byId("maurya"), catalogue.entries);
+    expect(named.before.id).toBe("nanda");
+    expect(named.after.id).toBe("shunga");
+    // No `after` on Gupta, so the next dynasty in the lane is used.
+    expect(X.neighbours(byId("gupta"), catalogue.entries).after.id).toBe("harsha");
+  });
+
+  it("lists who ruled elsewhere at the same time, longest overlap first", () => {
+    const list = X.meanwhile(byId("chola"), catalogue.entries, 8);
+    expect(list.length).toBeGreaterThan(3);
+    for (const m of list) {
+      expect(m.entry.lane).not.toBe("south");
+      expect(m.entry.from).toBeLessThanOrEqual(1279);
+      expect(m.entry.to).toBeGreaterThanOrEqual(848);
+    }
+    const years = list.map((m) => m.years);
+    expect([...years].sort((a, b) => b - a)).toEqual(years);
+  });
+
+  it("covers every dated lane entry in the timeline bounds", () => {
+    const { start, end } = X.bounds(catalogue.entries);
+    expect(Number.isInteger(start / 100)).toBe(true);
+    for (const e of catalogue.entries.filter((x) => x.lane)) {
+      expect(e.from).toBeGreaterThanOrEqual(start);
+      expect(X.endOf(e)).toBeLessThanOrEqual(end);
+    }
+  });
+
+  it("packs every lane so no two blocks in a slot overlap", () => {
+    for (const region of catalogue.regions) {
+      for (const lane of region.lanes) {
+        const dyn = catalogue.entries.filter((e) => e.lane === lane.id && e.kind === "dynasty");
+        const { items, slots } = X.pack(dyn, { s: 0.45, start: -3300, pad: 26, minH: 30, tol: 30 });
+        expect(items).toHaveLength(dyn.length);
+        for (let k = 0; k < slots; k++) {
+          const inSlot = items.filter((it) => it.k === k).sort((a, b) => a.top - b.top);
+          for (let i = 1; i < inSlot.length; i++) {
+            expect(inSlot[i].top).toBeGreaterThanOrEqual(inSlot[i - 1].top + inSlot[i - 1].h);
+          }
+        }
+        // Keep the sample lanes readable on a phone: at most two side by side.
+        expect(slots, lane.id).toBeLessThanOrEqual(2);
+      }
+    }
+  });
+});

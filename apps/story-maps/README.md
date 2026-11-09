@@ -8,7 +8,7 @@ Three sections:
 - **Chronicles**: civilisations, empires and the routes that joined them, ancient and modern.
 - **Deep Time**: the Earth and the sky before people (later).
 
-Every story is listed in `manifest.json` and has a folder under `stories/`. A small Node build (`scripts/build.mjs`) turns them into one self-contained HTML page per story plus a hub page. No framework, no backend. Deployed as a Cloudflare Worker serving static assets, from `.github/workflows/deploy-story-maps.yml` on pushes to `main`.
+Every story is listed in `manifest.json` and has a folder under `stories/`. The hub's Timeline and Browse, and an entry page for every dynasty, event, legend and route, come from `catalogue.json`. A small Node build (`scripts/build.mjs`) turns them into one self-contained HTML page per story and entry, plus the hub page. No framework, no backend. Deployed as a Cloudflare Worker serving static assets, from `.github/workflows/deploy-story-maps.yml` on pushes to `main`.
 
 ```sh
 pnpm turbo run build lint typecheck test --filter=@krishnabuilds/story-maps

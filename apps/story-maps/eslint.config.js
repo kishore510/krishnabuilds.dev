@@ -6,10 +6,13 @@ const browser = {
   clearTimeout: "readonly",
   document: "readonly",
   Element: "readonly",
+  localStorage: "readonly",
+  location: "readonly",
   performance: "readonly",
   requestAnimationFrame: "readonly",
   ResizeObserver: "readonly",
   setTimeout: "readonly",
+  URLSearchParams: "readonly",
   window: "readonly",
 };
 
@@ -17,7 +20,7 @@ export default defineConfig(
   shared,
   {
     // Inlined into pages as classic <script>s.
-    files: ["src/**/*.js", "engine/src/**/*.js"],
+    files: ["src/**/*.js", "engine/src/**/*.js", "hub/**/*.js"],
     languageOptions: { sourceType: "script", globals: browser },
   },
   {

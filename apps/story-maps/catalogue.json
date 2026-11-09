@@ -1,0 +1,120 @@
+{
+  "regions": [
+    {
+      "id": "india",
+      "title": "India & South Asia",
+      "short": "India",
+      "hue": "saffron",
+      "lanes": [
+        { "id": "north", "title": "North & Gangetic" },
+        { "id": "deccan", "title": "Deccan" },
+        { "id": "south", "title": "Deep South" }
+      ]
+    },
+    {
+      "id": "europe",
+      "title": "Europe & Mediterranean",
+      "short": "Europe",
+      "hue": "lapis",
+      "lanes": [
+        { "id": "greece", "title": "Greece & Byzantium" },
+        { "id": "west", "title": "Rome & the West" }
+      ]
+    },
+    {
+      "id": "east-asia",
+      "title": "East Asia",
+      "short": "East Asia",
+      "hue": "jade",
+      "lanes": [{ "id": "china", "title": "China" }]
+    },
+    {
+      "id": "near-east",
+      "title": "Africa & Near East",
+      "short": "Near East",
+      "hue": "ochre",
+      "lanes": [
+        { "id": "persia", "title": "Near East & Persia" },
+        { "id": "africa", "title": "Egypt & Africa" }
+      ]
+    },
+    {
+      "id": "across",
+      "title": "Across regions",
+      "short": "Across",
+      "hue": "plum",
+      "lanes": []
+    }
+  ],
+  "entries": [
+    { "id": "ramayana", "name": "Rama’s Journey", "kind": "legend", "source": "Tradition", "region": "india", "story": "ramayana" },
+    { "id": "mahabharata", "name": "The Mahabharata", "kind": "legend", "source": "Tradition", "region": "india", "story": "mahabharata" },
+    { "id": "krishna", "name": "The Life of Krishna", "kind": "legend", "source": "Tradition", "region": "india", "story": "krishna" },
+    { "id": "samudra-manthan", "name": "The Churning of the Ocean", "kind": "legend", "source": "Tradition", "region": "india", "story": "samudra-manthan" },
+
+    { "id": "indus", "name": "Indus Valley civilisation", "kind": "dynasty", "source": "Archaeology", "region": "india", "lane": "north", "from": -3300, "to": -1300, "approx": true, "story": "indus", "note": "The cities flourished from about 2600 to 1900 BCE." },
+    { "id": "nanda", "name": "Nanda dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": -345, "to": -322, "approx": true, "after": ["maurya"] },
+    { "id": "maurya", "name": "Maurya Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": -322, "to": -185, "approx": true, "story": "maurya", "native": "मौर्य साम्राज्य", "after": ["shunga"], "added": "2026-11-09" },
+    { "id": "kalinga-war", "name": "Kalinga War", "kind": "event", "source": "History", "region": "india", "lane": "north", "from": -261, "approx": true },
+    { "id": "shunga", "name": "Shunga dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": -185, "to": -73, "approx": true },
+    { "id": "kushan", "name": "Kushan Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 30, "to": 375, "approx": true },
+    { "id": "gupta", "name": "Gupta Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 320, "to": 550, "approx": true, "native": "गुप्त साम्राज्य" },
+    { "id": "harsha", "name": "Harsha’s empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 606, "to": 647, "note": "The reign of Harsha of the Pushyabhuti dynasty." },
+    { "id": "pratihara", "name": "Gurjara-Pratihara dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 730, "to": 1036, "approx": true },
+    { "id": "pala", "name": "Pala Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 750, "to": 1161, "approx": true },
+    { "id": "delhi-sultanate", "name": "Delhi Sultanate", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 1206, "to": 1526, "after": ["mughal"] },
+    { "id": "panipat-1526", "name": "First Battle of Panipat", "kind": "event", "source": "History", "region": "india", "lane": "north", "from": 1526 },
+    { "id": "mughal", "name": "Mughal Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 1526, "to": 1857, "native": "मुग़ल साम्राज्य" },
+    { "id": "company-rule", "name": "Company rule", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 1757, "to": 1858, "story": "company-crown-freedom", "after": ["british-raj"] },
+    { "id": "british-raj", "name": "British Raj", "kind": "dynasty", "source": "History", "region": "india", "lane": "north", "from": 1858, "to": 1947, "story": "company-crown-freedom" },
+    { "id": "partition", "name": "Partition of India", "kind": "event", "source": "History", "region": "india", "lane": "north", "from": 1947 },
+
+    { "id": "satavahana", "name": "Satavahana dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": -100, "to": 220, "approx": true, "note": "When it began is disputed; some sources put it in the 3rd century BCE." },
+    { "id": "vakataka", "name": "Vakataka dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 250, "to": 500, "approx": true },
+    { "id": "chalukya-badami", "name": "Chalukyas of Badami", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 543, "to": 753, "after": ["rashtrakuta"] },
+    { "id": "rashtrakuta", "name": "Rashtrakuta dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 753, "to": 982, "after": ["chalukya-western"] },
+    { "id": "chalukya-western", "name": "Western Chalukyas", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 973, "to": 1189, "approx": true, "after": ["yadava"] },
+    { "id": "hoysala", "name": "Hoysala Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 1026, "to": 1343, "approx": true },
+    { "id": "yadava", "name": "Yadavas of Devagiri", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 1187, "to": 1317, "approx": true },
+    { "id": "bahmani", "name": "Bahmani Sultanate", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 1347, "to": 1527, "after": ["deccan-sultanates"] },
+    { "id": "deccan-sultanates", "name": "Deccan Sultanates", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 1490, "to": 1687, "approx": true },
+    { "id": "talikota", "name": "Battle of Talikota", "kind": "event", "source": "History", "region": "india", "lane": "deccan", "from": 1565 },
+    { "id": "maratha", "name": "Maratha Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "deccan", "from": 1674, "to": 1818 },
+
+    { "id": "tamil-kingdoms", "name": "Early Tamil kingdoms", "kind": "dynasty", "source": "History", "region": "india", "lane": "south", "from": -300, "to": 300, "approx": true, "note": "The Cheras, Cholas and Pandyas of the Sangam age." },
+    { "id": "pallava", "name": "Pallava dynasty", "kind": "dynasty", "source": "History", "region": "india", "lane": "south", "from": 275, "to": 897, "approx": true, "after": ["chola"] },
+    { "id": "chola", "name": "Chola Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "south", "from": 848, "to": 1279, "approx": true, "added": "2026-11-09" },
+    { "id": "pandya-later", "name": "Later Pandyas", "kind": "dynasty", "source": "History", "region": "india", "lane": "south", "from": 1216, "to": 1345, "approx": true },
+    { "id": "vijayanagara", "name": "Vijayanagara Empire", "kind": "dynasty", "source": "History", "region": "india", "lane": "south", "from": 1336, "to": 1646, "added": "2026-11-09" },
+    { "id": "nayaka-madurai", "name": "Nayakas of Madurai", "kind": "dynasty", "source": "History", "region": "india", "lane": "south", "from": 1529, "to": 1736 },
+
+    { "id": "classical-greece", "name": "Classical Greece", "kind": "dynasty", "source": "History", "region": "europe", "lane": "greece", "from": -510, "to": -323, "approx": true, "story": "greece-persia" },
+    { "id": "byzantine", "name": "Byzantine Empire", "kind": "dynasty", "source": "History", "region": "europe", "lane": "greece", "from": 330, "to": 1453 },
+    { "id": "fall-of-constantinople", "name": "Fall of Constantinople", "kind": "event", "source": "History", "region": "europe", "lane": "greece", "from": 1453 },
+    { "id": "roman-republic", "name": "Roman Republic", "kind": "dynasty", "source": "History", "region": "europe", "lane": "west", "from": -509, "to": -27, "after": ["roman-empire"] },
+    { "id": "roman-empire", "name": "Roman Empire", "kind": "dynasty", "source": "History", "region": "europe", "lane": "west", "from": -27, "to": 476, "note": "To the fall of the Western Empire. The Eastern Empire carried on as the Byzantine Empire." },
+    { "id": "carolingian", "name": "Carolingian Empire", "kind": "dynasty", "source": "History", "region": "europe", "lane": "west", "from": 800, "to": 888 },
+    { "id": "holy-roman-empire", "name": "Holy Roman Empire", "kind": "dynasty", "source": "History", "region": "europe", "lane": "west", "from": 962, "to": 1806 },
+    { "id": "british-empire", "name": "British Empire", "kind": "dynasty", "source": "History", "region": "europe", "lane": "west", "from": 1583, "to": 1997, "approx": true, "story": "british-empire" },
+
+    { "id": "qin", "name": "Qin dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": -221, "to": -206, "after": ["han"] },
+    { "id": "han", "name": "Han dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": -206, "to": 220 },
+    { "id": "sui", "name": "Sui dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": 581, "to": 618, "after": ["tang"] },
+    { "id": "tang", "name": "Tang dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": 618, "to": 907 },
+    { "id": "song", "name": "Song dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": 960, "to": 1279, "after": ["yuan"] },
+    { "id": "yuan", "name": "Yuan dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": 1271, "to": 1368, "after": ["ming"] },
+    { "id": "ming", "name": "Ming dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": 1368, "to": 1644, "after": ["qing"] },
+    { "id": "qing", "name": "Qing dynasty", "kind": "dynasty", "source": "History", "region": "east-asia", "lane": "china", "from": 1644, "to": 1912 },
+
+    { "id": "achaemenid", "name": "Achaemenid Persia", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "persia", "from": -550, "to": -330, "approx": true, "story": "greece-persia" },
+    { "id": "sasanian", "name": "Sasanian Empire", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "persia", "from": 224, "to": 651 },
+    { "id": "abbasid", "name": "Abbasid Caliphate", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "persia", "from": 750, "to": 1258 },
+    { "id": "ottoman", "name": "Ottoman Empire", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "persia", "from": 1299, "to": 1922, "added": "2026-11-09" },
+    { "id": "pharaonic-egypt", "name": "Pharaonic Egypt", "kind": "dynasty", "source": "Archaeology", "region": "near-east", "lane": "africa", "from": -3100, "to": -332, "approx": true, "story": "egypt", "note": "From the first kings of a united Egypt to Alexander’s conquest." },
+    { "id": "ptolemaic-egypt", "name": "Ptolemaic Egypt", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "africa", "from": -305, "to": -30, "story": "egypt" },
+    { "id": "aksum", "name": "Kingdom of Aksum", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "africa", "from": 100, "to": 940, "approx": true },
+    { "id": "mali", "name": "Mali Empire", "kind": "dynasty", "source": "History", "region": "near-east", "lane": "africa", "from": 1235, "to": 1670, "approx": true },
+
+    { "id": "silk-road", "name": "The Silk Road", "kind": "route", "source": "History", "region": "across", "from": -130, "to": 1450, "approx": true, "story": "silk-road" }
+  ]
+}
