@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- The British Empire: British India (1858 to 1947) now includes the whole of Jammu and Kashmir at the top of the map, as maps of the time show it. The coastline data splits it along today's lines, which left the north cut off.
+
 ## 0.7.0
 
 - New story map in Chronicles: The British Empire. From John Cabot's voyage in 1497 to the handover of Hong Kong in 1997, on a world map: 36 chapters, a Powers layer showing the British Empire gain and lose lands chapter by chapter alongside the dominions and the Spanish, Portuguese, Dutch and French empires (plus Germany, the Belgian Congo, the United States and Japan while they matter), and 17 people cards. It follows how colonies passed between empires: Jamaica, New York, Gibraltar, Canada, the Cape, Ceylon, Malta and the German colonies.
