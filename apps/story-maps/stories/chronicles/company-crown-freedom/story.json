@@ -1,0 +1,2905 @@
+{
+  "id": "company-crown-freedom",
+  "title": "Company, Crown and Freedom",
+  "description": "An illustrated map of how the East India Company came to rule India, how the British Crown took over, and the long struggle that ended in independence in 1947.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "mapLabel": "Illustrated map of India from the arrival of the East India Company in 1608 to independence in 1947",
+  "note": "Based on standard histories of the period. The map is stylised and not to scale: a few close neighbours (Lahore and Amritsar, Surat and Dandi) are drawn a little apart so their pins don’t overlap, and the regions under Powers are painted loosely, each shown only while it plays a part. Place names are those of the time. The timeline is stretched where events crowd together. Deaths in famines, massacres and partition are estimates, and historians differ on many of them.",
+  "phases": {
+    "trade": {
+      "name": "Traders arrive",
+      "color": "#4fc3b0"
+    },
+    "company": {
+      "name": "Company rule",
+      "color": "#f29a2e"
+    },
+    "revolt": {
+      "name": "The uprising of 1857",
+      "color": "#e0573a"
+    },
+    "crown": {
+      "name": "Crown rule",
+      "color": "#a678e0"
+    },
+    "struggle": {
+      "name": "A mass movement",
+      "color": "#f2c14e"
+    },
+    "freedom": {
+      "name": "The road to freedom",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "sail": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "8 5",
+      "cap": "butt"
+    },
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "revolt": {
+      "color": "#ff8a1f",
+      "width": 3.4,
+      "dash": "11 4",
+      "cap": "butt"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "army-ina": {
+      "color": "#7a7a2a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "flight": {
+      "color": "#5b4a3a",
+      "width": 2.8,
+      "dash": "1 6",
+      "cap": "round"
+    }
+  },
+  "travellers": {
+    "chronicle": {
+      "name": "The chronicle",
+      "icon": "scroll"
+    },
+    "ship": {
+      "name": "An East India Company ship",
+      "icon": "east-indiaman"
+    },
+    "army": {
+      "name": "Company troops",
+      "icon": "redcoat"
+    },
+    "sepoys": {
+      "name": "Rebel sepoys",
+      "icon": "sepoy"
+    },
+    "marchers": {
+      "name": "Gandhi and the salt marchers",
+      "icon": "marcher"
+    },
+    "ina": {
+      "name": "The Indian National Army",
+      "icon": "soldier"
+    },
+    "refugees": {
+      "name": "Refugees",
+      "icon": "refugees"
+    }
+  },
+  "places": {
+    "sea-west": {
+      "name": "Arabian Sea",
+      "at": [
+        63.5,
+        18.6
+      ],
+      "hidden": true
+    },
+    "surat": {
+      "name": "Surat",
+      "at": [
+        72.7,
+        21.6
+      ],
+      "glyph": "trading-post",
+      "label": "left"
+    },
+    "madras": {
+      "name": "Madras",
+      "at": [
+        80.3,
+        13.1
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "bombay": {
+      "name": "Bombay",
+      "at": [
+        72.85,
+        19.05
+      ],
+      "glyph": "trading-post",
+      "label": "left"
+    },
+    "calcutta": {
+      "name": "Calcutta",
+      "at": [
+        88.36,
+        22.55
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "arcot": {
+      "name": "Arcot",
+      "at": [
+        79.1,
+        12.85
+      ],
+      "glyph": "crossed-swords",
+      "label": "top"
+    },
+    "plassey": {
+      "name": "Plassey",
+      "at": [
+        88.25,
+        24.0
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "buxar": {
+      "name": "Buxar",
+      "at": [
+        83.98,
+        25.5
+      ],
+      "glyph": "crossed-swords",
+      "label": "bottom"
+    },
+    "srirangapatna": {
+      "name": "Srirangapatna",
+      "at": [
+        76.68,
+        12.42
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "pune": {
+      "name": "Poona",
+      "at": [
+        74.0,
+        18.5
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "lahore": {
+      "name": "Lahore",
+      "at": [
+        74.0,
+        31.55
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "lucknow": {
+      "name": "Lucknow",
+      "at": [
+        80.95,
+        26.85
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "meerut": {
+      "name": "Meerut",
+      "at": [
+        78.0,
+        29.1
+      ],
+      "hidden": true
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.21,
+        28.62
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "jhansi": {
+      "name": "Jhansi",
+      "at": [
+        78.57,
+        25.45
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "allahabad": {
+      "name": "Allahabad",
+      "at": [
+        81.85,
+        25.43
+      ],
+      "glyph": "crown",
+      "label": "bottom"
+    },
+    "champaran": {
+      "name": "Champaran",
+      "at": [
+        84.92,
+        26.75
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "amritsar": {
+      "name": "Amritsar",
+      "at": [
+        75.15,
+        31.7
+      ],
+      "glyph": "memorial",
+      "label": "right"
+    },
+    "chauri-chaura": {
+      "name": "Chauri Chaura",
+      "at": [
+        83.55,
+        26.65
+      ],
+      "glyph": "memorial",
+      "label": "top"
+    },
+    "sabarmati": {
+      "name": "Sabarmati Ashram",
+      "at": [
+        72.58,
+        23.06
+      ],
+      "glyph": "charkha",
+      "label": "left"
+    },
+    "dandi": {
+      "name": "Dandi",
+      "at": [
+        72.85,
+        20.55
+      ],
+      "glyph": "salt",
+      "label": "left"
+    },
+    "imphal": {
+      "name": "Imphal",
+      "at": [
+        93.94,
+        24.82
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "burma": {
+      "name": "Burma",
+      "at": [
+        96.0,
+        22.0
+      ],
+      "hidden": true
+    },
+    "noakhali": {
+      "name": "Noakhali",
+      "at": [
+        91.1,
+        22.87
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 15,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 38,
+        "color": "rgba(242,154,46,.3)"
+      },
+      {
+        "until": 43.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 53,
+        "color": "rgba(166,120,224,.3)"
+      },
+      {
+        "until": 77,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.4)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1600"
+      },
+      {
+        "at": 10.7,
+        "text": "1700"
+      },
+      {
+        "at": 24.5,
+        "text": "1800"
+      },
+      {
+        "at": 39.5,
+        "text": "1857"
+      },
+      {
+        "at": 50.3,
+        "text": "1900"
+      },
+      {
+        "at": 59,
+        "text": "1920"
+      },
+      {
+        "at": 80,
+        "text": "1940"
+      },
+      {
+        "at": 100,
+        "text": "1947"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "surat",
+      "phase": "trade",
+      "title": "A charter and a ship",
+      "native": "सूरत",
+      "when": "1600 to 1619",
+      "at": 3,
+      "camera": {
+        "at": [
+          70.5,
+          20.5
+        ],
+        "width": 17
+      },
+      "legs": [
+        {
+          "from": "sea-west",
+          "to": "surat",
+          "traveller": "ship",
+          "style": "sail",
+          "bend": 0.12
+        }
+      ],
+      "text": "On 31 December 1600 Queen Elizabeth I grants a charter to a London company of merchants trading to the East Indies. Its ships reach Surat, the Mughal empire’s chief port, in 1608. After English ships beat a Portuguese fleet nearby in 1612, Emperor Jahangir lets the Company keep a trading post there, called a factory (kothi).",
+      "today": "Today: Surat, Gujarat."
+    },
+    {
+      "place": "madras",
+      "phase": "trade",
+      "title": "Fort St George",
+      "native": "चेन्नई",
+      "when": "1639 to 1644",
+      "at": 5.5,
+      "camera": {
+        "at": [
+          79.6,
+          13.2
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In 1639 the Company’s agent Francis Day obtains a strip of coast from Damarla Venkatadri Nayaka, a local governor under the last Vijayanagara kings. A fortified trading post, Fort St George, is finished by about 1644. The town that grows around it, Madras, becomes the Company’s first great base in India.",
+      "today": "Today: Chennai, Tamil Nadu. Fort St George still houses the state’s government offices."
+    },
+    {
+      "place": "bombay",
+      "phase": "trade",
+      "title": "A dowry of islands",
+      "native": "मुंबई",
+      "when": "1661 to 1668",
+      "at": 8,
+      "camera": {
+        "at": [
+          73.4,
+          19.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In 1661 Portugal hands the islands of Bombay to King Charles II of England as part of the dowry of Catherine of Braganza. Finding them costly to run, the King leases them to the Company in 1668 for ten pounds a year. Its deep harbour later makes Bombay the Company’s main base on the west coast, in place of Surat.",
+      "today": "Today: Mumbai, Maharashtra."
+    },
+    {
+      "place": "calcutta",
+      "phase": "trade",
+      "title": "Three villages on the Hooghly",
+      "native": "कोलकाता",
+      "when": "1690 to 1717",
+      "at": 10,
+      "camera": {
+        "at": [
+          88,
+          23.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In 1690 the Company’s agent Job Charnock settles at Sutanuti on the Hooghly river. In 1698 the Company buys the rights to three villages, Sutanuti, Gobindapur and Kalikata, and builds Fort William. In 1717 the Mughal emperor Farrukhsiyar grants it duty-free trade in Bengal, a privilege its officials soon abuse for private trade.",
+      "today": "Today: Kolkata, West Bengal."
+    },
+    {
+      "place": "arcot",
+      "phase": "trade",
+      "title": "Rivals from France",
+      "native": "आर्काट",
+      "when": "1746 to 1763",
+      "at": 14,
+      "camera": {
+        "at": [
+          78.8,
+          13.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Britain and France fight for trade and influence in the south, each backing rival claimants to local thrones. In 1751 Robert Clive, a young Company clerk turned soldier, seizes Arcot and holds it through a siege of about fifty days. In 1761 the British take the French base at Pondicherry, ending France’s hopes of an Indian empire.",
+      "today": "Today: Arcot, Tamil Nadu. Pondicherry is now Puducherry."
+    },
+    {
+      "place": "plassey",
+      "phase": "company",
+      "title": "The battle of Plassey",
+      "native": "पलासी",
+      "when": "1756 to 1757",
+      "at": 16,
+      "camera": {
+        "at": [
+          88,
+          23.7
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "calcutta",
+          "to": "plassey",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 1756 the young Nawab of Bengal, Siraj ud-Daulah, angered by the Company fortifying Calcutta, captures the town. Clive retakes it, then plots with the Nawab’s commander, Mir Jafar. At Plassey on 23 June 1757 Mir Jafar’s troops stand aside, the Nawab is defeated and later killed, and Mir Jafar becomes the Company’s puppet Nawab.",
+      "today": "Today: Palashi, Nadia district, West Bengal."
+    },
+    {
+      "place": "buxar",
+      "phase": "company",
+      "title": "The right to tax",
+      "native": "दीवानी",
+      "when": "1764 to 1765",
+      "at": 18,
+      "camera": {
+        "at": [
+          84.2,
+          25.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Mir Qasim, a later Nawab, tries to curb the Company and is driven out. He joins the Nawab of Awadh and the Mughal emperor Shah Alam II, and their armies lose at Buxar in October 1764. By the Treaty of Allahabad in 1765 the emperor grants the Company the right to collect the revenue (diwani) of Bengal, Bihar and Orissa.",
+      "today": "Today: Buxar, Bihar."
+    },
+    {
+      "place": "calcutta",
+      "phase": "company",
+      "title": "Famine and a Governor-General",
+      "native": "अकाल",
+      "when": "1770 to 1773",
+      "at": 20,
+      "camera": {
+        "at": [
+          87.5,
+          23.6
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "Drought strikes Bengal, while the Company keeps collecting its tax. In the famine of 1769 to 1770 a Company estimate put the dead at a third of the people; historians still debate the figure. Worried by famine, debt and corruption, Parliament passes the Regulating Act of 1773, and Warren Hastings becomes the first Governor-General, at Calcutta.",
+      "today": "Calcutta remains the capital of British India until 1911."
+    },
+    {
+      "place": "srirangapatna",
+      "phase": "company",
+      "title": "The fall of Tipu Sultan",
+      "native": "श्रीरंगपट्टण",
+      "when": "1767 to 1799",
+      "at": 24,
+      "camera": {
+        "at": [
+          78,
+          12.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "madras",
+          "to": "srirangapatna",
+          "traveller": "army",
+          "style": "march",
+          "bend": -0.12
+        }
+      ],
+      "text": "Mysore, under Hyder Ali and then his son Tipu Sultan, fights the Company in four wars from 1767. Tipu modernises his army, uses iron-cased rockets and seeks help from France. On 4 May 1799 Company troops storm his island fortress at Srirangapatna, and Tipu dies defending it. Mysore is handed back to the Wodeyar family under British protection.",
+      "today": "Today: Srirangapatna, near Mysuru, Karnataka."
+    },
+    {
+      "place": "pune",
+      "phase": "company",
+      "title": "The last Peshwa",
+      "native": "पेशवा",
+      "when": "1775 to 1818",
+      "at": 28,
+      "camera": {
+        "at": [
+          74.6,
+          19
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The Maratha Confederacy, the strongest Indian power after the Mughals declined, fights the Company in three wars. Divided by rivalries, the Maratha chiefs are beaten one by one; Arthur Wellesley, later Duke of Wellington, wins at Assaye in 1803. In 1818 the last Peshwa, Baji Rao II, surrenders and is pensioned off near Kanpur.",
+      "today": "Today: Pune, Maharashtra. The Peshwas’ Shaniwar Wada palace survives in ruins."
+    },
+    {
+      "place": "lahore",
+      "phase": "company",
+      "title": "The Sikh kingdom falls",
+      "native": "लाहौर",
+      "when": "1839 to 1849",
+      "at": 33,
+      "camera": {
+        "at": [
+          74.6,
+          31.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Maharaja Ranjit Singh has built a powerful Sikh kingdom in the Punjab, and the Company keeps peace with him. After his death in 1839 the court falls into turmoil. The Company wins two Anglo-Sikh wars, annexes the Punjab in 1849 and deposes the boy king, Duleep Singh. The Koh-i-Noor diamond is sent to Queen Victoria.",
+      "today": "Today: Lahore, Punjab, Pakistan."
+    },
+    {
+      "place": "lucknow",
+      "phase": "company",
+      "title": "Lapse and annexation",
+      "native": "अवध",
+      "when": "1848 to 1856",
+      "at": 36,
+      "camera": {
+        "at": [
+          80.4,
+          26.4
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "Governor-General Lord Dalhousie takes over Indian states whose rulers die without a natural heir, a policy called the doctrine of lapse; Satara, Jhansi and Nagpur are taken. In 1856 he annexes Awadh, claiming misrule, and exiles its Nawab, Wajid Ali Shah. Railways and the telegraph arrive too. Anger grows among princes, landholders and soldiers.",
+      "today": "Today: Lucknow, capital of Uttar Pradesh."
+    },
+    {
+      "place": "delhi",
+      "phase": "revolt",
+      "title": "The uprising of 1857",
+      "native": "विद्रोह",
+      "when": "May 1857",
+      "at": 39.5,
+      "camera": {
+        "at": [
+          77.6,
+          28.6
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "meerut",
+          "to": "delhi",
+          "traveller": "sepoys",
+          "style": "revolt",
+          "bend": -0.2
+        }
+      ],
+      "text": "New rifle cartridges, rumoured to be greased with cow and pig fat, offend Hindu and Muslim soldiers (sepoys) alike. On 10 May 1857 sepoys at Meerut rise, kill their officers and march to Delhi, where they proclaim the old Mughal emperor, Bahadur Shah Zafar, their leader. The revolt spreads across northern and central India.",
+      "today": "Indian historians often call it the First War of Independence."
+    },
+    {
+      "place": "jhansi",
+      "phase": "revolt",
+      "title": "The Rani of Jhansi",
+      "native": "झाँसी की रानी",
+      "when": "1857 to 1858",
+      "at": 42,
+      "camera": {
+        "at": [
+          79.4,
+          26.2
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "Rani Lakshmibai, whose adopted son was refused the throne of Jhansi, becomes a leader of the revolt. Nana Sahib holds Kanpur, Begum Hazrat Mahal leads in Lucknow and Tatya Tope fights a long campaign. Both sides commit massacres. The British retake Delhi in September 1857; the Rani dies fighting near Gwalior in June 1858.",
+      "today": "Today: Jhansi, Uttar Pradesh, where her fort still stands."
+    },
+    {
+      "place": "allahabad",
+      "phase": "crown",
+      "title": "The Crown takes over",
+      "native": "राज",
+      "when": "1858 to 1877",
+      "at": 44.5,
+      "camera": {
+        "at": [
+          81.4,
+          25.8
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Parliament ends Company rule. On 1 November 1858 Lord Canning, now the first Viceroy, reads Queen Victoria’s proclamation at Allahabad, promising religious tolerance and no more annexations. Bahadur Shah Zafar is exiled to Rangoon, ending the Mughal line. The Company is wound up in 1874, and in 1877 Victoria is proclaimed Empress of India.",
+      "today": "Today: Prayagraj, Uttar Pradesh."
+    },
+    {
+      "place": "bombay",
+      "phase": "crown",
+      "title": "A national congress",
+      "native": "कांग्रेस",
+      "when": "December 1885",
+      "at": 48,
+      "camera": {
+        "at": [
+          73.4,
+          19.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In December 1885, 72 delegates meet in Bombay to found the Indian National Congress, with the lawyer W. C. Bonnerjee presiding and the retired British official Allan Octavian Hume as an organiser. Early leaders such as Dadabhai Naoroji argue that British rule drains India’s wealth, and ask, politely, for Indians to share in government.",
+      "today": "The first session met at Gokuldas Tejpal Sanskrit College, Bombay."
+    },
+    {
+      "place": "calcutta",
+      "phase": "crown",
+      "title": "Bengal divided",
+      "native": "स्वदेशी",
+      "when": "1905 to 1911",
+      "at": 51,
+      "camera": {
+        "at": [
+          88.2,
+          23.6
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "In 1905 Viceroy Lord Curzon splits Bengal in two, officially for easier rule; many see a plan to divide Hindus and Muslims. Protesters boycott British goods and buy Indian-made ones (swadeshi), and a more radical wing led by Tilak, Lajpat Rai and Bipin Chandra Pal rises. The partition is reversed in 1911, and the capital moves to Delhi.",
+      "today": "The All-India Muslim League is founded in Dhaka in 1906. New Delhi is inaugurated as the capital in 1931."
+    },
+    {
+      "place": "champaran",
+      "phase": "struggle",
+      "title": "Gandhi comes to Champaran",
+      "native": "सत्याग्रह",
+      "when": "1915 to 1917",
+      "at": 55,
+      "camera": {
+        "at": [
+          84.6,
+          26.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Mohandas Karamchand Gandhi returns in 1915 after two decades in South Africa, where he developed a non-violent resistance he called truth-force (satyagraha). In 1917 he goes to Champaran in Bihar, where tenant farmers are forced to grow indigo for British planters. Defying an order to leave, he gathers their testimony, and the system is ended.",
+      "today": "Today: East and West Champaran districts, Bihar."
+    },
+    {
+      "place": "amritsar",
+      "phase": "struggle",
+      "title": "Jallianwala Bagh",
+      "native": "जलियाँवाला बाग",
+      "when": "13 April 1919",
+      "at": 58,
+      "camera": {
+        "at": [
+          74.9,
+          31.3
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "The Rowlatt Act of 1919 lets the government jail people without trial, and protests spread. On 13 April, the festival of Baisakhi, a crowd gathers in the walled Jallianwala Bagh garden in Amritsar. Brigadier-General Reginald Dyer blocks the exit and orders his troops to fire. An official count gave 379 dead; Indian estimates were far higher.",
+      "today": "Today the garden is a memorial, and bullet marks remain in its walls."
+    },
+    {
+      "place": "chauri-chaura",
+      "phase": "struggle",
+      "title": "Non-cooperation",
+      "native": "असहयोग",
+      "when": "1920 to 1922",
+      "at": 61,
+      "camera": {
+        "at": [
+          83.4,
+          26.2
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Congress, now led by Gandhi and joined by the Muslim Khilafat movement, calls on Indians to boycott British courts, schools, titles and cloth, and to spin their own (khadi). Millions join. In February 1922 a crowd at Chauri Chaura sets fire to a police station, killing more than twenty policemen. Gandhi, insisting on non-violence, calls the movement off.",
+      "today": "Today: Chauri Chaura, near Gorakhpur, Uttar Pradesh."
+    },
+    {
+      "place": "lahore",
+      "phase": "struggle",
+      "title": "Bhagat Singh",
+      "native": "इंक़लाब ज़िंदाबाद",
+      "when": "1928 to 1931",
+      "at": 65,
+      "camera": {
+        "at": [
+          74.6,
+          31.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "An all-British commission under Sir John Simon arrives in 1928 to review India’s government and is met with protests: “Simon, go back!” In Lahore the leader Lala Lajpat Rai is beaten by police and dies weeks later. The young revolutionary Bhagat Singh and his comrades shoot a police officer in revenge. Bhagat Singh, Rajguru and Sukhdev are hanged in 1931.",
+      "today": "Their memorial stands at Hussainiwala, Punjab, India, where they were cremated."
+    },
+    {
+      "place": "lahore",
+      "phase": "struggle",
+      "title": "Complete independence",
+      "native": "पूर्ण स्वराज",
+      "when": "December 1929",
+      "at": 68,
+      "camera": {
+        "at": [
+          74.6,
+          31.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "At its Lahore session in December 1929, Congress, under its young president Jawaharlal Nehru, demands complete independence (purna swaraj). At midnight on 31 December Nehru raises the flag of independence on the banks of the Ravi. Congress asks Indians across the country to mark 26 January 1930 as Independence Day.",
+      "today": "26 January is now India’s Republic Day: the Constitution took effect on that day in 1950."
+    },
+    {
+      "place": "dandi",
+      "phase": "struggle",
+      "title": "The Salt March",
+      "native": "नमक सत्याग्रह",
+      "when": "March to April 1930",
+      "at": 71,
+      "camera": {
+        "at": [
+          73.2,
+          21.8
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "sabarmati",
+          "to": "dandi",
+          "traveller": "marchers",
+          "style": "walk",
+          "bend": 0.18
+        }
+      ],
+      "text": "Britain taxes salt and forbids Indians to make it. On 12 March 1930 Gandhi sets out from his Sabarmati Ashram with 78 followers, walking about 385 kilometres to the sea at Dandi. On 6 April he picks up a lump of natural salt, breaking the law. Civil disobedience spreads, and tens of thousands are jailed.",
+      "today": "Today: Dandi, Navsari district, Gujarat."
+    },
+    {
+      "place": "pune",
+      "phase": "struggle",
+      "title": "The Poona Pact",
+      "native": "पूना समझौता",
+      "when": "1930 to 1935",
+      "at": 74,
+      "camera": {
+        "at": [
+          74.4,
+          18.9
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "After Round Table talks in London, Britain gives the “depressed classes” (Dalits) separate electorates. Gandhi, in Yerwada jail in Poona, fasts against it. B. R. Ambedkar, the Dalit leader, agrees instead to seats reserved for them within joint electorates. The Government of India Act of 1935 then gives Indians elected governments in the provinces.",
+      "today": "Today: Yerwada, Pune, Maharashtra."
+    },
+    {
+      "place": "lahore",
+      "phase": "freedom",
+      "title": "A demand for Pakistan",
+      "native": "लाहौर प्रस्ताव",
+      "when": "1939 to 1940",
+      "at": 80,
+      "camera": {
+        "at": [
+          74.6,
+          31.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In 1939 the Viceroy declares India at war with Germany without consulting Indian leaders, and the Congress provincial governments resign. In March 1940, at Lahore, the Muslim League under Muhammad Ali Jinnah demands independent states for the Muslim-majority areas of the north-west and east. The idea becomes known as Pakistan.",
+      "today": "Minar-e-Pakistan in Lahore marks where the resolution was passed."
+    },
+    {
+      "place": "bombay",
+      "phase": "freedom",
+      "title": "Quit India",
+      "native": "भारत छोड़ो",
+      "when": "August 1942",
+      "at": 84,
+      "camera": {
+        "at": [
+          73.4,
+          19.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "After Britain’s offer of self-rule after the war is rejected, Congress meets in Bombay. On 8 August 1942 Gandhi calls on the British to quit India and tells Indians, “Do or die.” Within hours Gandhi, Nehru, Patel and almost all the leaders are jailed. Strikes, protests and sabotage follow and are crushed; tens of thousands are arrested.",
+      "today": "Gowalia Tank, where the resolution was passed, is now August Kranti Maidan, Mumbai."
+    },
+    {
+      "place": "calcutta",
+      "phase": "freedom",
+      "title": "The Bengal famine",
+      "native": "बंगाल का अकाल",
+      "when": "1943",
+      "at": 87,
+      "camera": {
+        "at": [
+          88.6,
+          23.4
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "In 1943 famine strikes Bengal. The loss of rice from Japanese-occupied Burma, a cyclone, wartime hoarding and soaring prices, and a slow and inadequate government response combine. Between two and three million people die, many on Calcutta’s streets. Historians still debate how much British wartime policy was to blame.",
+      "today": "It is one of the worst famines of the twentieth century."
+    },
+    {
+      "place": "imphal",
+      "phase": "freedom",
+      "title": "The Indian National Army",
+      "native": "आज़ाद हिंद फ़ौज",
+      "when": "1941 to 1944",
+      "at": 90,
+      "camera": {
+        "at": [
+          94,
+          24
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "burma",
+          "to": "imphal",
+          "traveller": "ina",
+          "style": "army-ina",
+          "bend": 0.12
+        }
+      ],
+      "text": "Subhas Chandra Bose, twice Congress president, escapes house arrest in Calcutta in 1941 and seeks help from Germany and Japan. In 1943, in Singapore, he takes command of the Indian National Army, raised largely from Indian prisoners of war. In 1944 it fights beside the Japanese in their failed invasion of India at Imphal and Kohima.",
+      "today": "Today: Imphal, Manipur. Kohima is in Nagaland."
+    },
+    {
+      "place": "delhi",
+      "phase": "freedom",
+      "title": "Trials at the Red Fort",
+      "native": "लाल क़िला",
+      "when": "1945 to 1946",
+      "at": 93,
+      "camera": {
+        "at": [
+          77.4,
+          28.4
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "After the war, three INA officers, a Hindu, a Muslim and a Sikh, are put on trial in the Red Fort. Protests sweep the country, and their sentences are remitted. In February 1946 sailors of the Royal Indian Navy mutiny in Bombay. With its army’s loyalty in doubt and its strength drained by war, Britain prepares to leave.",
+      "today": "Today: the Red Fort, Delhi."
+    },
+    {
+      "place": "noakhali",
+      "phase": "freedom",
+      "title": "Days of killing",
+      "native": "नोआखाली",
+      "when": "1946",
+      "at": 95.5,
+      "camera": {
+        "at": [
+          90.2,
+          23.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Britain’s Cabinet Mission fails to agree a plan for a united India. On 16 August 1946 the Muslim League’s Direct Action Day sets off days of killing in Calcutta, followed by violence in Noakhali, Bihar and beyond. Gandhi, now 77, walks barefoot from village to village in Noakhali for months, trying to restore peace.",
+      "today": "Today: Noakhali district, Bangladesh."
+    },
+    {
+      "place": "amritsar",
+      "phase": "freedom",
+      "title": "Partition",
+      "native": "बँटवारा",
+      "when": "June to August 1947",
+      "at": 97.5,
+      "camera": {
+        "at": [
+          74.6,
+          31.4
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "amritsar",
+          "traveller": "refugees",
+          "style": "flight",
+          "bend": 0.3
+        },
+        {
+          "from": "amritsar",
+          "to": "lahore",
+          "traveller": "refugees",
+          "style": "flight",
+          "bend": 0.3
+        }
+      ],
+      "text": "On 3 June 1947 the last Viceroy, Lord Mountbatten, announces that British India will be divided. A border through Punjab and Bengal is drawn in five weeks by Cyril Radcliffe, a lawyer who had never been to India. Between ten and twenty million people cross the new borders, and hundreds of thousands, perhaps up to two million, are killed.",
+      "today": "Amritsar and Lahore, about 50 kilometres apart, now lie on either side of the India–Pakistan border."
+    },
+    {
+      "place": "delhi",
+      "phase": "freedom",
+      "title": "A tryst with destiny",
+      "native": "स्वतंत्रता",
+      "when": "14 and 15 August 1947",
+      "at": 99.5,
+      "camera": {
+        "at": [
+          79,
+          22.5
+        ],
+        "width": 27
+      },
+      "legs": [],
+      "text": "Pakistan becomes independent on 14 August, with Jinnah as Governor-General. At midnight Nehru tells India’s Constituent Assembly in Delhi, “At the stroke of the midnight hour, when the world sleeps, India will awake to life and freedom.” He becomes Prime Minister. Gandhi spends the day fasting and praying in Calcutta, grieving at the violence.",
+      "today": "15 August is India’s Independence Day. India becomes a republic on 26 January 1950."
+    }
+  ],
+  "effects": [
+    {
+      "type": "lamps",
+      "place": "delhi",
+      "steps": [
+        31
+      ]
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "mughal",
+        "name": "Mughal Empire",
+        "native": "मुग़ल साम्राज्य",
+        "color": "#2fa36b",
+        "active": [
+          [
+            0,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Mughal Empire",
+          "at": [
+            78.5,
+            25
+          ]
+        },
+        "area": [
+          [
+            69.5,
+            34.5
+          ],
+          [
+            74,
+            35.5
+          ],
+          [
+            78,
+            32.6
+          ],
+          [
+            80.5,
+            30
+          ],
+          [
+            84,
+            27.5
+          ],
+          [
+            88,
+            26.6
+          ],
+          [
+            92.2,
+            25.2
+          ],
+          [
+            91.8,
+            22.8
+          ],
+          [
+            88.5,
+            21.9
+          ],
+          [
+            86.5,
+            20.2
+          ],
+          [
+            84,
+            18.6
+          ],
+          [
+            80.2,
+            15.6
+          ],
+          [
+            77,
+            14.2
+          ],
+          [
+            74.6,
+            15.2
+          ],
+          [
+            73.3,
+            17.5
+          ],
+          [
+            72.8,
+            20.5
+          ],
+          [
+            70.5,
+            21.6
+          ],
+          [
+            68.8,
+            23.6
+          ],
+          [
+            67.8,
+            25.5
+          ],
+          [
+            67.2,
+            28
+          ],
+          [
+            68.4,
+            31
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Timurid, known as the Mughals",
+          "Capital": "Agra, then Delhi (Shahjahanabad) from 1648",
+          "Extent": "Largest under Aurangzeb, around 1690",
+          "Today": "Most of India, Pakistan and Bangladesh"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Jahangir, from 1605"
+          },
+          {
+            "from": 1,
+            "text": "Shah Jahan"
+          },
+          {
+            "from": 2,
+            "text": "Aurangzeb"
+          },
+          {
+            "from": 3,
+            "text": "Aurangzeb until 1707; Farrukhsiyar by 1717"
+          }
+        ],
+        "role": "The great power when the Company arrives. Its emperors grant the English their first rights to trade.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Lets the Company keep a trading post at Surat (1613)"
+          },
+          {
+            "from": 3,
+            "text": "Farrukhsiyar grants the Company duty-free trade in Bengal (1717)"
+          }
+        ]
+      },
+      {
+        "id": "mughal-delhi",
+        "name": "Mughal emperor’s lands",
+        "native": "मुग़ल बादशाह",
+        "color": "#2fa36b",
+        "active": [
+          [
+            4,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Mughal emperor",
+          "at": [
+            77.6,
+            29.9
+          ]
+        },
+        "area": [
+          [
+            76.5,
+            29.4
+          ],
+          [
+            78.3,
+            29.4
+          ],
+          [
+            78.7,
+            28.3
+          ],
+          [
+            77.6,
+            27.6
+          ],
+          [
+            76.5,
+            28.1
+          ]
+        ],
+        "facts": {
+          "Capital": "Delhi",
+          "Today": "Delhi and its surroundings"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Muhammad Shah, then Ahmad Shah Bahadur, Alamgir II and Shah Alam II"
+          },
+          {
+            "from": 5,
+            "text": "Alamgir II"
+          },
+          {
+            "from": 6,
+            "text": "Shah Alam II"
+          },
+          {
+            "from": 9,
+            "text": "Akbar II"
+          },
+          {
+            "from": 10,
+            "text": "Bahadur Shah II (Zafar)"
+          }
+        ],
+        "role": "A shadow of the old empire. Emperors rule little beyond Delhi, yet every power still seeks their name and their grants.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Shah Alam II grants the Company the diwani (1765)"
+          },
+          {
+            "from": 7,
+            "text": "Returns to Delhi with Maratha help (1772)"
+          },
+          {
+            "from": 9,
+            "text": "Under Company protection since 1803"
+          },
+          {
+            "from": 12,
+            "text": "Rebel sepoys proclaim Bahadur Shah their leader (1857)"
+          }
+        ]
+      },
+      {
+        "id": "bengal",
+        "name": "Nawabs of Bengal",
+        "native": "बंगाल के नवाब",
+        "color": "#e8574a",
+        "active": [
+          [
+            3,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Bengal",
+          "at": [
+            87,
+            24.9
+          ]
+        },
+        "area": [
+          [
+            85.5,
+            27
+          ],
+          [
+            88.2,
+            26.5
+          ],
+          [
+            89.8,
+            26.2
+          ],
+          [
+            92,
+            24.8
+          ],
+          [
+            92,
+            22.6
+          ],
+          [
+            89,
+            21.9
+          ],
+          [
+            87.3,
+            21.6
+          ],
+          [
+            86.3,
+            20.4
+          ],
+          [
+            84.7,
+            20.9
+          ],
+          [
+            83.6,
+            23.3
+          ],
+          [
+            83.6,
+            25.2
+          ],
+          [
+            84.2,
+            26.9
+          ]
+        ],
+        "facts": {
+          "Capital": "Murshidabad",
+          "Overlord": "The Mughal emperor, in name",
+          "Today": "West Bengal, Bangladesh, Bihar and Odisha"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Murshid Quli Khan, Nawab from 1717"
+          },
+          {
+            "from": 4,
+            "text": "Alivardi Khan"
+          },
+          {
+            "from": 5,
+            "text": "Siraj ud-Daulah, then Mir Jafar"
+          },
+          {
+            "from": 6,
+            "text": "Mir Jafar, restored by the Company after Mir Qasim fled"
+          }
+        ],
+        "role": "The richest Mughal province, whose wealth the Company turns into an empire.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Must honour the Company’s duty-free trade grant (1717)"
+          },
+          {
+            "from": 5,
+            "text": "Mir Jafar pays the Company and Clive huge sums"
+          },
+          {
+            "from": 6,
+            "text": "Mir Qasim allies with Awadh and the emperor against the Company"
+          },
+          {
+            "from": 6,
+            "text": "Loses the right to tax (diwani) to the Company (1765)"
+          }
+        ]
+      },
+      {
+        "id": "maratha",
+        "name": "Maratha Confederacy",
+        "native": "मराठा",
+        "color": "#f29a2e",
+        "active": [
+          [
+            4,
+            9
+          ]
+        ],
+        "label": {
+          "text": "Marathas",
+          "at": [
+            76.6,
+            21.3
+          ]
+        },
+        "area": [
+          [
+            72.9,
+            22.8
+          ],
+          [
+            76,
+            24.5
+          ],
+          [
+            79,
+            26
+          ],
+          [
+            81.5,
+            25
+          ],
+          [
+            83.3,
+            21.5
+          ],
+          [
+            82,
+            19
+          ],
+          [
+            79,
+            17.8
+          ],
+          [
+            76.5,
+            16.2
+          ],
+          [
+            74.4,
+            16
+          ],
+          [
+            73.4,
+            17.5
+          ],
+          [
+            72.9,
+            20
+          ]
+        ],
+        "facts": {
+          "Seat": "Poona, seat of the Peshwas",
+          "Members": "The Peshwa, with the Scindias, Holkars, Gaekwads and Bhonsles",
+          "Today": "Maharashtra, Madhya Pradesh, Gujarat and beyond"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Peshwa Balaji Bajirao (Nanasaheb), for the Chhatrapati at Satara"
+          },
+          {
+            "from": 6,
+            "text": "Peshwa Madhavrao I"
+          },
+          {
+            "from": 8,
+            "text": "Peshwa Baji Rao II"
+          },
+          {
+            "from": 9,
+            "text": "Peshwa Baji Rao II, who surrenders in 1818"
+          }
+        ],
+        "role": "The strongest Indian power of the 18th century, and the Company’s last great rival.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Defeated by the Afghan army of Ahmad Shah Durrani at Panipat (1761)"
+          },
+          {
+            "from": 7,
+            "text": "Restores Shah Alam II to Delhi (1772)"
+          },
+          {
+            "from": 8,
+            "text": "First war with the Company ends without a winner (1782)"
+          },
+          {
+            "from": 9,
+            "text": "Defeated in the second (1803 to 1805) and third (1817 to 1818) wars"
+          }
+        ]
+      },
+      {
+        "id": "awadh",
+        "name": "Awadh",
+        "native": "अवध",
+        "color": "#ffb300",
+        "active": [
+          [
+            6,
+            6
+          ],
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Awadh",
+          "at": [
+            81.6,
+            27.9
+          ]
+        },
+        "area": [
+          [
+            79.3,
+            28.3
+          ],
+          [
+            81.2,
+            28.6
+          ],
+          [
+            83.4,
+            27.3
+          ],
+          [
+            84,
+            26.1
+          ],
+          [
+            82.8,
+            25.6
+          ],
+          [
+            81,
+            25.6
+          ],
+          [
+            79.4,
+            26.4
+          ]
+        ],
+        "facts": {
+          "Capital": "Faizabad, then Lucknow from 1775",
+          "Today": "Central and eastern Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Nawab Shuja-ud-Daula"
+          },
+          {
+            "from": 11,
+            "text": "Nawab Wajid Ali Shah, deposed in 1856"
+          }
+        ],
+        "role": "A rich state that broke away from the Mughals. Beaten at Buxar, it becomes a Company ally, and is annexed in 1856.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Fights beside Mir Qasim and Shah Alam II at Buxar (1764)"
+          },
+          {
+            "from": 11,
+            "text": "Annexed by Dalhousie for “misrule” (1856)"
+          }
+        ]
+      },
+      {
+        "id": "mysore",
+        "name": "Mysore",
+        "native": "मैसूर",
+        "color": "#a678e0",
+        "active": [
+          [
+            8,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Mysore",
+          "at": [
+            76.4,
+            14.2
+          ]
+        },
+        "area": [
+          [
+            74.7,
+            14.6
+          ],
+          [
+            77.4,
+            15.2
+          ],
+          [
+            78.5,
+            13.8
+          ],
+          [
+            78.1,
+            11.6
+          ],
+          [
+            76.6,
+            11.2
+          ],
+          [
+            75.3,
+            12.3
+          ]
+        ],
+        "facts": {
+          "Capital": "Srirangapatna",
+          "Today": "Southern Karnataka"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Tipu Sultan"
+          }
+        ],
+        "role": "A modernising southern kingdom, and the Company’s fiercest enemy in the south.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Four wars with the Company (1767 to 1799)"
+          },
+          {
+            "from": 8,
+            "text": "Tipu seeks an alliance with France"
+          }
+        ]
+      },
+      {
+        "id": "sikh",
+        "name": "Sikh kingdom",
+        "native": "सिख राज्य",
+        "color": "#4fa3d9",
+        "active": [
+          [
+            9,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Sikh kingdom",
+          "at": [
+            73.2,
+            33.2
+          ]
+        },
+        "area": [
+          [
+            71,
+            34
+          ],
+          [
+            74.5,
+            35
+          ],
+          [
+            77,
+            33.5
+          ],
+          [
+            77.3,
+            31.5
+          ],
+          [
+            76.3,
+            30.4
+          ],
+          [
+            74.5,
+            30.3
+          ],
+          [
+            71.6,
+            29.6
+          ],
+          [
+            70.6,
+            31.5
+          ]
+        ],
+        "facts": {
+          "Capital": "Lahore",
+          "Today": "Punjab in Pakistan and India, Kashmir and Khyber Pakhtunkhwa"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "Maharaja Ranjit Singh"
+          },
+          {
+            "from": 10,
+            "text": "Maharaja Duleep Singh, a boy, deposed in 1849"
+          }
+        ],
+        "role": "The last great independent kingdom, annexed in 1849.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Treaty of Amritsar with the Company makes the Sutlej river the border (1809)"
+          },
+          {
+            "from": 10,
+            "text": "Two wars with the Company (1845 to 1846, 1848 to 1849)"
+          }
+        ]
+      },
+      {
+        "id": "company-bengal",
+        "name": "Bengal Presidency",
+        "native": "बंगाल प्रेसीडेंसी",
+        "color": "#d9432a",
+        "active": [
+          [
+            6,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Company Bengal",
+          "at": [
+            86.6,
+            23.9
+          ]
+        },
+        "area": [
+          [
+            85.5,
+            27
+          ],
+          [
+            88.2,
+            26.5
+          ],
+          [
+            89.8,
+            26.2
+          ],
+          [
+            92,
+            24.8
+          ],
+          [
+            92,
+            22.6
+          ],
+          [
+            89,
+            21.9
+          ],
+          [
+            87.3,
+            21.6
+          ],
+          [
+            86.3,
+            20.4
+          ],
+          [
+            84.7,
+            20.9
+          ],
+          [
+            83.6,
+            23.3
+          ],
+          [
+            83.6,
+            25.2
+          ],
+          [
+            84.2,
+            26.9
+          ]
+        ],
+        "facts": {
+          "Seat": "Fort William, Calcutta",
+          "Ruled by": "The East India Company, overseen from 1784 by a Board of Control in London",
+          "Growth": "Reaches up the Ganges to Delhi by 1803"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Governor Robert Clive"
+          },
+          {
+            "from": 7,
+            "text": "Governor-General Warren Hastings"
+          },
+          {
+            "from": 8,
+            "text": "Governor-General Richard Wellesley"
+          },
+          {
+            "from": 9,
+            "text": "Governor-General the Marquess of Hastings"
+          },
+          {
+            "from": 10,
+            "text": "Governor-General Lord Dalhousie"
+          },
+          {
+            "from": 12,
+            "text": "Governor-General Lord Canning"
+          }
+        ],
+        "role": "The heart of Company power. From 1773 its Governor-General oversees Madras and Bombay too.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Collects the revenue of Bengal, Bihar and Orissa (1765)"
+          },
+          {
+            "from": 9,
+            "text": "Holds Delhi and protects the emperor (from 1803)"
+          },
+          {
+            "from": 10,
+            "text": "Annexes the Punjab (1849)"
+          },
+          {
+            "from": 11,
+            "text": "Annexes Awadh (1856)"
+          }
+        ]
+      },
+      {
+        "id": "company-madras",
+        "name": "Madras Presidency",
+        "native": "मद्रास प्रेसीडेंसी",
+        "color": "#d9432a",
+        "active": [
+          [
+            8,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Madras",
+          "at": [
+            78.6,
+            10.6
+          ]
+        },
+        "area": [
+          [
+            79.6,
+            16.4
+          ],
+          [
+            80.3,
+            15.6
+          ],
+          [
+            80.2,
+            13.4
+          ],
+          [
+            79.8,
+            11.5
+          ],
+          [
+            79.2,
+            10.2
+          ],
+          [
+            78.4,
+            8.7
+          ],
+          [
+            77.5,
+            8.5
+          ],
+          [
+            77.1,
+            9.6
+          ],
+          [
+            77.6,
+            11
+          ],
+          [
+            78.6,
+            12.6
+          ],
+          [
+            78.8,
+            14.5
+          ],
+          [
+            78.2,
+            16
+          ]
+        ],
+        "facts": {
+          "Seat": "Fort St George, Madras",
+          "Today": "Tamil Nadu, coastal Andhra Pradesh and beyond"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "A governor at Fort St George, under the Governor-General"
+          }
+        ],
+        "role": "Company lands in the south, grown through the Carnatic and Mysore wars.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Takes much of Mysore’s land after 1799"
+          }
+        ],
+        "minor": true
+      },
+      {
+        "id": "company-bombay",
+        "name": "Bombay Presidency",
+        "native": "बम्बई प्रेसीडेंसी",
+        "color": "#d9432a",
+        "active": [
+          [
+            9,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Bombay",
+          "at": [
+            74.5,
+            16.6
+          ]
+        },
+        "area": [
+          [
+            72.7,
+            22.3
+          ],
+          [
+            73.8,
+            22.1
+          ],
+          [
+            74.7,
+            19.6
+          ],
+          [
+            74.6,
+            17.2
+          ],
+          [
+            73.7,
+            16
+          ],
+          [
+            73.2,
+            17.5
+          ],
+          [
+            72.8,
+            19.2
+          ]
+        ],
+        "facts": {
+          "Seat": "Bombay",
+          "Today": "Western Maharashtra and Gujarat"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "A governor at Bombay, under the Governor-General"
+          }
+        ],
+        "role": "Company lands in the west, which grow greatly with the Peshwa’s territory in 1818.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Takes over the Peshwa’s lands (1818)"
+          }
+        ],
+        "minor": true
+      },
+      {
+        "id": "british-india",
+        "name": "British India",
+        "native": "ब्रिटिश भारत",
+        "color": "#a678e0",
+        "active": [
+          [
+            14,
+            30
+          ]
+        ],
+        "label": {
+          "text": "British India",
+          "at": [
+            79.6,
+            22.6
+          ]
+        },
+        "area": [
+          [
+            68.6,
+            24
+          ],
+          [
+            67.6,
+            26
+          ],
+          [
+            69,
+            29
+          ],
+          [
+            70.5,
+            32.5
+          ],
+          [
+            71.6,
+            35
+          ],
+          [
+            74.5,
+            35.8
+          ],
+          [
+            78,
+            34.5
+          ],
+          [
+            79,
+            32
+          ],
+          [
+            81,
+            30
+          ],
+          [
+            84,
+            28
+          ],
+          [
+            88,
+            27.4
+          ],
+          [
+            89.6,
+            26.8
+          ],
+          [
+            92,
+            27.1
+          ],
+          [
+            95.5,
+            28
+          ],
+          [
+            96.6,
+            27
+          ],
+          [
+            95,
+            25
+          ],
+          [
+            94.4,
+            23
+          ],
+          [
+            92.6,
+            21.8
+          ],
+          [
+            91.8,
+            22.4
+          ],
+          [
+            89,
+            21.9
+          ],
+          [
+            87.2,
+            21.5
+          ],
+          [
+            86.5,
+            20.1
+          ],
+          [
+            84.5,
+            18.7
+          ],
+          [
+            82.3,
+            17
+          ],
+          [
+            80.3,
+            15.6
+          ],
+          [
+            80.2,
+            13.3
+          ],
+          [
+            79.8,
+            10.6
+          ],
+          [
+            78.2,
+            8.7
+          ],
+          [
+            77.4,
+            8.4
+          ],
+          [
+            76.4,
+            9.8
+          ],
+          [
+            75.6,
+            11.8
+          ],
+          [
+            74.6,
+            14.5
+          ],
+          [
+            73.5,
+            16.5
+          ],
+          [
+            72.9,
+            19.2
+          ],
+          [
+            72.7,
+            21.3
+          ],
+          [
+            72.3,
+            22.1
+          ],
+          [
+            70.6,
+            21.1
+          ],
+          [
+            69.1,
+            22.4
+          ]
+        ],
+        "facts": {
+          "Capital": "Calcutta, then Delhi from 1911",
+          "Ruled by": "The Crown, through the Viceroy and the Secretary of State for India in London",
+          "Princely states": "About 560, ruled by Indian princes under British control",
+          "Today": "India, Pakistan and Bangladesh (Burma, also ruled as part of British India, was separated in 1937)"
+        },
+        "rulers": [
+          {
+            "from": 14,
+            "text": "Queen Victoria; Viceroy Lord Canning"
+          },
+          {
+            "from": 15,
+            "text": "Queen Victoria, Empress of India; Viceroy Lord Dufferin"
+          },
+          {
+            "from": 16,
+            "text": "King Edward VII; Viceroy Lord Curzon"
+          },
+          {
+            "from": 17,
+            "text": "King George V; Viceroy Lord Chelmsford"
+          },
+          {
+            "from": 19,
+            "text": "King George V; Viceroy Lord Reading"
+          },
+          {
+            "from": 20,
+            "text": "King George V; Viceroy Lord Irwin"
+          },
+          {
+            "from": 23,
+            "text": "King George V; Viceroy Lord Willingdon"
+          },
+          {
+            "from": 24,
+            "text": "King George VI; Viceroy Lord Linlithgow"
+          },
+          {
+            "from": 26,
+            "text": "King George VI; Viceroy Lord Linlithgow, then from October Lord Wavell"
+          },
+          {
+            "from": 27,
+            "text": "King George VI; Viceroy Lord Wavell"
+          },
+          {
+            "from": 30,
+            "text": "King George VI; Viceroy Lord Mountbatten"
+          }
+        ],
+        "role": "The British Raj: provinces ruled directly, and princely states ruled indirectly through their princes.",
+        "ties": [
+          {
+            "from": 14,
+            "text": "The Queen’s proclamation promises no more annexations (1858)"
+          },
+          {
+            "from": 15,
+            "text": "Victoria proclaimed Empress of India (1877)"
+          },
+          {
+            "from": 16,
+            "text": "The capital moves to Delhi (1911)"
+          },
+          {
+            "from": 17,
+            "text": "About 1.3 million Indians serve in the First World War"
+          },
+          {
+            "from": 18,
+            "text": "The Rowlatt Act allows detention without trial (1919)"
+          },
+          {
+            "from": 24,
+            "text": "Provinces gain elected governments under the 1935 Act"
+          },
+          {
+            "from": 24,
+            "text": "India is declared at war without consultation (1939)"
+          },
+          {
+            "from": 25,
+            "text": "About 2.5 million Indians serve in the Second World War"
+          }
+        ]
+      },
+      {
+        "id": "india",
+        "name": "India",
+        "native": "भारत",
+        "color": "#3a6fb5",
+        "active": [
+          [
+            31,
+            31
+          ]
+        ],
+        "label": {
+          "text": "India",
+          "at": [
+            79.6,
+            22.6
+          ]
+        },
+        "area": [
+          [
+            68.9,
+            23.8
+          ],
+          [
+            71.1,
+            24.4
+          ],
+          [
+            70.1,
+            27.8
+          ],
+          [
+            73.4,
+            29.9
+          ],
+          [
+            74.6,
+            31.1
+          ],
+          [
+            75.3,
+            32.4
+          ],
+          [
+            77.5,
+            32.9
+          ],
+          [
+            79,
+            32
+          ],
+          [
+            81,
+            30
+          ],
+          [
+            84,
+            28
+          ],
+          [
+            88,
+            27.4
+          ],
+          [
+            89.6,
+            26.8
+          ],
+          [
+            92,
+            27.1
+          ],
+          [
+            95.5,
+            28
+          ],
+          [
+            96.6,
+            27
+          ],
+          [
+            95,
+            25
+          ],
+          [
+            94.4,
+            23
+          ],
+          [
+            93,
+            22.6
+          ],
+          [
+            92.3,
+            24.9
+          ],
+          [
+            90,
+            25.8
+          ],
+          [
+            88.9,
+            26.1
+          ],
+          [
+            88.3,
+            24.6
+          ],
+          [
+            88.9,
+            22.9
+          ],
+          [
+            89,
+            21.9
+          ],
+          [
+            87.2,
+            21.5
+          ],
+          [
+            86.5,
+            20.1
+          ],
+          [
+            84.5,
+            18.7
+          ],
+          [
+            82.3,
+            17
+          ],
+          [
+            80.3,
+            15.6
+          ],
+          [
+            80.2,
+            13.3
+          ],
+          [
+            79.8,
+            10.6
+          ],
+          [
+            78.2,
+            8.7
+          ],
+          [
+            77.4,
+            8.4
+          ],
+          [
+            76.4,
+            9.8
+          ],
+          [
+            75.6,
+            11.8
+          ],
+          [
+            74.6,
+            14.5
+          ],
+          [
+            73.5,
+            16.5
+          ],
+          [
+            72.9,
+            19.2
+          ],
+          [
+            72.7,
+            21.3
+          ],
+          [
+            72.3,
+            22.1
+          ],
+          [
+            70.6,
+            21.1
+          ],
+          [
+            69.1,
+            22.4
+          ]
+        ],
+        "facts": {
+          "Capital": "New Delhi",
+          "Today": "The Republic of India, from 26 January 1950"
+        },
+        "rulers": [
+          {
+            "from": 31,
+            "text": "Governor-General Lord Mountbatten; Prime Minister Jawaharlal Nehru"
+          }
+        ],
+        "role": "A new, independent dominion. Most princely states have agreed to join it; Hyderabad, Junagadh and Kashmir have not yet.",
+        "ties": [
+          {
+            "from": 31,
+            "text": "Asks Mountbatten to stay on as Governor-General"
+          }
+        ]
+      },
+      {
+        "id": "pakistan-west",
+        "name": "Pakistan",
+        "native": "पाकिस्तान",
+        "color": "#2fa36b",
+        "active": [
+          [
+            31,
+            31
+          ]
+        ],
+        "label": {
+          "text": "Pakistan",
+          "at": [
+            69.6,
+            28.6
+          ]
+        },
+        "area": [
+          [
+            66.8,
+            25.2
+          ],
+          [
+            68.6,
+            23.8
+          ],
+          [
+            71.1,
+            24.4
+          ],
+          [
+            70.1,
+            27.8
+          ],
+          [
+            73.4,
+            29.9
+          ],
+          [
+            74.6,
+            31.1
+          ],
+          [
+            75.2,
+            32.4
+          ],
+          [
+            73.6,
+            33.2
+          ],
+          [
+            73.4,
+            34.6
+          ],
+          [
+            72.6,
+            36
+          ],
+          [
+            71.2,
+            36.2
+          ],
+          [
+            70,
+            34
+          ],
+          [
+            69.3,
+            31.9
+          ],
+          [
+            66.8,
+            29.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Karachi",
+          "Today": "Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 31,
+            "text": "Governor-General Muhammad Ali Jinnah; Prime Minister Liaquat Ali Khan"
+          }
+        ],
+        "role": "A new, independent dominion in two wings, about 1,600 kilometres apart across India.",
+        "ties": [
+          {
+            "from": 31,
+            "text": "Becomes independent on 14 August 1947"
+          }
+        ]
+      },
+      {
+        "id": "pakistan-east",
+        "name": "East Bengal (Pakistan)",
+        "native": "पूर्वी बंगाल",
+        "color": "#2fa36b",
+        "active": [
+          [
+            31,
+            31
+          ]
+        ],
+        "label": {
+          "text": "East Bengal",
+          "at": [
+            90.4,
+            24.9
+          ]
+        },
+        "area": [
+          [
+            88.3,
+            24.6
+          ],
+          [
+            88.9,
+            26.1
+          ],
+          [
+            90,
+            25.8
+          ],
+          [
+            92.3,
+            24.9
+          ],
+          [
+            92.4,
+            22.8
+          ],
+          [
+            92.5,
+            21.2
+          ],
+          [
+            91.8,
+            22.4
+          ],
+          [
+            90.6,
+            22.1
+          ],
+          [
+            89.2,
+            21.8
+          ],
+          [
+            88.9,
+            22.9
+          ]
+        ],
+        "facts": {
+          "Capital": "Dhaka",
+          "Today": "Bangladesh, independent since 1971"
+        },
+        "rulers": [
+          {
+            "from": 31,
+            "text": "Governed from Karachi as part of Pakistan"
+          }
+        ],
+        "role": "The eastern wing of Pakistan, carved from Bengal and part of Assam.",
+        "ties": [
+          {
+            "from": 31,
+            "text": "Becomes independent with Pakistan on 14 August 1947"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "jahangir",
+        "name": "Jahangir",
+        "native": "जहाँगीर",
+        "life": "1569 to 1627",
+        "role": "Mughal emperor from 1605",
+        "steps": [
+          0
+        ],
+        "text": "Akbar’s son, Jahangir rules the Mughal empire when it is one of the richest states in the world. He lets the English trade at Surat, and from 1615 to 1619 receives King James I’s ambassador, Sir Thomas Roe, at his court."
+      },
+      {
+        "id": "clive",
+        "name": "Robert Clive",
+        "native": "रॉबर्ट क्लाइव",
+        "life": "1725 to 1774",
+        "role": "Company soldier and Governor of Bengal",
+        "steps": [
+          4,
+          5,
+          6
+        ],
+        "text": "A Company clerk who sailed for Madras at 18, Clive made his name at Arcot in 1751 and won Plassey in 1757 through a secret deal with Mir Jafar. Twice Governor of Bengal, he secured the diwani in 1765 and grew enormously rich. Investigated by Parliament, he was cleared, but died in 1774, probably by his own hand."
+      },
+      {
+        "id": "siraj",
+        "name": "Siraj ud-Daulah",
+        "native": "सिराजुद्दौला",
+        "life": "about 1733 to 1757",
+        "role": "The last independent Nawab of Bengal",
+        "steps": [
+          5
+        ],
+        "text": "Grandson and heir of Nawab Alivardi Khan, Siraj ud-Daulah came to the throne in 1756, still in his twenties. He resented the Company’s new fortifications and its misuse of trading privileges, and seized Calcutta. Betrayed at Plassey by his commander, Mir Jafar, he fled, and was captured and killed days later."
+      },
+      {
+        "id": "hastings",
+        "name": "Warren Hastings",
+        "native": "वॉरेन हेस्टिंग्स",
+        "life": "1732 to 1818",
+        "role": "The first Governor-General",
+        "steps": [
+          7
+        ],
+        "text": "Hastings ran the Company’s affairs in Bengal from 1772 and became the first Governor-General under the Regulating Act. He reorganised revenue and justice, and backed the study of Indian languages and texts. Back in Britain he was impeached by Parliament for corruption, in a trial that lasted seven years, and was acquitted in 1795."
+      },
+      {
+        "id": "tipu",
+        "name": "Tipu Sultan",
+        "native": "टीपू सुल्तान",
+        "life": "1751 to 1799",
+        "role": "Ruler of Mysore from 1782",
+        "steps": [
+          8
+        ],
+        "text": "Son of Hyder Ali, Tipu was one of the Company’s most determined enemies, known as the Tiger of Mysore. He modernised his army, used iron-cased rockets and sought an alliance with France. He died fighting when his capital, Srirangapatna, fell in 1799."
+      },
+      {
+        "id": "ranjit",
+        "name": "Ranjit Singh",
+        "native": "रणजीत सिंह",
+        "life": "1780 to 1839",
+        "role": "Maharaja of the Sikh kingdom",
+        "steps": [
+          10
+        ],
+        "text": "Ranjit Singh took Lahore in 1799 and united the Punjab into a strong Sikh kingdom, with a modern army trained partly by European officers. Called the Lion of Punjab, he kept a careful treaty peace with the Company. After his death his heirs fought among themselves, and within ten years the Company had annexed his kingdom."
+      },
+      {
+        "id": "dalhousie",
+        "name": "Lord Dalhousie",
+        "native": "लॉर्ड डलहौज़ी",
+        "life": "1812 to 1860",
+        "role": "Governor-General, 1848 to 1856",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "Dalhousie annexed more territory than any other Governor-General: the Punjab by conquest, and Satara, Jhansi, Nagpur and Awadh by lapse or claimed misrule. He also pushed railways, the telegraph and a cheap postal service. Many historians see his annexations as a cause of the uprising that broke out a year after he left."
+      },
+      {
+        "id": "mangal",
+        "name": "Mangal Pandey",
+        "native": "मंगल पांडे",
+        "life": "1827 to 1857",
+        "role": "Sepoy of the 34th Bengal Native Infantry",
+        "steps": [
+          12
+        ],
+        "text": "On 29 March 1857, at Barrackpore near Calcutta, Mangal Pandey attacked British officers and called on his fellow soldiers to rise. He was hanged on 8 April and his regiment was disbanded. The British soon called all the rebels “Pandies”, and in India he is remembered as an early hero of 1857."
+      },
+      {
+        "id": "zafar",
+        "name": "Bahadur Shah Zafar",
+        "native": "बहादुर शाह ज़फ़र",
+        "life": "1775 to 1862",
+        "role": "The last Mughal emperor",
+        "steps": [
+          12,
+          14
+        ],
+        "text": "Emperor in name only, with little power beyond Delhi’s Red Fort, Bahadur Shah II was a fine Urdu poet who wrote as Zafar. Rebel soldiers proclaimed him their leader in May 1857. After Delhi fell his sons were shot, and he was tried and exiled to Rangoon, where he died in 1862."
+      },
+      {
+        "id": "lakshmibai",
+        "name": "Rani Lakshmibai",
+        "native": "रानी लक्ष्मीबाई",
+        "life": "about 1828 to 1858",
+        "role": "Rani of Jhansi",
+        "steps": [
+          11,
+          13
+        ],
+        "text": "Widow of the Raja of Jhansi, she was refused the right to rule for her adopted son when the British took Jhansi by lapse in 1854. She led the defence of Jhansi in 1858, escaped on horseback when it fell, and died fighting near Gwalior that June. She became a lasting symbol of resistance."
+      },
+      {
+        "id": "naoroji",
+        "name": "Dadabhai Naoroji",
+        "native": "दादाभाई नौरोजी",
+        "life": "1825 to 1917",
+        "role": "Economist and early Congress leader",
+        "steps": [
+          15
+        ],
+        "text": "A Parsi scholar and businessman known as the Grand Old Man of India, Naoroji argued that British rule drained India’s wealth to Britain. In 1892 he became the first Indian elected to the British Parliament. He was three times president of the Congress, and in 1906 called for self-rule (swaraj)."
+      },
+      {
+        "id": "tilak",
+        "name": "Bal Gangadhar Tilak",
+        "native": "बाल गंगाधर तिलक",
+        "life": "1856 to 1920",
+        "role": "Nationalist leader and newspaper editor",
+        "steps": [
+          16
+        ],
+        "text": "A scholar and editor from Poona, Tilak led the Congress’s radical wing, using festivals and the press to rally ordinary people. He was jailed for sedition, including six years in Mandalay. His words “Swaraj is my birthright, and I shall have it” inspired a generation. A British writer called him the father of Indian unrest."
+      },
+      {
+        "id": "tagore",
+        "name": "Rabindranath Tagore",
+        "native": "रवीन्द्रनाथ टैगोर",
+        "life": "1861 to 1941",
+        "role": "Poet, Nobel laureate in 1913",
+        "steps": [
+          16,
+          18
+        ],
+        "text": "The Bengali poet and the first non-European to win the Nobel Prize in Literature, Tagore wrote songs for the protests against the partition of Bengal. After Jallianwala Bagh he gave up his knighthood in protest. His songs became the national anthems of both India and Bangladesh."
+      },
+      {
+        "id": "gandhi",
+        "name": "Mahatma Gandhi",
+        "native": "महात्मा गांधी",
+        "life": "1869 to 1948",
+        "role": "Leader of the non-violent struggle for independence",
+        "steps": [
+          17,
+          19,
+          22,
+          23,
+          25,
+          29,
+          31
+        ],
+        "text": "A London-trained lawyer, Mohandas Karamchand Gandhi spent two decades in South Africa before returning in 1915. He turned the Congress into a mass movement through non-violent protest, homespun cloth and campaigns against untouchability. Called Mahatma, “great soul”, he was jailed many times. He was shot dead in Delhi on 30 January 1948 by a Hindu nationalist, Nathuram Godse."
+      },
+      {
+        "id": "dyer",
+        "name": "Reginald Dyer",
+        "native": "रेजिनाल्ड डायर",
+        "life": "1864 to 1927",
+        "role": "British army officer",
+        "steps": [
+          18
+        ],
+        "text": "Brigadier-General Dyer ordered his troops to fire without warning on the crowd at Jallianwala Bagh, and kept firing until their ammunition was nearly spent. An inquiry, the Hunter Committee, condemned his actions and he was made to resign. Some in Britain hailed him as a hero, which deepened Indian anger."
+      },
+      {
+        "id": "bhagat",
+        "name": "Bhagat Singh",
+        "native": "भगत सिंह",
+        "life": "1907 to 1931",
+        "role": "Revolutionary",
+        "steps": [
+          20
+        ],
+        "text": "A socialist revolutionary, Bhagat Singh helped shoot the police officer John Saunders in 1928, mistaking him for the officer who had ordered the beating of Lala Lajpat Rai. In 1929 he threw bombs meant to make a noise, not to kill, into the Central Legislative Assembly and courted arrest. Hanged at 23, he is honoured as Shaheed, “martyr”."
+      },
+      {
+        "id": "nehru",
+        "name": "Jawaharlal Nehru",
+        "native": "जवाहरलाल नेहरू",
+        "life": "1889 to 1964",
+        "role": "First Prime Minister of India",
+        "steps": [
+          21,
+          25,
+          31
+        ],
+        "text": "Educated at Harrow and Cambridge, Nehru joined Gandhi’s movement and led its younger, socialist-minded wing. He was jailed nine times, for about nine years in all, and wrote books including The Discovery of India in prison. He was Prime Minister from 1947 until his death in 1964."
+      },
+      {
+        "id": "sarojini",
+        "name": "Sarojini Naidu",
+        "native": "सरोजिनी नायडू",
+        "life": "1879 to 1949",
+        "role": "Poet and Congress leader",
+        "steps": [
+          22
+        ],
+        "text": "A poet known as the Nightingale of India, Naidu became the first Indian woman president of the Congress in 1925. She joined the salt campaign and led the protest at the Dharasana salt works after Gandhi’s arrest. After independence she became the first woman governor of an Indian state, Uttar Pradesh."
+      },
+      {
+        "id": "ambedkar",
+        "name": "B. R. Ambedkar",
+        "native": "भीमराव आंबेडकर",
+        "life": "1891 to 1956",
+        "role": "Dalit leader and chief architect of the Constitution",
+        "steps": [
+          23
+        ],
+        "text": "Born into a Dalit family treated as untouchable, Bhimrao Ramji Ambedkar earned doctorates from Columbia University and the London School of Economics. He fought for the rights of the depressed classes, argued with Gandhi over how to end caste oppression and signed the Poona Pact. After independence he chaired the committee that drafted India’s Constitution."
+      },
+      {
+        "id": "jinnah",
+        "name": "Muhammad Ali Jinnah",
+        "native": "मुहम्मद अली जिन्ना",
+        "life": "1876 to 1948",
+        "role": "Founder of Pakistan",
+        "steps": [
+          24,
+          29,
+          30,
+          31
+        ],
+        "text": "A brilliant lawyer, Jinnah was once a Congress member, hailed as an “ambassador of Hindu–Muslim unity”. Breaking with Gandhi’s mass politics, he came to lead the Muslim League and from 1940 demanded a separate Pakistan. Called Quaid-e-Azam, “great leader”, he became Pakistan’s first Governor-General and died in September 1948."
+      },
+      {
+        "id": "azad",
+        "name": "Maulana Abul Kalam Azad",
+        "native": "मौलाना अबुल कलाम आज़ाद",
+        "life": "1888 to 1958",
+        "role": "Scholar and Congress president",
+        "steps": [
+          19,
+          25
+        ],
+        "text": "A scholar and journalist, Azad joined the Khilafat and non-cooperation movements and became the youngest Congress president in 1923. As president again from 1940 to 1946 he led the party through Quit India and the talks with Britain, and opposed partition. He became independent India’s first education minister."
+      },
+      {
+        "id": "patel",
+        "name": "Vallabhbhai Patel",
+        "native": "वल्लभभाई पटेल",
+        "life": "1875 to 1950",
+        "role": "Congress leader and first Deputy Prime Minister",
+        "steps": [
+          25,
+          31
+        ],
+        "text": "A lawyer from Gujarat, Patel led peasant campaigns at Kheda and Bardoli, earning the title Sardar, “chief”. Jailed during Quit India, he became Deputy Prime Minister and Home Minister in 1947, and persuaded or pressed more than five hundred princely states to join India."
+      },
+      {
+        "id": "bose",
+        "name": "Subhas Chandra Bose",
+        "native": "सुभाष चंद्र बोस",
+        "life": "1897 to 1945",
+        "role": "Leader of the Indian National Army",
+        "steps": [
+          27,
+          28
+        ],
+        "text": "Twice president of the Congress, Bose broke with Gandhi over non-violence. He escaped British house arrest in 1941, sought help from Germany and Japan, and led the Indian National Army and a Provisional Government of Free India (Azad Hind). Known as Netaji, “respected leader”, he is reported to have died after a plane crash in Taiwan in 1945."
+      },
+      {
+        "id": "mountbatten",
+        "name": "Lord Mountbatten",
+        "native": "लॉर्ड माउंटबेटन",
+        "life": "1900 to 1979",
+        "role": "The last Viceroy",
+        "steps": [
+          30,
+          31
+        ],
+        "text": "A naval commander and a relative of King George VI, Mountbatten arrived as Viceroy in March 1947 with orders to hand over power by June 1948. He brought the date forward to August 1947, and stayed on as independent India’s first Governor-General until June 1948. Critics blame the haste for much of partition’s chaos."
+      }
+    ]
+  }
+}

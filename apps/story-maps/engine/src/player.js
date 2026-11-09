@@ -1,6 +1,6 @@
 // Story Maps engine, part 2: the player. Builds the map from the page's
 // #sm-data JSON and runs it: steps, Play/Back/Next, the timeline, the camera,
-// the story sheet and the realms layer. Nothing here is specific to one story.
+// the story sheet, the realms layer and the people cards. Nothing here is specific to one story.
 //
 // Performance rules (apps/story-maps/CLAUDE.md): the camera is never
 // re-centred while the sheet is being dragged; resize work is coalesced into
@@ -208,6 +208,7 @@
     dots.forEach((d, j) => d.classList.toggle("on", j <= i));
     el.scroll.scrollTop = 0;
     renderRealms(i);
+    renderPeople(i);
   }
 
   function renderPins(i) {
@@ -245,6 +246,7 @@
     clearTimeout(holdTimer);
     cancelAnimationFrame(camFrame);
     closeRealm();
+    closePerson();
     readerCamera = false;
     const headFrom = headAt;
     current = i;
@@ -604,6 +606,7 @@
     const realm = byId[id];
     if (!realm || !realmsOn || !activeAt(realm, current)) return;
     stopPlaying();
+    closePerson();
     openRealmId = id;
     const ruler = latest(realm.rulers, current);
     $("sm-realm-swatch").style.background = realm.color;
@@ -659,6 +662,67 @@
       const g = e.target instanceof Element ? e.target.closest(".sm-realm") : null;
       if (g) openRealm(g.dataset.id);
     });
+  }
+
+  // --- people: who appears in each chapter, and a card for each ---------------------------------
+
+  const people = story.people;
+  const peopleBox = $("sm-people-box");
+  const peopleChips = $("sm-people-chips");
+  let openPersonId = null;
+
+  function renderPeople(i) {
+    if (!people) return;
+    peopleChips.replaceChildren();
+    for (const person of people.items) {
+      if (!person.steps.includes(i)) continue;
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "sm-chip-button";
+      chip.textContent = person.name;
+      chip.addEventListener("click", () => openPerson(person.id));
+      peopleChips.appendChild(chip);
+    }
+    peopleBox.hidden = peopleChips.children.length === 0;
+  }
+
+  function openPerson(id) {
+    const person = people && people.items.find((p) => p.id === id);
+    if (!person) return;
+    stopPlaying();
+    closeRealm();
+    openPersonId = id;
+    $("sm-person-name").textContent = person.name;
+    $("sm-person-native").textContent = person.native || "";
+    $("sm-person-role").textContent = `${person.life}. ${person.role}`;
+    $("sm-person-text").textContent = person.text;
+    const list = $("sm-person-steps");
+    list.replaceChildren();
+    for (const n of person.steps) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "sm-chip-button";
+      b.style.setProperty("--phase", story.phases[steps[n].phase].color);
+      const dot = document.createElement("i");
+      dot.style.background = story.phases[steps[n].phase].color;
+      b.append(dot, `${n + 1}. ${steps[n].title}`);
+      if (n === current) b.setAttribute("aria-current", "step");
+      b.addEventListener("click", () => goTo(n));
+      list.appendChild(b);
+    }
+    sheet.classList.add("person-view");
+    el.scroll.scrollTop = 0;
+    if (!wide.matches && sheet.offsetHeight < closedHeight() + 60) animateSheet(openHeight());
+  }
+  function closePerson() {
+    if (!openPersonId) return;
+    openPersonId = null;
+    sheet.classList.remove("person-view");
+  }
+
+  if (people) {
+    $("sm-people-heading").textContent = people.heading;
+    $("sm-person-close").addEventListener("click", closePerson);
   }
 
   // --- zoom and pan: pinch, wheel, drag, double-click, + and - ---------------------------------

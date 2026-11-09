@@ -132,7 +132,7 @@ function write(path, html) {
 const HOME = '<header class="sm-top"><a href="https://krishnabuilds.dev">← krishnabuilds</a></header>';
 const BACK = '<header class="sm-top"><a href="/">← All story maps</a></header>';
 const FOOT =
-  '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and early histories. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.</footer>';
+  '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and the historical record. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.</footer>';
 
 /** @param {Story} story */
 function card(story) {
