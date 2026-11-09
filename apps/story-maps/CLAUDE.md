@@ -33,7 +33,7 @@ scripts/build.mjs  the build; stops on any manifest or story data problem
 ## Sections
 
 - **Legends**: epics and sacred stories, placed where tradition puts them. Grouped into collections (`indian` so far).
-- **Chronicles**: ancient civilisations and routes, from archaeology and early histories. No collections.
+- **Chronicles**: civilisations, empires and routes, from archaeology and the historical record (ancient and modern). No collections.
 - **Deep Time**: the Earth and the sky before people. Empty for now.
 
 `manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
@@ -42,7 +42,7 @@ scripts/build.mjs  the build; stops on any manifest or story data problem
 
 - A new story is new **data**, never new engine code. If a story needs something the engine can't do, add a general feature to the engine and describe it in data.
 - A built story is three kinds of data: its `story.json`, a basemap from `basemaps/` (reuse one for stories in the same region) and drawings from `art/glyphs.json`. A new drawing goes in the art library, not in engine code.
-- `story.json` (see `stories/legends/indian/ramayana/story.json`): `id`, `title`, `description`, `canvas`, `basemap`, `source` (Tradition or Archaeology; a step may override it), `mapLabel`, `note`; `places` (`at` is [lon, lat], `glyph`, `label` side; `hidden` for route waypoints); `travellers` (icon from the art library); `phases`, `routeStyles`; `timeline` (`track` segments and `ticks`, 0 to 100); `steps` in order (`place`, `phase`, `title`, `native`, `when`, `at` on the timeline, `camera` {`at`, `width` in degrees}, `legs` {`from`, `to`, `traveller`, `style`, `bend`}, `text`, `today`); optional `effects` and `realms`.
+- `story.json` (see `stories/legends/indian/ramayana/story.json`): `id`, `title`, `description`, `canvas`, `basemap`, `source` (Tradition, Archaeology or History; a step may override it), `mapLabel`, `note`; `places` (`at` is [lon, lat], `glyph`, `label` side; `hidden` for route waypoints); `travellers` (icon from the art library); `phases`, `routeStyles`; `timeline` (`track` segments and `ticks`, 0 to 100); `steps` in order (`place`, `phase`, `title`, `native`, `when`, `at` on the timeline, `camera` {`at`, `width` in degrees}, `legs` {`from`, `to`, `traveller`, `style`, `bend`}, `text`, `today`); optional `effects`, `realms` and `people` (`heading`, and `items` with `id`, `name`, `native`, `life`, `role`, `text` and the `steps` they appear in, by index).
 - The build runs the engine's `validate` on every built story and stops on any problem. Run `pnpm turbo run test build --filter=@krishnabuilds/story-maps` after editing data.
 - Each story's data sets a `canvas`:
   - `geo`: a real map projected from longitude and latitude (Legends, Chronicles).
@@ -54,10 +54,11 @@ scripts/build.mjs  the build; stops on any manifest or story data problem
 
 ## Content rules
 
-- Label traditions as traditions ("Tradition places this at...", "Traditionally..."). Tag every card **Tradition** or **Archaeology**.
+- Label traditions as traditions ("Tradition places this at...", "Traditionally..."). Tag every card **Tradition**, **Archaeology** or **History** (recorded history, such as the colonial era).
 - Where more than one place claims an event, say so and name them.
 - Never invent rulers, dates, names or places. If a source doesn't name it, write "not named".
-- Cards are about 50 to 60 words, never more than 60 (the build checks). Don't pad a shorter card with detail the sources don't give.
+- Cards are about 50 to 60 words, never more than 60 (the build checks). People cards follow the same limit. Don't pad a shorter card with detail the sources don't give.
+- For recorded history, give disputed figures (famine and massacre deaths, partition) as estimates and say they are disputed.
 - Plain English translations, with the native term in brackets the first time: "fire ritual (yajna)".
 - Any third-party art or data needs its own attribution and licence check before it's committed.
 
@@ -69,6 +70,7 @@ Phones first. In the map:
 - No infinite SVG animations. Run an effect a few times, then stop, and respect `prefers-reduced-motion`.
 - Don't re-centre the camera while the story sheet is being dragged; do it once when the drag ends.
 - Coalesce resize and ResizeObserver work into one `requestAnimationFrame`. Zoom and pan also draw at most once a frame.
+- Pins are tappable at any time (they open a place card); legs, the marker and effects stay `pointer-events: none` so taps reach the pins.
 - Only the map zooms: it has `touch-action: none` and handles pinch, wheel and drag itself. Never block page zoom elsewhere (no `user-scalable=no`).
 - Keep decoration counts modest (trees, waves, mountains): tens per layer, not hundreds.
 

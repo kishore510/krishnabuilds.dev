@@ -88,4 +88,17 @@ describe("validate", () => {
     story.steps[3].at = story.steps[2].at - 1;
     expect(map.validate(story, basemap, art).join("\n")).toContain("step 4: timeline position");
   });
+
+  it("catches bad people cards", () => {
+    const withPeople = built.find((s) => loadStoryData(s).story.people);
+    expect(withPeople).toBeDefined();
+    const { story, basemap, art } = structuredClone(loadStoryData(/** @type {any} */ (withPeople)));
+    story.people.items[0].steps = [story.steps.length];
+    story.people.items[1].text = Array(61).fill("word").join(" ");
+    story.people.items[2].id = story.people.items[3].id;
+    const problems = map.validate(story, basemap, art).join("\n");
+    expect(problems).toContain("steps out of range");
+    expect(problems).toContain("61 words");
+    expect(problems).toContain("duplicate id");
+  });
 });

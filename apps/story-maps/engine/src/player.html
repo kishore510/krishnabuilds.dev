@@ -11,7 +11,7 @@
   </header>
   <div class="sm-main" id="sm-main">
     <div class="sm-stage" id="sm-stage">
-      <svg id="sm-map" role="img" aria-label="{{mapLabel}}"></svg>
+      <svg id="sm-map" role="group" aria-label="{{mapLabel}}. Tap a place for its chapters."></svg>
       <div class="sm-chip sm-counter" id="sm-counter"></div>
       <button class="sm-chip sm-overview" id="sm-overview" type="button">Whole map</button>
       <div class="sm-zoom" role="group" aria-label="Zoom the map">
@@ -36,6 +36,9 @@
           <p class="sm-text" id="sm-text"></p>
           <div class="sm-more">
             <p class="sm-today" id="sm-today"></p>
+            <div class="sm-people-box" id="sm-people-box" hidden>
+              <h3 id="sm-people-heading"></h3><div class="sm-chips" id="sm-people-chips"></div>
+            </div>
             <div class="sm-realm-box" id="sm-realm-box" hidden>
               <h3 id="sm-main-heading"></h3><div class="sm-chips" id="sm-main-chips"></div>
               <h3 id="sm-minor-heading"></h3><div class="sm-chips" id="sm-minor-chips"></div>
@@ -51,6 +54,19 @@
             <dl class="sm-facts" id="sm-realm-facts"></dl>
             <h3>Role in the story</h3><p id="sm-realm-role"></p>
             <h3>Alliances and ties so far</h3><ul id="sm-realm-ties"></ul>
+          </div>
+        </div>
+        <div class="sm-place-card" id="sm-place-card">
+          <div class="sm-realm-head"><span class="sm-realm-name" id="sm-place-name"></span><button type="button" class="sm-realm-close" id="sm-place-close">Back to story</button></div>
+          <p class="sm-realm-ruler" id="sm-place-summary"></p>
+          <div class="sm-realm-details" id="sm-place-chapters"></div>
+        </div>
+        <div class="sm-person-card" id="sm-person-card">
+          <div class="sm-realm-head"><span class="sm-realm-name" id="sm-person-name"></span><p class="sm-native" id="sm-person-native" lang="hi"></p><button type="button" class="sm-realm-close" id="sm-person-close">Back to story</button></div>
+          <p class="sm-realm-ruler" id="sm-person-role"></p>
+          <div class="sm-realm-details">
+            <p id="sm-person-text"></p>
+            <h3>In the story</h3><div class="sm-chips" id="sm-person-steps"></div>
           </div>
         </div>
       </div>

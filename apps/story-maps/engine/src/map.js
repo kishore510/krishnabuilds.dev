@@ -277,7 +277,7 @@
           1,
           `<circle class="sm-pulse" r="15"/><circle class="sm-disc" r="14"/><g transform="scale(.92)">${art.glyphs[p.glyph]}</g>` +
             `<text class="sm-pin-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${esc(p.name)}</text>`,
-          ` class="sm-pin future" data-place="${esc(id)}"`,
+          ` class="sm-pin future" data-place="${esc(id)}" role="button" tabindex="0" aria-label="${esc(p.name)}: about this place"`,
         );
       }
       out.push(s);
@@ -320,7 +320,7 @@
   // --- validation -----------------------------------------------------------------
 
   const CANVASES = ["geo", "earth-deep", "cosmic"];
-  const SOURCES = ["Tradition", "Archaeology"];
+  const SOURCES = ["Tradition", "Archaeology", "History"];
   const LABEL_SIDES = ["left", "right", "top", "bottom"];
 
   /** @returns {string[]} problems; empty when the data is usable. */
@@ -378,6 +378,18 @@
         need(r.area.length >= 3 && r.area.every(isLonLat), `realm ${r.id}: area needs at least three [lon, lat] points`);
         need(r.active.every(([a, b]) => a >= 0 && b <= last && a <= b), `realm ${r.id}: active steps out of range`);
         need([...r.rulers, ...r.ties].every((x) => x.from >= 0 && x.from <= last), `realm ${r.id}: ruler or tie step out of range`);
+      }
+    }
+    if (story.people) {
+      const ids = new Set();
+      need(typeof story.people.heading === "string" && story.people.heading.trim() !== "", "people: missing heading");
+      for (const p of story.people.items) {
+        need(!ids.has(p.id), `person ${p.id}: duplicate id`);
+        ids.add(p.id);
+        for (const key of ["name", "life", "role", "text"]) need(typeof p[key] === "string" && p[key].trim() !== "", `person ${p.id}: missing ${key}`);
+        const words = (p.text || "").trim().split(/\s+/).length;
+        need(words <= 60, `person ${p.id}: card is ${words} words; keep it to about 60 at most`);
+        need(Array.isArray(p.steps) && p.steps.length > 0 && p.steps.every((n) => Number.isInteger(n) && n >= 0 && n <= last), `person ${p.id}: steps out of range`);
       }
     }
     return problems;

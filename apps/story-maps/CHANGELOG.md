@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0
+
+- Tap any place on the map, at any point in the story, to see every chapter that happens there or whose route starts or ends there, with each chapter's text and a link to jump to it. Places you haven't reached yet work too. Pins can also be reached with the keyboard (Tab, then Enter). Dragging the map from a pin doesn't open it.
+
+## 0.4.0
+
+- New story map in Chronicles: Company, Crown and Freedom. The East India Company's arrival in 1600, its conquest of India, Crown rule after 1857, and the struggle for independence to 15 August 1947: 32 chapters, a timeline from 1600 to 1947, routes (the first ships, Plassey, 1857, the Salt March, the INA, partition), a Powers layer and 24 people cards.
+- Engine: People cards. A story can list people; each chapter shows who appears in it, and a person's card has their dates, role, a short life and links to every chapter they appear in.
+- Engine: a third source tag, History, for stories from the historical record.
+- Art: new place glyphs (trading post, fort, battle, crown, spinning wheel, salt, memorial) and travellers (ship, Company soldier, sepoy, marcher, INA soldier, refugees).
+- Chronicles now covers empires and recorded history, not only the ancient world.
+
 ## 0.3.0
 
 - Zoom and pan the map without zooming the page: pinch and drag on phones; scroll wheel or trackpad pinch, drag and double-click on laptops; and + and − buttons (or the + and − keys) everywhere. While you hold the camera the story leaves it alone; the next chapter or Whole map takes it back.
