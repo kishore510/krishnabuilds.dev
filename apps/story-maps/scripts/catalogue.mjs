@@ -14,7 +14,7 @@ import { APP_DIR } from "./manifest.mjs";
  * @typedef {{
  *   id: string, name: string, kind: string, source: string, region: string, lane?: string,
  *   from?: number, to?: number, approx?: boolean, story?: string, after?: string[],
- *   native?: string, lang?: string, note?: string, added?: string
+ *   native?: string, lang?: string, note?: string, added?: string, summary: string
  * }} Entry
  * @typedef {{ regions: Region[], entries: Entry[] }} Catalogue
  */
@@ -25,11 +25,13 @@ export const SOURCES = ["History", "Archaeology", "Tradition"];
 export const HUES = ["saffron", "lapis", "jade", "ochre", "plum"];
 const FIELDS = new Set([
   "id", "name", "kind", "source", "region", "lane", "from", "to", "approx",
-  "story", "after", "native", "lang", "note", "added",
+  "story", "after", "native", "lang", "note", "added", "summary",
 ]);
 const SLUG = /^[a-z][a-z0-9-]{0,39}$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_NOTE_WORDS = 30;
+// Summaries follow the card rule in CLAUDE.md: about 50 to 60 words, never more than 60.
+export const MAX_SUMMARY_WORDS = 60;
 
 /** @returns {Catalogue} */
 export function loadCatalogue() {
@@ -127,6 +129,10 @@ export function validateCatalogue(catalogue, stories) {
     if (e.native !== undefined && !e.native.trim()) problems.push(`${where}: native is empty`);
     if (e.note !== undefined && e.note.trim().split(/\s+/).length > MAX_NOTE_WORDS) {
       problems.push(`${where}: note is over ${MAX_NOTE_WORDS} words`);
+    }
+    if (!e.summary?.trim()) problems.push(`${where}: missing summary`);
+    else if (e.summary.trim().split(/\s+/).length > MAX_SUMMARY_WORDS) {
+      problems.push(`${where}: summary is over ${MAX_SUMMARY_WORDS} words`);
     }
     if (e.added !== undefined && !DAY.test(e.added)) problems.push(`${where}: added must be YYYY-MM-DD`);
   }

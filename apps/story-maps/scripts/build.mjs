@@ -309,6 +309,7 @@ function entryPage(e) {
     e.note ? `<p class="sm-entry-note">${esc(e.note)}</p>` : "",
     `<p class="sm-entry-source"><span class="sm-tag">${esc(e.source)}</span></p>`,
     "</div>",
+    `<p class="sm-entry-summary">${esc(e.summary)}</p>`,
     contextStrip(e),
     storyPanel,
     e.lane && X.isDated(e) ? `<div class="sm-btns"><a class="sm-btn" href="/?at=${e.id}#timeline">Show on the timeline</a></div>` : "",
@@ -350,12 +351,11 @@ function entryPage(e) {
 }
 
 for (const e of catalogue.entries) {
-  const dates = X.rangeText(e);
   write(
     `explore/${e.id}/index.html`,
     render({
       title: `${e.name} · Story Maps · krishnabuilds`,
-      description: `${e.name}${dates ? `, ${dates}` : ""}: where it sits on the Story Maps timeline, what came before and after, and who ruled at the same time.`,
+      description: e.summary,
       path: `/explore/${e.id}/`,
       explore: true,
       body: entryPage(e),

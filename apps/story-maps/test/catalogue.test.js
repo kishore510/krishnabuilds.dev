@@ -35,6 +35,8 @@ describe("catalogue.json", () => {
         { id: "x-story", name: "Lost story", kind: "route", source: "History", region: "across", from: 1, to: 2, story: "nowhere" },
         { id: "x-after", name: "Lost successor", kind: "dynasty", source: "History", region: "india", lane: "north", from: 1, to: 2, after: ["nobody"] },
         { id: "x-field", name: "Typo", kind: "dynasty", source: "History", region: "india", lane: "north", from: 1, to: 2, form: 3 },
+        { id: "x-nosum", name: "No summary", kind: "legend", source: "Tradition", region: "india" },
+        { id: "x-long", name: "Long summary", kind: "legend", source: "Tradition", region: "india", summary: "word ".repeat(61) },
       ),
       stories,
     ).join("\n");
@@ -48,6 +50,8 @@ describe("catalogue.json", () => {
     expect(problems).toContain("entry x-story: unknown story nowhere");
     expect(problems).toContain("entry x-after: after lists unknown entry nobody");
     expect(problems).toContain("entry x-field: unknown field form");
+    expect(problems).toContain("entry x-nosum: missing summary");
+    expect(problems).toContain("entry x-long: summary is over 60 words");
   });
 
   it("catches a duplicate id and a story no entry links to", () => {

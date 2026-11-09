@@ -316,3 +316,7 @@ The hub has two views. The Timeline runs time down the page with regions as colu
 A theme picker (Parchment, Night, Auto) sits in the Story Maps top bar. Parchment and Night are the existing light and dark Story Maps themes. Story Maps keeps its own cream parchment palette rather than the shared white one, as Chalkline and Sumyard keep theirs; the shared tokens still supply spacing, type and radii. It writes the shared `kb-theme` cookie with a copy of `setTheme` from `packages/ui`, as the pre-paint script does, and a test fails if the copy writes a different cookie. The story player keeps its own bar without the picker for now.
 
 The first catalogue's dates are textbook approximations and still need checking against sources, entry by entry.
+
+## 2026-11-09 — Story Maps: every catalogue entry has a summary
+
+Each entry in `catalogue.json` has a required `summary`: what made it unique, its most iconic figures and its biggest achievements, at most 60 words, as for story cards. The build fails on a missing or over-long summary, so the rule holds for every entry and story added later. The Maurya Empire's summary is the model the owner approved; the rest were written to match it and follow the same content rules.
