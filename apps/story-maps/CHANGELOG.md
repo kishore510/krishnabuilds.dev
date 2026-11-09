@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Company, Crown and Freedom: the 1947 map now shows Jammu and Kashmir as part of India, labelled on the map, with a Powers card on its accession to India on 26 October 1947. India's card notes when Kashmir, Junagadh and Hyderabad joined.
+
 ## 0.5.0
 
 - Tap any place on the map, at any point in the story, to see every chapter that happens there or whose route starts or ends there, with each chapter's text and a link to jump to it. Places you haven't reached yet work too. Pins can also be reached with the keyboard (Tab, then Enter). Dragging the map from a pin doesn't open it.
