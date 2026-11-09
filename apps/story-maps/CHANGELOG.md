@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0
+
+- Every catalogue entry now has a summary: a short paragraph on what made it unique, its most iconic figures and its biggest achievements, shown on its entry page and used as the page description. Browse search covers summaries too.
+- The build requires a summary of at most 60 words for every entry, so every new entry needs one.
+
 ## 0.9.0
 
 - New hub: a **Timeline** of dynasties, empires and events, with time running down the page and regions as columns (India split into North & Gangetic, Deccan and Deep South). Scroll through time: a line marks the year, and the strip above lists who ruled at that moment. Four zoom levels, with region filters. Every name is readable; lanes with entries side by side get wider and scroll sideways.

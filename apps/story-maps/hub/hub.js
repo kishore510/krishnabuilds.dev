@@ -352,7 +352,7 @@
 
   function haystack(e) {
     return [e.name, e.native, REGION[e.region].title, e.lane && LANE[e.lane].title, KIND[e.kind], X.rangeText(e),
-      e.story && STORIES[e.story] && STORIES[e.story].title, e.note]
+      e.story && STORIES[e.story] && STORIES[e.story].title, e.note, e.summary]
       .filter(Boolean).join(" ").toLowerCase();
   }
 
