@@ -163,7 +163,7 @@ describe("buildMap", () => {
     const { svg } = map.buildMap(story, basemap, art);
     expect(svg).toContain('class="sm-realm-piece" data-steps="0-1,3-4"');
     expect(svg).toContain(`class="sm-realm-piece" data-steps="2-${last}"`);
-    expect(svg).toMatch(/<circle class="sm-realm-shape"[^>]* r="10"/); // 0.5 degrees at 20 units per degree
+    expect(svg).toMatch(/<circle class="sm-realm-shape sm-realm-dot"[^>]* r="10"/); // 0.5 degrees at 20 units per degree
     expect(svg).toContain('data-steps="0-1" x=');
     expect(svg).toContain(`data-steps="2-${last}" x=`);
   });
