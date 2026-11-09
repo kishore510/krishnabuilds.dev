@@ -17,18 +17,33 @@ From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnab
 ## Layout
 
 ```
-manifest.json      sections, collections and every story (the hub reads only this)
+manifest.json      sections, collections and every story
+catalogue.json     regions, timeline lanes and entries (dynasties, events, legends, routes) for the hub and /explore/<id>/
 stories/           one folder per story: stories/<section>/[<collection>/]<id>/; a built story has story.json there
 basemaps/          shared maps: south-asia.json, world.json (coastlines, rivers, ranges, forests, labels)
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
 hub/page.html      the shell every page is rendered into
+hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
+hub/hub.js         the hub in the browser: Timeline and Browse
+hub/explore.css    styles for the hub and entry pages
+src/theme-picker.js Classic / Night / Auto picker; test/prepaint.test.js fails if it writes a different cookie from packages/ui
 src/theme.css      painted theme (saffron, lapis, gold), light and dark
 src/prepaint.js    kb-theme pre-paint script; test/prepaint.test.js fails if it drifts from packages/ui/src/theme.ts
 public/            favicon and apple-touch icon, copied as-is
 licences/          OFL texts for the fonts
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
-scripts/build.mjs  the build; stops on any manifest or story data problem
+scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
 ```
+
+## Catalogue
+
+`catalogue.json` drives the hub's Timeline and Browse and the `/explore/<id>/` entry pages. Stories stay in `manifest.json`; entries link to them with `story`, and every story must be linked from at least one entry (the build checks).
+
+- `regions`: `id`, `title`, `short`, `hue` (saffron, lapis, jade, ochre or plum; colours in `src/theme.css`) and `lanes` (`id`, `title`), the timeline's columns. A region with no lanes (Across regions) is in Browse only.
+- `entries`: `id` (slug; page path `/explore/<id>/`), `name`, `kind` (`dynasty`, `event`, `legend`, `route`), `source` (History, Archaeology or Tradition), `region`, and for the timeline `lane`, `from` and `to` (whole years, negative for BCE, never 0; an event has only `from`). Optional: `approx` (show "c."), `story`, `after` (named successors), `native` and `lang`, `note` (30 words at most), `added` (YYYY-MM-DD, shows "New" for 45 days).
+- Legends have no dates or lane, so they are in Browse only.
+- The same content rules apply: never invent a date. Where sources disagree, give the usual range, set `approx` and say so in `note`.
+- Keep lanes readable: the tests fail if a lane needs more than two entries side by side. Split a lane before that happens.
 
 ## Sections
 

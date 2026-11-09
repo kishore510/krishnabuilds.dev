@@ -90,3 +90,28 @@ describe("src/prepaint.js matches packages/ui/src/theme.ts", () => {
     expect(prepaint(jar)).toBe(attrFor(getTheme()));
   });
 });
+
+// src/theme-picker.js has its own copy of setTheme (kbSetTheme) for the same
+// reason. It must write exactly the cookie the real setTheme writes.
+const pickerSrc = readFileSync(new URL("../src/theme-picker.js", import.meta.url), "utf8");
+
+describe("src/theme-picker.js matches packages/ui/src/theme.ts", () => {
+  it.each([
+    ["light", "story-maps.krishnabuilds.dev", "https:"],
+    ["dark", "story-maps.krishnabuilds.dev", "https:"],
+    ["system", "story-maps.krishnabuilds.dev", "https:"],
+    ["dark", "localhost", "http:"],
+  ])("kbSetTheme(%s) on %s writes what setTheme writes", async (theme, hostname, protocol) => {
+    const realDoc = fakeDocument();
+    const { setTheme } = await loadTheme(realDoc);
+    globalThis.location = { hostname, protocol };
+    setTheme(theme);
+
+    const pickerDoc = fakeDocument();
+    const kbSetTheme = new Function("document", "location", `${pickerSrc}\nreturn kbSetTheme;`)(pickerDoc, { hostname, protocol });
+    kbSetTheme(theme);
+
+    expect(pickerDoc.written).toEqual(realDoc.written);
+    expect(pickerDoc.attrs).toEqual(realDoc.attrs);
+  });
+});

@@ -2,6 +2,7 @@
 // Builds Story Maps into dist/:
 //   dist/index.html          the hub, listing every story in manifest.json
 //   dist/<id>/index.html     one page per story
+//   dist/explore/<id>/       one page per catalogue entry (catalogue.json)
 //   dist/404.html            served by Cloudflare for unknown paths
 //   dist/fonts/              self-hosted fonts and their OFL licences
 // Every page inlines the shared tokens CSS, the painted theme and the
@@ -12,9 +13,11 @@ import { copyFileSync, cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } 
 import { createRequire } from "node:module";
 
 import { checkStory, loadEngineAssets, loadMapFunctions, loadStoryData } from "./engine.mjs";
+import { loadCatalogue, loadExplore, validateCatalogue } from "./catalogue.mjs";
 import { APP_DIR, loadManifest, validateManifest } from "./manifest.mjs";
 
 /** @typedef {import("./manifest.mjs").Story} Story */
+/** @typedef {import("./catalogue.mjs").Entry} Entry */
 
 const require = createRequire(import.meta.url);
 const DIST = `${APP_DIR}dist/`;
@@ -47,6 +50,12 @@ const manifest = loadManifest();
 const problems = validateManifest(manifest);
 if (problems.length) {
   console.error(`manifest.json has problems:\n- ${problems.join("\n- ")}`);
+  process.exit(1);
+}
+const catalogue = loadCatalogue();
+const catalogueProblems = validateCatalogue(catalogue, manifest.stories);
+if (catalogueProblems.length) {
+  console.error(`catalogue.json has problems:\n- ${catalogueProblems.join("\n- ")}`);
   process.exit(1);
 }
 const mapFunctions = loadMapFunctions();
@@ -100,9 +109,13 @@ const styles = [
 ].join("\n");
 const prepaint = read(`${APP_DIR}src/prepaint.js`).trim();
 const engine = loadEngineAssets();
+const exploreCss = read(`${APP_DIR}hub/explore.css`);
+const exploreJs = read(`${APP_DIR}hub/explore.js`);
+const hubJs = read(`${APP_DIR}hub/hub.js`);
+const themePickerJs = read(`${APP_DIR}src/theme-picker.js`);
 
 /**
- * @param {{ title: string, description: string, path: string, body: string, noindex?: boolean, story?: boolean }} page
+ * @param {{ title: string, description: string, path: string, body: string, noindex?: boolean, story?: boolean, explore?: boolean }} page
  */
 function render(page) {
   /** @type {Record<string, string>} */
@@ -112,7 +125,7 @@ function render(page) {
     url: `${ORIGIN}${page.path}`,
     robots: page.noindex ? '<meta name="robots" content="noindex">\n' : "",
     prepaint,
-    styles: page.story ? `${styles}\n${engine.css}` : styles,
+    styles: page.story ? `${styles}\n${engine.css}` : page.explore ? `${styles}\n${exploreCss}` : styles,
     bodyAttrs: page.story ? ' class="sm-story-page"' : "",
     body: page.body,
   };
@@ -129,19 +142,18 @@ function write(path, html) {
   writeFileSync(`${DIST}${path}`, html);
 }
 
-const HOME = '<header class="sm-top"><a href="https://krishnabuilds.dev">← krishnabuilds</a></header>';
-const BACK = '<header class="sm-top"><a href="/">← All story maps</a></header>';
+// Classic is the light parchment theme, Night the dark one; Auto follows the device.
+const THEME_PICKER =
+  '<div class="sm-theme" role="group" aria-label="Theme">' +
+  [["light", "Classic"], ["dark", "Night"], ["system", "Auto"]]
+    .map(([value, label]) => `<button type="button" data-kb-theme="${value}" aria-pressed="false">${label}</button>`)
+    .join("") +
+  "</div>";
+const THEME_SCRIPT = `<script>\n${themePickerJs}</script>`;
+const HOME = `<header class="sm-top"><a href="https://krishnabuilds.dev">← krishnabuilds</a>${THEME_PICKER}</header>`;
+const BACK = `<header class="sm-top"><a href="/">← All story maps</a>${THEME_PICKER}</header>`;
 const FOOT =
   '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and the historical record. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.</footer>';
-
-/** @param {Story} story */
-function card(story) {
-  const badge =
-    story.status === "built"
-      ? '<span class="sm-badge sm-badge--built">Open</span>'
-      : '<span class="sm-badge">Coming soon</span>';
-  return `<li><a class="sm-card" href="/${story.id}/"><span class="sm-card__title">${esc(story.title)}</span><span class="sm-tags"><span class="sm-tag">${esc(story.era)}</span>${badge}</span></a></li>`;
-}
 
 /**
  * Fills {{key}} placeholders in one pass, so inserted text is never scanned again.
@@ -172,45 +184,184 @@ function storyPage(entry) {
   );
 }
 
-/** @param {Story[]} stories */
-const cards = (stories) => `<ul class="sm-cards">${stories.map(card).join("")}</ul>`;
+// --- hub: timeline and Browse ------------------------------------------------
 
-// --- hub ---------------------------------------------------------------------
+const X = loadExplore();
+const storyById = new Map(manifest.stories.map((s) => [s.id, s]));
+/** @param {Entry} e */
+const isBuilt = (e) => Boolean(e.story && storyById.get(e.story)?.status === "built");
+const regionById = new Map(catalogue.regions.map((r) => [r.id, r]));
+/** @type {Map<string, string>} */
+const laneTitle = new Map(catalogue.regions.flatMap((r) => r.lanes.map((l) => [l.id, l.title])));
+/** @param {string} regionId */
+const hueOf = (regionId) => `--hue:var(--sm-hue-${regionById.get(regionId)?.hue})`;
+const KIND = { dynasty: "Dynasty", event: "Event", legend: "Legend", route: "Route" };
 
-const sections = manifest.sections.map((section) => {
-  const stories = manifest.stories.filter((s) => s.section === section.id);
-  const parts = [
-    `<section class="sm-section" aria-labelledby="s-${section.id}">`,
-    `<h2 id="s-${section.id}">${esc(section.title)}</h2>`,
-    `<p class="sm-blurb">${esc(section.blurb)}</p>`,
-  ];
-  const loose = stories.filter((s) => s.collection === undefined);
-  if (loose.length) parts.push(cards(loose));
-  for (const c of manifest.collections.filter((c) => c.section === section.id)) {
-    const inCollection = stories.filter((s) => s.collection === c.id);
-    if (inCollection.length) parts.push(`<h3>${esc(c.title)}</h3>`, cards(inCollection));
-  }
-  if (!stories.length) parts.push('<p class="sm-empty">Nothing here yet.</p>');
-  parts.push("</section>");
-  return parts.join("\n");
-});
+const hubData = {
+  regions: catalogue.regions,
+  entries: catalogue.entries,
+  stories: Object.fromEntries(manifest.stories.map((s) => [s.id, { title: s.title, built: s.status === "built" }])),
+};
+// JSON inside <script>: escape "<" so no "</script>" can end it early.
+const hubJson = JSON.stringify(hubData).replace(/</g, "\\u003c");
 
 write(
   "index.html",
   render({
     title: "Story Maps · krishnabuilds",
-    description: "Illustrated maps that follow a story across the land, one chapter at a time.",
+    description: "Illustrated maps that follow a story across the land, and a timeline of the dynasties and empires behind them.",
     path: "/",
+    explore: true,
     body: [
       HOME,
-      '<main class="sm-page">',
-      '<section class="sm-hero"><h1>Story Maps</h1><p>Illustrated maps that follow a story across the land, one chapter at a time.</p></section>',
-      ...sections,
+      '<main class="sm-page sm-hub">',
+      '<section class="sm-hero"><h1>Story Maps</h1><p>Illustrated maps that follow a story across the land, and a timeline of who ruled where, and when.</p></section>',
+      '<div class="sm-hub-bar"><nav class="sm-tabs" aria-label="Views"><a id="sm-tab-timeline" href="#timeline">Timeline</a><a id="sm-tab-browse" href="#browse">Browse</a></nav><p class="sm-count" id="sm-count"></p></div>',
+      '<section class="sm-v-timeline" id="sm-v-timeline" aria-label="Timeline">',
+      '<div class="sm-chips" id="sm-tl-regions" role="group" aria-label="Regions"></div>',
+      '<div class="sm-tl-now" id="sm-tl-now" aria-live="polite"></div>',
+      '<div class="sm-tl">',
+      '<div class="sm-tl-scroller" id="sm-tl-scroller"><div id="sm-tl-inner"></div></div>',
+      '<div class="sm-tl-guide" id="sm-tl-guide"><span id="sm-tl-pill"></span></div>',
+      '<div class="sm-tl-zoom" role="group" aria-label="Zoom the timeline"><button type="button" id="sm-zoom-out" aria-label="Zoom out">−</button><span id="sm-zoom-name"></span><button type="button" id="sm-zoom-in" aria-label="Zoom in">+</button></div>',
+      "</div>",
+      '<p class="sm-key"><span><i class="sm-key-built"></i>Story map ready</span><span><i></i>Story map to come</span><span><i class="sm-key-event"></i>Event</span><span>Scroll through time; the line shows who ruled at the same moment.</span></p>',
+      "</section>",
+      '<section class="sm-v-browse" id="sm-v-browse" aria-label="Browse" hidden>',
+      '<div class="sm-search"><label class="sm-sr" for="sm-q">Search</label><input id="sm-q" type="search" placeholder="Search dynasties, events, legends and regions" autocomplete="off"></div>',
+      '<div class="sm-browse-body" id="sm-browse-body"></div>',
+      "</section>",
+      `<noscript><div class="sm-noscript"><h2>Everything</h2><ul>${catalogue.entries
+        .map((e) => `<li><a href="/explore/${e.id}/">${esc(e.name)}</a> <span class="sm-muted">${esc(X.rangeText(e))}</span></li>`)
+        .join("")}</ul></div></noscript>`,
       FOOT,
       "</main>",
+      `<script type="application/json" id="sm-catalogue">${hubJson}</script>`,
+      `<script>\n${exploreJs}\n${hubJs}</script>`,
+      THEME_SCRIPT,
     ].join("\n"),
   }),
 );
+
+// --- entry pages -------------------------------------------------------------
+
+/** @param {string} kind @param {Entry | null} e */
+function mini(kind, e) {
+  if (!e) return `<div class="sm-mini"><span class="sm-mini__k">${kind}</span><span class="sm-mini__n sm-muted">Nothing yet</span></div>`;
+  return `<a class="sm-mini" href="/explore/${e.id}/" style="${hueOf(e.region)}"><span class="sm-mini__k">${kind}</span><span class="sm-mini__n">${esc(e.name)}</span><span class="sm-mini__d">${esc(X.rangeText(e))}</span></a>`;
+}
+
+/** This entry and its lane neighbours to scale, like a slice of the timeline. @param {Entry} e */
+function contextStrip(e) {
+  if (!e.lane || e.kind !== "dynasty") return "";
+  const from = /** @type {number} */ (e.from);
+  const to = /** @type {number} */ (e.to);
+  const pad = Math.max(150, (to - from) * 0.8);
+  const lo = from - pad;
+  const hi = to + pad;
+  /** @type {Entry[]} */
+  const mates = X.laneMates(e, catalogue.entries);
+  const segs = [e, ...mates.filter((x) => /** @type {number} */ (x.to) > lo && /** @type {number} */ (x.from) < hi)];
+  /** @param {number} y */
+  const pct = (y) => Math.min(100, Math.max(0, ((y - lo) / (hi - lo)) * 100));
+  /** @param {number} y */
+  const label = (y) => X.yearText(Math.round(y / 10) * 10 || 1);
+  return `<div class="sm-ctx" aria-hidden="true">${segs
+    .map((x) => {
+      const l = pct(/** @type {number} */ (x.from));
+      const w = Math.max(pct(/** @type {number} */ (x.to)) - l, 1.5);
+      const current = x === e ? ' aria-current="page"' : "";
+      return `<a href="/explore/${x.id}/" tabindex="-1"${current} style="left:${l.toFixed(2)}%;width:${w.toFixed(2)}%;${hueOf(x.region)}" title="${esc(x.name)}">${esc(x.name)}</a>`;
+    })
+    .join("")}<span style="left:0">${label(lo)}</span><span style="right:0">${label(hi)}</span></div>`;
+}
+
+/** @param {Entry} e */
+function entryPage(e) {
+  const region = regionById.get(e.region);
+  const lane = e.lane ? laneTitle.get(e.lane) : undefined;
+  const { before, after } = X.neighbours(e, catalogue.entries);
+  /** @type {{ entry: Entry, years: number }[]} */
+  const meanwhile = X.meanwhile(e, catalogue.entries, 8);
+  const skip = [before?.id, after?.id].filter(Boolean);
+  /** @type {Entry[]} */
+  const more = X.moreFromRegion(e, catalogue.entries, skip, 6);
+  const story = e.story ? storyById.get(e.story) : undefined;
+  const length = X.lengthText(e);
+  const kicker = [KIND[/** @type {keyof typeof KIND} */ (e.kind)], [region?.title, lane].filter(Boolean).join(" › ")].join(" · ");
+
+  let storyPanel;
+  if (story && isBuilt(e)) {
+    storyPanel = `<section class="sm-panel sm-panel--map"><h2>Story map: ${esc(story.title)}</h2><p>Follow it across an illustrated map, chapter by chapter.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/">Open the story map</a></div></section>`;
+  } else if (story) {
+    storyPanel = `<section class="sm-panel"><h2>Story map coming: ${esc(story.title)}</h2><p class="sm-muted">This map is still being drawn.</p></section>`;
+  } else {
+    storyPanel = '<section class="sm-panel"><h2>Story map to come</h2><p class="sm-muted">There is no story map for this yet. Its place on the timeline and its neighbours are below.</p></section>';
+  }
+
+  const main = [
+    '<div class="sm-entry-main">',
+    '<div class="sm-entry-head">',
+    `<p class="sm-entry-kicker">${esc(kicker)}</p>`,
+    `<h1>${esc(e.name)}</h1>`,
+    e.native ? `<p class="sm-entry-native" lang="${esc(e.lang ?? "hi")}">${esc(e.native)}</p>` : "",
+    `<p class="sm-entry-dates">${esc(X.rangeText(e))}${length ? ` <span>· ${esc(length)}</span>` : ""}</p>`,
+    e.note ? `<p class="sm-entry-note">${esc(e.note)}</p>` : "",
+    `<p class="sm-entry-source"><span class="sm-tag">${esc(e.source)}</span></p>`,
+    "</div>",
+    contextStrip(e),
+    storyPanel,
+    e.lane && X.isDated(e) ? `<div class="sm-btns"><a class="sm-btn" href="/?at=${e.id}#timeline">Show on the timeline</a></div>` : "",
+    e.lane || before || after ? `<div class="sm-pair">${mini("Before", before)}${mini("After", after)}</div>` : "",
+    "</div>",
+  ];
+  const side = [
+    '<div class="sm-entry-side">',
+    meanwhile.length
+      ? `<section class="sm-panel"><h2>Meanwhile elsewhere</h2><ul class="sm-list">${meanwhile
+          .map(
+            ({ entry: x, years }) =>
+              `<li><a href="/explore/${x.id}/" style="${hueOf(x.region)}"><span class="sm-dot"></span><span><span class="sm-list__n">${esc(x.name)}</span><span class="sm-list__r">${esc(regionById.get(x.region)?.title ?? "")}</span></span><span class="sm-list__o">${years} ${years === 1 ? "year" : "years"}<br>together</span></a></li>`,
+          )
+          .join("")}</ul></section>`
+      : "",
+    more.length
+      ? `<section class="sm-panel"><h2>More from ${esc(region?.short ?? "")}</h2><ul class="sm-list">${more
+          .map(
+            (x) =>
+              `<li><a href="/explore/${x.id}/" style="${hueOf(x.region)}"><span class="sm-dot"></span><span><span class="sm-list__n">${esc(x.name)}</span><span class="sm-list__r">${esc(X.rangeText(x))}</span></span><span class="sm-list__o">${isBuilt(x) ? "Story map" : ""}</span></a></li>`,
+          )
+          .join("")}</ul></section>`
+      : "",
+    "</div>",
+  ];
+  // Remember this entry as explored, for the hub's count and "Pick up where you left off".
+  const remember = `<script>try{var k="sm-explored",a=JSON.parse(localStorage.getItem(k)||"[]").filter(function(x){return x!==${JSON.stringify(e.id)}});a.unshift(${JSON.stringify(e.id)});localStorage.setItem(k,JSON.stringify(a.slice(0,200)))}catch(err){}</script>`;
+  return [
+    BACK,
+    `<main class="sm-page sm-entry" style="${hueOf(e.region)}">`,
+    ...main,
+    ...side,
+    FOOT,
+    "</main>",
+    remember,
+    THEME_SCRIPT,
+  ].join("\n");
+}
+
+for (const e of catalogue.entries) {
+  const dates = X.rangeText(e);
+  write(
+    `explore/${e.id}/index.html`,
+    render({
+      title: `${e.name} · Story Maps · krishnabuilds`,
+      description: `${e.name}${dates ? `, ${dates}` : ""}: where it sits on the Story Maps timeline, what came before and after, and who ruled at the same time.`,
+      path: `/explore/${e.id}/`,
+      explore: true,
+      body: entryPage(e),
+    }),
+  );
+}
 
 // --- story pages ---------------------------------------------------------------
 
@@ -247,6 +398,7 @@ for (const story of manifest.stories) {
         '<p class="sm-note">This map is still being drawn. Check back soon.</p>',
         FOOT,
         "</main>",
+        THEME_SCRIPT,
       ].join("\n"),
     }),
   );
@@ -267,8 +419,11 @@ write(
       "<h1>Not on the map</h1>",
       '<p>There is no page here. <a href="/">See all story maps</a>.</p>',
       "</main>",
+      THEME_SCRIPT,
     ].join("\n"),
   }),
 );
 
-console.log(`Built hub, ${manifest.stories.length} story pages and 404 into dist/`);
+console.log(
+  `Built hub, ${manifest.stories.length} story pages, ${catalogue.entries.length} entry pages and 404 into dist/`,
+);
