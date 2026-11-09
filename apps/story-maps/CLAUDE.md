@@ -68,7 +68,8 @@ Phones first. In the map:
 - No SVG masks or blur filters (`feGaussianBlur` and similar). Reveal routes with dash arrays.
 - No infinite SVG animations. Run an effect a few times, then stop, and respect `prefers-reduced-motion`.
 - Don't re-centre the camera while the story sheet is being dragged; do it once when the drag ends.
-- Coalesce resize and ResizeObserver work into one `requestAnimationFrame`.
+- Coalesce resize and ResizeObserver work into one `requestAnimationFrame`. Zoom and pan also draw at most once a frame.
+- Only the map zooms: it has `touch-action: none` and handles pinch, wheel and drag itself. Never block page zoom elsewhere (no `user-scalable=no`).
 - Keep decoration counts modest (trees, waves, mountains): tens per layer, not hundreds.
 
 ## Versioning

@@ -94,6 +94,9 @@
   const main = $("sm-main");
   const covered = () => (wide.matches ? 0 : sheet.offsetHeight);
   let cam = { ...built.overview };
+  // True once the reader zooms or pans: the story then leaves the camera alone
+  // until the next step (or Whole map) takes it back.
+  let readerCamera = false;
 
   /** Widen a camera so its whole area fits above the sheet, and never zoom in too far. */
   function fit(c) {
@@ -242,6 +245,7 @@
     clearTimeout(holdTimer);
     cancelAnimationFrame(camFrame);
     closeRealm();
+    readerCamera = false;
     const headFrom = headAt;
     current = i;
     renderCard(i);
@@ -252,7 +256,7 @@
     const mine = legsOf[i];
     const headTo = steps[i].at;
     const settle = () => {
-      cam = target_;
+      if (!readerCamera) cam = target_;
       applyCamera(cam);
       setHead(headTo);
       setPlayLabel();
@@ -289,8 +293,10 @@
     const frame = (now) => {
       const t = now - start;
       const ce = ease(Math.min(1, t / camDuration));
-      cam = { x: lerp(camFrom.x, target_.x, ce), y: lerp(camFrom.y, target_.y, ce), w: lerp(camFrom.w, target_.w, ce) };
-      applyCamera(cam);
+      if (!readerCamera) {
+        cam = { x: lerp(camFrom.x, target_.x, ce), y: lerp(camFrom.y, target_.y, ce), w: lerp(camFrom.w, target_.w, ce) };
+        applyCamera(cam);
+      }
       setHead(lerp(headFrom, headTo, ease(Math.min(1, t / span))));
       const tt = t - lead;
       let before = 0;
@@ -353,6 +359,7 @@
   el.overview.addEventListener("click", () => {
     stopPlaying();
     if (anim) goTo(current, { instant: true });
+    readerCamera = true;
     moveCamera(overviewCamera(), 1000);
   });
   document.addEventListener("keydown", (e) => {
@@ -413,6 +420,10 @@
 
   function recentre(smooth) {
     if (current < 0 || anim || (drag && drag.moved)) return; // never while dragging
+    if (readerCamera) {
+      applyCamera(cam);
+      return;
+    }
     moveCamera(stepCamera(current), smooth ? 320 : 0);
   }
   function finishSheet() {
@@ -649,6 +660,157 @@
       if (g) openRealm(g.dataset.id);
     });
   }
+
+  // --- zoom and pan: pinch, wheel, drag, double-click, + and - ---------------------------------
+  // Only the map zooms: the SVG has touch-action: none, so the browser never
+  // zooms or scrolls the page for gestures that start on the map.
+
+  // Closest zoom, in map units across the stage: a bit under twice as close as a
+  // story's closest step, so pins and labels (which scale with the map) stay readable.
+  const MIN_W = 110;
+  const maxW = () => built.overview.w * 1.6;
+
+  /** The map point under a stage pixel, for camera c. */
+  function mapPoint(c, px, py) {
+    const cw = stage.clientWidth || 390;
+    const ch = stage.clientHeight || 600;
+    const upp = c.w / cw;
+    return [c.x - c.w / 2 + px * upp, c.y - (ch * upp) / 2 + (covered() / 2) * upp + py * upp];
+  }
+  /** Keep the camera's centre over the map. */
+  function bounded(c) {
+    return { x: Math.max(0, Math.min(MAP_W, c.x)), y: Math.max(0, Math.min(MAP_H, c.y)), w: c.w };
+  }
+  /** Zoom by `factor` (>1 zooms in) keeping the map point under (px, py) still. */
+  function zoomAt(c, factor, px, py) {
+    const cw = stage.clientWidth || 390;
+    const ch = stage.clientHeight || 600;
+    const w = Math.max(MIN_W, Math.min(maxW(), c.w / factor));
+    const [mx, my] = mapPoint(c, px, py);
+    const upp = w / cw;
+    return bounded({ w, x: mx - px * upp + w / 2, y: my - py * upp + (ch * upp) / 2 - (covered() / 2) * upp });
+  }
+
+  let viewFrame = 0;
+  /** Reader moves: take the camera and draw at most once a frame. */
+  function setReaderCamera(c) {
+    if (!readerCamera) {
+      readerCamera = true;
+      stopPlaying();
+    }
+    cancelAnimationFrame(camFrame);
+    cam = c;
+    if (!viewFrame) {
+      viewFrame = requestAnimationFrame(() => {
+        viewFrame = 0;
+        applyCamera(cam);
+      });
+    }
+  }
+  const stagePoint = (e) => {
+    const box = stage.getBoundingClientRect();
+    return [e.clientX - box.left, e.clientY - box.top];
+  };
+
+  svg.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault(); // also stops a trackpad pinch (ctrl+wheel) zooming the page
+      const [px, py] = stagePoint(e);
+      const lines = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1;
+      setReaderCamera(zoomAt(cam, Math.exp((-e.deltaY * lines) / (e.ctrlKey ? 100 : 400)), px, py));
+    },
+    { passive: false },
+  );
+
+  const pointers = new Map();
+  let gesture = null;
+  let suppressClick = false;
+  function startGesture() {
+    const pts = [...pointers.values()];
+    if (pts.length === 1) gesture = { kind: "pan", start: pts[0], cam: { ...cam }, moved: false };
+    else if (pts.length >= 2) {
+      const [a, b] = pts;
+      gesture = { kind: "pinch", dist: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, mid: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], cam: { ...cam }, moved: true };
+    }
+  }
+  svg.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    // A new gesture: forget a drag that ended without a click (a pinch never fires one).
+    if (!pointers.size) suppressClick = false;
+    pointers.set(e.pointerId, stagePoint(e));
+    // Capture only once this is a pinch: capturing on a plain tap would send its
+    // click to the whole map instead of the kingdom under the finger.
+    if (pointers.size >= 2) for (const id of pointers.keys()) svg.setPointerCapture?.(id);
+    startGesture();
+  });
+  svg.addEventListener("pointermove", (e) => {
+    if (!pointers.has(e.pointerId) || !gesture) return;
+    pointers.set(e.pointerId, stagePoint(e));
+    const pts = [...pointers.values()];
+    if (gesture.kind === "pan") {
+      const [x, y] = pts[0];
+      const dx = x - gesture.start[0];
+      const dy = y - gesture.start[1];
+      if (!gesture.moved && Math.hypot(dx, dy) < 5) return; // still a tap
+      if (!gesture.moved) svg.setPointerCapture?.(e.pointerId);
+      gesture.moved = true;
+      svg.classList.add("sm-panning");
+      const upp = gesture.cam.w / (stage.clientWidth || 390);
+      setReaderCamera(bounded({ x: gesture.cam.x - dx * upp, y: gesture.cam.y - dy * upp, w: gesture.cam.w }));
+    } else if (pts.length >= 2) {
+      const [a, b] = pts;
+      const dist = Math.hypot(a[0] - b[0], a[1] - b[1]) || 1;
+      const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      // Zoom about where the pinch started, then follow the fingers' midpoint.
+      const zoomed = zoomAt(gesture.cam, dist / gesture.dist, gesture.mid[0], gesture.mid[1]);
+      const upp = zoomed.w / (stage.clientWidth || 390);
+      setReaderCamera(bounded({ x: zoomed.x - (mid[0] - gesture.mid[0]) * upp, y: zoomed.y - (mid[1] - gesture.mid[1]) * upp, w: zoomed.w }));
+    }
+  });
+  function endPointer(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (gesture && gesture.moved) suppressClick = true;
+    svg.classList.remove("sm-panning");
+    // Lifting one finger of a pinch carries on as a pan from where it is.
+    if (pointers.size) startGesture();
+    else gesture = null;
+  }
+  svg.addEventListener("pointerup", endPointer);
+  svg.addEventListener("pointercancel", endPointer);
+  // A drag or pinch that ends over a kingdom is not a click on it.
+  svg.addEventListener(
+    "click",
+    (e) => {
+      if (!suppressClick) return;
+      suppressClick = false;
+      e.stopImmediatePropagation();
+    },
+    true,
+  );
+  svg.addEventListener("dblclick", (e) => {
+    e.preventDefault();
+    const [px, py] = stagePoint(e);
+    setReaderCamera(zoomAt(cam, 1.8, px, py));
+  });
+
+  /** + and - zoom about the middle of the visible map (above the sheet on phones). */
+  function zoomButton(factor) {
+    const cw = stage.clientWidth || 390;
+    const visible = (stage.clientHeight || 600) - covered();
+    readerCamera = true;
+    stopPlaying();
+    moveCamera(zoomAt(cam, factor, cw / 2, visible / 2), 250);
+  }
+  $("sm-zoom-in").addEventListener("click", () => zoomButton(1.6));
+  $("sm-zoom-out").addEventListener("click", () => zoomButton(1 / 1.6));
+  document.addEventListener("keydown", (e) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target instanceof Element && e.target.closest("input, textarea, select")) return;
+    if (e.key === "+" || e.key === "=") zoomButton(1.6);
+    else if (e.key === "-" || e.key === "_") zoomButton(1 / 1.6);
+  });
 
   // --- resizing: one frame of work, however many events --------------------------------------
 

@@ -50,6 +50,7 @@ body.sm-story-page {
   color: var(--sm-saffron);
 }
 .sm-bar h1 {
+  flex: 1 1 auto;
   font-size: 19px;
   margin: 0;
   white-space: nowrap;
@@ -58,6 +59,8 @@ body.sm-story-page {
   min-width: 0;
 }
 .sm-when {
+  flex: none;
+  white-space: nowrap;
   margin-left: auto;
   font-family: var(--sm-font-head);
   font-size: 15px;
@@ -148,6 +151,40 @@ body.sm-story-page {
   width: 100%;
   height: 100%;
   display: block;
+  /* The map handles pinch and drag itself, so the page never zooms or scrolls. */
+  touch-action: none;
+  cursor: grab;
+}
+#sm-map.sm-panning {
+  cursor: grabbing;
+}
+.sm-zoom {
+  position: absolute;
+  right: 10px;
+  top: 52px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(242, 193, 78, 0.6);
+  background: rgba(14, 28, 46, 0.84);
+}
+.sm-zoom button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f3e9d2;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sm-zoom button + button {
+  border-top: 1px solid rgba(242, 193, 78, 0.4);
+}
+.sm-zoom button:hover {
+  background: rgba(242, 193, 78, 0.18);
 }
 .sm-chip {
   position: absolute;
@@ -437,14 +474,18 @@ body.sm-story-page {
 .sm-realm-ruler {
   margin: 8px 0 0;
 }
-.sm-sheet:not(.open) .sm-realm-ruler {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.sm-sheet:not(.open) .sm-realm-details {
-  display: none;
+/* Phones only: a collapsed sheet shows just the realm's name and ruler. The
+   side panel from 900px never collapses, so these must not reach it. */
+@media (max-width: 899.98px) {
+  .sm-sheet:not(.open) .sm-realm-ruler {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .sm-sheet:not(.open) .sm-realm-details {
+    display: none;
+  }
 }
 .sm-facts {
   display: grid;
@@ -523,7 +564,7 @@ body.sm-story-page {
     font-size: 30px;
   }
   .sm-text,
-  .sm-sheet .sm-realm-ruler {
+  .sm-realm-ruler {
     display: block;
     -webkit-line-clamp: unset;
     overflow: visible;
@@ -531,8 +572,7 @@ body.sm-story-page {
     line-height: 1.6;
     margin-top: 10px;
   }
-  .sm-more,
-  .sm-sheet .sm-realm-details {
+  .sm-more {
     display: block;
   }
 }
@@ -673,6 +713,15 @@ body.sm-story-page {
 .sm-realm-label.minor {
   font-size: 9px;
   fill-opacity: 0.95;
+}
+
+@media (max-width: 420px) {
+  .sm-bar h1 {
+    font-size: 17px;
+  }
+  .sm-when {
+    font-size: 13px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
