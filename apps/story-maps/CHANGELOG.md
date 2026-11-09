@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- Tap any place on the map, at any point in the story, to see every chapter that happens there or whose route starts or ends there, with each chapter's text and a link to jump to it. Places you haven't reached yet work too. Pins can also be reached with the keyboard (Tab, then Enter). Dragging the map from a pin doesn't open it.
+
 ## 0.4.0
 
 - New story map in Chronicles: Company, Crown and Freedom. The East India Company's arrival in 1600, its conquest of India, Crown rule after 1857, and the struggle for independence to 15 August 1947: 32 chapters, a timeline from 1600 to 1947, routes (the first ships, Plassey, 1857, the Salt March, the INA, partition), a Powers layer and 24 people cards.

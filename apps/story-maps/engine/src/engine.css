@@ -434,22 +434,41 @@ body.sm-story-page {
   border-radius: 50%;
 }
 .sm-realm-card,
-.sm-person-card {
+.sm-person-card,
+.sm-place-card {
   display: none;
 }
 .sm-sheet.realm-view .sm-step,
-.sm-sheet.person-view .sm-step {
+.sm-sheet.person-view .sm-step,
+.sm-sheet.place-view .sm-step {
   display: none;
 }
 .sm-sheet.realm-view .sm-realm-card,
-.sm-sheet.person-view .sm-person-card {
+.sm-sheet.person-view .sm-person-card,
+.sm-sheet.place-view .sm-place-card {
   display: block;
 }
-.sm-person-card .sm-chip-button {
+.sm-person-card .sm-chip-button,
+.sm-place-card .sm-chip-button {
   text-align: left;
 }
-.sm-person-card .sm-chip-button[aria-current="step"] {
+.sm-person-card .sm-chip-button[aria-current="step"],
+.sm-place-card .sm-chip-button[aria-current="step"] {
   border-color: var(--phase);
+}
+.sm-place-step {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--sm-line);
+}
+.sm-place-card p.sm-place-when {
+  margin: 8px 0 0;
+  font-family: var(--sm-font-head);
+  font-size: 14px;
+  color: var(--sm-saffron);
+}
+.sm-place-step p {
+  margin: 6px 0 0;
 }
 .sm-realm-head {
   display: flex;
@@ -516,7 +535,8 @@ body.sm-story-page {
 }
 .sm-realm-card p,
 .sm-realm-card ul,
-.sm-person-card p {
+.sm-person-card p,
+.sm-place-card p {
   font-size: 16px;
   line-height: 1.5;
 }
@@ -591,13 +611,25 @@ body.sm-story-page {
 
 /* map parts (SVG) */
 .sm-legs,
-.sm-pin,
 .sm-marker,
 .sm-effect {
   pointer-events: none;
 }
+/* Every pin can be tapped at any point in the story, not only once visited. */
 .sm-pin {
+  cursor: pointer;
+  outline: none;
   transition: opacity 0.5s;
+}
+.sm-pin.future:hover,
+.sm-pin.future.selected {
+  opacity: 1;
+}
+.sm-pin:hover .sm-disc,
+.sm-pin:focus-visible .sm-disc,
+.sm-pin.selected .sm-disc {
+  stroke: #1f4e8c;
+  stroke-width: 3;
 }
 .sm-pin.future {
   opacity: 0.5;

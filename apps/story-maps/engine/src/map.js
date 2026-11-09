@@ -277,7 +277,7 @@
           1,
           `<circle class="sm-pulse" r="15"/><circle class="sm-disc" r="14"/><g transform="scale(.92)">${art.glyphs[p.glyph]}</g>` +
             `<text class="sm-pin-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${esc(p.name)}</text>`,
-          ` class="sm-pin future" data-place="${esc(id)}"`,
+          ` class="sm-pin future" data-place="${esc(id)}" role="button" tabindex="0" aria-label="${esc(p.name)}: about this place"`,
         );
       }
       out.push(s);

@@ -1,6 +1,6 @@
 // Story Maps engine, part 2: the player. Builds the map from the page's
 // #sm-data JSON and runs it: steps, Play/Back/Next, the timeline, the camera,
-// the story sheet, the realms layer and the people cards. Nothing here is specific to one story.
+// the story sheet, the realms layer, and the place and people cards. Nothing here is specific to one story.
 //
 // Performance rules (apps/story-maps/CLAUDE.md): the camera is never
 // re-centred while the sheet is being dragged; resize work is coalesced into
@@ -247,6 +247,7 @@
     cancelAnimationFrame(camFrame);
     closeRealm();
     closePerson();
+    closePlace();
     readerCamera = false;
     const headFrom = headAt;
     current = i;
@@ -366,7 +367,7 @@
   });
   document.addEventListener("keydown", (e) => {
     if (e.altKey || e.ctrlKey || e.metaKey) return;
-    const onControl = e.target instanceof Element && e.target.closest("button, a, input, textarea, select");
+    const onControl = e.target instanceof Element && e.target.closest("button, a, input, textarea, select, [role=button]");
     if (e.key === "ArrowRight") {
       stopPlaying();
       goTo(current + 1);
@@ -607,6 +608,7 @@
     if (!realm || !realmsOn || !activeAt(realm, current)) return;
     stopPlaying();
     closePerson();
+    closePlace();
     openRealmId = id;
     const ruler = latest(realm.rulers, current);
     $("sm-realm-swatch").style.background = realm.color;
@@ -691,6 +693,7 @@
     if (!person) return;
     stopPlaying();
     closeRealm();
+    closePlace();
     openPersonId = id;
     $("sm-person-name").textContent = person.name;
     $("sm-person-native").textContent = person.native || "";
@@ -724,6 +727,73 @@
     $("sm-people-heading").textContent = people.heading;
     $("sm-person-close").addEventListener("click", closePerson);
   }
+
+  // --- places: tap any pin, at any point in the story, for its chapters ----------------------------
+
+  let openPlaceId = null;
+  /** Chapters that happen at a place, or whose routes start or end there. */
+  const chaptersAt = (id) =>
+    steps.map((s, n) => n).filter((n) => steps[n].place === id || steps[n].legs.some((l) => l.from === id || l.to === id));
+
+  function openPlace(id) {
+    const place = story.places[id];
+    if (!place) return;
+    const list = chaptersAt(id);
+    stopPlaying();
+    closeRealm();
+    closePerson();
+    openPlaceId = id;
+    $("sm-place-name").textContent = place.name;
+    $("sm-place-summary").textContent =
+      list.length === 1 ? "One chapter of the story happens here." : `${list.length} chapters of the story happen here or pass through.`;
+    const box = $("sm-place-chapters");
+    box.replaceChildren();
+    for (const n of list) {
+      const step = steps[n];
+      const color = story.phases[step.phase].color;
+      const item = document.createElement("article");
+      item.className = "sm-place-step";
+      const go = document.createElement("button");
+      go.type = "button";
+      go.className = "sm-chip-button";
+      go.style.setProperty("--phase", color);
+      const dot = document.createElement("i");
+      dot.style.background = color;
+      go.append(dot, `${n + 1}. ${step.title}`);
+      go.title = "Go to this chapter";
+      if (n === current) go.setAttribute("aria-current", "step");
+      go.addEventListener("click", () => goTo(n));
+      const when = document.createElement("p");
+      when.className = "sm-place-when";
+      when.textContent = step.when;
+      const text = document.createElement("p");
+      text.textContent = step.text;
+      item.append(go, when, text);
+      box.appendChild(item);
+    }
+    sheet.classList.add("place-view");
+    for (const pin of pins) pin.classList.toggle("selected", pin.dataset.place === id);
+    el.scroll.scrollTop = 0;
+    if (!wide.matches && sheet.offsetHeight < closedHeight() + 60) animateSheet(openHeight());
+  }
+  function closePlace() {
+    if (!openPlaceId) return;
+    openPlaceId = null;
+    sheet.classList.remove("place-view");
+    for (const pin of pins) pin.classList.remove("selected");
+  }
+
+  $("sm-place-close").addEventListener("click", closePlace);
+  svg.addEventListener("click", (e) => {
+    const pin = e.target instanceof Element ? e.target.closest(".sm-pin") : null;
+    if (pin) openPlace(pin.dataset.place);
+  });
+  svg.addEventListener("keydown", (e) => {
+    const pin = e.target instanceof Element ? e.target.closest(".sm-pin") : null;
+    if (!pin || (e.key !== "Enter" && e.key !== " ")) return;
+    e.preventDefault();
+    openPlace(pin.dataset.place);
+  });
 
   // --- zoom and pan: pinch, wheel, drag, double-click, + and - ---------------------------------
   // Only the map zooms: the SVG has touch-action: none, so the browser never
