@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+
+- Engine: world maps. A new `world` basemap (every continent, simplified from Natural Earth's public-domain coastlines), land shapes with holes for inland seas such as the Caspian, and a thinner coastal glow for wide maps.
+- Engine: realms that change over time. A realm can be made of pieces, each shown only in the chapters it belongs to, plus dots for ports and islands too small to outline; its label can move as it changes. This lets an empire gain and lose lands chapter by chapter.
+- Engine: a story can show only the current chapter's routes instead of the whole journey so far, and can set the language of its native-language names (no longer always Hindi).
+- Art: new place glyphs: flag, treaty, anchor and chain.
+
 ## 0.5.1
 
 - Company, Crown and Freedom: the 1947 map now shows Jammu and Kashmir as part of India, labelled on the map, with a Powers card on its accession to India on 26 October 1947. India's card notes when Kashmir, Junagadh and Hyderabad joined.

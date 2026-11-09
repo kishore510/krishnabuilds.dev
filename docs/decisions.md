@@ -300,3 +300,7 @@ The build checks each built story with the engine's own `validate` (places, phas
 
 The engine was written fresh from the rules in `apps/story-maps/CLAUDE.md`, using `docs/reference/rama-journey-map.html` for look and behaviour. That file's story text, places, kingdoms and drawings were moved into the data files; its code was not copied, and the Google Fonts and blur filter are gone. Story Maps is listed as live from 0.2.0.
 
+## 2026-11-09 — Story Maps: a world basemap from Natural Earth
+
+Stories that span the world (starting with The British Empire) share a `world` basemap. Unlike `south-asia`, its coastlines aren't hand-placed: they are Natural Earth's 1:110m land (public domain), simplified to about 2,500 points, with Antarctica left out and the Bering Strait sliver moved east of 180° so no coast is cut at the map edge. It was converted once with a throwaway script; from now on it is plain data, edited like any other basemap, and the generator is not kept in the repo. Powers areas in world stories are loose, hand-drawn regions cut to the same coastlines. Realms gain `pieces` with step ranges instead of one outline per chapter, so a long story doesn't repeat the same geometry dozens of times.
+

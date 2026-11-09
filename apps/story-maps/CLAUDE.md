@@ -19,7 +19,7 @@ From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnab
 ```
 manifest.json      sections, collections and every story (the hub reads only this)
 stories/           one folder per story: stories/<section>/[<collection>/]<id>/; a built story has story.json there
-basemaps/          shared regional maps, e.g. south-asia.json (coastlines, rivers, ranges, forests, labels)
+basemaps/          shared maps: south-asia.json, world.json (coastlines, rivers, ranges, forests, labels)
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
 hub/page.html      the shell every page is rendered into
 src/theme.css      painted theme (saffron, lapis, gold), light and dark
@@ -43,6 +43,9 @@ scripts/build.mjs  the build; stops on any manifest or story data problem
 - A new story is new **data**, never new engine code. If a story needs something the engine can't do, add a general feature to the engine and describe it in data.
 - A built story is three kinds of data: its `story.json`, a basemap from `basemaps/` (reuse one for stories in the same region) and drawings from `art/glyphs.json`. A new drawing goes in the art library, not in engine code.
 - `story.json` (see `stories/legends/indian/ramayana/story.json`): `id`, `title`, `description`, `canvas`, `basemap`, `source` (Tradition, Archaeology or History; a step may override it), `mapLabel`, `note`; `places` (`at` is [lon, lat], `glyph`, `label` side; `hidden` for route waypoints); `travellers` (icon from the art library); `phases`, `routeStyles`; `timeline` (`track` segments and `ticks`, 0 to 100); `steps` in order (`place`, `phase`, `title`, `native`, `when`, `at` on the timeline, `camera` {`at`, `width` in degrees}, `legs` {`from`, `to`, `traveller`, `style`, `bend`}, `text`, `today`); optional `effects`, `realms` and `people` (`heading`, and `items` with `id`, `name`, `native`, `life`, `role`, `text` and the `steps` they appear in, by index).
+- Optional story settings: `nativeLang`, the language tag for `native` text (Hindi, `hi`, if unset; a step, realm or person can set its own `lang`), and `routes`: `journey` (the default) keeps earlier chapters' routes on the map, `chapter` shows only the current chapter's.
+- A realm gives either `area` (one outline for the whole story) or `pieces`: `[{ steps: [[from, to], ...], areas: [outline or { at, radius }] }]`, each piece shown only in its own steps, so an empire can gain and lose lands chapter by chapter. `{ at: [lon, lat], radius }` (in degrees) is a dot for a port or island too small to outline. `label.moves` (`[{ from, at }]`) moves the label as the realm changes.
+- Basemap extras: a land shape can list `holes` (inland seas, cut out with the even-odd rule), and `sea.shallowsWidth` draws the coastal glow thinner on a wide map.
 - The build runs the engine's `validate` on every built story and stops on any problem. Run `pnpm turbo run test build --filter=@krishnabuilds/story-maps` after editing data.
 - Each story's data sets a `canvas`:
   - `geo`: a real map projected from longitude and latitude (Legends, Chronicles).
