@@ -751,6 +751,19 @@ body.sm-story-page {
   stroke-opacity: 0.9;
   stroke-dasharray: none;
 }
+/* Dots for small holdings stay solid markers, whatever the realm's state. */
+.sm-realm .sm-realm-dot,
+.sm-realm:hover .sm-realm-dot {
+  fill-opacity: 0.9;
+  stroke: #fff6dc;
+  stroke-width: 1.2;
+  stroke-opacity: 1;
+}
+.sm-realm.selected .sm-realm-dot {
+  fill-opacity: 1;
+  stroke: #1b1209;
+  stroke-width: 1.6;
+}
 .sm-realm-label {
   font-family: var(--sm-font-head);
   font-size: 10.5px;

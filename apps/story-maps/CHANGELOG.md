@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2
+
+- Powers: small holdings (ports and islands) are now small solid markers with a light edge, not large dashed discs, so they no longer look like painted regions. The British Empire's Portuguese, Dutch, French and British ports in India now read as ports.
+- World map: the green landscape washes are fainter and more olive, and the one over northern India is gone, so scenery no longer looks like a power's territory.
+
 ## 0.7.1
 
 - The British Empire: British India (1858 to 1947) now includes the whole of Jammu and Kashmir at the top of the map, as maps of the time show it. The coastline data splits it along today's lines, which left the north cut off.

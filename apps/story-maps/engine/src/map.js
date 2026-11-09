@@ -243,6 +243,7 @@
         const style =
           `fill="${realm.color}" fill-opacity="${realm.minor ? ".24" : ".38"}" stroke="#2a1608" stroke-opacity="${realm.minor ? ".4" : ".55"}" ` +
           `stroke-width="${realm.minor ? "1.3" : "1.8"}" stroke-dasharray="${realm.minor ? "2 4" : "5 4"}" stroke-linejoin="round"`;
+        const dotStyle = `fill="${realm.color}" fill-opacity="${realm.minor ? ".7" : ".9"}" stroke="#fff6dc" stroke-width="1.2"`;
         const pieces = realmPieces(realm, last)
           .map((piece) => {
             const rings = piece.areas.filter((a) => Array.isArray(a));
@@ -251,7 +252,8 @@
             const circles = dots
               .map((dot) => {
                 const [x, y] = P(dot.at);
-                return `<circle class="sm-realm-shape" cx="${r1(x)}" cy="${r1(y)}" r="${r1(dot.radius * basemap.projection.unitsPerDegree)}" ${style}/>`;
+                // A holding too small to outline: a solid marker, so it never reads as a painted region.
+                return `<circle class="sm-realm-shape sm-realm-dot" cx="${r1(x)}" cy="${r1(y)}" r="${r1(dot.radius * basemap.projection.unitsPerDegree)}" ${dotStyle}/>`;
               })
               .join("");
             return `<g class="sm-realm-piece" data-steps="${stepsAttr(piece.steps)}">${path}${circles}</g>`;
