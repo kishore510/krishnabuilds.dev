@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0
+
+- New story map in Chronicles: The Indus Cities. From the first farmers at Mehrgarh, about 7000 BCE, through the planned cities of Mohenjo-daro, Harappa, Dholavira and Rakhigarhi, their seals and unread script, crafts and the sea trade with Mesopotamia, to the decline after about 1900 BCE and the rediscovery in the 1920s: 20 chapters on the South Asia map, an Extent layer that grows and shrinks with the civilisation, and 10 people cards for the archaeologists who found it.
+- South Asia map: the Indus and the five rivers of the Punjab (Jhelum, Chenab, Ravi, Beas and Sutlej), which every story on this map now shows.
+- Art: new place glyphs (brick city, seal, village, beads) and travellers (ox cart, reed boat).
+
 ## 0.10.0
 
 - Every catalogue entry now has a summary: a short paragraph on what made it unique, its most iconic figures and its biggest achievements, shown on its entry page and used as the page description. Browse search covers summaries too.
