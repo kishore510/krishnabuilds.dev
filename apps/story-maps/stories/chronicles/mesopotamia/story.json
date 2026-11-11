@@ -1,0 +1,3906 @@
+{
+  "id": "mesopotamia",
+  "title": "Mesopotamia",
+  "description": "An illustrated map of ancient Mesopotamia, from the first farmers and the cities of Sumer through Akkad, Babylon and Assyria to the fall of Babylon, and the rediscovery of its cities and writing.",
+  "canvas": "geo",
+  "basemap": "near-east",
+  "source": "Archaeology",
+  "nativeLang": "akk",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of Mesopotamia, from about 9500 BCE to today",
+  "note": "Based on excavated sites and on texts written in cuneiform; each chapter says which it follows. Dates before about 1500 BCE are approximate and follow the usual (middle) chronology; others put them decades later. Native names are given in Latin letters. The map is stylised and not to scale. Eridu, Nimrud, Nineveh, Lachish and Jerusalem are drawn a little apart from their true spots so their pins don’t overlap. Coasts and rivers are drawn as they are today; the Gulf once reached further inland, and the Euphrates ran further east, past Ur and Uruk. Lands under Powers are painted loosely.",
+  "places": {
+    "cedar-forest": {
+      "name": "Toward the Cedar Forest",
+      "at": [
+        36.1,
+        34.3
+      ],
+      "hidden": true
+    },
+    "meluhha": {
+      "name": "Toward Meluhha, the Indus",
+      "at": [
+        61.8,
+        24.9
+      ],
+      "hidden": true
+    },
+    "gobekli-tepe": {
+      "name": "Göbekli Tepe",
+      "at": [
+        38.92,
+        37.22
+      ],
+      "glyph": "rock",
+      "label": "top"
+    },
+    "habuba-kabira": {
+      "name": "Habuba Kabira",
+      "at": [
+        38.1,
+        36.17
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "hattusa": {
+      "name": "Hattusa",
+      "at": [
+        34.62,
+        40.02
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "mari": {
+      "name": "Mari",
+      "at": [
+        40.89,
+        34.55
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "jarmo": {
+      "name": "Jarmo",
+      "at": [
+        44.95,
+        35.55
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "nineveh": {
+      "name": "Nineveh",
+      "at": [
+        43.12,
+        36.45
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "nimrud": {
+      "name": "Nimrud",
+      "at": [
+        43.4,
+        35.95
+      ],
+      "glyph": "winged-bull",
+      "label": "right"
+    },
+    "behistun": {
+      "name": "Behistun",
+      "at": [
+        47.44,
+        34.39
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "babylon": {
+      "name": "Babylon",
+      "at": [
+        44.42,
+        32.54
+      ],
+      "glyph": "gate",
+      "label": "left"
+    },
+    "nippur": {
+      "name": "Nippur",
+      "at": [
+        45.23,
+        32.13
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "susa": {
+      "name": "Susa",
+      "at": [
+        48.25,
+        32.19
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "uruk": {
+      "name": "Uruk",
+      "at": [
+        45.64,
+        31.32
+      ],
+      "glyph": "brick-city",
+      "label": "left"
+    },
+    "girsu": {
+      "name": "Girsu",
+      "at": [
+        46.18,
+        31.55
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "ur": {
+      "name": "Ur",
+      "at": [
+        46.1,
+        30.96
+      ],
+      "glyph": "ziggurat",
+      "label": "right"
+    },
+    "eridu": {
+      "name": "Eridu",
+      "at": [
+        45.72,
+        30.52
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "dilmun": {
+      "name": "Dilmun",
+      "at": [
+        50.52,
+        26.23
+      ],
+      "glyph": "trading-post",
+      "label": "right"
+    },
+    "magan": {
+      "name": "Magan",
+      "at": [
+        56.7,
+        24.0
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "pasargadae": {
+      "name": "Pasargadae",
+      "at": [
+        53.17,
+        30.2
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "lachish": {
+      "name": "Lachish",
+      "at": [
+        34.75,
+        31.5
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "jerusalem": {
+      "name": "Jerusalem",
+      "at": [
+        35.28,
+        31.85
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "amarna": {
+      "name": "Amarna",
+      "at": [
+        30.9,
+        27.65
+      ],
+      "glyph": "seal",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "boat": {
+      "name": "A trading boat",
+      "icon": "reed-boat"
+    },
+    "gilgamesh": {
+      "name": "Gilgamesh and Enkidu",
+      "icon": "prince"
+    },
+    "army": {
+      "name": "An army",
+      "icon": "chariot"
+    },
+    "elamites": {
+      "name": "The Elamite army",
+      "icon": "chariot"
+    },
+    "hittites": {
+      "name": "The Hittite army",
+      "icon": "chariot"
+    },
+    "envoy": {
+      "name": "An envoy with clay letters",
+      "icon": "scroll"
+    },
+    "exiles": {
+      "name": "Exiles from Judah",
+      "icon": "refugees"
+    },
+    "persians": {
+      "name": "The Persian army",
+      "icon": "chariot"
+    }
+  },
+  "phases": {
+    "roots": {
+      "name": "First farmers",
+      "color": "#8fcf8a"
+    },
+    "cities": {
+      "name": "The cities of Sumer",
+      "color": "#f29a2e"
+    },
+    "empires": {
+      "name": "Akkad and Ur",
+      "color": "#4fc3b0"
+    },
+    "babylon": {
+      "name": "Babylon rises",
+      "color": "#f2c14e"
+    },
+    "assyria": {
+      "name": "Assyria",
+      "color": "#e0573a"
+    },
+    "fall": {
+      "name": "Babylon’s last empire",
+      "color": "#5b8fd9"
+    },
+    "rediscovery": {
+      "name": "Rediscovery",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "river": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "exile": {
+      "color": "#3a2a20",
+      "width": 3,
+      "dash": "1 6",
+      "cap": "round"
+    },
+    "legend": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 12.5,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 38.5,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 51.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 66,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 75.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 88,
+        "color": "rgba(91,143,217,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "9500 BCE"
+      },
+      {
+        "at": 15,
+        "text": "4000"
+      },
+      {
+        "at": 41,
+        "text": "2300"
+      },
+      {
+        "at": 57,
+        "text": "1800"
+      },
+      {
+        "at": 77,
+        "text": "612 BCE"
+      },
+      {
+        "at": 93,
+        "text": "1857 CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "gobekli-tepe",
+      "phase": "roots",
+      "title": "Pillars before farming",
+      "when": "from about 9500 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          39.2,
+          37.0
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "On a hilltop above the Harran plain, people who still hunt and gather raise rings of T-shaped stone pillars, up to about 5.5 metres tall, carved with foxes, boars, snakes and vultures. Why they built it is debated. Einkorn, one of the first wheats to be farmed, was probably first grown in the Karacadağ hills nearby.",
+      "today": "Today: near Şanlıurfa, south-east Turkey; a World Heritage Site."
+    },
+    {
+      "place": "jarmo",
+      "phase": "roots",
+      "title": "Farmers in the foothills",
+      "when": "about 7000 BCE",
+      "at": 6,
+      "camera": {
+        "at": [
+          44.7,
+          35.5
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "In the Zagros foothills, a village of perhaps 150 people lives in mud-walled houses, grows wheat and barley, and herds goats and sheep. Robert and Linda Braidwood dug here from 1948 to find how farming began. In this region it began in uplands like these, where wild grains and animals lived, long before the river plains were settled.",
+      "today": "Today: near Chamchamal, Kurdistan Region, Iraq."
+    },
+    {
+      "place": "eridu",
+      "phase": "roots",
+      "title": "The temple at Eridu",
+      "native": "Eridug",
+      "lang": "sux",
+      "when": "from about 5400 BCE",
+      "at": 10,
+      "camera": {
+        "at": [
+          45.8,
+          30.9
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Farmers settle the marshy south, digging canals from the rivers. At Eridu, excavators found a small mud-brick shrine rebuilt again and again on the same spot, each larger than the last, until a great temple stood there. It was later the house of Enki, god of fresh water. Tradition named Eridu the first city where kingship came down from heaven.",
+      "today": "Today: Abu Shahrain, Dhi Qar, Iraq."
+    },
+    {
+      "place": "uruk",
+      "phase": "cities",
+      "title": "The first city",
+      "native": "Unug",
+      "lang": "sux",
+      "when": "about 4000 to 3100 BCE",
+      "at": 15,
+      "camera": {
+        "at": [
+          45.6,
+          31.4
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Uruk grows into perhaps the world’s first true city, home by about 3100 BCE to tens of thousands of people; estimates vary widely. Temples to the goddess Inanna and the sky god Anu stand on raised platforms, their walls studded with coloured clay cones. Thousands of identical rough bowls, probably for rations, suggest workers were paid in food.",
+      "today": "Today: Warka, Al-Muthanna, Iraq."
+    },
+    {
+      "place": "habuba-kabira",
+      "phase": "cities",
+      "title": "Uruk’s outposts",
+      "when": "about 3500 to 3100 BCE",
+      "at": 19,
+      "camera": {
+        "at": [
+          41.8,
+          34.2
+        ],
+        "width": 9.5
+      },
+      "legs": [
+        {
+          "from": "uruk",
+          "to": "habuba-kabira",
+          "traveller": "boat",
+          "style": "river",
+          "bend": 0.12
+        }
+      ],
+      "text": "Far up the Euphrates, in today’s Syria, a walled town is planned, with houses, temples and pottery just like Uruk’s. Towns like it, from Iran to Anatolia, may have been colonies or trading posts, reaching for the timber, stone and metal the southern plain lacks. Most of it now lies under the lake behind the Tabqa Dam.",
+      "today": "Today: under Lake Assad, Raqqa province, Syria."
+    },
+    {
+      "place": "uruk",
+      "phase": "cities",
+      "title": "Writing on clay",
+      "when": "about 3300 to 3200 BCE",
+      "at": 23,
+      "camera": {
+        "at": [
+          45.6,
+          31.4
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Scribes at Uruk press signs into clay with reeds: pictures of grain, sheep and beer, with numbers. Most early tablets are accounts. Over centuries the signs become wedge-shaped marks, cuneiform (from Latin cuneus, wedge), used for about 3,000 years to write Sumerian, Akkadian and other languages. Counting in sixties lives on in our minutes and seconds.",
+      "today": "Today: Uruk’s tablets are in museums in Baghdad, Berlin and elsewhere."
+    },
+    {
+      "place": "girsu",
+      "phase": "cities",
+      "title": "Rival cities",
+      "when": "about 2900 to 2350 BCE",
+      "at": 28,
+      "source": "History",
+      "camera": {
+        "at": [
+          46.0,
+          31.3
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Sumer is a land of rival city-states, each with its own god and ruler. Lagash and its neighbour Umma fight for generations over a strip of farmland. Eannatum of Lagash records a victory, about 2450 BCE, on the Stele of the Vultures, found at Girsu: one of the oldest pictures of soldiers marching in close ranks behind shields and spears.",
+      "today": "Today: Tello, Dhi Qar, Iraq. The stele is in the Louvre, Paris."
+    },
+    {
+      "place": "ur",
+      "phase": "cities",
+      "title": "The Royal Cemetery",
+      "native": "Urim",
+      "lang": "sux",
+      "when": "about 2600 BCE",
+      "at": 32,
+      "camera": {
+        "at": [
+          46.0,
+          31.0
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Leonard Woolley’s team uncovered about 1,800 graves at Ur in the 1920s. In 16 rich tombs, the dead were buried with gold, lapis lazuli from Afghanistan, carnelian from the Indus and dozens of attendants who died with them. Puabi, named on her cylinder seal, wore a headdress of gold leaves. Finds include the Standard of Ur and great lyres.",
+      "today": "Today: Tell al-Muqayyar, near Nasiriyah, Iraq."
+    },
+    {
+      "place": "uruk",
+      "phase": "cities",
+      "title": "Gilgamesh, king of Uruk",
+      "native": "Bilgames",
+      "lang": "sux",
+      "when": "about 2700 BCE, in tradition",
+      "at": 36,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          41.5,
+          33.2
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "uruk",
+          "to": "cedar-forest",
+          "traveller": "gilgamesh",
+          "style": "legend",
+          "bend": 0.12
+        }
+      ],
+      "text": "The Sumerian King List says Gilgamesh ruled Uruk for 126 years; he may have been a real king, but no inscription of his survives. In poems first written down about 2100 BCE, he and his friend Enkidu kill Humbaba, guardian of the Cedar Forest, and he searches in vain for eternal life. Later versions place the forest in Lebanon.",
+      "today": "Today: the best-known tablets of the epic, from Nineveh, are in the British Museum, London."
+    },
+    {
+      "place": "nippur",
+      "phase": "empires",
+      "title": "Sargon of Akkad",
+      "native": "Sharrum-kin",
+      "when": "about 2334 to 2279 BCE",
+      "at": 41,
+      "source": "History",
+      "camera": {
+        "at": [
+          41.5,
+          33.8
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "nippur",
+          "to": "mari",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.08
+        },
+        {
+          "from": "mari",
+          "to": "cedar-forest",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Sargon, by tradition once cupbearer to a king of Kish, defeats Lugalzagesi of Uruk and builds the first known empire, from the Gulf to Syria. His capital, Akkad, has never been found. His inscriptions survive in later scribes’ copies of statues at Nippur, holy city of the god Enlil, and say he reached the Cedar Forest and the Silver Mountains.",
+      "today": "Today: Nuffar, Al-Qadisiyah, Iraq."
+    },
+    {
+      "place": "dilmun",
+      "phase": "empires",
+      "title": "Ships from distant lands",
+      "when": "about 2300 to 1750 BCE",
+      "at": 45,
+      "source": "History",
+      "camera": {
+        "at": [
+          53.2,
+          27.4
+        ],
+        "width": 15.5
+      },
+      "legs": [
+        {
+          "from": "ur",
+          "to": "dilmun",
+          "traveller": "boat",
+          "style": "sea",
+          "bend": -0.12
+        },
+        {
+          "from": "dilmun",
+          "to": "magan",
+          "traveller": "boat",
+          "style": "sea",
+          "bend": -0.12
+        },
+        {
+          "from": "magan",
+          "to": "meluhha",
+          "traveller": "boat",
+          "style": "sea",
+          "bend": -0.08
+        }
+      ],
+      "text": "Sargon boasts that ships from Dilmun, Magan and Meluhha moor at Akkad’s quay. Dilmun is Bahrain, with its own seals and thousands of burial mounds; Magan, probably Oman, sends copper and diorite; Meluhha is most likely the Indus civilisation. About 1750 BCE, a man named Nanni writes from Ur to complain that the merchant Ea-nasir sold him poor copper.",
+      "today": "Today: Qal’at al-Bahrain, Bahrain; a World Heritage Site."
+    },
+    {
+      "place": "ur",
+      "phase": "empires",
+      "title": "The Third Dynasty of Ur",
+      "native": "Urim",
+      "lang": "sux",
+      "when": "about 2112 to 2004 BCE",
+      "at": 49,
+      "source": "History",
+      "camera": {
+        "at": [
+          47.2,
+          31.5
+        ],
+        "width": 5.5
+      },
+      "legs": [
+        {
+          "from": "susa",
+          "to": "ur",
+          "traveller": "elamites",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Ur-Nammu reunites Sumer and begins the great ziggurat of Ur for the moon god Nanna. Laws in his name, the oldest surviving law code, set fines for injuries. His son Shulgi rules through governors and armies of scribes; tens of thousands of their tablets survive. About 2004 BCE the Elamites sack Ur and carry off its last king, Ibbi-Sin.",
+      "today": "Today: the ziggurat’s lowest stage, restored in the 1980s, still stands at Ur."
+    },
+    {
+      "place": "mari",
+      "phase": "babylon",
+      "title": "The palace of Mari",
+      "when": "about 1775 to 1761 BCE",
+      "at": 54,
+      "source": "History",
+      "camera": {
+        "at": [
+          42.6,
+          33.6
+        ],
+        "width": 6.5
+      },
+      "legs": [
+        {
+          "from": "babylon",
+          "to": "mari",
+          "traveller": "army",
+          "style": "march",
+          "bend": -0.1
+        }
+      ],
+      "text": "King Zimri-Lim rules from a palace of about 300 rooms on the Euphrates. Its archive of some 20,000 tablets shows kings writing to each other as brothers and fathers, trading horses and news. One letter warns that no king is strong by himself: ten or fifteen kings follow Hammurabi of Babylon. Once an ally, Hammurabi takes Mari about 1761 BCE.",
+      "today": "Today: Tell Hariri, near Abu Kamal, Syria."
+    },
+    {
+      "place": "babylon",
+      "phase": "babylon",
+      "title": "Hammurabi’s laws",
+      "native": "Babili",
+      "when": "about 1792 to 1750 BCE",
+      "at": 57,
+      "source": "History",
+      "camera": {
+        "at": [
+          44.6,
+          32.4
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Hammurabi makes Babylon the leading city of Mesopotamia. Late in his reign he raises a basalt stele carved with about 280 laws, beneath a picture of the sun god Shamash. Punishment depends on rank: an eye for an eye between equals, but a fine for blinding a commoner. About 1158 BCE an Elamite king carried it to Susa.",
+      "today": "Today: the stele, found at Susa in 1901, is in the Louvre, Paris."
+    },
+    {
+      "place": "babylon",
+      "phase": "babylon",
+      "title": "Hittites and Kassites",
+      "when": "about 1595 to 1155 BCE",
+      "at": 61,
+      "source": "History",
+      "camera": {
+        "at": [
+          39.6,
+          36.2
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "hattusa",
+          "to": "babylon",
+          "traveller": "hittites",
+          "style": "march",
+          "bend": 0.12
+        }
+      ],
+      "text": "About 1595 BCE the Hittite king Mursili I marches from Anatolia, sacks Babylon and goes home. The Kassites, probably from the Zagros mountains, take the throne and rule Babylonia for about four centuries, longer than any other dynasty there. Their language is barely known, but they keep Babylon’s gods, literature and scribal schools alive.",
+      "today": "Today: Babylon, near Hillah, Iraq. Hattusa, the Hittite capital, is near Boğazkale, Turkey."
+    },
+    {
+      "place": "amarna",
+      "phase": "babylon",
+      "title": "Letters to Pharaoh",
+      "native": "Akhetaten",
+      "lang": "egy",
+      "when": "about 1360 to 1332 BCE",
+      "at": 64,
+      "source": "History",
+      "camera": {
+        "at": [
+          37.6,
+          30.6
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "babylon",
+          "to": "amarna",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": 0.08
+        }
+      ],
+      "text": "Clay letters found at Amarna in 1887 show kings of Babylon, Assyria, Mitanni and the Hittites writing to Egypt’s pharaohs in Akkadian cuneiform, the shared language of diplomacy. They trade gifts and princesses. Burna-Buriash of Babylon complains that Egyptian gold came up short when melted down, and that Assyria’s envoys, his subjects, are received at all.",
+      "today": "Today: Tell el-Amarna, Minya, Egypt. Most of the letters are in Berlin, London and Cairo."
+    },
+    {
+      "place": "nimrud",
+      "phase": "assyria",
+      "title": "Assyria’s new capital",
+      "native": "Kalhu",
+      "when": "879 BCE",
+      "at": 68,
+      "source": "History",
+      "camera": {
+        "at": [
+          43.6,
+          36.0
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Ashurnasirpal II rebuilds Kalhu, today’s Nimrud, as his capital. Winged, human-headed bulls (lamassu) guard its palace gates, and carved stone panels show the king’s wars and hunts. A stele claims he feasted 69,574 guests for ten days at its opening. Assyria’s armies campaign almost every year and move conquered peoples far from home.",
+      "today": "Today: south of Mosul, Nineveh province, Iraq."
+    },
+    {
+      "place": "lachish",
+      "phase": "assyria",
+      "title": "The siege of Lachish",
+      "when": "701 BCE",
+      "at": 71,
+      "source": "History",
+      "camera": {
+        "at": [
+          38.9,
+          33.9
+        ],
+        "width": 10.5
+      },
+      "legs": [
+        {
+          "from": "nineveh",
+          "to": "lachish",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.22
+        }
+      ],
+      "text": "Sennacherib of Assyria invades the kingdom of Judah. His army builds a ramp against the walls of Lachish and takes the city; excavators found the ramp and hundreds of arrowheads. Reliefs at Nineveh show the siege. His annals say he shut King Hezekiah in Jerusalem “like a bird in a cage”, but do not claim to take it.",
+      "today": "Today: Tel Lachish, Israel. The reliefs are in the British Museum, London."
+    },
+    {
+      "place": "nineveh",
+      "phase": "assyria",
+      "title": "Ashurbanipal’s library",
+      "native": "Ninua",
+      "when": "668 to about 631 BCE",
+      "at": 74,
+      "source": "History",
+      "camera": {
+        "at": [
+          43.4,
+          36.3
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Ashurbanipal, who boasts that he learned to read and write, gathers tens of thousands of tablets at Nineveh: omens, medicine, hymns, letters and the Epic of Gilgamesh. When Nineveh later burned, the clay was baked hard and survived. His palace reliefs of lion hunts are among the finest Assyrian art. About 647 BCE he sacks Susa, the Elamite capital.",
+      "today": "Today: Nineveh lies within Mosul, Iraq. Most of the tablets are in the British Museum."
+    },
+    {
+      "place": "nineveh",
+      "phase": "fall",
+      "title": "The fall of Nineveh",
+      "when": "614 to 609 BCE",
+      "at": 77,
+      "source": "History",
+      "camera": {
+        "at": [
+          44.0,
+          34.4
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "babylon",
+          "to": "nineveh",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Within about twenty years of Ashurbanipal’s death, Assyria collapses. The Medes from Iran take Ashur in 614 BCE; with Nabopolassar of Babylon they take Nineveh in 612 after a siege, as the Babylonian Chronicle records. The last Assyrian king holds out at Harran until 609. Assyria’s cities are left in ruins, and its empire passes to Babylon.",
+      "today": "Today: Nineveh’s ruined walls still ring part of eastern Mosul."
+    },
+    {
+      "place": "babylon",
+      "phase": "fall",
+      "title": "Nebuchadnezzar’s Babylon",
+      "native": "Babili",
+      "when": "605 to 562 BCE",
+      "at": 80,
+      "source": "History",
+      "camera": {
+        "at": [
+          39.6,
+          32.4
+        ],
+        "width": 10.5
+      },
+      "legs": [
+        {
+          "from": "jerusalem",
+          "to": "babylon",
+          "traveller": "exiles",
+          "style": "exile",
+          "bend": -0.08
+        }
+      ],
+      "text": "Nebuchadnezzar II rebuilds Babylon with the Ishtar Gate, glazed blue and covered in dragons and bulls, and the great ziggurat Etemenanki, often linked with the Tower of Babel. He destroys Jerusalem in 587 or 586 BCE and takes many Judeans to Babylon in exile. The Hanging Gardens appear only in later Greek writers; where, or whether, they stood is debated.",
+      "today": "Today: the Ishtar Gate is rebuilt in the Pergamon Museum, Berlin. Babylon is a World Heritage Site."
+    },
+    {
+      "place": "babylon",
+      "phase": "fall",
+      "title": "Cyrus takes Babylon",
+      "when": "539 BCE",
+      "at": 83,
+      "source": "History",
+      "camera": {
+        "at": [
+          48.6,
+          31.5
+        ],
+        "width": 10.5
+      },
+      "legs": [
+        {
+          "from": "pasargadae",
+          "to": "babylon",
+          "traveller": "persians",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "King Nabonidus has spent ten years at the Arabian oasis of Tayma, leaving his son Belshazzar in charge. In 539 BCE the Persian king Cyrus defeats the Babylonian army at Opis and takes Babylon, by his own account without fighting. His clay cylinder says the god Marduk chose him, and that he let deported peoples and their gods go home.",
+      "today": "Today: the Cyrus Cylinder, found at Babylon in 1879, is in the British Museum, London."
+    },
+    {
+      "place": "babylon",
+      "phase": "fall",
+      "title": "The last tablets",
+      "when": "331 BCE to the 1st century CE",
+      "at": 86,
+      "source": "History",
+      "camera": {
+        "at": [
+          44.6,
+          32.5
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Alexander the Great takes Babylon in 331 BCE and dies in Nebuchadnezzar’s palace in 323. His general Seleucus founds a new capital, Seleucia on the Tigris, and Babylon slowly empties. Its astronomers go on recording the sky, and Greek astronomers use their eclipse records. The last known dated cuneiform tablet, an astronomical text, comes from the first century CE.",
+      "today": "Today: after that, no one could read cuneiform for about 1,800 years."
+    },
+    {
+      "place": "nimrud",
+      "phase": "rediscovery",
+      "title": "Digging up Assyria",
+      "when": "1842 to 1855",
+      "at": 90,
+      "source": "History",
+      "camera": {
+        "at": [
+          43.6,
+          36.1
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Paul-Émile Botta, the French consul at Mosul, finds Assyrian palace reliefs at Khorsabad in 1843. Austen Henry Layard digs Nimrud from 1845 and then Nineveh, with Hormuzd Rassam and hundreds of local workmen. Winged bulls weighing many tonnes are floated down the Tigris on rafts and shipped to Paris and London, where crowds come to see them.",
+      "today": "Today: Assyrian reliefs fill galleries in the Louvre and the British Museum."
+    },
+    {
+      "place": "behistun",
+      "phase": "rediscovery",
+      "title": "Reading cuneiform",
+      "when": "1835 to 1857",
+      "at": 93,
+      "source": "History",
+      "camera": {
+        "at": [
+          47.0,
+          34.3
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "On a cliff at Behistun, Darius I of Persia had his deeds carved about 520 BCE in three languages: Old Persian, Elamite and Babylonian. Henry Rawlinson copies it between 1835 and 1847. In 1857 Rawlinson, Edward Hincks, Henry Fox Talbot and Jules Oppert each translate the same newly found text; their versions agree, and Akkadian can be read again.",
+      "today": "Today: Bisotun, near Kermanshah, Iran; a World Heritage Site."
+    },
+    {
+      "place": "nineveh",
+      "phase": "rediscovery",
+      "title": "A flood in the tablets",
+      "when": "1872",
+      "at": 96,
+      "source": "History",
+      "camera": {
+        "at": [
+          43.4,
+          36.3
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "George Smith, a self-taught assistant at the British Museum, is sorting tablets from Ashurbanipal’s library when he reads of a great flood, a boat resting on a mountain and birds sent out to find dry land: a story much like Noah’s flood in the Bible. In 1873 a London newspaper sends him to Nineveh, where he finds more of it.",
+      "today": "Today: the Flood Tablet is in the British Museum, London."
+    },
+    {
+      "place": "nimrud",
+      "phase": "rediscovery",
+      "title": "Loss and repair",
+      "when": "2003 to today",
+      "at": 99,
+      "source": "History",
+      "camera": {
+        "at": [
+          43.6,
+          36.0
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "In April 2003, during the invasion of Iraq, the Iraq Museum in Baghdad is looted; about 15,000 objects are taken, by one estimate, and thousands have since come back. In 2015 Islamic State militants blow up Nimrud’s palace and smash its winged bulls, and damage Nineveh and Hatra. Iraqi and international teams are now restoring what they can.",
+      "today": "Today: Nimrud, south of Mosul, Iraq."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "sumer",
+        "name": "Sumer",
+        "native": "Kiengi",
+        "lang": "sux",
+        "color": "#c8693a",
+        "active": [
+          [
+            3,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Sumer",
+          "at": [
+            45.6,
+            31.9
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  45.3,
+                  32.6
+                ],
+                [
+                  46.3,
+                  32.0
+                ],
+                [
+                  47.0,
+                  31.4
+                ],
+                [
+                  47.4,
+                  30.8
+                ],
+                [
+                  46.8,
+                  30.4
+                ],
+                [
+                  45.9,
+                  30.3
+                ],
+                [
+                  45.3,
+                  30.8
+                ],
+                [
+                  44.1,
+                  32.3
+                ],
+                [
+                  44.3,
+                  32.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Main cities": "Eridu, Ur, Uruk, Lagash, Umma, Nippur and Kish",
+          "Language": "Sumerian, related to no other known language",
+          "Today": "Southern Iraq"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Not named: no ruler’s name survives from these years"
+          },
+          {
+            "from": 6,
+            "text": "Each city has its own ruler, such as Eannatum of Lagash"
+          },
+          {
+            "from": 8,
+            "text": "Gilgamesh of Uruk, in tradition"
+          }
+        ],
+        "role": "The land of the first cities and the first writing, in the far south of Mesopotamia.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Uruk’s traders build outposts far up the Euphrates"
+          },
+          {
+            "from": 7,
+            "text": "Carnelian from the Indus and lapis from Afghanistan reach Ur"
+          }
+        ]
+      },
+      {
+        "id": "akkad",
+        "name": "Akkadian Empire",
+        "native": "Akkade",
+        "color": "#e0892e",
+        "active": [
+          [
+            9,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Akkadian Empire",
+          "at": [
+            42.6,
+            34.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                9,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  38.0,
+                  37.2
+                ],
+                [
+                  40.0,
+                  37.4
+                ],
+                [
+                  42.5,
+                  37.2
+                ],
+                [
+                  44.3,
+                  36.6
+                ],
+                [
+                  47.4,
+                  33.8
+                ],
+                [
+                  49.0,
+                  32.6
+                ],
+                [
+                  49.6,
+                  31.2
+                ],
+                [
+                  48.7,
+                  30.1
+                ],
+                [
+                  48.07,
+                  30.04
+                ],
+                [
+                  47.6,
+                  29.9
+                ],
+                [
+                  46.4,
+                  30.2
+                ],
+                [
+                  44.8,
+                  31.0
+                ],
+                [
+                  43.2,
+                  32.4
+                ],
+                [
+                  41.2,
+                  33.8
+                ],
+                [
+                  37.2,
+                  35.2
+                ],
+                [
+                  36.2,
+                  35.8
+                ],
+                [
+                  36.4,
+                  36.6
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Akkad, not yet found",
+          "Founded": "About 2334 BCE, by Sargon",
+          "Ended": "About 2154 BCE",
+          "Today": "Iraq, and parts of Syria, Turkey and Iran"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "Sargon"
+          }
+        ],
+        "role": "The first known empire, joining the Sumerian and Akkadian cities under one king.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Defeats Lugalzagesi of Uruk"
+          },
+          {
+            "from": 10,
+            "text": "Ships from Dilmun, Magan and Meluhha dock at Akkad"
+          }
+        ]
+      },
+      {
+        "id": "dilmun",
+        "name": "Dilmun",
+        "color": "#4fc3b0",
+        "minor": true,
+        "active": [
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Dilmun",
+          "at": [
+            50.0,
+            25.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                10,
+                10
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  50.55,
+                  26.05
+                ],
+                "radius": 0.3
+              },
+              {
+                "at": [
+                  48.33,
+                  29.44
+                ],
+                "radius": 0.15
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "Bahrain, with Failaka island off Kuwait",
+          "Known for": "Trade in copper, and burial mounds",
+          "Today": "Bahrain and Kuwait"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Not named in these years"
+          }
+        ],
+        "role": "A trading land in the Gulf, between Mesopotamia, Magan and Meluhha.",
+        "ties": []
+      },
+      {
+        "id": "ur3",
+        "name": "Third Dynasty of Ur",
+        "native": "Urim",
+        "lang": "sux",
+        "color": "#e0892e",
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Ur III",
+          "at": [
+            44.9,
+            33.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                11,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  44.6,
+                  35.8
+                ],
+                [
+                  47.6,
+                  33.3
+                ],
+                [
+                  49.2,
+                  32.4
+                ],
+                [
+                  49.0,
+                  31.0
+                ],
+                [
+                  48.03,
+                  30.03
+                ],
+                [
+                  46.8,
+                  30.1
+                ],
+                [
+                  45.6,
+                  30.5
+                ],
+                [
+                  44.6,
+                  31.3
+                ],
+                [
+                  43.6,
+                  32.4
+                ],
+                [
+                  43.0,
+                  33.6
+                ],
+                [
+                  42.8,
+                  34.9
+                ],
+                [
+                  43.0,
+                  36.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Ur",
+          "Founded": "About 2112 BCE, by Ur-Nammu",
+          "Ended": "About 2004 BCE, when Elam sacked Ur",
+          "Today": "Iraq, and parts of western Iran"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Ur-Nammu, then his son Shulgi; the last king is Ibbi-Sin"
+          }
+        ],
+        "role": "The last great Sumerian kingdom, run by governors and a vast staff of scribes.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Elam sacks Ur and takes Ibbi-Sin captive"
+          }
+        ]
+      },
+      {
+        "id": "elam",
+        "name": "Elam",
+        "native": "Haltamti",
+        "lang": "elx",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Elam",
+          "at": [
+            50.6,
+            30.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                11,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  49.4,
+                  33.3
+                ],
+                [
+                  51.0,
+                  31.8
+                ],
+                [
+                  53.5,
+                  30.6
+                ],
+                [
+                  54.2,
+                  29.2
+                ],
+                [
+                  52.6,
+                  28.6
+                ],
+                [
+                  50.43,
+                  29.65
+                ],
+                [
+                  50.17,
+                  29.92
+                ],
+                [
+                  50.07,
+                  30.2
+                ],
+                [
+                  49.55,
+                  30.03
+                ],
+                [
+                  49.0,
+                  30.37
+                ],
+                [
+                  49.19,
+                  30.38
+                ],
+                [
+                  49.22,
+                  30.47
+                ],
+                [
+                  49.0,
+                  30.51
+                ],
+                [
+                  49.04,
+                  30.45
+                ],
+                [
+                  48.9,
+                  30.35
+                ],
+                [
+                  48.8,
+                  30.4
+                ],
+                [
+                  47.9,
+                  32.4
+                ],
+                [
+                  47.9,
+                  33.6
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Susa and Anshan",
+          "Language": "Elamite, related to no other known language",
+          "Today": "South-western Iran"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Kings of Shimashki, by later lists"
+          }
+        ],
+        "role": "Mesopotamia’s neighbour and rival in the Iranian lowlands and hills.",
+        "ties": []
+      },
+      {
+        "id": "mari-kingdom",
+        "name": "Kingdom of Mari",
+        "color": "#4fc3b0",
+        "minor": true,
+        "active": [
+          [
+            12,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Mari",
+          "at": [
+            40.4,
+            35.3
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                12,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  40.6,
+                  35.5
+                ],
+                [
+                  41.8,
+                  34.7
+                ],
+                [
+                  42.0,
+                  34.1
+                ],
+                [
+                  41.2,
+                  33.9
+                ],
+                [
+                  40.2,
+                  34.4
+                ],
+                [
+                  39.2,
+                  35.1
+                ],
+                [
+                  39.4,
+                  35.7
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Mari",
+          "Known for": "A great palace and its archive",
+          "Today": "Eastern Syria"
+        },
+        "rulers": [
+          {
+            "from": 12,
+            "text": "Zimri-Lim"
+          }
+        ],
+        "role": "A rich kingdom on the middle Euphrates, controlling trade between Babylonia and Syria.",
+        "ties": [
+          {
+            "from": 12,
+            "text": "Taken by Hammurabi of Babylon, about 1761 BCE"
+          }
+        ]
+      },
+      {
+        "id": "old-babylon",
+        "name": "Babylon of Hammurabi",
+        "native": "Babili",
+        "color": "#f2c14e",
+        "active": [
+          [
+            12,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Babylon",
+          "at": [
+            44.2,
+            33.6
+          ],
+          "moves": [
+            {
+              "from": 13,
+              "at": [
+                43.6,
+                34.3
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                12,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  44.9,
+                  33.3
+                ],
+                [
+                  45.5,
+                  32.5
+                ],
+                [
+                  45.0,
+                  31.9
+                ],
+                [
+                  44.0,
+                  32.2
+                ],
+                [
+                  43.5,
+                  32.9
+                ],
+                [
+                  43.6,
+                  33.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  41.8,
+                  36.1
+                ],
+                [
+                  43.4,
+                  36.6
+                ],
+                [
+                  44.8,
+                  35.6
+                ],
+                [
+                  46.8,
+                  33.0
+                ],
+                [
+                  47.4,
+                  31.6
+                ],
+                [
+                  47.7,
+                  30.4
+                ],
+                [
+                  46.9,
+                  30.1
+                ],
+                [
+                  45.8,
+                  30.4
+                ],
+                [
+                  44.7,
+                  31.2
+                ],
+                [
+                  43.4,
+                  32.5
+                ],
+                [
+                  42.1,
+                  33.6
+                ],
+                [
+                  40.8,
+                  34.2
+                ],
+                [
+                  40.1,
+                  34.8
+                ],
+                [
+                  40.4,
+                  35.4
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Babylon",
+          "Founded": "About 1894 BCE, by Sumu-abum",
+          "Ended": "About 1595 BCE, when the Hittites sacked Babylon",
+          "Today": "Iraq and eastern Syria"
+        },
+        "rulers": [
+          {
+            "from": 12,
+            "text": "Hammurabi"
+          }
+        ],
+        "role": "The first dynasty of Babylon, which made a small town the leading city of Mesopotamia.",
+        "ties": [
+          {
+            "from": 12,
+            "text": "Takes Mari, about 1761 BCE"
+          },
+          {
+            "from": 13,
+            "text": "Hammurabi now rules from Mari to the Gulf"
+          }
+        ]
+      },
+      {
+        "id": "kassite",
+        "name": "Kassite Babylonia",
+        "native": "Karduniash",
+        "color": "#f2c14e",
+        "active": [
+          [
+            14,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Kassite Babylonia",
+          "at": [
+            45.0,
+            32.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                14,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  44.6,
+                  34.7
+                ],
+                [
+                  46.1,
+                  33.7
+                ],
+                [
+                  47.3,
+                  32.3
+                ],
+                [
+                  47.8,
+                  30.4
+                ],
+                [
+                  46.9,
+                  30.1
+                ],
+                [
+                  45.8,
+                  30.4
+                ],
+                [
+                  44.6,
+                  31.3
+                ],
+                [
+                  43.4,
+                  32.6
+                ],
+                [
+                  42.8,
+                  33.5
+                ],
+                [
+                  43.0,
+                  34.4
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Babylon, and later also Dur-Kurigalzu",
+          "Ruled": "About 1595 to 1155 BCE",
+          "Today": "Iraq"
+        },
+        "rulers": [
+          {
+            "from": 14,
+            "text": "Kassite kings, for about four centuries"
+          },
+          {
+            "from": 15,
+            "text": "Burna-Buriash II"
+          }
+        ],
+        "role": "Babylonia under its longest-ruling dynasty, one of the great powers of its day.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Writes to Egypt as an equal"
+          }
+        ]
+      },
+      {
+        "id": "hatti",
+        "name": "Hittite kingdom",
+        "native": "Hatti",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            14,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Hittites",
+          "at": [
+            34.6,
+            39.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                14,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  31.8,
+                  40.4
+                ],
+                [
+                  34.6,
+                  41.6
+                ],
+                [
+                  37.6,
+                  41.0
+                ],
+                [
+                  39.2,
+                  39.2
+                ],
+                [
+                  38.2,
+                  37.4
+                ],
+                [
+                  36.6,
+                  36.8
+                ],
+                [
+                  36.19,
+                  36.75
+                ],
+                [
+                  36.05,
+                  36.91
+                ],
+                [
+                  35.64,
+                  36.68
+                ],
+                [
+                  35.21,
+                  36.63
+                ],
+                [
+                  34.7,
+                  36.82
+                ],
+                [
+                  34.44,
+                  36.69
+                ],
+                [
+                  32.4,
+                  37.0
+                ],
+                [
+                  30.5,
+                  38.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Hattusa",
+          "Language": "Hittite, the oldest written Indo-European language",
+          "Today": "Central Turkey"
+        },
+        "rulers": [
+          {
+            "from": 14,
+            "text": "Mursili I"
+          },
+          {
+            "from": 15,
+            "text": "Suppiluliuma I"
+          }
+        ],
+        "role": "A kingdom of central Anatolia that became one of the great powers.",
+        "ties": [
+          {
+            "from": 14,
+            "text": "Mursili I sacks Babylon, about 1595 BCE"
+          }
+        ]
+      },
+      {
+        "id": "egypt",
+        "name": "Egypt",
+        "color": "#4fc3b0",
+        "minor": true,
+        "active": [
+          [
+            15,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Egypt",
+          "at": [
+            31.4,
+            27.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                15,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  29.6,
+                  31.0
+                ],
+                [
+                  31.02,
+                  31.5
+                ],
+                [
+                  31.84,
+                  31.37
+                ],
+                [
+                  31.77,
+                  31.29
+                ],
+                [
+                  32.01,
+                  31.22
+                ],
+                [
+                  32.1,
+                  31.09
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.22,
+                  31.29
+                ],
+                [
+                  32.31,
+                  31.26
+                ],
+                [
+                  32.6,
+                  30.0
+                ],
+                [
+                  32.59,
+                  29.92
+                ],
+                [
+                  32.47,
+                  29.93
+                ],
+                [
+                  32.36,
+                  29.63
+                ],
+                [
+                  32.51,
+                  29.43
+                ],
+                [
+                  32.3,
+                  28.0
+                ],
+                [
+                  33.2,
+                  26.0
+                ],
+                [
+                  33.0,
+                  24.0
+                ],
+                [
+                  32.6,
+                  22.5
+                ],
+                [
+                  32.0,
+                  24.0
+                ],
+                [
+                  31.3,
+                  26.5
+                ],
+                [
+                  30.6,
+                  28.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Akhetaten (Amarna), under Akhenaten",
+          "Today": "Egypt"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Amenhotep III, then Akhenaten"
+          }
+        ],
+        "role": "The richest of the great powers, writing to the others in Akkadian.",
+        "ties": []
+      },
+      {
+        "id": "mitanni",
+        "name": "Mitanni",
+        "color": "#c8693a",
+        "minor": true,
+        "active": [
+          [
+            15,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Mitanni",
+          "at": [
+            39.8,
+            36.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                15,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  37.4,
+                  37.4
+                ],
+                [
+                  40.0,
+                  37.8
+                ],
+                [
+                  42.4,
+                  37.4
+                ],
+                [
+                  43.8,
+                  36.4
+                ],
+                [
+                  43.2,
+                  35.2
+                ],
+                [
+                  41.6,
+                  35.2
+                ],
+                [
+                  39.6,
+                  35.6
+                ],
+                [
+                  37.6,
+                  35.6
+                ],
+                [
+                  36.4,
+                  36.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Washukanni, not yet found for certain",
+          "Today": "Northern Syria and south-east Turkey"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Tushratta"
+          }
+        ],
+        "role": "A Hurrian kingdom of northern Mesopotamia, soon broken by the Hittites and Assyria.",
+        "ties": []
+      },
+      {
+        "id": "assyria",
+        "name": "Assyria",
+        "native": "Mat Ashur",
+        "color": "#d9432a",
+        "active": [
+          [
+            15,
+            19
+          ]
+        ],
+        "label": {
+          "text": "Assyria",
+          "at": [
+            43.2,
+            36.0
+          ],
+          "moves": [
+            {
+              "from": 16,
+              "at": [
+                41.6,
+                36.4
+              ]
+            },
+            {
+              "from": 17,
+              "at": [
+                40.6,
+                35.6
+              ]
+            },
+            {
+              "from": 19,
+              "at": [
+                43.2,
+                36.0
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                15,
+                15
+              ],
+              [
+                19,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  43.4,
+                  37.2
+                ],
+                [
+                  44.4,
+                  36.6
+                ],
+                [
+                  44.6,
+                  35.6
+                ],
+                [
+                  43.8,
+                  35.0
+                ],
+                [
+                  43.0,
+                  34.9
+                ],
+                [
+                  42.2,
+                  35.6
+                ],
+                [
+                  41.8,
+                  36.3
+                ],
+                [
+                  42.0,
+                  36.9
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                16,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  40.0,
+                  37.6
+                ],
+                [
+                  42.5,
+                  37.6
+                ],
+                [
+                  44.4,
+                  37.0
+                ],
+                [
+                  45.6,
+                  35.8
+                ],
+                [
+                  45.0,
+                  34.4
+                ],
+                [
+                  43.8,
+                  34.1
+                ],
+                [
+                  42.4,
+                  34.6
+                ],
+                [
+                  40.8,
+                  35.0
+                ],
+                [
+                  39.0,
+                  35.6
+                ],
+                [
+                  38.0,
+                  36.1
+                ],
+                [
+                  38.2,
+                  36.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  34.3,
+                  31.3
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.83,
+                  35.5
+                ],
+                [
+                  35.86,
+                  35.87
+                ],
+                [
+                  35.96,
+                  36.0
+                ],
+                [
+                  35.88,
+                  36.17
+                ],
+                [
+                  35.9,
+                  36.4
+                ],
+                [
+                  36.8,
+                  37.3
+                ],
+                [
+                  38.6,
+                  37.8
+                ],
+                [
+                  41.0,
+                  38.0
+                ],
+                [
+                  43.5,
+                  37.8
+                ],
+                [
+                  45.2,
+                  36.8
+                ],
+                [
+                  46.6,
+                  35.4
+                ],
+                [
+                  47.6,
+                  33.8
+                ],
+                [
+                  47.9,
+                  32.5
+                ],
+                [
+                  48.0,
+                  30.8
+                ],
+                [
+                  47.4,
+                  29.9
+                ],
+                [
+                  45.0,
+                  30.8
+                ],
+                [
+                  41.4,
+                  33.0
+                ],
+                [
+                  39.2,
+                  33.0
+                ],
+                [
+                  37.4,
+                  31.6
+                ],
+                [
+                  35.6,
+                  30.0
+                ],
+                [
+                  34.9,
+                  29.6
+                ],
+                [
+                  34.3,
+                  30.3
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Ashur, then Nimrud (Kalhu), Dur-Sharrukin and Nineveh",
+          "Ended": "612 to 609 BCE",
+          "Today": "Iraq, Syria and south-east Turkey, and for a time the Levant and Egypt"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Ashur-uballit I"
+          },
+          {
+            "from": 16,
+            "text": "Ashurnasirpal II"
+          },
+          {
+            "from": 17,
+            "text": "Sennacherib"
+          },
+          {
+            "from": 18,
+            "text": "Ashurbanipal"
+          },
+          {
+            "from": 19,
+            "text": "Sin-shar-ishkun, who dies as Nineveh falls; then Ashur-uballit II, at Harran"
+          }
+        ],
+        "role": "A kingdom on the upper Tigris that built the largest empire the world had yet seen.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Its envoys reach Egypt"
+          },
+          {
+            "from": 17,
+            "text": "Takes Lachish in Judah, 701 BCE"
+          },
+          {
+            "from": 18,
+            "text": "Sacks Susa, about 647 BCE"
+          },
+          {
+            "from": 19,
+            "text": "Nineveh falls to the Medes and Babylonians"
+          }
+        ]
+      },
+      {
+        "id": "judah",
+        "name": "Kingdom of Judah",
+        "color": "#4fc3b0",
+        "minor": true,
+        "active": [
+          [
+            17,
+            17
+          ],
+          [
+            20,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Judah",
+          "at": [
+            35.6,
+            31.1
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                17,
+                17
+              ],
+              [
+                20,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  35.0,
+                  31.95
+                ],
+                [
+                  35.5,
+                  31.95
+                ],
+                [
+                  35.5,
+                  31.3
+                ],
+                [
+                  35.1,
+                  31.0
+                ],
+                [
+                  34.75,
+                  31.3
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Jerusalem",
+          "Today": "Israel and the West Bank"
+        },
+        "rulers": [
+          {
+            "from": 17,
+            "text": "Hezekiah"
+          },
+          {
+            "from": 20,
+            "text": "Zedekiah, the last king"
+          }
+        ],
+        "role": "A small hill kingdom caught between Egypt, Assyria and Babylon.",
+        "ties": [
+          {
+            "from": 17,
+            "text": "Pays tribute to Assyria"
+          },
+          {
+            "from": 20,
+            "text": "Jerusalem destroyed, 587 or 586 BCE"
+          }
+        ]
+      },
+      {
+        "id": "media",
+        "name": "Medes",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            19,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Medes",
+          "at": [
+            49.6,
+            35.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                19,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  48.4,
+                  38.8
+                ],
+                [
+                  49.2,
+                  37.4
+                ],
+                [
+                  51.12,
+                  36.74
+                ],
+                [
+                  51.76,
+                  36.61
+                ],
+                [
+                  52.52,
+                  36.69
+                ],
+                [
+                  53.8,
+                  36.6
+                ],
+                [
+                  53.6,
+                  34.2
+                ],
+                [
+                  50.2,
+                  33.4
+                ],
+                [
+                  48.0,
+                  34.0
+                ],
+                [
+                  46.4,
+                  35.0
+                ],
+                [
+                  45.2,
+                  36.5
+                ],
+                [
+                  45.4,
+                  38.6
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Ecbatana, today’s Hamadan",
+          "Today": "North-western Iran"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Cyaxares"
+          },
+          {
+            "from": 20,
+            "text": "Astyages"
+          }
+        ],
+        "role": "A people of western Iran who helped bring down Assyria.",
+        "ties": [
+          {
+            "from": 19,
+            "text": "Takes Ashur and, with Babylon, Nineveh"
+          }
+        ]
+      },
+      {
+        "id": "neo-babylon",
+        "name": "Neo-Babylonian Empire",
+        "native": "Babili",
+        "color": "#f2c14e",
+        "active": [
+          [
+            19,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Babylonia",
+          "at": [
+            45.0,
+            32.2
+          ],
+          "moves": [
+            {
+              "from": 20,
+              "at": [
+                40.4,
+                33.2
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                19,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  44.6,
+                  34.8
+                ],
+                [
+                  46.0,
+                  33.8
+                ],
+                [
+                  47.4,
+                  32.3
+                ],
+                [
+                  47.9,
+                  30.4
+                ],
+                [
+                  46.9,
+                  30.1
+                ],
+                [
+                  45.8,
+                  30.4
+                ],
+                [
+                  44.6,
+                  31.3
+                ],
+                [
+                  43.3,
+                  32.6
+                ],
+                [
+                  42.7,
+                  33.6
+                ],
+                [
+                  43.2,
+                  34.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                20,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  34.3,
+                  31.2
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.86,
+                  35.47
+                ],
+                [
+                  36.2,
+                  36.5
+                ],
+                [
+                  38.2,
+                  36.9
+                ],
+                [
+                  40.6,
+                  36.6
+                ],
+                [
+                  42.2,
+                  36.1
+                ],
+                [
+                  43.6,
+                  35.1
+                ],
+                [
+                  45.5,
+                  34.1
+                ],
+                [
+                  46.8,
+                  33.0
+                ],
+                [
+                  47.8,
+                  31.5
+                ],
+                [
+                  48.0,
+                  30.2
+                ],
+                [
+                  47.2,
+                  29.6
+                ],
+                [
+                  46.0,
+                  30.2
+                ],
+                [
+                  41.0,
+                  32.3
+                ],
+                [
+                  39.0,
+                  32.2
+                ],
+                [
+                  37.0,
+                  30.8
+                ],
+                [
+                  35.5,
+                  29.6
+                ],
+                [
+                  34.9,
+                  29.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Babylon",
+          "Founded": "626 BCE, by Nabopolassar",
+          "Ended": "539 BCE, taken by Cyrus of Persia",
+          "Today": "Iraq, Syria, Lebanon, Jordan, Israel and the West Bank"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Nabopolassar"
+          },
+          {
+            "from": 20,
+            "text": "Nebuchadnezzar II"
+          },
+          {
+            "from": 21,
+            "text": "Nabonidus, with his son Belshazzar in Babylon"
+          }
+        ],
+        "role": "Babylon’s last empire, which took over most of Assyria’s lands.",
+        "ties": [
+          {
+            "from": 19,
+            "text": "Helps take Nineveh, 612 BCE"
+          },
+          {
+            "from": 20,
+            "text": "Destroys Jerusalem"
+          },
+          {
+            "from": 21,
+            "text": "Falls to Cyrus"
+          }
+        ]
+      },
+      {
+        "id": "persia",
+        "name": "Persian Empire",
+        "native": "Parsa",
+        "lang": "peo",
+        "color": "#b3488a",
+        "active": [
+          [
+            21,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Persian Empire",
+          "at": [
+            52.0,
+            33.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                21,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.71,
+                  40.38
+                ],
+                [
+                  27.28,
+                  40.46
+                ],
+                [
+                  27.48,
+                  40.32
+                ],
+                [
+                  27.73,
+                  40.33
+                ],
+                [
+                  27.85,
+                  40.38
+                ],
+                [
+                  27.73,
+                  40.48
+                ],
+                [
+                  27.87,
+                  40.51
+                ],
+                [
+                  27.99,
+                  40.49
+                ],
+                [
+                  27.96,
+                  40.37
+                ],
+                [
+                  29.01,
+                  40.39
+                ],
+                [
+                  29.06,
+                  40.42
+                ],
+                [
+                  28.79,
+                  40.53
+                ],
+                [
+                  28.96,
+                  40.63
+                ],
+                [
+                  29.85,
+                  40.76
+                ],
+                [
+                  29.36,
+                  40.81
+                ],
+                [
+                  29.11,
+                  40.94
+                ],
+                [
+                  29.05,
+                  41.01
+                ],
+                [
+                  29.15,
+                  41.22
+                ],
+                [
+                  31.25,
+                  41.11
+                ],
+                [
+                  31.46,
+                  41.32
+                ],
+                [
+                  31.7,
+                  41.42
+                ],
+                [
+                  35.0,
+                  42.0
+                ],
+                [
+                  35.12,
+                  41.96
+                ],
+                [
+                  35.3,
+                  41.73
+                ],
+                [
+                  35.56,
+                  41.63
+                ],
+                [
+                  35.88,
+                  41.71
+                ],
+                [
+                  36.07,
+                  41.64
+                ],
+                [
+                  36.18,
+                  41.43
+                ],
+                [
+                  36.41,
+                  41.27
+                ],
+                [
+                  36.78,
+                  41.36
+                ],
+                [
+                  37.07,
+                  41.18
+                ],
+                [
+                  38.38,
+                  40.92
+                ],
+                [
+                  39.43,
+                  41.11
+                ],
+                [
+                  40.13,
+                  40.94
+                ],
+                [
+                  41.09,
+                  41.26
+                ],
+                [
+                  41.5,
+                  41.3
+                ],
+                [
+                  45.0,
+                  41.5
+                ],
+                [
+                  48.6,
+                  41.6
+                ],
+                [
+                  49.3,
+                  40.3
+                ],
+                [
+                  49.02,
+                  39.13
+                ],
+                [
+                  48.85,
+                  38.82
+                ],
+                [
+                  48.93,
+                  38.02
+                ],
+                [
+                  49.08,
+                  37.67
+                ],
+                [
+                  49.37,
+                  37.52
+                ],
+                [
+                  50.08,
+                  37.42
+                ],
+                [
+                  50.4,
+                  37.1
+                ],
+                [
+                  51.12,
+                  36.74
+                ],
+                [
+                  51.76,
+                  36.61
+                ],
+                [
+                  52.19,
+                  36.62
+                ],
+                [
+                  53.66,
+                  36.91
+                ],
+                [
+                  53.86,
+                  36.9
+                ],
+                [
+                  53.68,
+                  36.85
+                ],
+                [
+                  53.77,
+                  36.82
+                ],
+                [
+                  54.02,
+                  36.85
+                ],
+                [
+                  53.9,
+                  37.4
+                ],
+                [
+                  53.87,
+                  38.95
+                ],
+                [
+                  53.7,
+                  39.21
+                ],
+                [
+                  53.41,
+                  39.32
+                ],
+                [
+                  53.24,
+                  39.61
+                ],
+                [
+                  53.6,
+                  39.55
+                ],
+                [
+                  53.47,
+                  39.67
+                ],
+                [
+                  53.49,
+                  39.91
+                ],
+                [
+                  53.0,
+                  40.0
+                ],
+                [
+                  53.61,
+                  40.82
+                ],
+                [
+                  53.87,
+                  40.65
+                ],
+                [
+                  54.38,
+                  40.69
+                ],
+                [
+                  54.32,
+                  40.83
+                ],
+                [
+                  54.37,
+                  40.87
+                ],
+                [
+                  54.71,
+                  40.89
+                ],
+                [
+                  54.67,
+                  41.12
+                ],
+                [
+                  54.12,
+                  41.49
+                ],
+                [
+                  54.2,
+                  41.6
+                ],
+                [
+                  56.0,
+                  42.6
+                ],
+                [
+                  62.0,
+                  42.6
+                ],
+                [
+                  62.0,
+                  25.2
+                ],
+                [
+                  60.62,
+                  25.33
+                ],
+                [
+                  60.51,
+                  25.44
+                ],
+                [
+                  60.43,
+                  25.34
+                ],
+                [
+                  59.46,
+                  25.48
+                ],
+                [
+                  58.94,
+                  25.48
+                ],
+                [
+                  57.94,
+                  25.69
+                ],
+                [
+                  57.8,
+                  25.65
+                ],
+                [
+                  57.47,
+                  25.77
+                ],
+                [
+                  57.2,
+                  26.13
+                ],
+                [
+                  57.04,
+                  26.8
+                ],
+                [
+                  56.91,
+                  26.99
+                ],
+                [
+                  56.73,
+                  27.13
+                ],
+                [
+                  56.4,
+                  27.2
+                ],
+                [
+                  53.96,
+                  26.72
+                ],
+                [
+                  52.69,
+                  27.33
+                ],
+                [
+                  52.48,
+                  27.62
+                ],
+                [
+                  52.03,
+                  27.82
+                ],
+                [
+                  51.52,
+                  27.91
+                ],
+                [
+                  51.28,
+                  28.16
+                ],
+                [
+                  51.06,
+                  28.73
+                ],
+                [
+                  50.87,
+                  28.87
+                ],
+                [
+                  50.88,
+                  29.06
+                ],
+                [
+                  50.68,
+                  29.15
+                ],
+                [
+                  50.65,
+                  29.42
+                ],
+                [
+                  50.17,
+                  29.92
+                ],
+                [
+                  50.07,
+                  30.2
+                ],
+                [
+                  49.55,
+                  30.03
+                ],
+                [
+                  49.03,
+                  30.33
+                ],
+                [
+                  49.05,
+                  30.4
+                ],
+                [
+                  49.25,
+                  30.41
+                ],
+                [
+                  49.13,
+                  30.51
+                ],
+                [
+                  49.0,
+                  30.51
+                ],
+                [
+                  49.04,
+                  30.45
+                ],
+                [
+                  48.92,
+                  30.4
+                ],
+                [
+                  48.87,
+                  30.06
+                ],
+                [
+                  48.28,
+                  29.99
+                ],
+                [
+                  48.07,
+                  30.04
+                ],
+                [
+                  47.98,
+                  30.01
+                ],
+                [
+                  47.98,
+                  29.92
+                ],
+                [
+                  47.2,
+                  29.6
+                ],
+                [
+                  46.0,
+                  30.2
+                ],
+                [
+                  44.5,
+                  30.8
+                ],
+                [
+                  42.0,
+                  31.5
+                ],
+                [
+                  39.0,
+                  32.0
+                ],
+                [
+                  37.0,
+                  30.6
+                ],
+                [
+                  35.0,
+                  29.5
+                ],
+                [
+                  34.3,
+                  31.2
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.84,
+                  35.49
+                ],
+                [
+                  35.98,
+                  36.49
+                ],
+                [
+                  36.19,
+                  36.66
+                ],
+                [
+                  36.18,
+                  36.81
+                ],
+                [
+                  36.05,
+                  36.91
+                ],
+                [
+                  35.39,
+                  36.58
+                ],
+                [
+                  34.7,
+                  36.82
+                ],
+                [
+                  34.3,
+                  36.6
+                ],
+                [
+                  34.02,
+                  36.34
+                ],
+                [
+                  33.0,
+                  36.2
+                ],
+                [
+                  32.33,
+                  36.22
+                ],
+                [
+                  32.02,
+                  36.54
+                ],
+                [
+                  31.35,
+                  36.8
+                ],
+                [
+                  30.95,
+                  36.85
+                ],
+                [
+                  30.64,
+                  36.87
+                ],
+                [
+                  30.58,
+                  36.8
+                ],
+                [
+                  30.46,
+                  36.28
+                ],
+                [
+                  29.14,
+                  36.43
+                ],
+                [
+                  29.04,
+                  36.69
+                ],
+                [
+                  28.82,
+                  36.68
+                ],
+                [
+                  28.48,
+                  36.8
+                ],
+                [
+                  28.3,
+                  36.81
+                ],
+                [
+                  28.02,
+                  36.63
+                ],
+                [
+                  28.08,
+                  36.75
+                ],
+                [
+                  27.91,
+                  36.74
+                ],
+                [
+                  27.86,
+                  36.8
+                ],
+                [
+                  28.24,
+                  37.03
+                ],
+                [
+                  27.73,
+                  37.01
+                ],
+                [
+                  27.23,
+                  37.75
+                ],
+                [
+                  27.23,
+                  37.98
+                ],
+                [
+                  27.1,
+                  38.01
+                ],
+                [
+                  26.91,
+                  38.38
+                ],
+                [
+                  27.14,
+                  38.45
+                ],
+                [
+                  26.97,
+                  38.45
+                ],
+                [
+                  26.8,
+                  38.63
+                ],
+                [
+                  26.76,
+                  38.71
+                ],
+                [
+                  27.01,
+                  38.89
+                ],
+                [
+                  26.81,
+                  38.96
+                ],
+                [
+                  26.85,
+                  39.12
+                ],
+                [
+                  26.68,
+                  39.29
+                ],
+                [
+                  26.9,
+                  39.55
+                ],
+                [
+                  26.45,
+                  39.51
+                ],
+                [
+                  26.3,
+                  40.0
+                ]
+              ],
+              [
+                [
+                  27.6,
+                  41.2
+                ],
+                [
+                  28.99,
+                  41.24
+                ],
+                [
+                  29.06,
+                  41.23
+                ],
+                [
+                  28.96,
+                  41.01
+                ],
+                [
+                  28.78,
+                  40.97
+                ],
+                [
+                  28.17,
+                  41.08
+                ],
+                [
+                  27.93,
+                  40.99
+                ],
+                [
+                  27.5,
+                  40.97
+                ],
+                [
+                  27.26,
+                  40.69
+                ],
+                [
+                  26.88,
+                  40.53
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Pasargadae, later Susa, Persepolis and Babylon",
+          "Founded": "About 550 BCE, by Cyrus",
+          "Ended": "330 BCE, conquered by Alexander",
+          "Today": "From Turkey and Egypt to Afghanistan and Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "Cyrus the Great"
+          },
+          {
+            "from": 22,
+            "text": "Darius III, the last king, then Alexander"
+          }
+        ],
+        "role": "The Achaemenid empire, the largest the world had yet seen.",
+        "ties": [
+          {
+            "from": 21,
+            "text": "Takes Babylon, 539 BCE"
+          },
+          {
+            "from": 22,
+            "text": "Conquered by Alexander of Macedon"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "schmidt",
+        "name": "Klaus Schmidt",
+        "life": "1953 to 2014",
+        "role": "German archaeologist",
+        "steps": [
+          0
+        ],
+        "text": "Schmidt, of the German Archaeological Institute, led the digs at Göbekli Tepe from 1995 until his death. He argued that hunter-gatherers built it as a ritual centre, and that gathering to build it may have helped push people toward farming. Later excavators, who found houses and water cisterns, have revised parts of his view."
+      },
+      {
+        "id": "braidwood",
+        "name": "Robert J. Braidwood",
+        "life": "1907 to 2003",
+        "role": "American archaeologist",
+        "steps": [
+          1
+        ],
+        "text": "Braidwood, of the University of Chicago, and his wife Linda Braidwood went looking for the first farmers in the hills rather than the river valleys. At Jarmo they brought geologists, botanists and zoologists to study the soil, seeds and bones, a team approach that changed how archaeology is done."
+      },
+      {
+        "id": "woolley",
+        "name": "Leonard Woolley",
+        "life": "1880 to 1960",
+        "role": "British archaeologist",
+        "steps": [
+          7,
+          11
+        ],
+        "text": "Woolley led the joint British Museum and University of Pennsylvania dig at Ur from 1922 to 1934, uncovering the Royal Cemetery and the ziggurat. His assistant Max Mallowan married the novelist Agatha Christie, who visited the site; she later wrote Murder in Mesopotamia. Woolley’s claim to have found Noah’s flood at Ur is not accepted."
+      },
+      {
+        "id": "puabi",
+        "name": "Puabi",
+        "native": "Pu-abi",
+        "life": "about 2600 BCE",
+        "role": "A woman buried at Ur",
+        "steps": [
+          7
+        ],
+        "text": "Her name and the title nin, often read as queen, are carved on a cylinder seal found in her tomb. She was buried with a headdress of gold leaves, beads of gold, lapis lazuli and carnelian, and attendants who died with her. Study of her bones suggests she was about 40 when she died."
+      },
+      {
+        "id": "gilgamesh",
+        "name": "Gilgamesh",
+        "native": "Bilgames",
+        "lang": "sux",
+        "life": "in tradition, about 2700 BCE",
+        "role": "King of Uruk, in tradition",
+        "steps": [
+          8
+        ],
+        "text": "Hero of the oldest great poem known. In the standard version, on twelve tablets, he is two-thirds god, builds the walls of Uruk, loses his friend Enkidu and seeks eternal life from Utnapishtim, survivor of a great flood. He fails, and comes home to Uruk. No inscription from his own lifetime has been found."
+      },
+      {
+        "id": "sargon",
+        "name": "Sargon of Akkad",
+        "native": "Sharrum-kin",
+        "life": "ruled about 2334 to 2279 BCE; dates debated",
+        "role": "Founder of the Akkadian Empire",
+        "steps": [
+          9,
+          10
+        ],
+        "text": "His name means ‘the true king’. A much later legend says his mother, a priestess, set him adrift on the Euphrates in a reed basket, and a gardener raised him. His inscriptions say 5,400 men ate before him every day. Kings honoured him for two thousand years as the model of a conqueror."
+      },
+      {
+        "id": "enheduanna",
+        "name": "Enheduanna",
+        "native": "En-hedu-ana",
+        "lang": "sux",
+        "life": "lived about 2300 BCE",
+        "role": "High priestess of the moon god at Ur",
+        "steps": [
+          9
+        ],
+        "text": "Sargon’s daughter, appointed high priestess of the moon god Nanna at Ur. Hymns to the goddess Inanna are credited to her, which would make her the earliest author known by name, though how many she wrote herself is debated. A carved disc that Woolley found at Ur shows her making an offering."
+      },
+      {
+        "id": "naram-sin",
+        "name": "Naram-Sin",
+        "native": "Naram-Sin",
+        "life": "ruled about 2254 to 2218 BCE",
+        "role": "Sargon’s grandson, king of Akkad",
+        "steps": [
+          9
+        ],
+        "text": "He called himself ‘king of the four quarters’ and was worshipped as a god in his lifetime. His victory stele shows him in a horned helmet, climbing a mountain over his enemies. A later poem, the Curse of Akkad, blames him for the empire’s fall, about 2154 BCE, to the Gutians from the hills."
+      },
+      {
+        "id": "ur-nammu",
+        "name": "Ur-Nammu",
+        "native": "Ur-Namma",
+        "lang": "sux",
+        "life": "ruled about 2112 to 2095 BCE",
+        "role": "Founder of the Third Dynasty of Ur",
+        "steps": [
+          11
+        ],
+        "text": "Once governor of Ur for Utu-hegal of Uruk, Ur-Nammu made himself king and united Sumer. He dug canals and built temples and the ziggurat at Ur, and the laws named after him are the oldest known. A later poem tells of his death in battle and his journey to the underworld."
+      },
+      {
+        "id": "zimri-lim",
+        "name": "Zimri-Lim",
+        "life": "ruled about 1775 to 1761 BCE",
+        "role": "King of Mari",
+        "steps": [
+          12
+        ],
+        "text": "Zimri-Lim won back his family’s throne at Mari and grew rich on trade along the Euphrates. Letters from his wife Shiptu, his daughters, his officials and his allies fill the palace archive, along with reports of prophets and dreams. After Hammurabi took Mari, nothing more is known of him."
+      },
+      {
+        "id": "hammurabi",
+        "name": "Hammurabi",
+        "life": "ruled about 1792 to 1750 BCE",
+        "role": "King of Babylon",
+        "steps": [
+          12,
+          13
+        ],
+        "text": "An Amorite who inherited a small kingdom and, over thirty years of alliances and wars, made Babylon master of Mesopotamia. His letters show a king checking canals, taxes and court cases himself. His law stele says it was set up so that the strong should not oppress the weak, and that the wronged could come and read it."
+      },
+      {
+        "id": "sennacherib",
+        "name": "Sennacherib",
+        "native": "Sin-ahhe-eriba",
+        "life": "ruled 705 to 681 BCE",
+        "role": "King of Assyria",
+        "steps": [
+          17
+        ],
+        "text": "Sennacherib made Nineveh his capital and built his ‘Palace without Rival’ there, with canals and aqueducts to water its gardens. He took Lachish, and in 689 BCE destroyed rebel Babylon. He was murdered by one of his sons, and another son, Esarhaddon, took the throne."
+      },
+      {
+        "id": "ashurbanipal",
+        "name": "Ashurbanipal",
+        "native": "Ashur-bani-apli",
+        "life": "ruled 668 to about 631 BCE",
+        "role": "King of Assyria",
+        "steps": [
+          18,
+          19
+        ],
+        "text": "The last great king of Assyria, chosen as heir over his elder brother Shamash-shum-ukin, who became king of Babylon. The brothers went to war, and Shamash-shum-ukin died as Babylon fell in 648 BCE. In one relief Ashurbanipal feasts with his queen in a garden, the head of a defeated Elamite king hanging from a tree."
+      },
+      {
+        "id": "nebuchadnezzar",
+        "name": "Nebuchadnezzar II",
+        "native": "Nabu-kudurri-usur",
+        "life": "ruled 605 to 562 BCE",
+        "role": "King of Babylon",
+        "steps": [
+          20
+        ],
+        "text": "As crown prince he beat Egypt’s army at Carchemish in 605 BCE, and became king the same year. Bricks stamped with his name turn up all over Babylon. In the Bible he destroys Jerusalem and its temple; in the Book of Daniel, written much later, he loses his mind and lives like an animal for a time."
+      },
+      {
+        "id": "cyrus",
+        "name": "Cyrus the Great",
+        "native": "Kurush",
+        "lang": "peo",
+        "life": "ruled about 559 to 530 BCE",
+        "role": "Founder of the Persian Empire",
+        "steps": [
+          21,
+          22
+        ],
+        "text": "A Persian king who overthrew the Medes and then conquered Lydia and Babylon, building the largest empire yet seen. Babylonian and Greek writers and the Bible remember him as a merciful ruler; his own cylinder says the same, and is propaganda as much as record. His tomb still stands at Pasargadae."
+      },
+      {
+        "id": "layard",
+        "name": "Austen Henry Layard",
+        "life": "1817 to 1894",
+        "role": "British archaeologist and politician",
+        "steps": [
+          23
+        ],
+        "text": "Layard was a young traveller with no training when he began digging at Nimrud in 1845, and at first took it for Nineveh. His book Nineveh and Its Remains became a bestseller. He later became a member of parliament and Britain’s ambassador in Constantinople."
+      },
+      {
+        "id": "rassam",
+        "name": "Hormuzd Rassam",
+        "life": "1826 to 1910",
+        "role": "Archaeologist from Mosul",
+        "steps": [
+          18,
+          23
+        ],
+        "text": "Born in Mosul to a Chaldean Christian family, Rassam worked with Layard and then led digs of his own. In 1853 he found Ashurbanipal’s North Palace at Nineveh, with the lion hunt reliefs and much of the library, and in 1879 the Cyrus Cylinder at Babylon. Others often took the credit."
+      },
+      {
+        "id": "rawlinson",
+        "name": "Henry Creswicke Rawlinson",
+        "life": "1810 to 1895",
+        "role": "British army officer and scholar",
+        "steps": [
+          24
+        ],
+        "text": "A soldier serving in Persia, Rawlinson copied the Behistun inscription from ladders over a sheer drop; in 1847 a local Kurdish boy climbed to the hardest part to take a paper cast. He worked out much of Old Persian and then Babylonian cuneiform, alongside the Irish clergyman Edward Hincks, whose part is often overlooked."
+      },
+      {
+        "id": "george-smith",
+        "name": "George Smith",
+        "life": "1840 to 1876",
+        "role": "British Assyriologist",
+        "steps": [
+          25
+        ],
+        "text": "Smith trained as a banknote engraver and taught himself cuneiform, studying tablets in his lunch breaks at the British Museum. After the flood story made him famous, he led three trips to Mesopotamia. He fell ill on the third and died near Aleppo, aged 36."
+      }
+    ]
+  }
+}

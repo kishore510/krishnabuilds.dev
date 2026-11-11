@@ -320,3 +320,9 @@ The first catalogue's dates are textbook approximations and still need checking 
 ## 2026-11-09 — Story Maps: every catalogue entry has a summary
 
 Each entry in `catalogue.json` has a required `summary`: what made it unique, its most iconic figures and its biggest achievements, at most 60 words, as for story cards. The build fails on a missing or over-long summary, so the rule holds for every entry and story added later. The Maurya Empire's summary is the model the owner approved; the rest were written to match it and follow the same content rules.
+
+## 2026-11-11 — Story Maps: a Near East basemap at 70 units per degree
+
+Mesopotamia, and later Egypt and Greece and Persia, share a `near-east` basemap from the Aegean to the Gulf of Oman. Like `world`, its coastlines and lakes are Natural Earth data (1:50m land and lakes, 1:10m rivers, all public domain), simplified once with a throwaway script that is not kept; from now on it is plain data. Natural lakes are holes in the land; modern reservoirs are left out.
+
+Pins are 28 map units across and scale with the map, so cities closer together than a pin can't both be tapped. The cities of Sumer are only 50 to 60 km apart, so this map uses 70 units per degree (South Asia uses 20), and its stories keep their cameras to about 300 to 1,000 map units across, as other stories do. Where real sites are closer still (Ur and Eridu, Nineveh and Nimrud, Lachish and Jerusalem), the pins are moved a little apart and the story's note says so, rather than adding pin-collision logic to the engine. Realm areas in Mesopotamia are loose outlines cut to the same coastlines, as in The British Empire.
