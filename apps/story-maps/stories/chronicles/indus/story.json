@@ -1,0 +1,1094 @@
+{
+  "id": "indus",
+  "title": "The Indus Cities",
+  "description": "An illustrated map of the Indus civilisation, from the first farmers at Mehrgarh through the planned cities of Harappa, Mohenjo-daro and Dholavira and their trade with Mesopotamia, to their decline and rediscovery.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "Archaeology",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Indus civilisation, from about 7000 BCE to its rediscovery",
+  "note": "Based on excavated sites and on Mesopotamian texts; each chapter says which it follows. The Indus script is undeciphered, so no ruler, city or person of the civilisation is known by their own name, and the names used are modern ones. Dates are approximate and many are debated. The map is stylised and not to scale, and the extent under Extent is painted loosely. Rivers are drawn on their courses today; several ran differently then, and the Ghaggar-Hakra is not drawn.",
+  "places": {
+    "gulf-west": {
+      "name": "Toward Magan, Dilmun and Mesopotamia",
+      "at": [
+        58.4,
+        24.4
+      ],
+      "hidden": true
+    },
+    "mehrgarh": {
+      "name": "Mehrgarh",
+      "at": [
+        67.62,
+        29.38
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "harappa": {
+      "name": "Harappa",
+      "at": [
+        72.86,
+        30.63
+      ],
+      "glyph": "seal",
+      "label": "left"
+    },
+    "kalibangan": {
+      "name": "Kalibangan",
+      "at": [
+        74.13,
+        29.47
+      ],
+      "glyph": "brick-city",
+      "label": "bottom"
+    },
+    "mohenjo-daro": {
+      "name": "Mohenjo-daro",
+      "at": [
+        68.14,
+        27.33
+      ],
+      "glyph": "brick-city",
+      "label": "right"
+    },
+    "dholavira": {
+      "name": "Dholavira",
+      "at": [
+        70.21,
+        23.89
+      ],
+      "glyph": "brick-city",
+      "label": "left"
+    },
+    "rakhigarhi": {
+      "name": "Rakhigarhi",
+      "at": [
+        76.11,
+        29.29
+      ],
+      "glyph": "brick-city",
+      "label": "top"
+    },
+    "lothal": {
+      "name": "Lothal",
+      "at": [
+        72.25,
+        22.52
+      ],
+      "glyph": "beads",
+      "label": "right"
+    },
+    "shortughai": {
+      "name": "Shortughai",
+      "at": [
+        69.5,
+        37.1
+      ],
+      "glyph": "trading-post",
+      "label": "bottom"
+    },
+    "sutkagen-dor": {
+      "name": "Sutkagen Dor",
+      "at": [
+        61.66,
+        25.5
+      ],
+      "glyph": "fort",
+      "label": "top"
+    },
+    "daimabad": {
+      "name": "Daimabad",
+      "at": [
+        74.7,
+        19.5
+      ],
+      "glyph": "village",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "farmers": {
+      "name": "Farmers and their herds",
+      "icon": "ox-cart"
+    },
+    "caravan": {
+      "name": "A trade caravan",
+      "icon": "ox-cart"
+    },
+    "boat": {
+      "name": "A trading boat",
+      "icon": "reed-boat"
+    },
+    "chronicle": {
+      "name": "The news",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "roots": {
+      "name": "Farmers and early towns",
+      "color": "#8fcf8a"
+    },
+    "cities": {
+      "name": "The great cities",
+      "color": "#f29a2e"
+    },
+    "trade": {
+      "name": "Crafts and trade",
+      "color": "#4fc3b0"
+    },
+    "decline": {
+      "name": "Decline",
+      "color": "#e0573a"
+    },
+    "rediscovery": {
+      "name": "Rediscovery",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "cart": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "news": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 16,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 44,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 62,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 77,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "7000 BCE"
+      },
+      {
+        "at": 18,
+        "text": "2600"
+      },
+      {
+        "at": 66,
+        "text": "1900 BCE"
+      },
+      {
+        "at": 85,
+        "text": "1924 CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "mehrgarh",
+      "phase": "roots",
+      "title": "First farmers at Mehrgarh",
+      "when": "from about 7000 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          68.5,
+          28.5
+        ],
+        "width": 14
+      },
+      "legs": [],
+      "text": "At the foot of the Bolan Pass, villagers at Mehrgarh grow wheat and barley and herd cattle, sheep and goats from about 7000 BCE, among the earliest farmers in South Asia. They build mud-brick houses and bury their dead with ornaments; some teeth even show holes drilled by early dentists. Dates for the first layers are debated.",
+      "today": "Today: near Sibi, Balochistan, Pakistan."
+    },
+    {
+      "place": "harappa",
+      "phase": "roots",
+      "title": "Early towns",
+      "when": "about 3300 to 2600 BCE",
+      "at": 8,
+      "camera": {
+        "at": [
+          70.5,
+          28.5
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "mehrgarh",
+          "to": "harappa",
+          "traveller": "farmers",
+          "style": "cart",
+          "bend": 0.12
+        }
+      ],
+      "text": "Over thousands of years, farming villages spread across the Indus plains. Harappa’s first settlement dates to about 3300 BCE, and marks scratched on some of its pots may be early forms of the later script. Towns such as Kot Diji in Sindh build walls, and pottery styles grow alike across a wide region.",
+      "today": "Today: Harappa, Sahiwal district, Punjab, Pakistan."
+    },
+    {
+      "place": "kalibangan",
+      "phase": "roots",
+      "title": "A ploughed field",
+      "when": "before about 2600 BCE",
+      "at": 13,
+      "camera": {
+        "at": [
+          74,
+          29.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "At Kalibangan, beside the dry bed of the Ghaggar river, archaeologists found a field ploughed in a criss-cross pattern, sealed beneath the later town: one of the oldest ploughed fields known. Local farmers still sow two crops together in the same pattern. The later town has a walled citadel and a row of fire altars.",
+      "today": "Today: Hanumangarh district, Rajasthan, India."
+    },
+    {
+      "place": "mohenjo-daro",
+      "phase": "cities",
+      "title": "A planned city",
+      "when": "about 2600 BCE",
+      "at": 18,
+      "camera": {
+        "at": [
+          69.5,
+          27
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Around 2600 BCE, cities rise across the Indus region. Mohenjo-daro, beside the Indus, is one of the largest: a raised citadel and a lower town of straight streets, baked-brick houses, hundreds of wells and covered drains. Bricks across the civilisation share one shape, 1 by 2 by 4. Its population is unknown; estimates of tens of thousands are disputed.",
+      "today": "Today: Larkana district, Sindh, Pakistan; a World Heritage Site since 1980."
+    },
+    {
+      "place": "mohenjo-daro",
+      "phase": "cities",
+      "title": "The Great Bath",
+      "when": "about 2600 to 1900 BCE",
+      "at": 22,
+      "camera": {
+        "at": [
+          68.6,
+          27.3
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "On the citadel lies the Great Bath, a brick tank about 12 by 7 metres and over 2 metres deep, with steps at each end, sealed with gypsum mortar and a layer of bitumen. Its purpose is unknown; many scholars think it was for ritual bathing. A large building nearby is often called the granary, though its use is debated.",
+      "today": "Today: The Great Bath can still be seen at Mohenjo-daro."
+    },
+    {
+      "place": "harappa",
+      "phase": "cities",
+      "title": "The city that named a civilisation",
+      "when": "about 2600 to 1900 BCE",
+      "at": 26,
+      "camera": {
+        "at": [
+          72.8,
+          30.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Harappa, on an old course of the Ravi, grows into a city of walled mounds with gateways, workshops and a cemetery. It was the first city excavated, so archaeologists call the whole civilisation Harappan. Here, as elsewhere, no palace, royal tomb or ruler’s statue has been found, and how the cities were governed is unknown.",
+      "today": "Today: Harappa, Sahiwal district, Punjab, Pakistan."
+    },
+    {
+      "place": "dholavira",
+      "phase": "cities",
+      "title": "A city of reservoirs",
+      "when": "about 2600 to 1900 BCE",
+      "at": 30,
+      "camera": {
+        "at": [
+          70.6,
+          23.6
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "On Khadir island in the salt flats of the Rann of Kutch, Dholavira catches water from seasonal streams in a chain of large reservoirs cut into rock. Its citadel, middle town and lower town sit inside stone walls. Near the north gate lay a signboard of ten large signs, once inlaid in white gypsum, one of the longest Indus inscriptions.",
+      "today": "Today: Kutch district, Gujarat, India; a World Heritage Site since 2021."
+    },
+    {
+      "place": "rakhigarhi",
+      "phase": "cities",
+      "title": "Rakhigarhi and the lost river",
+      "when": "about 2600 to 1900 BCE",
+      "at": 34,
+      "camera": {
+        "at": [
+          75.4,
+          29.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Rakhigarhi, in the plain of the Ghaggar-Hakra river, is among the largest Indus sites. Hundreds of settlements once lined this river, which today flows only in the monsoon. Some identify it with the Sarasvati of the Rigveda; that link is debated. A 2019 DNA study of a woman buried here found no ancestry from the Central Asian steppe.",
+      "today": "Today: Hisar district, Haryana, India."
+    },
+    {
+      "place": "mohenjo-daro",
+      "phase": "cities",
+      "title": "Seals and an unread script",
+      "when": "about 2600 to 1900 BCE",
+      "at": 38,
+      "camera": {
+        "at": [
+          69.5,
+          28
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Thousands of small square seals, mostly of carved stone (steatite), show an animal, often a one-horned bull, beneath a line of signs. Traders probably pressed them into clay to mark goods. The script has about 400 signs, and most inscriptions are very short. It has never been deciphered, so the language and the names of its writers are unknown.",
+      "today": "Today: Indus seals are in museums in Pakistan, India and beyond."
+    },
+    {
+      "place": "mohenjo-daro",
+      "phase": "cities",
+      "title": "The Dancing Girl and the Priest-King",
+      "when": "about 2600 to 1900 BCE",
+      "at": 42,
+      "camera": {
+        "at": [
+          68.6,
+          27.3
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Mohenjo-daro’s best-known finds are small. A bronze figure of a young woman, about 10 centimetres tall, was nicknamed the Dancing Girl by its excavators. A bearded man in a patterned robe, carved in stone, was nicknamed the Priest-King, though nothing shows that he was either. Who they were is not known.",
+      "today": "Today: The Dancing Girl is in the National Museum, New Delhi; the Priest-King in the National Museum of Pakistan, Karachi."
+    },
+    {
+      "place": "lothal",
+      "phase": "trade",
+      "title": "Beads, shell and metal",
+      "when": "about 2600 to 1900 BCE",
+      "at": 46,
+      "camera": {
+        "at": [
+          71.5,
+          23
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "dholavira",
+          "to": "lothal",
+          "traveller": "boat",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Indus craftworkers are famous for long beads of red carnelian, drilled lengthwise with fine stone drills, slow work that could take days for one bead. Lothal, near carnelian sources on the Gulf of Khambhat, has a bead workshop; Chanhudaro in Sindh is another craft town. Workshops also cut shell bangles and cast copper and bronze tools.",
+      "today": "Today: Ahmedabad district, Gujarat, India."
+    },
+    {
+      "place": "shortughai",
+      "phase": "trade",
+      "title": "Lapis from the mountains",
+      "when": "about 2600 to 1900 BCE",
+      "at": 50,
+      "camera": {
+        "at": [
+          70.5,
+          33
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "shortughai",
+          "to": "harappa",
+          "traveller": "caravan",
+          "style": "cart",
+          "bend": 0.1
+        }
+      ],
+      "text": "Far to the north, on the Amu Darya (Oxus) in today’s Afghanistan, Shortughai is an Indus outpost with Harappan pottery, bricks and a seal. It lies near the mountains of Badakhshan, the main ancient source of blue lapis lazuli. Lapis probably travelled from here to the Indus cities, and on to Mesopotamia.",
+      "today": "Today: Takhar province, Afghanistan."
+    },
+    {
+      "place": "lothal",
+      "phase": "trade",
+      "title": "The dock at Lothal",
+      "when": "about 2600 to 1900 BCE",
+      "at": 54,
+      "camera": {
+        "at": [
+          72.2,
+          22.6
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "At Lothal, a brick-lined basin over 200 metres long was identified by its excavator, S. R. Rao, as a dock for boats coming in from the gulf. Others argue it was a reservoir for fresh water. A round seal of a kind made in the Persian Gulf, found here, shows that Lothal’s trade did reach overseas.",
+      "today": "Today: Ahmedabad district, Gujarat, India."
+    },
+    {
+      "place": "sutkagen-dor",
+      "phase": "trade",
+      "title": "Ships from Meluhha",
+      "when": "about 2300 BCE",
+      "at": 58,
+      "source": "History",
+      "camera": {
+        "at": [
+          64.5,
+          24.8
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "lothal",
+          "to": "gulf-west",
+          "traveller": "boat",
+          "style": "sea",
+          "bend": 0.12
+        },
+        {
+          "from": "sutkagen-dor",
+          "to": "gulf-west",
+          "traveller": "boat",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Mesopotamian texts name a distant land, Meluhha, most likely the Indus region. Around 2300 BCE King Sargon of Akkad boasts that ships from Meluhha, Magan (Oman) and Dilmun (Bahrain) moor at his capital. Indus seals and carnelian beads turn up at Ur and other Mesopotamian cities. Walled coastal posts such as Sutkagen Dor lie on the route west.",
+      "today": "Today: Sutkagen Dor is near Jiwani, Balochistan, Pakistan; Mesopotamia is in Iraq."
+    },
+    {
+      "place": "kalibangan",
+      "phase": "decline",
+      "title": "The cities empty",
+      "when": "after about 1900 BCE",
+      "at": 66,
+      "camera": {
+        "at": [
+          72,
+          28
+        ],
+        "width": 18
+      },
+      "legs": [],
+      "text": "After about 1900 BCE the great cities shrink and are slowly abandoned, and the seals, script and standard weights fall out of use. Why is debated: weaker monsoon rains, rivers changing course, the Ghaggar-Hakra drying and less trade with Mesopotamia are all suggested. There is no sign of a single disaster. Kalibangan is abandoned around this time.",
+      "today": "Today: Hanumangarh district, Rajasthan, India."
+    },
+    {
+      "place": "daimabad",
+      "phase": "decline",
+      "title": "Moving east and south",
+      "when": "about 1900 to 1300 BCE",
+      "at": 72,
+      "camera": {
+        "at": [
+          74,
+          25
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "harappa",
+          "to": "rakhigarhi",
+          "traveller": "farmers",
+          "style": "cart",
+          "bend": 0.12
+        },
+        {
+          "from": "lothal",
+          "to": "daimabad",
+          "traveller": "farmers",
+          "style": "cart",
+          "bend": -0.12
+        }
+      ],
+      "text": "The people do not vanish. Villages of the later, simpler Harappan phase grow in number east into Haryana and the Ganga–Yamuna plain, where Alamgirpur near Meerut is the easternmost site, and south through Gujarat. Daimabad, on the Pravara river in Maharashtra, is the southernmost; a hoard of bronze figures found there is of debated date.",
+      "today": "Today: Ahmednagar district, Maharashtra, India."
+    },
+    {
+      "place": "harappa",
+      "phase": "rediscovery",
+      "title": "Ruins and railway bricks",
+      "when": "1820s to 1875 CE",
+      "at": 80,
+      "source": "History",
+      "camera": {
+        "at": [
+          72.8,
+          30.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In the late 1820s the traveller Charles Masson describes a ruined brick fortress at Harappa. Alexander Cunningham of the Archaeological Survey visits in the 1850s and 1870s, but railway builders have by then carted away many of its bricks as track ballast. In 1875 he publishes a seal with unknown signs, which he thinks is foreign.",
+      "today": "Today: Harappa’s mounds are a protected site with a museum."
+    },
+    {
+      "place": "mohenjo-daro",
+      "phase": "rediscovery",
+      "title": "A civilisation announced",
+      "when": "1921 to 1924 CE",
+      "at": 85,
+      "source": "History",
+      "camera": {
+        "at": [
+          70.5,
+          29
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "harappa",
+          "to": "mohenjo-daro",
+          "traveller": "chronicle",
+          "style": "news",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1921 Daya Ram Sahni begins digging at Harappa. In 1922 R. D. Banerji, studying a Buddhist stupa at Mohenjo-daro, finds far older layers beneath it. Seals from the two sites, about 600 kilometres apart, match. In 1924 John Marshall, head of the Archaeological Survey, announces a forgotten civilisation in the Illustrated London News.",
+      "today": "Today: The stupa still stands on top of Mohenjo-daro’s citadel."
+    },
+    {
+      "place": "mohenjo-daro",
+      "phase": "rediscovery",
+      "title": "The invasion that wasn’t",
+      "when": "1940s to today",
+      "at": 90,
+      "source": "History",
+      "camera": {
+        "at": [
+          68.6,
+          27.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In the 1940s Mortimer Wheeler argues that invaders destroyed the cities, pointing to skeletons in Mohenjo-daro’s streets and the war god Indra of the Rigveda. Later study showed the skeletons come from different periods, with no signs of a battle. Most archaeologists now reject an invasion, though how Indo-European languages reached India is still debated.",
+      "today": "Today: Mohenjo-daro’s brick ruins are threatened by salt and floods."
+    },
+    {
+      "place": "dholavira",
+      "phase": "rediscovery",
+      "title": "Still unread",
+      "when": "1990 CE to today",
+      "at": 96,
+      "camera": {
+        "at": [
+          70,
+          27.5
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "text": "Excavated by R. S. Bisht from 1990, Dholavira became a World Heritage Site in 2021, joining Mohenjo-daro. Over a thousand Indus sites are now known, across an area larger than Egypt and Mesopotamia together. Yet the script is still unread. Until it is, the people of the Indus cities speak only through what they built and left behind.",
+      "today": "Today: Kutch district, Gujarat, India."
+    }
+  ],
+  "realms": {
+    "toggle": "Extent",
+    "mainHeading": "The civilisation at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "indus",
+        "name": "Indus civilisation",
+        "native": "सिन्धु घाटी सभ्यता",
+        "color": "#c8693a",
+        "active": [
+          [
+            1,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Indus civilisation",
+          "at": [
+            71.3,
+            26.3
+          ],
+          "moves": [
+            {
+              "from": 14,
+              "at": [
+                76.2,
+                31.6
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  66.5,
+                  25.6
+                ],
+                [
+                  67.0,
+                  28.5
+                ],
+                [
+                  67.8,
+                  30.5
+                ],
+                [
+                  70.0,
+                  32.3
+                ],
+                [
+                  72.5,
+                  33.4
+                ],
+                [
+                  74.5,
+                  32.5
+                ],
+                [
+                  76.3,
+                  30.6
+                ],
+                [
+                  76.6,
+                  29.0
+                ],
+                [
+                  74.6,
+                  28.6
+                ],
+                [
+                  72.3,
+                  28.0
+                ],
+                [
+                  70.2,
+                  26.0
+                ],
+                [
+                  68.6,
+                  24.2
+                ],
+                [
+                  67.4,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  61.3,
+                  25.3
+                ],
+                [
+                  61.5,
+                  26.6
+                ],
+                [
+                  64.5,
+                  27.0
+                ],
+                [
+                  66.5,
+                  28.6
+                ],
+                [
+                  67.3,
+                  30.2
+                ],
+                [
+                  68.5,
+                  31.6
+                ],
+                [
+                  70.5,
+                  33.0
+                ],
+                [
+                  72.5,
+                  34.2
+                ],
+                [
+                  74.5,
+                  33.2
+                ],
+                [
+                  76.5,
+                  31.2
+                ],
+                [
+                  77.9,
+                  29.8
+                ],
+                [
+                  77.7,
+                  28.6
+                ],
+                [
+                  76.0,
+                  28.2
+                ],
+                [
+                  74.2,
+                  27.6
+                ],
+                [
+                  72.5,
+                  26.4
+                ],
+                [
+                  71.6,
+                  25.0
+                ],
+                [
+                  72.0,
+                  23.8
+                ],
+                [
+                  72.8,
+                  22.8
+                ],
+                [
+                  72.5,
+                  21.9
+                ],
+                [
+                  71.2,
+                  21.0
+                ],
+                [
+                  70.2,
+                  20.9
+                ],
+                [
+                  69.3,
+                  21.9
+                ],
+                [
+                  69.0,
+                  22.3
+                ],
+                [
+                  69.9,
+                  22.8
+                ],
+                [
+                  68.5,
+                  23.3
+                ],
+                [
+                  68.2,
+                  23.7
+                ],
+                [
+                  67.4,
+                  24.2
+                ],
+                [
+                  66.4,
+                  25.2
+                ],
+                [
+                  64.5,
+                  25.3
+                ]
+              ],
+              {
+                "at": [
+                  69.5,
+                  37.1
+                ],
+                "radius": 0.45
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                14,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.8,
+                  32.4
+                ],
+                [
+                  74.5,
+                  32.8
+                ],
+                [
+                  76.5,
+                  31.2
+                ],
+                [
+                  78.3,
+                  29.8
+                ],
+                [
+                  78.0,
+                  28.3
+                ],
+                [
+                  76.0,
+                  28.3
+                ],
+                [
+                  74.0,
+                  29.0
+                ],
+                [
+                  71.8,
+                  29.9
+                ]
+              ],
+              [
+                [
+                  70.2,
+                  20.9
+                ],
+                [
+                  69.3,
+                  21.9
+                ],
+                [
+                  69.0,
+                  22.3
+                ],
+                [
+                  69.9,
+                  22.8
+                ],
+                [
+                  70.5,
+                  23.6
+                ],
+                [
+                  71.8,
+                  23.6
+                ],
+                [
+                  72.8,
+                  22.8
+                ],
+                [
+                  72.5,
+                  21.9
+                ],
+                [
+                  71.2,
+                  21.0
+                ]
+              ],
+              [
+                [
+                  67.6,
+                  25.2
+                ],
+                [
+                  67.8,
+                  27.6
+                ],
+                [
+                  69.0,
+                  27.7
+                ],
+                [
+                  68.8,
+                  25.3
+                ]
+              ],
+              {
+                "at": [
+                  74.7,
+                  19.5
+                ],
+                "radius": 0.45
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Largest cities": "Mohenjo-daro, Harappa, Rakhigarhi, Ganweriwala and Dholavira",
+          "Script": "Not deciphered",
+          "Today": "Pakistan, north-west India and north-east Afghanistan"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Not named: no ruler’s name survives"
+          }
+        ],
+        "role": "One of the world’s first urban civilisations, alongside Egypt and Mesopotamia, spread along the Indus and the Ghaggar-Hakra.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "An outpost at Shortughai, near the lapis mines of Badakhshan"
+          },
+          {
+            "from": 13,
+            "text": "Trades by sea with Magan, Dilmun and Mesopotamia, which most likely knows it as Meluhha"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "jarrige",
+        "name": "Jean-François Jarrige",
+        "life": "1940 to 2014",
+        "role": "French archaeologist",
+        "steps": [
+          0
+        ],
+        "text": "Jarrige led the French team that, with Catherine Jarrige and Pakistani colleagues, excavated Mehrgarh from 1974. Their work pushed the story of the Indus civilisation back by thousands of years, showing a long run of farming villages in the region before the cities."
+      },
+      {
+        "id": "lal",
+        "name": "B. B. Lal",
+        "life": "1921 to 2022",
+        "role": "Indian archaeologist",
+        "steps": [
+          2,
+          14
+        ],
+        "text": "Braj Basi Lal, later Director-General of the Archaeological Survey of India, excavated Kalibangan with B. K. Thapar in the 1960s, uncovering the ploughed field and the fire altars. He also dug at places linked with the epics, and some of his later views are debated."
+      },
+      {
+        "id": "bisht",
+        "name": "R. S. Bisht",
+        "life": "born 1944",
+        "role": "Indian archaeologist",
+        "steps": [
+          6,
+          19
+        ],
+        "text": "Ravindra Singh Bisht led the Archaeological Survey’s excavation of Dholavira from 1990, uncovering its reservoirs, its three-part plan and the great signboard. Earlier he excavated Banawali in Haryana. His work laid the ground for Dholavira’s listing as a World Heritage Site in 2021."
+      },
+      {
+        "id": "rao",
+        "name": "S. R. Rao",
+        "life": "1922 to 2013",
+        "role": "Indian archaeologist",
+        "steps": [
+          10,
+          12
+        ],
+        "text": "Shikaripura Ranganatha Rao excavated Lothal from 1955 to 1960 and identified its great basin as a dock. He later turned to underwater archaeology off Dwarka. His claim to have read the Indus script as an early form of Sanskrit is not accepted by most scholars."
+      },
+      {
+        "id": "masson",
+        "name": "Charles Masson",
+        "life": "1800 to 1853",
+        "role": "Traveller and collector",
+        "steps": [
+          16
+        ],
+        "text": "Born James Lewis in London, he deserted the East India Company’s army and travelled under a new name through the Punjab and Afghanistan, collecting tens of thousands of coins. His account, published in 1842, gives the first known description of an Indus city, Harappa."
+      },
+      {
+        "id": "cunningham",
+        "name": "Alexander Cunningham",
+        "life": "1814 to 1893",
+        "role": "First head of the Archaeological Survey of India",
+        "steps": [
+          16
+        ],
+        "text": "A British army engineer, Cunningham became the first head of the Archaeological Survey in 1861 and traced many Buddhist sites using the account of the Chinese pilgrim Xuanzang. He visited Harappa but could not place the seal he found there; its real age was recognised about fifty years later."
+      },
+      {
+        "id": "sahni",
+        "name": "Daya Ram Sahni",
+        "life": "1879 to 1939",
+        "role": "Indian archaeologist",
+        "steps": [
+          17
+        ],
+        "text": "Sahni began the first full excavation of Harappa in 1921. He later became the first Indian Director-General of the Archaeological Survey of India, from 1931 to 1935."
+      },
+      {
+        "id": "banerji",
+        "name": "R. D. Banerji",
+        "life": "1885 to 1930",
+        "role": "Indian archaeologist and historian",
+        "steps": [
+          17
+        ],
+        "text": "Rakhal Das Banerji went to Mohenjo-daro in 1922 to study a Buddhist stupa and found seals and remains far older beneath it. He was also a historian and a novelist in Bengali. His share of the credit for the discovery was long overlooked."
+      },
+      {
+        "id": "marshall",
+        "name": "John Marshall",
+        "life": "1876 to 1958",
+        "role": "Director-General of the Archaeological Survey of India, 1902 to 1928",
+        "steps": [
+          17
+        ],
+        "text": "Marshall saw that the finds from Harappa and Mohenjo-daro belonged together and announced them in 1924 as a civilisation as old as Sumer. He also led long excavations at Taxila and Sanchi. He suggested that a figure on one seal was an early form of Shiva, an idea still debated."
+      },
+      {
+        "id": "wheeler",
+        "name": "Mortimer Wheeler",
+        "life": "1890 to 1976",
+        "role": "Director-General of the Archaeological Survey of India, 1944 to 1948",
+        "steps": [
+          18
+        ],
+        "text": "A British archaeologist and soldier, Wheeler dug at Harappa in 1946 and trained a generation of South Asian archaeologists in careful excavation. His vivid claim that the war god Indra ‘stands accused’ of destroying the cities made headlines, but later work rejected it."
+      }
+    ]
+  }
+}
