@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.0
+
+- New story map in Chronicles: Mesopotamia. From the pillars of Göbekli Tepe, about 9500 BCE, and the first farmers, through Uruk and the invention of writing, Sumer, Akkad, Ur, Hammurabi's Babylon, the Amarna letters and Assyria, to Nebuchadnezzar, Cyrus, the last cuneiform tablets, the rediscovery from the 1840s and the damage since 2003: 27 chapters, a Powers layer that changes chapter by chapter, and 19 people cards.
+- New Near East map, from the Aegean to the Gulf of Oman, with the Tigris, Euphrates, Nile and Jordan, simplified from Natural Earth's public-domain coastlines, lakes and rivers. Egypt and Greece and Persia can use it too.
+- Catalogue: new entries for the invention of cuneiform, the Third Dynasty of Ur and Kassite Babylonia, in the Mesopotamia lane; Sumer, Akkad, the Old Babylonian kingdom, the Neo-Assyrian and the Neo-Babylonian empires now link to the new story.
+- Art: new place glyphs (ziggurat, clay tablet, winged bull, gate) and a chariot traveller.
+
 ## 0.12.0
 
 - Browse: a new **Civilisations** filter, alongside Dynasties & empires, Epics & legends, Events and Routes. The Indus, Pharaonic Egypt and classical Greece are now civilisations; civilisations sit on the timeline with the dynasties.
