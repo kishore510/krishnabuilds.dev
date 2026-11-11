@@ -27,7 +27,7 @@
   var ON_TIMELINE = REGIONS.filter(function (r) {
     return r.lanes.length;
   });
-  var KIND = { dynasty: "Dynasty", event: "Event", legend: "Legend", route: "Route" };
+  var KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route" };
   var built = function (e) {
     return Boolean(e.story && STORIES[e.story] && STORIES[e.story].built);
   };
@@ -178,7 +178,7 @@
 
     var packed = lanes.map(function (l) {
       var dyn = E.filter(function (e) {
-        return e.lane === l.id && e.kind === "dynasty";
+        return e.lane === l.id && X.isSpan(e);
       });
       var p = X.pack(dyn, { s: s, start: START, pad: PADTOP, minH: ov ? 5 : 30, tol: TOL });
       return { l: l, items: p.items, w: p.slots * SLOT, x: 0 };
@@ -289,7 +289,7 @@
       });
       var ids = new Set(visibleLanes().map(function (l) { return l.id; }));
       var now = E.filter(function (e) {
-        return e.kind === "dynasty" && ids.has(e.lane) && e.from <= y && e.to >= y;
+        return X.isSpan(e) && ids.has(e.lane) && e.from <= y && e.to >= y;
       });
       var key = now.map(function (e) { return e.id; }).join();
       if (key === lastKey) return;
@@ -380,7 +380,7 @@
       return e.added && Date.now() - Date.parse(e.added) < 45 * 864e5;
     });
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
-    var kindOpts = [["all", "Everything"], ["dynasty", "Dynasties"], ["event", "Events"], ["legend", "Legends"], ["route", "Routes"]];
+    var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"]];
 
     $("sm-browse-body").innerHTML =
       chipRow("Region", "data-br", regionOpts, b.region) +
@@ -394,7 +394,7 @@
       '<option value="az"' + (b.sort === "az" ? " selected" : "") + ">A to Z</option></select></label></div>" +
       (list.length
         ? '<ul class="sm-entry-grid">' + list.map(card).join("") + "</ul>"
-        : '<p class="sm-empty">' + (q ? "Nothing matches “" + esc(b.q.trim()) + "”. Try a dynasty, a region or a century, or clear a filter." : "Nothing here yet for these filters.") + "</p>") +
+        : '<p class="sm-empty">' + (q ? "Nothing matches “" + esc(b.q.trim()) + "”. Try a civilisation, a dynasty, a region or a century, or clear a filter." : "Nothing here yet for these filters.") + "</p>") +
       '<p class="sm-browse-foot">Legends have no dates, so they are listed here rather than on the timeline.</p>';
   }
 
