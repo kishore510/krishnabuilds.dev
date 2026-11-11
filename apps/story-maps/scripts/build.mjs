@@ -195,7 +195,7 @@ const regionById = new Map(catalogue.regions.map((r) => [r.id, r]));
 const laneTitle = new Map(catalogue.regions.flatMap((r) => r.lanes.map((l) => [l.id, l.title])));
 /** @param {string} regionId */
 const hueOf = (regionId) => `--hue:var(--sm-hue-${regionById.get(regionId)?.hue})`;
-const KIND = { dynasty: "Dynasty", event: "Event", legend: "Legend", route: "Route" };
+const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route" };
 
 const hubData = {
   regions: catalogue.regions,
@@ -209,7 +209,7 @@ write(
   "index.html",
   render({
     title: "Story Maps · krishnabuilds",
-    description: "Illustrated maps that follow a story across the land, and a timeline of the dynasties and empires behind them.",
+    description: "Illustrated maps that follow a story across the land, and a timeline of the civilisations, dynasties and empires behind them.",
     path: "/",
     explore: true,
     body: [
@@ -228,7 +228,7 @@ write(
       '<p class="sm-key"><span><i class="sm-key-built"></i>Story map ready</span><span><i></i>Story map to come</span><span><i class="sm-key-event"></i>Event</span><span>Scroll through time; the line shows who ruled at the same moment.</span></p>',
       "</section>",
       '<section class="sm-v-browse" id="sm-v-browse" aria-label="Browse" hidden>',
-      '<div class="sm-search"><label class="sm-sr" for="sm-q">Search</label><input id="sm-q" type="search" placeholder="Search dynasties, events, legends and regions" autocomplete="off"></div>',
+      '<div class="sm-search"><label class="sm-sr" for="sm-q">Search</label><input id="sm-q" type="search" placeholder="Search civilisations, empires, legends and regions" autocomplete="off"></div>',
       '<div class="sm-browse-body" id="sm-browse-body"></div>',
       "</section>",
       `<noscript><div class="sm-noscript"><h2>Everything</h2><ul>${catalogue.entries
@@ -253,7 +253,7 @@ function mini(kind, e) {
 
 /** This entry and its lane neighbours to scale, like a slice of the timeline. @param {Entry} e */
 function contextStrip(e) {
-  if (!e.lane || e.kind !== "dynasty") return "";
+  if (!e.lane || !X.isSpan(e)) return "";
   const from = /** @type {number} */ (e.from);
   const to = /** @type {number} */ (e.to);
   const pad = Math.max(150, (to - from) * 0.8);

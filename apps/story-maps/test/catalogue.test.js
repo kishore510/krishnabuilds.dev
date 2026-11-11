@@ -37,6 +37,7 @@ describe("catalogue.json", () => {
         { id: "x-field", name: "Typo", kind: "dynasty", source: "History", region: "india", lane: "north", from: 1, to: 2, form: 3 },
         { id: "x-nosum", name: "No summary", kind: "legend", source: "Tradition", region: "india" },
         { id: "x-long", name: "Long summary", kind: "legend", source: "Tradition", region: "india", summary: "word ".repeat(61) },
+        { id: "x-civ", name: "Undated civilisation", kind: "civilisation", source: "Archaeology", region: "americas", summary: "A test." },
       ),
       stories,
     ).join("\n");
@@ -52,6 +53,8 @@ describe("catalogue.json", () => {
     expect(problems).toContain("entry x-field: unknown field form");
     expect(problems).toContain("entry x-nosum: missing summary");
     expect(problems).toContain("entry x-long: summary is over 60 words");
+    expect(problems).toContain("entry x-civ: a civilisation needs from and to");
+    expect(problems).toContain("entry x-civ: a civilisation needs a lane");
   });
 
   it("catches a duplicate id and a story no entry links to", () => {
@@ -93,6 +96,18 @@ describe("hub/explore.js", () => {
     expect([...years].sort((a, b) => b - a)).toEqual(years);
   });
 
+  it("treats civilisations like dynasties on the timeline", () => {
+    expect(X.isSpan(byId("indus"))).toBe(true);
+    expect(X.isSpan(byId("maurya"))).toBe(true);
+    expect(X.isSpan(byId("partition"))).toBe(false);
+    expect(X.isSpan(byId("ramayana"))).toBe(false);
+    // The Indus cities were trading with Sumer and Akkad.
+    const ids = X.meanwhile(byId("indus"), catalogue.entries, 20).map((m) => m.entry.id);
+    expect(ids).toContain("sumer");
+    expect(ids).toContain("pharaonic-egypt");
+    expect(X.laneMates(byId("vedic"), catalogue.entries).map((e) => e.id)).toContain("indus");
+  });
+
   it("covers every dated lane entry in the timeline bounds", () => {
     const { start, end } = X.bounds(catalogue.entries);
     expect(Number.isInteger(start / 100)).toBe(true);
@@ -105,7 +120,7 @@ describe("hub/explore.js", () => {
   it("packs every lane so no two blocks in a slot overlap", () => {
     for (const region of catalogue.regions) {
       for (const lane of region.lanes) {
-        const dyn = catalogue.entries.filter((e) => e.lane === lane.id && e.kind === "dynasty");
+        const dyn = catalogue.entries.filter((e) => e.lane === lane.id && X.isSpan(e));
         const { items, slots } = X.pack(dyn, { s: 0.45, start: -3300, pad: 26, minH: 30, tol: 30 });
         expect(items).toHaveLength(dyn.length);
         for (let k = 0; k < slots; k++) {

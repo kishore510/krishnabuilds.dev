@@ -18,7 +18,7 @@ From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnab
 
 ```
 manifest.json      sections, collections and every story
-catalogue.json     regions, timeline lanes and entries (dynasties, events, legends, routes) for the hub and /explore/<id>/
+catalogue.json     regions, timeline lanes and entries (civilisations, dynasties, events, legends, routes) for the hub and /explore/<id>/
 stories/           one folder per story: stories/<section>/[<collection>/]<id>/; a built story has story.json there
 basemaps/          shared maps: south-asia.json, world.json (coastlines, rivers, ranges, forests, labels)
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
@@ -39,9 +39,10 @@ scripts/build.mjs  the build; stops on any manifest, catalogue or story data pro
 
 `catalogue.json` drives the hub's Timeline and Browse and the `/explore/<id>/` entry pages. Stories stay in `manifest.json`; entries link to them with `story`, and every story must be linked from at least one entry (the build checks).
 
-- `regions`: `id`, `title`, `short`, `hue` (saffron, lapis, jade, ochre or plum; colours in `src/theme.css`) and `lanes` (`id`, `title`), the timeline's columns. A region with no lanes (Across regions) is in Browse only.
-- `entries`: `id` (slug; page path `/explore/<id>/`), `name`, `summary`, `kind` (`dynasty`, `event`, `legend`, `route`), `source` (History, Archaeology or Tradition), `region`, and for the timeline `lane`, `from` and `to` (whole years, negative for BCE, never 0; an event has only `from`). Optional: `approx` (show "c."), `story`, `after` (named successors), `native` and `lang`, `note` (30 words at most), `added` (YYYY-MM-DD, shows "New" for 45 days).
+- `regions`: `id`, `title`, `short`, `hue` (saffron, lapis, jade, ochre, plum or rose; colours in `src/theme.css`) and `lanes` (`id`, `title`), the timeline's columns. A region with no lanes (Across regions) is in Browse only.
+- `entries`: `id` (slug; page path `/explore/<id>/`), `name`, `summary`, `kind` (`civilisation`, `dynasty`, `event`, `legend`, `route`), `source` (History, Archaeology or Tradition), `region`, and for the timeline `lane`, `from` and `to` (whole years, negative for BCE, never 0; an event has only `from`). Optional: `approx` (show "c."), `story`, `after` (named successors), `native` and `lang`, `note` (30 words at most), `added` (YYYY-MM-DD, shows "New" for 45 days).
 - **Every entry needs a `summary`** (the build fails without one), including every new entry and every story added from now on: a short paragraph on what made it unique, its most iconic figures and its biggest achievements, in about 50 to 60 words and never more than 60. It follows the content rules: label tradition as tradition, give disputed figures as disputed estimates, native terms in brackets after the English. See `maurya` for the model.
+- Kinds: `civilisation` for a culture known mainly as a whole, often from archaeology (Indus, Sumer, Maya, Minoan Crete), and `dynasty` for a dynasty, kingdom or empire (Maurya, Ming, Spanish Empire). Both need `from`, `to` and a lane, and both fill the timeline. Browse labels them Civilisations and Dynasties & empires. Don't split dynasties from empires: most entries are both.
 - Legends have no dates or lane, so they are in Browse only.
 - The same content rules apply: never invent a date. Where sources disagree, give the usual range, set `approx` and say so in `note`.
 - Keep lanes readable: the tests fail if a lane needs more than two entries side by side. Split a lane before that happens.
