@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.0
+
+- Browse: a new **Civilisations** filter, alongside Dynasties & empires, Epics & legends, Events and Routes. The Indus, Pharaonic Egypt and classical Greece are now civilisations; civilisations sit on the timeline with the dynasties.
+- New region: **The Americas** (Mesoamerica, Andes, North America): Olmec, Maya, Teotihuacan, the Aztec Empire, Chavín, Moche, Tiwanaku, the Inca Empire and the Mississippian culture, with the fall of Tenochtitlan and Pizarro's capture of Atahualpa.
+- European empires overseas get their own lanes: the Spanish, Portuguese, French and Dutch empires join the British Empire, with Columbus in 1492 and Vasco da Gama in 1498.
+- 59 new entries in all, filling gaps across the timeline: the Vedic period and the Mahajanapadas, the Sikh Empire, the Ahoms, the Eastern Gangas and Mysore under Hyder Ali and Tipu Sultan; Minoan Crete, Mycenaean Greece, Alexander's empire, Carthage, the Vikings, Napoleon, Kievan Rus', Muscovy and the Russian Empire; Sumer, Akkad, Babylon, the Hittites, Assyria, the Seleucids, Parthians, Rashidun and Umayyad caliphates and the Safavids; Kush, Ghana, Great Zimbabwe and Songhai; the Mongols and Timurids, Silla, Goryeo, Joseon, Heian, Kamakura, Ashikaga and Tokugawa Japan, Srivijaya, the Khmer Empire and Majapahit.
+- East Asia is now East & Southeast Asia. As before, the dates are approximate and still need checking against sources.
+
 ## 0.11.0
 
 - New story map in Chronicles: The Indus Cities. From the first farmers at Mehrgarh, about 7000 BCE, through the planned cities of Mohenjo-daro, Harappa, Dholavira and Rakhigarhi, their seals and unread script, crafts and the sea trade with Mesopotamia, to the decline after about 1900 BCE and the rediscovery in the 1920s: 20 chapters on the South Asia map, an Extent layer that grows and shrinks with the civilisation, and 10 people cards for the archaeologists who found it.

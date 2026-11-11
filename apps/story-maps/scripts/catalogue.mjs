@@ -1,6 +1,6 @@
 // @ts-check
-// Reads and checks catalogue.json: the regions, lanes and entries (dynasties,
-// events, legends, routes) behind the hub's timeline, Browse and the
+// Reads and checks catalogue.json: the regions, lanes and entries (civilisations,
+// dynasties, events, legends, routes) behind the hub's timeline, Browse and the
 // /explore/<id>/ pages. Used by the build (which stops on any problem) and by
 // test/catalogue.test.js. Also runs hub/explore.js in Node for its pure functions.
 
@@ -19,10 +19,10 @@ import { APP_DIR } from "./manifest.mjs";
  * @typedef {{ regions: Region[], entries: Entry[] }} Catalogue
  */
 
-export const KINDS = ["dynasty", "event", "legend", "route"];
+export const KINDS = ["civilisation", "dynasty", "event", "legend", "route"];
 export const SOURCES = ["History", "Archaeology", "Tradition"];
 // Region colours; each has light and dark values in src/theme.css (--sm-hue-<name>).
-export const HUES = ["saffron", "lapis", "jade", "ochre", "plum"];
+export const HUES = ["saffron", "lapis", "jade", "ochre", "plum", "rose"];
 const FIELDS = new Set([
   "id", "name", "kind", "source", "region", "lane", "from", "to", "approx",
   "story", "after", "native", "lang", "note", "added", "summary",
@@ -98,11 +98,12 @@ export function validateCatalogue(catalogue, stories) {
     const hasTo = e.to !== undefined;
     if (hasFrom && !isYear(e.from)) problems.push(`${where}: from must be a whole year, not 0 (1 BCE is -1)`);
     if (hasTo && !isYear(e.to)) problems.push(`${where}: to must be a whole year, not 0 (1 BCE is -1)`);
-    if (e.kind === "dynasty" || e.kind === "route") {
+    const isSpan = e.kind === "civilisation" || e.kind === "dynasty";
+    if (isSpan || e.kind === "route") {
       if (!hasFrom || !hasTo) problems.push(`${where}: a ${e.kind} needs from and to`);
       else if (/** @type {number} */ (e.to) < /** @type {number} */ (e.from)) problems.push(`${where}: to is before from`);
     }
-    if (e.kind === "dynasty" || e.kind === "event") {
+    if (isSpan || e.kind === "event") {
       if (e.lane === undefined) problems.push(`${where}: a ${e.kind} needs a lane`);
     }
     if (e.kind === "event") {

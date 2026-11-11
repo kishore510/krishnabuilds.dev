@@ -14,6 +14,11 @@
     return typeof e.from === "number";
   }
 
+  /** Civilisations and dynasties (or empires) span years and fill the timeline's lanes. */
+  function isSpan(e) {
+    return e.kind === "dynasty" || e.kind === "civilisation";
+  }
+
   /** The last year an entry covers: events cover one year. */
   function endOf(e) {
     return e.kind === "event" ? e.from : e.to;
@@ -38,11 +43,11 @@
     return (e.approx ? "about " : "") + n + (n === 1 ? " year" : " years");
   }
 
-  /** Dynasties in the same lane, oldest first. */
+  /** Civilisations and dynasties in the same lane, oldest first. */
   function laneMates(e, entries) {
     return entries
       .filter(function (x) {
-        return x.kind === "dynasty" && x.lane && x.lane === e.lane && x.id !== e.id;
+        return isSpan(x) && x.lane && x.lane === e.lane && x.id !== e.id;
       })
       .sort(function (a, b) {
         return a.from - b.from;
@@ -83,13 +88,13 @@
     return { before: before || null, after: after || null };
   }
 
-  /** Dynasties in other lanes that overlap this entry, longest overlap first. */
+  /** Civilisations and dynasties in other lanes that overlap this entry, longest overlap first. */
   function meanwhile(e, entries, limit) {
     if (!isDated(e) || e.kind === "route") return [];
     var end = endOf(e);
     return entries
       .filter(function (x) {
-        return x.kind === "dynasty" && x.id !== e.id && x.lane !== e.lane && x.from <= end && x.to >= e.from;
+        return isSpan(x) && x.id !== e.id && x.lane !== e.lane && x.from <= end && x.to >= e.from;
       })
       .map(function (x) {
         var from = Math.max(x.from, e.from);
@@ -192,6 +197,7 @@
     rangeText: rangeText,
     lengthText: lengthText,
     isDated: isDated,
+    isSpan: isSpan,
     endOf: endOf,
     laneMates: laneMates,
     neighbours: neighbours,
