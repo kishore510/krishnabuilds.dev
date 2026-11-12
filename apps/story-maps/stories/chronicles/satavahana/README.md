@@ -1,0 +1,8 @@
+# The Satavahanas
+
+Status: built. The Satavahana dynasty of the Deccan, from the end of Maurya rule to its break-up in the early 3rd century CE: Ashoka's edicts at Sopara, Simuka and the coins from Kotilingala, Queen Naganika's inscription at Naneghat, Kharavela's challenge, the Sanchi gateway, the first caves at Ajanta, the great hall at Karla, Hala's Seven Hundred Verses, the Periplus on Kalyan, Paithan and Tagara, Roman bronzes at Kolhapur, Nahapana and the Kshaharatas, Gautamiputra's revival and the Jogalthembi hoard, Gautami Balashri's inscription, Ptolemy's two royal seats, Rudradaman at Junagadh, the marriage at Kanheri, the portrait coins, Amaravati, Kanaganahalli, Yajna Sri's ship coins, the successor kingdoms at Nagarjunakonda and the Shalivahana era. 23 chapters, a **Powers** layer (the Satavahanas changing chapter by chapter, the Mauryas, the Shungas and Kanvas, Kalinga, the Kshaharata and Western Kshatrapas, and the Ikshvakus, Abhiras and Chutus) and 11 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes show only for the current chapter.
+- Source: inscriptions, coins and excavations are **Archaeology**; the Periplus, Ptolemy and the Puranas' king lists read as history are **History**; Hala's authorship and the Shalivahana legend are **Tradition**.
+- Native names are in Sanskrit (`sa`), in Devanagari, with Prakrit (`pra`), Greek (`grc`), Telugu (`te`), Kannada (`kn`) and Odia (`or`) where a card needs them.
+- When the dynasty began is disputed (the 3rd or the 1st century BCE), and the order of its kings and most reign dates are debated. The cards say so where it matters. Powers areas are loose regions, not borders.
