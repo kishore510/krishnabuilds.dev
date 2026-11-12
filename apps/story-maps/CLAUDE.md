@@ -24,7 +24,8 @@ basemaps/          shared maps: south-asia.json, world.json, near-east.json (coa
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
 hub/page.html      the shell every page is rendered into
 hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
-hub/hub.js         the hub in the browser: Timeline and Browse
+hub/hub.js         the hub in the browser: story cards, Atlas, Timeline and Browse
+hub/progress.js    story pages only: remembers the last chapter read (the engine itself stores nothing)
 hub/explore.css    styles for the hub and entry pages
 src/theme-picker.js Parchment / Night / Auto picker; test/prepaint.test.js fails if it writes a different cookie from packages/ui
 src/theme.css      painted theme (saffron, lapis, gold), light and dark
@@ -37,11 +38,12 @@ scripts/build.mjs  the build; stops on any manifest, catalogue or story data pro
 
 ## Catalogue
 
-`catalogue.json` drives the hub's Timeline and Browse and the `/explore/<id>/` entry pages. Stories stay in `manifest.json`; entries link to them with `story`, and every story must be linked from at least one entry (the build checks).
+`catalogue.json` drives the hub's Atlas, Timeline and Browse and the `/explore/<id>/` entry pages. Stories stay in `manifest.json`; entries link to them with `story`, and every story must be linked from at least one entry (the build checks).
 
 - `regions`: `id`, `title`, `short`, `hue` (saffron, lapis, jade, ochre, plum or rose; colours in `src/theme.css`) and `lanes` (`id`, `title`), the timeline's columns. A region with no lanes (Across regions) is in Browse only.
 - `entries`: `id` (slug; page path `/explore/<id>/`), `name`, `summary`, `kind` (`civilisation`, `dynasty`, `event`, `legend`, `route`), `source` (History, Archaeology or Tradition), `region`, and for the timeline `lane`, `from` and `to` (whole years, negative for BCE, never 0; an event has only `from`). Optional: `approx` (show "c."), `story`, `after` (named successors), `native` and `lang`, `note` (30 words at most), `added` (YYYY-MM-DD, shows "New" for 45 days).
 - **Every entry needs a `summary`** (the build fails without one), including every new entry and every story added from now on: a short paragraph on what made it unique, its most iconic figures and its biggest achievements, in about 50 to 60 words and never more than 60. It follows the content rules: label tradition as tradition, give disputed figures as disputed estimates, native terms in brackets after the English. See `maurya` for the model.
+- **Atlas**: every civilisation and dynasty also needs `at` (`[lon, lat]`, its heartland) and `radius` (its rough reach in degrees, 1 to 15); the build fails without them. The atlas draws a circle there in the years between `from` and `to`. It is a marker, never a border: keep it on the heartland, and for an overseas empire on the home country. The atlas and the story cards draw the `world` basemap's coastlines.
 - Kinds: `civilisation` for a culture known mainly as a whole, often from archaeology (Indus, Sumer, Maya, Minoan Crete), and `dynasty` for a dynasty, kingdom or empire (Maurya, Ming, Spanish Empire). Both need `from`, `to` and a lane, and both fill the timeline. Browse labels them Civilisations and Dynasties & empires. Don't split dynasties from empires: most entries are both.
 - Legends have no dates or lane, so they are in Browse only.
 - The same content rules apply: never invent a date. Where sources disagree, give the usual range, set `approx` and say so in `note`.
@@ -69,6 +71,7 @@ scripts/build.mjs  the build; stops on any manifest, catalogue or story data pro
   - `earth-deep`: the Earth through geological time (Deep Time).
   - `cosmic`: the sky and space (Deep Time), or a mythic setting with no real geography.
 - Only the `geo` canvas is built so far; `earth-deep` and `cosmic` are new engine features when the first such story needs them.
+- The engine stores nothing and makes no requests (the tests check). It puts the chapter in the address (`#12`), announces each chapter with an `sm:chapter` event and takes `StoryMap.offerResume(i)`; `hub/progress.js` does the remembering. The build passes each story `more`: the other built stories (a card that names one links to it), the stories to offer at the end and the catalogue entries around it.
 - The engine lives in `engine/` until a second app needs it; only then does it move to `packages/` (see `docs/decisions.md`).
 - `docs/reference/rama-journey-map.html` is the look-and-behaviour reference. It is reference only: it loads Google Fonts and defines a blur filter, which these rules forbid. Don't copy its code into the engine.
 

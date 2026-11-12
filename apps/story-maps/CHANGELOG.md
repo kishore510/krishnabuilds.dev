@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.14.0
+
+- New **Atlas** on the hub, and the first thing you see: a world map and a year. Drag the year (or press play) and every civilisation and empire alive then appears as a circle on its heartland; tap one for its summary, its story map, and what came next in the same place. Circles mark a heartland and a rough reach, never a border. The atlas and the timeline share one year, so switching tabs keeps your place in time.
+- Hub: a **Start with a story** row, one card per story map with a small map of where it happens. A story you have started shows how far you got and opens where you left off.
+- Stories: the whole card is now readable without opening the sheet, the chapter buttons sit at the bottom under your thumb with Next as the main one, and on a phone you can swipe the card sideways to turn the page.
+- Stories: the numbered chapter circles are replaced by a chapter list with titles and dates under each phase; open it from the chapter count on the map.
+- Stories: dragging the timeline shows which chapter is under your finger.
+- Stories: the chapter is in the address (`/maurya/#12`), so a chapter can be shared and a reload stays put, and a story offers to continue from the chapter you stopped at.
+- Stories: the last chapter leads on to another story and to the catalogue entries around it, and a card that mentions another story map links to it.
+- Stories: the layer button says what it does (Show powers, Hide powers), and the back arrow returns to wherever you came from.
+- Catalogue: every civilisation and dynasty has `at` and `radius` for the atlas; entry pages have a Show on the atlas button.
+
 ## 0.13.0
 
 - New story map in Chronicles: Mesopotamia. From the pillars of Göbekli Tepe, about 9500 BCE, and the first farmers, through Uruk and the invention of writing, Sumer, Akkad, Ur, Hammurabi's Babylon, the Amarna letters and Assyria, to Nebuchadnezzar, Cyrus, the last cuneiform tablets, the rediscovery from the 1840s and the damage since 2003: 27 chapters, a Powers layer that changes chapter by chapter, and 19 people cards.

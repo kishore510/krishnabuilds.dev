@@ -1,18 +1,18 @@
 <div class="sm-app">
   <header class="sm-bar">
     <div class="sm-bar-row">
-      <a class="sm-back" href="/" aria-label="All story maps">←</a>
+      <a class="sm-back" id="sm-back" href="/" aria-label="Back to all story maps">←</a>
       <h1>{{title}}</h1>
       <div class="sm-when" id="sm-when"></div>
     </div>
     <div class="sm-timeline" id="sm-timeline" role="group" aria-label="Story timeline. Tap or drag to jump to a chapter.">
-      <div class="sm-track" id="sm-track"></div><div class="sm-fill"></div><div class="sm-head"></div>
+      <div class="sm-track" id="sm-track"></div><div class="sm-fill"></div><div class="sm-head"></div><div class="sm-scrub" id="sm-scrub" hidden></div>
     </div>
   </header>
   <div class="sm-main" id="sm-main">
     <div class="sm-stage" id="sm-stage">
       <svg id="sm-map" role="group" aria-label="{{mapLabel}}. Tap a place for its chapters."></svg>
-      <div class="sm-chip sm-counter" id="sm-counter"></div>
+      <button class="sm-chip sm-counter" id="sm-counter" type="button" aria-label="Chapters"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="sm-counter-text"></span></button>
       <button class="sm-chip sm-overview" id="sm-overview" type="button">Whole map</button>
       <div class="sm-zoom" role="group" aria-label="Zoom the map">
         <button type="button" id="sm-zoom-in" aria-label="Zoom in" title="Zoom in (+)">+</button>
@@ -21,16 +21,10 @@
       <button class="sm-chip sm-realm-toggle" id="sm-realm-toggle" type="button" aria-pressed="false" hidden></button>
     </div>
     <section class="sm-sheet" id="sm-sheet" aria-live="polite" aria-label="Story">
-      <div class="sm-sheet-fixed">
-        <button class="sm-grip" id="sm-grip" type="button" aria-expanded="false" aria-controls="sm-scroll" aria-label="Show full story"><span></span></button>
-        <div class="sm-controls" role="group" aria-label="Journey controls">
-          <button type="button" id="sm-prev">Back</button>
-          <button type="button" id="sm-play" class="sm-play">Play</button>
-          <button type="button" id="sm-next">Next</button>
-        </div>
-      </div>
+      <button class="sm-grip" id="sm-grip" type="button" aria-expanded="false" aria-controls="sm-scroll" aria-label="Show full story"><span></span></button>
       <div class="sm-scroll" id="sm-scroll">
-        <div class="sm-step">
+        <div class="sm-step" id="sm-step">
+          <button class="sm-resume" id="sm-resume" type="button" hidden></button>
           <div class="sm-phase"><i id="sm-phase-dot"></i><span id="sm-phase"></span><span class="sm-source" id="sm-source"></span><p class="sm-native" id="sm-native" lang="hi"></p></div>
           <h2 id="sm-title"></h2>
           <p class="sm-text" id="sm-text"></p>
@@ -43,7 +37,7 @@
               <h3 id="sm-main-heading"></h3><div class="sm-chips" id="sm-main-chips"></div>
               <h3 id="sm-minor-heading"></h3><div class="sm-chips" id="sm-minor-chips"></div>
             </div>
-            <nav class="sm-chapters" id="sm-chapters" aria-label="Chapters"></nav>
+            <button class="sm-all-chapters" id="sm-all-chapters" type="button"></button>
             <p class="sm-footnote">{{note}}</p>
           </div>
         </div>
@@ -69,6 +63,21 @@
             <h3>In the story</h3><div class="sm-chips" id="sm-person-steps"></div>
           </div>
         </div>
+        <div class="sm-contents-card" id="sm-contents-card">
+          <div class="sm-realm-head"><span class="sm-realm-name">Chapters</span><button type="button" class="sm-realm-close" id="sm-contents-close">Back to story</button></div>
+          <nav class="sm-contents" id="sm-contents" aria-label="Chapters"></nav>
+        </div>
+        <div class="sm-end-card" id="sm-end-card">
+          <div class="sm-realm-head"><span class="sm-realm-name">The end of this story</span><button type="button" class="sm-realm-close" id="sm-end-close">Back to story</button></div>
+          <div class="sm-end-box" id="sm-end-next-box"><h3>Follow another story</h3><div class="sm-end-stories" id="sm-end-next"></div></div>
+          <div class="sm-end-box" id="sm-end-related-box"><h3>Around this story</h3><div class="sm-chips" id="sm-end-related"></div></div>
+          <div class="sm-end-actions"><button type="button" class="sm-realm-close" id="sm-end-again">Start again</button><a class="sm-realm-close" href="/">All story maps</a></div>
+        </div>
+      </div>
+      <div class="sm-controls" role="group" aria-label="Chapter controls">
+        <button type="button" id="sm-prev" class="sm-prev">Back</button>
+        <button type="button" id="sm-play" class="sm-play"></button>
+        <button type="button" id="sm-next" class="sm-next">Next</button>
       </div>
     </section>
   </div>
