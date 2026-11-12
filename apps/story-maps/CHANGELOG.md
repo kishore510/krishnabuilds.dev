@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.25.0
+
+- New story map in Chronicles: The Gupta Empire. From a divided north about 300 CE and Chandragupta I’s Licchavi marriage, through Samudragupta (Harishena’s poem on the Prayagraj pillar, the Naga kings uprooted, the southern campaign to Kanchi, tribute from the frontiers, Meghavarna’s monastery at Bodh Gaya, the horse sacrifice and lyre coins), Chandragupta II (Ramagupta and Dhruvadevi, the end of the Western Kshatrapas, the boar at Udayagiri, Prabhavatigupta among the Vakatakas, Faxian, the iron pillar, Kalidasa), Kumaragupta and Nalanda, the Mandsaur silk weavers, Skandagupta against the Hunas and the Sudarshana lake, to the Sarnath Buddhas, the Damodarpur land sales, Eran under Toramana, Aryabhata, the Deogarh temple, Goparaja’s memorial, Mihirakula, Yashodharman, the last Guptas and the “golden age” question: 30 chapters, a Powers layer that changes chapter by chapter, and 15 people cards.
+- Catalogue: the Gupta Empire entry now opens the story.
+
 ## 0.24.0
 
 - New story map in Chronicles: The Satavahanas, the Deccan dynasty that followed the Mauryas in the south. From Ashoka’s edicts in the Deccan, Simuka’s coins at Kotilingala, Queen Naganika at Naneghat, Kharavela’s challenge, the Sanchi gateway and the first caves at Ajanta, through the great hall at Karla, Hala’s Seven Hundred Verses, the Periplus on Kalyan, Paithan and Tagara, Roman bronzes at Kolhapur and Nahapana’s Kshatrapas, to Gautamiputra’s revival (the Jogalthembi hoard, Gautami Balashri’s inscription), Ptolemy’s two royal seats, Rudradaman at Junagadh, the marriage recorded at Kanheri, coins in two languages, Amaravati, the portraits at Kanaganahalli, Yajna Sri’s ship coins, the break-up about 225 CE and the Shalivahana era: 23 chapters, a Powers layer that changes chapter by chapter, and 11 people cards.
