@@ -1,6 +1,8 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
-import { loadManifest, SECTIONS, STATUSES, validateManifest } from "../scripts/manifest.mjs";
+import { APP_DIR, loadManifest, SECTIONS, STATUSES, validateManifest } from "../scripts/manifest.mjs";
 
 const manifest = loadManifest();
 
@@ -54,5 +56,13 @@ describe("manifest.json", () => {
   it("allows a story with no collection", () => {
     const loose = manifest.stories.find((s) => s.collection === undefined);
     expect(loose).toBeDefined();
+  });
+
+  it("BACKLOG.md lists every built story under Built, and none of them under Next", () => {
+    const [next, built] = readFileSync(`${APP_DIR}BACKLOG.md`, "utf8").split("\n## Built\n");
+    for (const story of manifest.stories.filter((s) => s.status === "built")) {
+      expect(built, `${story.id} is missing from Built in BACKLOG.md`).toContain(`(\`${story.id}\`)`);
+      expect(next, `${story.id} is built but still under Next in BACKLOG.md`).not.toContain(`\`${story.id}\``);
+    }
   });
 });

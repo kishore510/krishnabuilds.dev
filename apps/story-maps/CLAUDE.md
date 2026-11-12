@@ -14,6 +14,14 @@ A static site with a small Node build step and no backend. Every page is a singl
 
 From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnabuilds/story-maps`. Output goes to `apps/story-maps/dist/`; preview with `python3 -m http.server 8080 -d dist` from `apps/story-maps` (that server has no 404 page; Cloudflare serves `dist/404.html` for unknown paths).
 
+`BACKLOG.md` lists what to build next, in order, and what is built; the skill and a test keep it current.
+
+Adding a story: use the `new-story-map` skill (`.claude/skills/new-story-map/SKILL.md` at the repo root). It needs no engine or hub code read. From `apps/story-maps`:
+
+- `pnpm story:ref` prints what a story's data may refer to: basemap extents, glyph and traveller ids, lanes, taken ids.
+- `pnpm story:check <id>` runs the build's data checks on one story, plus layout warnings (`scripts/layout.mjs`): pins hiding each other, labels over pins or off the map, cameras that miss their place, unused data. Warnings don't fail the build; older stories carry some.
+- `pnpm story:shots <id> [steps]` saves phone screenshots of chosen chapters to `.work/<id>/` (ignored by git). It needs Playwright, which is not a dependency here; Claude Code cloud sessions have it.
+
 ## Layout
 
 ```
@@ -36,6 +44,7 @@ public/            favicon and apple-touch icon, copied as-is
 licences/          OFL texts for the fonts
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
+scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above
 ```
 
 ## Catalogue
@@ -58,7 +67,7 @@ scripts/build.mjs  the build; stops on any manifest, catalogue or story data pro
 - **Chronicles**: civilisations, empires and routes, from archaeology and the historical record (ancient and modern). No collections.
 - **Deep Time**: the Earth and the sky before people. Empty for now.
 
-`manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A `built` story also needs `added`: when its map was finished, as `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM` in UTC (set it when the story is built). The hub's "New story maps" row shows the 8 most recently finished maps from the last 45 days; placeholder entries and coming-soon stories are never new. A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
+`manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A `built` story also needs `added`: when its map was finished, as `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM` in UTC (set it when the story is built). The hub's "New story maps" row lists every finished map, newest first by `added`, however old; the New pill marks those from the last 45 days. Placeholder entries and coming-soon stories are never listed there. A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
 
 ## Engine and data
 

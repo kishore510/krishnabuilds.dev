@@ -364,13 +364,14 @@
 
   // ---------- Browse ----------
 
-  // "New": story maps finished in the last 45 days (the manifest's added), newest first, at most 8.
-  // Catalogue entries without a finished map are placeholders, so they never count as new.
-  var FRESH = Object.keys(STORIES)
+  // "New story maps": every finished map, newest first (the manifest's added), however old.
+  // Catalogue entries without a finished map are placeholders, so they are never listed.
+  var NEWEST = Object.keys(STORIES)
     .map(function (id) { return Object.assign({ id: id }, STORIES[id]); })
-    .filter(function (s) { return s.built && s.added && Date.now() - Date.parse(s.added + (s.added.length > 10 ? "Z" : "")) < 45 * 864e5; })
-    .sort(function (a, b) { return b.added.localeCompare(a.added); })
-    .slice(0, 8);
+    .filter(function (s) { return s.built && s.added; })
+    .sort(function (a, b) { return b.added.localeCompare(a.added); });
+  // The New pill is only for maps finished in the last 45 days.
+  var FRESH = NEWEST.filter(function (s) { return Date.now() - Date.parse(s.added + (s.added.length > 10 ? "Z" : "")) < 45 * 864e5; });
   var isFresh = function (storyId) {
     return FRESH.some(function (s) { return s.id === storyId; });
   };
@@ -381,7 +382,7 @@
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + (r ? esc(r.short) + " · " : "") + "Story map</span>" +
       '<span class="sm-entry-card__name">' + esc(s.title) + "</span>" +
       '<span class="sm-entry-card__dates">' + esc(s.era) + "</span>" +
-      '<span class="sm-entry-card__tags"><span class="sm-pill sm-pill--new">New</span></span></a></li>';
+      (isFresh(s.id) ? '<span class="sm-entry-card__tags"><span class="sm-pill sm-pill--new">New</span></span>' : "") + "</a></li>";
   }
 
   function card(e) {
@@ -434,7 +435,7 @@
         return '<button type="button" class="sm-chip-btn" data-bk="' + o[0] + '" aria-pressed="' + (b.kind === o[0]) + '">' + o[1] + "</button>";
       }).join("") + '<button type="button" class="sm-chip-btn sm-chip-btn--maps" data-bm aria-pressed="' + b.maps + '">Story maps only</button></div>' +
       (plain && recent.length ? '<h2 class="sm-browse-h">Pick up where you left off</h2><ul class="sm-entry-row">' + recent.map(card).join("") + "</ul>" : "") +
-      (plain && FRESH.length ? '<h2 class="sm-browse-h">New story maps</h2><ul class="sm-entry-row">' + FRESH.map(storyCard).join("") + "</ul>" : "") +
+      (plain && NEWEST.length ? '<h2 class="sm-browse-h">New story maps</h2><ul class="sm-entry-row">' + NEWEST.map(storyCard).join("") + "</ul>" : "") +
       '<div class="sm-browse-bar"><h2 class="sm-browse-h">' + (plain ? "Everything" : "Results") + ' <span class="sm-browse-n">' + list.length + "</span></h2>" +
       '<label class="sm-sort">Sort <select id="sm-sort"><option value="date"' + (b.sort === "date" ? " selected" : "") + '>Oldest first</option>' +
       '<option value="az"' + (b.sort === "az" ? " selected" : "") + ">A to Z</option></select></label></div>" +

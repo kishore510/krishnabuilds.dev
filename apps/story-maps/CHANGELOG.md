@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.32.0
+
+- Browse: “New story maps” now lists every finished story map, newest first, however long ago it was finished, instead of at most 8 from the last 45 days. The New pill still marks only those from the last 45 days.
+- For maintainers: `pnpm story:ref`, `story:check` and `story:shots`, the `new-story-map` skill and `BACKLOG.md`, for adding a story without reading the engine.
+
 ## 0.31.1
 
 - Fix: entries that share a story map no longer look like copies of it. The Bhagavad Gita, the Battle of the Ten Kings and 24 other entries are now shown as “Part of <story>” and open the story at their own chapter (for example the Ten Kings at chapter 9 of The Vedic Age) instead of at chapter 1. The build stops if a second entry links to a whole story or a chapter doesn’t exist.
