@@ -1,0 +1,10 @@
+# The Aztec Empire
+
+Status: built. The Mexica and their empire, from the migration out of Aztlan and the Seven Caves, Serpent Hill and the memory of the Toltecs at Tula, through Chapultepec, Culhuacan and the founding of Tenochtitlan (by tradition in 1325), the Tepanecs of Azcapotzalco, the chinampas and Teotihuacan, to the Triple Alliance of 1428 (Itzcoatl's burning of the books, Nezahualcoyotl of Texcoco, Moctezuma I, the flowery wars with Tlaxcala, the defeat by the Purépecha, the Great Temple, Soconusco and the Codex Mendoza's tribute), the city in 1519, and the Spanish conquest: Cozumel, Malintzin, Cempoala, Tlaxcala, Cholula, the meeting on the causeway, Toxcatl, the Sad Night, smallpox, the brigantines and the fall of 13 August 1521. It ends with Mexico City on the ruins, the Florentine Codex and the Great Temple found again. 34 chapters, a **Powers** layer that changes chapter by chapter, and 15 people cards.
+
+- `story.json`: the story data. It uses the new `mesoamerica` basemap and the shared art library. Routes show only for the current chapter.
+- Source: the migration chapters are **Tradition** (Mexica and other Nahua histories, written down after the conquest); later chapters are **History** (those histories, Spanish letters and chronicles, the Codex Mendoza and the Florentine Codex) or **Archaeology**. Disputed figures (the 1487 sacrifices, the dead at Cholula and in the siege, Tenochtitlan's population) are given as estimates and said to be disputed.
+- Native names are in Nahuatl (`nah`) in a common modern spelling, with Spanish (`es`), Yucatec Maya (`yua`) and Purépecha (`tsz`) where they fit.
+- Aztlan and Chicomoztoc have no known location: their pins mark one modern claim each (Mexcaltitán and La Quemada), and the cards say so.
+- In the Valley of Mexico, Chapultepec, Azcapotzalco, Culhuacan, Texcoco and Teotihuacan are moved a little apart so their pins can be told apart; Tlatelolco shares Tenochtitlan's pin. The story's note says so.
+- Powers areas are loose outlines, not borders, drawn by hand over the `mesoamerica` coastlines.
