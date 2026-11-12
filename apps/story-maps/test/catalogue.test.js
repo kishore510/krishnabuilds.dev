@@ -81,6 +81,23 @@ describe("catalogue.json", () => {
     expect(problems).toContain("entry gupta: duplicate id");
     expect(problems).toContain("story unlinked is in manifest.json but no catalogue entry links to it");
   });
+
+  it("lets only one entry link to a whole story; the rest name a chapter", () => {
+    const legend = { kind: "legend", source: "Tradition", region: "india", summary: "A test." };
+    const problems = validateCatalogue(
+      withEntries(
+        { ...legend, id: "x-second", name: "Second", story: "mahabharata" },
+        { ...legend, id: "x-zero", name: "Zero", story: "mahabharata", chapter: 0 },
+        { ...legend, id: "x-nostory", name: "No story", chapter: 3 },
+        { ...legend, id: "x-part", name: "Part", story: "mahabharata", chapter: 5 },
+      ),
+      stories,
+    ).join("\n");
+    expect(problems).toContain("entry x-second: mahabharata already links to story mahabharata; give one of them a chapter");
+    expect(problems).toContain("entry x-zero: chapter must be a whole number from 1, with a story");
+    expect(problems).toContain("entry x-nostory: chapter must be a whole number from 1, with a story");
+    expect(problems).not.toContain("x-part");
+  });
 });
 
 describe("hub/explore.js", () => {

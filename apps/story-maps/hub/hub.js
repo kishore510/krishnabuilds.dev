@@ -42,6 +42,10 @@
   var href = function (e) {
     return "/explore/" + e.id + "/";
   };
+  // An entry with a chapter is part of a larger story map; link straight to its chapter.
+  var mapHref = function (e) {
+    return "/" + e.story + "/" + (e.chapter ? "#" + e.chapter : "");
+  };
 
   // Per-viewer conveniences only; everything works without storage.
   var store = {
@@ -360,10 +364,20 @@
 
   // ---------- Browse ----------
 
+  // "New": the most recently added entries (added in the last 45 days), newest first. Entries added
+  // on the same day keep the order they were appended to the catalogue, latest first. Capped so the
+  // row stays a short list of what is new, not most of the catalogue.
+  var FRESH = E.map(function (e, i) { return { e: e, i: i }; })
+    .filter(function (x) { return x.e.added && Date.now() - Date.parse(x.e.added) < 45 * 864e5; })
+    .sort(function (a, b) { return b.e.added.localeCompare(a.e.added) || b.i - a.i; })
+    .slice(0, 12)
+    .map(function (x) { return x.e; });
+
   function card(e) {
     var r = REGION[e.region];
-    var isNew = e.added && Date.now() - Date.parse(e.added) < 45 * 864e5;
-    var tags = (built(e) ? '<span class="sm-pill sm-pill--map">Story map</span>' : "") +
+    var isNew = FRESH.indexOf(e) >= 0;
+    var map = !built(e) ? "" : e.chapter ? "Part of " + esc(STORIES[e.story].title) : "Story map";
+    var tags = (map ? '<span class="sm-pill sm-pill--map">' + map + "</span>" : "") +
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
       (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
@@ -399,9 +413,7 @@
     list.sort(b.sort === "az" ? function (x, y) { return x.name.localeCompare(y.name); } : byDate);
     var plain = b.region === "all" && b.kind === "all" && !b.maps && !q;
     var recent = explored.slice(0, 8).map(function (id) { return BY[id]; });
-    var fresh = E.filter(function (e) {
-      return e.added && Date.now() - Date.parse(e.added) < 45 * 864e5;
-    });
+    var fresh = FRESH;
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
     var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"]];
 
@@ -651,7 +663,7 @@
       '<p class="sm-at-dates">' + X.rangeText(e) + "</p>" +
       '<p class="sm-at-summary">' + esc(e.summary) + "</p>" +
       '<div class="sm-at-links">' +
-      (built(e) ? '<a class="sm-btn sm-btn--primary" href="/' + e.story + '/">Open the story map</a>' : "") +
+      (built(e) ? '<a class="sm-btn sm-btn--primary" href="' + mapHref(e) + '">' + (e.chapter ? "Open at its chapter" : "Open the story map") + "</a>" : "") +
       '<a class="sm-btn" href="' + href(e) + '">Read more</a>' +
       (next && next.at ? '<button type="button" class="sm-btn" data-next="' + next.id + '">Next here: ' + esc(next.name) + " →</button>" : "") +
       "</div>";
