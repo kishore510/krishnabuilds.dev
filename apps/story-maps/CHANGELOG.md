@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.30.0
+
+- New story map in Chronicles: The Mughal Empire. From Babur’s boyhood in Ferghana, Samarkand won and lost and the kingdom at Kabul, through the first battle of Panipat, Khanwa and Babur’s gardens, Humayun’s defeats by Sher Khan, Sher Shah’s roads and rupee, Akbar’s birth at Umarkot and Humayun’s fall on the library stairs, Akbar’s reign (Hemu and the second Panipat, the Amber alliance, Chittor, the ride to Gujarat, Haldighati, Fatehpur Sikri, the House of Worship, Todar Mal and the Ain-i Akbari, Chand Bibi, Prince Salim’s revolt), Guru Arjan, Sir Thomas Roe and Nur Jahan, the gardens of Kashmir, the Taj Mahal and Shahjahanabad, the war of succession, Shivaji, Aurangzeb’s stricter rule, the Khalsa, Golconda and the plain grave at Khuldabad, to the successor states, Nadir Shah, the third Panipat, Shah Alam II, 1857 and the exile of Bahadur Shah Zafar, and the Mughal legacy: 39 chapters, a Powers layer that changes chapter by chapter, and 24 people cards.
+- Catalogue: the Mughal Empire and the First Battle of Panipat entries now open the story.
+- Art: a Mughal dome glyph and a four-part garden (char bagh) glyph.
+
 ## 0.29.0
 
 - A guided tour for first-time visitors. On a first visit the hub and the first story opened each show a short tour: a few cards that light up one part of the page at a time (the story cards, Atlas, Timeline and Browse on the hub; the chapter buttons, the chapter card, the map, the timeline and the chapter list on a story). It can be skipped at any point, and Escape closes it.
