@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 /**
  * @typedef {{ id: string, title: string, blurb: string }} Section
  * @typedef {{ id: string, section: string, title: string }} Collection
- * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string }} Story
+ * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string, added?: string }} Story
  * @typedef {{ sections: Section[], collections: Collection[], stories: Story[] }} Manifest
  */
 
@@ -32,6 +32,8 @@ export function storyDir(story) {
   const parts = ["stories", story.section, story.collection, story.id];
   return parts.filter(Boolean).join("/");
 }
+
+const ADDED = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/;
 
 /**
  * @param {Manifest} manifest
@@ -62,6 +64,10 @@ export function validateManifest(manifest) {
     if (!STATUSES.includes(story.status)) problems.push(`${where}: unknown status ${story.status}`);
     if (!story.title?.trim()) problems.push(`${where}: missing title`);
     if (!story.era?.trim()) problems.push(`${where}: missing era`);
+    // When the map was finished, in UTC; drives the hub's New row. Every built story needs one.
+    if (story.added !== undefined ? !ADDED.test(story.added) : story.status === "built") {
+      problems.push(`${where}: a built story needs added, as YYYY-MM-DD or YYYY-MM-DDTHH:MM (UTC)`);
+    }
     if (story.collection !== undefined) {
       const c = collections.get(story.collection);
       if (!c) problems.push(`${where}: unknown collection ${story.collection}`);

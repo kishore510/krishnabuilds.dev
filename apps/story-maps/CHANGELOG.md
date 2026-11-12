@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.31.1
+
+- Fix: entries that share a story map no longer look like copies of it. The Bhagavad Gita, the Battle of the Ten Kings and 24 other entries are now shown as “Part of <story>” and open the story at their own chapter (for example the Ten Kings at chapter 9 of The Vedic Age) instead of at chapter 1. The build stops if a second entry links to a whole story or a chapter doesn’t exist.
+- Fix: the Browse “New” row showed most of the catalogue, placeholders included, in catalogue order. It is now “New story maps”: the 8 most recently finished maps from the last 45 days, newest first, from a new `added` time on each built story in `manifest.json`. Placeholder entries never show as New.
+- The Early Tamil kingdoms entry is now The Three Crowned Kings (early Tamil kingdoms), matching its story map.
+
 ## 0.31.0
 
 - New story map in Chronicles: The Delhi Sultanate. From the raids out of Ghazni and the battles of Tarain, through Muinuddin Chishti at Ajmer, the Qutb Minar, Bakhtiyar Khalji in Bihar and Bengal, Aibak at Lahore, Chinggis Khan on the Indus, Iltutmish and Razia, Balban and the Mongol frontier, Alauddin Khalji (Devagiri, Gujarat and Malik Kafur, the Mongols at Delhi, Ranthambore and Chittor, the fixed markets, Warangal and the far south), the Tughlaqs (‘Delhi is still far’, Daulatabad, the token coins, Ibn Battuta, the breakaway of Madurai, Vijayanagara, Bengal and the Bahmanis, Firuz Shah and Ashoka’s pillars), Timur’s sack of Delhi, the regional sultanates and the Sayyids, the Lodis at Jaunpur and Agra, Kabir and Guru Nanak, to Panipat in 1526 and the sultanate’s legacy: 30 chapters, a Powers layer that changes chapter by chapter, and 23 people cards.
