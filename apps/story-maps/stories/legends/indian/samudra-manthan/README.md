@@ -1,5 +1,9 @@
 # The Churning of the Ocean
 
-Status: coming soon. The churning of the ocean of milk. A mythic setting rather than real geography, so it may use a non-geographic canvas.
+Status: built. The churning of the ocean of milk (Samudra Manthan) as tradition tells it, in 32 chapters: the story Vishvamitra tells Rama at Vishala, Durvasa’s garland, the gods’ defeat, Vishnu’s plan and the truce with Bali, Mandara uprooted and carried on Garuda, Vasuki as the rope, the tortoise (Kurma) and Srikurmam, the poison and Shiva’s blue throat (Kailasa, Neelkanth, Surutapalli), the treasures from Kamadhenu to Dhanvantari, the pot snatched, Mohini, Rahu and the eclipses (Thirunageswaram), the war on the shore, the coral tree at Dwaraka, the four drops of nectar and the Kumbh Mela towns, and two chapters from the historical record (Harsha at Prayag, the Kumbh Mela today). 10 people cards; no Kingdoms layer, since the story has none.
 
-This folder will hold the story data the engine reads. Until then it holds only this README.
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, plus new art: glyphs for the churning, a tortoise and a pot (kumbha), and a pot of nectar as a traveller. Routes show only for the current chapter.
+- Source: **Tradition**, except the last two chapters, which are **History**. The text follows the Bhagavata Purana (book 8), and says where the Vishnu Purana, the Mahabharata and the Ramayana differ (Durvasa’s curse, the order of the treasures, the moon, Varuni). The four drops of nectar are labelled a later tradition, not found in those texts.
+- The ocean of milk (Kshirasagara) belongs to Puranic cosmology, not to any real sea. It is set in the Bay of Bengal only so the churning has a place on the map, and the story’s note and cards say so.
+- Other places are where tradition puts them. Where several claim one (where Shiva drank the poison, where he rested), the cards name them. Neelkanth, about 25 km from Haridwar, is moved apart so each can be tapped.
+- Native names are in Sanskrit (`sa`), in Devanagari, except a few Hindi terms (`hi`).

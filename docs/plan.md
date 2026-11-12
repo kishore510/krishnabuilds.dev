@@ -125,7 +125,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Engine and the first story, Rama’s Journey; Story Maps goes live (0.2.0)
 - [x] The Mahabharata (0.23.0)
 - [x] The Life of Krishna (0.26.0)
-- [ ] Next story: Samudra Manthan
+- [x] The Churning of the Ocean (Samudra Manthan) (0.27.0)
 
 ### Stickyard
 
