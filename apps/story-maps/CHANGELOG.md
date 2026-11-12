@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.28.0
+
+- New story map in Chronicles: Greece and Persia, the Greek city-states and the Persian empire, and where they met. From the games at Olympia, Delphi and the colonies and the thinkers of Miletus, through Cyrus and the Medes, Croesus at Sardis, Babylon and Egypt, Darius at Behistun, Persepolis, the Royal Road, Scylax down the Indus and the bridge over the Bosporus, Athens’ democracy, the Ionian Revolt, Marathon, the silver of Laurion, Xerxes at the Hellespont, Thermopylae, Salamis, Plataea and Mycale, the Delian League, the Parthenon, Persian gold and Sparta’s victory, the Ten Thousand and Mausolus, to Philip of Macedon, Alexander at the Granicus, Issus and Gaugamela, the burning of Persepolis, the last Achaemenid, the weddings at Susa and Alexander’s death in Babylon, then the first marathon in 1896 and the digging of Persepolis: 34 chapters, a Powers layer that changes chapter by chapter, and 19 people cards.
+- Engine: a story can set its own whole-map view (`overview`); otherwise it uses its basemap’s.
+- Near East map: widened west to take in mainland Greece (the projection and size change together, so the other stories frame the same), with the Aegean Sea named, the Pindus mountains and forest in Macedonia.
+- Catalogue: Classical Greece, Achaemenid Persia and Alexander’s empire now open the story.
+- Art: a Greek temple glyph, and a trireme as a traveller.
+
 ## 0.27.0
 
 - New story map in Legends: The Churning of the Ocean (Samudra Manthan), the fourth of the Indian legends. From the story Vishvamitra tells Rama at Vishala, Durvasa’s garland and the gods’ defeat, through Vishnu’s plan and the truce with Bali, Mandara uprooted and flown to the sea on Garuda, Vasuki as the rope, the tortoise (Kurma) and his temple at Srikurmam, the poison and Shiva’s blue throat (Kailasa, Neelkanth, Surutapalli), the treasures (Kamadhenu, the white horse, Airavata, the Kaustubha jewel, the coral tree, the apsaras, Lakshmi, Varuni, Dhanvantari), the pot snatched, Mohini, Rahu and the eclipses, and the war on the shore, to the coral tree at Dwaraka, the four drops of nectar and the Kumbh Mela towns (Haridwar, Prayagraj, Ujjain, Nashik), Harsha at Prayag in Xuanzang’s account and the Kumbh Mela today: 32 chapters and 10 people cards.
