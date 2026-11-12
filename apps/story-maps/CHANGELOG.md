@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.16.0
+
+- New story map in Chronicles: Pharaonic Egypt. From the standing stones of Nabta Playa, about 5000 BCE, and the first writing at Abydos, through the unification, the pyramids of Saqqara and Giza and the town that fed their builders, the Middle Kingdom's Nubian forts and the first alphabet, the Hyksos, Hatshepsut, Megiddo, Amarna, Kadesh and Abu Simbel, to Kush, Persia, Alexander, the Ptolemies and the last hieroglyphs at Philae, and the rediscovery from the Rosetta Stone to the Grand Egyptian Museum: 29 chapters, a Powers layer that changes chapter by chapter, and 17 people cards.
+- Near East map: the Nile now runs south through Nubia to the map's edge, with its Rosetta and Damietta branches through the delta, from Natural Earth 1:10m rivers. Mesopotamia shows them too.
+- Catalogue: new events for the Great Pyramid of Giza and the Battle of Kadesh, in the Egypt lane; the Pharaonic Egypt and Ptolemaic Egypt entries, which already named it, now open the story instead of "to come".
+- Art: new place glyphs (pyramid, temple gateway, sun disc, lighthouse, stela).
+
 ## 0.15.0
 
 - New story map in Chronicles: The Vijayanagara Empire. From Delhi's raid on Kampili in 1327 and the founding of the city of victory on the Tungabhadra, through the Bahmani wars, Madurai, Abdur Razzaq's visit and Krishnadevaraya's reign (Goa's horse trade, the Kalinga campaigns, Raichur, the court poets and Hampi's temples), to Talikota and the sack of 1565, the last capitals at Penukonda, Chandragiri and Vellore, the Madras grant of 1639 and the ruins' rediscovery: 24 chapters, a Powers layer that changes chapter by chapter, and 15 people cards.
