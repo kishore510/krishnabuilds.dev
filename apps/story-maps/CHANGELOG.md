@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.33.0
+
+- New story map in Chronicles: The Marathas. From the Varkari saint-poets of Pandharpur and Shivaji’s birth at Shivneri, through the first forts above Pune, Afzal Khan at Pratapgad, Pavan Khind, the raid on Shaista Khan, the sack of Surat, Sindhudurg, Purandar and Agra, the coronation at Raigad and the southern campaign; Sambhaji, Rajaram at Gingee, Tarabai and Shahu’s return; Kanhoji Angre, Balaji Vishwanath’s march to Delhi, Baji Rao at Palkhed, Malwa and Bhopal, Vasai, the raids into Bengal and the flags beyond Attock; the third battle of Panipat, Madhavrao, Ahilyabai Holkar and Mahadji Scindia; the Treaty of Bassein, Assaye and the last Peshwa, to the UNESCO listing of the Maratha forts in 2025: 30 chapters, a Powers layer that changes chapter by chapter, and 8 people cards.
+- Catalogue: the Maratha Empire entry now opens the story, and a new Third Battle of Panipat entry opens it at chapter 23.
+
 ## 0.32.0
 
 - Browse: “New story maps” now lists every finished story map, newest first, however long ago it was finished, instead of at most 8 from the last 45 days. The New pill still marks only those from the last 45 days.
