@@ -1,0 +1,2317 @@
+{
+  "id": "aztec",
+  "title": "The Aztec Empire",
+  "description": "An illustrated map of the Mexica, from their migration out of Aztlan and the founding of Tenochtitlan in Lake Texcoco, through the Triple Alliance and its empire of tribute, to the Spanish conquest of 1519 to 1521 and what remains.",
+  "canvas": "geo",
+  "basemap": "mesoamerica",
+  "source": "History",
+  "nativeLang": "nah",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Mexica and the Triple Alliance, from the migration from Aztlan to the fall of Tenochtitlan in 1521",
+  "note": "Based on Mexica and other Nahua histories written down after the conquest, Spanish letters and chronicles, and archaeology; each chapter says which it follows. The migration is tradition, and dates before about 1400 are uncertain. Pins in the Valley of Mexico are moved a little apart so they can be told apart, and Tlatelolco shares Tenochtitlan’s pin. The lakes and the areas under Powers are drawn loosely and are not borders.",
+  "places": {
+    "aztlan": {
+      "name": "Aztlan",
+      "at": [
+        -105.45,
+        21.9
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "chicomoztoc": {
+      "name": "Chicomoztoc",
+      "at": [
+        -102.82,
+        22.45
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "tula": {
+      "name": "Tula",
+      "at": [
+        -99.34,
+        20.06
+      ],
+      "glyph": "pillar",
+      "label": "right"
+    },
+    "chapultepec": {
+      "name": "Chapultepec",
+      "at": [
+        -99.39,
+        19.4
+      ],
+      "glyph": "mountain",
+      "label": "left"
+    },
+    "azcapotzalco": {
+      "name": "Azcapotzalco",
+      "at": [
+        -99.3,
+        19.6
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "culhuacan": {
+      "name": "Culhuacan",
+      "at": [
+        -99.13,
+        19.22
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "tenochtitlan": {
+      "name": "Tenochtitlan",
+      "at": [
+        -99.133,
+        19.434
+      ],
+      "glyph": "eagle-cactus",
+      "label": "right"
+    },
+    "texcoco": {
+      "name": "Texcoco",
+      "at": [
+        -98.82,
+        19.58
+      ],
+      "glyph": "codex",
+      "label": "right"
+    },
+    "teotihuacan": {
+      "name": "Teotihuacan",
+      "at": [
+        -98.78,
+        19.8
+      ],
+      "glyph": "step-temple",
+      "label": "right"
+    },
+    "tlaxcala": {
+      "name": "Tlaxcala",
+      "at": [
+        -98.24,
+        19.32
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "cholula": {
+      "name": "Cholula",
+      "at": [
+        -98.3,
+        19.06
+      ],
+      "glyph": "step-temple",
+      "label": "bottom"
+    },
+    "tzintzuntzan": {
+      "name": "Tzintzuntzan",
+      "at": [
+        -101.58,
+        19.63
+      ],
+      "glyph": "fort",
+      "label": "top"
+    },
+    "soconusco": {
+      "name": "Soconusco",
+      "at": [
+        -92.3,
+        14.95
+      ],
+      "glyph": "trading-post",
+      "label": "right"
+    },
+    "cozumel": {
+      "name": "Cozumel",
+      "at": [
+        -86.92,
+        20.45
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "potonchan": {
+      "name": "Potonchan",
+      "at": [
+        -92.62,
+        18.45
+      ],
+      "glyph": "crossed-swords",
+      "label": "top"
+    },
+    "cempoala": {
+      "name": "Cempoala",
+      "at": [
+        -96.41,
+        19.45
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "cuba": {
+      "name": "Western Cuba",
+      "at": [
+        -84.95,
+        21.86
+      ],
+      "hidden": true
+    },
+    "gulf": {
+      "name": "Gulf coast",
+      "at": [
+        -96.2,
+        18.9
+      ],
+      "hidden": true
+    },
+    "oaxaca": {
+      "name": "Oaxaca",
+      "at": [
+        -96.72,
+        17.06
+      ],
+      "hidden": true
+    },
+    "paso": {
+      "name": "The pass between the volcanoes",
+      "at": [
+        -98.66,
+        19.1
+      ],
+      "hidden": true
+    },
+    "tlacopan": {
+      "name": "Tlacopan",
+      "at": [
+        -99.19,
+        19.46
+      ],
+      "hidden": true
+    },
+    "cuauhtitlan": {
+      "name": "Cuauhtitlan",
+      "at": [
+        -99.2,
+        19.68
+      ],
+      "hidden": true
+    },
+    "zumpango": {
+      "name": "North of the lakes",
+      "at": [
+        -99.05,
+        19.9
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "mexica": {
+      "name": "The Mexica",
+      "icon": "mexica-walker"
+    },
+    "army": {
+      "name": "The Alliance’s army",
+      "icon": "eagle-warrior"
+    },
+    "spanish": {
+      "name": "Cortés and his allies",
+      "icon": "conquistador"
+    },
+    "fleet": {
+      "name": "Cortés’s ships",
+      "icon": "east-indiaman"
+    }
+  },
+  "phases": {
+    "migration": {
+      "name": "The migration",
+      "color": "#4fc3b0"
+    },
+    "island": {
+      "name": "The island city",
+      "color": "#ff8a1f"
+    },
+    "alliance": {
+      "name": "The Triple Alliance",
+      "color": "#e0573a"
+    },
+    "height": {
+      "name": "Moctezuma’s empire",
+      "color": "#a678e0"
+    },
+    "conquest": {
+      "name": "The Spanish conquest",
+      "color": "#2b7fb4"
+    },
+    "memory": {
+      "name": "What remains",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "army": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "spanish": {
+      "color": "#55606e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "6 6",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 11.4,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 29.2,
+        "color": "rgba(255,138,31,.35)"
+      },
+      {
+        "until": 53,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 58.9,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 91.6,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 1,
+        "text": "Tradition"
+      },
+      {
+        "at": 18.8,
+        "text": "1325"
+      },
+      {
+        "at": 30.7,
+        "text": "1428"
+      },
+      {
+        "at": 57.4,
+        "text": "1519"
+      },
+      {
+        "at": 90.1,
+        "text": "1521"
+      },
+      {
+        "at": 99,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "aztlan",
+      "phase": "migration",
+      "title": "The people of Aztlan",
+      "native": "Aztlan",
+      "when": "Tradition: the 11th or 12th century",
+      "at": 1,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          -104.4,
+          21.7
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "The Mexica told that their ancestors came from Aztlan, the place of herons, an island in a lake somewhere to the north. The name Aztec comes from Aztlan, though it became common only centuries later. No one knows where Aztlan was, or whether it was a real place; Mexcaltitán, an island town in Nayarit, is one modern claim.",
+      "today": "Today: unknown. The pin marks Mexcaltitán, Nayarit, one of several claims."
+    },
+    {
+      "place": "chicomoztoc",
+      "phase": "migration",
+      "title": "The Seven Caves",
+      "native": "Chicomoztoc",
+      "when": "Tradition",
+      "at": 4,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          -103.4,
+          22
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "aztlan",
+          "to": "chicomoztoc",
+          "traveller": "mexica",
+          "style": "walk",
+          "bend": 0.15
+        }
+      ],
+      "text": "Many peoples of central Mexico traced their origins to Chicomoztoc, the Place of Seven Caves. In the Mexica accounts, a group of tribes set out from there on foot, led by priests who carried the sacred bundle of their god Huitzilopochtli. Its place is unknown; the ruins of La Quemada, Zacatecas, are one suggestion.",
+      "today": "Today: unknown. The pin marks La Quemada, Zacatecas, one suggestion."
+    },
+    {
+      "place": "tula",
+      "phase": "migration",
+      "title": "Serpent Hill: the war god is born",
+      "native": "Coatepec",
+      "when": "Tradition",
+      "at": 6.9,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          -100.6,
+          20.9
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "chicomoztoc",
+          "to": "tula",
+          "traveller": "mexica",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Tradition places Serpent Hill (Coatepec) near Tula. There, the sacred songs say, Coatlicue became pregnant from a ball of feathers. Her daughter Coyolxauhqui and four hundred brothers set out to kill her, but Huitzilopochtli, the war god, was born armed, cut Coyolxauhqui to pieces and scattered the rest. The Great Temple later stood for this hill.",
+      "today": "Today: Coatepec is thought to lie near Tula, Hidalgo, Mexico."
+    },
+    {
+      "place": "tula",
+      "phase": "migration",
+      "title": "The memory of the Toltecs",
+      "native": "Tollan",
+      "when": "about 900 to 1150 CE",
+      "at": 9.9,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -99.3,
+          19.9
+        ],
+        "width": 2.4
+      },
+      "legs": [],
+      "text": "Tula, the Toltec capital, Tollan, flourished between about 900 and 1150 and lay in ruins when they passed; its stone warrior columns still stand. The Mexica remembered the Toltecs as the inventors of every art, and their word for a fine craftsman was toltecatl. Later Mexica kings claimed Toltec blood, and Toltec objects turn up in their offerings.",
+      "today": "Today: the Tula archaeological zone, Hidalgo, Mexico."
+    },
+    {
+      "place": "chapultepec",
+      "phase": "island",
+      "title": "Grasshopper Hill",
+      "native": "Chapoltepec",
+      "when": "late 13th century to about 1299",
+      "at": 12.9,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          -99.2,
+          19.6
+        ],
+        "width": 1.6
+      },
+      "legs": [
+        {
+          "from": "tula",
+          "to": "chapultepec",
+          "traveller": "mexica",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "By the late 13th century the Mexica reached the Valley of Mexico, a high basin of lakes already crowded with city-states. They settled on Grasshopper Hill (Chapultepec), by its fresh springs. Their neighbours, led by Culhuacan, drove them out, by tradition about 1299, and their leader Huitzilihuitl the Elder was captured and killed. The springs later watered Tenochtitlan.",
+      "today": "Today: Chapultepec Park, Mexico City."
+    },
+    {
+      "place": "culhuacan",
+      "phase": "island",
+      "title": "Serfs of Culhuacan",
+      "native": "Colhuacan",
+      "when": "early 14th century, by tradition",
+      "at": 15.9,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          -99.17,
+          19.36
+        ],
+        "width": 1.5
+      },
+      "legs": [
+        {
+          "from": "chapultepec",
+          "to": "culhuacan",
+          "traveller": "mexica",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Culhuacan, whose kings claimed Toltec descent, let the Mexica settle at Tizapan, a stony place full of snakes; they ate the snakes and thrived, their histories say. They fought for Culhuacan and married into its families. Then, the story goes, they asked for King Achitometl’s daughter, sacrificed her to their god, and were driven into the lake marshes.",
+      "today": "Today: Culhuacán, in Iztapalapa, Mexico City."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "island",
+      "title": "The eagle on the cactus",
+      "native": "Tenochtitlan",
+      "when": "1325, by tradition",
+      "at": 18.8,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          -99.1,
+          19.42
+        ],
+        "width": 1.4
+      },
+      "legs": [
+        {
+          "from": "culhuacan",
+          "to": "tenochtitlan",
+          "traveller": "mexica",
+          "style": "walk",
+          "bend": 0.15
+        }
+      ],
+      "text": "Hiding among the reeds, the story goes, the Mexica saw the sign their god had promised: an eagle on a prickly pear cactus (tenochtli) growing from a rock. In the best-known version it is eating a snake. There, on a small marshy island, they founded Tenochtitlan in the year 2 House, usually given as 1325, under their leader Tenoch.",
+      "today": "Today: the heart of Mexico City. The eagle, cactus and snake are on Mexico’s flag."
+    },
+    {
+      "place": "azcapotzalco",
+      "phase": "island",
+      "title": "Soldiers for the Tepanecs",
+      "native": "Azcapotzalco",
+      "when": "from about 1375",
+      "at": 21.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.18,
+          19.5
+        ],
+        "width": 1.6
+      },
+      "legs": [],
+      "text": "The island lay in lands claimed by the Tepanecs of Azcapotzalco, the strongest power in the valley, and the Mexica paid them tribute and fought in their wars. About 1375 they took their first king (tlatoani), Acamapichtli, a nobleman of Culhuacan’s Toltec line. Under the Tepanec king Tezozomoc, Mexica soldiers shared in his conquests and learned how tribute empires worked.",
+      "today": "Today: Azcapotzalco, a borough of Mexico City."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "island",
+      "title": "Gardens in the lake",
+      "native": "chinamitl",
+      "when": "14th to 16th centuries",
+      "at": 24.8,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -99.05,
+          19.36
+        ],
+        "width": 1.5
+      },
+      "legs": [],
+      "text": "To farm the lakes, the people of the valley built chinampas: beds of mud and plants piled up between canals and anchored by willows. They are often called floating gardens, but they did not float. Maize, beans, squash and flowers grew on them, and canoes carried the harvest to market. The largest fields lay around Xochimilco and Chalco.",
+      "today": "Today: chinampas are still farmed at Xochimilco, Mexico City, part of a UNESCO World Heritage Site."
+    },
+    {
+      "place": "teotihuacan",
+      "phase": "island",
+      "title": "Where the gods were made",
+      "native": "Teotihuacan",
+      "when": "abandoned by about 550 CE",
+      "at": 27.7,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -98.95,
+          19.6
+        ],
+        "width": 1.6
+      },
+      "legs": [],
+      "text": "North-east of the lake lay the ruins of Teotihuacan, empty for some 800 years. The Mexica, who did not know its builders, named it the place where the gods were made, and told how a god leapt into a fire there to become the sun. Excavators have found Teotihuacan masks that the Mexica buried as offerings in their Great Temple.",
+      "today": "Today: Teotihuacan, State of Mexico, a UNESCO World Heritage Site."
+    },
+    {
+      "place": "azcapotzalco",
+      "phase": "alliance",
+      "title": "The Tepanec War",
+      "native": "Excan Tlatoloyan",
+      "when": "1426 to 1428",
+      "at": 30.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.1,
+          19.5
+        ],
+        "width": 1.6
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "azcapotzalco",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.15
+        },
+        {
+          "from": "texcoco",
+          "to": "azcapotzalco",
+          "traveller": "army",
+          "style": "army",
+          "bend": -0.12
+        }
+      ],
+      "text": "When Tezozomoc died in 1426, his son Maxtla seized the Tepanec throne, and the Mexica king Chimalpopoca died, probably on Maxtla’s orders. The new king Itzcoatl, his adviser Tlacaelel and Nezahualcoyotl, an exiled prince of Texcoco, joined forces with Huexotzinco and others and in 1428 destroyed Azcapotzalco. Tenochtitlan, Texcoco and Tlacopan then formed the Triple Alliance.",
+      "today": "Today: Azcapotzalco, Mexico City. Tlacopan is Tacuba, nearby."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "alliance",
+      "title": "Itzcoatl rewrites the past",
+      "native": "amoxtli",
+      "when": "1430s",
+      "at": 33.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.1,
+          19.45
+        ],
+        "width": 1.4
+      },
+      "legs": [],
+      "text": "After the victory, Itzcoatl and his council ordered the old painted books (amoxtli) burned, according to accounts gathered a century later: the books held lies, they said, and the common people should not see them. A new history took their place, in which the Mexica were the chosen people of the sun god. Tlacaelel is often credited with shaping it.",
+      "today": "Today: only a handful of books painted before 1519 survive from all of Mexico."
+    },
+    {
+      "place": "texcoco",
+      "phase": "alliance",
+      "title": "The poet-king of Texcoco",
+      "native": "Nezahualcoyotl",
+      "when": "1431 to 1472",
+      "at": 36.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99,
+          19.5
+        ],
+        "width": 1.5
+      },
+      "legs": [],
+      "text": "Nezahualcoyotl ruled Texcoco, the Alliance’s second city, from 1431 to 1472. He was remembered as a lawgiver, an engineer and a poet; poems are recited under his name, though how many are his is debated. He helped build the aqueduct from Chapultepec to Tenochtitlan and, after a flood in 1449, a dike some 16 kilometres long across the lake.",
+      "today": "Today: Texcoco, State of Mexico."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "alliance",
+      "title": "Moctezuma I and the famine",
+      "native": "Motecuhzoma Ilhuicamina",
+      "when": "1440 to 1469",
+      "at": 39.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -97.9,
+          18.4
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "gulf",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.1
+        },
+        {
+          "from": "tenochtitlan",
+          "to": "oaxaca",
+          "traveller": "army",
+          "style": "army",
+          "bend": -0.1
+        }
+      ],
+      "text": "Moctezuma I, Itzcoatl’s nephew, led the Alliance’s armies south into Morelos, east to the Gulf coast and as far as Oaxaca, and their tribute flowed to the island. From about 1450 frost and drought brought years of famine, and some people sold themselves into servitude for maize. In his reign the Great Temple was rebuilt larger.",
+      "today": "Today: the states of Morelos, Puebla, Veracruz and Oaxaca, Mexico."
+    },
+    {
+      "place": "tlaxcala",
+      "phase": "alliance",
+      "title": "The flowery wars",
+      "native": "xochiyaoyotl",
+      "when": "from the mid-15th century",
+      "at": 42.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -98.6,
+          19.3
+        ],
+        "width": 2
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "tlaxcala",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.12
+        }
+      ],
+      "text": "Tlaxcala, a league of four towns east of the valley, was never conquered. Instead the Alliance fought it and its neighbours Huexotzinco and Cholula in arranged battles, the flowery wars (xochiyaoyotl), meant, the Mexica said, to take captives for sacrifice and to train young warriors. Historians debate whether that was the real purpose or a cover for failed conquest.",
+      "today": "Today: Tlaxcala, capital of Mexico’s smallest state."
+    },
+    {
+      "place": "tzintzuntzan",
+      "phase": "alliance",
+      "title": "Defeat in the west",
+      "native": "Tsintsuntsani",
+      "lang": "tsz",
+      "when": "about 1479",
+      "at": 45.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -100.4,
+          19.6
+        ],
+        "width": 3.6
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "tzintzuntzan",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.1
+        }
+      ],
+      "text": "After taking Tlatelolco, the Mexica’s twin city, in 1473, King Axayacatl marched west against the Purépecha (Tarascans), whose capital, Tzintzuntzan, stood on Lake Pátzcuaro. About 1479 his army was routed; a later account says 20,000 of 24,000 men died, a figure that cannot be checked. The Purépecha, who worked copper and bronze, held a fortified frontier and were never conquered.",
+      "today": "Today: Tzintzuntzan, Michoacán, with its round-fronted temple platforms (yácatas)."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "alliance",
+      "title": "The Great Temple",
+      "native": "Huei Teocalli",
+      "when": "1487",
+      "at": 48.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.1,
+          19.45
+        ],
+        "width": 1.4
+      },
+      "legs": [],
+      "text": "The Great Temple (Templo Mayor) was a pyramid with twin shrines on top, to Huitzilopochtli and to Tlaloc, the rain god: war and water, the two things the city lived by, rebuilt seven times. At its rededication in 1487 under Ahuitzotl, some chronicles claim 80,400 captives were sacrificed; historians think that figure greatly exaggerated, though the killings were real.",
+      "today": "Today: the Templo Mayor ruins and museum, Mexico City."
+    },
+    {
+      "place": "soconusco",
+      "phase": "alliance",
+      "title": "The cacao coast",
+      "native": "Xoconochco",
+      "when": "about 1500",
+      "at": 51.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -95.6,
+          17.2
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "oaxaca",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.08
+        },
+        {
+          "from": "oaxaca",
+          "to": "soconusco",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.1
+        }
+      ],
+      "text": "Ahuitzotl’s armies went farther than any before: through Oaxaca to the Isthmus of Tehuantepec and along the Pacific coast to Soconusco, near today’s Guatemala, rich in cacao and the feathers of the quetzal bird. Long-distance merchants (pochteca) travelled ahead of the armies, trading and gathering news. Soconusco became the empire’s most distant province.",
+      "today": "Today: the Soconusco region, Chiapas, Mexico."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "height",
+      "title": "An empire of tribute",
+      "native": "tlacalaquilli",
+      "when": "about 1519; recorded about 1541",
+      "at": 54.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -97.6,
+          18.4
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "The Alliance ruled through tribute, not occupation: conquered towns kept their own lords but paid on a fixed schedule. A book painted for Spain’s viceroy about 1541, the Codex Mendoza, lists 38 provinces and their goods: cotton cloaks, maize, cacao, feathers, jade, gold and warriors’ suits. Lands such as Tlaxcala, Metztitlán and the Purépecha kingdom stayed outside.",
+      "today": "Today: the Codex Mendoza is in the Bodleian Library, Oxford."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "height",
+      "title": "The island city in 1519",
+      "native": "Mexico Tenochtitlan",
+      "when": "1519",
+      "at": 57.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.1,
+          19.45
+        ],
+        "width": 1.4
+      },
+      "legs": [],
+      "text": "By 1519 Tenochtitlan and Tlatelolco together held perhaps 200,000 people, though estimates vary widely. Three causeways linked the island to the shore, an aqueduct brought fresh water from Chapultepec, and canals ran through the streets. Hernán Cortés wrote that more than 60,000 people came daily to Tlatelolco’s market. Its king was Moctezuma II, who had ruled since 1502.",
+      "today": "Today: the Historic Centre of Mexico City, a UNESCO World Heritage Site."
+    },
+    {
+      "place": "cozumel",
+      "phase": "conquest",
+      "title": "Strangers from the sea",
+      "native": "Cuzamil",
+      "lang": "yua",
+      "when": "February 1519",
+      "at": 60.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -86,
+          21.1
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "cuba",
+          "to": "cozumel",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "Spanish ships from Cuba had touched the coast of Yucatán in 1517 and 1518. In February 1519 Hernán Cortés sailed with 11 ships and about 500 soldiers, defying the governor of Cuba, who had cancelled his command. On Cozumel he found Jerónimo de Aguilar, a Spaniard shipwrecked eight years before, who had learned Maya and became his interpreter.",
+      "today": "Today: Cozumel, Quintana Roo, Mexico."
+    },
+    {
+      "place": "potonchan",
+      "phase": "conquest",
+      "title": "Malintzin",
+      "native": "Malintzin",
+      "when": "March 1519",
+      "at": 63.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.8,
+          19.6
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "cozumel",
+          "to": "potonchan",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": -0.15
+        }
+      ],
+      "text": "At Potonchan, near the mouth of the Grijalva river, the Chontal Maya fought the Spanish at Centla and lost. Among 20 women given to Cortés afterwards was one the Spanish baptised Marina, called Malintzin in Nahuatl and later Malinche. She spoke Nahuatl and Maya, and soon Spanish: through her and Aguilar, Cortés could talk with the Mexica world.",
+      "today": "Today: near Frontera, Tabasco, Mexico; the exact site of Potonchan is uncertain."
+    },
+    {
+      "place": "cempoala",
+      "phase": "conquest",
+      "title": "The Totonacs change sides",
+      "native": "Cempohuallan",
+      "when": "April to August 1519",
+      "at": 66.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          -94.5,
+          19
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "potonchan",
+          "to": "cempoala",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": -0.12
+        }
+      ],
+      "text": "Cortés landed near today’s Veracruz in April 1519. Moctezuma’s envoys brought gifts and asked him to leave. Instead he founded a town, Villa Rica de la Vera Cruz, to answer only to the king of Spain, and won over the Totonacs of Cempoala, who resented Mexica tribute. Then he had his ships run aground, so no one could turn back.",
+      "today": "Today: the Zempoala archaeological site, Veracruz, Mexico."
+    },
+    {
+      "place": "tlaxcala",
+      "phase": "conquest",
+      "title": "Tlaxcala: war, then alliance",
+      "native": "Tlaxcallan",
+      "when": "September 1519",
+      "at": 69.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          -97.3,
+          19.4
+        ],
+        "width": 3.4
+      },
+      "legs": [
+        {
+          "from": "cempoala",
+          "to": "tlaxcala",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        }
+      ],
+      "text": "Marching inland, the Spanish and their Totonac allies entered Tlaxcala and were attacked for some two weeks by armies led by the young war chief Xicotencatl. Unable to destroy them, and no friends of the Mexica, Tlaxcala’s rulers made peace and became Cortés’s firmest allies. Without Tlaxcala’s soldiers, porters and food, the conquest could hardly have happened.",
+      "today": "Today: Tlaxcala, Mexico."
+    },
+    {
+      "place": "cholula",
+      "phase": "conquest",
+      "title": "The massacre at Cholula",
+      "native": "Cholollan",
+      "when": "October 1519",
+      "at": 72.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          -98.25,
+          19.2
+        ],
+        "width": 1.8
+      },
+      "legs": [
+        {
+          "from": "tlaxcala",
+          "to": "cholula",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.15
+        }
+      ],
+      "text": "Cholula, holy city of Quetzalcoatl, whose pyramid is the largest in the world by volume, let the Spanish in. Claiming the Cholulans planned an ambush, Cortés’s men and their Tlaxcalan allies killed thousands of unarmed people in a temple courtyard. Cortés wrote of 3,000 dead; other accounts give more. Whether there was any plot is still debated.",
+      "today": "Today: San Pedro Cholula, Puebla; a church stands on top of the pyramid."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "conquest",
+      "title": "Moctezuma meets Cortés",
+      "native": "Motecuhzoma Xocoyotzin",
+      "when": "8 November 1519",
+      "at": 75.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          -98.85,
+          19.25
+        ],
+        "width": 2
+      },
+      "legs": [
+        {
+          "from": "cholula",
+          "to": "paso",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.08
+        },
+        {
+          "from": "paso",
+          "to": "tenochtitlan",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.08
+        }
+      ],
+      "text": "Crossing the pass between the volcanoes, the Spanish came down into the valley and along the southern causeway. On 8 November 1519 Moctezuma met Cortés on the causeway, gave him gifts and lodged him in the palace of his father, Axayacatl. Within a week the Spanish took Moctezuma prisoner in his own city, and ruled through him for months.",
+      "today": "Today: the meeting is remembered at the Hospital de Jesús, Mexico City."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "conquest",
+      "title": "The Toxcatl massacre",
+      "native": "Toxcatl",
+      "when": "May to June 1520",
+      "at": 78.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -97.8,
+          19.4
+        ],
+        "width": 4.6
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "cempoala",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        },
+        {
+          "from": "cempoala",
+          "to": "tenochtitlan",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        }
+      ],
+      "text": "In May 1520 Cortés left to defeat a Spanish force sent from Cuba to arrest him. Meanwhile Pedro de Alvarado’s men attacked unarmed nobles dancing at the feast of Toxcatl and killed hundreds or more. The city rose. Moctezuma died in late June; Spanish accounts blame his own people, Mexica accounts the Spanish.",
+      "today": "Today: the Templo Mayor precinct, Mexico City."
+    },
+    {
+      "place": "teotihuacan",
+      "phase": "conquest",
+      "title": "The Sad Night and Otumba",
+      "native": "La Noche Triste",
+      "lang": "es",
+      "when": "30 June to 7 July 1520",
+      "at": 81.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -98.7,
+          19.5
+        ],
+        "width": 2.4
+      },
+      "legs": [
+        {
+          "from": "tenochtitlan",
+          "to": "tlacopan",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.05
+        },
+        {
+          "from": "tlacopan",
+          "to": "cuauhtitlan",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.05
+        },
+        {
+          "from": "cuauhtitlan",
+          "to": "zumpango",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        },
+        {
+          "from": "zumpango",
+          "to": "teotihuacan",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        },
+        {
+          "from": "teotihuacan",
+          "to": "tlaxcala",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        }
+      ],
+      "text": "On the night of 30 June 1520 the Spanish and Tlaxcalans fled along the western causeway in the rain. Attacked from canoes, hundreds of Spaniards and more allies died, some weighed down with gold, it is said: the Spanish called it the Sad Night. A week later, on the plain near Otumba and Teotihuacan, they fought through to Tlaxcala.",
+      "today": "Today: the plain of Otumba, State of Mexico."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "conquest",
+      "title": "Smallpox",
+      "native": "huei zahuatl",
+      "when": "autumn 1520",
+      "at": 84.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -98.8,
+          19.4
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "Smallpox, unknown in the Americas, came with the force from Cuba and spread through central Mexico in 1520. Nahua accounts collected by Sahagún describe people covered in sores, unable to move, starving when no one was left to care for them. Moctezuma’s brother Cuitláhuac, the new king, died of it after about 80 days. His cousin Cuauhtémoc succeeded him.",
+      "today": "Today: epidemics went on to kill a large share of Mexico’s people within a century; the figures are disputed."
+    },
+    {
+      "place": "texcoco",
+      "phase": "conquest",
+      "title": "Ships for the lake",
+      "native": "bergantines",
+      "lang": "es",
+      "when": "December 1520 to April 1521",
+      "at": 87.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -98.55,
+          19.4
+        ],
+        "width": 2.2
+      },
+      "legs": [
+        {
+          "from": "tlaxcala",
+          "to": "texcoco",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        }
+      ],
+      "text": "Cortés made Texcoco his base. Tlaxcalan porters carried 13 small sailing ships (brigantines), built in Tlaxcala, over the mountains in pieces. A canal was dug to the lake, and the ships were launched in April 1521. With them the Spanish could fight the canoes that had beaten them, and cut the city off from food.",
+      "today": "Today: Texcoco, State of Mexico."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "conquest",
+      "title": "The fall of Tenochtitlan",
+      "native": "Tenochtitlan",
+      "when": "May to 13 August 1521",
+      "at": 90.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.02,
+          19.45
+        ],
+        "width": 1.5
+      },
+      "legs": [
+        {
+          "from": "texcoco",
+          "to": "tenochtitlan",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "The siege began at the end of May 1521. The Spanish cut the aqueduct and, with tens of thousands of Indigenous allies, fought street by street, levelling the city. The defenders made their last stand in Tlatelolco. On 13 August Cuauhtémoc was captured in a canoe. How many died is unknown; estimates run past 100,000 and are disputed.",
+      "today": "Today: a plaque at Tlatelolco calls it neither triumph nor defeat, but the painful birth of the mestizo people of Mexico."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "memory",
+      "title": "Mexico City on the ruins",
+      "native": "México",
+      "when": "from 1521",
+      "at": 93.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -95,
+          18.5
+        ],
+        "width": 14
+      },
+      "legs": [],
+      "text": "Cortés built the capital of New Spain on the ruins, using the temple stones. Cuauhtémoc was tortured for gold and, in 1525, hanged during a march to Honduras. Over the next four centuries the lakes were drained to stop the floods, and today Mexico City, one of the largest cities in the world, is slowly sinking into the old lakebed.",
+      "today": "Today: Mexico City, capital of Mexico."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "memory",
+      "title": "In their own words",
+      "native": "Historia general de las cosas de la Nueva España",
+      "lang": "es",
+      "when": "1540s to about 1577",
+      "at": 96,
+      "source": "History",
+      "camera": {
+        "at": [
+          -99.1,
+          19.45
+        ],
+        "width": 1.6
+      },
+      "legs": [],
+      "text": "The friar Bernardino de Sahagún worked for decades with Nahua scholars trained at the college at Tlatelolco, and with elders who remembered the old ways. Together they made a 12-book encyclopedia of Nahua life in Nahuatl and Spanish, with more than 2,000 pictures, now called the Florentine Codex. Its last book tells the conquest from the Mexica side.",
+      "today": "Today: the Florentine Codex is in the Laurentian Library, Florence."
+    },
+    {
+      "place": "tenochtitlan",
+      "phase": "memory",
+      "title": "The Great Temple found again",
+      "native": "Coyolxauhqui",
+      "when": "1790 to today",
+      "at": 99,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -99.1,
+          19.45
+        ],
+        "width": 1.4
+      },
+      "legs": [],
+      "text": "In 1790 workers in the main square found the great Sun Stone. In 1978 electricity workers struck a huge carved disc showing Coyolxauhqui cut to pieces, as in the story of Serpent Hill, and the excavation of the Great Temple began. About 1.65 million people in Mexico speak Nahuatl today, and the country still carries the Mexica name.",
+      "today": "Today: the Templo Mayor Museum, Mexico City; the Sun Stone is in the National Museum of Anthropology."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "mexica",
+        "name": "Tenochtitlan and the Triple Alliance",
+        "native": "Excan Tlatoloyan",
+        "color": "#d9432a",
+        "active": [
+          [
+            6,
+            30
+          ]
+        ],
+        "label": {
+          "text": "Mexica",
+          "at": [
+            -99,
+            20
+          ],
+          "moves": [
+            {
+              "from": 13,
+              "at": [
+                -97.6,
+                18
+              ]
+            },
+            {
+              "from": 17,
+              "at": [
+                -98,
+                18
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                9
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -99.133,
+                  19.434
+                ],
+                "radius": 0.05
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -99.45,
+                  19.85
+                ],
+                [
+                  -98.95,
+                  19.95
+                ],
+                [
+                  -98.7,
+                  19.7
+                ],
+                [
+                  -98.75,
+                  19.25
+                ],
+                [
+                  -99,
+                  19.1
+                ],
+                [
+                  -99.35,
+                  19.15
+                ],
+                [
+                  -99.5,
+                  19.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                14
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -99.8,
+                  20.3
+                ],
+                [
+                  -98.4,
+                  20.4
+                ],
+                [
+                  -97.3,
+                  19.7
+                ],
+                [
+                  -96.4,
+                  19.3
+                ],
+                [
+                  -96,
+                  18.6
+                ],
+                [
+                  -96.5,
+                  17.6
+                ],
+                [
+                  -96.3,
+                  16.9
+                ],
+                [
+                  -97,
+                  16.8
+                ],
+                [
+                  -97.7,
+                  17.6
+                ],
+                [
+                  -98.6,
+                  18.3
+                ],
+                [
+                  -99.4,
+                  18.5
+                ],
+                [
+                  -99.9,
+                  19
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                15,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -100.3,
+                  20.1
+                ],
+                [
+                  -99.8,
+                  20.3
+                ],
+                [
+                  -98.4,
+                  20.4
+                ],
+                [
+                  -97.3,
+                  19.7
+                ],
+                [
+                  -96.4,
+                  19.3
+                ],
+                [
+                  -96,
+                  18.6
+                ],
+                [
+                  -96.5,
+                  17.6
+                ],
+                [
+                  -96.3,
+                  16.9
+                ],
+                [
+                  -97,
+                  16.8
+                ],
+                [
+                  -97.7,
+                  17.6
+                ],
+                [
+                  -98.6,
+                  18.3
+                ],
+                [
+                  -99.4,
+                  18.4
+                ],
+                [
+                  -100.2,
+                  18.8
+                ],
+                [
+                  -100.4,
+                  19.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                30
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -100.3,
+                  20.2
+                ],
+                [
+                  -99.3,
+                  20.9
+                ],
+                [
+                  -98.4,
+                  21.8
+                ],
+                [
+                  -97.75,
+                  21.9
+                ],
+                [
+                  -97.3,
+                  21
+                ],
+                [
+                  -96.6,
+                  19.9
+                ],
+                [
+                  -95.9,
+                  19
+                ],
+                [
+                  -95.3,
+                  18.4
+                ],
+                [
+                  -94.9,
+                  17.9
+                ],
+                [
+                  -95,
+                  16.6
+                ],
+                [
+                  -95.3,
+                  16.2
+                ],
+                [
+                  -96.2,
+                  15.8
+                ],
+                [
+                  -97.6,
+                  16.2
+                ],
+                [
+                  -98.4,
+                  16.4
+                ],
+                [
+                  -99.6,
+                  16.8
+                ],
+                [
+                  -100.8,
+                  17.3
+                ],
+                [
+                  -101.4,
+                  17.9
+                ],
+                [
+                  -100.95,
+                  18.6
+                ],
+                [
+                  -100.6,
+                  19.3
+                ]
+              ],
+              [
+                [
+                  -93.6,
+                  15.75
+                ],
+                [
+                  -92.8,
+                  15.6
+                ],
+                [
+                  -92.2,
+                  15.05
+                ],
+                [
+                  -92.25,
+                  14.6
+                ],
+                [
+                  -92.9,
+                  15
+                ],
+                [
+                  -93.75,
+                  15.55
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Tenochtitlan, with Texcoco and Tlacopan as allies",
+          "Language": "Nahuatl",
+          "Today": "Central and southern Mexico"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Tenoch, in tradition"
+          },
+          {
+            "from": 7,
+            "text": "Acamapichtli, first king (tlatoani), from about 1375"
+          },
+          {
+            "from": 10,
+            "text": "Itzcoatl"
+          },
+          {
+            "from": 13,
+            "text": "Moctezuma I"
+          },
+          {
+            "from": 15,
+            "text": "Axayacatl"
+          },
+          {
+            "from": 16,
+            "text": "Ahuitzotl"
+          },
+          {
+            "from": 18,
+            "text": "Moctezuma II"
+          },
+          {
+            "from": 26,
+            "text": "Moctezuma II, a prisoner; he dies in June 1520"
+          },
+          {
+            "from": 28,
+            "text": "Cuitláhuac, then Cuauhtémoc"
+          },
+          {
+            "from": 30,
+            "text": "Cuauhtémoc, captured on 13 August 1521"
+          }
+        ],
+        "role": "A small island town that became, with its allies, the greatest tribute empire of Mesoamerica.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Pays tribute to Azcapotzalco"
+          },
+          {
+            "from": 10,
+            "text": "Allied with Texcoco and Tlacopan"
+          },
+          {
+            "from": 14,
+            "text": "At ritual war with Tlaxcala"
+          },
+          {
+            "from": 15,
+            "text": "Defeated by the Purépecha"
+          },
+          {
+            "from": 22,
+            "text": "Its tributaries begin to join the Spanish"
+          }
+        ]
+      },
+      {
+        "id": "tepanec",
+        "name": "Tepanec kingdom",
+        "native": "Tepanecapan",
+        "color": "#4f6fd0",
+        "active": [
+          [
+            7,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Tepanecs",
+          "at": [
+            -99.65,
+            19.85
+          ]
+        },
+        "area": [
+          [
+            -99.9,
+            20.1
+          ],
+          [
+            -99.05,
+            20.2
+          ],
+          [
+            -98.85,
+            19.85
+          ],
+          [
+            -99.05,
+            19.45
+          ],
+          [
+            -99.3,
+            19.1
+          ],
+          [
+            -99.8,
+            19.2
+          ],
+          [
+            -100,
+            19.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Azcapotzalco",
+          "Today": "Western Valley of Mexico and beyond"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Tezozomoc"
+          },
+          {
+            "from": 10,
+            "text": "Maxtla"
+          }
+        ],
+        "role": "The leading power of the valley until 1428, with the Mexica as its tributaries and soldiers.",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Destroyed by the Mexica and Texcoco"
+          }
+        ]
+      },
+      {
+        "id": "culhuacan",
+        "name": "Culhuacan",
+        "native": "Colhuacan",
+        "color": "#2fa39a",
+        "minor": true,
+        "active": [
+          [
+            4,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Culhuacan",
+          "at": [
+            -99.25,
+            19.18
+          ]
+        },
+        "area": [
+          [
+            -99.25,
+            19.33
+          ],
+          [
+            -99.05,
+            19.36
+          ],
+          [
+            -98.95,
+            19.27
+          ],
+          [
+            -99.1,
+            19.15
+          ],
+          [
+            -99.25,
+            19.2
+          ]
+        ],
+        "facts": {
+          "Capital": "Culhuacan",
+          "Today": "Iztapalapa, Mexico City"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Achitometl, in Mexica tradition"
+          }
+        ],
+        "role": "An old city whose rulers claimed Toltec descent; the Mexica’s overlords for a time.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Drives the Mexica into the marshes"
+          }
+        ]
+      },
+      {
+        "id": "tlaxcala",
+        "name": "Tlaxcala",
+        "native": "Tlaxcallan",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            14,
+            30
+          ]
+        ],
+        "label": {
+          "text": "Tlaxcala",
+          "at": [
+            -98.05,
+            19.53
+          ]
+        },
+        "area": [
+          [
+            -98.55,
+            19.55
+          ],
+          [
+            -98.05,
+            19.62
+          ],
+          [
+            -97.75,
+            19.38
+          ],
+          [
+            -98,
+            19.13
+          ],
+          [
+            -98.4,
+            19.17
+          ],
+          [
+            -98.62,
+            19.35
+          ]
+        ],
+        "facts": {
+          "Government": "A league of four towns, each with its own lord",
+          "Today": "Tlaxcala state, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 14,
+            "text": "A council of the four towns’ lords"
+          }
+        ],
+        "role": "Hemmed in and never conquered by the Alliance, it became the Spanish conquerors’ chief ally.",
+        "ties": [
+          {
+            "from": 14,
+            "text": "At ritual war with the Alliance"
+          },
+          {
+            "from": 23,
+            "text": "Allied with Cortés"
+          }
+        ]
+      },
+      {
+        "id": "purepecha",
+        "name": "Purépecha kingdom",
+        "native": "Iréchekua Tsintsuntsani",
+        "lang": "tsz",
+        "color": "#a678e0",
+        "active": [
+          [
+            15,
+            30
+          ]
+        ],
+        "label": {
+          "text": "Purépecha",
+          "at": [
+            -102.2,
+            19.5
+          ]
+        },
+        "area": [
+          [
+            -103.3,
+            20.5
+          ],
+          [
+            -101.6,
+            20.4
+          ],
+          [
+            -100.7,
+            20
+          ],
+          [
+            -100.75,
+            19.2
+          ],
+          [
+            -101.1,
+            18.5
+          ],
+          [
+            -102,
+            18.15
+          ],
+          [
+            -103,
+            18.6
+          ],
+          [
+            -103.6,
+            19.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Tzintzuntzan",
+          "Also called": "The Tarascan state",
+          "Today": "Michoacán, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "The Purépecha king (cazonci)"
+          }
+        ],
+        "role": "The Alliance’s great rival in the west, never conquered by it; it submitted to Spain in the 1520s.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Defeats Axayacatl’s army"
+          }
+        ]
+      },
+      {
+        "id": "spain",
+        "name": "Spain in the Americas",
+        "native": "Nueva España",
+        "lang": "es",
+        "color": "#e0b43a",
+        "active": [
+          [
+            20,
+            33
+          ]
+        ],
+        "label": {
+          "text": "Spain",
+          "at": [
+            -83.7,
+            22.9
+          ],
+          "moves": [
+            {
+              "from": 31,
+              "at": [
+                -98.3,
+                17.6
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                20,
+                33
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -84.95,
+                  21.86
+                ],
+                [
+                  -84.3,
+                  22.4
+                ],
+                [
+                  -83.5,
+                  22.85
+                ],
+                [
+                  -82.5,
+                  23.15
+                ],
+                [
+                  -82.5,
+                  22.6
+                ],
+                [
+                  -83.2,
+                  22.25
+                ],
+                [
+                  -84.2,
+                  21.95
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                22,
+                30
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -96.42,
+                  19.67
+                ],
+                "radius": 0.07
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                31,
+                33
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -100.3,
+                  20.2
+                ],
+                [
+                  -99.3,
+                  20.9
+                ],
+                [
+                  -98.4,
+                  21.8
+                ],
+                [
+                  -97.75,
+                  21.9
+                ],
+                [
+                  -97.3,
+                  21
+                ],
+                [
+                  -96.6,
+                  19.9
+                ],
+                [
+                  -95.9,
+                  19
+                ],
+                [
+                  -95.3,
+                  18.4
+                ],
+                [
+                  -94.9,
+                  17.9
+                ],
+                [
+                  -95,
+                  16.6
+                ],
+                [
+                  -95.3,
+                  16.2
+                ],
+                [
+                  -96.2,
+                  15.8
+                ],
+                [
+                  -97.6,
+                  16.2
+                ],
+                [
+                  -98.4,
+                  16.4
+                ],
+                [
+                  -99.6,
+                  16.8
+                ],
+                [
+                  -100.8,
+                  17.3
+                ],
+                [
+                  -101.4,
+                  17.9
+                ],
+                [
+                  -100.95,
+                  18.6
+                ],
+                [
+                  -100.6,
+                  19.3
+                ]
+              ],
+              [
+                [
+                  -93.6,
+                  15.75
+                ],
+                [
+                  -92.8,
+                  15.6
+                ],
+                [
+                  -92.2,
+                  15.05
+                ],
+                [
+                  -92.25,
+                  14.6
+                ],
+                [
+                  -92.9,
+                  15
+                ],
+                [
+                  -93.75,
+                  15.55
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Ruled from": "Cuba, then Mexico City (from 1535 a viceroyalty)",
+          "Today": "Mexico was part of New Spain until 1821"
+        },
+        "rulers": [
+          {
+            "from": 20,
+            "text": "Charles I of Spain (the emperor Charles V)"
+          }
+        ],
+        "role": "From Cuba, a Spanish expedition that became the conquest of Mexico and the colony of New Spain.",
+        "ties": [
+          {
+            "from": 22,
+            "text": "Allied with Cempoala"
+          },
+          {
+            "from": 23,
+            "text": "Allied with Tlaxcala"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "tenoch",
+        "name": "Tenoch",
+        "native": "Tenoch",
+        "life": "14th century, in tradition",
+        "role": "Founder of Tenochtitlan, in tradition",
+        "steps": [
+          6
+        ],
+        "text": "Mexica histories name Tenoch as the leader, perhaps a priest, under whom the island city was founded; the Codex Mendoza shows him seated among the founders beside the eagle on the cactus. Some historians think he is more symbol than person, a name made from the city’s own."
+      },
+      {
+        "id": "acamapichtli",
+        "name": "Acamapichtli",
+        "native": "Acamapichtli",
+        "life": "ruled about 1375 to 1395; dates vary",
+        "role": "First king (tlatoani) of Tenochtitlan",
+        "steps": [
+          7
+        ],
+        "text": "Acamapichtli, handful of reeds, was a nobleman of Culhuacan with Mexica ties, chosen to rule so that the new city’s kings would carry Toltec blood. He ruled as a vassal of Azcapotzalco and took wives from the leading Mexica families. Every later king of Tenochtitlan descended from him."
+      },
+      {
+        "id": "tezozomoc",
+        "name": "Tezozomoc",
+        "native": "Tezozomoc",
+        "life": "died 1426",
+        "role": "King of Azcapotzalco",
+        "steps": [
+          7,
+          10
+        ],
+        "text": "Tezozomoc ruled the Tepanecs of Azcapotzalco for decades and made them the leading power of the Valley of Mexico, with the Mexica as his soldiers. In 1418 he defeated Texcoco, whose king was killed, sending the young Nezahualcoyotl into exile. His death in 1426 opened the war that ended Tepanec rule."
+      },
+      {
+        "id": "itzcoatl",
+        "name": "Itzcoatl",
+        "native": "Itzcoatl",
+        "life": "ruled 1427 to 1440",
+        "role": "King of Tenochtitlan",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "Itzcoatl, obsidian serpent, was a son of Acamapichtli by a woman of low rank, chosen king in a crisis. He led the war that broke Azcapotzalco in 1428, made the Triple Alliance and rewarded his warriors with conquered land. Later accounts say he burned the old books so the Mexica could tell their history anew."
+      },
+      {
+        "id": "tlacaelel",
+        "name": "Tlacaelel",
+        "native": "Tlacaelel",
+        "life": "about 1397 to about 1487; dates uncertain",
+        "role": "Chief adviser (cihuacoatl)",
+        "steps": [
+          10,
+          11,
+          13,
+          14
+        ],
+        "text": "Tlacaelel served several kings as cihuacoatl, a high office second only to the king. Some chronicles make him the mind behind the Alliance, the new state religion and the flowery wars; historians think those accounts may exaggerate his part. He is said to have refused the throne himself."
+      },
+      {
+        "id": "nezahualcoyotl",
+        "name": "Nezahualcoyotl",
+        "native": "Nezahualcoyotl",
+        "life": "1402 to 1472",
+        "role": "King of Texcoco",
+        "steps": [
+          10,
+          12
+        ],
+        "text": "Nezahualcoyotl, fasting coyote, saw his father killed by the Tepanecs and lived for years in exile before winning back Texcoco with Mexica help. As king he built palaces, gardens and waterworks, and gave Texcoco laws and a name for learning. Poems on the passing of life are attributed to him; scholars debate which are really his."
+      },
+      {
+        "id": "moctezuma-i",
+        "name": "Moctezuma I",
+        "native": "Motecuhzoma Ilhuicamina",
+        "life": "ruled 1440 to 1469",
+        "role": "King of Tenochtitlan",
+        "steps": [
+          13,
+          14
+        ],
+        "text": "Moctezuma Ilhuicamina, he who shoots at the sky, was a war leader under Itzcoatl and king for nearly thirty years. His campaigns turned the Alliance into an empire reaching the Gulf coast and Oaxaca, and he set laws of dress and rank. The chronicles say he opened the royal stores to the hungry in the famine of the 1450s."
+      },
+      {
+        "id": "axayacatl",
+        "name": "Axayacatl",
+        "native": "Axayacatl",
+        "life": "ruled 1469 to 1481",
+        "role": "King of Tenochtitlan",
+        "steps": [
+          15
+        ],
+        "text": "Axayacatl came to the throne young. He conquered Tlatelolco in 1473, ending its independence, and pushed the empire west into the Toluca valley, but his war against the Purépecha ended in disaster. In 1519 his palace housed Cortés and the Spanish, who found a hidden treasure room there."
+      },
+      {
+        "id": "ahuitzotl",
+        "name": "Ahuitzotl",
+        "native": "Ahuitzotl",
+        "life": "ruled 1486 to 1502",
+        "role": "King of Tenochtitlan",
+        "steps": [
+          16,
+          17
+        ],
+        "text": "Ahuitzotl, named for a water creature, was the empire’s greatest conqueror after Moctezuma I, reaching Soconusco on the Pacific coast. He finished the Great Temple’s rebuilding for its rededication in 1487. A new aqueduct he built flooded the city in 1499; some accounts say he died in 1502 of a head injury from that flood."
+      },
+      {
+        "id": "moctezuma-ii",
+        "name": "Moctezuma II",
+        "native": "Motecuhzoma Xocoyotzin",
+        "life": "about 1466 to 1520",
+        "role": "King of Tenochtitlan",
+        "steps": [
+          19,
+          22,
+          25,
+          26
+        ],
+        "text": "Moctezuma Xocoyotzin, the younger, was a priest and general who made the court grander and more exclusive. When the Spanish came he sent gifts and tried to keep them away, then received them. The story that he took Cortés for the returning god Quetzalcoatl was written down after the conquest, and many historians doubt it."
+      },
+      {
+        "id": "malintzin",
+        "name": "Malintzin",
+        "native": "Malintzin",
+        "life": "about 1500 to about 1529",
+        "role": "Interpreter and adviser to Cortés",
+        "steps": [
+          21,
+          22,
+          23,
+          24,
+          25
+        ],
+        "text": "Born to a Nahuatl-speaking family on the Gulf coast, she was given or sold into slavery among the Maya as a girl. As Cortés’s interpreter she spoke for him at every meeting, and bore his son Martín. In Mexico, Malinche long meant a traitor; many now see a captive who survived with the few choices she had."
+      },
+      {
+        "id": "cortes",
+        "name": "Hernán Cortés",
+        "native": "Hernán Cortés",
+        "lang": "es",
+        "life": "1485 to 1547",
+        "role": "Spanish conquistador",
+        "steps": [
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          29,
+          30,
+          31
+        ],
+        "text": "Hernán Cortés, from Medellín in Spain, sailed against orders, led the conquest and described it in long letters to the emperor Charles V. He became Marquis of the Valley of Oaxaca and one of the richest men in New Spain, but the Crown kept him from governing it. He died in Spain, still pursuing lawsuits."
+      },
+      {
+        "id": "xicotencatl",
+        "name": "Xicotencatl the Younger",
+        "native": "Xicohtencatl Axayacatzin",
+        "life": "died 1521",
+        "role": "War leader of Tlaxcala",
+        "steps": [
+          23,
+          29
+        ],
+        "text": "Xicotencatl the Younger led Tlaxcala’s armies against the Spanish in 1519 and opposed the alliance that followed. In 1521, during the march on Tenochtitlan, he left the Spanish camp, and Cortés had him hanged. In Mexico today he is often honoured as a defender of his people."
+      },
+      {
+        "id": "cuauhtemoc",
+        "name": "Cuauhtémoc",
+        "native": "Cuauhtemoc",
+        "life": "about 1500 to 1525",
+        "role": "Last king of Tenochtitlan",
+        "steps": [
+          28,
+          30,
+          31
+        ],
+        "text": "Cuauhtémoc, descending eagle, a son of Ahuitzotl, became king after Cuitláhuac died of smallpox and led the defence through the siege. Captured on 13 August 1521, he was tortured for gold. In 1525 Cortés had him hanged during the march to Honduras, accused of plotting. Mexico honours him as a national hero."
+      },
+      {
+        "id": "sahagun",
+        "name": "Bernardino de Sahagún",
+        "native": "Bernardino de Sahagún",
+        "lang": "es",
+        "life": "about 1499 to 1590",
+        "role": "Franciscan friar and scholar",
+        "steps": [
+          32
+        ],
+        "text": "Bernardino de Sahagún came to New Spain in 1529, learned Nahuatl and taught at the college of Santa Cruz in Tlatelolco. His life’s work, made with Nahua students and elders, was meant to help missionaries root out the old religion, yet it preserved more of that world than any other source. Spanish authorities seized his papers in 1577."
+      }
+    ]
+  }
+}

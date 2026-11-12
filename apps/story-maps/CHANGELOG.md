@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.0
+
+- New story map in Chronicles: The Aztec Empire, the first in the Americas. From the migration out of Aztlan, the Seven Caves and Serpent Hill, through Chapultepec, Culhuacan and the eagle on the cactus (Tenochtitlan, by tradition 1325), the Tepanecs, the chinampas and Teotihuacan, the Triple Alliance of 1428 (Itzcoatl, Nezahualcoyotl, Moctezuma I, the flowery wars, the Purépecha, the Great Temple, Soconusco and the empire of tribute), to the Spanish conquest from Cozumel and Malintzin to Cholula, the Sad Night, smallpox and the fall of Tenochtitlan in 1521, and what remains: 34 chapters, a Powers layer that changes chapter by chapter, and 15 people cards.
+- New Mesoamerica map, from Sinaloa and the Gulf of Mexico to Honduras and western Cuba, simplified from Natural Earth’s public-domain coastlines, lakes and rivers, with the lakes of the Valley of Mexico about 1519 and Lake Pátzcuaro drawn by hand. Stories of the Maya can use it too.
+- Catalogue: the Aztec Empire and the Fall of Tenochtitlan now open the story; new entries for the Toltecs (Tula) and, in legends, the eagle on the cactus.
+- Art: new place glyphs (stepped temple, eagle on a cactus, painted book) and travellers (a Mexica walker with the god’s bundle, an eagle warrior and a conquistador).
+
 ## 0.18.0
 
 - New story map in Chronicles: The Nanda Dynasty. The rise of Magadha from Bimbisara’s hill-ringed Rajagriha, Anga, Ajatashatru’s war with the Vajjis and the fort at Pataligrama, Shishunaga’s victory over Avanti and the council at Vaishali, through the Nanda kings (the barber’s-son stories, Mahapadma the sole ruler, Kalinga in Kharavela’s inscription, the army the Greeks feared, the Nanda treasure and the court legends), Alexander’s halt at the Beas, to Chanakya’s vow, the fall of the Nandas about 322 BCE, Mudrarakshasa, Magadha’s nameless coins and what the Mauryas inherited: 21 chapters, a Powers layer that changes chapter by chapter, and 13 people cards.

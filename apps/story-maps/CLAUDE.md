@@ -20,7 +20,7 @@ From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnab
 manifest.json      sections, collections and every story
 catalogue.json     regions, timeline lanes and entries (civilisations, dynasties, events, legends, routes) for the hub and /explore/<id>/
 stories/           one folder per story: stories/<section>/[<collection>/]<id>/; a built story has story.json there
-basemaps/          shared maps: south-asia.json, world.json, near-east.json (coastlines, rivers, ranges, forests, labels)
+basemaps/          shared maps: south-asia.json, world.json, near-east.json, mesoamerica.json (coastlines, rivers, ranges, forests, labels)
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
 hub/page.html      the shell every page is rendered into
 hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
