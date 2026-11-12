@@ -1,0 +1,1745 @@
+{
+  "id": "three-crowned-kings",
+  "title": "The Three Crowned Kings",
+  "description": "An illustrated map of the early Tamil kingdoms, the Cheras, Cholas and Pandyas, from Iron Age burials and Ashoka’s edicts, through the Sangam poems and the Roman pepper trade, to the epics and the rediscovery of the poems.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "ta",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Chera, Chola and Pandya kingdoms of the Sangam age, about 300 BCE to 300 CE",
+  "note": "Based on excavations, inscriptions, the Sangam poems, Greek and Roman writers and Sri Lanka’s chronicle; each chapter says which it follows. Dates for the Sangam age, its kings and its poems are uncertain and debated, and the poems are poetry, not chronicles. The three kingdoms’ areas are painted loosely; borders shifted and many chiefs ruled on their own. The map is stylised and not to scale; Karur, Venni and Arikamedu are moved a little so their pins do not overlap.",
+  "places": {
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [
+        85.1,
+        25.6
+      ],
+      "hidden": true
+    },
+    "himalaya": {
+      "name": "The Himalaya",
+      "at": [
+        79.5,
+        30.4
+      ],
+      "hidden": true
+    },
+    "talaiyalanganam": {
+      "name": "Talaiyalanganam",
+      "at": [
+        79.55,
+        10.9
+      ],
+      "hidden": true
+    },
+    "arabian-sea": {
+      "name": "Across the Arabian Sea",
+      "at": [
+        64.5,
+        14.5
+      ],
+      "hidden": true
+    },
+    "korkai": {
+      "name": "Korkai",
+      "at": [
+        78.07,
+        8.63
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "madurai": {
+      "name": "Madurai",
+      "at": [
+        78.12,
+        9.92
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "erragudi": {
+      "name": "Erragudi",
+      "at": [
+        77.71,
+        15.23
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "anuradhapura": {
+      "name": "Anuradhapura",
+      "at": [
+        80.4,
+        8.35
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "udayagiri": {
+      "name": "Udayagiri",
+      "at": [
+        85.78,
+        20.26
+      ],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "karur": {
+      "name": "Karur",
+      "at": [
+        77.95,
+        11.08
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "venni": {
+      "name": "Venni",
+      "at": [
+        79.25,
+        10.35
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "puhar": {
+      "name": "Puhar",
+      "at": [
+        79.85,
+        11.2
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "tagadur": {
+      "name": "Tagadur",
+      "at": [
+        78.16,
+        12.13
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "muziris": {
+      "name": "Muziris",
+      "at": [
+        76.22,
+        10.17
+      ],
+      "glyph": "trading-post",
+      "label": "bottom"
+    },
+    "arikamedu": {
+      "name": "Arikamedu",
+      "at": [
+        79.8,
+        12.15
+      ],
+      "glyph": "beads",
+      "label": "right"
+    },
+    "madras": {
+      "name": "Madras (Chennai)",
+      "at": [
+        80.27,
+        13.08
+      ],
+      "glyph": "palm-leaf",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "envoy": {
+      "name": "An edict",
+      "icon": "scroll"
+    },
+    "army": {
+      "name": "An army",
+      "icon": "war-elephant"
+    },
+    "ship": {
+      "name": "A Roman-era merchant ship",
+      "icon": "merchant-ship"
+    },
+    "poet": {
+      "name": "A poet",
+      "icon": "monk"
+    },
+    "kannagi": {
+      "name": "Kannagi",
+      "icon": "prince"
+    },
+    "cart": {
+      "name": "Goods",
+      "icon": "ox-cart"
+    }
+  },
+  "phases": {
+    "before": {
+      "name": "Before the kings",
+      "color": "#4fc3b0"
+    },
+    "named": {
+      "name": "Named from afar",
+      "color": "#5b8fd0"
+    },
+    "poems": {
+      "name": "Kings of the poems",
+      "color": "#f29a2e"
+    },
+    "trade": {
+      "name": "Pepper and gold",
+      "color": "#a678e0"
+    },
+    "epics": {
+      "name": "Epics and a silence",
+      "color": "#e0573a"
+    },
+    "legacy": {
+      "name": "The poems found again",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "sea": {
+      "color": "#1f7a8c",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 8.2,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 29.1,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 58.3,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 79.2,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 91.8,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "c. 1000 BCE"
+      },
+      {
+        "at": 22.9,
+        "text": "c. 200 BCE"
+      },
+      {
+        "at": 43.7,
+        "text": "c. 100 CE"
+      },
+      {
+        "at": 89.7,
+        "text": "c. 590"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "korkai",
+      "phase": "before",
+      "title": "Urns by the Thamirabarani",
+      "native": "ஆதிச்சநல்லூர்",
+      "when": "first millennium BCE",
+      "at": 2.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          78.0,
+          9.0
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Upriver from Korkai, at Adichanallur on the Thamirabarani river, a hillside holds hundreds of burial urns. Excavated from 1899 and again from 2004, they held iron weapons and tools, bronze vessels, pottery and thin gold diadems. Their dates are debated, but most fall in the first millennium BCE, long before any written record of the south.",
+      "today": "Today: Adichanallur, Thoothukudi district, Tamil Nadu, India, with a site museum."
+    },
+    {
+      "place": "madurai",
+      "phase": "before",
+      "title": "A brick town on the Vaigai",
+      "native": "கீழடி",
+      "when": "from about the 6th century BCE, by some estimates",
+      "at": 6.2,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          78.2,
+          9.95
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "At Keezhadi, about 12 km south-east of Madurai, digs since 2015 have uncovered brick buildings, drains, ring wells, dice, beads and thousands of potsherds, some scratched with names in Tamil-Brahmi letters. The state’s archaeologists date the earliest layers to about the 6th century BCE; others argue for a later date, and the debate goes on.",
+      "today": "Today: the Keezhadi excavations and Keeladi Museum, Sivaganga district."
+    },
+    {
+      "place": "korkai",
+      "phase": "named",
+      "title": "The land of Pandaia",
+      "native": "Πανδαία",
+      "lang": "grc",
+      "when": "about 300 BCE",
+      "at": 10.3,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          80.5,
+          14.5
+        ],
+        "width": 20
+      },
+      "legs": [],
+      "text": "Megasthenes, a Greek envoy at the Maurya court, heard of a southern kingdom called Pandaia. Later Greek writers repeat his story: Heracles gave it to his daughter Pandaia, women ruled it, and he searched the sea for pearls to adorn her. It is a legend, but the name is close to the Pandyas, whose port of Korkai fished pearls.",
+      "today": "Today: Korkai village, near the mouth of the Thamirabarani."
+    },
+    {
+      "place": "erragudi",
+      "phase": "named",
+      "title": "Beyond Ashoka’s borders",
+      "when": "about 250 BCE",
+      "at": 14.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.5,
+          18
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "erragudi",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": 0.08
+        }
+      ],
+      "text": "The Maurya emperor Ashoka never ruled the far south. His second rock edict, carved at Erragudi and other sites, names the peoples beyond his borders: the Cholas, the Pandyas, the Satiyaputras and the Keralaputras, as far as Sri Lanka. There, it says, he has provided medical care for people and animals, and planted herbs and dug wells.",
+      "today": "Today: the Ashokan rock edicts at Erragudi, Kurnool district, Andhra Pradesh."
+    },
+    {
+      "place": "madurai",
+      "phase": "named",
+      "title": "The first Tamil writing",
+      "native": "மாங்குளம்",
+      "when": "about the 2nd century BCE",
+      "at": 18.7,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          78.2,
+          10.0
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "In caves at Mangulam, north-east of Madurai, stone beds were cut for Jain monks. Lines in Tamil-Brahmi above them, among the oldest Tamil inscriptions known, record the gift and name an officer of a Pandya king called Nedunjeliyan. Dozens of such cave inscriptions survive in the hills around Madurai; their exact dates are debated.",
+      "today": "Today: the Mangulam (Meenakshipuram) caves, Madurai district."
+    },
+    {
+      "place": "anuradhapura",
+      "phase": "named",
+      "title": "A Chola king in Lanka",
+      "native": "எல்லாளன்",
+      "lang": "ta",
+      "when": "2nd century BCE, by the chronicle",
+      "at": 22.9,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.8,
+          8.8
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Sri Lanka’s chronicle, the Mahavamsa, says a Tamil named Elara, from the Chola country, ruled Anuradhapura for 44 years. It praises his justice: a bell hung by his bed for anyone wronged. Prince Dutugamunu killed him in single combat, then honoured him with a monument and ordered all who passed it to show respect.",
+      "today": "Today: Anuradhapura, North Central Province, Sri Lanka."
+    },
+    {
+      "place": "udayagiri",
+      "phase": "named",
+      "title": "A league of Tamil kings",
+      "native": "ହାତୀଗୁମ୍ଫା",
+      "lang": "or",
+      "when": "about the 1st century BCE",
+      "at": 27.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          82.5,
+          16.5
+        ],
+        "width": 18
+      },
+      "legs": [],
+      "text": "In the Elephant Cave inscription at Udayagiri, King Kharavela of Kalinga boasts of breaking up a league of Tamil states that had stood for 113 years, and of receiving pearls and jewels from a Pandya king. The inscription is damaged, and both its date and these readings are debated, but it shows the southern kings acting together.",
+      "today": "Today: the Hathigumpha inscription, Udayagiri hills, Bhubaneswar, Odisha."
+    },
+    {
+      "place": "madurai",
+      "phase": "poems",
+      "title": "The assemblies of poets",
+      "native": "சங்கம்",
+      "when": "in tradition, thousands of years",
+      "at": 31.2,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          78.6,
+          9.6
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "A commentary of about the 8th century tells of three assemblies (sangams) of poets under the Pandya kings. The first met at a southern Madurai later swallowed by the sea, the second at Kapatapuram, also lost, and the third at Madurai itself, each lasting thousands of years. Historians treat this as tradition; the name Sangam stuck to the age.",
+      "today": "Today: Madurai, Tamil Nadu."
+    },
+    {
+      "place": "madurai",
+      "phase": "poems",
+      "title": "Poems of love and war",
+      "native": "எட்டுத்தொகை",
+      "when": "about the 1st to 3rd centuries CE, debated",
+      "at": 35.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.6,
+          10.3
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "The Sangam poems survive in eight anthologies and ten long poems: 2,381 poems by 473 named poets, plus about a hundred unnamed. Love poems (akam) set each mood in a landscape, from mountains for union to the seashore for pining; poems of the outer world (puram) praise kings, battles and gifts. Most date from the early centuries CE.",
+      "today": "Today: the Eighteen Greater Texts (Patinenmelkanakku), read across the Tamil world."
+    },
+    {
+      "place": "karur",
+      "phase": "poems",
+      "title": "The Cheras of Vanci",
+      "native": "வஞ்சி",
+      "when": "about the 2nd century CE",
+      "at": 39.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          77.2,
+          10.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "karur",
+          "to": "himalaya",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.06
+        }
+      ],
+      "text": "One anthology, the Ten Tens (Patirruppattu), praises Chera kings, among them Imayavaramban, ‘whose border is the Himalaya’, said to have carved the Chera bow on its peaks. Rock inscriptions at Pugalur, near Karur, name three generations of Chera kings, and the Chera bow appears on coins from the Amaravati river. Their capital, Vanci, is identified with Karur or Kodungallur.",
+      "today": "Today: Karur, on the Amaravati river, Tamil Nadu."
+    },
+    {
+      "place": "venni",
+      "phase": "poems",
+      "title": "Karikala at Venni",
+      "native": "வெண்ணி",
+      "when": "early centuries CE; dates uncertain",
+      "at": 43.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.0,
+          10.6
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "karur",
+          "to": "venni",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        },
+        {
+          "from": "madurai",
+          "to": "venni",
+          "traveller": "army",
+          "style": "march",
+          "bend": -0.1
+        }
+      ],
+      "text": "At Venni, in the Kaveri delta, the young Chola king Karikala defeats the Chera and Pandya kings and eleven chieftains. The poems say the Chera king, wounded in the back, thought it a disgrace, and starved himself to death facing north. Karikala becomes the most famous Chola of the poems, though his dates are uncertain.",
+      "today": "Today: Kovil Venni, Tiruvarur district, Tamil Nadu."
+    },
+    {
+      "place": "puhar",
+      "phase": "poems",
+      "title": "Puhar, the Kaveri’s port",
+      "native": "காவிரிப்பூம்பட்டினம்",
+      "when": "early centuries CE",
+      "at": 47.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.6,
+          11.0
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "venni",
+          "to": "puhar",
+          "traveller": "cart",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "The long poem Pattinappalai pictures Karikala’s port at the Kaveri’s mouth: officers stamping the Chola tiger on goods, horses landed from overseas, pepper from the hills, pearls from the south and gold from the north. Tradition credits Karikala with banking the Kaveri, and the Grand Anicut (Kallanai) dam, still in use, is often attributed to him.",
+      "today": "Today: Poompuhar, Mayiladuthurai district, Tamil Nadu."
+    },
+    {
+      "place": "madurai",
+      "phase": "poems",
+      "title": "The Pandya at Talaiyalanganam",
+      "native": "தலையாலங்கானம்",
+      "when": "early centuries CE",
+      "at": 52.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.8,
+          10.3
+        ],
+        "width": 5
+      },
+      "legs": [
+        {
+          "from": "madurai",
+          "to": "talaiyalanganam",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Pandya king Nedunjeliyan, still young, beats the Chera and Chola kings and five chieftains at Talaiyalanganam. A poem in his own name vows that if he loses, poets may stop singing of him. The long poem Maduraikkanchi then describes his Madurai: its broad streets, temple festivals, and markets open by day and by night.",
+      "today": "Today: Thalaiyalangadu, Tiruvarur district; Madurai, Tamil Nadu."
+    },
+    {
+      "place": "tagadur",
+      "phase": "poems",
+      "title": "Avvaiyar and the gooseberry",
+      "native": "ஔவையார்",
+      "when": "early centuries CE",
+      "at": 56.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.6,
+          12.0
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "tagadur",
+          "to": "puhar",
+          "traveller": "poet",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Kings were not the only patrons. Athiyaman, chief of Tagadur, gave the poet Avvaiyar a rare gooseberry (nellikkani) said to grant long life, keeping none for himself; she praised him in the poems and served as his envoy. A rock inscription at Jambai names him as ‘Satiyaputo’, the Satiyaputras of Ashoka’s edict.",
+      "today": "Today: Dharmapuri, Tamil Nadu; the Jambai inscription is in Kallakurichi district."
+    },
+    {
+      "place": "muziris",
+      "phase": "trade",
+      "title": "Yavana ships at Muciri",
+      "native": "முசிறி",
+      "when": "1st century BCE to 2nd century CE",
+      "at": 60.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          72.0,
+          12.0
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "arabian-sea",
+          "to": "muziris",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": -0.08
+        }
+      ],
+      "text": "Using the monsoon winds to cross the open sea from Egypt’s Red Sea ports, ships reach the Chera coast. A Sangam poem describes the Yavanas’ fine ships coming to Muciri with gold and leaving laden with pepper. Yavana meant Greeks and later any westerner. Digs at Pattanam, north of Kochi, are thought to have found the port.",
+      "today": "Today: Pattanam, near Kodungallur, Ernakulam district, Kerala."
+    },
+    {
+      "place": "muziris",
+      "phase": "trade",
+      "title": "Pliny counts the cost",
+      "when": "about 77 CE",
+      "at": 64.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          74.0,
+          11.0
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "arabian-sea",
+          "to": "muziris",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": -0.08
+        }
+      ],
+      "text": "The Roman writer Pliny the Elder complains that India drains the empire of at least 50 million sesterces a year, for goods sold at a hundred times their cost. He names Muziris as India’s first market but warns of pirates and that ships must anchor far offshore. The Periplus, a sailors’ guide, lists it with the Pandya port of Nelcynda.",
+      "today": "Today: the Periyar river mouth, Kerala."
+    },
+    {
+      "place": "muziris",
+      "phase": "trade",
+      "title": "The Muziris papyrus",
+      "when": "mid 2nd century CE",
+      "at": 68.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.4,
+          10.4
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "A papyrus now in Vienna records a loan for a voyage to Muziris. Its back lists the cargo of one returning ship, the Hermapollon: Gangetic nard, ivory and fine cloth, valued at millions of drachmas, with a quarter paid as tax on landing. It shows how large this trade was, and that pepper was not all the Tamil ports sold.",
+      "today": "Today: the papyrus is in the Austrian National Library, Vienna."
+    },
+    {
+      "place": "arikamedu",
+      "phase": "trade",
+      "title": "Arikamedu’s beads",
+      "native": "அரிக்கமேடு",
+      "when": "about the 2nd century BCE to 2nd century CE",
+      "at": 73.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.6,
+          11.6
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "arabian-sea",
+          "to": "arikamedu",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": 0.12
+        }
+      ],
+      "text": "On the east coast, near Puducherry, Mortimer Wheeler’s dig of 1945 found Italian red-glazed tableware (Arretine ware), wine and oil jars from the Mediterranean, and a workshop making glass and stone beads, traded across the Indian Ocean. Later digs showed the site was older than the Roman trade. It may be the Periplus’s port of Poduke.",
+      "today": "Today: Arikamedu, Ariyankuppam, Puducherry."
+    },
+    {
+      "place": "korkai",
+      "phase": "trade",
+      "title": "Pearls and an embassy",
+      "native": "கொற்கை",
+      "when": "about 20 BCE to the 1st century CE",
+      "at": 77.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.0,
+          8.9
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "korkai",
+          "to": "arabian-sea",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Periplus says the pearl fishery at Korkai belongs to the Pandya king and is worked by condemned criminals. The Greek geographer Strabo writes that a king called Pandion sent an embassy to the Roman emperor Augustus, though some sources name Porus instead. Roman gold and silver coins turn up in hoards across the south, many around Coimbatore.",
+      "today": "Today: Korkai; the sea has since retreated several kilometres."
+    },
+    {
+      "place": "madurai",
+      "phase": "epics",
+      "title": "Kannagi’s anklet",
+      "native": "சிலப்பதிகாரம்",
+      "when": "epic of about the 5th to 6th century, debated",
+      "at": 81.3,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          78.4,
+          10.4
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "puhar",
+          "to": "madurai",
+          "traveller": "kannagi",
+          "style": "walk",
+          "bend": -0.1
+        },
+        {
+          "from": "madurai",
+          "to": "karur",
+          "traveller": "kannagi",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "In the epic The Tale of the Anklet (Silappatikaram), Kovalan of Puhar is wrongly executed in Madurai for stealing the queen’s anklet. His wife Kannagi breaks her own anklet to show rubies, not the queen’s pearls; the Pandya king dies of shame and her anger burns Madurai. Tradition makes the poet, Ilango Adigal, a Chera prince.",
+      "today": "Today: Kannagi is worshipped as the goddess Pattini in Kerala and Sri Lanka."
+    },
+    {
+      "place": "puhar",
+      "phase": "epics",
+      "title": "Taken by the sea",
+      "native": "மணிமேகலை",
+      "when": "in the epic",
+      "at": 85.5,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.7,
+          11.1
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "The Buddhist epic Manimekalai, a sequel to the Tale of the Anklet, ends with Puhar swallowed by the sea after a king neglects the festival of Indra. Offshore surveys near Poompuhar have found submerged structures, but their age and meaning are debated. The poem’s heroine, Kovalan’s daughter, becomes a Buddhist nun.",
+      "today": "Today: Poompuhar’s coast, where the Kaveri meets the Bay of Bengal."
+    },
+    {
+      "place": "madurai",
+      "phase": "epics",
+      "title": "The Kalabhra interval",
+      "native": "களப்பிரர்",
+      "when": "about the 3rd to 6th centuries",
+      "at": 89.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.5,
+          10.6
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "After the Sangam age the old kings fade from the record. A Pandya copper-plate grant of the 8th century says a Kalabhra king overran the land and took back gifts to Brahmins, until the Pandya Kadungon drove them out, about 590. Who the Kalabhras were is unknown. In the north, the Pallavas of Kanchipuram rose.",
+      "today": "Today: the Velvikudi copper plates are in the Government Museum, Chennai."
+    },
+    {
+      "place": "madras",
+      "phase": "legacy",
+      "title": "Palm leaves into print",
+      "native": "உ. வே. சாமிநாதையர்",
+      "when": "1880s to 1940s",
+      "at": 93.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.6,
+          12.2
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "madurai",
+          "to": "madras",
+          "traveller": "poet",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "By the 19th century the Sangam poems survived only on crumbling palm-leaf manuscripts. C. W. Damodaram Pillai printed some from 1887, and U. V. Swaminatha Iyer, searching houses and monasteries across the Tamil country, printed others, among them the Ten Long Poems in 1889, the Tale of the Anklet in 1892 and the Purananuru in 1894.",
+      "today": "Today: the U. V. Swaminatha Iyer Library, Besant Nagar, Chennai."
+    },
+    {
+      "place": "madurai",
+      "phase": "legacy",
+      "title": "A classical language",
+      "native": "செம்மொழி",
+      "when": "2004 onwards",
+      "at": 98.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.6,
+          10.6
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "In 2004 India declared Tamil its first classical language, citing its ancient literature. The Sangam poems are taught in schools and translated worldwide, and the Chola tiger, Pandya fish and Chera bow live on as emblems. Digs at Keezhadi, Adichanallur and Pattanam continue, and the Keeladi Museum opened in 2023.",
+      "today": "Today: Tamil is spoken by over 80 million people, in India, Sri Lanka and beyond."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "pandya",
+        "name": "Pandyas",
+        "native": "பாண்டியர்",
+        "color": "#2f8f6b",
+        "active": [
+          [
+            2,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Pandyas",
+          "at": [
+            78.0,
+            9.3
+          ]
+        },
+        "area": [
+          [
+            77.3,
+            9.0
+          ],
+          [
+            77,
+            8.5
+          ],
+          [
+            77.55,
+            8.08
+          ],
+          [
+            78.4,
+            9
+          ],
+          [
+            79.35,
+            9.3
+          ],
+          [
+            79,
+            9.5
+          ],
+          [
+            79.2,
+            9.95
+          ],
+          [
+            78.9,
+            10.4
+          ],
+          [
+            78.2,
+            10.6
+          ],
+          [
+            77.7,
+            10.3
+          ],
+          [
+            77.25,
+            9.8
+          ]
+        ],
+        "facts": {
+          "Capital": "Madurai; port at Korkai",
+          "Emblem": "The fish",
+          "Today": "Southern Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Nedunjeliyan, named in the Mangulam inscription"
+          },
+          {
+            "from": 12,
+            "text": "Nedunjeliyan of Talaiyalanganam"
+          }
+        ],
+        "role": "The southernmost of the three crowned kings, patrons of the Sangam poets in tradition.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Sends pearls and jewels to Kharavela of Kalinga"
+          },
+          {
+            "from": 12,
+            "text": "Beats the Chera and Chola kings at Talaiyalanganam"
+          },
+          {
+            "from": 18,
+            "text": "Owns the pearl fishery at Korkai"
+          }
+        ]
+      },
+      {
+        "id": "chola",
+        "name": "Cholas",
+        "native": "சோழர்",
+        "color": "#e0892e",
+        "active": [
+          [
+            3,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Cholas",
+          "at": [
+            79.2,
+            11.8
+          ]
+        },
+        "area": [
+          [
+            78.3,
+            11.2
+          ],
+          [
+            78.2,
+            10.6
+          ],
+          [
+            78.9,
+            10.4
+          ],
+          [
+            79.2,
+            9.95
+          ],
+          [
+            79.85,
+            10.35
+          ],
+          [
+            79.8,
+            11.3
+          ],
+          [
+            80.1,
+            12.2
+          ],
+          [
+            80.2,
+            13.2
+          ],
+          [
+            79.4,
+            13.3
+          ],
+          [
+            78.7,
+            12.6
+          ],
+          [
+            78.3,
+            11.9
+          ]
+        ],
+        "facts": {
+          "Capitals": "Uraiyur and Puhar",
+          "Emblem": "The tiger",
+          "Today": "The Kaveri delta and northern Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Karikala"
+          }
+        ],
+        "role": "Kings of the Kaveri delta, whose great age is still to come.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Elara, from the Chola country, rules Anuradhapura, by the chronicle"
+          },
+          {
+            "from": 10,
+            "text": "Beats the Chera and Pandya kings at Venni"
+          }
+        ]
+      },
+      {
+        "id": "chera",
+        "name": "Cheras",
+        "native": "சேரர்",
+        "color": "#c2477a",
+        "active": [
+          [
+            3,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Cheras",
+          "at": [
+            76.6,
+            11.0
+          ]
+        },
+        "area": [
+          [
+            75.2,
+            12.4
+          ],
+          [
+            75.4,
+            12
+          ],
+          [
+            76,
+            10.5
+          ],
+          [
+            76.4,
+            9.5
+          ],
+          [
+            77,
+            8.5
+          ],
+          [
+            77.3,
+            9.0
+          ],
+          [
+            77.25,
+            9.8
+          ],
+          [
+            77.7,
+            10.3
+          ],
+          [
+            78.2,
+            10.6
+          ],
+          [
+            78.3,
+            11.2
+          ],
+          [
+            77.8,
+            11.8
+          ],
+          [
+            76.6,
+            12.0
+          ],
+          [
+            75.9,
+            12.4
+          ]
+        ],
+        "facts": {
+          "Capital": "Vanci, identified with Karur or Kodungallur",
+          "Port": "Muziris",
+          "Emblem": "The bow",
+          "Today": "Kerala and western Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "Imayavaramban Nedum Cheralatan, among others"
+          }
+        ],
+        "role": "Kings of the western coast and the Kongu country, masters of the pepper trade.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "The Keralaputras of Ashoka’s edict"
+          },
+          {
+            "from": 14,
+            "text": "Sells pepper to Yavana ships at Muciri"
+          }
+        ]
+      },
+      {
+        "id": "maurya",
+        "name": "Maurya Empire",
+        "native": "मौर्य साम्राज्य",
+        "lang": "hi",
+        "color": "#5b6fa8",
+        "active": [
+          [
+            2,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Maurya Empire",
+          "at": [
+            79.0,
+            22.0
+          ]
+        },
+        "area": [
+          [
+            62.0,
+            25.3
+          ],
+          [
+            62.5,
+            30.0
+          ],
+          [
+            64.0,
+            33.0
+          ],
+          [
+            68.0,
+            35.2
+          ],
+          [
+            71.5,
+            36.0
+          ],
+          [
+            74.5,
+            35.0
+          ],
+          [
+            77.0,
+            32.5
+          ],
+          [
+            80.0,
+            30.0
+          ],
+          [
+            83.99,
+            27.7
+          ],
+          [
+            88.5,
+            26.6
+          ],
+          [
+            89.5,
+            24.5
+          ],
+          [
+            88.0,
+            21.7
+          ],
+          [
+            87.19,
+            21.46
+          ],
+          [
+            86.8,
+            20.6
+          ],
+          [
+            85.5,
+            19.8
+          ],
+          [
+            83.44,
+            17.94
+          ],
+          [
+            82.5,
+            17.5
+          ],
+          [
+            81.2,
+            17.4
+          ],
+          [
+            82.4,
+            19.5
+          ],
+          [
+            82.39,
+            21.23
+          ],
+          [
+            80.0,
+            16.0
+          ],
+          [
+            78.74,
+            14.49
+          ],
+          [
+            80.3,
+            15.5
+          ],
+          [
+            80.18,
+            13.2
+          ],
+          [
+            76.5,
+            13.1
+          ],
+          [
+            75.0,
+            13.8
+          ],
+          [
+            74.6,
+            14.2
+          ],
+          [
+            74.79,
+            14.27
+          ],
+          [
+            73.32,
+            17.42
+          ],
+          [
+            73.0,
+            18.5
+          ],
+          [
+            72.86,
+            19.37
+          ],
+          [
+            72.98,
+            21.31
+          ],
+          [
+            72.63,
+            21.28
+          ],
+          [
+            72.54,
+            21.98
+          ],
+          [
+            72.1,
+            21.4
+          ],
+          [
+            71.47,
+            20.98
+          ],
+          [
+            70.2,
+            20.9
+          ],
+          [
+            69.09,
+            22.35
+          ],
+          [
+            69.82,
+            22.82
+          ],
+          [
+            68.63,
+            23.25
+          ],
+          [
+            66.4,
+            25.2
+          ]
+        ],
+        "facts": {
+          "Capital": "Pataliputra",
+          "Ended": "About 185 BCE"
+        },
+        "rulers": [
+          {
+            "from": 2,
+            "text": "Chandragupta"
+          },
+          {
+            "from": 3,
+            "text": "Ashoka"
+          }
+        ],
+        "role": "The great northern empire, which knew the Tamil kings as neighbours beyond its border.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Ashoka names the Cholas, Pandyas, Satiyaputras and Keralaputras"
+          }
+        ]
+      },
+      {
+        "id": "anuradhapura",
+        "name": "Anuradhapura kingdom",
+        "native": "අනුරාධපුර",
+        "lang": "si",
+        "color": "#b5a33a",
+        "minor": true,
+        "active": [
+          [
+            5,
+            5
+          ]
+        ],
+        "label": {
+          "text": "Anuradhapura",
+          "at": [
+            80.7,
+            7.4
+          ]
+        },
+        "area": [
+          [
+            80.05,
+            9.85
+          ],
+          [
+            80.6,
+            9.5
+          ],
+          [
+            81.2,
+            8.6
+          ],
+          [
+            81.75,
+            7.5
+          ],
+          [
+            81.8,
+            6.8
+          ],
+          [
+            81.3,
+            6.2
+          ],
+          [
+            80.6,
+            5.93
+          ],
+          [
+            80.05,
+            6.05
+          ],
+          [
+            79.85,
+            6.9
+          ],
+          [
+            79.8,
+            7.8
+          ],
+          [
+            79.95,
+            8.7
+          ],
+          [
+            79.75,
+            9.2
+          ]
+        ],
+        "facts": {
+          "Capital": "Anuradhapura",
+          "Today": "Sri Lanka"
+        },
+        "rulers": [
+          {
+            "from": 5,
+            "text": "Elara, then Dutugamunu, by the chronicle"
+          }
+        ],
+        "role": "The kingdom of Sri Lanka, closely tied to the Tamil kingdoms across the strait.",
+        "ties": []
+      },
+      {
+        "id": "kalinga",
+        "name": "Kalinga",
+        "native": "କଳିଙ୍ଗ",
+        "lang": "or",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            6,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Kalinga",
+          "at": [
+            84.6,
+            20.8
+          ]
+        },
+        "area": [
+          [
+            82.4,
+            19.5
+          ],
+          [
+            83.5,
+            18
+          ],
+          [
+            84.7,
+            19
+          ],
+          [
+            85.5,
+            19.8
+          ],
+          [
+            86.8,
+            20.6
+          ],
+          [
+            87.2,
+            21.5
+          ],
+          [
+            86.5,
+            22.2
+          ],
+          [
+            85.0,
+            22.3
+          ],
+          [
+            83.5,
+            21.6
+          ],
+          [
+            82.6,
+            20.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Kalinganagara, near Bhubaneswar",
+          "Today": "Odisha"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Kharavela"
+          }
+        ],
+        "role": "An eastern kingdom whose king boasts of breaking a league of Tamil states.",
+        "ties": []
+      },
+      {
+        "id": "kalabhras",
+        "name": "Kalabhras",
+        "native": "களப்பிரர்",
+        "color": "#6b6358",
+        "active": [
+          [
+            21,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Kalabhras",
+          "at": [
+            78.0,
+            10.6
+          ]
+        },
+        "area": [
+          [
+            75.2,
+            12.4
+          ],
+          [
+            75.4,
+            12
+          ],
+          [
+            76,
+            10.5
+          ],
+          [
+            76.4,
+            9.5
+          ],
+          [
+            77,
+            8.5
+          ],
+          [
+            77.55,
+            8.08
+          ],
+          [
+            78.4,
+            9
+          ],
+          [
+            79.35,
+            9.3
+          ],
+          [
+            79,
+            9.5
+          ],
+          [
+            79.2,
+            9.95
+          ],
+          [
+            79.85,
+            10.35
+          ],
+          [
+            79.8,
+            11.3
+          ],
+          [
+            80.1,
+            12.2
+          ],
+          [
+            80.2,
+            13.2
+          ],
+          [
+            79.4,
+            13.3
+          ],
+          [
+            78.7,
+            12.6
+          ],
+          [
+            77.8,
+            11.8
+          ],
+          [
+            76.6,
+            12.0
+          ],
+          [
+            75.9,
+            12.4
+          ]
+        ],
+        "facts": {
+          "Ruled": "About the 3rd to 6th centuries",
+          "Known from": "Later copper plates and scattered references"
+        },
+        "rulers": [],
+        "role": "Rulers of unknown origin who displaced the old kings; how far they ruled is unknown.",
+        "ties": [
+          {
+            "from": 21,
+            "text": "Driven out by the Pandya Kadungon, about 590"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "megasthenes",
+        "name": "Megasthenes",
+        "native": "Μεγασθένης",
+        "lang": "grc",
+        "life": "about 350 to 290 BCE",
+        "role": "Greek envoy to the Maurya court",
+        "steps": [
+          2
+        ],
+        "text": "Sent by Seleucus to Chandragupta’s court at Pataliputra, Megasthenes wrote the Indica, now lost and known only from quotations by later writers such as Arrian and Strabo. His account mixes what he saw with what he was told, including the legend of Pandaia, the earliest foreign mention of a Pandya kingdom."
+      },
+      {
+        "id": "ashoka",
+        "name": "Ashoka",
+        "native": "अशोक",
+        "lang": "hi",
+        "life": "ruled about 268 to 232 BCE",
+        "role": "Maurya emperor",
+        "steps": [
+          3
+        ],
+        "text": "Ashoka ruled most of the subcontinent but never the far south. His edicts, carved on rocks and pillars, name the Tamil kingdoms as neighbours, and his minor rock edicts reach as far south as Karnataka. They are the oldest written record to name the Cholas, Pandyas and Keralaputras."
+      },
+      {
+        "id": "elara",
+        "name": "Elara (Ellalan)",
+        "native": "எல்லாளன்",
+        "life": "2nd century BCE, by the chronicle",
+        "role": "Chola-born king of Anuradhapura",
+        "steps": [
+          5
+        ],
+        "text": "The Mahavamsa remembers Elara as a just ruler, though not a Buddhist. The chronicle tells that he had his own son executed for running over a calf with his chariot. His defeat by Dutugamunu is the chronicle’s great set piece; it says Dutugamunu honoured Elara’s memory."
+      },
+      {
+        "id": "kharavela",
+        "name": "Kharavela",
+        "native": "ଖାରବେଳ",
+        "lang": "or",
+        "life": "about the 1st century BCE, debated",
+        "role": "King of Kalinga",
+        "steps": [
+          6
+        ],
+        "text": "Kharavela is known almost only from his own inscription in the Elephant Cave at Udayagiri, which records his deeds year by year: wars to the west and north, gifts to Jain monks, and his campaign against the league of Tamil states. It is damaged, and scholars read parts of it differently."
+      },
+      {
+        "id": "karikala",
+        "name": "Karikala",
+        "native": "கரிகால் சோழன்",
+        "life": "early centuries CE; dates uncertain",
+        "role": "Chola king",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "Karikala, ‘the charred leg’, a name later tradition explains by a fire he escaped as a boy, is the greatest Chola of the Sangam poems. He wins at Venni, rules from Uraiyur and Puhar, and is praised for clearing forests and taming the Kaveri. Much told of him comes from later sources and is tradition."
+      },
+      {
+        "id": "nedunjeliyan",
+        "name": "Nedunjeliyan",
+        "native": "நெடுஞ்செழியன்",
+        "life": "early centuries CE; dates uncertain",
+        "role": "Pandya king, victor of Talaiyalanganam",
+        "steps": [
+          12
+        ],
+        "text": "The poems praise this Pandya king for winning at Talaiyalanganam while still a youth. He was a poet himself: one poem in the Purananuru is in his name. The name Nedunjeliyan was borne by more than one Pandya, and which one the Mangulam inscription means is debated."
+      },
+      {
+        "id": "avvaiyar",
+        "name": "Avvaiyar",
+        "native": "ஔவையார்",
+        "life": "early centuries CE",
+        "role": "Poet",
+        "steps": [
+          13
+        ],
+        "text": "Some 59 Sangam poems are credited to Avvaiyar, among the best known of the poets, many of them on her patron Athiyaman. The name was borne by later poets too, including the author of short moral verses still taught to children, and tradition often blends them into one wise old woman."
+      },
+      {
+        "id": "athiyaman",
+        "name": "Athiyaman Neduman Anji",
+        "native": "அதியமான் நெடுமான் அஞ்சி",
+        "life": "early centuries CE",
+        "role": "Chief of Tagadur",
+        "steps": [
+          13
+        ],
+        "text": "Athiyaman was one of the famed generous chiefs (vallal) of the poems, ruling from Tagadur, today’s Dharmapuri. The Jambai inscription, found in 1981, names him as a Satiyaputra, linking the poems to Ashoka’s edict. Avvaiyar’s laments mourn his death."
+      },
+      {
+        "id": "pliny",
+        "name": "Pliny the Elder",
+        "life": "23 or 24 to 79 CE",
+        "role": "Roman writer and admiral",
+        "steps": [
+          15
+        ],
+        "text": "Pliny’s Natural History, an encyclopedia in 37 books, describes the sea route to India and grumbles about the gold it costs Rome. He died at Misenum trying to rescue people from the eruption of Vesuvius in 79 CE."
+      },
+      {
+        "id": "wheeler",
+        "name": "Mortimer Wheeler",
+        "life": "1890 to 1976",
+        "role": "British archaeologist",
+        "steps": [
+          17
+        ],
+        "text": "As Director-General of the Archaeological Survey of India from 1944, Wheeler dug at Arikamedu in 1945, using Roman pottery to date Indian layers for the first time. He trained a generation of Indian archaeologists. Later work by Vimala Begley showed the site began before Roman contact."
+      },
+      {
+        "id": "ilango",
+        "name": "Ilango Adigal",
+        "native": "இளங்கோ அடிகள்",
+        "life": "date debated",
+        "role": "Poet of the Tale of the Anklet, in tradition",
+        "steps": [
+          19
+        ],
+        "text": "Tradition says Ilango was a Chera prince, the younger brother of King Senguttuvan, who became a monk so as not to stand in the way of his brother’s rule. His epic follows Kannagi across all three kingdoms, from Puhar to Madurai to the Chera hills. Its date and author are debated."
+      },
+      {
+        "id": "uvs",
+        "name": "U. V. Swaminatha Iyer",
+        "native": "உ. வே. சாமிநாதையர்",
+        "life": "1855 to 1942",
+        "role": "Scholar and editor",
+        "steps": [
+          22,
+          23
+        ],
+        "text": "A teacher at Kumbakonam and later Madras, Swaminatha Iyer spent decades tracking down palm-leaf manuscripts and comparing copies to print the classics accurately. He edited over 90 books, and is remembered as the grandfather of Tamil (Tamil Thatha)."
+      }
+    ]
+  }
+}

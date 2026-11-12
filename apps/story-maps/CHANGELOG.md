@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.21.0
+
+- New story map in Chronicles: The Three Crowned Kings, the early Tamil kingdoms of the Cheras, Cholas and Pandyas. From the urn burials of Adichanallur and the brick town at Keezhadi, through the south as others saw it (Megasthenes’ Pandaia, Ashoka’s second rock edict, the first Tamil-Brahmi inscriptions at Mangulam, Elara in Anuradhapura, Kharavela’s league of Tamil states), the Sangam age (the assemblies of poets, the poems of love and war, the Cheras of Vanci, Karikala at Venni, Puhar, Nedunjeliyan at Talaiyalanganam, Avvaiyar and Athiyaman), the pepper and pearl trade with Rome (Muziris, Pliny, the Muziris papyrus, Arikamedu, Korkai), to the Tale of the Anklet, Puhar lost to the sea, the Kalabhra interval and the printing of the poems by Damodaram Pillai and Swaminatha Iyer: 24 chapters, a Powers layer and 12 people cards.
+- Catalogue: the Early Tamil kingdoms entry now opens the story.
+- Art: a palm-leaf manuscript glyph and a merchant ship traveller.
+
 ## 0.20.0
 
 - New story map in Chronicles: The Maya. From Aguada Fénix, the oldest Maya monument, El Mirador, the San Bartolo murals and highland Kaminaljuyu, through the Classic kingdoms (Tikal's first dated stela, the arrival of Sihyaj K'ahk' in 378, Copán's founder, Tikal's defeat in 562, Calakmul and the Snake kingdom, Pakal of Palenque, Dos Pilas, Lady Six Sky of Naranjo, Tikal's victory of 695, the Yaxchilan lintels, the beheading of 18 Rabbit, Copán's Hieroglyphic Stairway and the Bonampak murals), the southern collapse and the last Long Count date in 909, to Uxmal, Chichen Itza, Mayapan, Tulum, the K'iche' and the Popol Vuh, Columbus's trading canoe, the Spanish conquest from Champotón to the burning of the books at Maní and the fall of Nojpetén in 1697, and what remains: Stephens and Catherwood, the Caste War, the decipherment, the 2018 lidar survey and the Maya today. 35 chapters, a Powers layer that changes chapter by chapter, and 18 people cards.
