@@ -14,6 +14,12 @@ A static site with a small Node build step and no backend. Every page is a singl
 
 From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnabuilds/story-maps`. Output goes to `apps/story-maps/dist/`; preview with `python3 -m http.server 8080 -d dist` from `apps/story-maps` (that server has no 404 page; Cloudflare serves `dist/404.html` for unknown paths).
 
+Adding a story: use the `new-story-map` skill (`.claude/skills/new-story-map/SKILL.md` at the repo root). It needs no engine or hub code read. From `apps/story-maps`:
+
+- `pnpm story:ref` prints what a story's data may refer to: basemap extents, glyph and traveller ids, lanes, taken ids.
+- `pnpm story:check <id>` runs the build's data checks on one story, plus layout warnings (`scripts/layout.mjs`): pins hiding each other, labels over pins or off the map, cameras that miss their place, unused data. Warnings don't fail the build; older stories carry some.
+- `pnpm story:shots <id> [steps]` saves phone screenshots of chosen chapters to `.work/<id>/` (ignored by git). It needs Playwright, which is not a dependency here; Claude Code cloud sessions have it.
+
 ## Layout
 
 ```
@@ -36,6 +42,7 @@ public/            favicon and apple-touch icon, copied as-is
 licences/          OFL texts for the fonts
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
+scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above
 ```
 
 ## Catalogue
