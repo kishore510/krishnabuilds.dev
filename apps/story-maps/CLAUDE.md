@@ -14,6 +14,8 @@ A static site with a small Node build step and no backend. Every page is a singl
 
 From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnabuilds/story-maps`. Output goes to `apps/story-maps/dist/`; preview with `python3 -m http.server 8080 -d dist` from `apps/story-maps` (that server has no 404 page; Cloudflare serves `dist/404.html` for unknown paths).
 
+`BACKLOG.md` lists what to build next, in order, and what is built; the skill and a test keep it current.
+
 Adding a story: use the `new-story-map` skill (`.claude/skills/new-story-map/SKILL.md` at the repo root). It needs no engine or hub code read. From `apps/story-maps`:
 
 - `pnpm story:ref` prints what a story's data may refer to: basemap extents, glyph and traveller ids, lanes, taken ids.

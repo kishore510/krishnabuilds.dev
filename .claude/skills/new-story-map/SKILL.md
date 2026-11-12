@@ -7,6 +7,8 @@ description: Add a new story to Story Maps (apps/story-maps) from a topic the ow
 
 A story is data. The engine, the hub, the controls and the page layout are finished and covered by their own tests, so adding a story never needs them read, changed or re-tested. What can go wrong in a new story is all in its data: a wrong fact, a card that is too long, a pin on top of another, a camera that misses its place, a realm outline that looks odd. The steps below spend the expensive model on the first of those and scripts on the rest.
 
+If the owner names no story, build the first one under **Next** in `apps/story-maps/BACKLOG.md`.
+
 Work from `apps/story-maps`. Its `CLAUDE.md` has the data format and the content rules; read that. Do not open `engine/`, `hub/`, `scripts/build.mjs`, `art/glyphs.json`, the basemaps or `catalogue.json` in full: `pnpm story:ref` prints everything a story may refer to (basemap extents, glyph and traveller ids, lanes, taken ids, catalogue entries waiting for a story). If the lockfile is not installed yet, run `pnpm install --frozen-lockfile` at the repo root first.
 
 ## 1. Content (you, the main model)
@@ -30,7 +32,7 @@ Stop and ask the owner before going further if the story needs any of these, bec
 Start one subagent with the Agent tool, `model: "sonnet"`, and give it this job in full, since it starts with no context:
 
 - Read `apps/story-maps/CLAUDE.md` (the "Engine and data" section is the format), the brief, the output of `pnpm story:ref`, and one built story on the same basemap as the pattern to copy for structure, colours, route styles and timeline (`stories/chronicles/nanda/story.json` is a compact one with realms and people).
-- Write `story.json` and the story's `README.md`; add the manifest entry (or flip `coming-soon` to `built`) with `builtAt` set to the output of `date -u +%Y-%m-%dT%H:%M:%SZ`; add or link the catalogue entry with `added` set to today; bump the minor version in `package.json`; add the `CHANGELOG.md` entry; update the Story Maps line in `docs/plan.md`.
+- Write `story.json` and the story's `README.md`; add the manifest entry (or flip `coming-soon` to `built`) with `builtAt` set to the output of `date -u +%Y-%m-%dT%H:%M:%SZ`; add or link the catalogue entry with `added` set to today; bump the minor version in `package.json`; add the `CHANGELOG.md` entry; tick or add the story in the Story Maps list in `docs/plan.md`; in `BACKLOG.md`, remove the story from **Next** and add it to the top of **Built** in the same form as its neighbours.
 - Copy every card, title and people text from the brief exactly. It supplies only what the brief leaves to it: coordinates, label sides, cameras, route bends, timeline positions, colours and realm outlines.
 - Run `pnpm story:check <id>` until there are no errors, and clear the warnings it can by moving label sides, widening cameras and merging or hiding crowded pins. A warning it believes should stand, it lists with the reason.
 - Run `pnpm turbo run build lint typecheck test --filter=@krishnabuilds/story-maps` from the repo root, then `pnpm story:shots <id>` (add chapter numbers for the realm changes named in the brief).
@@ -45,6 +47,6 @@ You wrote the content, so do not reread `story.json` end to end. Look at:
 - the subagent's report and the remaining warnings;
 - the screenshots: realm outlines against the coastline and each other, route bends, crowded corners, native-script labels rendering;
 - the coordinates it flagged, and a spot check of a few others;
-- `git diff --stat`, to see that only the story's files, `manifest.json`, `catalogue.json`, `CHANGELOG.md`, `package.json` and `docs/plan.md` changed.
+- `git diff --stat`, to see that only the story's files, `manifest.json`, `catalogue.json`, `CHANGELOG.md`, `BACKLOG.md`, `package.json` and `docs/plan.md` changed.
 
 Fix small things directly and rerun `pnpm story:check <id>`. Then commit as `Story Maps: <title> (<version>)` and follow the repo's branch and PR rules.
