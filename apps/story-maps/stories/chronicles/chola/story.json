@@ -1,0 +1,2810 @@
+{
+  "id": "chola",
+  "title": "The Chola Empire",
+  "description": "An illustrated map of the Chola Empire, from Vijayalaya’s capture of Thanjavur about 848, through Rajaraja’s great temple and Rajendra’s march to the Ganges and raid on Srivijaya, to the last Chola king in 1279 and the living temples today.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "ta",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Chola Empire from about 848 to 1279",
+  "note": "Based mainly on Chola inscriptions and copper plates, with Sri Lankan, Chalukya and Chinese records and Tamil literature; each chapter says which it follows. Royal inscriptions boast, and their claims of conquest are given as claims. The map is stylised and not to scale; Thanjavur, Gangaikonda Cholapuram and Nagapattinam are moved a little so their pins do not overlap, and Srivijaya and China lie beyond its edge. The Powers areas are painted loosely and change chapter by chapter.",
+  "places": {
+    "kadaram-way": {
+      "name": "Towards Kadaram and Srivijaya",
+      "at": [
+        97.6,
+        7.0
+      ],
+      "hidden": true
+    },
+    "manyakheta": {
+      "name": "Manyakheta",
+      "at": [
+        77.15,
+        17.15
+      ],
+      "hidden": true
+    },
+    "china-way": {
+      "name": "Towards China",
+      "at": [
+        97.8,
+        13.5
+      ],
+      "hidden": true
+    },
+    "thanjavur": {
+      "name": "Thanjavur",
+      "at": [
+        78.95,
+        10.6
+      ],
+      "glyph": "vimana",
+      "label": "left"
+    },
+    "gkc": {
+      "name": "Gangaikonda Cholapuram",
+      "at": [
+        79.5,
+        11.45
+      ],
+      "glyph": "vimana",
+      "label": "right"
+    },
+    "nagapattinam": {
+      "name": "Nagapattinam",
+      "at": [
+        80.0,
+        10.45
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "madurai": {
+      "name": "Madurai",
+      "at": [
+        78.12,
+        9.75
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "kanchipuram": {
+      "name": "Kanchipuram",
+      "at": [
+        79.7,
+        12.83
+      ],
+      "glyph": "gopuram",
+      "label": "right"
+    },
+    "kandalur": {
+      "name": "Kandalur",
+      "at": [
+        76.98,
+        8.45
+      ],
+      "glyph": "boat",
+      "label": "left"
+    },
+    "polonnaruwa": {
+      "name": "Polonnaruwa",
+      "at": [
+        81.0,
+        7.94
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "vengi": {
+      "name": "Vengi",
+      "at": [
+        81.1,
+        16.7
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "koppam": {
+      "name": "Koppam",
+      "at": [
+        76.15,
+        15.35
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "maldives": {
+      "name": "Maldives",
+      "at": [
+        73.4,
+        4.4
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "bengal": {
+      "name": "Bengal",
+      "at": [
+        88.2,
+        23.6
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "kalinga": {
+      "name": "Kalinga",
+      "at": [
+        84.0,
+        18.6
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "army": {
+      "name": "The Chola army",
+      "icon": "war-elephant"
+    },
+    "enemy": {
+      "name": "A rival army",
+      "icon": "horse"
+    },
+    "fleet": {
+      "name": "A Chola fleet",
+      "icon": "merchant-ship"
+    },
+    "envoy": {
+      "name": "An embassy",
+      "icon": "scroll"
+    },
+    "prince": {
+      "name": "Kulottunga",
+      "icon": "prince"
+    },
+    "water": {
+      "name": "Ganges water",
+      "icon": "ox-cart"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "Out of the delta",
+      "color": "#4fc3b0"
+    },
+    "rajaraja": {
+      "name": "Rajaraja",
+      "color": "#f29a2e"
+    },
+    "rajendra": {
+      "name": "Rajendra and the sea",
+      "color": "#a678e0"
+    },
+    "chalukya": {
+      "name": "The Chalukya Cholas",
+      "color": "#5b8fd0"
+    },
+    "fall": {
+      "name": "The fall",
+      "color": "#e0573a"
+    },
+    "legacy": {
+      "name": "Bronze, stone and trade",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "enemy": {
+      "color": "#2b5fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#1f7a8c",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 20.9,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 44.9,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 65.4,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 82.6,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 89.4,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "848"
+      },
+      {
+        "at": 22.6,
+        "text": "985"
+      },
+      {
+        "at": 46.6,
+        "text": "1014"
+      },
+      {
+        "at": 70.6,
+        "text": "1070"
+      },
+      {
+        "at": 87.7,
+        "text": "1279"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "thanjavur",
+      "phase": "rise",
+      "title": "Vijayalaya takes Thanjavur",
+      "native": "விஜயாலயன்",
+      "when": "about 848",
+      "at": 2.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.0,
+          11.0
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In the mid 9th century the far south belongs to the Pandyas of Madurai and the Pallavas of Kanchipuram. The old Chola family survives as minor chiefs near Uraiyur. In about 848 one of them, Vijayalaya, takes Thanjavur from the Muttaraiyar chiefs. Later Chola copper plates say he built a temple there to the goddess Nisumbhasudini.",
+      "today": "Today: Thanjavur, Tamil Nadu, India."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "rise",
+      "title": "Aditya defeats the Pallavas",
+      "native": "காஞ்சிபுரம்",
+      "when": "about 885 to 897",
+      "at": 5.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.3,
+          12.0
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "kanchipuram",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Vijayalaya’s son Aditya I, once an ally of the Pallavas, turns on them. Later Chola plates say he killed the Pallava king Aparajita, who was riding an elephant. Aditya takes the Pallava lands around Kanchipuram (Tondaimandalam) and the Kongu country to the west. The Cholas now hold most of the north of the Tamil country.",
+      "today": "Today: Kanchipuram, Tamil Nadu."
+    },
+    {
+      "place": "madurai",
+      "phase": "rise",
+      "title": "Parantaka takes Madurai",
+      "native": "மதுரையும் ஈழமும் கொண்ட",
+      "when": "about 910",
+      "at": 8.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.6,
+          9.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "madurai",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Aditya’s son Parantaka I takes Madurai and calls himself ‘conqueror of Madurai and Lanka’, after beating the Pandya king and his Sri Lankan allies. The Pandya king flees to Sri Lanka, leaving his crown there. Chola records say Parantaka covered the hall of the dancing Shiva at Chidambaram with gold.",
+      "today": "Today: Madurai, Tamil Nadu."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "rise",
+      "title": "Elected by lot",
+      "native": "குடவோலை",
+      "when": "919 and 921",
+      "at": 12.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.6,
+          12.5
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Two inscriptions of Parantaka’s reign at Uttaramerur, near Kanchipuram, set rules for electing village committees. Candidates must own land and a house, be aged 35 to 70 and know the scriptures; recent members and their relatives were barred. Names were written on palm leaves, put in a pot (kudavolai) and drawn by a child.",
+      "today": "Today: the Vaikunta Perumal temple, Uttaramerur, Chengalpattu district."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "rise",
+      "title": "Disaster at Takkolam",
+      "native": "தக்கோலம்",
+      "when": "949",
+      "at": 15.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.5,
+          14.5
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "manyakheta",
+          "to": "kanchipuram",
+          "traveller": "enemy",
+          "style": "enemy",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Rashtrakuta emperor Krishna III invades from the Deccan with his Ganga ally Butuga II. At Takkolam, near Kanchipuram, Parantaka’s son and heir Rajaditya is killed by an arrow on his elephant. The Cholas lose the north, and Krishna III claims to have conquered Kanchi and Thanjavur. For three decades the dynasty struggles.",
+      "today": "Today: Takkolam, Ranipet district, Tamil Nadu."
+    },
+    {
+      "place": "thanjavur",
+      "phase": "rise",
+      "title": "Sembiyan Mahadevi",
+      "native": "செம்பியன் மாதேவி",
+      "when": "about 950 to 1001",
+      "at": 19.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.3,
+          10.9
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Through these weak years one patron shapes Chola art. Sembiyan Mahadevi, widow of King Gandaraditya and mother of King Uttama Chola, rebuilds old brick temples across the delta in stone and gives them bronze images, over some fifty years. At Konerirajapuram a carved panel shows her husband worshipping Shiva. Her bronzes are among the finest Chola works.",
+      "today": "Today: Konerirajapuram and other delta temples, Tamil Nadu."
+    },
+    {
+      "place": "kandalur",
+      "phase": "rajaraja",
+      "title": "Rajaraja’s first victory",
+      "native": "காந்தளூர்ச் சாலை",
+      "when": "about 988",
+      "at": 22.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          77.6,
+          9.2
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "kandalur",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rajaraja I takes the throne in 985. His inscriptions open by praising him for his deed at Kandalur Salai, on the Chera coast near today’s Thiruvananthapuram. The phrase is usually read as destroying ships there, though some read it as ending a hall that trained warriors; its meaning is debated. Soon the Pandyas and Cheras are beaten.",
+      "today": "Today: Valiyasala, Thiruvananthapuram, Kerala."
+    },
+    {
+      "place": "polonnaruwa",
+      "phase": "rajaraja",
+      "title": "Into Sri Lanka",
+      "native": "පොළොන්නරුව",
+      "lang": "si",
+      "when": "about 993",
+      "at": 26.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.4,
+          8.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "polonnaruwa",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Rajaraja’s army crosses to Sri Lanka and sacks Anuradhapura, the island’s capital for over a thousand years; its king, Mahinda V, flees south. The Cholas make Polonnaruwa their capital and rename it Jananathamangalam. A small stone Shiva temple they built there still stands. Sri Lanka’s chronicle, the Culavamsa, remembers the conquest bitterly.",
+      "today": "Today: Shiva Devale No. 2, Polonnaruwa, Sri Lanka."
+    },
+    {
+      "place": "vengi",
+      "phase": "rajaraja",
+      "title": "Vengi and the Chalukyas",
+      "native": "வேங்கி",
+      "when": "999 to 1007",
+      "at": 29.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.0,
+          15.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "vengi",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        },
+        {
+          "from": "thanjavur",
+          "to": "koppam",
+          "traveller": "army",
+          "style": "march",
+          "bend": -0.1
+        }
+      ],
+      "text": "Rajaraja puts a refugee prince, Saktivarman, on the throne of Vengi, the Eastern Chalukya kingdom, and marries his daughter Kundavai to Saktivarman’s brother. That draws him into war with the Western Chalukyas. A Chalukya inscription of 1007 at Hottur says Rajaraja’s son Rajendra raided with a vast army, killing women, children and Brahmins.",
+      "today": "Today: Pedavegi, near Eluru, Andhra Pradesh."
+    },
+    {
+      "place": "maldives",
+      "phase": "rajaraja",
+      "title": "Twelve thousand islands",
+      "native": "முந்நீர்ப் பழந்தீவு பன்னீராயிரம்",
+      "when": "before 1014",
+      "at": 32.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.0,
+          7.5
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "kandalur",
+          "to": "maldives",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rajaraja’s praise inscriptions claim ‘the twelve thousand ancient islands of the sea’, usually taken to mean the Maldives. Little else is known about this conquest. Chola fleets now operate on both coasts, and the empire controls the ports where Arab, Chinese and Southeast Asian ships trade.",
+      "today": "Today: the Maldives, in the Indian Ocean."
+    },
+    {
+      "place": "thanjavur",
+      "phase": "rajaraja",
+      "title": "The great temple",
+      "native": "இராஜராஜேச்சரம்",
+      "when": "1010",
+      "at": 36.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.0,
+          10.7
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "In his 25th year Rajaraja dedicates the Rajarajeshvaram at Thanjavur, today’s Brihadishvara. Its granite tower (vimana) rises about 66 metres, the tallest in India then. Its walls carry long inscriptions: gifts of gold and villages, the 400 temple dancers housed in two streets, the musicians and staff, and the architect’s name, Kunjara Mallan.",
+      "today": "Today: the Brihadishvara (Peruvudaiyar) temple, Thanjavur, still in worship."
+    },
+    {
+      "place": "thanjavur",
+      "phase": "rajaraja",
+      "title": "Measuring the land",
+      "native": "உலகளந்தான்",
+      "when": "about 1001 onwards",
+      "at": 39.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.0,
+          10.7
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Rajaraja has his kingdom surveyed, field by field, under an officer the records call ‘he who measured the world’ (Ulagalandan), and sets taxes by the result. The land is organised into provinces (mandalams) and districts (valanadus). His inscriptions begin a new form, a long praise poem (meykirtti) listing his conquests, which his successors continue.",
+      "today": "Today: Chola inscriptions survive on hundreds of Tamil temples."
+    },
+    {
+      "place": "nagapattinam",
+      "phase": "rajaraja",
+      "title": "A monastery for Srivijaya",
+      "native": "சூடாமணி விகாரை",
+      "when": "about 1006",
+      "at": 43.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.8,
+          10.6
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "kadaram-way",
+          "to": "nagapattinam",
+          "traveller": "envoy",
+          "style": "sea",
+          "bend": -0.1
+        }
+      ],
+      "text": "The Srivijayan king Mara Vijayottungavarman builds a Buddhist monastery, the Chudamani Vihara, at the Chola port of Nagapattinam, and Rajaraja grants it a village. The grant is recorded on copper plates now in Leiden. A tower of the monastery stood until 1867, when it was pulled down.",
+      "today": "Today: Nagapattinam, Tamil Nadu; the Leiden plates are in Leiden University Library."
+    },
+    {
+      "place": "polonnaruwa",
+      "phase": "rajendra",
+      "title": "The whole of Lanka",
+      "native": "ஈழம்",
+      "when": "about 1017",
+      "at": 46.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.6,
+          7.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "nagapattinam",
+          "to": "polonnaruwa",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": 0.12
+        }
+      ],
+      "text": "Rajaraja’s son Rajendra I conquers the rest of Sri Lanka. He seizes King Mahinda V, his queen and his crown, and takes back the Pandya crown left there a century before. The Culavamsa says Mahinda died a captive in the Chola country twelve years later. The whole island is ruled from Polonnaruwa for half a century.",
+      "today": "Today: Polonnaruwa, Sri Lanka."
+    },
+    {
+      "place": "bengal",
+      "phase": "rajendra",
+      "title": "To the Ganges",
+      "native": "கங்கைகொண்ட",
+      "when": "about 1019 to 1022",
+      "at": 50.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          84.0,
+          18.5
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "bengal",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.08
+        },
+        {
+          "from": "bengal",
+          "to": "gkc",
+          "traveller": "water",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rajendra’s army marches north through Kalinga and defeats Mahipala, the Pala king of Bengal. The Tiruvalangadu copper plates claim the defeated kings carried Ganges water on their heads back to the Chola country. Rajendra takes the title ‘he who took the Ganges’ (Gangaikonda). Historians see it as a raid, not a conquest.",
+      "today": "Today: the Tiruvalangadu plates are in the Government Museum, Chennai."
+    },
+    {
+      "place": "gkc",
+      "phase": "rajendra",
+      "title": "A new capital",
+      "native": "கங்கைகொண்ட சோழபுரம்",
+      "when": "about 1025",
+      "at": 53.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.4,
+          11.2
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "Rajendra builds a new capital, Gangaikonda Cholapuram, with a temple modelled on his father’s at Thanjavur, its tower a little lower but more graceful. A huge reservoir, the Chola-gangam, is called ‘a liquid pillar of victory’ in the plates. It stays the Chola capital for about 250 years; little of the city survives.",
+      "today": "Today: Gangaikonda Cholapuram, Ariyalur district, Tamil Nadu."
+    },
+    {
+      "place": "nagapattinam",
+      "phase": "rajendra",
+      "title": "The raid on Srivijaya",
+      "native": "கடாரம்",
+      "when": "1025",
+      "at": 56.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          88.5,
+          9.5
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "nagapattinam",
+          "to": "kadaram-way",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": -0.08
+        }
+      ],
+      "text": "A Chola fleet crosses the Bay of Bengal and strikes Srivijaya, which controls the Strait of Malacca. A Thanjavur inscription of 1025 lists the ports taken, from Kadaram (Kedah) to Sumatra, the capture of King Sangrama Vijayottungavarman, and a jewelled gateway seized as loot. Why Rajendra attacked an old friend is debated; most historians think trade.",
+      "today": "Today: Kedah, Malaysia, and Palembang, Indonesia, lie beyond this map."
+    },
+    {
+      "place": "nagapattinam",
+      "phase": "rajendra",
+      "title": "Envoys to China",
+      "native": "注輦",
+      "lang": "zh",
+      "when": "1015 to 1077",
+      "at": 60.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          88.5,
+          12.0
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "nagapattinam",
+          "to": "china-way",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": -0.08
+        }
+      ],
+      "text": "Chinese records of the Song dynasty name the Chola kingdom as Zhunian and record its embassies, in 1015, 1020, 1033 and 1077, bringing pearls, ivory and other gifts. Chinese porcelain and coins are found at Chola ports. The embassies were also trade missions, as the Song court rewarded tribute with valuable gifts.",
+      "today": "Today: Chinese ceramics from Song times turn up in digs at Gangaikonda Cholapuram and Nagapattinam."
+    },
+    {
+      "place": "koppam",
+      "phase": "rajendra",
+      "title": "A king falls at Koppam",
+      "native": "கொப்பம்",
+      "when": "1054",
+      "at": 63.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          77.5,
+          14.0
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "gkc",
+          "to": "koppam",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rajendra’s sons fight the Western Chalukyas for years. At Koppam, in 1054, King Rajadhiraja I is killed on his elephant. His brother, Rajendra II, is crowned on the battlefield, rallies the army and claims victory. Where Koppam was is debated: some place it at Koppal, others on the Krishna river.",
+      "today": "Today: Koppal, Karnataka, is one suggested site."
+    },
+    {
+      "place": "polonnaruwa",
+      "phase": "chalukya",
+      "title": "Lanka lost",
+      "native": "විජයබාහු",
+      "lang": "si",
+      "when": "about 1070",
+      "at": 67.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.6,
+          7.6
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In Sri Lanka, Vijayabahu I leads a long war from the south and finally takes Polonnaruwa, about 1070, ending Chola rule on the island. He makes Polonnaruwa his own capital and restores Buddhist orders by inviting monks from Burma. The Chola temples at Polonnaruwa are left standing.",
+      "today": "Today: Polonnaruwa, a World Heritage Site in Sri Lanka."
+    },
+    {
+      "place": "gkc",
+      "phase": "chalukya",
+      "title": "A Chalukya prince takes the throne",
+      "native": "குலோத்துங்கன்",
+      "when": "1070",
+      "at": 70.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.0,
+          14.0
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "vengi",
+          "to": "gkc",
+          "traveller": "prince",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1070 the Chola king Adhirajendra dies amid unrest, perhaps killed. The throne passes to Rajendra Chalukya, prince of Vengi and grandson of Rajendra I through his mother. Crowned as Kulottunga I, he rules for over fifty years; his inscriptions call him the king who abolished tolls. His descendants rule as Cholas until the end.",
+      "today": "Today: Gangaikonda Cholapuram."
+    },
+    {
+      "place": "kalinga",
+      "phase": "chalukya",
+      "title": "The war of Kalinga",
+      "native": "கலிங்கத்துப்பரணி",
+      "when": "about 1110",
+      "at": 74.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          82.0,
+          16.5
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "gkc",
+          "to": "kalinga",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Kulottunga’s general, Karunakara Tondaiman, invades Kalinga, to the north-east. The court poet Jayamkondar celebrates it in the Kalingattupparani, a war poem of a genre sung for a victor said to have killed a thousand elephants. Its battle scenes, ghouls feasting on the field, are famous in Tamil literature.",
+      "today": "Today: Odisha and northern Andhra Pradesh."
+    },
+    {
+      "place": "thanjavur",
+      "phase": "chalukya",
+      "title": "Poets of the later Cholas",
+      "native": "பெரியபுராணம்",
+      "when": "12th century",
+      "at": 77.4,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.2,
+          10.9
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Sekkizhar, a minister of Kulottunga II, writes the Periya Puranam, the lives of the 63 Shaiva saints (Nayanmars). Kamban’s Tamil Ramayana is set by tradition in this age, though some date it to the 9th century. At Darasuram, near Kumbakonam, Rajaraja II builds the finely carved Airavateshvara temple.",
+      "today": "Today: the Airavateshvara temple, Darasuram, Thanjavur district."
+    },
+    {
+      "place": "madurai",
+      "phase": "chalukya",
+      "title": "The last great king",
+      "native": "மூன்றாம் குலோத்துங்கன்",
+      "when": "1178 to 1218",
+      "at": 80.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.6,
+          10.2
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "madurai",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Kulottunga III, the last strong Chola, intervenes again and again in a Pandya civil war, and his inscriptions claim he took Madurai and destroyed the Pandya coronation hall. He builds the Kampahareshvara temple at Tribhuvanam, near Kumbakonam, the last great Chola temple. But the Pandyas recover, and the Hoysalas rise in the north-west.",
+      "today": "Today: Tribhuvanam, Thanjavur district."
+    },
+    {
+      "place": "thanjavur",
+      "phase": "fall",
+      "title": "The Pandyas strike back",
+      "native": "மாறவர்மன் சுந்தர பாண்டியன்",
+      "when": "about 1219 to 1231",
+      "at": 84.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.0,
+          11.0
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "madurai",
+          "to": "thanjavur",
+          "traveller": "enemy",
+          "style": "enemy",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Pandya Maravarman Sundara Pandya I sacks Thanjavur and Uraiyur, and the Chola king Rajaraja III survives only with help from the Hoysala king Narasimha II. About 1231 a Kadava chief, Kopperunjinga, captures Rajaraja III and holds him at Sendamangalam until Hoysala generals free him. The Cholas now depend on others.",
+      "today": "Today: Sendamangalam, Kallakurichi district, Tamil Nadu."
+    },
+    {
+      "place": "madurai",
+      "phase": "fall",
+      "title": "The last Chola",
+      "native": "மூன்றாம் இராஜேந்திரன்",
+      "when": "1279",
+      "at": 87.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.6,
+          10.6
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "madurai",
+          "to": "gkc",
+          "traveller": "enemy",
+          "style": "enemy",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Pandyas of Madurai become the leading power of the south. Rajendra III, the last Chola king known, is defeated by Maravarman Kulasekhara Pandya I; his last inscription is dated 1279. After four centuries the Chola kingdom ends, and its lands pass to the Pandyas, until Delhi’s armies arrive in 1311.",
+      "today": "Today: Madurai, Tamil Nadu."
+    },
+    {
+      "place": "nagapattinam",
+      "phase": "legacy",
+      "title": "Bronzes",
+      "native": "நடராஜர்",
+      "when": "10th to 13th centuries",
+      "at": 91.1,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.6,
+          10.6
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Chola craftsmen cast temple images in bronze by the lost-wax method, above all Shiva as lord of the dance (Nataraja) in a ring of flame. At Nagapattinam, hundreds of Buddhist bronzes have been dug up since 1856. Bronzes stolen from Tamil temples are still being traced in collections abroad, and some have been returned.",
+      "today": "Today: the bronze gallery of the Government Museum, Chennai."
+    },
+    {
+      "place": "nagapattinam",
+      "phase": "legacy",
+      "title": "Merchants overseas",
+      "native": "ஐந்நூற்றுவர்",
+      "when": "1088 and after",
+      "at": 94.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          88.5,
+          10.0
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "nagapattinam",
+          "to": "kadaram-way",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": -0.08
+        }
+      ],
+      "text": "Tamil merchant guilds travel with the Chola expansion and outlast it. A Tamil inscription of 1088 by the guild of the Five Hundred (Ainnurruvar) stands at Barus, on Sumatra, and a Tamil inscription of 1281 was found at a Shiva temple in Quanzhou, China. Tamil words and scripts left traces across Southeast Asia.",
+      "today": "Today: the Lobu Tua inscription, Barus, North Sumatra, Indonesia."
+    },
+    {
+      "place": "thanjavur",
+      "phase": "legacy",
+      "title": "Great living temples",
+      "native": "பெருவுடையார் கோயில்",
+      "when": "1987 onwards",
+      "at": 98.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.2,
+          11.0
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "The temple at Thanjavur became a World Heritage Site in 1987; Gangaikonda Cholapuram and Darasuram were added in 2004 as the Great Living Chola Temples, still in worship. In 2010 Thanjavur celebrated the temple’s thousandth year. Rajaraja’s birth star is still marked there each year with the Sadhaya festival.",
+      "today": "Today: the Great Living Chola Temples, Tamil Nadu."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "chola",
+        "name": "Chola Empire",
+        "native": "சோழப் பேரரசு",
+        "color": "#e0892e",
+        "active": [
+          [
+            0,
+            25
+          ]
+        ],
+        "label": {
+          "text": "Cholas",
+          "at": [
+            79.1,
+            11.0
+          ],
+          "moves": [
+            {
+              "from": 6,
+              "at": [
+                77.6,
+                11.3
+              ]
+            },
+            {
+              "from": 24,
+              "at": [
+                79.2,
+                11.9
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ],
+              [
+                25,
+                25
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  10.4
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  79.5,
+                  11.6
+                ],
+                [
+                  78.8,
+                  11.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.2,
+                  11.0
+                ],
+                [
+                  78.2,
+                  10.6
+                ],
+                [
+                  78.9,
+                  10.4
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  79.3,
+                  13.6
+                ],
+                [
+                  78.5,
+                  12.8
+                ],
+                [
+                  77.6,
+                  11.9
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                3
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.2,
+                  11.0
+                ],
+                [
+                  77.3,
+                  9.0
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  79.3,
+                  13.6
+                ],
+                [
+                  78.5,
+                  12.8
+                ],
+                [
+                  77.6,
+                  11.9
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                4,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.3,
+                  9.0
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  79.9,
+                  11.8
+                ],
+                [
+                  79.2,
+                  12.0
+                ],
+                [
+                  78.3,
+                  11.6
+                ],
+                [
+                  77.4,
+                  11.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                23
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.0,
+                  13.3
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  76.4,
+                  9.5
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.25,
+                  14.4
+                ],
+                [
+                  79.2,
+                  14.3
+                ],
+                [
+                  77.8,
+                  13.8
+                ],
+                [
+                  76.4,
+                  13.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  79.9,
+                  9.75
+                ],
+                [
+                  80.6,
+                  9.5
+                ],
+                [
+                  81.2,
+                  8.6
+                ],
+                [
+                  81.3,
+                  8.0
+                ],
+                [
+                  80.6,
+                  7.7
+                ],
+                [
+                  79.85,
+                  7.9
+                ],
+                [
+                  79.8,
+                  8.7
+                ],
+                [
+                  79.75,
+                  9.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  80.05,
+                  9.85
+                ],
+                [
+                  80.6,
+                  9.5
+                ],
+                [
+                  81.2,
+                  8.6
+                ],
+                [
+                  81.75,
+                  7.5
+                ],
+                [
+                  81.8,
+                  6.8
+                ],
+                [
+                  81.3,
+                  6.2
+                ],
+                [
+                  80.6,
+                  5.93
+                ],
+                [
+                  80.05,
+                  6.05
+                ],
+                [
+                  79.85,
+                  6.9
+                ],
+                [
+                  79.8,
+                  7.8
+                ],
+                [
+                  79.95,
+                  8.7
+                ],
+                [
+                  79.75,
+                  9.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                18
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  73.4,
+                  4.4
+                ],
+                "radius": 0.8
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                24,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  10.4
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.0
+                ],
+                [
+                  79.3,
+                  13.0
+                ],
+                [
+                  78.5,
+                  12.2
+                ],
+                [
+                  78.2,
+                  11.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Thanjavur, then Gangaikonda Cholapuram from about 1025",
+          "Founded": "About 848, by Vijayalaya",
+          "Ended": "1279, with Rajendra III",
+          "Emblem": "The tiger",
+          "Today": "Tamil Nadu, Kerala, southern Karnataka and, for a time, Sri Lanka"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Vijayalaya"
+          },
+          {
+            "from": 1,
+            "text": "Aditya I"
+          },
+          {
+            "from": 2,
+            "text": "Parantaka I"
+          },
+          {
+            "from": 5,
+            "text": "Gandaraditya, Arinjaya, Sundara Chola and Uttama Chola, in turn"
+          },
+          {
+            "from": 6,
+            "text": "Rajaraja I"
+          },
+          {
+            "from": 13,
+            "text": "Rajendra I"
+          },
+          {
+            "from": 18,
+            "text": "Rajadhiraja I, then Rajendra II"
+          },
+          {
+            "from": 19,
+            "text": "Virarajendra, then Adhirajendra"
+          },
+          {
+            "from": 20,
+            "text": "Kulottunga I"
+          },
+          {
+            "from": 22,
+            "text": "Kulottunga II and Rajaraja II"
+          },
+          {
+            "from": 23,
+            "text": "Kulottunga III"
+          },
+          {
+            "from": 24,
+            "text": "Rajaraja III"
+          },
+          {
+            "from": 25,
+            "text": "Rajendra III"
+          }
+        ],
+        "role": "From a small kingdom in the Kaveri delta to the greatest power of the south, by land and sea.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Overthrows the Pallavas"
+          },
+          {
+            "from": 4,
+            "text": "Defeated by the Rashtrakutas at Takkolam (949)"
+          },
+          {
+            "from": 7,
+            "text": "Rules northern Sri Lanka from Polonnaruwa"
+          },
+          {
+            "from": 8,
+            "text": "Allied by marriage to the Eastern Chalukyas of Vengi"
+          },
+          {
+            "from": 14,
+            "text": "Raids Bengal and reaches the Ganges"
+          },
+          {
+            "from": 16,
+            "text": "Raids Srivijaya (1025)"
+          },
+          {
+            "from": 24,
+            "text": "Saved by the Hoysalas"
+          }
+        ]
+      },
+      {
+        "id": "pandya",
+        "name": "Pandyas",
+        "native": "பாண்டியர்",
+        "color": "#2f8f6b",
+        "active": [
+          [
+            0,
+            1
+          ],
+          [
+            24,
+            25
+          ]
+        ],
+        "label": {
+          "text": "Pandyas",
+          "at": [
+            78.0,
+            9.2
+          ],
+          "moves": [
+            {
+              "from": 25,
+              "at": [
+                78.4,
+                10.4
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                1
+              ],
+              [
+                24,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.3,
+                  9.0
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  78.9,
+                  10.4
+                ],
+                [
+                  78.2,
+                  10.6
+                ],
+                [
+                  77.7,
+                  10.3
+                ],
+                [
+                  77.25,
+                  9.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                25,
+                25
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.3,
+                  9.0
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.0
+                ],
+                [
+                  79.3,
+                  13.0
+                ],
+                [
+                  78.5,
+                  12.2
+                ],
+                [
+                  77.7,
+                  11.2
+                ],
+                [
+                  77.25,
+                  9.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Madurai",
+          "Emblem": "The fish",
+          "Today": "Southern Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Varaguna II, then Rajasimha II"
+          },
+          {
+            "from": 24,
+            "text": "Maravarman Sundara Pandya I"
+          },
+          {
+            "from": 25,
+            "text": "Maravarman Kulasekhara Pandya I"
+          }
+        ],
+        "role": "The old rival of the Cholas, conquered in the 10th century and victorious in the 13th.",
+        "ties": [
+          {
+            "from": 24,
+            "text": "Sacks Thanjavur and Uraiyur"
+          },
+          {
+            "from": 25,
+            "text": "Defeats the last Chola king"
+          }
+        ]
+      },
+      {
+        "id": "pallava",
+        "name": "Pallavas",
+        "native": "பல்லவர்",
+        "color": "#c2477a",
+        "active": [
+          [
+            0,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Pallavas",
+          "at": [
+            79.4,
+            13.8
+          ]
+        },
+        "area": [
+          [
+            78.6,
+            11.5
+          ],
+          [
+            79.5,
+            11.6
+          ],
+          [
+            79.8,
+            11.3
+          ],
+          [
+            80.1,
+            12.2
+          ],
+          [
+            80.2,
+            13.4
+          ],
+          [
+            80.25,
+            14.6
+          ],
+          [
+            79.4,
+            15.4
+          ],
+          [
+            78.4,
+            14.6
+          ],
+          [
+            78.0,
+            13.2
+          ]
+        ],
+        "facts": {
+          "Capital": "Kanchipuram",
+          "Ended": "About 897"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Aparajita"
+          }
+        ],
+        "role": "Kings of Kanchipuram for six centuries, overthrown by Aditya I.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Aparajita killed by Aditya I, by later Chola records"
+          }
+        ]
+      },
+      {
+        "id": "rashtrakuta",
+        "name": "Rashtrakutas",
+        "native": "ರಾಷ್ಟ್ರಕೂಟ",
+        "lang": "kn",
+        "color": "#4f6fd0",
+        "active": [
+          [
+            4,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Rashtrakutas",
+          "at": [
+            76.6,
+            18.0
+          ]
+        },
+        "area": [
+          [
+            74.1,
+            15
+          ],
+          [
+            73.5,
+            16.8
+          ],
+          [
+            73,
+            18.5
+          ],
+          [
+            72.8,
+            19.7
+          ],
+          [
+            72.75,
+            20.7
+          ],
+          [
+            74.5,
+            22.0
+          ],
+          [
+            78.5,
+            22.0
+          ],
+          [
+            80.5,
+            19.5
+          ],
+          [
+            80.3,
+            16.5
+          ],
+          [
+            80.25,
+            14.6
+          ],
+          [
+            80.2,
+            13.4
+          ],
+          [
+            79.5,
+            12.6
+          ],
+          [
+            78.5,
+            12.8
+          ],
+          [
+            77,
+            14.5
+          ],
+          [
+            74.6,
+            15.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Manyakheta",
+          "Ended": "973"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Krishna III"
+          }
+        ],
+        "role": "The great power of the Deccan, which humbled the Cholas at Takkolam.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Wins at Takkolam (949)"
+          }
+        ]
+      },
+      {
+        "id": "western-chalukya",
+        "name": "Western Chalukyas",
+        "native": "ಚಾಳುಕ್ಯ",
+        "lang": "kn",
+        "color": "#3a9b78",
+        "active": [
+          [
+            8,
+            8
+          ],
+          [
+            18,
+            18
+          ]
+        ],
+        "label": {
+          "text": "Western Chalukyas",
+          "at": [
+            76.0,
+            17.4
+          ]
+        },
+        "area": [
+          [
+            74.1,
+            15
+          ],
+          [
+            73.5,
+            16.8
+          ],
+          [
+            73,
+            18.5
+          ],
+          [
+            74.5,
+            19.8
+          ],
+          [
+            77.5,
+            19.5
+          ],
+          [
+            78.5,
+            18
+          ],
+          [
+            78.3,
+            16.3
+          ],
+          [
+            77.5,
+            15.0
+          ],
+          [
+            76.0,
+            14.3
+          ],
+          [
+            74.7,
+            14.2
+          ]
+        ],
+        "facts": {
+          "Capital": "Kalyani, from the 1050s",
+          "Today": "Karnataka and Maharashtra"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Satyashraya"
+          },
+          {
+            "from": 18,
+            "text": "Someshvara I"
+          }
+        ],
+        "role": "The Cholas’ great rival in the Deccan for over a century.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Complains of Rajendra’s raid in the Hottur inscription (1007)"
+          },
+          {
+            "from": 18,
+            "text": "Kills Rajadhiraja I at Koppam (1054)"
+          }
+        ]
+      },
+      {
+        "id": "vengi",
+        "name": "Eastern Chalukyas of Vengi",
+        "native": "వేంగి",
+        "lang": "te",
+        "color": "#b5a33a",
+        "minor": true,
+        "active": [
+          [
+            8,
+            8
+          ],
+          [
+            14,
+            14
+          ],
+          [
+            20,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Vengi",
+          "at": [
+            82.0,
+            17.6
+          ]
+        },
+        "area": [
+          [
+            80.3,
+            15.2
+          ],
+          [
+            81.3,
+            16
+          ],
+          [
+            82.3,
+            16.8
+          ],
+          [
+            83.4,
+            17.9
+          ],
+          [
+            82.5,
+            18.4
+          ],
+          [
+            81.0,
+            17.6
+          ],
+          [
+            80.0,
+            16.6
+          ],
+          [
+            79.8,
+            15.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Vengi, later Rajahmundry",
+          "Today": "Coastal Andhra Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Saktivarman I"
+          },
+          {
+            "from": 14,
+            "text": "Rajaraja Narendra"
+          },
+          {
+            "from": 20,
+            "text": "Kulottunga I, also Chola king"
+          }
+        ],
+        "role": "A kingdom tied to the Cholas by marriage, whose prince became Chola king.",
+        "ties": []
+      },
+      {
+        "id": "lanka",
+        "name": "Sinhala kings",
+        "native": "ලංකාව",
+        "lang": "si",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            2,
+            2
+          ],
+          [
+            7,
+            7
+          ],
+          [
+            19,
+            25
+          ]
+        ],
+        "label": {
+          "text": "Lanka",
+          "at": [
+            80.7,
+            7.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                2,
+                2
+              ],
+              [
+                19,
+                25
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  80.05,
+                  9.85
+                ],
+                [
+                  80.6,
+                  9.5
+                ],
+                [
+                  81.2,
+                  8.6
+                ],
+                [
+                  81.75,
+                  7.5
+                ],
+                [
+                  81.8,
+                  6.8
+                ],
+                [
+                  81.3,
+                  6.2
+                ],
+                [
+                  80.6,
+                  5.93
+                ],
+                [
+                  80.05,
+                  6.05
+                ],
+                [
+                  79.85,
+                  6.9
+                ],
+                [
+                  79.8,
+                  7.8
+                ],
+                [
+                  79.95,
+                  8.7
+                ],
+                [
+                  79.75,
+                  9.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  79.85,
+                  7.9
+                ],
+                [
+                  80.6,
+                  7.7
+                ],
+                [
+                  81.3,
+                  8.0
+                ],
+                [
+                  81.75,
+                  7.5
+                ],
+                [
+                  81.8,
+                  6.8
+                ],
+                [
+                  81.3,
+                  6.2
+                ],
+                [
+                  80.6,
+                  5.93
+                ],
+                [
+                  80.05,
+                  6.05
+                ],
+                [
+                  79.85,
+                  6.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Anuradhapura, then Polonnaruwa",
+          "Today": "Sri Lanka"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Mahinda V"
+          },
+          {
+            "from": 19,
+            "text": "Vijayabahu I"
+          }
+        ],
+        "role": "The island kingdom, half-conquered by Rajaraja, wholly by Rajendra, then freed.",
+        "ties": [
+          {
+            "from": 2,
+            "text": "Shelters the fleeing Pandya king"
+          },
+          {
+            "from": 19,
+            "text": "Vijayabahu I drives out the Cholas (about 1070)"
+          }
+        ]
+      },
+      {
+        "id": "chera",
+        "name": "Cheras of Mahodayapuram",
+        "native": "ചേരർ",
+        "lang": "ml",
+        "color": "#9b5a3a",
+        "minor": true,
+        "active": [
+          [
+            6,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Cheras",
+          "at": [
+            76.2,
+            11.2
+          ]
+        },
+        "area": [
+          [
+            75.2,
+            12.4
+          ],
+          [
+            75.4,
+            12
+          ],
+          [
+            76,
+            10.5
+          ],
+          [
+            76.4,
+            9.5
+          ],
+          [
+            77,
+            8.5
+          ],
+          [
+            77.3,
+            9.0
+          ],
+          [
+            77.25,
+            9.8
+          ],
+          [
+            77.1,
+            10.6
+          ],
+          [
+            76.6,
+            11.6
+          ],
+          [
+            75.9,
+            12.4
+          ]
+        ],
+        "facts": {
+          "Capital": "Mahodayapuram (Kodungallur)",
+          "Today": "Kerala"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Bhaskara Ravi"
+          }
+        ],
+        "role": "Kings of the Kerala coast, defeated by Rajaraja.",
+        "ties": []
+      },
+      {
+        "id": "pala",
+        "name": "Pala Empire",
+        "native": "পাল",
+        "lang": "bn",
+        "color": "#5b6fa8",
+        "minor": true,
+        "active": [
+          [
+            14,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Palas",
+          "at": [
+            87.6,
+            25.2
+          ]
+        },
+        "area": [
+          [
+            86.0,
+            22.5
+          ],
+          [
+            87.6,
+            21.5
+          ],
+          [
+            89.2,
+            21.7
+          ],
+          [
+            90.3,
+            21.9
+          ],
+          [
+            91.2,
+            22.4
+          ],
+          [
+            90.5,
+            25.5
+          ],
+          [
+            88.5,
+            26.5
+          ],
+          [
+            85.5,
+            26.8
+          ],
+          [
+            84.5,
+            25.0
+          ],
+          [
+            85.5,
+            23.5
+          ]
+        ],
+        "facts": {
+          "Region": "Bengal and Bihar"
+        },
+        "rulers": [
+          {
+            "from": 14,
+            "text": "Mahipala I"
+          }
+        ],
+        "role": "The Buddhist kings of Bengal, defeated by Rajendra’s army.",
+        "ties": []
+      },
+      {
+        "id": "kalinga",
+        "name": "Eastern Gangas of Kalinga",
+        "native": "କଳିଙ୍ଗ",
+        "lang": "or",
+        "color": "#a678e0",
+        "minor": true,
+        "active": [
+          [
+            21,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Kalinga",
+          "at": [
+            84.8,
+            20.8
+          ]
+        },
+        "area": [
+          [
+            82.4,
+            19.5
+          ],
+          [
+            83.5,
+            18
+          ],
+          [
+            84.7,
+            19
+          ],
+          [
+            85.5,
+            19.8
+          ],
+          [
+            86.8,
+            20.6
+          ],
+          [
+            87.2,
+            21.5
+          ],
+          [
+            86.5,
+            22.2
+          ],
+          [
+            85.0,
+            22.3
+          ],
+          [
+            83.5,
+            21.6
+          ],
+          [
+            82.6,
+            20.6
+          ]
+        ],
+        "facts": {
+          "Today": "Odisha"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "Anantavarman Chodaganga"
+          }
+        ],
+        "role": "The kingdom invaded by Kulottunga’s general, celebrated in the Kalingattupparani.",
+        "ties": []
+      },
+      {
+        "id": "hoysala",
+        "name": "Hoysalas",
+        "native": "ಹೊಯ್ಸಳ",
+        "lang": "kn",
+        "color": "#6b8f3a",
+        "minor": true,
+        "active": [
+          [
+            23,
+            25
+          ]
+        ],
+        "label": {
+          "text": "Hoysalas",
+          "at": [
+            76.4,
+            13.6
+          ]
+        },
+        "area": [
+          [
+            75.0,
+            13.3
+          ],
+          [
+            74.7,
+            13.5
+          ],
+          [
+            74.1,
+            15
+          ],
+          [
+            75.6,
+            15.8
+          ],
+          [
+            77.0,
+            15.3
+          ],
+          [
+            78.0,
+            13.8
+          ],
+          [
+            78.6,
+            12.6
+          ],
+          [
+            77.6,
+            11.9
+          ],
+          [
+            76.6,
+            12.0
+          ],
+          [
+            75.9,
+            12.4
+          ]
+        ],
+        "facts": {
+          "Capital": "Dorasamudra (Halebidu)",
+          "Today": "Southern Karnataka"
+        },
+        "rulers": [
+          {
+            "from": 24,
+            "text": "Narasimha II"
+          }
+        ],
+        "role": "Kings of southern Karnataka who prop up the last Cholas against the Pandyas.",
+        "ties": [
+          {
+            "from": 24,
+            "text": "Free Rajaraja III from Kopperunjinga"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "vijayalaya",
+        "name": "Vijayalaya",
+        "native": "விஜயாலயன்",
+        "life": "ruled about 848 to 871",
+        "role": "Founder of the imperial Chola line",
+        "steps": [
+          0
+        ],
+        "text": "Little is known of Vijayalaya beyond what his descendants’ copper plates say: that he took Thanjavur and built a temple there. Every later Chola king traced his line to him, and an early stone temple at Narttamalai bears his name, the Vijayalaya Choleshvaram."
+      },
+      {
+        "id": "parantaka",
+        "name": "Parantaka I",
+        "native": "முதலாம் பராந்தகன்",
+        "life": "ruled 907 to 955",
+        "role": "Chola king",
+        "steps": [
+          2,
+          3,
+          4
+        ],
+        "text": "In a reign of nearly fifty years Parantaka takes the Pandya kingdom and makes the Cholas the leading power of the south, but the defeat at Takkolam undoes much of it. The Uttaramerur inscriptions on village elections date from his reign."
+      },
+      {
+        "id": "sembiyan",
+        "name": "Sembiyan Mahadevi",
+        "native": "செம்பியன் மாதேவி",
+        "life": "10th century; died about 1001",
+        "role": "Queen and patron",
+        "steps": [
+          5
+        ],
+        "text": "Widowed young, Sembiyan Mahadevi spent her long life as a patron of temples, rebuilding them in stone and giving bronzes, jewels and lands. A village near Nagapattinam bears her name, and her own bronze portrait as a goddess is believed by many to survive, now in the Freer Gallery, Washington."
+      },
+      {
+        "id": "rajaraja",
+        "name": "Rajaraja I",
+        "native": "முதலாம் இராஜராஜன்",
+        "life": "ruled 985 to 1014",
+        "role": "Chola emperor",
+        "steps": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "text": "Born Arunmozhi Varman, Rajaraja turns the Chola kingdom into an empire: Kerala, the Pandya country, northern Sri Lanka and the Maldives. He builds the great temple at Thanjavur and has the land surveyed. His long inscriptions are a main source for Chola history."
+      },
+      {
+        "id": "kundavai",
+        "name": "Kundavai",
+        "native": "குந்தவை",
+        "life": "10th to 11th century",
+        "role": "Princess and patron",
+        "steps": [
+          8,
+          10
+        ],
+        "text": "Rajaraja’s elder sister, Kundavai, was among the empire’s richest patrons, giving gold and jewels to the Thanjavur temple and founding a hospital. Rajaraja named his daughter after her, and that younger Kundavai married into the Eastern Chalukya house of Vengi."
+      },
+      {
+        "id": "vijayottunga",
+        "name": "Mara Vijayottungavarman",
+        "life": "early 11th century",
+        "role": "King of Srivijaya",
+        "steps": [
+          12
+        ],
+        "text": "The Srivijayan king who built the Chudamani Vihara at Nagapattinam, a sign of good relations between the two sea powers. Less than twenty years later, a Chola fleet raided his kingdom and captured his successor, Sangrama Vijayottungavarman."
+      },
+      {
+        "id": "rajendra",
+        "name": "Rajendra I",
+        "native": "முதலாம் இராஜேந்திரன்",
+        "life": "ruled 1014 to 1044",
+        "role": "Chola emperor",
+        "steps": [
+          8,
+          13,
+          14,
+          15,
+          16
+        ],
+        "text": "Rajaraja’s son, already a commander in his father’s wars, takes all of Sri Lanka, marches to the Ganges and sends a fleet against Srivijaya. He builds Gangaikonda Cholapuram as his capital. Under him the Chola Empire reaches its greatest extent."
+      },
+      {
+        "id": "mahinda",
+        "name": "Mahinda V",
+        "native": "මහින්ද",
+        "lang": "si",
+        "life": "ruled 982 to 1017; died about 1029",
+        "role": "King of Anuradhapura",
+        "steps": [
+          7,
+          13
+        ],
+        "text": "Mahinda’s reign began amid revolts of his own unpaid soldiers. He fled from the Chola army to the south of the island, and was captured in 1017 with his queen and crown. The Culavamsa says he died in captivity in the Chola country."
+      },
+      {
+        "id": "rajadhiraja",
+        "name": "Rajadhiraja I",
+        "native": "முதலாம் இராஜாதிராஜன்",
+        "life": "ruled 1044 to 1054",
+        "role": "Chola king",
+        "steps": [
+          18
+        ],
+        "text": "Rajendra’s eldest son spent his reign at war with the Western Chalukyas, and is said to have performed the horse sacrifice. He died fighting at Koppam, the rare Chola king to fall in battle."
+      },
+      {
+        "id": "vijayabahu",
+        "name": "Vijayabahu I",
+        "native": "විජයබාහු",
+        "lang": "si",
+        "life": "ruled 1055 to 1110",
+        "role": "King of Sri Lanka",
+        "steps": [
+          19
+        ],
+        "text": "From his base in the south, Vijayabahu fought the Cholas for some fifteen years before taking Polonnaruwa. He reunited the island and restored its Buddhist monastic orders with the help of monks from Burma."
+      },
+      {
+        "id": "kulottunga",
+        "name": "Kulottunga I",
+        "native": "முதலாம் குலோத்துங்கன்",
+        "life": "ruled 1070 to 1122",
+        "role": "Chola emperor",
+        "steps": [
+          20,
+          21
+        ],
+        "text": "Born Rajendra Chalukya, a prince of Vengi with a Chola mother, Kulottunga took the Chola throne in 1070. He lost Sri Lanka and, late in his reign, Vengi, but kept the Tamil heartland at peace for half a century and sent an embassy to China in 1077."
+      },
+      {
+        "id": "jayamkondar",
+        "name": "Jayamkondar",
+        "native": "ஜெயங்கொண்டார்",
+        "life": "late 11th to early 12th century",
+        "role": "Court poet",
+        "steps": [
+          21
+        ],
+        "text": "The poet of Kulottunga’s court who wrote the Kalingattupparani. The poem mixes real history, such as Kulottunga’s genealogy and the general’s march, with horror and comedy, and became the model for later war poems."
+      },
+      {
+        "id": "sekkizhar",
+        "name": "Sekkizhar",
+        "native": "சேக்கிழார்",
+        "life": "12th century",
+        "role": "Poet and minister",
+        "steps": [
+          22
+        ],
+        "text": "A minister of Kulottunga II, Sekkizhar wrote the Periya Puranam, the stories of the 63 Shaiva saints, which became the twelfth book of the Shaiva canon (Tirumurai). Tradition says the king heard it first at Chidambaram."
+      },
+      {
+        "id": "sundara-pandya",
+        "name": "Maravarman Sundara Pandya I",
+        "native": "மாறவர்மன் சுந்தர பாண்டியன்",
+        "life": "ruled 1216 to about 1238",
+        "role": "Pandya king",
+        "steps": [
+          24
+        ],
+        "text": "The Pandya king who reversed three centuries of Chola dominance. He sacked the Chola cities and made Rajaraja III a vassal, beginning the Pandya revival that his successors carried to its height."
+      }
+    ]
+  }
+}

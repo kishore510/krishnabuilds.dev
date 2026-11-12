@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.0
+
+- New story map in Chronicles: The Chola Empire, following The Three Crowned Kings. From Vijayalaya's capture of Thanjavur about 848, Aditya's defeat of the Pallavas, Parantaka's Madurai, the Uttaramerur elections, Takkolam and Sembiyan Mahadevi, through Rajaraja I (Kandalur Salai, Sri Lanka, Vengi, the Maldives, the great temple at Thanjavur, the land survey, the Chudamani Vihara) and Rajendra I (all of Sri Lanka, the march to the Ganges, Gangaikonda Cholapuram, the raid on Srivijaya, the embassies to China, Koppam), the Chalukya Cholas (Vijayabahu, Kulottunga I, the Kalingattupparani, Sekkizhar and Kamban, Kulottunga III), to the Pandya revival and the last Chola in 1279, and the bronzes, merchant guilds and living temples: 29 chapters, a Powers layer that changes chapter by chapter, and 14 people cards.
+- Catalogue: the Chola Empire entry now opens the story.
+- Art: a temple tower (vimana) glyph.
+
 ## 0.21.0
 
 - New story map in Chronicles: The Three Crowned Kings, the early Tamil kingdoms of the Cheras, Cholas and Pandyas. From the urn burials of Adichanallur and the brick town at Keezhadi, through the south as others saw it (Megasthenes’ Pandaia, Ashoka’s second rock edict, the first Tamil-Brahmi inscriptions at Mangulam, Elara in Anuradhapura, Kharavela’s league of Tamil states), the Sangam age (the assemblies of poets, the poems of love and war, the Cheras of Vanci, Karikala at Venni, Puhar, Nedunjeliyan at Talaiyalanganam, Avvaiyar and Athiyaman), the pepper and pearl trade with Rome (Muziris, Pliny, the Muziris papyrus, Arikamedu, Korkai), to the Tale of the Anklet, Puhar lost to the sea, the Kalabhra interval and the printing of the poems by Damodaram Pillai and Swaminatha Iyer: 24 chapters, a Powers layer and 12 people cards.
