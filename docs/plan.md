@@ -123,7 +123,8 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Scaffold `apps/story-maps` and deploy to story-maps.krishnabuilds.dev (0.1.0)
 - [x] Portal card in a new Explore group
 - [x] Engine and the first story, Rama’s Journey; Story Maps goes live (0.2.0)
-- [ ] Next stories: Mahabharata, Krishna, Samudra Manthan, then Chronicles
+- [x] The Mahabharata (0.23.0)
+- [ ] Next stories: Krishna, Samudra Manthan
 
 ### Stickyard
 

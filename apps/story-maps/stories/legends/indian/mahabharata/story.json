@@ -1,0 +1,2434 @@
+{
+  "id": "mahabharata",
+  "title": "The Mahabharata",
+  "description": "An illustrated map of the Mahabharata: the Kuru cousins’ rivalry from Hastinapura to the war at Kurukshetra and after, chapter by chapter.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "Tradition",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Mahabharata across India, from Hastinapura and Kurukshetra to Dwaraka, Manipura and the Himalaya",
+  "note": "Places follow traditional associations; several places claim some of them, and the cards name them. The story follows the Sanskrit epic, mainly the critical edition, and says where well-known episodes are later additions. The map is stylised and not to scale. Kingdom areas are loose regions, shown only while they play a part. The timeline is not to scale: the war’s eighteen days are enlarged.",
+  "places": {
+    "mana": {
+      "name": "Mana, by Badrinath",
+      "at": [
+        79.49,
+        30.77
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "hastinapura": {
+      "name": "Hastinapura",
+      "at": [
+        78.02,
+        29.16
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "kashi": {
+      "name": "Kashi (Varanasi)",
+      "at": [
+        83.0,
+        25.32
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "chambal": {
+      "name": "Chambal meets the Yamuna",
+      "at": [
+        79.25,
+        26.42
+      ],
+      "hidden": true
+    },
+    "champa": {
+      "name": "Champa",
+      "at": [
+        86.95,
+        25.24
+      ],
+      "glyph": "boat",
+      "label": "top"
+    },
+    "ahichchhatra": {
+      "name": "Ahichchhatra",
+      "at": [
+        79.13,
+        28.37
+      ],
+      "glyph": "brick-city",
+      "label": "right"
+    },
+    "varanavata": {
+      "name": "Varanavata",
+      "at": [
+        77.43,
+        29.12
+      ],
+      "glyph": "house-fire",
+      "label": "left"
+    },
+    "ekachakra": {
+      "name": "Ekachakra (one claimed site)",
+      "at": [
+        79.13,
+        26.66
+      ],
+      "glyph": "forest",
+      "label": "left"
+    },
+    "kampilya": {
+      "name": "Kampilya",
+      "at": [
+        79.27,
+        27.62
+      ],
+      "glyph": "great-bow",
+      "label": "right"
+    },
+    "indraprastha": {
+      "name": "Indraprastha",
+      "at": [
+        77.24,
+        28.61
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "manipura": {
+      "name": "Manipura",
+      "at": [
+        93.94,
+        24.81
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "dwaraka": {
+      "name": "Dwaraka",
+      "at": [
+        68.97,
+        22.24
+      ],
+      "glyph": "golden-city",
+      "label": "right"
+    },
+    "rajagriha": {
+      "name": "Girivraja (Rajgir)",
+      "at": [
+        85.42,
+        25.03
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "viratnagar": {
+      "name": "Virata’s city (Bairat)",
+      "at": [
+        76.18,
+        27.45
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "kurukshetra": {
+      "name": "Kurukshetra",
+      "at": [
+        76.85,
+        29.97
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "prabhasa": {
+      "name": "Prabhasa",
+      "at": [
+        70.4,
+        20.89
+      ],
+      "glyph": "deer",
+      "label": "right"
+    },
+    "pune": {
+      "name": "Pune",
+      "at": [
+        73.83,
+        18.52
+      ],
+      "glyph": "palm-leaf",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "pandavas": {
+      "name": "The Pandavas",
+      "icon": "prince"
+    },
+    "bhishma": {
+      "name": "Bhishma",
+      "icon": "chariot"
+    },
+    "arjuna": {
+      "name": "Arjuna",
+      "icon": "prince"
+    },
+    "krishna": {
+      "name": "Krishna’s chariot",
+      "icon": "chariot"
+    },
+    "basket": {
+      "name": "Karna’s basket",
+      "icon": "reed-boat"
+    },
+    "pandava-army": {
+      "name": "The Pandava army",
+      "icon": "chariot"
+    },
+    "kaurava-army": {
+      "name": "The Kaurava army",
+      "icon": "war-elephant"
+    },
+    "horse": {
+      "name": "The sacrificial horse",
+      "icon": "horse"
+    }
+  },
+  "phases": {
+    "prelude": {
+      "name": "The Kuru line",
+      "color": "#8fcf8a"
+    },
+    "youth": {
+      "name": "Rival cousins",
+      "color": "#f2c14e"
+    },
+    "kingdom": {
+      "name": "Indraprastha",
+      "color": "#4fc3b0"
+    },
+    "dice": {
+      "name": "The dice game",
+      "color": "#a678e0"
+    },
+    "exile": {
+      "name": "Exile",
+      "color": "#e0573a"
+    },
+    "war": {
+      "name": "Kurukshetra",
+      "color": "#b3261e"
+    },
+    "after": {
+      "name": "After the war",
+      "color": "#ffd166"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#d9432a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "chariot": {
+      "color": "#f29a2e",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "river": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "1 6",
+      "cap": "round"
+    },
+    "pandava": {
+      "color": "#d9432a",
+      "width": 3.6,
+      "dash": "11 4",
+      "cap": "butt"
+    },
+    "kaurava": {
+      "color": "#5b2a86",
+      "width": 3.6,
+      "dash": "11 4",
+      "cap": "butt"
+    },
+    "horse": {
+      "color": "#ffb300",
+      "width": 3,
+      "dash": "0.1 7",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 14,
+        "color": "rgba(143,207,138,.4)"
+      },
+      {
+        "until": 37.5,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 51.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 56.5,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 68.5,
+        "color": "rgba(224,87,58,.3)"
+      },
+      {
+        "until": 88,
+        "color": "rgba(179,38,30,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(255,209,102,.4)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 1,
+        "text": "Shantanu"
+      },
+      {
+        "at": 20,
+        "text": "Births"
+      },
+      {
+        "at": 39,
+        "text": "Kingdom"
+      },
+      {
+        "at": 55,
+        "text": "Exile"
+      },
+      {
+        "at": 75,
+        "text": "War"
+      },
+      {
+        "at": 95,
+        "text": "+36 yrs"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "mana",
+      "phase": "prelude",
+      "title": "Vyasa dictates, Ganesha writes",
+      "native": "व्यास",
+      "when": "The telling",
+      "at": 1,
+      "camera": {
+        "at": [
+          79.4,
+          30.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Tradition credits the epic to the sage Vyasa, himself grandfather to its heroes. A well-loved story says he dictated it to Ganesha, who would write only if Vyasa never paused; Vyasa asked in turn that Ganesha understand every verse before writing it. That story is a later addition, left out of the critical edition.",
+      "today": "Tradition places Vyasa’s cave (Vyas Gufa) at Mana, near Badrinath, Uttarakhand."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "prelude",
+      "title": "The river goddess",
+      "native": "गङ्गा",
+      "when": "Before the heroes",
+      "at": 4,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "King Shantanu of the Kuru line marries a beautiful stranger on one condition: he must never question her. She drowns seven newborn sons in the river. When he stops her at the eighth, she reveals she is the river Ganga and leaves, later returning the boy, Devavrata, grown and trained in arms and learning.",
+      "today": "Today: Hastinapur, Meerut district, Uttar Pradesh, beside an old bed of the Ganga."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "prelude",
+      "title": "Bhishma’s vow",
+      "native": "भीष्म",
+      "when": "Before the heroes",
+      "at": 7,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Shantanu falls in love with Satyavati, daughter of a fisher chief on the Yamuna, but her father wants her sons to rule. So Devavrata swears never to claim the throne and never to marry. For this terrible vow he is called Bhishma, and his father grants him a gift: he will die only when he chooses.",
+      "today": "Tradition sets it at Hastinapura and on the Yamuna."
+    },
+    {
+      "place": "kashi",
+      "phase": "prelude",
+      "title": "Three princesses of Kashi",
+      "native": "अम्बा",
+      "when": "Before the heroes",
+      "at": 10,
+      "camera": {
+        "at": [
+          80.6,
+          27.2
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "kashi",
+          "traveller": "bhishma",
+          "style": "chariot",
+          "bend": 0.12
+        }
+      ],
+      "text": "Satyavati’s sons die young, but first Vichitravirya needs wives. Bhishma carries off the three princesses of Kashi from their bridegroom-choice (svayamvara). Amba, who loved King Shalva, is let go, but Shalva will not take her back. Blaming Bhishma, she vows to cause his death, and is reborn as Shikhandi, a child of Drupada.",
+      "today": "Today: Varanasi, Uttar Pradesh."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "prelude",
+      "title": "Three princes",
+      "native": "धृतराष्ट्र · पाण्डु · विदुर",
+      "when": "A generation on",
+      "at": 13,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Vichitravirya dies childless. To save the line, Satyavati calls her elder son, Vyasa, to father heirs with the widows Ambika and Ambalika. Their sons are Dhritarashtra, born blind, and Pandu, born pale; a maid bears the wise Vidura. Because he is blind, Dhritarashtra is passed over, and Pandu becomes king.",
+      "today": "Tradition sets it at Hastinapura."
+    },
+    {
+      "place": "champa",
+      "phase": "youth",
+      "title": "A child on the river",
+      "native": "कर्ण",
+      "when": "Before Kunti marries",
+      "at": 17,
+      "camera": {
+        "at": [
+          83.0,
+          26.0
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "chambal",
+          "to": "champa",
+          "traveller": "basket",
+          "style": "river",
+          "bend": 0.08
+        }
+      ],
+      "text": "Young Kunti, given a mantra by the sage Durvasa, tests it by calling the Sun god (Surya) and bears a son born with armour and earrings. Unmarried and afraid, she sets him adrift in a basket. Downstream he is found by the charioteer Adhiratha and his wife Radha, who raise him as their own: Karna.",
+      "today": "The epic follows the basket down the Ashva, the Chambal, the Yamuna and the Ganga to Champa, near Bhagalpur, Bihar."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "youth",
+      "title": "Five sons and a hundred",
+      "native": "पाण्डव · कौरव",
+      "when": "Childhood",
+      "at": 20,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Cursed to die if he lies with a wife, Pandu retires to the forest. Kunti’s mantra calls gods: Dharma, Vayu and Indra father Yudhishthira, Bhima and Arjuna, and Pandu’s second queen, Madri, bears the twins Nakula and Sahadeva. Gandhari bears Dhritarashtra a hundred sons, Duryodhana the eldest. Pandu dies, and Kunti brings her sons to Hastinapura.",
+      "today": "Tradition sets their childhood at Hastinapura."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "youth",
+      "title": "The tournament",
+      "native": "द्रोण",
+      "when": "Youth",
+      "at": 24,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The brahmin Drona trains the princes in arms; Arjuna is his best. When Ekalavya, a Nishada prince who taught himself before Drona’s image, outshoots Arjuna, Drona demands his right thumb as his fee, and gets it. At the princes’ tournament Karna matches Arjuna but is mocked as a charioteer’s son. Duryodhana makes him king of Anga.",
+      "today": "Tradition sets the tournament at Hastinapura."
+    },
+    {
+      "place": "ahichchhatra",
+      "phase": "youth",
+      "title": "Drona’s fee",
+      "native": "अहिच्छत्र",
+      "when": "Youth",
+      "at": 27,
+      "camera": {
+        "at": [
+          78.7,
+          28.3
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "ahichchhatra",
+          "traveller": "arjuna",
+          "style": "chariot",
+          "bend": 0.12
+        }
+      ],
+      "text": "Drona had been snubbed by his boyhood friend Drupada, king of Panchala. As his teacher’s fee he has the princes bring Drupada captive, then keeps the northern half of Panchala. Drupada holds a fire ritual for revenge, and from the fire rise a son, Dhrishtadyumna, born to kill Drona, and a daughter, Draupadi.",
+      "today": "Ahichchhatra, the northern capital, is a large excavated mound near Bareilly, Uttar Pradesh. Drupada kept Kampilya."
+    },
+    {
+      "place": "varanavata",
+      "phase": "youth",
+      "title": "The house of lac",
+      "native": "लाक्षागृह",
+      "when": "Youth",
+      "at": 30,
+      "camera": {
+        "at": [
+          77.7,
+          29.1
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "varanavata",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Jealous of Yudhishthira’s rise, Duryodhana sends the Pandavas and Kunti to Varanavata, where his man Purochana has built them a house of lac, made to burn. Warned by Vidura, they dig a tunnel, set the house alight themselves and slip away. A Nishada woman and her five sons die inside, and the world thinks the Pandavas dead.",
+      "today": "Tradition places it at Barnawa, Baghpat district, Uttar Pradesh, where a mound is shown as the house of lac."
+    },
+    {
+      "place": "ekachakra",
+      "phase": "youth",
+      "title": "Hidimba and Baka",
+      "native": "एकचक्रा",
+      "when": "In hiding",
+      "at": 33,
+      "camera": {
+        "at": [
+          78.4,
+          27.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "varanavata",
+          "to": "ekachakra",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.18
+        }
+      ],
+      "text": "In the forest Bhima kills the man-eater Hidimba and marries his sister Hidimbi; their son is Ghatotkacha. Disguised as brahmins, the brothers lodge in the town of Ekachakra, which must send the demon Baka a cartload of food and a person in turn. Bhima goes in their host’s place, eats the food and kills Baka.",
+      "today": "Several places claim Ekachakra, among them Chakarnagar near Etawah, Arrah in Bihar and Ekachakra in West Bengal. The pin shows the first."
+    },
+    {
+      "place": "kampilya",
+      "phase": "youth",
+      "title": "Draupadi’s choice",
+      "native": "द्रौपदी",
+      "when": "Youth",
+      "at": 36,
+      "camera": {
+        "at": [
+          78.8,
+          27.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "ekachakra",
+          "to": "kampilya",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Drupada sets a contest for Draupadi: string a mighty bow and hit a target through a revolving device. Kings fail; versions differ on Karna. Arjuna, disguised as a brahmin, hits it. At home Kunti, not looking, tells her sons to share what they have brought, and Draupadi weds all five. Here the Pandavas first meet Krishna.",
+      "today": "Traditionally Kampil, Farrukhabad district, Uttar Pradesh."
+    },
+    {
+      "place": "indraprastha",
+      "phase": "kingdom",
+      "title": "A city from a forest",
+      "native": "इन्द्रप्रस्थ",
+      "when": "The kingdom divided",
+      "at": 39,
+      "camera": {
+        "at": [
+          77.6,
+          28.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "indraprastha",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Learning they live, Dhritarashtra divides the kingdom and gives the Pandavas Khandavaprastha, where they build Indraprastha. Arjuna and Krishna help the fire god Agni burn the Khandava forest. Spared from the flames, Maya, an architect of the asuras, builds them an assembly hall full of illusions.",
+      "today": "Tradition places Indraprastha at the Purana Qila, Delhi, where excavations found Painted Grey Ware, pottery some archaeologists link to the epic’s setting."
+    },
+    {
+      "place": "manipura",
+      "phase": "kingdom",
+      "title": "Arjuna’s wanderings",
+      "native": "चित्राङ्गदा",
+      "when": "Arjuna’s exile",
+      "at": 42,
+      "camera": {
+        "at": [
+          85.5,
+          26.5
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "indraprastha",
+          "to": "manipura",
+          "traveller": "arjuna",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Arjuna breaks the brothers’ pact about time alone with Draupadi and goes into exile. He marries Ulupi, a serpent (naga) princess, then Chitrangada, daughter of King Chitravahana of Manipura, on condition that their son stay to be her father’s heir. That son is Babhruvahana.",
+      "today": "Tradition identifies Manipura with Manipur. Some read the epic as placing it on the east coast, near Kalinga."
+    },
+    {
+      "place": "dwaraka",
+      "phase": "kingdom",
+      "title": "Subhadra",
+      "native": "सुभद्रा",
+      "when": "Arjuna’s exile",
+      "at": 45,
+      "camera": {
+        "at": [
+          79.0,
+          24.5
+        ],
+        "width": 30
+      },
+      "legs": [
+        {
+          "from": "manipura",
+          "to": "dwaraka",
+          "traveller": "arjuna",
+          "style": "walk",
+          "bend": 0.08
+        },
+        {
+          "from": "dwaraka",
+          "to": "indraprastha",
+          "traveller": "arjuna",
+          "style": "chariot",
+          "bend": -0.1
+        }
+      ],
+      "text": "In the west, at Krishna’s city of Dwaraka, Arjuna falls in love with Krishna’s sister Subhadra. Krishna advises him to carry her off, as warriors may. The Yadavas are furious until Krishna calms them. Arjuna brings Subhadra home to Indraprastha, where she bears Abhimanyu.",
+      "today": "Today: Dwarka, Gujarat."
+    },
+    {
+      "place": "rajagriha",
+      "phase": "kingdom",
+      "title": "Jarasandha",
+      "native": "जरासन्ध",
+      "when": "Before the consecration",
+      "at": 48,
+      "camera": {
+        "at": [
+          81.5,
+          27.0
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "indraprastha",
+          "to": "rajagriha",
+          "traveller": "krishna",
+          "style": "chariot",
+          "bend": 0.12
+        }
+      ],
+      "text": "Before Yudhishthira can claim imperial rank, Jarasandha of Magadha, who holds many kings captive, must fall. Krishna, Bhima and Arjuna enter his hill-ringed city of Girivraja disguised as brahmins and challenge him. Bhima wrestles him for days and kills him. The captive kings go free, and Jarasandha’s son Sahadeva is placed on the throne.",
+      "today": "Girivraja is Rajgir, Bihar, where tradition shows Jarasandha’s wrestling ground (akhara)."
+    },
+    {
+      "place": "indraprastha",
+      "phase": "kingdom",
+      "title": "The royal consecration",
+      "native": "राजसूय",
+      "when": "The height of Indraprastha",
+      "at": 50,
+      "camera": {
+        "at": [
+          77.6,
+          28.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "rajagriha",
+          "to": "indraprastha",
+          "traveller": "krishna",
+          "style": "chariot",
+          "bend": 0.12
+        }
+      ],
+      "text": "Yudhishthira holds the royal consecration (rajasuya). When Krishna is given the first honour, Shishupala of Chedi insults him past bearing, and Krishna’s discus kills him. In Maya’s hall Duryodhana mistakes floor for water and water for floor, and falls in, to laughter. Later tellings give Draupadi a cruel jibe; the critical edition does not.",
+      "today": "Tradition sets it at Indraprastha, Delhi."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "dice",
+      "title": "The game of dice",
+      "native": "द्यूत",
+      "when": "Invited to play",
+      "at": 53,
+      "camera": {
+        "at": [
+          77.6,
+          28.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "indraprastha",
+          "to": "hastinapura",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Burning with envy, Duryodhana has his uncle Shakuni of Gandhara, a master of dice, play Yudhishthira, who will not refuse a challenge. Throw by throw Yudhishthira loses his wealth, his kingdom, his brothers, himself and, at last, Draupadi.",
+      "today": "Tradition sets the game in a new hall at Hastinapura."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "dice",
+      "title": "Draupadi in the hall",
+      "native": "द्रौपदी",
+      "when": "The same day",
+      "at": 55,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Duhshasana drags Draupadi into the hall. She asks a question no one answers: had Yudhishthira lost himself before he staked her? When Duhshasana strips her, her cloth never ends; later tellings say Krishna answered her prayer. Bhima vows to drink Duhshasana’s blood and break Duryodhana’s thigh. A second game sends them into exile.",
+      "today": "The exile is twelve years in the forest and a thirteenth in hiding."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "exile",
+      "title": "Twelve years in the forest",
+      "native": "वनवास",
+      "when": "Exile, years 1 to 12",
+      "at": 58,
+      "camera": {
+        "at": [
+          77.0,
+          29.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "kurukshetra",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "The Sun god gives Yudhishthira a pot that feeds all their guests each day. Sages visit with stories that became famous on their own: Nala and Damayanti, Savitri, who argues her husband back from Death, and a short telling of Rama’s story. Jayadratha of Sindhu tries to carry Draupadi off and is caught.",
+      "today": "The Kamyaka forest is shown at Kurukshetra: tradition places it by the Sarasvati at Kamoda, nearby in Haryana."
+    },
+    {
+      "place": "mana",
+      "phase": "exile",
+      "title": "Bhima meets Hanuman",
+      "native": "हनुमान्",
+      "when": "Exile",
+      "at": 61,
+      "camera": {
+        "at": [
+          79.4,
+          30.4
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "kurukshetra",
+          "to": "mana",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Arjuna has gone to win divine weapons, first fighting Shiva, disguised as a hunter. The others wait in the Himalaya near Badari. Fetching a fragrant lotus for Draupadi, Bhima finds an old monkey’s tail across the path and cannot lift it. It is Hanuman, also a son of the wind god and so his elder brother.",
+      "today": "Tradition places the meeting at Hanuman Chatti, below Badrinath."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "exile",
+      "title": "The yaksha’s questions",
+      "native": "यक्षप्रश्न",
+      "when": "Exile, year 12",
+      "at": 64,
+      "camera": {
+        "at": [
+          77.0,
+          29.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "mana",
+          "to": "kurukshetra",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "In the Dvaita forest four brothers drink from a lake against a spirit’s (yaksha’s) warning and fall dead. Yudhishthira answers its riddles instead. The greatest wonder? Every day people die, yet the living think they will not. Offered one brother back, he picks Madri’s son Nakula. The yaksha, his father Dharma, revives all four.",
+      "today": "The epic puts the Dvaita forest, like Kamyaka, by the Sarasvati; its site is not identified, so the pin is only a guide."
+    },
+    {
+      "place": "viratnagar",
+      "phase": "exile",
+      "title": "The year in hiding",
+      "native": "विराट",
+      "when": "Exile, year 13",
+      "at": 67,
+      "camera": {
+        "at": [
+          76.6,
+          28.4
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "kurukshetra",
+          "to": "viratnagar",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "For the thirteenth year they serve King Virata of Matsya in disguise: Yudhishthira as a dice companion, Bhima a cook, Arjuna a dance teacher living as a woman, the twins as horse- and cow-keepers, Draupadi a maid. Bhima kills the general Kichaka for harassing her. Arjuna alone drives off a Kaurava cattle raid. Abhimanyu weds Virata’s daughter Uttara.",
+      "today": "Tradition identifies Virata’s city with Bairat (Viratnagar), Rajasthan."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "war",
+      "title": "Not a needle’s point",
+      "native": "कृष्ण",
+      "when": "Before the war",
+      "at": 70,
+      "camera": {
+        "at": [
+          77.2,
+          28.4
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "viratnagar",
+          "to": "hastinapura",
+          "traveller": "krishna",
+          "style": "chariot",
+          "bend": 0.12
+        }
+      ],
+      "text": "Both sides seek allies. Asked to choose, Arjuna takes Krishna, who will not fight; Duryodhana takes Krishna’s army. Krishna goes to Hastinapura as envoy, and Yudhishthira will settle for five villages. Duryodhana will not yield land enough to cover a needle’s point and plots to seize Krishna, who reveals his cosmic form. War is certain.",
+      "today": "Tradition sets the peace mission at Hastinapura."
+    },
+    {
+      "place": "hastinapura",
+      "phase": "war",
+      "title": "Karna’s choice",
+      "native": "कर्ण",
+      "when": "Before the war",
+      "at": 72,
+      "camera": {
+        "at": [
+          78.0,
+          29.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Krishna, then Kunti by the Ganga, tell Karna the truth: he is Kunti’s first son, the eldest Pandava, and could be king. He will not desert Duryodhana, who stood by him when others mocked him. He promises Kunti she will still have five sons: of hers, he will kill only Arjuna. He has already given his armour to Indra.",
+      "today": "Indra, Arjuna’s father, had begged the armour and earrings in disguise."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "The Song of the Lord",
+      "native": "भगवद्गीता",
+      "when": "War, day 1",
+      "at": 75,
+      "camera": {
+        "at": [
+          76.9,
+          29.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "viratnagar",
+          "to": "kurukshetra",
+          "traveller": "pandava-army",
+          "style": "pandava",
+          "bend": 0.1
+        },
+        {
+          "from": "hastinapura",
+          "to": "kurukshetra",
+          "traveller": "kaurava-army",
+          "style": "kaurava",
+          "bend": -0.1
+        }
+      ],
+      "text": "Eighteen armies meet at Kurukshetra, in the epic’s counting eleven for the Kauravas and seven for the Pandavas. Seeing teachers and kin across the field, Arjuna lays down his bow. Krishna, his charioteer, teaches him to do his duty without craving its fruits, and shows his universal form. Their dialogue is the Bhagavad Gita.",
+      "today": "Tradition places the teaching at Jyotisar, Kurukshetra, Haryana."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "Bhishma on a bed of arrows",
+      "native": "शरशय्या",
+      "when": "War, day 10",
+      "at": 77,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "For nine days Bhishma, the Kaurava commander, cannot be beaten. Asked how he may be killed, he tells the Pandavas he will not fight Shikhandi, born a woman. On the tenth day Arjuna shoots from behind Shikhandi until Bhishma falls, held off the ground by arrows. He waits there for the sun’s turn north to die.",
+      "today": "Tradition shows the place at Bhishma Kund, Narkatari, near Kurukshetra."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "Abhimanyu in the wheel",
+      "native": "चक्रव्यूह",
+      "when": "War, days 13 and 14",
+      "at": 79,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Drona, now in command, forms the wheel (chakravyuha) while Arjuna is drawn away. Abhimanyu knows how to break in but not out. Trapped, he is killed by many warriors together. Arjuna vows to kill Jayadratha, who held his brothers back, by the next sunset, and does. That night Karna kills Ghatotkacha with a weapon saved for Arjuna.",
+      "today": "Tradition sets the whole war on the plain around Kurukshetra."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "Ashvatthama is dead",
+      "native": "अश्वत्थामा",
+      "when": "War, day 15",
+      "at": 81,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Drona seems unstoppable, and Krishna urges a trick. Bhima kills an elephant named Ashvatthama and shouts that Ashvatthama is dead. Drona asks Yudhishthira, who never lies. He says it, adding under his breath, the elephant. His chariot, which had floated above the earth, touches the ground. Drona lays down his arms, and Dhrishtadyumna beheads him.",
+      "today": "Ashvatthama is also the name of Drona’s son."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "Karna’s last day",
+      "native": "कर्ण",
+      "when": "War, days 16 and 17",
+      "at": 83,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Bhima kills Duhshasana and drinks his blood, as he vowed. On the seventeenth day Karna, with Shalya of Madra as his grudging charioteer, meets Arjuna. Under old curses his chariot wheel sinks into the earth and his learning fails him. As he struggles to free the wheel, Krishna urges Arjuna to shoot, and Karna falls.",
+      "today": "Tradition sets it on the plain around Kurukshetra."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "The broken thigh",
+      "native": "ऊरुभङ्ग",
+      "when": "War, day 18",
+      "at": 85,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Shalya falls to Yudhishthira and Shakuni to Sahadeva. Duryodhana hides in a lake, then fights Bhima with clubs. Prompted by Krishna and Arjuna, Bhima strikes below the navel, against the rules, and breaks his thigh, fulfilling his vow. Balarama, Krishna’s brother and teacher of both, is enraged at the foul blow.",
+      "today": "Tradition shows several lakes near Kurukshetra as Duryodhana’s hiding place."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "war",
+      "title": "The night raid",
+      "native": "सौप्तिक",
+      "when": "The night after",
+      "at": 87,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Drona’s son Ashvatthama, with Kripa and Kritavarma, enters the sleeping Pandava camp and kills Dhrishtadyumna, Shikhandi and Draupadi’s five sons. Duryodhana dies content at the news. Cornered, Ashvatthama looses a terrible weapon at the unborn child of Abhimanyu’s widow. Krishna revives the child, Parikshit, and curses Ashvatthama to wander for 3,000 years.",
+      "today": "The five Pandavas and Krishna were away from the camp that night."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "after",
+      "title": "The women’s lament",
+      "native": "स्त्रीपर्व",
+      "when": "After the war",
+      "at": 89,
+      "camera": {
+        "at": [
+          76.85,
+          29.97
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Gandhari and the widows walk the field among the dead. Grieving her hundred sons, Gandhari curses Krishna: in thirty-six years his own clan will destroy itself. At the funeral offerings, Kunti at last tells her sons that Karna was their eldest brother. Yudhishthira, shattered, wants to give up the throne.",
+      "today": "The funeral offerings are made in the Ganga."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "after",
+      "title": "Teachings from the bed of arrows",
+      "native": "शान्तिपर्व",
+      "when": "After the war",
+      "at": 91,
+      "camera": {
+        "at": [
+          77.4,
+          29.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "kurukshetra",
+          "traveller": "krishna",
+          "style": "chariot",
+          "bend": 0.12
+        }
+      ],
+      "text": "Yudhishthira is crowned at Hastinapura. Krishna takes him to Bhishma, still lying on his arrows, who teaches him at length on kingship, duty and freedom from rebirth: the Shanti and Anushasana books, the longest in the epic. Tradition counts the thousand names of Vishnu among the teachings. When the sun turns north, Bhishma chooses to die.",
+      "today": "Tradition shows the place at Bhishma Kund, near Kurukshetra."
+    },
+    {
+      "place": "manipura",
+      "phase": "after",
+      "title": "The horse sacrifice",
+      "native": "अश्वमेध",
+      "when": "After the war",
+      "at": 93,
+      "camera": {
+        "at": [
+          85.5,
+          26.5
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "manipura",
+          "traveller": "horse",
+          "style": "horse",
+          "bend": 0.1
+        }
+      ],
+      "text": "Yudhishthira holds a horse sacrifice (ashvamedha), and Arjuna follows the horse wherever it roams. In Manipura his son Babhruvahana greets him humbly, but Arjuna scorns him as no warrior. They fight, and the son kills the father. Ulupi revives Arjuna with a magic gem, and father and son are reconciled.",
+      "today": "Tradition identifies Manipura with Manipur."
+    },
+    {
+      "place": "prabhasa",
+      "phase": "after",
+      "title": "The end of the Yadavas",
+      "native": "प्रभास",
+      "when": "Thirty-six years on",
+      "at": 95,
+      "camera": {
+        "at": [
+          70.0,
+          21.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Gandhari’s curse comes due. At Prabhasa by the sea, the drunken Yadava men quarrel and kill one another with stalks of grass that turn to clubs. Balarama leaves his body in meditation. Krishna lies down in the forest, and a hunter named Jara, taking his foot for a deer, shoots him.",
+      "today": "Tradition shows the place at Bhalka Tirtha, near Somnath, Gujarat."
+    },
+    {
+      "place": "dwaraka",
+      "phase": "after",
+      "title": "The sea takes Dwaraka",
+      "native": "द्वारका",
+      "when": "Thirty-six years on",
+      "at": 96.5,
+      "camera": {
+        "at": [
+          73.0,
+          25.5
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "dwaraka",
+          "traveller": "arjuna",
+          "style": "chariot",
+          "bend": 0.12
+        },
+        {
+          "from": "dwaraka",
+          "to": "indraprastha",
+          "traveller": "arjuna",
+          "style": "walk",
+          "bend": -0.1
+        }
+      ],
+      "text": "Arjuna comes to lead the survivors to safety. As they leave, the sea floods Dwaraka. On the road, herders (Abhiras) attack the column, and Arjuna can barely string his bow; his power has gone with Krishna. He settles the survivors and crowns Krishna’s great-grandson Vajra at Indraprastha.",
+      "today": "Underwater surveys off Dwarka and Bet Dwarka since the 1980s found stone structures; their age and meaning are debated."
+    },
+    {
+      "place": "mana",
+      "phase": "after",
+      "title": "The great journey",
+      "native": "महाप्रस्थान",
+      "when": "The end",
+      "at": 98,
+      "camera": {
+        "at": [
+          78.9,
+          29.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hastinapura",
+          "to": "mana",
+          "traveller": "pandavas",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Crowning Parikshit, the Pandavas and Draupadi walk north, followed by a dog. One by one they fall: Draupadi first, then Sahadeva, Nakula, Arjuna and Bhima. Yudhishthira climbs on. Offered heaven, he will not enter without the faithful dog, which is Dharma, his father, testing him one last time.",
+      "today": "Tradition starts the last climb at Mana, toward the peak Swargarohini."
+    },
+    {
+      "place": "pune",
+      "phase": "after",
+      "title": "The epic preserved",
+      "native": "महाभारत",
+      "when": "Today",
+      "at": 100,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.0,
+          22.0
+        ],
+        "width": 30
+      },
+      "legs": [],
+      "text": "The epic was handed down in many versions, in every Indian script and region. From 1919 to 1966, scholars at the Bhandarkar Oriental Research Institute compared more than a thousand manuscripts to make a critical edition, leaving out passages most likely added later. Retold on Indian television from 1988 to 1990, the Mahabharata is still told everywhere.",
+      "today": "Today: the Bhandarkar Oriental Research Institute, Pune, Maharashtra."
+    }
+  ],
+  "realms": {
+    "toggle": "Kingdoms",
+    "mainHeading": "Main kingdoms",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "kuru",
+        "name": "Kuru",
+        "native": "कुरु",
+        "color": "#ffb300",
+        "active": [
+          [
+            1,
+            37
+          ]
+        ],
+        "label": {
+          "text": "Kuru",
+          "at": [
+            77.0,
+            30.35
+          ]
+        },
+        "area": [
+          [
+            75.9,
+            30.7
+          ],
+          [
+            77.6,
+            30.7
+          ],
+          [
+            78.6,
+            29.7
+          ],
+          [
+            78.4,
+            28.4
+          ],
+          [
+            77.4,
+            28.0
+          ],
+          [
+            76.2,
+            28.5
+          ],
+          [
+            75.7,
+            29.6
+          ]
+        ],
+        "facts": {
+          "Dynasty": "The Kuru line, descended from Puru and Bharata",
+          "Capital": "Hastinapura; Indraprastha for the Pandavas’ share",
+          "Today": "Haryana, Delhi and western Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Shantanu"
+          },
+          {
+            "from": 4,
+            "text": "Pandu, after Vichitravirya and Bhishma’s regency"
+          },
+          {
+            "from": 6,
+            "text": "Dhritarashtra, after Pandu’s death"
+          },
+          {
+            "from": 12,
+            "text": "Divided: Dhritarashtra at Hastinapura, Yudhishthira at Indraprastha"
+          },
+          {
+            "from": 18,
+            "text": "Dhritarashtra, with Duryodhana holding the Pandavas’ share"
+          },
+          {
+            "from": 33,
+            "text": "Yudhishthira"
+          },
+          {
+            "from": 37,
+            "text": "Parikshit, Arjuna’s grandson"
+          }
+        ],
+        "role": "The heroes’ home. The quarrel over its throne drives the whole epic.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Dhritarashtra married Gandhari of Gandhara; Pandu married Madri of Madra"
+          },
+          {
+            "from": 11,
+            "text": "Bound to Panchala by Draupadi’s marriage"
+          },
+          {
+            "from": 22,
+            "text": "Bound to Matsya by Abhimanyu’s marriage to Uttara"
+          },
+          {
+            "from": 25,
+            "text": "Split in two: Kauravas against Pandavas"
+          }
+        ]
+      },
+      {
+        "id": "panchala",
+        "name": "Panchala",
+        "native": "पञ्चाल",
+        "color": "#2fa36b",
+        "active": [
+          [
+            8,
+            11
+          ],
+          [
+            25,
+            31
+          ]
+        ],
+        "label": {
+          "text": "Panchala",
+          "at": [
+            79.6,
+            28.95
+          ]
+        },
+        "area": [
+          [
+            78.4,
+            29.8
+          ],
+          [
+            80.2,
+            29.6
+          ],
+          [
+            80.6,
+            28.2
+          ],
+          [
+            80.0,
+            27.0
+          ],
+          [
+            78.8,
+            26.9
+          ],
+          [
+            78.3,
+            27.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Drupada’s house",
+          "Capital": "Kampilya in the south, Ahichchhatra in the north",
+          "Today": "Rohilkhand and the central Ganga–Yamuna plain, Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Drupada; Drona takes the northern half"
+          },
+          {
+            "from": 28,
+            "text": "Drupada killed by Drona on day 15"
+          }
+        ],
+        "role": "Draupadi’s homeland, and the Pandavas’ firmest ally.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Old enemy of Drona"
+          },
+          {
+            "from": 11,
+            "text": "Draupadi marries the five Pandavas"
+          },
+          {
+            "from": 25,
+            "text": "Fights for the Pandavas; Dhrishtadyumna commands their army"
+          }
+        ]
+      },
+      {
+        "id": "matsya",
+        "name": "Matsya",
+        "native": "मत्स्य",
+        "color": "#e8574a",
+        "active": [
+          [
+            22,
+            29
+          ]
+        ],
+        "label": {
+          "text": "Matsya",
+          "at": [
+            76.3,
+            27.95
+          ]
+        },
+        "area": [
+          [
+            75.6,
+            28.2
+          ],
+          [
+            77.0,
+            28.1
+          ],
+          [
+            77.3,
+            27.0
+          ],
+          [
+            76.4,
+            26.5
+          ],
+          [
+            75.4,
+            26.9
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Virata’s house",
+          "Capital": "Virata’s city",
+          "Today": "Jaipur and Alwar, Rajasthan"
+        },
+        "rulers": [
+          {
+            "from": 22,
+            "text": "Virata"
+          },
+          {
+            "from": 28,
+            "text": "Virata killed by Drona on day 15"
+          }
+        ],
+        "role": "Hides the Pandavas in their thirteenth year, then fights at their side.",
+        "ties": [
+          {
+            "from": 22,
+            "text": "Princess Uttara marries Abhimanyu"
+          },
+          {
+            "from": 25,
+            "text": "Fights for the Pandavas"
+          }
+        ]
+      },
+      {
+        "id": "yadava",
+        "name": "Yadavas",
+        "native": "यादव",
+        "color": "#6b7bd6",
+        "active": [
+          [
+            11,
+            16
+          ],
+          [
+            23,
+            25
+          ],
+          [
+            35,
+            36
+          ]
+        ],
+        "label": {
+          "text": "Yadavas",
+          "at": [
+            70.6,
+            23.0
+          ]
+        },
+        "area": [
+          [
+            68.9,
+            23.4
+          ],
+          [
+            70.6,
+            23.5
+          ],
+          [
+            72.2,
+            22.2
+          ],
+          [
+            71.4,
+            20.8
+          ],
+          [
+            70.0,
+            20.7
+          ],
+          [
+            68.9,
+            21.9
+          ]
+        ],
+        "facts": {
+          "Dynasty": "The Vrishnis and Andhakas, of Yadu’s line",
+          "Capital": "Dwaraka",
+          "Today": "Saurashtra, Gujarat"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Ugrasena, with Krishna and Balarama"
+          },
+          {
+            "from": 35,
+            "text": "Destroyed at Prabhasa"
+          }
+        ],
+        "role": "Krishna’s people. Split by the war, they destroy themselves thirty-six years later.",
+        "ties": [
+          {
+            "from": 14,
+            "text": "Subhadra marries Arjuna"
+          },
+          {
+            "from": 23,
+            "text": "Krishna joins the Pandavas unarmed; his army and Kritavarma fight for the Kauravas; Balarama stays out"
+          }
+        ]
+      },
+      {
+        "id": "magadha",
+        "name": "Magadha",
+        "native": "मगध",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            15,
+            15
+          ],
+          [
+            25,
+            29
+          ]
+        ],
+        "label": {
+          "text": "Magadha",
+          "at": [
+            85.6,
+            24.5
+          ]
+        },
+        "area": [
+          [
+            84.3,
+            25.6
+          ],
+          [
+            85.6,
+            25.75
+          ],
+          [
+            86.6,
+            25.3
+          ],
+          [
+            86.6,
+            24.6
+          ],
+          [
+            85.6,
+            24.2
+          ],
+          [
+            84.4,
+            24.4
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Brihadratha’s line",
+          "Capital": "Girivraja (Rajgir)",
+          "Today": "South Bihar"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Jarasandha, then his son Sahadeva"
+          }
+        ],
+        "role": "The great power of the east, until Bhima kills Jarasandha.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Jarasandha’s old enemies are the Yadavas"
+          },
+          {
+            "from": 25,
+            "text": "Sahadeva of Magadha fights for the Pandavas"
+          }
+        ]
+      },
+      {
+        "id": "anga",
+        "name": "Anga",
+        "native": "अङ्ग",
+        "color": "#c96b2c",
+        "active": [
+          [
+            5,
+            7
+          ],
+          [
+            25,
+            29
+          ]
+        ],
+        "label": {
+          "text": "Anga",
+          "at": [
+            87.4,
+            24.75
+          ]
+        },
+        "area": [
+          [
+            86.6,
+            25.6
+          ],
+          [
+            88.0,
+            25.4
+          ],
+          [
+            88.1,
+            24.6
+          ],
+          [
+            87.0,
+            24.4
+          ],
+          [
+            86.6,
+            24.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic before Karna",
+          "Capital": "Champa",
+          "Today": "Around Bhagalpur, Bihar"
+        },
+        "rulers": [
+          {
+            "from": 5,
+            "text": "Not named"
+          },
+          {
+            "from": 7,
+            "text": "Karna, made king by Duryodhana"
+          }
+        ],
+        "role": "Where Karna grows up, and the kingdom Duryodhana gives him.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Karna owes Duryodhana his crown"
+          },
+          {
+            "from": 25,
+            "text": "Fights for the Kauravas"
+          }
+        ]
+      },
+      {
+        "id": "gandhara",
+        "name": "Gandhara",
+        "native": "गान्धार",
+        "color": "#b5547a",
+        "minor": true,
+        "active": [
+          [
+            6,
+            6
+          ],
+          [
+            17,
+            18
+          ],
+          [
+            25,
+            30
+          ]
+        ],
+        "label": {
+          "text": "Gandhara",
+          "at": [
+            72.1,
+            34.35
+          ]
+        },
+        "area": [
+          [
+            71.0,
+            34.6
+          ],
+          [
+            73.0,
+            34.5
+          ],
+          [
+            73.3,
+            33.4
+          ],
+          [
+            71.8,
+            33.2
+          ],
+          [
+            70.8,
+            33.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Subala’s house",
+          "Capital": "Not named in the epic",
+          "Today": "Around Peshawar and Taxila, Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Subala"
+          },
+          {
+            "from": 17,
+            "text": "Subala; his son Shakuni lives at the Kuru court"
+          }
+        ],
+        "role": "Gandhari’s and Shakuni’s homeland.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Gandhari marries Dhritarashtra"
+          },
+          {
+            "from": 25,
+            "text": "Fights for the Kauravas"
+          }
+        ]
+      },
+      {
+        "id": "madra",
+        "name": "Madra",
+        "native": "मद्र",
+        "color": "#3f9fd1",
+        "minor": true,
+        "active": [
+          [
+            6,
+            6
+          ],
+          [
+            25,
+            30
+          ]
+        ],
+        "label": {
+          "text": "Madra",
+          "at": [
+            74.3,
+            32.4
+          ]
+        },
+        "area": [
+          [
+            73.6,
+            33.0
+          ],
+          [
+            75.2,
+            32.8
+          ],
+          [
+            75.0,
+            31.8
+          ],
+          [
+            73.6,
+            31.7
+          ],
+          [
+            73.2,
+            32.3
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Shakala (Sialkot)",
+          "Today": "North-east Punjab, Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Shalya, Madri’s brother"
+          }
+        ],
+        "role": "Madri’s homeland. Shalya, the twins’ uncle, is tricked into fighting for the Kauravas.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Madri marries Pandu"
+          },
+          {
+            "from": 25,
+            "text": "Shalya fights for the Kauravas"
+          }
+        ]
+      },
+      {
+        "id": "sindhu",
+        "name": "Sindhu",
+        "native": "सिन्धु",
+        "color": "#2fa39a",
+        "minor": true,
+        "active": [
+          [
+            19,
+            19
+          ],
+          [
+            25,
+            27
+          ]
+        ],
+        "label": {
+          "text": "Sindhu",
+          "at": [
+            68.9,
+            26.4
+          ]
+        },
+        "area": [
+          [
+            68.2,
+            27.8
+          ],
+          [
+            69.6,
+            27.4
+          ],
+          [
+            69.6,
+            25.2
+          ],
+          [
+            68.4,
+            24.6
+          ],
+          [
+            68.1,
+            26.0
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Not named in the epic",
+          "Today": "Sindh, Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Jayadratha, husband of Duryodhana’s sister Duhshala"
+          },
+          {
+            "from": 27,
+            "text": "Jayadratha killed by Arjuna"
+          }
+        ],
+        "role": "Jayadratha’s kingdom.",
+        "ties": [
+          {
+            "from": 19,
+            "text": "Jayadratha tries to carry off Draupadi"
+          },
+          {
+            "from": 25,
+            "text": "Fights for the Kauravas"
+          }
+        ]
+      },
+      {
+        "id": "chedi",
+        "name": "Chedi",
+        "native": "चेदि",
+        "color": "#7a9a3a",
+        "minor": true,
+        "active": [
+          [
+            16,
+            16
+          ],
+          [
+            25,
+            29
+          ]
+        ],
+        "label": {
+          "text": "Chedi",
+          "at": [
+            79.4,
+            24.6
+          ]
+        },
+        "area": [
+          [
+            78.4,
+            25.4
+          ],
+          [
+            80.4,
+            25.4
+          ],
+          [
+            80.8,
+            24.2
+          ],
+          [
+            79.4,
+            23.6
+          ],
+          [
+            78.2,
+            24.2
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named in the epic",
+          "Capital": "Shuktimati",
+          "Today": "Bundelkhand, central India"
+        },
+        "rulers": [
+          {
+            "from": 16,
+            "text": "Shishupala"
+          },
+          {
+            "from": 25,
+            "text": "Dhrishtaketu, Shishupala’s son"
+          }
+        ],
+        "role": "Shishupala’s kingdom.",
+        "ties": [
+          {
+            "from": 16,
+            "text": "Shishupala is killed at the consecration"
+          },
+          {
+            "from": 25,
+            "text": "Dhrishtaketu fights for the Pandavas"
+          }
+        ]
+      },
+      {
+        "id": "pragjyotisha",
+        "name": "Pragjyotisha",
+        "native": "प्राग्ज्योतिष",
+        "color": "#d98a2b",
+        "minor": true,
+        "active": [
+          [
+            16,
+            16
+          ],
+          [
+            25,
+            26
+          ]
+        ],
+        "label": {
+          "text": "Pragjyotisha",
+          "at": [
+            91.4,
+            26.3
+          ]
+        },
+        "area": [
+          [
+            89.8,
+            26.8
+          ],
+          [
+            92.4,
+            26.9
+          ],
+          [
+            93.2,
+            26.2
+          ],
+          [
+            91.6,
+            25.6
+          ],
+          [
+            89.8,
+            25.8
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Naraka’s line",
+          "Capital": "Pragjyotishapura",
+          "Today": "Traditionally Assam"
+        },
+        "rulers": [
+          {
+            "from": 16,
+            "text": "Bhagadatta"
+          }
+        ],
+        "role": "Bhagadatta’s elephant kingdom in the east.",
+        "ties": [
+          {
+            "from": 16,
+            "text": "Bhagadatta pays tribute to Yudhishthira"
+          },
+          {
+            "from": 25,
+            "text": "Bhagadatta fights for the Kauravas; Arjuna kills him on day 12"
+          }
+        ]
+      },
+      {
+        "id": "manipura",
+        "name": "Manipura",
+        "native": "मणिपूर",
+        "color": "#c94f7c",
+        "minor": true,
+        "active": [
+          [
+            13,
+            13
+          ],
+          [
+            34,
+            34
+          ]
+        ],
+        "label": {
+          "text": "Manipura",
+          "at": [
+            93.95,
+            25.5
+          ]
+        },
+        "area": [
+          [
+            93.3,
+            25.4
+          ],
+          [
+            94.6,
+            25.6
+          ],
+          [
+            94.8,
+            24.2
+          ],
+          [
+            93.6,
+            23.9
+          ],
+          [
+            93.0,
+            24.6
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Chitravahana’s house",
+          "Capital": "Manipura",
+          "Today": "Traditionally Manipur; some place it near Kalinga"
+        },
+        "rulers": [
+          {
+            "from": 13,
+            "text": "Chitravahana"
+          },
+          {
+            "from": 34,
+            "text": "Babhruvahana, Arjuna’s son"
+          }
+        ],
+        "role": "Chitrangada’s home, and her son’s kingdom.",
+        "ties": [
+          {
+            "from": 13,
+            "text": "Chitrangada marries Arjuna"
+          }
+        ]
+      },
+      {
+        "id": "kashi",
+        "name": "Kashi",
+        "native": "काशी",
+        "color": "#9a7bd6",
+        "minor": true,
+        "active": [
+          [
+            3,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Kashi",
+          "at": [
+            83.2,
+            25.6
+          ]
+        },
+        "area": [
+          [
+            82.6,
+            25.9
+          ],
+          [
+            83.8,
+            25.8
+          ],
+          [
+            83.9,
+            25.0
+          ],
+          [
+            83.0,
+            24.8
+          ],
+          [
+            82.5,
+            25.2
+          ]
+        ],
+        "facts": {
+          "Dynasty": "Not named here",
+          "Capital": "Varanasi",
+          "Today": "Around Varanasi, Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Not named in this episode"
+          }
+        ],
+        "role": "Home of Amba, Ambika and Ambalika.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Ambika and Ambalika marry Vichitravirya"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "vyasa",
+        "name": "Vyasa",
+        "native": "व्यास",
+        "life": "Epic tradition; no historical dates",
+        "role": "Sage, author of the epic by tradition",
+        "steps": [
+          0,
+          4
+        ],
+        "text": "Son of Satyavati and the sage Parashara, born on an island in the Yamuna, which gives him the name Dvaipayana. Tradition credits him with arranging the Vedas and composing the Mahabharata, in which he also appears, as the father of Dhritarashtra, Pandu and Vidura. He taught the epic to his pupil Vaishampayana."
+      },
+      {
+        "id": "bhishma",
+        "name": "Bhishma",
+        "native": "भीष्म",
+        "life": "Epic tradition; no historical dates",
+        "role": "Grandsire of the Kuru house",
+        "steps": [
+          1,
+          2,
+          3,
+          4,
+          26,
+          33
+        ],
+        "text": "Born Devavrata, son of Shantanu and Ganga. His vow never to rule or marry gives him his name and binds him to serve whoever holds the throne. He commands the Kaurava army for ten days, though he loves the Pandavas, and teaches Yudhishthira from his bed of arrows before choosing his death."
+      },
+      {
+        "id": "kunti",
+        "name": "Kunti",
+        "native": "कुन्ती",
+        "life": "Epic tradition; no historical dates",
+        "role": "Queen of Pandu, mother of the Pandavas",
+        "steps": [
+          5,
+          6,
+          9,
+          11,
+          24,
+          32
+        ],
+        "text": "Born Pritha, a Yadava, and raised by King Kuntibhoja. Her mantra lets her call any god: Surya fathers Karna, whom she gives up, then Dharma, Vayu and Indra father Yudhishthira, Bhima and Arjuna. She shares the mantra with Madri. She keeps Karna’s secret until after his death."
+      },
+      {
+        "id": "karna",
+        "name": "Karna",
+        "native": "कर्ण",
+        "life": "Epic tradition; no historical dates",
+        "role": "King of Anga, Kunti’s first son",
+        "steps": [
+          5,
+          7,
+          24,
+          29,
+          32
+        ],
+        "text": "Son of Kunti and the Sun god, raised by a charioteer and mocked for it all his life. Famous for his generosity, he never refuses a request, even when Indra asks for his protective armour. He stays loyal to Duryodhana, who made him a king, even after he learns the Pandavas are his brothers."
+      },
+      {
+        "id": "drona",
+        "name": "Drona",
+        "native": "द्रोण",
+        "life": "Epic tradition; no historical dates",
+        "role": "Teacher of the Kuru princes",
+        "steps": [
+          7,
+          8,
+          27,
+          28
+        ],
+        "text": "A brahmin master of weapons, teacher of both Kauravas and Pandavas. His feud with Drupada begins the Panchala quarrel, and his demand for Ekalavya’s thumb is among the epic’s most questioned acts. He commands the Kaurava army after Bhishma falls, until the half-lie about his son makes him put down his weapons."
+      },
+      {
+        "id": "draupadi",
+        "name": "Draupadi",
+        "native": "द्रौपदी",
+        "life": "Epic tradition; no historical dates",
+        "role": "Princess of Panchala, wife of the five Pandavas",
+        "steps": [
+          8,
+          11,
+          17,
+          18,
+          22,
+          31,
+          37
+        ],
+        "text": "Born from Drupada’s sacrificial fire, also called Panchali and Krishnaa. Wife of all five brothers, she is staked and lost at dice, and her question in the hall, and her humiliation there, become the war’s deepest cause. She loses her five sons in the night raid, and is the first to fall on the great journey."
+      },
+      {
+        "id": "yudhishthira",
+        "name": "Yudhishthira",
+        "native": "युधिष्ठिर",
+        "life": "Epic tradition; no historical dates",
+        "role": "Eldest Pandava, son of Dharma",
+        "steps": [
+          6,
+          16,
+          17,
+          21,
+          28,
+          33,
+          37
+        ],
+        "text": "The eldest Pandava, famed for righteousness and truthfulness, and for one fatal weakness: dice. He stakes everything and loses it, answers the yaksha’s riddles, and tells his only half-lie to bring down Drona. After the war he rules for thirty-six years, then walks to heaven, refusing to abandon a dog."
+      },
+      {
+        "id": "bhima",
+        "name": "Bhima",
+        "native": "भीम",
+        "life": "Epic tradition; no historical dates",
+        "role": "Second Pandava, son of the wind god Vayu",
+        "steps": [
+          9,
+          10,
+          15,
+          20,
+          22,
+          29,
+          30
+        ],
+        "text": "The strongest of the brothers, with a giant appetite and a giant temper. He carries his family from the burning house of lac, kills Hidimba, Baka, Jarasandha and Kichaka, and keeps both vows made in the dice hall: he drinks Duhshasana’s blood and breaks Duryodhana’s thigh. His son by Hidimbi is Ghatotkacha."
+      },
+      {
+        "id": "arjuna",
+        "name": "Arjuna",
+        "native": "अर्जुन",
+        "life": "Epic tradition; no historical dates",
+        "role": "Third Pandava, son of Indra",
+        "steps": [
+          7,
+          11,
+          12,
+          13,
+          14,
+          25,
+          27,
+          29,
+          34,
+          36
+        ],
+        "text": "The finest archer of his age, with the bow Gandiva. He wins Draupadi, marries Ulupi, Chitrangada and Subhadra, and wins divine weapons in exile. On the first day at Kurukshetra his doubt draws from Krishna the Bhagavad Gita. After Krishna’s death his strength deserts him."
+      },
+      {
+        "id": "krishna",
+        "name": "Krishna",
+        "native": "कृष्ण",
+        "life": "Epic tradition; no historical dates",
+        "role": "Yadava prince; Vishnu in human form in tradition",
+        "steps": [
+          11,
+          12,
+          14,
+          15,
+          16,
+          23,
+          25,
+          35
+        ],
+        "text": "Prince of Dwaraka, cousin and friend of the Pandavas. He refuses to fight in the war but drives Arjuna’s chariot, and his counsel, the Bhagavad Gita, is the epic’s heart. He also urges some of its most questioned tricks. His own clan dies as Gandhari cursed. His early life is told in the Harivamsha and the Puranas."
+      },
+      {
+        "id": "duryodhana",
+        "name": "Duryodhana",
+        "native": "दुर्योधन",
+        "life": "Epic tradition; no historical dates",
+        "role": "Eldest son of Dhritarashtra",
+        "steps": [
+          7,
+          16,
+          17,
+          23,
+          30,
+          31
+        ],
+        "text": "Eldest of the hundred Kauravas, a fine club fighter and a loyal friend to Karna, consumed by envy of his cousins. He tries to burn them, cheats them at dice and refuses them five villages. Bhima breaks his thigh on the eighteenth day. Some later tellings and plays treat him as a tragic hero."
+      },
+      {
+        "id": "gandhari",
+        "name": "Gandhari",
+        "native": "गान्धारी",
+        "life": "Epic tradition; no historical dates",
+        "role": "Queen of Dhritarashtra, mother of the Kauravas",
+        "steps": [
+          6,
+          32
+        ],
+        "text": "A princess of Gandhara who, married to a blind king, blindfolds herself for life to share his darkness. She warns her son Duryodhana against the war and will not wish him victory, only that right prevail. After the war she curses Krishna for not stopping it, and his clan dies thirty-six years later."
+      },
+      {
+        "id": "shakuni",
+        "name": "Shakuni",
+        "native": "शकुनि",
+        "life": "Epic tradition; no historical dates",
+        "role": "Prince of Gandhara, Duryodhana’s uncle",
+        "steps": [
+          17,
+          30
+        ],
+        "text": "Gandhari’s brother, who lives at the Kuru court and becomes Duryodhana’s closest adviser. A master of dice, he plays for his nephew against Yudhishthira and wins everything. In the war he fights for the Kauravas and is killed on the eighteenth day by Sahadeva, the youngest Pandava."
+      },
+      {
+        "id": "abhimanyu",
+        "name": "Abhimanyu",
+        "native": "अभिमन्यु",
+        "life": "Epic tradition; no historical dates",
+        "role": "Son of Arjuna and Subhadra",
+        "steps": [
+          14,
+          22,
+          27
+        ],
+        "text": "Arjuna’s son by Krishna’s sister, married to Uttara of Matsya. On the thirteenth day he breaks into Drona’s wheel formation, knowing no way out, and is killed by several warriors at once. His death leads to Jayadratha’s. His son Parikshit, born after the war, inherits the Kuru throne."
+      },
+      {
+        "id": "ashvatthama",
+        "name": "Ashvatthama",
+        "native": "अश्वत्थामा",
+        "life": "Epic tradition; no historical dates",
+        "role": "Son of Drona",
+        "steps": [
+          28,
+          31
+        ],
+        "text": "Drona’s only son, a great warrior on the Kaurava side. The false news of his death breaks his father’s will to fight. In revenge he leads the night raid on the sleeping Pandava camp. Krishna curses him to wander the earth, and in tradition he is one of the long-lived immortals (chiranjivi)."
+      },
+      {
+        "id": "vidura",
+        "name": "Vidura",
+        "native": "विदुर",
+        "life": "Epic tradition; no historical dates",
+        "role": "Counsellor to the Kuru kings",
+        "steps": [
+          4,
+          9,
+          17
+        ],
+        "text": "Son of Vyasa and a maid, half-brother of Dhritarashtra and Pandu, and in tradition an embodiment of Dharma. Barred from the throne by birth, he serves as the court’s conscience. He warns the Pandavas of the house of lac and begs Dhritarashtra to stop the dice game. His advice to the king is the Vidura Niti."
+      }
+    ]
+  }
+}
