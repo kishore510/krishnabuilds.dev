@@ -332,3 +332,7 @@ Pins are 28 map units across and scale with the map, so cities closer together t
 The Aztec Empire, and later the Maya, share a `mesoamerica` basemap from Sinaloa to Honduras and western Cuba. Like `near-east`, its coastlines, lakes and rivers are Natural Earth data (1:10m, public domain), simplified once with a throwaway script that is not kept; from now on it is plain data. Modern reservoirs are left out. Lake Texcoco and its neighbours were drained after the conquest and are not in Natural Earth, so the lakes of the Valley of Mexico about 1519 are one hand-drawn hole, a stylised outline after published reconstructions; Lake Pátzcuaro, too small for the 1:10m data, is drawn by hand as well.
 
 The Valley of Mexico packs Tenochtitlan, Texcoco, Azcapotzalco, Chapultepec and Culhuacan into about 40 km, so this map uses 140 units per degree (Near East uses 70). Even so, those pins are moved a little apart and the story's note says so, as on the Near East map, rather than adding pin-collision logic to the engine.
+
+## 2026-11-12 — Story Maps: Classic Maya names use the `emy` language tag
+
+The Maya story's native names are mostly Classic Maya, read from inscriptions (Mutul, Lakamha', Oxwitik). The story sets `nativeLang` to `emy`, the ISO 639-3 code for Epigraphic Mayan, rather than a modern Maya language, and uses `yua`, `quc` and `itz` for Yucatec, K'iche' and Itza' names. Lake Petén Itzá, too small for the 1:10m data, is added to the `mesoamerica` basemap by hand, as Lake Pátzcuaro was.
