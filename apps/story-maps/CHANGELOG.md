@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.23.0
+
+- New story map in Legends: The Mahabharata, the second of the Indian legends. From Vyasa and Ganesha at Mana, Shantanu and Ganga, Bhishma's vow, the princesses of Kashi and Karna set adrift to Champa, through the rival cousins (Drona's tournament, Ahichchhatra, the house of lac at Varanavata, Hidimba and Baka, Draupadi's choice at Kampilya), Indraprastha (the Khandava forest, Arjuna in Manipura and Dwaraka, Jarasandha, the royal consecration), the dice game and Draupadi in the hall, the exile (Kamyaka, Bhima and Hanuman, the yaksha's questions, the year in hiding at Virata's city), Krishna's peace mission and Karna's choice, the eighteen days at Kurukshetra from the Bhagavad Gita to the night raid, to Bhishma's teachings, the horse sacrifice, the end of the Yadavas at Prabhasa, the sea taking Dwaraka, the great journey and the critical edition: 39 chapters, a Kingdoms layer and 16 people cards.
+- Catalogue: the Mahabharata entry now opens the story; a new legend entry, the Bhagavad Gita, links to it.
+- Art: a burning-house glyph, for the house of lac.
+
 ## 0.22.0
 
 - New story map in Chronicles: The Chola Empire, following The Three Crowned Kings. From Vijayalaya's capture of Thanjavur about 848, Aditya's defeat of the Pallavas, Parantaka's Madurai, the Uttaramerur elections, Takkolam and Sembiyan Mahadevi, through Rajaraja I (Kandalur Salai, Sri Lanka, Vengi, the Maldives, the great temple at Thanjavur, the land survey, the Chudamani Vihara) and Rajendra I (all of Sri Lanka, the march to the Ganges, Gangaikonda Cholapuram, the raid on Srivijaya, the embassies to China, Koppam), the Chalukya Cholas (Vijayabahu, Kulottunga I, the Kalingattupparani, Sekkizhar and Kamban, Kulottunga III), to the Pandya revival and the last Chola in 1279, and the bronzes, merchant guilds and living temples: 29 chapters, a Powers layer that changes chapter by chapter, and 14 people cards.
