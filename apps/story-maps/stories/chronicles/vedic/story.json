@@ -1,0 +1,1453 @@
+{
+  "id": "vedic",
+  "title": "The Vedic Age",
+  "description": "An illustrated map of the Vedic age, from the Rigveda’s land of seven rivers through the Kuru kingdom, the move east to Videha and the Upanishads, to the great kingdoms and the living tradition of Vedic chanting.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Vedic age, from about 1500 BCE to the Vedic chanting of today",
+  "note": "Based on the Vedic texts, on archaeology and on the modern record; each chapter says which it follows. The Vedas were composed and passed down by memory, and their dates are debated: those given are the usual ranges. Stories the hymns and later texts tell are tagged Tradition. How Vedic Sanskrit reached South Asia is debated, and so is the Sarasvati, which is not drawn. The map is stylised and not to scale, and the areas under Lands are painted loosely.",
+  "places": {
+    "toward-mitanni": {
+      "name": "Toward Mitanni and the Hittites",
+      "at": [
+        58.6,
+        33.5
+      ],
+      "hidden": true
+    },
+    "swat": {
+      "name": "Swat valley",
+      "at": [
+        72.36,
+        34.77
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "sinauli": {
+      "name": "Sinauli",
+      "at": [
+        77.27,
+        29.13
+      ],
+      "glyph": "memorial",
+      "label": "bottom"
+    },
+    "sapta-sindhu": {
+      "name": "Land of the Seven Rivers",
+      "at": [
+        71.9,
+        32.5
+      ],
+      "glyph": "sacred-fire",
+      "label": "left"
+    },
+    "vipash": {
+      "name": "Beas and Sutlej meet",
+      "at": [
+        75.0,
+        31.15
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "parushni": {
+      "name": "Parushni (Ravi)",
+      "at": [
+        74.2,
+        31.55
+      ],
+      "glyph": "crossed-swords",
+      "label": "top"
+    },
+    "sarasvati": {
+      "name": "Sarasvati, by one reading",
+      "at": [
+        75.0,
+        29.55
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "kurukshetra": {
+      "name": "Kurukshetra",
+      "at": [
+        76.85,
+        29.97
+      ],
+      "glyph": "sacred-fire",
+      "label": "right"
+    },
+    "hastinapur": {
+      "name": "Hastinapur",
+      "at": [
+        78.02,
+        29.16
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "atranjikhera": {
+      "name": "Atranjikhera",
+      "at": [
+        78.68,
+        27.7
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "kampilya": {
+      "name": "Kampilya",
+      "at": [
+        79.27,
+        27.62
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "kaushambi": {
+      "name": "Kaushambi",
+      "at": [
+        81.39,
+        25.34
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "videha": {
+      "name": "Mithila (Janakpur)",
+      "at": [
+        85.92,
+        26.73
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "kashi": {
+      "name": "Kashi (Varanasi)",
+      "at": [
+        83.0,
+        25.32
+      ],
+      "glyph": "brick-city",
+      "label": "bottom"
+    },
+    "rajagriha": {
+      "name": "Rajagriha",
+      "at": [
+        85.42,
+        25.03
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "hampi": {
+      "name": "Vijayanagara (Hampi)",
+      "at": [
+        76.46,
+        15.33
+      ],
+      "glyph": "gopuram",
+      "label": "right"
+    },
+    "pune": {
+      "name": "Pune",
+      "at": [
+        73.83,
+        18.52
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "panjal": {
+      "name": "Panjal",
+      "at": [
+        76.3,
+        10.7
+      ],
+      "glyph": "sacred-fire",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "herders": {
+      "name": "Herders and their cattle",
+      "icon": "ox-cart"
+    },
+    "chariot": {
+      "name": "A war chariot",
+      "icon": "chariot"
+    },
+    "priest": {
+      "name": "A priest carrying the fire",
+      "icon": "monk"
+    },
+    "chronicle": {
+      "name": "The news",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "roots": {
+      "name": "Roots",
+      "color": "#8fcf8a"
+    },
+    "rigveda": {
+      "name": "The Rigveda",
+      "color": "#f29a2e"
+    },
+    "kuru": {
+      "name": "Kuru and Panchala",
+      "color": "#4fc3b0"
+    },
+    "east": {
+      "name": "East to Videha",
+      "color": "#e0573a"
+    },
+    "kingdoms": {
+      "name": "The great kingdoms",
+      "color": "#d9a62e"
+    },
+    "legacy": {
+      "name": "Living tradition",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "cart": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "war": {
+      "color": "#b3261e",
+      "width": 3,
+      "dash": "8 4",
+      "cap": "butt"
+    },
+    "fire": {
+      "color": "#e8632a",
+      "width": 3,
+      "dash": "2 5",
+      "cap": "round"
+    },
+    "news": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 12,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 40,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 60,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 77,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 86,
+        "color": "rgba(217,166,46,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "2000 BCE"
+      },
+      {
+        "at": 14,
+        "text": "1500"
+      },
+      {
+        "at": 43,
+        "text": "1200"
+      },
+      {
+        "at": 80,
+        "text": "600 BCE"
+      },
+      {
+        "at": 89,
+        "text": "1300s CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "swat",
+      "phase": "roots",
+      "title": "Cousins of Persian and Greek",
+      "when": "2nd millennium BCE",
+      "at": 2,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          70.5,
+          33.0
+        ],
+        "width": 18
+      },
+      "legs": [],
+      "text": "The language of the Vedas, an early form of Sanskrit, is Indo-European, like Persian, Greek and Latin, and its closest cousin is the Avestan of ancient Iran. How it reached South Asia is debated: most linguists favour migrations from Central Asia; a 2019 DNA study found steppe ancestry in people buried in the Swat valley from about 1200 BCE.",
+      "today": "Today: Swat district, Khyber Pakhtunkhwa, Pakistan."
+    },
+    {
+      "place": "sinauli",
+      "phase": "roots",
+      "title": "Carts in a grave",
+      "when": "about 2000 to 1800 BCE",
+      "at": 6,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          76.0,
+          29.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In 2018 the Archaeological Survey of India uncovered burials at Sinauli with three carts, their solid wheels sheathed in copper, beside swords, shields and a helmet. The excavators call them chariots and some link them to Vedic warriors. Others note the wheels are not spoked, and the graves are older than the Rigveda is usually dated.",
+      "today": "Today: Baghpat district, Uttar Pradesh, India."
+    },
+    {
+      "place": "swat",
+      "phase": "roots",
+      "title": "Gods named in a treaty",
+      "when": "about 1380 BCE",
+      "at": 10,
+      "source": "History",
+      "camera": {
+        "at": [
+          66.0,
+          33.0
+        ],
+        "width": 26
+      },
+      "legs": [
+        {
+          "from": "toward-mitanni",
+          "to": "swat",
+          "traveller": "chronicle",
+          "style": "news",
+          "bend": 0.1
+        }
+      ],
+      "text": "Far to the west, in a treaty between the Hittite king Suppiluliuma and Shattiwaza of Mitanni, in northern Syria, the gods called to witness include Mitra, Varuna, Indra and the Nasatyas, all gods of the Rigveda. A Mitanni horse-training manual uses Indo-Aryan words for numbers. So a language close to Vedic Sanskrit was spoken there by then.",
+      "today": "Today: The treaty tablets were found at Hattusa, Turkey, from 1906."
+    },
+    {
+      "place": "sapta-sindhu",
+      "phase": "rigveda",
+      "title": "The land of seven rivers",
+      "native": "सप्त सिन्धु",
+      "when": "about 1500 to 1200 BCE",
+      "at": 14,
+      "camera": {
+        "at": [
+          72.5,
+          32.0
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "The Rigveda, the oldest of the Vedas, gathers 1,028 hymns in ten books (mandalas), composed in Sanskrit by families of poet-seers (rishis). Its world is the land of seven rivers (sapta sindhu): the Indus and the rivers of the Punjab. One hymn names rivers from the Ganga in the east to the Kabul (Kubha) and Swat (Suvastu) in the west.",
+      "today": "Today: Punjab, in Pakistan and India."
+    },
+    {
+      "place": "sapta-sindhu",
+      "phase": "rigveda",
+      "title": "Fire and soma",
+      "native": "यज्ञ",
+      "when": "about 1500 to 1200 BCE",
+      "at": 18,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          72.2,
+          32.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The hymns were sung at the fire ritual (yajna). Its first hymn praises Agni, the fire god, who carries offerings to the gods. Priests pressed and drank soma, a juice from a plant that is itself praised as a god. Which plant it was is unknown; ephedra and certain mushrooms are among many suggestions.",
+      "today": "Today: Agni’s hymn is still recited as the Rigveda’s opening."
+    },
+    {
+      "place": "sapta-sindhu",
+      "phase": "rigveda",
+      "title": "Indra frees the waters",
+      "native": "इन्द्र",
+      "when": "about 1500 to 1200 BCE",
+      "at": 22,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          72.2,
+          32.3
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "About a quarter of the hymns praise Indra, the warrior god and drinker of soma. Fortified with it, he strikes the serpent Vritra with his thunderbolt (vajra) and frees the rivers it had held back. Varuna guards the cosmic order (rita), and the dawn goddess Ushas is praised in some of the finest hymns.",
+      "today": "Today: Indra is still named in Hindu prayer, though seldom worshipped alone."
+    },
+    {
+      "place": "sapta-sindhu",
+      "phase": "rigveda",
+      "title": "Cattle, horses and chariots",
+      "native": "गविष्टि",
+      "when": "about 1500 to 1200 BCE",
+      "at": 26,
+      "camera": {
+        "at": [
+          72.4,
+          32.4
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "swat",
+          "to": "sapta-sindhu",
+          "traveller": "herders",
+          "style": "cart",
+          "bend": 0.1
+        }
+      ],
+      "text": "The hymns describe herders more than farmers. Wealth is counted in cattle, and a word for battle means a search for cows (gavishti). Clans (jana) are led by a chief (rajan), with assemblies called sabha and samiti. Warriors fight from light horse-drawn chariots with spoked wheels. No towns or temples are described.",
+      "today": "Today: The cow is still honoured across India."
+    },
+    {
+      "place": "vipash",
+      "phase": "rigveda",
+      "title": "Vishvamitra and the rivers",
+      "native": "विपाश् शुतुद्री",
+      "when": "Rigveda, book 3",
+      "at": 30,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          74.8,
+          31.4
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "sapta-sindhu",
+          "to": "vipash",
+          "traveller": "herders",
+          "style": "cart",
+          "bend": 0.15
+        }
+      ],
+      "text": "In one hymn the seer Vishvamitra comes with the Bharata clan to where the Beas (Vipash) and the Sutlej (Shutudri) meet, swollen with water. He praises the rivers and asks them to let the people cross. The rivers answer him, as mothers to a child, and lower their waters. Vishvamitra is also the seer of the Gayatri mantra.",
+      "today": "Today: The two rivers meet at Harike, Punjab, India."
+    },
+    {
+      "place": "parushni",
+      "phase": "rigveda",
+      "title": "The Battle of the Ten Kings",
+      "native": "दाशराज्ञ",
+      "when": "Rigveda, book 7",
+      "at": 34,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          74.3,
+          31.5
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "vipash",
+          "to": "parushni",
+          "traveller": "chariot",
+          "style": "war",
+          "bend": -0.2
+        }
+      ],
+      "text": "Hymns in the seventh book tell how Sudas, king of the Bharatas, guided by his priest Vasishtha, defeats an alliance of ten kings on the Parushni (Ravi). Among his enemies are the Purus, Anus, Druhyus, Turvashas and Yadus; many drown in the river. Whether it records a real battle is debated, but it is often read that way.",
+      "today": "Today: The Ravi flows past Lahore, Pakistan."
+    },
+    {
+      "place": "sarasvati",
+      "phase": "rigveda",
+      "title": "Sarasvati, best of rivers",
+      "native": "सरस्वती",
+      "when": "about 1500 to 1200 BCE",
+      "at": 38,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          74.5,
+          30.2
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "The hymns praise the Sarasvati as best of mothers, best of rivers and best of goddesses, flowing from the mountains to the sea. Which river it was is debated. Many identify it with the Ghaggar-Hakra, now seasonal; others with the Helmand in Afghanistan, called Haraxvaiti in the Avesta. It is not drawn on this map.",
+      "today": "Today: Sarasvati is worshipped as the goddess of learning."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "kuru",
+      "title": "The Kuru kingdom",
+      "native": "कुरु",
+      "when": "from about 1200 BCE",
+      "at": 43,
+      "camera": {
+        "at": [
+          77.2,
+          29.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "sarasvati",
+          "to": "kurukshetra",
+          "traveller": "herders",
+          "style": "cart",
+          "bend": 0.12
+        }
+      ],
+      "text": "In the later Vedic texts, the Bharatas and Purus have joined as the Kurus, centred on Kurukshetra between the Sarasvati and the Yamuna. Many scholars, following Michael Witzel, see the Kuru realm as the first state in South Asia. The Atharvaveda praises its king Parikshit, under whom the people prosper. Its dates are debated.",
+      "today": "Today: Kurukshetra, Haryana, India."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "kuru",
+      "title": "Four Vedas",
+      "native": "वेद",
+      "when": "about 1200 to 800 BCE",
+      "at": 46,
+      "camera": {
+        "at": [
+          77.0,
+          29.9
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Under the Kurus, many scholars think, the hymns were gathered and the ritual set in order. There are now four Vedas: the Rigveda of hymns, the Samaveda of chants, the Yajurveda of ritual formulas and the Atharvaveda of spells and healing. Prose works (Brahmanas) explain the rites, and every syllable is learned by heart.",
+      "today": "Today: All four Vedas are still recited."
+    },
+    {
+      "place": "hastinapur",
+      "phase": "kuru",
+      "title": "Painted Grey Ware",
+      "when": "about 1200 to 600 BCE",
+      "at": 49,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          78.0,
+          28.9
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Across Haryana and the upper Ganga plain, villages of this time leave a fine grey pottery painted with black lines and dots. B. B. Lal excavated it at Hastinapur in 1950 to 1952 and linked it with the Mahabharata and the later Vedic people. Many archaeologists accept a link with the later Vedic age; the epic link is debated.",
+      "today": "Today: Meerut district, Uttar Pradesh, India."
+    },
+    {
+      "place": "atranjikhera",
+      "phase": "kuru",
+      "title": "Iron and the plough",
+      "native": "श्याम अयस्",
+      "when": "about 1200 to 600 BCE",
+      "at": 52,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          78.6,
+          27.8
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Later Vedic texts speak of a dark metal (shyama ayas), most likely iron, and of large ploughs pulled by teams of oxen. Rice and barley are grown and the herders settle. Iron tools and weapons appear in Painted Grey Ware villages such as Atranjikhera. Some much earlier dates for iron in the Ganga plain are debated.",
+      "today": "Today: Etah district, Uttar Pradesh, India."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "kuru",
+      "title": "Four orders of society",
+      "native": "वर्ण",
+      "when": "late Rigveda and after",
+      "at": 55,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          77.0,
+          29.9
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "A late Rigveda hymn tells how the gods sacrificed a cosmic man (purusha): from his mouth came the priests (brahmin), from his arms the warrior (rajanya), from his thighs the common people (vaishya), from his feet the servants (shudra). Later Vedic texts harden these four orders (varna). Most scholars think birth set them only gradually.",
+      "today": "Today: The varna idea still shapes caste in South Asia."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "kuru",
+      "title": "The horse sacrifice",
+      "native": "अश्वमेध",
+      "when": "later Vedic period",
+      "at": 58,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          77.6,
+          29.4
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Kings grow stronger and claim power through great rites: the royal consecration (rajasuya) and the horse sacrifice (ashvamedha). A horse wanders for a year, guarded by armed men, and the lands it crosses must submit or fight. The Shatapatha Brahmana says Janamejaya, son of Parikshit, performed it. The people pay tribute (bali).",
+      "today": "Today: Kurukshetra, Haryana, India."
+    },
+    {
+      "place": "videha",
+      "phase": "east",
+      "title": "Carrying the fire east",
+      "native": "विदेघ माथव",
+      "when": "Shatapatha Brahmana (date debated)",
+      "at": 63,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          81.5,
+          28.0
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "sarasvati",
+          "to": "videha",
+          "traveller": "priest",
+          "style": "fire",
+          "bend": -0.1
+        }
+      ],
+      "text": "The Shatapatha Brahmana tells how Videgha Mathava, with his priest Gotama Rahugana, followed the fire god Agni, who burned eastward from the Sarasvati. The fire stopped at the Sadanira river, usually taken as the Gandak. Beyond it the land was marshy and untilled; the Videhas settled there. Many read it as a memory of the eastward spread.",
+      "today": "Today: North Bihar, India, and south-east Nepal."
+    },
+    {
+      "place": "videha",
+      "phase": "east",
+      "title": "Debate at Janaka’s court",
+      "native": "जनक",
+      "when": "about 7th to 6th century BCE",
+      "at": 66,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.9,
+          26.6
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "The Brihadaranyaka Upanishad tells how King Janaka of Videha offers a thousand cows, gold tied to their horns, to the wisest priest. Yajnavalkya tells his pupil to drive them home, and answers every challenger. Gargi Vachaknavi presses him twice on what the world is woven upon. Tradition places Janaka’s capital, Mithila, at Janakpur.",
+      "today": "Today: Janakpur, Madhesh Province, Nepal."
+    },
+    {
+      "place": "kampilya",
+      "phase": "east",
+      "title": "A king’s five questions",
+      "native": "पञ्चाल",
+      "when": "about 7th to 6th century BCE",
+      "at": 69,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.4,
+          27.6
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Two Upanishads tell how young Shvetaketu, back from his studies, comes to the assembly of the Panchalas. Their king, Pravahana Jaivali, asks him five questions about what happens after death, and he cannot answer any. The king then teaches his father the path of rebirth, saying this knowledge had belonged to warriors, not priests.",
+      "today": "Today: Kampil, Farrukhabad district, Uttar Pradesh, India."
+    },
+    {
+      "place": "kampilya",
+      "phase": "east",
+      "title": "You are that",
+      "native": "तत् त्वम् असि",
+      "when": "about 7th to 6th century BCE",
+      "at": 72,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.3,
+          27.6
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "In the Chandogya Upanishad, the sage Uddalaka Aruni teaches Shvetaketu with salt dissolved in water: unseen, it is present in every sip. So the self (atman) is one with the whole (brahman): “you are that” (tat tvam asi). The Upanishads turn from the ritual to the self, and to ideas of karma and rebirth.",
+      "today": "Today: The Upanishads are the root of Vedanta philosophy."
+    },
+    {
+      "place": "kaushambi",
+      "phase": "east",
+      "title": "Hastinapura washed away",
+      "native": "कौशाम्बी",
+      "when": "about 8th century BCE (debated)",
+      "at": 75,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.8,
+          27.2
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "hastinapur",
+          "to": "kaushambi",
+          "traveller": "herders",
+          "style": "cart",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Puranas say that when the Ganga carried away Hastinapura, King Nichakshu, a descendant of Janamejaya, moved the capital to Kaushambi. At Hastinapur, B. B. Lal found a thick flood deposit ending the Painted Grey Ware town, and he linked the two. Whether they record the same flood is debated. Kaushambi becomes the capital of Vatsa.",
+      "today": "Today: Kaushambi district, Uttar Pradesh, India."
+    },
+    {
+      "place": "kashi",
+      "phase": "kingdoms",
+      "title": "Sixteen great kingdoms",
+      "native": "महाजनपद",
+      "when": "about 600 BCE",
+      "at": 80,
+      "source": "History",
+      "camera": {
+        "at": [
+          81.5,
+          26.0
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "By about 600 BCE, Buddhist texts list sixteen great kingdoms and republics (mahajanapadas), among them Kuru, Panchala, Kashi, Kosala, Vatsa and Magadha. Cities rise again for the first time since the Indus, with walls, a glossy black pottery and, later, punch-marked silver coins. Kashi, on the Ganga, is famed for its cloth and learning.",
+      "today": "Today: Varanasi, Uttar Pradesh, India."
+    },
+    {
+      "place": "rajagriha",
+      "phase": "kingdoms",
+      "title": "The sacrifice questioned",
+      "native": "राजगृह",
+      "when": "5th century BCE",
+      "at": 83,
+      "source": "History",
+      "camera": {
+        "at": [
+          84.5,
+          25.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In Magadha, ruled from Rajagriha by Bimbisara, new teachers question the Vedas. The Buddha and Mahavira, the last great teacher (tirthankara) of the Jains, reject animal sacrifice and the authority of the Vedas, and teach a path open to all. Their dates are debated. Magadha’s kings will later build The Maurya Empire.",
+      "today": "Today: Rajgir, Nalanda district, Bihar, India."
+    },
+    {
+      "place": "hampi",
+      "phase": "legacy",
+      "title": "Sayana’s commentary",
+      "native": "सायण",
+      "when": "14th century CE",
+      "at": 89,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.5,
+          15.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The Vedas were handed down by memory and written down only centuries later. At the court of Vijayanagara, under Bukka I and Harihara II, the scholar Sayana and his team wrote a commentary on all four Vedas, explaining every word. It became the most used guide to the hymns. See The Vijayanagara Empire for the court he served.",
+      "today": "Today: Hampi, Karnataka, India; a World Heritage Site."
+    },
+    {
+      "place": "pune",
+      "phase": "legacy",
+      "title": "Printed and preserved",
+      "when": "1849 to 2007 CE",
+      "at": 93,
+      "source": "History",
+      "camera": {
+        "at": [
+          75.0,
+          22.0
+        ],
+        "width": 26
+      },
+      "legs": [],
+      "text": "From 1849 to 1874 the German-born scholar Max Müller printed the first full edition of the Rigveda, with Sayana’s commentary, in Oxford, paid for by the East India Company. Indian scholars later made their own editions. In 2007, thirty Rigveda manuscripts at the Bhandarkar Oriental Research Institute in Pune joined UNESCO’s Memory of the World register.",
+      "today": "Today: The manuscripts are kept at the Bhandarkar Institute, Pune."
+    },
+    {
+      "place": "panjal",
+      "phase": "legacy",
+      "title": "The fire still lit",
+      "native": "अग्निचयन",
+      "when": "1975 CE to today",
+      "at": 97,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.3,
+          11.0
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "In 1975 Nambudiri priests in the Kerala village of Panjal performed the twelve-day fire altar rite (agnicayana), building a bird-shaped altar of about a thousand bricks, while Frits Staal and a film crew recorded it. In 2003 UNESCO proclaimed the tradition of Vedic chanting a masterpiece of humanity’s oral heritage. The hymns are still learned by heart.",
+      "today": "Today: Panjal, Thrissur district, Kerala, India."
+    }
+  ],
+  "realms": {
+    "toggle": "Lands",
+    "mainHeading": "Lands at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "sapta-sindhu",
+        "name": "Rigvedic lands",
+        "native": "सप्त सिन्धु",
+        "color": "#e0892e",
+        "active": [
+          [
+            3,
+            9
+          ]
+        ],
+        "label": {
+          "text": "Rigvedic clans",
+          "at": [
+            70.6,
+            33.9
+          ]
+        },
+        "area": [
+          [
+            68.8,
+            34.6
+          ],
+          [
+            70.8,
+            35.3
+          ],
+          [
+            72.8,
+            35.1
+          ],
+          [
+            74.5,
+            33.9
+          ],
+          [
+            76.0,
+            32.7
+          ],
+          [
+            77.3,
+            31.1
+          ],
+          [
+            77.8,
+            29.8
+          ],
+          [
+            77.3,
+            28.9
+          ],
+          [
+            75.5,
+            28.9
+          ],
+          [
+            73.5,
+            29.3
+          ],
+          [
+            71.5,
+            29.7
+          ],
+          [
+            70.0,
+            30.4
+          ],
+          [
+            69.2,
+            31.9
+          ],
+          [
+            68.6,
+            33.4
+          ]
+        ],
+        "facts": {
+          "Known from": "The Rigveda",
+          "Clans named": "Bharatas, Purus, Yadus, Turvashas, Anus, Druhyus and others",
+          "Today": "Eastern Afghanistan, Pakistan and north-west India"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Many clan chiefs (rajan); no one rules the whole land"
+          },
+          {
+            "from": 8,
+            "text": "Sudas of the Bharatas, in the Rigveda’s telling"
+          }
+        ],
+        "role": "Not a kingdom but a land of clans, where the hymns of the Rigveda were composed.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "The Bharatas defeat ten kings on the Parushni (Ravi)"
+          }
+        ]
+      },
+      {
+        "id": "kuru",
+        "name": "Kuru",
+        "native": "कुरु",
+        "color": "#2fa39a",
+        "active": [
+          [
+            10,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Kuru",
+          "at": [
+            77.7,
+            30.6
+          ]
+        },
+        "area": [
+          [
+            75.5,
+            30.6
+          ],
+          [
+            77.2,
+            30.9
+          ],
+          [
+            78.3,
+            30.1
+          ],
+          [
+            78.4,
+            28.8
+          ],
+          [
+            77.6,
+            28.2
+          ],
+          [
+            76.3,
+            28.5
+          ],
+          [
+            75.3,
+            29.3
+          ]
+        ],
+        "facts": {
+          "Heartland": "Kurukshetra and the upper Ganga–Yamuna plain",
+          "Capitals": "Asandivat; by tradition Hastinapura, later Kaushambi",
+          "Today": "Haryana, Delhi and western Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Parikshit, praised in the Atharvaveda"
+          },
+          {
+            "from": 15,
+            "text": "Janamejaya, son of Parikshit"
+          },
+          {
+            "from": 16,
+            "text": "Not named in these chapters"
+          },
+          {
+            "from": 20,
+            "text": "Nichakshu, in Puranic tradition"
+          },
+          {
+            "from": 21,
+            "text": "Not named"
+          }
+        ],
+        "role": "Formed when the Bharatas and Purus joined. Many scholars see it as the first state in South Asia, where the Vedas were gathered.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Its kings perform the horse sacrifice"
+          }
+        ]
+      },
+      {
+        "id": "panchala",
+        "name": "Panchala",
+        "native": "पञ्चाल",
+        "color": "#4f6fd0",
+        "active": [
+          [
+            12,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Panchala",
+          "at": [
+            79.8,
+            28.5
+          ]
+        },
+        "area": [
+          [
+            78.5,
+            29.5
+          ],
+          [
+            79.7,
+            29.3
+          ],
+          [
+            80.2,
+            28.2
+          ],
+          [
+            80.2,
+            27.0
+          ],
+          [
+            79.2,
+            26.7
+          ],
+          [
+            78.5,
+            27.5
+          ],
+          [
+            78.5,
+            28.6
+          ]
+        ],
+        "facts": {
+          "Capitals": "Ahichchhatra in the north, Kampilya in the south",
+          "Today": "Western and central Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 12,
+            "text": "Not named"
+          },
+          {
+            "from": 18,
+            "text": "Pravahana Jaivali, in the Upanishads"
+          },
+          {
+            "from": 20,
+            "text": "Not named"
+          }
+        ],
+        "role": "The Kurus’ eastern neighbour and partner: together, Kuru-Panchala is the heart of later Vedic culture.",
+        "ties": []
+      },
+      {
+        "id": "videha",
+        "name": "Videha",
+        "native": "विदेह",
+        "color": "#c2477a",
+        "active": [
+          [
+            16,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Videha",
+          "at": [
+            86.9,
+            26.2
+          ]
+        },
+        "area": [
+          [
+            84.4,
+            27.1
+          ],
+          [
+            85.6,
+            26.9
+          ],
+          [
+            86.9,
+            26.6
+          ],
+          [
+            86.9,
+            25.7
+          ],
+          [
+            85.6,
+            25.6
+          ],
+          [
+            84.6,
+            25.8
+          ]
+        ],
+        "facts": {
+          "Capital": "Mithila; tradition places it at Janakpur",
+          "Today": "North Bihar, India, and south-east Nepal"
+        },
+        "rulers": [
+          {
+            "from": 16,
+            "text": "Videgha Mathava, its founder in tradition"
+          },
+          {
+            "from": 17,
+            "text": "Janaka"
+          },
+          {
+            "from": 18,
+            "text": "Not named"
+          }
+        ],
+        "role": "The eastern edge of Vedic culture, beyond the Sadanira, famous for Janaka’s court of philosophers.",
+        "ties": []
+      },
+      {
+        "id": "magadha",
+        "name": "Magadha",
+        "native": "मगध",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            21,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Magadha",
+          "at": [
+            86.3,
+            23.7
+          ]
+        },
+        "area": [
+          [
+            84.3,
+            25.5
+          ],
+          [
+            86.6,
+            25.3
+          ],
+          [
+            86.6,
+            24.3
+          ],
+          [
+            85.0,
+            23.9
+          ],
+          [
+            84.0,
+            24.6
+          ]
+        ],
+        "facts": {
+          "Capital": "Rajagriha, later Pataliputra",
+          "Today": "South Bihar, India"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "Not certain"
+          },
+          {
+            "from": 22,
+            "text": "Bimbisara, then his son Ajatashatru"
+          }
+        ],
+        "role": "Looked down on in the Atharvaveda, it becomes the strongest of the great kingdoms.",
+        "ties": []
+      },
+      {
+        "id": "kosala",
+        "name": "Kosala",
+        "native": "कोसल",
+        "color": "#b5a33a",
+        "minor": true,
+        "active": [
+          [
+            21,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Kosala",
+          "at": [
+            82.0,
+            27.0
+          ]
+        },
+        "area": [
+          [
+            80.6,
+            27.9
+          ],
+          [
+            83.6,
+            27.5
+          ],
+          [
+            83.4,
+            26.2
+          ],
+          [
+            81.5,
+            26.0
+          ],
+          [
+            80.4,
+            26.8
+          ]
+        ],
+        "facts": {
+          "Cities": "Ayodhya (Saketa) and Shravasti",
+          "Today": "Central and eastern Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 22,
+            "text": "Prasenajit"
+          }
+        ],
+        "role": "A great kingdom north of the Ganga, rival of Magadha. Tradition makes Ayodhya Rama’s capital.",
+        "ties": []
+      },
+      {
+        "id": "kashi",
+        "name": "Kashi",
+        "native": "काशी",
+        "color": "#d9432a",
+        "minor": true,
+        "active": [
+          [
+            21,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Kashi",
+          "at": [
+            83.3,
+            26.3
+          ]
+        },
+        "area": [
+          [
+            82.3,
+            25.8
+          ],
+          [
+            83.7,
+            25.7
+          ],
+          [
+            83.8,
+            24.9
+          ],
+          [
+            82.5,
+            24.9
+          ]
+        ],
+        "facts": {
+          "City": "Varanasi",
+          "Today": "Around Varanasi, Uttar Pradesh"
+        },
+        "rulers": [],
+        "role": "A rich kingdom on the Ganga, taken by Kosala and then by Magadha.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "vishvamitra",
+        "name": "Vishvamitra",
+        "native": "विश्वामित्र",
+        "life": "Not known; tradition places him in the Rigvedic age",
+        "role": "Seer (rishi) of the Rigveda’s third book",
+        "steps": [
+          7
+        ],
+        "text": "Tradition names Vishvamitra and his family as the seers of the Rigveda’s third book, including the Gayatri mantra, still recited daily. In the hymns he serves the Bharatas and King Sudas; later stories make him a king who became a sage, and his rivalry with Vasishtha a famous theme."
+      },
+      {
+        "id": "vasishtha",
+        "name": "Vasishtha",
+        "native": "वसिष्ठ",
+        "life": "Not known; tradition places him in the Rigvedic age",
+        "role": "Seer of the Rigveda’s seventh book",
+        "steps": [
+          8
+        ],
+        "text": "Tradition names Vasishtha and his family as the seers of the Rigveda’s seventh book. In its hymns he is the priest of King Sudas, praying to Indra and Varuna for victory over the ten kings. In the later epics he becomes the family priest of Rama’s line."
+      },
+      {
+        "id": "sudas",
+        "name": "Sudas",
+        "native": "सुदास्",
+        "life": "Not known; named in the Rigveda",
+        "role": "King of the Bharatas",
+        "steps": [
+          8
+        ],
+        "text": "Sudas, descendant of Pijavana, is the Bharata king who, in the Rigveda’s seventh book, defeats the alliance of ten kings on the Parushni. His victory is often taken as the moment the Bharatas rose above the other clans. Some link India’s own name, Bharat, to them; tradition names it after a King Bharata."
+      },
+      {
+        "id": "witzel",
+        "name": "Michael Witzel",
+        "life": "born 1943",
+        "role": "German-born Sanskrit scholar at Harvard",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "Witzel argued in 1995 that the Kuru kingdom was the first state in South Asia, and that its kings and priests gathered the hymns and set the ritual in order. He has written widely on the Vedic texts and their geography. Some of his views on origins are disputed."
+      },
+      {
+        "id": "lal",
+        "name": "B. B. Lal",
+        "life": "1921 to 2022",
+        "role": "Indian archaeologist",
+        "steps": [
+          12,
+          20
+        ],
+        "text": "Braj Basi Lal excavated Hastinapur from 1950 to 1952, defining Painted Grey Ware and finding the flood layer he linked with the Puranic move to Kaushambi. He later led the Archaeological Survey of India. His links between sites and the epics, and some later views, are debated."
+      },
+      {
+        "id": "janamejaya",
+        "name": "Janamejaya",
+        "native": "जनमेजय",
+        "life": "Not known; named in later Vedic texts",
+        "role": "Kuru king",
+        "steps": [
+          15
+        ],
+        "text": "The Shatapatha Brahmana names Janamejaya, son of Parikshit, as a king for whom the priest Indrota Daivapa Shaunaka performed the horse sacrifice. In the Mahabharata he is Arjuna’s great-grandson, and the epic is first recited to him at his snake sacrifice."
+      },
+      {
+        "id": "yajnavalkya",
+        "name": "Yajnavalkya",
+        "native": "याज्ञवल्क्य",
+        "life": "Not known; tradition places him in Videha",
+        "role": "Sage of the Upanishads",
+        "steps": [
+          17
+        ],
+        "text": "Yajnavalkya is the leading voice of the Brihadaranyaka Upanishad and, by tradition, the teacher of the White Yajurveda. He wins Janaka’s cows, teaches the king, and explains the self to his wife Maitreyi before leaving home: the self can only be described as “not this, not this” (neti neti)."
+      },
+      {
+        "id": "gargi",
+        "name": "Gargi Vachaknavi",
+        "native": "गार्गी वाचक्नवी",
+        "life": "Not known; tradition places her in Videha",
+        "role": "Philosopher in the Upanishads",
+        "steps": [
+          17
+        ],
+        "text": "In the Brihadaranyaka Upanishad, Gargi questions Yajnavalkya at Janaka’s court on what everything is woven upon, until he warns her not to ask too far. She returns with two questions, like arrows, and then tells the assembly no one will beat him. She is one of the few women named as a debater."
+      },
+      {
+        "id": "uddalaka",
+        "name": "Uddalaka Aruni",
+        "native": "उद्दालक आरुणि",
+        "life": "Not known; tradition places him in Kuru-Panchala",
+        "role": "Teacher in the Upanishads",
+        "steps": [
+          18,
+          19
+        ],
+        "text": "Uddalaka Aruni, a Brahmin of the Kuru-Panchala land, teaches his son Shvetaketu in the Chandogya Upanishad that the self is one with all that is: “you are that”. He is also shown as a pupil, learning the doctrine of rebirth from King Pravahana Jaivali."
+      },
+      {
+        "id": "sayana",
+        "name": "Sayana",
+        "native": "सायण",
+        "life": "died 1387",
+        "role": "Scholar at the Vijayanagara court",
+        "steps": [
+          23
+        ],
+        "text": "Sayana served the Vijayanagara kings Bukka I and Harihara II as a minister and led the scholars who wrote commentaries on all four Vedas. His brother Madhava is often identified with Vidyaranya of Sringeri, though that identity is debated. European editors relied heavily on his work."
+      },
+      {
+        "id": "max-muller",
+        "name": "Friedrich Max Müller",
+        "life": "1823 to 1900",
+        "role": "German-born scholar at Oxford",
+        "steps": [
+          24
+        ],
+        "text": "Max Müller spent about 25 years editing the Rigveda with Sayana’s commentary, from manuscripts brought from India, and edited the fifty-volume Sacred Books of the East. He never visited India. His early dating of the Rigveda to about 1200 BCE was a guess he later admitted was uncertain."
+      },
+      {
+        "id": "staal",
+        "name": "Frits Staal",
+        "life": "1930 to 2012",
+        "role": "Dutch scholar of Vedic ritual",
+        "steps": [
+          25
+        ],
+        "text": "Staal, a professor at Berkeley, persuaded Nambudiri priests to perform the agnicayana in 1975 and recorded it with the film-maker Robert Gardner, in the film Altar of Fire and a two-volume book, Agni. He argued that Vedic ritual is followed for its own sake, an idea still debated."
+      }
+    ]
+  }
+}
