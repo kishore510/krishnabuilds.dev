@@ -1,0 +1,5908 @@
+{
+  "id": "egypt",
+  "title": "Pharaonic Egypt",
+  "description": "An illustrated map of ancient Egypt along the Nile, from the first herders and the pyramid builders through the Middle and New Kingdoms to Kush, Persia, Alexander and the Ptolemies, and the rediscovery of its writing and tombs.",
+  "canvas": "geo",
+  "basemap": "near-east",
+  "source": "Archaeology",
+  "nativeLang": "egy",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of ancient Egypt, from about 5000 BCE to today",
+  "note": "Based on excavated sites and on texts written in Egyptian, Greek and other languages; each chapter says which it follows. Dates before about 700 BCE are approximate, and scholars’ dates for the early kings differ by decades or more. Native names are given in Latin letters. The map is stylised and not to scale. Memphis and Giza are drawn a little apart from their true spots so their pins don’t overlap, and Saqqara, Deir el-Bahari, Deir el-Medina, the Valley of the Kings and Philae share the pins of the cities beside them. Rivers are drawn as they are today; the Nile through Lake Nasser follows the reservoir’s centre line, close to the old river. Lands under Powers are painted loosely.",
+  "places": {
+    "upper-nubia": {
+      "name": "Upriver, toward Upper Nubia and Kush",
+      "at": [
+        30.35,
+        20.0
+      ],
+      "hidden": true
+    },
+    "red-sea": {
+      "name": "The Red Sea coast",
+      "at": [
+        34.1,
+        26.4
+      ],
+      "hidden": true
+    },
+    "punt": {
+      "name": "Toward Punt",
+      "at": [
+        38.6,
+        20.3
+      ],
+      "hidden": true
+    },
+    "tjaru": {
+      "name": "Tjaru, the border fort",
+      "at": [
+        32.3,
+        30.85
+      ],
+      "hidden": true
+    },
+    "gaza": {
+      "name": "Gaza",
+      "at": [
+        34.45,
+        31.5
+      ],
+      "hidden": true
+    },
+    "paraetonium": {
+      "name": "Paraetonium",
+      "at": [
+        27.24,
+        31.3
+      ],
+      "hidden": true
+    },
+    "nabta": {
+      "name": "Nabta Playa",
+      "at": [
+        30.73,
+        22.51
+      ],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "hierakonpolis": {
+      "name": "Hierakonpolis",
+      "at": [
+        32.78,
+        25.1
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "abydos": {
+      "name": "Abydos",
+      "at": [
+        31.92,
+        26.18
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "memphis": {
+      "name": "Memphis",
+      "at": [
+        31.38,
+        29.72
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "giza": {
+      "name": "Giza",
+      "at": [
+        30.95,
+        30.08
+      ],
+      "glyph": "pyramid",
+      "label": "left"
+    },
+    "aswan": {
+      "name": "Aswan",
+      "at": [
+        32.89,
+        24.09
+      ],
+      "glyph": "pylon",
+      "label": "right"
+    },
+    "thebes": {
+      "name": "Thebes",
+      "at": [
+        32.64,
+        25.7
+      ],
+      "glyph": "pylon",
+      "label": "right"
+    },
+    "buhen": {
+      "name": "Buhen",
+      "at": [
+        31.33,
+        21.9
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "serabit": {
+      "name": "Serabit el-Khadim",
+      "at": [
+        33.46,
+        29.04
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "avaris": {
+      "name": "Avaris",
+      "at": [
+        31.82,
+        30.79
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "megiddo": {
+      "name": "Megiddo",
+      "at": [
+        35.18,
+        32.58
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "amarna": {
+      "name": "Amarna",
+      "at": [
+        30.9,
+        27.65
+      ],
+      "glyph": "sun-disc",
+      "label": "left"
+    },
+    "kadesh": {
+      "name": "Kadesh",
+      "at": [
+        36.51,
+        34.56
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "abu-simbel": {
+      "name": "Abu Simbel",
+      "at": [
+        31.63,
+        22.34
+      ],
+      "glyph": "pylon",
+      "label": "right"
+    },
+    "sais": {
+      "name": "Sais",
+      "at": [
+        30.77,
+        30.96
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "pelusium": {
+      "name": "Pelusium",
+      "at": [
+        32.57,
+        31.04
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "siwa": {
+      "name": "Siwa",
+      "at": [
+        25.52,
+        29.2
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "alexandria": {
+      "name": "Alexandria",
+      "at": [
+        29.92,
+        31.2
+      ],
+      "glyph": "lighthouse",
+      "label": "left"
+    },
+    "rosetta": {
+      "name": "Rosetta",
+      "at": [
+        30.42,
+        31.4
+      ],
+      "glyph": "stela",
+      "label": "top"
+    }
+  },
+  "travellers": {
+    "fleet": {
+      "name": "A fleet on the Nile",
+      "icon": "reed-boat"
+    },
+    "caravan": {
+      "name": "Harkhuf’s caravan",
+      "icon": "prince"
+    },
+    "army": {
+      "name": "An Egyptian army",
+      "icon": "chariot"
+    },
+    "ships": {
+      "name": "Hatshepsut’s ships",
+      "icon": "reed-boat"
+    },
+    "kushites": {
+      "name": "The army of Kush",
+      "icon": "soldier"
+    },
+    "persians": {
+      "name": "The Persian army",
+      "icon": "horse"
+    },
+    "macedonians": {
+      "name": "Alexander’s army",
+      "icon": "hoplite"
+    }
+  },
+  "phases": {
+    "roots": {
+      "name": "Before the pharaohs",
+      "color": "#8fcf8a"
+    },
+    "pyramids": {
+      "name": "The pyramid age",
+      "color": "#f2c14e"
+    },
+    "middle": {
+      "name": "Collapse and recovery",
+      "color": "#4fc3b0"
+    },
+    "empire": {
+      "name": "The New Kingdom",
+      "color": "#f29a2e"
+    },
+    "foreign": {
+      "name": "Kush, Persia and the Greeks",
+      "color": "#e0573a"
+    },
+    "rediscovery": {
+      "name": "Rediscovery",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "river": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "exile": {
+      "color": "#3a2a20",
+      "width": 3,
+      "dash": "1 6",
+      "cap": "round"
+    },
+    "legend": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "trade": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 12,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 31.5,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 47,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 68,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 86.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "5000 BCE"
+      },
+      {
+        "at": 22,
+        "text": "2560"
+      },
+      {
+        "at": 49,
+        "text": "1470"
+      },
+      {
+        "at": 70,
+        "text": "728"
+      },
+      {
+        "at": 91,
+        "text": "1822 CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "nabta",
+      "phase": "roots",
+      "title": "Stones in the desert",
+      "when": "from about 5000 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          30.9,
+          23.4
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "When the Sahara was wetter, herders brought cattle to a seasonal lake west of the Nile. They raised a small ring of upright stones, which some think lined up with the midsummer sunrise, and buried cattle under stone mounds. Its dates and meaning are debated. As the rains failed, people moved toward the Nile valley.",
+      "today": "Today: the Western Desert, about 100 km west of Abu Simbel, Egypt."
+    },
+    {
+      "place": "hierakonpolis",
+      "phase": "roots",
+      "title": "Chiefs of the south",
+      "native": "Nekhen",
+      "when": "about 3500 BCE",
+      "at": 6,
+      "camera": {
+        "at": [
+          32.5,
+          25.6
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Along the southern Nile the Naqada culture grows rich on farming and trade. At Nekhen, a town of thousands, brewers make beer in large vats and leaders are buried in grand tombs. One, Tomb 100, is painted with boats, animals and a man striking captives. Rival centres grow at Naqada and Abydos, and power gathers in fewer hands.",
+      "today": "Today: Kom el-Ahmar, between Luxor and Aswan, Egypt."
+    },
+    {
+      "place": "abydos",
+      "phase": "roots",
+      "title": "The first writing",
+      "native": "Abdju",
+      "when": "about 3250 BCE",
+      "at": 10,
+      "camera": {
+        "at": [
+          32.0,
+          26.3
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "In tomb U-j at Abydos, someone of high rank is buried with hundreds of jars of imported wine and small bone tags carved with signs. Many read them as early hieroglyphs naming places and goods. If so, they are among the oldest writing anywhere, as old as the first tablets of Mesopotamia. Günter Dreyer’s team found them in 1988.",
+      "today": "Today: near el-Balyana, Sohag, Egypt."
+    },
+    {
+      "place": "memphis",
+      "phase": "pyramids",
+      "title": "Two lands become one",
+      "native": "Ineb-hedj",
+      "when": "about 3100 BCE",
+      "at": 14,
+      "camera": {
+        "at": [
+          31.8,
+          27.6
+        ],
+        "width": 7.5
+      },
+      "legs": [
+        {
+          "from": "hierakonpolis",
+          "to": "memphis",
+          "traveller": "fleet",
+          "style": "river",
+          "bend": 0.08
+        }
+      ],
+      "text": "Kings from the south take the north, joining Upper Egypt, the valley, to Lower Egypt, the delta. A palette shows King Narmer wearing the crown of each. Tradition, written down much later, says the first king, Menes, founded Memphis where valley meets delta. Historians count kings in the 30 dynasties of Manetho, an Egyptian priest of the 200s BCE.",
+      "today": "Today: Mit Rahina, south of Cairo, Egypt."
+    },
+    {
+      "place": "memphis",
+      "phase": "pyramids",
+      "title": "The first pyramid",
+      "when": "about 2650 BCE",
+      "at": 18,
+      "camera": {
+        "at": [
+          31.2,
+          29.9
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "At Saqqara, the burial ground of Memphis, King Djoser’s tomb rises in six stone steps, about 62 metres high, inside a walled court of shrines carved to look like reed and wood. It is the oldest known large stone building. Later Egyptians credited its design to his official Imhotep, and later worshipped Imhotep as a god of healing.",
+      "today": "Today: Saqqara, south of Cairo; the Step Pyramid reopened in 2020 after restoration."
+    },
+    {
+      "place": "giza",
+      "phase": "pyramids",
+      "title": "The Great Pyramid",
+      "native": "Akhet Khufu",
+      "when": "about 2560 BCE",
+      "at": 22,
+      "camera": {
+        "at": [
+          31.4,
+          29.9
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Khufu’s pyramid is built of some 2.3 million stone blocks and stood about 146 metres tall, the tallest building on Earth for about 3,800 years. Logbooks found at Wadi al-Jarf, the oldest inscribed papyri known, record a crew under an inspector named Merer shipping limestone from the Tura quarries to Giza. Khufu’s father Sneferu had built three pyramids.",
+      "today": "Today: Giza, on the edge of Cairo; a World Heritage Site."
+    },
+    {
+      "place": "giza",
+      "phase": "pyramids",
+      "title": "The builders’ town",
+      "when": "about 2500 BCE",
+      "at": 25,
+      "camera": {
+        "at": [
+          31.2,
+          30.0
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "South of the Sphinx, teams led by Mark Lehner and Zahi Hawass have dug since the late 1980s, finding bakeries, sleeping halls and heaps of cattle, sheep and fish bones: a town that fed the builders, with workers buried in tombs of their own. The builders seem to have been paid crews and farmers serving in turns, not slaves.",
+      "today": "Today: Heit el-Ghurab, the Lost City of the Pyramid Builders, Giza, Egypt."
+    },
+    {
+      "place": "aswan",
+      "phase": "pyramids",
+      "title": "A dancer from Yam",
+      "native": "Abu",
+      "when": "2200s BCE",
+      "at": 29,
+      "camera": {
+        "at": [
+          32.0,
+          22.6
+        ],
+        "width": 6.5
+      },
+      "legs": [
+        {
+          "from": "aswan",
+          "to": "upper-nubia",
+          "traveller": "caravan",
+          "style": "trade",
+          "bend": -0.1
+        }
+      ],
+      "text": "Harkhuf, governor at Elephantine on Egypt’s southern border, leads caravans to Yam, a land whose place is debated, returning with incense, ebony and leopard skins. Once he brings back a dancer, probably a pygmy or dwarf. The boy king Pepi II writes, thrilled, wanting the dancer checked on ten times a night. Harkhuf carved the letter on his tomb.",
+      "today": "Today: the Qubbet el-Hawa tombs, Aswan, Egypt."
+    },
+    {
+      "place": "thebes",
+      "phase": "middle",
+      "title": "Egypt united again",
+      "native": "Waset",
+      "when": "about 2055 BCE",
+      "at": 34,
+      "camera": {
+        "at": [
+          32.0,
+          27.6
+        ],
+        "width": 7.5
+      },
+      "legs": [],
+      "text": "After Pepi II, royal power fades. For more than a century rival kings rule from Herakleopolis and from Thebes, while governors run their own provinces. Later writings describe famine, though how bad things were is debated. Mentuhotep II of Thebes defeats the north and reunites Egypt, and builds a terraced tomb-temple in the cliffs at Deir el-Bahari.",
+      "today": "Today: Luxor’s west bank, Egypt."
+    },
+    {
+      "place": "buhen",
+      "phase": "middle",
+      "title": "Forts on the Nile",
+      "when": "about 1860 BCE",
+      "at": 38,
+      "camera": {
+        "at": [
+          31.9,
+          23.0
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "aswan",
+          "to": "buhen",
+          "traveller": "fleet",
+          "style": "river",
+          "bend": 0.05
+        }
+      ],
+      "text": "Middle Kingdom kings push into Lower Nubia for its gold, and Senusret III strengthens a chain of mud-brick forts at the Second Cataract. Buhen has towers, a ditch and loopholes for archers. A stela at Semna, a little upriver, bars Nubians from passing north except to trade. Beyond lies a rising power, the kingdom of Kush at Kerma.",
+      "today": "Today: under Lake Nasser, near Wadi Halfa, Sudan; Buhen’s temple was moved to Khartoum."
+    },
+    {
+      "place": "serabit",
+      "phase": "middle",
+      "title": "Letters from pictures",
+      "when": "perhaps about 1850 BCE",
+      "at": 41,
+      "camera": {
+        "at": [
+          33.4,
+          29.4
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Egyptian expeditions mine turquoise in the Sinai hills, with workers from Canaan. Here someone scratched texts in a few dozen signs borrowed from hieroglyphs, each standing for the first sound of its name: an ox head for aleph, a house for bet. This early alphabet is the ancestor of Phoenician, Hebrew, Greek, Latin and Arabic letters. Its date is debated.",
+      "today": "Today: South Sinai, Egypt."
+    },
+    {
+      "place": "avaris",
+      "phase": "middle",
+      "title": "Rulers of foreign lands",
+      "native": "Hut-waret",
+      "when": "about 1650 to 1550 BCE",
+      "at": 45,
+      "camera": {
+        "at": [
+          32.2,
+          27.8
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "thebes",
+          "to": "avaris",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.06
+        }
+      ],
+      "text": "As the Middle Kingdom weakens, people from the Levant settle in the eastern delta. Their leaders, called rulers of foreign lands (heqau khasut), Hyksos in Greek, rule the north from Avaris, while Theban kings hold the south and Kush the far south. Horses and chariots reach Egypt in these years. About 1550 BCE, Ahmose of Thebes takes Avaris.",
+      "today": "Today: Tell el-Dab‘a, Sharqia, Egypt, dug by Manfred Bietak’s team since 1966."
+    },
+    {
+      "place": "thebes",
+      "phase": "empire",
+      "title": "Hatshepsut and Punt",
+      "when": "about 1470 BCE",
+      "at": 49,
+      "camera": {
+        "at": [
+          34.6,
+          23.8
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "thebes",
+          "to": "red-sea",
+          "traveller": "ships",
+          "style": "trade",
+          "bend": 0.1
+        },
+        {
+          "from": "red-sea",
+          "to": "punt",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": -0.08
+        }
+      ],
+      "text": "Hatshepsut, regent for the young Thutmose III, has herself crowned king. Her temple at Deir el-Bahari, Holiest of Holies (Djeser-djeseru), shows a fleet sailing to Punt, a land of incense on the southern Red Sea, and returning with myrrh trees, ebony and baboons. Where Punt lay is debated: Eritrea, Sudan, Somalia and Arabia have all been proposed.",
+      "today": "Today: Deir el-Bahari, Luxor’s west bank, Egypt."
+    },
+    {
+      "place": "megiddo",
+      "phase": "empire",
+      "title": "The battle of Megiddo",
+      "when": "about 1457 BCE",
+      "at": 52,
+      "source": "History",
+      "camera": {
+        "at": [
+          33.9,
+          31.9
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "tjaru",
+          "to": "gaza",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.04
+        },
+        {
+          "from": "gaza",
+          "to": "megiddo",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.06
+        }
+      ],
+      "text": "Thutmose III marches against Canaanite rulers led by the king of Kadesh. Against his officers’ advice he takes a narrow pass, surprises them at Megiddo, and besieges the city for seven months. His annals, carved at Karnak, record it: the first battle known in such detail. In later campaigns he crosses the Euphrates, and Egypt has an empire.",
+      "today": "Today: Tel Megiddo, northern Israel; its name is the root of Armageddon."
+    },
+    {
+      "place": "amarna",
+      "phase": "empire",
+      "title": "City of the sun disc",
+      "native": "Akhetaten",
+      "when": "about 1346 BCE",
+      "at": 56,
+      "camera": {
+        "at": [
+          31.0,
+          27.7
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "Akhenaten turns from Amun and the old gods to worship one god, the sun disc (Aten), and builds a new capital on bare desert, Horizon of the Aten (Akhetaten). Art changes: the royal family is shown at ease. Clay letters found here in 1887 record dealings with Babylon, Mitanni and the Hittites. After his death the city is abandoned.",
+      "today": "Today: Tell el-Amarna, Minya, Egypt."
+    },
+    {
+      "place": "kadesh",
+      "phase": "empire",
+      "title": "The battle of Kadesh",
+      "when": "1274 BCE",
+      "at": 60,
+      "source": "History",
+      "camera": {
+        "at": [
+          34.6,
+          32.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "avaris",
+          "to": "gaza",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.04
+        },
+        {
+          "from": "gaza",
+          "to": "kadesh",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.08
+        }
+      ],
+      "text": "Ramesses II marches north from his capital, Pi-Ramesses, beside old Avaris, to take Kadesh from the Hittites under Muwatalli II. Misled by spies, he is ambushed; both sides claim victory, but Kadesh stays Hittite. About 1259 BCE Ramesses and Hattusili III agree one of the earliest known peace treaties, kept in Egyptian at Karnak and in Akkadian at Hattusa.",
+      "today": "Today: Tell Nebi Mend, near Homs, Syria."
+    },
+    {
+      "place": "abu-simbel",
+      "phase": "empire",
+      "title": "Temples in the cliff",
+      "when": "about 1264 BCE",
+      "at": 63,
+      "camera": {
+        "at": [
+          31.8,
+          22.7
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "In Nubia, Ramesses has two temples cut into a sandstone cliff. Four seated statues of himself, about 20 metres high, guard the larger; the smaller honours his queen Nefertari and the goddess Hathor. Twice a year, in February and October, the rising sun reaches the inner shrine, lighting statues of gods and king. They tell Nubia who rules it.",
+      "today": "Today: Aswan Governorate, Egypt, near the Sudan border."
+    },
+    {
+      "place": "thebes",
+      "phase": "empire",
+      "title": "The first recorded strike",
+      "when": "about 1157 BCE",
+      "at": 66,
+      "source": "History",
+      "camera": {
+        "at": [
+          32.6,
+          25.8
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "At Deir el-Medina, village of the craftsmen who cut the royal tombs, grain rations come late. In the 29th year of Ramesses III, who fought off the Sea Peoples, the workers down tools and sit in protest by the temples: the first strike on record, noted by the scribe Amennakht. By about 1070 BCE the New Kingdom splits apart.",
+      "today": "Today: Deir el-Medina, Luxor’s west bank, Egypt."
+    },
+    {
+      "place": "memphis",
+      "phase": "foreign",
+      "title": "Piye marches north",
+      "when": "about 728 BCE",
+      "at": 70,
+      "source": "History",
+      "camera": {
+        "at": [
+          31.6,
+          25.2
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "upper-nubia",
+          "to": "thebes",
+          "traveller": "kushites",
+          "style": "river",
+          "bend": 0.06
+        },
+        {
+          "from": "thebes",
+          "to": "memphis",
+          "traveller": "kushites",
+          "style": "march",
+          "bend": 0.05
+        }
+      ],
+      "text": "Egypt is divided among rival rulers. From Napata, far up the Nile, King Piye of Kush, who already holds Thebes, sails north, storms Memphis and takes the surrender of the delta princes, as his victory stela tells. His family rules Egypt as the 25th Dynasty until the Assyrians drive them out, sacking Thebes about 663 BCE.",
+      "today": "Today: Mit Rahina; Piye’s stela is in the Egyptian Museum, Cairo."
+    },
+    {
+      "place": "sais",
+      "phase": "foreign",
+      "title": "A revival at Sais",
+      "native": "Sau",
+      "when": "from 664 BCE",
+      "at": 73,
+      "source": "History",
+      "camera": {
+        "at": [
+          31.0,
+          30.6
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Psamtik I, a prince of Sais who first ruled under Assyria, reunites Egypt with Greek and Carian soldiers. His dynasty looks back to the age of the pyramids, copying its art and texts. Greek traders settle at Naukratis nearby, and his son Necho II, Herodotus says, begins a canal from the Nile to the Red Sea. Little of Sais survives.",
+      "today": "Today: Sa el-Hagar, Gharbia, Egypt."
+    },
+    {
+      "place": "pelusium",
+      "phase": "foreign",
+      "title": "The Persians",
+      "when": "525 BCE",
+      "at": 76,
+      "source": "History",
+      "camera": {
+        "at": [
+          36.0,
+          32.0
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "gaza",
+          "to": "pelusium",
+          "traveller": "persians",
+          "style": "march",
+          "bend": 0.05
+        }
+      ],
+      "text": "The Persian king Cambyses II defeats Psamtik III at Pelusium, Egypt’s eastern gateway, and Egypt becomes a province (satrapy) of the Persian Empire. Darius I finishes the Red Sea canal. Egypt breaks free about 404 BCE, but the Persians return in 343 BCE, and Nectanebo II, the last native king of ancient Egypt, flees south.",
+      "today": "Today: Tell el-Farama, North Sinai, Egypt."
+    },
+    {
+      "place": "siwa",
+      "phase": "foreign",
+      "title": "Alexander and the oracle",
+      "when": "332 to 331 BCE",
+      "at": 79,
+      "source": "History",
+      "camera": {
+        "at": [
+          29.6,
+          30.0
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "gaza",
+          "to": "pelusium",
+          "traveller": "macedonians",
+          "style": "march",
+          "bend": 0.05
+        },
+        {
+          "from": "pelusium",
+          "to": "memphis",
+          "traveller": "macedonians",
+          "style": "march",
+          "bend": 0.06
+        },
+        {
+          "from": "memphis",
+          "to": "alexandria",
+          "traveller": "macedonians",
+          "style": "river",
+          "bend": -0.06
+        },
+        {
+          "from": "alexandria",
+          "to": "paraetonium",
+          "traveller": "macedonians",
+          "style": "march",
+          "bend": 0.04
+        },
+        {
+          "from": "paraetonium",
+          "to": "siwa",
+          "traveller": "macedonians",
+          "style": "march",
+          "bend": 0.08
+        }
+      ],
+      "text": "Alexander of Macedon takes Egypt from the Persians without a fight in 332 BCE. On the coast he founds Alexandria, then crosses the desert to the oracle of Amun at Siwa, where, ancient writers say, the priests greet him as the god’s son. Egypt’s temples show him as pharaoh. He leaves in 331 BCE and never returns alive.",
+      "today": "Today: Siwa Oasis, Matrouh, Egypt; the oracle’s temple stands at Aghurmi."
+    },
+    {
+      "place": "alexandria",
+      "phase": "foreign",
+      "title": "The Ptolemies",
+      "native": "Alexandreia",
+      "lang": "grc",
+      "when": "305 to 30 BCE",
+      "at": 82,
+      "source": "History",
+      "camera": {
+        "at": [
+          30.2,
+          30.6
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Ptolemy, one of Alexander’s generals, makes himself king, and his Greek-speaking family rules as pharaohs for three centuries. Alexandria gains the great Library and the Pharos lighthouse, one of the Seven Wonders. In 30 BCE, after defeat by Octavian, Cleopatra VII dies, by most accounts by her own hand, and Egypt becomes a province of Rome.",
+      "today": "Today: Alexandria, Egypt; the Qaitbay fort stands where the Pharos stood."
+    },
+    {
+      "place": "aswan",
+      "phase": "foreign",
+      "title": "The last hieroglyphs",
+      "when": "394 CE",
+      "at": 85,
+      "camera": {
+        "at": [
+          32.9,
+          24.2
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "On the island of Philae, near Aswan, the temple of Isis draws worshippers long after Egypt becomes Roman, then Christian. In 394 CE someone carves the last known hieroglyphic inscription there; the last known text in demotic, the everyday script, follows in 452. About 535, under Emperor Justinian, the temple is closed. Soon no one can read the old writing.",
+      "today": "Today: Philae’s temples were moved to nearby Agilkia island, a project finished in 1980."
+    },
+    {
+      "place": "rosetta",
+      "phase": "rediscovery",
+      "title": "The Rosetta Stone",
+      "native": "Rashid",
+      "lang": "ar",
+      "when": "1799",
+      "at": 88,
+      "source": "History",
+      "camera": {
+        "at": [
+          30.6,
+          31.0
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Napoleon’s army invades Egypt in 1798, bringing scholars who measure and draw its monuments. In July 1799, French soldiers rebuilding a fort near Rashid, which Europeans call Rosetta, find a broken slab carved with one decree of 196 BCE in three scripts: hieroglyphs, demotic and Greek. When the French surrender in 1801, the British take it to London.",
+      "today": "Today: Rashid, Beheira, Egypt; the stone is in the British Museum, and Egyptian scholars have called for its return."
+    },
+    {
+      "place": "rosetta",
+      "phase": "rediscovery",
+      "title": "Champollion reads the signs",
+      "when": "1822",
+      "at": 91,
+      "source": "History",
+      "camera": {
+        "at": [
+          31.0,
+          29.0
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Thomas Young, in England, works out the sounds of a few signs inside royal name rings (cartouches). Jean-François Champollion, in Paris,, who knows Coptic, the last stage of Egyptian, goes further. In September 1822 he reads the names Ramesses and Thutmose, and shows that hieroglyphs mix signs for sounds with signs for ideas. Egypt’s own records can be read again.",
+      "today": "Today: Champollion’s birthplace, Figeac in France, has a museum of the world’s writing."
+    },
+    {
+      "place": "thebes",
+      "phase": "rediscovery",
+      "title": "Tutankhamun’s tomb",
+      "when": "1922",
+      "at": 94,
+      "source": "History",
+      "camera": {
+        "at": [
+          32.6,
+          25.8
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "In November 1922 Howard Carter, paid by Lord Carnarvon, finds a step below workmen’s huts in the Valley of the Kings. Behind sealed doors lies the nearly intact tomb of Tutankhamun, who became king as a boy about 1332 BCE and restored the old gods after Akhenaten. Recording and clearing its more than 5,000 objects takes ten years.",
+      "today": "Today: the tomb is in the Valley of the Kings, Luxor; its treasures are in the Grand Egyptian Museum."
+    },
+    {
+      "place": "abu-simbel",
+      "phase": "rediscovery",
+      "title": "Moving the temples",
+      "when": "1964 to 1968",
+      "at": 97,
+      "source": "History",
+      "camera": {
+        "at": [
+          32.2,
+          23.2
+        ],
+        "width": 5.5
+      },
+      "legs": [],
+      "text": "The Aswan High Dam will flood Nubia under Lake Nasser. UNESCO appeals for help, and engineers cut Abu Simbel’s temples into more than 1,000 blocks and rebuild them 65 metres higher. Other temples are moved too, and some given to countries that helped, like the Temple of Dendur in New York. Many Nubians lose their homes to the lake.",
+      "today": "Today: Abu Simbel, on the shore of Lake Nasser, Egypt."
+    },
+    {
+      "place": "giza",
+      "phase": "rediscovery",
+      "title": "A museum by the pyramids",
+      "when": "2025",
+      "at": 99.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          31.2,
+          30.0
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Within sight of the pyramids, the Grand Egyptian Museum opens fully in November 2025, after some two decades of building, with all of Tutankhamun’s treasures shown together for the first time. Digging goes on along the Nile, and new finds, from workers’ towns to papyri, keep changing the picture of how ordinary Egyptians lived.",
+      "today": "Today: Giza, Egypt."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "egypt",
+        "name": "Egypt",
+        "native": "Kemet",
+        "lang": "egy",
+        "color": "#e0a32e",
+        "active": [
+          [
+            3,
+            17
+          ],
+          [
+            19,
+            19
+          ]
+        ],
+        "label": {
+          "text": "Egypt",
+          "at": [
+            30.9,
+            27.2
+          ],
+          "moves": [
+            {
+              "from": 11,
+              "at": [
+                31.75,
+                26.95
+              ]
+            },
+            {
+              "from": 12,
+              "at": [
+                30.9,
+                27.2
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                8
+              ],
+              [
+                19,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  32.57,
+                  24.92
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  32.35,
+                  30.5
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.1
+                ],
+                [
+                  33.24,
+                  24.01
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  30.5,
+                  21.5
+                ],
+                [
+                  31.19,
+                  22.37
+                ],
+                [
+                  31.93,
+                  23.02
+                ],
+                [
+                  32.21,
+                  22.89
+                ],
+                [
+                  32.64,
+                  23.4
+                ],
+                [
+                  32.57,
+                  24.94
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  32.35,
+                  30.5
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.08
+                ],
+                [
+                  33.26,
+                  23.28
+                ],
+                [
+                  32.57,
+                  22.37
+                ],
+                [
+                  32.21,
+                  22.44
+                ],
+                [
+                  31.65,
+                  21.93
+                ],
+                [
+                  31.0,
+                  21.1
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  32.57,
+                  24.92
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.62,
+                  27.23
+                ],
+                [
+                  31.1,
+                  27.67
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.1
+                ],
+                [
+                  33.24,
+                  24.01
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                12
+              ],
+              [
+                17,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  30.31,
+                  20.19
+                ],
+                [
+                  30.29,
+                  19.95
+                ],
+                [
+                  30.05,
+                  20.92
+                ],
+                [
+                  31.18,
+                  22.36
+                ],
+                [
+                  31.93,
+                  23.02
+                ],
+                [
+                  32.21,
+                  22.89
+                ],
+                [
+                  32.64,
+                  23.4
+                ],
+                [
+                  32.57,
+                  24.94
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  33.13,
+                  31.17
+                ],
+                [
+                  33.67,
+                  31.13
+                ],
+                [
+                  34.18,
+                  31.3
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.97,
+                  29.56
+                ],
+                [
+                  34.74,
+                  29.27
+                ],
+                [
+                  34.62,
+                  28.76
+                ],
+                [
+                  34.45,
+                  28.36
+                ],
+                [
+                  34.4,
+                  28.02
+                ],
+                [
+                  34.22,
+                  27.76
+                ],
+                [
+                  33.76,
+                  28.05
+                ],
+                [
+                  33.25,
+                  28.57
+                ],
+                [
+                  33.13,
+                  28.98
+                ],
+                [
+                  32.72,
+                  29.52
+                ],
+                [
+                  32.57,
+                  29.97
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.08
+                ],
+                [
+                  33.26,
+                  23.28
+                ],
+                [
+                  32.57,
+                  22.37
+                ],
+                [
+                  32.21,
+                  22.44
+                ],
+                [
+                  31.66,
+                  21.94
+                ],
+                [
+                  30.65,
+                  20.68
+                ],
+                [
+                  30.91,
+                  20.13
+                ],
+                [
+                  30.83,
+                  19.81
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  30.31,
+                  20.19
+                ],
+                [
+                  30.29,
+                  19.95
+                ],
+                [
+                  30.05,
+                  20.92
+                ],
+                [
+                  31.18,
+                  22.36
+                ],
+                [
+                  31.93,
+                  23.02
+                ],
+                [
+                  32.21,
+                  22.89
+                ],
+                [
+                  32.64,
+                  23.4
+                ],
+                [
+                  32.57,
+                  24.94
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  33.13,
+                  31.17
+                ],
+                [
+                  33.67,
+                  31.13
+                ],
+                [
+                  34.18,
+                  31.3
+                ],
+                [
+                  34.48,
+                  31.59
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  36.3,
+                  34.3
+                ],
+                [
+                  36.6,
+                  33.6
+                ],
+                [
+                  36.4,
+                  32.6
+                ],
+                [
+                  36.1,
+                  31.6
+                ],
+                [
+                  35.5,
+                  30.5
+                ],
+                [
+                  34.97,
+                  29.56
+                ],
+                [
+                  34.74,
+                  29.27
+                ],
+                [
+                  34.62,
+                  28.76
+                ],
+                [
+                  34.45,
+                  28.36
+                ],
+                [
+                  34.4,
+                  28.02
+                ],
+                [
+                  34.22,
+                  27.76
+                ],
+                [
+                  33.76,
+                  28.05
+                ],
+                [
+                  33.25,
+                  28.57
+                ],
+                [
+                  33.13,
+                  28.98
+                ],
+                [
+                  32.72,
+                  29.52
+                ],
+                [
+                  32.57,
+                  29.97
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.08
+                ],
+                [
+                  33.26,
+                  23.28
+                ],
+                [
+                  32.57,
+                  22.37
+                ],
+                [
+                  32.21,
+                  22.44
+                ],
+                [
+                  31.66,
+                  21.94
+                ],
+                [
+                  30.65,
+                  20.68
+                ],
+                [
+                  30.91,
+                  20.13
+                ],
+                [
+                  30.83,
+                  19.81
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Name": "Kemet, the Black Land, for the dark Nile soil",
+          "Capitals": "Memphis and Thebes; for a time Amarna, Pi-Ramesses and Sais",
+          "Language": "Egyptian, written in hieroglyphs and hieratic",
+          "Today": "Egypt, and at times northern Sudan and the Levant"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Narmer"
+          },
+          {
+            "from": 4,
+            "text": "Djoser"
+          },
+          {
+            "from": 5,
+            "text": "Khufu"
+          },
+          {
+            "from": 6,
+            "text": "Khafre, then Menkaure"
+          },
+          {
+            "from": 7,
+            "text": "Pepi II, a boy king"
+          },
+          {
+            "from": 8,
+            "text": "Mentuhotep II"
+          },
+          {
+            "from": 9,
+            "text": "Senusret III"
+          },
+          {
+            "from": 10,
+            "text": "Not named: the inscriptions can’t be tied to one reign"
+          },
+          {
+            "from": 11,
+            "text": "Theban kings: Seqenenre Tao, Kamose, then Ahmose"
+          },
+          {
+            "from": 12,
+            "text": "Hatshepsut, with Thutmose III"
+          },
+          {
+            "from": 13,
+            "text": "Thutmose III"
+          },
+          {
+            "from": 14,
+            "text": "Akhenaten"
+          },
+          {
+            "from": 15,
+            "text": "Ramesses II"
+          },
+          {
+            "from": 17,
+            "text": "Ramesses III"
+          },
+          {
+            "from": 19,
+            "text": "Psamtik I"
+          }
+        ],
+        "role": "The kingdom of the Nile valley and delta, ruled by kings (pharaohs) for about three thousand years.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Ships bring cedar from Byblos, in Lebanon"
+          },
+          {
+            "from": 9,
+            "text": "Trades with and fights Kush"
+          },
+          {
+            "from": 11,
+            "text": "Only the south is left to Thebes"
+          },
+          {
+            "from": 13,
+            "text": "Takes tribute from Canaan and Syria"
+          },
+          {
+            "from": 14,
+            "text": "Writes to Babylon, Mitanni and the Hittites"
+          },
+          {
+            "from": 15,
+            "text": "Makes peace with the Hittites"
+          },
+          {
+            "from": 19,
+            "text": "Hires Greek and Carian soldiers"
+          }
+        ]
+      },
+      {
+        "id": "hyksos",
+        "name": "Hyksos kingdom",
+        "native": "heqau khasut",
+        "lang": "egy",
+        "color": "#5b8fd9",
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Hyksos",
+          "at": [
+            31.0,
+            29.3
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                11,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  30.62,
+                  27.23
+                ],
+                [
+                  30.53,
+                  27.42
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  32.35,
+                  30.5
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.17,
+                  27.5
+                ],
+                [
+                  31.1,
+                  27.67
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Avaris",
+          "Ruled": "About 1650 to 1550 BCE",
+          "Today": "Northern Egypt"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Apepi, the best known"
+          }
+        ],
+        "role": "Kings of Levantine origin who ruled northern Egypt.",
+        "ties": [
+          {
+            "from": 11,
+            "text": "Writes to Kush seeking an alliance against Thebes, as a Theban stela tells"
+          }
+        ]
+      },
+      {
+        "id": "kerma",
+        "name": "Kingdom of Kush",
+        "native": "Kerma",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            11,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Kush",
+          "at": [
+            31.2,
+            21.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                11,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  30.11,
+                  19.91
+                ],
+                [
+                  30.28,
+                  20.03
+                ],
+                [
+                  30.05,
+                  20.92
+                ],
+                [
+                  31.18,
+                  22.36
+                ],
+                [
+                  31.93,
+                  23.02
+                ],
+                [
+                  32.21,
+                  22.89
+                ],
+                [
+                  32.65,
+                  23.46
+                ],
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  33.24,
+                  24.01
+                ],
+                [
+                  33.25,
+                  23.22
+                ],
+                [
+                  32.57,
+                  22.37
+                ],
+                [
+                  32.21,
+                  22.44
+                ],
+                [
+                  31.66,
+                  21.94
+                ],
+                [
+                  30.65,
+                  20.68
+                ],
+                [
+                  30.92,
+                  20.05
+                ],
+                [
+                  30.63,
+                  19.53
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Kerma, south of this map",
+          "Today": "Northern Sudan"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Not named in these years"
+          }
+        ],
+        "role": "A Nubian kingdom that takes the Egyptian forts while Egypt is divided.",
+        "ties": []
+      },
+      {
+        "id": "mitanni",
+        "name": "Mitanni",
+        "color": "#c8693a",
+        "minor": true,
+        "active": [
+          [
+            13,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Mitanni",
+          "at": [
+            39.8,
+            36.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                13,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  37.4,
+                  37.4
+                ],
+                [
+                  40.0,
+                  37.8
+                ],
+                [
+                  42.4,
+                  37.4
+                ],
+                [
+                  43.8,
+                  36.4
+                ],
+                [
+                  43.2,
+                  35.2
+                ],
+                [
+                  41.6,
+                  35.2
+                ],
+                [
+                  39.6,
+                  35.6
+                ],
+                [
+                  37.6,
+                  35.6
+                ],
+                [
+                  36.4,
+                  36.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Washukanni, not yet found for certain",
+          "Today": "Northern Syria and south-east Turkey"
+        },
+        "rulers": [
+          {
+            "from": 13,
+            "text": "Not named in Thutmose’s annals"
+          }
+        ],
+        "role": "A Hurrian kingdom of northern Mesopotamia, Egypt’s rival for Syria.",
+        "ties": [
+          {
+            "from": 13,
+            "text": "Backs Kadesh against Egypt"
+          }
+        ]
+      },
+      {
+        "id": "hatti",
+        "name": "Hittite kingdom",
+        "native": "Hatti",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            15,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Hittites",
+          "at": [
+            34.6,
+            39.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                15,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  31.8,
+                  40.4
+                ],
+                [
+                  34.6,
+                  41.6
+                ],
+                [
+                  37.6,
+                  41.0
+                ],
+                [
+                  39.2,
+                  39.2
+                ],
+                [
+                  38.6,
+                  37.4
+                ],
+                [
+                  38.4,
+                  36.0
+                ],
+                [
+                  37.6,
+                  34.9
+                ],
+                [
+                  36.9,
+                  34.3
+                ],
+                [
+                  36.3,
+                  34.35
+                ],
+                [
+                  35.98,
+                  34.6
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.9,
+                  35.42
+                ],
+                [
+                  35.76,
+                  35.57
+                ],
+                [
+                  35.86,
+                  35.87
+                ],
+                [
+                  35.96,
+                  36.0
+                ],
+                [
+                  35.88,
+                  36.17
+                ],
+                [
+                  35.9,
+                  36.4
+                ],
+                [
+                  36.19,
+                  36.75
+                ],
+                [
+                  36.05,
+                  36.91
+                ],
+                [
+                  35.64,
+                  36.68
+                ],
+                [
+                  35.21,
+                  36.63
+                ],
+                [
+                  34.7,
+                  36.82
+                ],
+                [
+                  34.44,
+                  36.69
+                ],
+                [
+                  32.4,
+                  37.0
+                ],
+                [
+                  30.5,
+                  38.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Hattusa",
+          "Today": "Central Turkey and northern Syria"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Muwatalli II, later Hattusili III"
+          }
+        ],
+        "role": "The great power of Anatolia, master of northern Syria.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Makes peace with Egypt, about 1259 BCE"
+          }
+        ]
+      },
+      {
+        "id": "kush",
+        "name": "Kingdom of Kush",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            18,
+            18
+          ]
+        ],
+        "label": {
+          "text": "Kush",
+          "at": [
+            31.0,
+            27.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                18,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  30.11,
+                  19.91
+                ],
+                [
+                  30.28,
+                  20.03
+                ],
+                [
+                  30.05,
+                  20.92
+                ],
+                [
+                  31.18,
+                  22.36
+                ],
+                [
+                  31.93,
+                  23.02
+                ],
+                [
+                  32.21,
+                  22.89
+                ],
+                [
+                  32.64,
+                  23.4
+                ],
+                [
+                  32.57,
+                  24.94
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  32.35,
+                  30.5
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.08
+                ],
+                [
+                  33.26,
+                  23.28
+                ],
+                [
+                  32.57,
+                  22.37
+                ],
+                [
+                  32.21,
+                  22.44
+                ],
+                [
+                  31.66,
+                  21.94
+                ],
+                [
+                  30.65,
+                  20.68
+                ],
+                [
+                  30.92,
+                  20.05
+                ],
+                [
+                  30.63,
+                  19.53
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Napata, south of this map",
+          "Ruled Egypt": "About 728 to 664 BCE, as the 25th Dynasty",
+          "Today": "Sudan and Egypt"
+        },
+        "rulers": [
+          {
+            "from": 18,
+            "text": "Piye"
+          }
+        ],
+        "role": "A Nubian kingdom that conquered Egypt and ruled it for about two generations.",
+        "ties": [
+          {
+            "from": 18,
+            "text": "Driven out by Assyria"
+          }
+        ]
+      },
+      {
+        "id": "persia",
+        "name": "Persian Empire",
+        "native": "Parsa",
+        "lang": "peo",
+        "color": "#b3488a",
+        "active": [
+          [
+            20,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Persian Empire",
+          "at": [
+            44.0,
+            34.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                20,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.71,
+                  40.38
+                ],
+                [
+                  27.28,
+                  40.46
+                ],
+                [
+                  27.48,
+                  40.32
+                ],
+                [
+                  27.73,
+                  40.33
+                ],
+                [
+                  27.85,
+                  40.38
+                ],
+                [
+                  27.73,
+                  40.48
+                ],
+                [
+                  27.87,
+                  40.51
+                ],
+                [
+                  27.99,
+                  40.49
+                ],
+                [
+                  27.96,
+                  40.37
+                ],
+                [
+                  29.01,
+                  40.39
+                ],
+                [
+                  29.06,
+                  40.42
+                ],
+                [
+                  28.79,
+                  40.53
+                ],
+                [
+                  28.96,
+                  40.63
+                ],
+                [
+                  29.85,
+                  40.76
+                ],
+                [
+                  29.36,
+                  40.81
+                ],
+                [
+                  29.11,
+                  40.94
+                ],
+                [
+                  29.05,
+                  41.01
+                ],
+                [
+                  29.15,
+                  41.22
+                ],
+                [
+                  31.25,
+                  41.11
+                ],
+                [
+                  31.46,
+                  41.32
+                ],
+                [
+                  31.7,
+                  41.42
+                ],
+                [
+                  35.0,
+                  42.0
+                ],
+                [
+                  35.12,
+                  41.96
+                ],
+                [
+                  35.3,
+                  41.73
+                ],
+                [
+                  35.56,
+                  41.63
+                ],
+                [
+                  35.88,
+                  41.71
+                ],
+                [
+                  36.07,
+                  41.64
+                ],
+                [
+                  36.18,
+                  41.43
+                ],
+                [
+                  36.41,
+                  41.27
+                ],
+                [
+                  36.78,
+                  41.36
+                ],
+                [
+                  37.07,
+                  41.18
+                ],
+                [
+                  38.38,
+                  40.92
+                ],
+                [
+                  39.43,
+                  41.11
+                ],
+                [
+                  40.13,
+                  40.94
+                ],
+                [
+                  41.09,
+                  41.26
+                ],
+                [
+                  41.5,
+                  41.3
+                ],
+                [
+                  45.0,
+                  41.5
+                ],
+                [
+                  48.6,
+                  41.6
+                ],
+                [
+                  49.3,
+                  40.3
+                ],
+                [
+                  49.02,
+                  39.13
+                ],
+                [
+                  48.85,
+                  38.82
+                ],
+                [
+                  48.93,
+                  38.02
+                ],
+                [
+                  49.08,
+                  37.67
+                ],
+                [
+                  49.37,
+                  37.52
+                ],
+                [
+                  50.08,
+                  37.42
+                ],
+                [
+                  50.4,
+                  37.1
+                ],
+                [
+                  51.12,
+                  36.74
+                ],
+                [
+                  51.76,
+                  36.61
+                ],
+                [
+                  52.19,
+                  36.62
+                ],
+                [
+                  53.66,
+                  36.91
+                ],
+                [
+                  53.86,
+                  36.9
+                ],
+                [
+                  53.68,
+                  36.85
+                ],
+                [
+                  53.77,
+                  36.82
+                ],
+                [
+                  54.02,
+                  36.85
+                ],
+                [
+                  53.9,
+                  37.4
+                ],
+                [
+                  53.87,
+                  38.95
+                ],
+                [
+                  53.7,
+                  39.21
+                ],
+                [
+                  53.41,
+                  39.32
+                ],
+                [
+                  53.24,
+                  39.61
+                ],
+                [
+                  53.6,
+                  39.55
+                ],
+                [
+                  53.47,
+                  39.67
+                ],
+                [
+                  53.49,
+                  39.91
+                ],
+                [
+                  53.0,
+                  40.0
+                ],
+                [
+                  53.61,
+                  40.82
+                ],
+                [
+                  53.87,
+                  40.65
+                ],
+                [
+                  54.38,
+                  40.69
+                ],
+                [
+                  54.32,
+                  40.83
+                ],
+                [
+                  54.37,
+                  40.87
+                ],
+                [
+                  54.71,
+                  40.89
+                ],
+                [
+                  54.67,
+                  41.12
+                ],
+                [
+                  54.12,
+                  41.49
+                ],
+                [
+                  54.2,
+                  41.6
+                ],
+                [
+                  56.0,
+                  42.6
+                ],
+                [
+                  62.0,
+                  42.6
+                ],
+                [
+                  62.0,
+                  25.2
+                ],
+                [
+                  60.62,
+                  25.33
+                ],
+                [
+                  60.51,
+                  25.44
+                ],
+                [
+                  60.43,
+                  25.34
+                ],
+                [
+                  59.46,
+                  25.48
+                ],
+                [
+                  58.94,
+                  25.48
+                ],
+                [
+                  57.94,
+                  25.69
+                ],
+                [
+                  57.8,
+                  25.65
+                ],
+                [
+                  57.47,
+                  25.77
+                ],
+                [
+                  57.2,
+                  26.13
+                ],
+                [
+                  57.04,
+                  26.8
+                ],
+                [
+                  56.91,
+                  26.99
+                ],
+                [
+                  56.73,
+                  27.13
+                ],
+                [
+                  56.4,
+                  27.2
+                ],
+                [
+                  53.96,
+                  26.72
+                ],
+                [
+                  52.69,
+                  27.33
+                ],
+                [
+                  52.48,
+                  27.62
+                ],
+                [
+                  52.03,
+                  27.82
+                ],
+                [
+                  51.52,
+                  27.91
+                ],
+                [
+                  51.28,
+                  28.16
+                ],
+                [
+                  51.06,
+                  28.73
+                ],
+                [
+                  50.87,
+                  28.87
+                ],
+                [
+                  50.88,
+                  29.06
+                ],
+                [
+                  50.68,
+                  29.15
+                ],
+                [
+                  50.65,
+                  29.42
+                ],
+                [
+                  50.17,
+                  29.92
+                ],
+                [
+                  50.07,
+                  30.2
+                ],
+                [
+                  49.55,
+                  30.03
+                ],
+                [
+                  49.03,
+                  30.33
+                ],
+                [
+                  49.05,
+                  30.4
+                ],
+                [
+                  49.25,
+                  30.41
+                ],
+                [
+                  49.13,
+                  30.51
+                ],
+                [
+                  49.0,
+                  30.51
+                ],
+                [
+                  49.04,
+                  30.45
+                ],
+                [
+                  48.92,
+                  30.4
+                ],
+                [
+                  48.87,
+                  30.06
+                ],
+                [
+                  48.28,
+                  29.99
+                ],
+                [
+                  48.07,
+                  30.04
+                ],
+                [
+                  47.98,
+                  30.01
+                ],
+                [
+                  47.98,
+                  29.92
+                ],
+                [
+                  47.2,
+                  29.6
+                ],
+                [
+                  46.0,
+                  30.2
+                ],
+                [
+                  44.5,
+                  30.8
+                ],
+                [
+                  42.0,
+                  31.5
+                ],
+                [
+                  39.0,
+                  32.0
+                ],
+                [
+                  37.0,
+                  30.6
+                ],
+                [
+                  35.0,
+                  29.5
+                ],
+                [
+                  34.3,
+                  31.2
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.84,
+                  35.49
+                ],
+                [
+                  35.98,
+                  36.49
+                ],
+                [
+                  36.19,
+                  36.66
+                ],
+                [
+                  36.18,
+                  36.81
+                ],
+                [
+                  36.05,
+                  36.91
+                ],
+                [
+                  35.39,
+                  36.58
+                ],
+                [
+                  34.7,
+                  36.82
+                ],
+                [
+                  34.3,
+                  36.6
+                ],
+                [
+                  34.02,
+                  36.34
+                ],
+                [
+                  33.0,
+                  36.2
+                ],
+                [
+                  32.33,
+                  36.22
+                ],
+                [
+                  32.02,
+                  36.54
+                ],
+                [
+                  31.35,
+                  36.8
+                ],
+                [
+                  30.95,
+                  36.85
+                ],
+                [
+                  30.64,
+                  36.87
+                ],
+                [
+                  30.58,
+                  36.8
+                ],
+                [
+                  30.46,
+                  36.28
+                ],
+                [
+                  29.14,
+                  36.43
+                ],
+                [
+                  29.04,
+                  36.69
+                ],
+                [
+                  28.82,
+                  36.68
+                ],
+                [
+                  28.48,
+                  36.8
+                ],
+                [
+                  28.3,
+                  36.81
+                ],
+                [
+                  28.02,
+                  36.63
+                ],
+                [
+                  28.08,
+                  36.75
+                ],
+                [
+                  27.91,
+                  36.74
+                ],
+                [
+                  27.86,
+                  36.8
+                ],
+                [
+                  28.24,
+                  37.03
+                ],
+                [
+                  27.73,
+                  37.01
+                ],
+                [
+                  27.23,
+                  37.75
+                ],
+                [
+                  27.23,
+                  37.98
+                ],
+                [
+                  27.1,
+                  38.01
+                ],
+                [
+                  26.91,
+                  38.38
+                ],
+                [
+                  27.14,
+                  38.45
+                ],
+                [
+                  26.97,
+                  38.45
+                ],
+                [
+                  26.8,
+                  38.63
+                ],
+                [
+                  26.76,
+                  38.71
+                ],
+                [
+                  27.01,
+                  38.89
+                ],
+                [
+                  26.81,
+                  38.96
+                ],
+                [
+                  26.85,
+                  39.12
+                ],
+                [
+                  26.68,
+                  39.29
+                ],
+                [
+                  26.9,
+                  39.55
+                ],
+                [
+                  26.45,
+                  39.51
+                ],
+                [
+                  26.3,
+                  40.0
+                ]
+              ],
+              [
+                [
+                  27.6,
+                  41.2
+                ],
+                [
+                  28.99,
+                  41.24
+                ],
+                [
+                  29.06,
+                  41.23
+                ],
+                [
+                  28.96,
+                  41.01
+                ],
+                [
+                  28.78,
+                  40.97
+                ],
+                [
+                  28.17,
+                  41.08
+                ],
+                [
+                  27.93,
+                  40.99
+                ],
+                [
+                  27.5,
+                  40.97
+                ],
+                [
+                  27.26,
+                  40.69
+                ],
+                [
+                  26.88,
+                  40.53
+                ]
+              ],
+              [
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  32.57,
+                  24.92
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  33.13,
+                  31.17
+                ],
+                [
+                  33.67,
+                  31.13
+                ],
+                [
+                  34.18,
+                  31.3
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.97,
+                  29.56
+                ],
+                [
+                  34.74,
+                  29.27
+                ],
+                [
+                  34.62,
+                  28.76
+                ],
+                [
+                  34.45,
+                  28.36
+                ],
+                [
+                  34.4,
+                  28.02
+                ],
+                [
+                  34.22,
+                  27.76
+                ],
+                [
+                  33.76,
+                  28.05
+                ],
+                [
+                  33.25,
+                  28.57
+                ],
+                [
+                  33.13,
+                  28.98
+                ],
+                [
+                  32.72,
+                  29.52
+                ],
+                [
+                  32.57,
+                  29.97
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.1
+                ],
+                [
+                  33.24,
+                  24.01
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Pasargadae, later Susa, Persepolis and Babylon",
+          "Founded": "About 550 BCE, by Cyrus",
+          "Ended": "330 BCE, conquered by Alexander",
+          "Today": "From Turkey and Egypt to Afghanistan and Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 20,
+            "text": "Cambyses II, then Darius I"
+          }
+        ],
+        "role": "The Achaemenid empire, the largest the world had yet seen.",
+        "ties": [
+          {
+            "from": 20,
+            "text": "Takes Egypt, 525 BCE"
+          }
+        ]
+      },
+      {
+        "id": "alexander",
+        "name": "Alexander’s empire",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            21,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Alexander",
+          "at": [
+            33.5,
+            38.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                21,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.71,
+                  40.38
+                ],
+                [
+                  27.28,
+                  40.46
+                ],
+                [
+                  27.48,
+                  40.32
+                ],
+                [
+                  27.73,
+                  40.33
+                ],
+                [
+                  27.85,
+                  40.38
+                ],
+                [
+                  27.73,
+                  40.48
+                ],
+                [
+                  27.87,
+                  40.51
+                ],
+                [
+                  27.99,
+                  40.49
+                ],
+                [
+                  27.96,
+                  40.37
+                ],
+                [
+                  29.01,
+                  40.39
+                ],
+                [
+                  29.06,
+                  40.42
+                ],
+                [
+                  28.79,
+                  40.53
+                ],
+                [
+                  28.96,
+                  40.63
+                ],
+                [
+                  29.85,
+                  40.76
+                ],
+                [
+                  29.36,
+                  40.81
+                ],
+                [
+                  29.11,
+                  40.94
+                ],
+                [
+                  29.05,
+                  41.01
+                ],
+                [
+                  29.15,
+                  41.22
+                ],
+                [
+                  31.25,
+                  41.11
+                ],
+                [
+                  31.46,
+                  41.32
+                ],
+                [
+                  31.7,
+                  41.42
+                ],
+                [
+                  35.0,
+                  42.0
+                ],
+                [
+                  35.12,
+                  41.96
+                ],
+                [
+                  35.3,
+                  41.73
+                ],
+                [
+                  35.56,
+                  41.63
+                ],
+                [
+                  35.88,
+                  41.71
+                ],
+                [
+                  36.07,
+                  41.64
+                ],
+                [
+                  36.18,
+                  41.43
+                ],
+                [
+                  36.41,
+                  41.27
+                ],
+                [
+                  36.78,
+                  41.36
+                ],
+                [
+                  37.07,
+                  41.18
+                ],
+                [
+                  38.38,
+                  40.92
+                ],
+                [
+                  39.5,
+                  39.0
+                ],
+                [
+                  38.6,
+                  37.4
+                ],
+                [
+                  38.2,
+                  36.0
+                ],
+                [
+                  37.4,
+                  34.0
+                ],
+                [
+                  36.6,
+                  32.0
+                ],
+                [
+                  35.6,
+                  30.0
+                ],
+                [
+                  35.0,
+                  29.5
+                ],
+                [
+                  34.3,
+                  31.2
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.84,
+                  35.49
+                ],
+                [
+                  35.98,
+                  36.49
+                ],
+                [
+                  36.19,
+                  36.66
+                ],
+                [
+                  36.18,
+                  36.81
+                ],
+                [
+                  36.05,
+                  36.91
+                ],
+                [
+                  35.39,
+                  36.58
+                ],
+                [
+                  34.7,
+                  36.82
+                ],
+                [
+                  34.3,
+                  36.6
+                ],
+                [
+                  34.02,
+                  36.34
+                ],
+                [
+                  33.0,
+                  36.2
+                ],
+                [
+                  32.33,
+                  36.22
+                ],
+                [
+                  32.02,
+                  36.54
+                ],
+                [
+                  31.35,
+                  36.8
+                ],
+                [
+                  30.95,
+                  36.85
+                ],
+                [
+                  30.64,
+                  36.87
+                ],
+                [
+                  30.58,
+                  36.8
+                ],
+                [
+                  30.46,
+                  36.28
+                ],
+                [
+                  29.14,
+                  36.43
+                ],
+                [
+                  29.04,
+                  36.69
+                ],
+                [
+                  28.82,
+                  36.68
+                ],
+                [
+                  28.48,
+                  36.8
+                ],
+                [
+                  28.3,
+                  36.81
+                ],
+                [
+                  28.02,
+                  36.63
+                ],
+                [
+                  28.08,
+                  36.75
+                ],
+                [
+                  27.91,
+                  36.74
+                ],
+                [
+                  27.86,
+                  36.8
+                ],
+                [
+                  28.24,
+                  37.03
+                ],
+                [
+                  27.73,
+                  37.01
+                ],
+                [
+                  27.23,
+                  37.75
+                ],
+                [
+                  27.23,
+                  37.98
+                ],
+                [
+                  27.1,
+                  38.01
+                ],
+                [
+                  26.91,
+                  38.38
+                ],
+                [
+                  27.14,
+                  38.45
+                ],
+                [
+                  26.97,
+                  38.45
+                ],
+                [
+                  26.8,
+                  38.63
+                ],
+                [
+                  26.76,
+                  38.71
+                ],
+                [
+                  27.01,
+                  38.89
+                ],
+                [
+                  26.81,
+                  38.96
+                ],
+                [
+                  26.85,
+                  39.12
+                ],
+                [
+                  26.68,
+                  39.29
+                ],
+                [
+                  26.9,
+                  39.55
+                ],
+                [
+                  26.45,
+                  39.51
+                ],
+                [
+                  26.3,
+                  40.0
+                ]
+              ],
+              [
+                [
+                  27.6,
+                  41.2
+                ],
+                [
+                  28.99,
+                  41.24
+                ],
+                [
+                  29.06,
+                  41.23
+                ],
+                [
+                  28.96,
+                  41.01
+                ],
+                [
+                  28.78,
+                  40.97
+                ],
+                [
+                  28.17,
+                  41.08
+                ],
+                [
+                  27.93,
+                  40.99
+                ],
+                [
+                  27.5,
+                  40.97
+                ],
+                [
+                  27.26,
+                  40.69
+                ],
+                [
+                  26.88,
+                  40.53
+                ]
+              ],
+              [
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  32.57,
+                  24.92
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  33.13,
+                  31.17
+                ],
+                [
+                  33.67,
+                  31.13
+                ],
+                [
+                  34.18,
+                  31.3
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.97,
+                  29.56
+                ],
+                [
+                  34.74,
+                  29.27
+                ],
+                [
+                  34.62,
+                  28.76
+                ],
+                [
+                  34.45,
+                  28.36
+                ],
+                [
+                  34.4,
+                  28.02
+                ],
+                [
+                  34.22,
+                  27.76
+                ],
+                [
+                  33.76,
+                  28.05
+                ],
+                [
+                  33.25,
+                  28.57
+                ],
+                [
+                  33.13,
+                  28.98
+                ],
+                [
+                  32.72,
+                  29.52
+                ],
+                [
+                  32.57,
+                  29.97
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.1
+                ],
+                [
+                  33.24,
+                  24.01
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Began": "336 BCE, when Alexander becomes king of Macedon",
+          "Ended": "Split among his generals after his death in 323 BCE",
+          "Today": "From Greece and Egypt to Pakistan, at its height"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "Alexander III of Macedon"
+          }
+        ],
+        "role": "Alexander’s conquests so far: Anatolia, the Levant and Egypt.",
+        "ties": [
+          {
+            "from": 21,
+            "text": "Defeats Darius III at Gaugamela, 331 BCE"
+          }
+        ]
+      },
+      {
+        "id": "persia-east",
+        "name": "Persian Empire",
+        "native": "Parsa",
+        "lang": "peo",
+        "color": "#b3488a",
+        "minor": true,
+        "active": [
+          [
+            21,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Persian Empire",
+          "at": [
+            50.0,
+            33.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                21,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  38.38,
+                  40.92
+                ],
+                [
+                  39.43,
+                  41.11
+                ],
+                [
+                  40.13,
+                  40.94
+                ],
+                [
+                  41.09,
+                  41.26
+                ],
+                [
+                  41.5,
+                  41.3
+                ],
+                [
+                  45.0,
+                  41.5
+                ],
+                [
+                  48.6,
+                  41.6
+                ],
+                [
+                  49.3,
+                  40.3
+                ],
+                [
+                  49.02,
+                  39.13
+                ],
+                [
+                  48.85,
+                  38.82
+                ],
+                [
+                  48.93,
+                  38.02
+                ],
+                [
+                  49.08,
+                  37.67
+                ],
+                [
+                  49.37,
+                  37.52
+                ],
+                [
+                  50.08,
+                  37.42
+                ],
+                [
+                  50.4,
+                  37.1
+                ],
+                [
+                  51.12,
+                  36.74
+                ],
+                [
+                  51.76,
+                  36.61
+                ],
+                [
+                  52.19,
+                  36.62
+                ],
+                [
+                  53.66,
+                  36.91
+                ],
+                [
+                  53.86,
+                  36.9
+                ],
+                [
+                  53.68,
+                  36.85
+                ],
+                [
+                  53.77,
+                  36.82
+                ],
+                [
+                  54.02,
+                  36.85
+                ],
+                [
+                  53.9,
+                  37.4
+                ],
+                [
+                  53.87,
+                  38.95
+                ],
+                [
+                  53.7,
+                  39.21
+                ],
+                [
+                  53.41,
+                  39.32
+                ],
+                [
+                  53.24,
+                  39.61
+                ],
+                [
+                  53.6,
+                  39.55
+                ],
+                [
+                  53.47,
+                  39.67
+                ],
+                [
+                  53.49,
+                  39.91
+                ],
+                [
+                  53.0,
+                  40.0
+                ],
+                [
+                  53.61,
+                  40.82
+                ],
+                [
+                  53.87,
+                  40.65
+                ],
+                [
+                  54.38,
+                  40.69
+                ],
+                [
+                  54.32,
+                  40.83
+                ],
+                [
+                  54.37,
+                  40.87
+                ],
+                [
+                  54.71,
+                  40.89
+                ],
+                [
+                  54.67,
+                  41.12
+                ],
+                [
+                  54.12,
+                  41.49
+                ],
+                [
+                  54.2,
+                  41.6
+                ],
+                [
+                  56.0,
+                  42.6
+                ],
+                [
+                  62.0,
+                  42.6
+                ],
+                [
+                  62.0,
+                  25.2
+                ],
+                [
+                  60.62,
+                  25.33
+                ],
+                [
+                  60.51,
+                  25.44
+                ],
+                [
+                  60.43,
+                  25.34
+                ],
+                [
+                  59.46,
+                  25.48
+                ],
+                [
+                  58.94,
+                  25.48
+                ],
+                [
+                  57.94,
+                  25.69
+                ],
+                [
+                  57.8,
+                  25.65
+                ],
+                [
+                  57.47,
+                  25.77
+                ],
+                [
+                  57.2,
+                  26.13
+                ],
+                [
+                  57.04,
+                  26.8
+                ],
+                [
+                  56.91,
+                  26.99
+                ],
+                [
+                  56.73,
+                  27.13
+                ],
+                [
+                  56.4,
+                  27.2
+                ],
+                [
+                  53.96,
+                  26.72
+                ],
+                [
+                  52.69,
+                  27.33
+                ],
+                [
+                  52.48,
+                  27.62
+                ],
+                [
+                  52.03,
+                  27.82
+                ],
+                [
+                  51.52,
+                  27.91
+                ],
+                [
+                  51.28,
+                  28.16
+                ],
+                [
+                  51.06,
+                  28.73
+                ],
+                [
+                  50.87,
+                  28.87
+                ],
+                [
+                  50.88,
+                  29.06
+                ],
+                [
+                  50.68,
+                  29.15
+                ],
+                [
+                  50.65,
+                  29.42
+                ],
+                [
+                  50.17,
+                  29.92
+                ],
+                [
+                  50.07,
+                  30.2
+                ],
+                [
+                  49.55,
+                  30.03
+                ],
+                [
+                  49.03,
+                  30.33
+                ],
+                [
+                  49.05,
+                  30.4
+                ],
+                [
+                  49.25,
+                  30.41
+                ],
+                [
+                  49.13,
+                  30.51
+                ],
+                [
+                  49.0,
+                  30.51
+                ],
+                [
+                  49.04,
+                  30.45
+                ],
+                [
+                  48.92,
+                  30.4
+                ],
+                [
+                  48.87,
+                  30.06
+                ],
+                [
+                  48.28,
+                  29.99
+                ],
+                [
+                  48.07,
+                  30.04
+                ],
+                [
+                  47.98,
+                  30.01
+                ],
+                [
+                  47.98,
+                  29.92
+                ],
+                [
+                  47.2,
+                  29.6
+                ],
+                [
+                  46.0,
+                  30.2
+                ],
+                [
+                  44.5,
+                  30.8
+                ],
+                [
+                  42.0,
+                  31.5
+                ],
+                [
+                  39.0,
+                  32.0
+                ],
+                [
+                  37.0,
+                  30.6
+                ],
+                [
+                  35.0,
+                  29.5
+                ],
+                [
+                  35.6,
+                  30.0
+                ],
+                [
+                  36.6,
+                  32.0
+                ],
+                [
+                  37.4,
+                  34.0
+                ],
+                [
+                  38.2,
+                  36.0
+                ],
+                [
+                  38.6,
+                  37.4
+                ],
+                [
+                  39.5,
+                  39.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Susa, Persepolis and Babylon",
+          "Today": "Iraq, Iran and lands to the east"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "Darius III"
+          }
+        ],
+        "role": "What is left of the Persian Empire, until Alexander takes it.",
+        "ties": []
+      },
+      {
+        "id": "ptolemaic",
+        "name": "Ptolemaic kingdom",
+        "color": "#4fc3b0",
+        "active": [
+          [
+            22,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Ptolemies",
+          "at": [
+            30.9,
+            27.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                22,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  32.57,
+                  24.92
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  33.13,
+                  31.17
+                ],
+                [
+                  33.67,
+                  31.13
+                ],
+                [
+                  34.18,
+                  31.3
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.97,
+                  29.56
+                ],
+                [
+                  34.74,
+                  29.27
+                ],
+                [
+                  34.62,
+                  28.76
+                ],
+                [
+                  34.45,
+                  28.36
+                ],
+                [
+                  34.4,
+                  28.02
+                ],
+                [
+                  34.22,
+                  27.76
+                ],
+                [
+                  33.76,
+                  28.05
+                ],
+                [
+                  33.25,
+                  28.57
+                ],
+                [
+                  33.13,
+                  28.98
+                ],
+                [
+                  32.72,
+                  29.52
+                ],
+                [
+                  32.57,
+                  29.97
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.1
+                ],
+                [
+                  33.24,
+                  24.01
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Alexandria",
+          "Founded": "305 BCE, by Ptolemy I",
+          "Ended": "30 BCE, taken by Rome",
+          "Language at court": "Greek"
+        },
+        "rulers": [
+          {
+            "from": 22,
+            "text": "Cleopatra VII, the last"
+          }
+        ],
+        "role": "A Greek-speaking dynasty that ruled Egypt as pharaohs.",
+        "ties": [
+          {
+            "from": 22,
+            "text": "Allied with Julius Caesar, then Mark Antony"
+          }
+        ]
+      },
+      {
+        "id": "rome",
+        "name": "Roman Empire",
+        "color": "#b3261e",
+        "active": [
+          [
+            23,
+            23
+          ]
+        ],
+        "label": {
+          "text": "Roman Empire",
+          "at": [
+            33.5,
+            38.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                23,
+                23
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.71,
+                  40.38
+                ],
+                [
+                  27.28,
+                  40.46
+                ],
+                [
+                  27.48,
+                  40.32
+                ],
+                [
+                  27.73,
+                  40.33
+                ],
+                [
+                  27.85,
+                  40.38
+                ],
+                [
+                  27.73,
+                  40.48
+                ],
+                [
+                  27.87,
+                  40.51
+                ],
+                [
+                  27.99,
+                  40.49
+                ],
+                [
+                  27.96,
+                  40.37
+                ],
+                [
+                  29.01,
+                  40.39
+                ],
+                [
+                  29.06,
+                  40.42
+                ],
+                [
+                  28.79,
+                  40.53
+                ],
+                [
+                  28.96,
+                  40.63
+                ],
+                [
+                  29.85,
+                  40.76
+                ],
+                [
+                  29.36,
+                  40.81
+                ],
+                [
+                  29.11,
+                  40.94
+                ],
+                [
+                  29.05,
+                  41.01
+                ],
+                [
+                  29.15,
+                  41.22
+                ],
+                [
+                  31.25,
+                  41.11
+                ],
+                [
+                  31.46,
+                  41.32
+                ],
+                [
+                  31.7,
+                  41.42
+                ],
+                [
+                  35.0,
+                  42.0
+                ],
+                [
+                  35.12,
+                  41.96
+                ],
+                [
+                  35.3,
+                  41.73
+                ],
+                [
+                  35.56,
+                  41.63
+                ],
+                [
+                  35.88,
+                  41.71
+                ],
+                [
+                  36.07,
+                  41.64
+                ],
+                [
+                  36.18,
+                  41.43
+                ],
+                [
+                  36.41,
+                  41.27
+                ],
+                [
+                  36.78,
+                  41.36
+                ],
+                [
+                  37.07,
+                  41.18
+                ],
+                [
+                  38.38,
+                  40.92
+                ],
+                [
+                  39.5,
+                  39.0
+                ],
+                [
+                  38.6,
+                  37.4
+                ],
+                [
+                  38.2,
+                  36.0
+                ],
+                [
+                  37.4,
+                  34.0
+                ],
+                [
+                  36.6,
+                  32.0
+                ],
+                [
+                  35.6,
+                  30.0
+                ],
+                [
+                  35.0,
+                  29.5
+                ],
+                [
+                  34.3,
+                  31.2
+                ],
+                [
+                  34.68,
+                  31.9
+                ],
+                [
+                  35.11,
+                  33.08
+                ],
+                [
+                  35.61,
+                  34.03
+                ],
+                [
+                  35.65,
+                  34.25
+                ],
+                [
+                  35.98,
+                  34.55
+                ],
+                [
+                  35.89,
+                  34.95
+                ],
+                [
+                  35.94,
+                  35.22
+                ],
+                [
+                  35.84,
+                  35.49
+                ],
+                [
+                  35.98,
+                  36.49
+                ],
+                [
+                  36.19,
+                  36.66
+                ],
+                [
+                  36.18,
+                  36.81
+                ],
+                [
+                  36.05,
+                  36.91
+                ],
+                [
+                  35.39,
+                  36.58
+                ],
+                [
+                  34.7,
+                  36.82
+                ],
+                [
+                  34.3,
+                  36.6
+                ],
+                [
+                  34.02,
+                  36.34
+                ],
+                [
+                  33.0,
+                  36.2
+                ],
+                [
+                  32.33,
+                  36.22
+                ],
+                [
+                  32.02,
+                  36.54
+                ],
+                [
+                  31.35,
+                  36.8
+                ],
+                [
+                  30.95,
+                  36.85
+                ],
+                [
+                  30.64,
+                  36.87
+                ],
+                [
+                  30.58,
+                  36.8
+                ],
+                [
+                  30.46,
+                  36.28
+                ],
+                [
+                  29.14,
+                  36.43
+                ],
+                [
+                  29.04,
+                  36.69
+                ],
+                [
+                  28.82,
+                  36.68
+                ],
+                [
+                  28.48,
+                  36.8
+                ],
+                [
+                  28.3,
+                  36.81
+                ],
+                [
+                  28.02,
+                  36.63
+                ],
+                [
+                  28.08,
+                  36.75
+                ],
+                [
+                  27.91,
+                  36.74
+                ],
+                [
+                  27.86,
+                  36.8
+                ],
+                [
+                  28.24,
+                  37.03
+                ],
+                [
+                  27.73,
+                  37.01
+                ],
+                [
+                  27.23,
+                  37.75
+                ],
+                [
+                  27.23,
+                  37.98
+                ],
+                [
+                  27.1,
+                  38.01
+                ],
+                [
+                  26.91,
+                  38.38
+                ],
+                [
+                  27.14,
+                  38.45
+                ],
+                [
+                  26.97,
+                  38.45
+                ],
+                [
+                  26.8,
+                  38.63
+                ],
+                [
+                  26.76,
+                  38.71
+                ],
+                [
+                  27.01,
+                  38.89
+                ],
+                [
+                  26.81,
+                  38.96
+                ],
+                [
+                  26.85,
+                  39.12
+                ],
+                [
+                  26.68,
+                  39.29
+                ],
+                [
+                  26.9,
+                  39.55
+                ],
+                [
+                  26.45,
+                  39.51
+                ],
+                [
+                  26.3,
+                  40.0
+                ]
+              ],
+              [
+                [
+                  27.6,
+                  41.2
+                ],
+                [
+                  28.99,
+                  41.24
+                ],
+                [
+                  29.06,
+                  41.23
+                ],
+                [
+                  28.96,
+                  41.01
+                ],
+                [
+                  28.78,
+                  40.97
+                ],
+                [
+                  28.17,
+                  41.08
+                ],
+                [
+                  27.93,
+                  40.99
+                ],
+                [
+                  27.5,
+                  40.97
+                ],
+                [
+                  27.26,
+                  40.69
+                ],
+                [
+                  26.88,
+                  40.53
+                ]
+              ],
+              [
+                [
+                  32.6,
+                  23.99
+                ],
+                [
+                  32.57,
+                  24.92
+                ],
+                [
+                  32.16,
+                  25.52
+                ],
+                [
+                  32.5,
+                  25.92
+                ],
+                [
+                  31.84,
+                  25.92
+                ],
+                [
+                  30.58,
+                  27.3
+                ],
+                [
+                  30.43,
+                  28.39
+                ],
+                [
+                  30.91,
+                  29.32
+                ],
+                [
+                  30.92,
+                  30.13
+                ],
+                [
+                  30.7,
+                  30.45
+                ],
+                [
+                  29.6,
+                  30.95
+                ],
+                [
+                  29.93,
+                  31.23
+                ],
+                [
+                  30.22,
+                  31.26
+                ],
+                [
+                  30.4,
+                  31.46
+                ],
+                [
+                  30.92,
+                  31.57
+                ],
+                [
+                  31.08,
+                  31.6
+                ],
+                [
+                  31.52,
+                  31.46
+                ],
+                [
+                  31.89,
+                  31.54
+                ],
+                [
+                  32.14,
+                  31.34
+                ],
+                [
+                  32.28,
+                  31.2
+                ],
+                [
+                  32.6,
+                  31.07
+                ],
+                [
+                  33.13,
+                  31.17
+                ],
+                [
+                  33.67,
+                  31.13
+                ],
+                [
+                  34.18,
+                  31.3
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.97,
+                  29.56
+                ],
+                [
+                  34.74,
+                  29.27
+                ],
+                [
+                  34.62,
+                  28.76
+                ],
+                [
+                  34.45,
+                  28.36
+                ],
+                [
+                  34.4,
+                  28.02
+                ],
+                [
+                  34.22,
+                  27.76
+                ],
+                [
+                  33.76,
+                  28.05
+                ],
+                [
+                  33.25,
+                  28.57
+                ],
+                [
+                  33.13,
+                  28.98
+                ],
+                [
+                  32.72,
+                  29.52
+                ],
+                [
+                  32.57,
+                  29.97
+                ],
+                [
+                  31.9,
+                  30.0
+                ],
+                [
+                  31.56,
+                  30.11
+                ],
+                [
+                  31.53,
+                  29.14
+                ],
+                [
+                  31.05,
+                  28.25
+                ],
+                [
+                  31.12,
+                  27.62
+                ],
+                [
+                  32.2,
+                  26.44
+                ],
+                [
+                  33.02,
+                  26.3
+                ],
+                [
+                  32.8,
+                  25.58
+                ],
+                [
+                  33.19,
+                  25.1
+                ],
+                [
+                  33.24,
+                  24.01
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Rome and Constantinople",
+          "Today": "From Britain to Egypt and Syria; only its eastern lands are on this map"
+        },
+        "rulers": [
+          {
+            "from": 23,
+            "text": "Theodosius I, the last to rule both halves"
+          }
+        ],
+        "role": "Rome’s eastern provinces, Christian by now.",
+        "ties": [
+          {
+            "from": 23,
+            "text": "Splits into eastern and western halves, 395"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "narmer",
+        "name": "Narmer",
+        "life": "about 3100 BCE",
+        "role": "King of Upper Egypt, then of all Egypt",
+        "steps": [
+          3
+        ],
+        "text": "Known from a slate palette found at Hierakonpolis, showing him in the white crown of the south on one side and the red crown of the north on the other. His name is on objects from Abydos, where he was buried. Many think he is the Menes of later king lists; others think Menes was Hor-Aha, who followed him."
+      },
+      {
+        "id": "imhotep",
+        "name": "Imhotep",
+        "life": "about 2650 BCE",
+        "role": "Chief official of King Djoser",
+        "steps": [
+          4
+        ],
+        "text": "His name and titles are carved on the base of a statue of Djoser found at Saqqara. Later Egyptians remembered him as a sage and the designer of the Step Pyramid, and by the Late Period worshipped him as a god of healing. Greeks linked him to their healer god Asclepius. His tomb has not been found."
+      },
+      {
+        "id": "khufu",
+        "name": "Khufu",
+        "life": "reigned about 2589 to 2566 BCE",
+        "role": "King, builder of the Great Pyramid",
+        "steps": [
+          5
+        ],
+        "text": "Second king of the 4th Dynasty and son of Sneferu. For all his pyramid, the only certain complete statue of him is an ivory figure about 7.5 cm tall, found by Flinders Petrie at Abydos in 1903. Herodotus, writing two thousand years later, called him a cruel tyrant, Cheops; Egyptian sources do not say so."
+      },
+      {
+        "id": "merer",
+        "name": "Merer",
+        "life": "about 2560 BCE",
+        "role": "Inspector of a work crew",
+        "steps": [
+          5
+        ],
+        "text": "His logbook, written on papyrus and found by Pierre Tallet’s team at Wadi al-Jarf in 2013, records months of work by his crew of about 40 men in Khufu’s last years: sailing limestone from the Tura quarries across the flooded plain to Giza. He is the first known eyewitness to the building of a pyramid."
+      },
+      {
+        "id": "harkhuf",
+        "name": "Harkhuf",
+        "life": "2200s BCE",
+        "role": "Governor of Elephantine and caravan leader",
+        "steps": [
+          7
+        ],
+        "text": "His tomb at Qubbet el-Hawa, across the river from Aswan, records four journeys to Yam under Merenre and Pepi II, each lasting months. It quotes in full the young king’s letter about the dancer: bring him safely, guard him on the boat lest he fall in the water, and check on him ten times a night."
+      },
+      {
+        "id": "mentuhotep",
+        "name": "Mentuhotep II",
+        "life": "reigned about 2055 to 2004 BCE",
+        "role": "King of Thebes, then of all Egypt",
+        "steps": [
+          8
+        ],
+        "text": "A ruler of Thebes who fought the kings of Herakleopolis and reunited Egypt, starting what historians call the Middle Kingdom. Later Egyptians honoured him as a founder. His tomb-temple at Deir el-Bahari, with terraces and colonnades against the cliff, inspired Hatshepsut’s temple beside it some five centuries later."
+      },
+      {
+        "id": "senusret3",
+        "name": "Senusret III",
+        "life": "reigned about 1878 to 1839 BCE",
+        "role": "King of the Middle Kingdom",
+        "steps": [
+          9
+        ],
+        "text": "He led campaigns into Nubia and set the border at Semna with stelae. His statues show a tired, lined face, unlike the calm, youthful faces of most royal portraits, and scholars still argue what that meant. In Nubia, Egyptians of the New Kingdom later worshipped him as a god."
+      },
+      {
+        "id": "hatshepsut",
+        "name": "Hatshepsut",
+        "life": "reigned about 1479 to 1458 BCE",
+        "role": "Queen, then king of Egypt",
+        "steps": [
+          12
+        ],
+        "text": "Daughter of Thutmose I and wife of Thutmose II, she became regent for her young stepson Thutmose III, then took the full titles of a king. Statues show her with a king’s headcloth and false beard. Long after her death, probably late in Thutmose III’s reign, her images were cut away and her name was left out of king lists."
+      },
+      {
+        "id": "thutmose3",
+        "name": "Thutmose III",
+        "life": "reigned about 1479 to 1425 BCE",
+        "role": "King and general",
+        "steps": [
+          12,
+          13
+        ],
+        "text": "Crowned as a child, he shared power with Hatshepsut for about two decades, then ruled alone. He led some 17 campaigns into Canaan and Syria, recorded in his annals at Karnak, and brought back plants and animals carved on the temple walls. Modern writers have called him Egypt’s greatest warrior king."
+      },
+      {
+        "id": "akhenaten",
+        "name": "Akhenaten",
+        "life": "reigned about 1353 to 1336 BCE",
+        "role": "King",
+        "steps": [
+          14
+        ],
+        "text": "Crowned as Amenhotep IV, he changed his name to honour the Aten, closed or neglected temples of other gods, and moved the court to Amarna. Later kings erased his name from monuments and king lists, calling him the enemy. A study of royal mummies published in 2010 suggests he was Tutankhamun’s father, though some scholars dispute it."
+      },
+      {
+        "id": "nefertiti",
+        "name": "Nefertiti",
+        "life": "about 1370 to after 1336 BCE",
+        "role": "Queen, wife of Akhenaten",
+        "steps": [
+          14
+        ],
+        "text": "Shown beside her husband as an equal in worship, and sometimes striking enemies, a royal pose. Her painted limestone bust was found at Amarna in 1912 by Ludwig Borchardt’s German team and is now in Berlin; Egypt has asked for it back. Whether she ruled after Akhenaten under another name is debated."
+      },
+      {
+        "id": "ramesses2",
+        "name": "Ramesses II",
+        "life": "reigned 1279 to 1213 BCE",
+        "role": "King",
+        "steps": [
+          15,
+          16
+        ],
+        "text": "He ruled for 66 years, outliving many of his children, and built more than any other pharaoh: Abu Simbel, his memorial temple the Ramesseum at Thebes, and the capital Pi-Ramesses. Scenes of Kadesh cover the walls of five of his temples. Later kings took his name in his honour; nine more are called Ramesses."
+      },
+      {
+        "id": "piye",
+        "name": "Piye",
+        "life": "reigned about 744 to 714 BCE",
+        "role": "King of Kush and Egypt",
+        "steps": [
+          18
+        ],
+        "text": "His great stela, set up at Napata, tells his campaign in his own words. When Nimlot, a defeated prince, showed him the royal stables, Piye was angrier that the horses had been left hungry than at the revolt. He was buried at el-Kurru in Sudan under a pyramid, with horses buried nearby."
+      },
+      {
+        "id": "cleopatra",
+        "name": "Cleopatra VII",
+        "life": "69 to 30 BCE",
+        "role": "Queen of Egypt, the last of the Ptolemies",
+        "steps": [
+          22
+        ],
+        "text": "Plutarch says she was the first of her Greek-speaking family to learn Egyptian. She allied with Julius Caesar, with whom she had a son, then with Mark Antony. After their fleet lost to Octavian at Actium in 31 BCE, both took their lives in Alexandria; that she used a snake is the old story, but uncertain."
+      },
+      {
+        "id": "champollion",
+        "name": "Jean-François Champollion",
+        "life": "1790 to 1832",
+        "role": "French scholar",
+        "steps": [
+          25
+        ],
+        "text": "He learned Coptic as a teenager, sure it held the key to the old language. In 1822 he set out his reading of hieroglyphs in a letter to the Academy in Paris, and in 1828 and 1829 travelled up the Nile checking it against the temples. He died in 1832, aged 41."
+      },
+      {
+        "id": "tutankhamun",
+        "name": "Tutankhamun",
+        "life": "reigned about 1332 to 1323 BCE",
+        "role": "King",
+        "steps": [
+          26
+        ],
+        "text": "Born Tutankhaten, he came to the throne at about nine, moved the court away from Amarna and changed his name to honour Amun again. He died at about nineteen; how is not known, though studies of his mummy have found a broken leg and malaria. His small tomb escaped robbers because later huts and debris hid it."
+      },
+      {
+        "id": "carter",
+        "name": "Howard Carter",
+        "life": "1874 to 1939",
+        "role": "British archaeologist",
+        "steps": [
+          26
+        ],
+        "text": "He came to Egypt at seventeen to copy tomb paintings, became an inspector of antiquities, then dug in the Valley of the Kings for Lord Carnarvon. Asked through the first opening whether he could see anything, he later wrote that he answered, “Yes, wonderful things.” Carnarvon died in 1923, giving rise to the legend of a curse."
+      }
+    ]
+  }
+}

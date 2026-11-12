@@ -1,5 +1,10 @@
-# Ancient Egypt
+# Pharaonic Egypt
 
-Status: coming soon. The Nile valley and its kingdoms, from archaeology and surviving records.
+Status: built. The Nile valley and its kingdoms, from the standing stones of Nabta Playa (about 5000 BCE), Nekhen and the first writing at Abydos, through Narmer and the unification, Djoser's Step Pyramid, Khufu's Great Pyramid and the builders' town at Giza, Harkhuf's caravans, the Middle Kingdom's forts in Nubia and the first alphabet in Sinai, the Hyksos at Avaris, the New Kingdom (Hatshepsut and Punt, Megiddo, Amarna, Kadesh, Abu Simbel and the first recorded strike), to Piye of Kush, the Saite revival, the Persians, Alexander at Siwa, the Ptolemies and the last hieroglyphs at Philae, and the rediscovery: the Rosetta Stone, Champollion, Tutankhamun's tomb, the rescue of Abu Simbel and the Grand Egyptian Museum. 29 chapters, a **Powers** layer that changes chapter by chapter, and 17 people cards.
 
-This folder will hold the story data the engine reads. Until then it holds only this README.
+- `story.json`: the story data. It uses the `near-east` basemap and the shared art library. Routes show only for the current chapter.
+- Source: chapters rest on **Archaeology** (excavations) or **History** (texts in Egyptian, Greek and other languages, and the modern record). Traditions such as Menes founding Memphis are labelled in the text.
+- Dates before about 700 BCE are approximate; scholars' dates for the early kings differ by decades or more. Native names are in Latin letters (Egyptian `egy`, Greek `grc`, Arabic `ar`, Old Persian `peo`).
+- Memphis and Giza are moved a little apart so their pins can be told apart. Saqqara, Deir el-Bahari, Deir el-Medina, the Valley of the Kings and Philae share the pins of Memphis, Thebes and Aswan. The story's note says so.
+- The Nile, with its Rosetta and Damietta branches, is simplified from Natural Earth 1:10m rivers (public domain). Through Lake Nasser it follows Natural Earth's lake centre line, close to the old river; the reservoir itself is not drawn.
+- Powers areas are loose outlines around the Nile valley and delta, cut to the `near-east` coastlines. The Persian Empire's lands outside Egypt reuse the outline from Mesopotamia.
