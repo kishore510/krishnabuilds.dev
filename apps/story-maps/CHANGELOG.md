@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.26.0
+
+- New story map in Legends: The Life of Krishna, the third of the Indian legends. From the voice at Devaki’s wedding, the birth in Kamsa’s prison and Vasudeva’s crossing of the Yamuna, through Gokula (Putana, the butter thief, the mortar) and Vrindavan (Kaliya, Govardhan, the rasa dance, Radha in later tradition), Akrura’s chariot, the end of Kamsa, Sandipani at Avanti, Uddhava and the song of the bee, Jarasandha’s sieges, Dwaraka in the sea, Rukmini, the Syamantaka jewel, Naraka, Usha and Aniruddha, the schoolfriend’s flattened rice, the Pandava chapters (Subhadra, the Khandava forest, Jarasandha, Shishupala, the peace mission, the Gita, the charioteer’s war, Gandhari’s curse), to the iron club, the Uddhava Gita, the hunter’s arrow at Prabhasa and the sea taking Dwaraka, then the historical record (Heliodorus at Vidisha, the Gita Govinda, Vrindavan rediscovered): 37 chapters, a Kingdoms layer and 14 people cards.
+- Catalogue: the Life of Krishna entry now opens the story; a new legend entry, the Bhagavata Purana, links to it.
+- Art: a flute glyph, and Garuda and a basket-bearer as travellers.
+
 ## 0.25.0
 
 - New story map in Chronicles: The Gupta Empire. From a divided north about 300 CE and Chandragupta I’s Licchavi marriage, through Samudragupta (Harishena’s poem on the Prayagraj pillar, the Naga kings uprooted, the southern campaign to Kanchi, tribute from the frontiers, Meghavarna’s monastery at Bodh Gaya, the horse sacrifice and lyre coins), Chandragupta II (Ramagupta and Dhruvadevi, the end of the Western Kshatrapas, the boar at Udayagiri, Prabhavatigupta among the Vakatakas, Faxian, the iron pillar, Kalidasa), Kumaragupta and Nalanda, the Mandsaur silk weavers, Skandagupta against the Hunas and the Sudarshana lake, to the Sarnath Buddhas, the Damodarpur land sales, Eran under Toramana, Aryabhata, the Deogarh temple, Goparaja’s memorial, Mihirakula, Yashodharman, the last Guptas and the “golden age” question: 30 chapters, a Powers layer that changes chapter by chapter, and 15 people cards.
