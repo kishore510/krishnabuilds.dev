@@ -33,6 +33,24 @@ describe("manifest.json", () => {
     expect(problems).toContain("story x-1: unknown status done");
   });
 
+  it("needs a finished time on every built story, and only on a known format", () => {
+    const first = manifest.stories.find((s) => s.status === "built");
+    const coming = manifest.stories.find((s) => s.status === "coming-soon");
+    const broken = {
+      ...manifest,
+      stories: [
+        ...manifest.stories,
+        { ...first, id: "x-undated", added: undefined },
+        { ...first, id: "x-baddate", added: "12 Nov 2026" },
+        { ...coming, id: "x-placeholder", added: undefined },
+      ],
+    };
+    const problems = validateManifest(broken).join("\n");
+    expect(problems).toContain("story x-undated: a built story needs added");
+    expect(problems).toContain("story x-baddate: a built story needs added");
+    expect(problems).not.toContain("x-placeholder: a built story needs added");
+  });
+
   it("allows a story with no collection", () => {
     const loose = manifest.stories.find((s) => s.collection === undefined);
     expect(loose).toBeDefined();

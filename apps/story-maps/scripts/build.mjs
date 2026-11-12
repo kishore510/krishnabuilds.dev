@@ -312,7 +312,14 @@ const storyCards = builtStories
 const hubData = {
   regions: catalogue.regions,
   entries: catalogue.entries,
-  stories: Object.fromEntries(manifest.stories.map((s) => [s.id, { title: s.title, built: s.status === "built" }])),
+  stories: Object.fromEntries(
+    manifest.stories.map((s) => {
+      // The region to colour a story's card by: its main entry's (the one with no chapter), else the first that links to it.
+      const linked = catalogue.entries.filter((e) => e.story === s.id);
+      const region = (linked.find((e) => e.chapter === undefined) ?? linked[0])?.region;
+      return [s.id, { title: s.title, built: s.status === "built", era: s.era, added: s.added, region }];
+    }),
+  ),
   // The atlas projects [lon, lat] the same way the world basemap does.
   world: { ...world.projection, size: world.size },
 };
