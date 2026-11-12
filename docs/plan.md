@@ -128,7 +128,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Churning of the Ocean (Samudra Manthan) (0.27.0)
 - [x] Greece and Persia (0.28.0)
 - [x] The Mughal Empire (0.30.0)
-- [ ] The Delhi Sultanate
+- [x] The Delhi Sultanate (0.31.0)
 - [ ] The Silk Road (already listed on the hub as coming soon)
 - [ ] The Marathas
 - [ ] The Mahajanapadas and the Buddha

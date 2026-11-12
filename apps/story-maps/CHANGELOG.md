@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.31.0
+
+- New story map in Chronicles: The Delhi Sultanate. From the raids out of Ghazni and the battles of Tarain, through Muinuddin Chishti at Ajmer, the Qutb Minar, Bakhtiyar Khalji in Bihar and Bengal, Aibak at Lahore, Chinggis Khan on the Indus, Iltutmish and Razia, Balban and the Mongol frontier, Alauddin Khalji (Devagiri, Gujarat and Malik Kafur, the Mongols at Delhi, Ranthambore and Chittor, the fixed markets, Warangal and the far south), the Tughlaqs (‘Delhi is still far’, Daulatabad, the token coins, Ibn Battuta, the breakaway of Madurai, Vijayanagara, Bengal and the Bahmanis, Firuz Shah and Ashoka’s pillars), Timur’s sack of Delhi, the regional sultanates and the Sayyids, the Lodis at Jaunpur and Agra, Kabir and Guru Nanak, to Panipat in 1526 and the sultanate’s legacy: 30 chapters, a Powers layer that changes chapter by chapter, and 23 people cards.
+- Catalogue: the Delhi Sultanate entry now opens the story.
+
 ## 0.30.0
 
 - New story map in Chronicles: The Mughal Empire. From Babur’s boyhood in Ferghana, Samarkand won and lost and the kingdom at Kabul, through the first battle of Panipat, Khanwa and Babur’s gardens, Humayun’s defeats by Sher Khan, Sher Shah’s roads and rupee, Akbar’s birth at Umarkot and Humayun’s fall on the library stairs, Akbar’s reign (Hemu and the second Panipat, the Amber alliance, Chittor, the ride to Gujarat, Haldighati, Fatehpur Sikri, the House of Worship, Todar Mal and the Ain-i Akbari, Chand Bibi, Prince Salim’s revolt), Guru Arjan, Sir Thomas Roe and Nur Jahan, the gardens of Kashmir, the Taj Mahal and Shahjahanabad, the war of succession, Shivaji, Aurangzeb’s stricter rule, the Khalsa, Golconda and the plain grave at Khuldabad, to the successor states, Nadir Shah, the third Panipat, Shah Alam II, 1857 and the exile of Bahadur Shah Zafar, and the Mughal legacy: 39 chapters, a Powers layer that changes chapter by chapter, and 24 people cards.
