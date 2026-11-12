@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.24.0
+
+- New story map in Chronicles: The Satavahanas, the Deccan dynasty that followed the Mauryas in the south. From Ashoka’s edicts in the Deccan, Simuka’s coins at Kotilingala, Queen Naganika at Naneghat, Kharavela’s challenge, the Sanchi gateway and the first caves at Ajanta, through the great hall at Karla, Hala’s Seven Hundred Verses, the Periplus on Kalyan, Paithan and Tagara, Roman bronzes at Kolhapur and Nahapana’s Kshatrapas, to Gautamiputra’s revival (the Jogalthembi hoard, Gautami Balashri’s inscription), Ptolemy’s two royal seats, Rudradaman at Junagadh, the marriage recorded at Kanheri, coins in two languages, Amaravati, the portraits at Kanaganahalli, Yajna Sri’s ship coins, the break-up about 225 CE and the Shalivahana era: 23 chapters, a Powers layer that changes chapter by chapter, and 11 people cards.
+- Catalogue: the Satavahana dynasty entry now opens the story.
+
 ## 0.23.0
 
 - New story map in Legends: The Mahabharata, the second of the Indian legends. From Vyasa and Ganesha at Mana, Shantanu and Ganga, Bhishma's vow, the princesses of Kashi and Karna set adrift to Champa, through the rival cousins (Drona's tournament, Ahichchhatra, the house of lac at Varanavata, Hidimba and Baka, Draupadi's choice at Kampilya), Indraprastha (the Khandava forest, Arjuna in Manipura and Dwaraka, Jarasandha, the royal consecration), the dice game and Draupadi in the hall, the exile (Kamyaka, Bhima and Hanuman, the yaksha's questions, the year in hiding at Virata's city), Krishna's peace mission and Karna's choice, the eighteen days at Kurukshetra from the Bhagavad Gita to the night raid, to Bhishma's teachings, the horse sacrifice, the end of the Yadavas at Prabhasa, the sea taking Dwaraka, the great journey and the critical edition: 39 chapters, a Kingdoms layer and 16 people cards.
