@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.27.0
+
+- New story map in Legends: The Churning of the Ocean (Samudra Manthan), the fourth of the Indian legends. From the story Vishvamitra tells Rama at Vishala, Durvasa’s garland and the gods’ defeat, through Vishnu’s plan and the truce with Bali, Mandara uprooted and flown to the sea on Garuda, Vasuki as the rope, the tortoise (Kurma) and his temple at Srikurmam, the poison and Shiva’s blue throat (Kailasa, Neelkanth, Surutapalli), the treasures (Kamadhenu, the white horse, Airavata, the Kaustubha jewel, the coral tree, the apsaras, Lakshmi, Varuni, Dhanvantari), the pot snatched, Mohini, Rahu and the eclipses, and the war on the shore, to the coral tree at Dwaraka, the four drops of nectar and the Kumbh Mela towns (Haridwar, Prayagraj, Ujjain, Nashik), Harsha at Prayag in Xuanzang’s account and the Kumbh Mela today: 32 chapters and 10 people cards.
+- The ocean of milk is set in the Bay of Bengal only so the churning has a place on the map; the story’s note says so.
+- Catalogue: the Churning of the Ocean entry now opens the story.
+- Art: glyphs for the churning, a tortoise and a pot (kumbha), and a pot of nectar as a traveller.
+
 ## 0.26.0
 
 - New story map in Legends: The Life of Krishna, the third of the Indian legends. From the voice at Devaki’s wedding, the birth in Kamsa’s prison and Vasudeva’s crossing of the Yamuna, through Gokula (Putana, the butter thief, the mortar) and Vrindavan (Kaliya, Govardhan, the rasa dance, Radha in later tradition), Akrura’s chariot, the end of Kamsa, Sandipani at Avanti, Uddhava and the song of the bee, Jarasandha’s sieges, Dwaraka in the sea, Rukmini, the Syamantaka jewel, Naraka, Usha and Aniruddha, the schoolfriend’s flattened rice, the Pandava chapters (Subhadra, the Khandava forest, Jarasandha, Shishupala, the peace mission, the Gita, the charioteer’s war, Gandhari’s curse), to the iron club, the Uddhava Gita, the hunter’s arrow at Prabhasa and the sea taking Dwaraka, then the historical record (Heliodorus at Vidisha, the Gita Govinda, Vrindavan rediscovered): 37 chapters, a Kingdoms layer and 14 people cards.
