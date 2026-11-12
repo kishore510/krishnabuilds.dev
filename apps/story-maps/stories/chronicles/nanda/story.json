@@ -1,0 +1,1723 @@
+{
+  "id": "nanda",
+  "title": "The Nanda Dynasty",
+  "description": "An illustrated map of the rise of Magadha and its Nanda kings, from Bimbisara’s Rajagriha through the Nandas’ wealth and great army and Alexander’s halt at the Beas, to their fall to Chandragupta and Chanakya about 322 BCE.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of Magadha and the Nanda kingdom, from the 6th or 5th century to about 322 BCE",
+  "note": "Based on Greek and Latin writers, Kharavela’s inscription, coins, and Puranic, Buddhist, Jain, Sri Lankan and Tamil traditions written down centuries later; each chapter says which it follows. The sources often disagree, and dates before 326 BCE are uncertain and debated. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders.",
+  "places": {
+    "hindu-kush": {
+      "name": "Hindu Kush",
+      "at": [
+        69.5,
+        35.8
+      ],
+      "hidden": true
+    },
+    "rajagriha": {
+      "name": "Rajagriha",
+      "at": [
+        85.42,
+        25.03
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "champa": {
+      "name": "Champa",
+      "at": [
+        86.95,
+        25.25
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "vaishali": {
+      "name": "Vaishali",
+      "at": [
+        85.13,
+        25.99
+      ],
+      "glyph": "flag",
+      "label": "top"
+    },
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [
+        85.14,
+        25.61
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "ujjain": {
+      "name": "Ujjain",
+      "at": [
+        75.78,
+        23.18
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "udayagiri": {
+      "name": "Udayagiri",
+      "at": [
+        85.79,
+        20.26
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [
+        72.83,
+        33.75
+      ],
+      "glyph": "hermitage",
+      "label": "top"
+    },
+    "hydaspes": {
+      "name": "Hydaspes (Jhelum)",
+      "at": [
+        73.55,
+        32.9
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "beas": {
+      "name": "Hyphasis (Beas)",
+      "at": [
+        75.4,
+        31.6
+      ],
+      "glyph": "sacred-fire",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "army": {
+      "name": "The army of Magadha",
+      "icon": "war-elephant"
+    },
+    "greeks": {
+      "name": "Alexander’s army",
+      "icon": "hoplite"
+    },
+    "chronicle": {
+      "name": "The chronicle",
+      "icon": "scroll"
+    },
+    "chandragupta": {
+      "name": "Chandragupta’s army",
+      "icon": "prince"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "The rise of Magadha",
+      "color": "#4fc3b0"
+    },
+    "nandas": {
+      "name": "The Nanda kings",
+      "color": "#a678e0"
+    },
+    "alexander": {
+      "name": "Alexander at the edge",
+      "color": "#2b7fb4"
+    },
+    "fall": {
+      "name": "The fall of the Nandas",
+      "color": "#e0573a"
+    },
+    "memory": {
+      "name": "What remains",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "greek": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 28.4,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 57.2,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 71.6,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 90.8,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "5th c. BCE"
+      },
+      {
+        "at": 35.6,
+        "text": "c. 345"
+      },
+      {
+        "at": 59.6,
+        "text": "326"
+      },
+      {
+        "at": 83.6,
+        "text": "322 BCE"
+      },
+      {
+        "at": 98.0,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "rajagriha",
+      "phase": "rise",
+      "title": "Magadha among the great kingdoms",
+      "native": "मगध",
+      "when": "6th or 5th century BCE",
+      "at": 2.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          85.6,
+          25.3
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Magadha, in today’s south Bihar, is one of sixteen great kingdoms (mahajanapadas) named in Buddhist and Jain texts. Its first capital, Rajagriha, sits in a ring of five hills, guarded by stone walls whose remains still stand. Historians point to its fertile rice land, forests full of elephants and iron ore in the hills to the south.",
+      "today": "Today: Rajgir, Bihar, India."
+    },
+    {
+      "place": "champa",
+      "phase": "rise",
+      "title": "Bimbisara takes Anga",
+      "native": "अङ्ग",
+      "when": "6th or 5th century BCE",
+      "at": 6.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          86.2,
+          25.4
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "rajagriha",
+          "to": "champa",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Buddhist texts name Bimbisara, a patron of the Buddha, as the king who began Magadha’s rise. He conquers Anga to the east, with its river port of Champa on the Ganga, and makes marriage alliances with Kosala, the Lichchhavis of Vaishali and Madra. His dates, like the Buddha’s, are debated.",
+      "today": "Today: Champanagar, near Bhagalpur, Bihar."
+    },
+    {
+      "place": "vaishali",
+      "phase": "rise",
+      "title": "Ajatashatru and the Vajjis",
+      "native": "वैशाली",
+      "when": "5th century BCE",
+      "at": 11.6,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.2,
+          25.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "rajagriha",
+          "to": "vaishali",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Ajatashatru, who Buddhist tradition says seized the throne from his father, fights Kosala and then the Vajji confederacy across the Ganga, a league of clans ruled by assemblies at Vaishali. Jain texts say he won with two new war machines: a great stone-thrower and a chariot with swinging maces. After a long war, Vaishali falls to Magadha.",
+      "today": "Today: Vaishali, Bihar, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "rise",
+      "title": "A fort on the Ganga",
+      "native": "पाटलिग्राम",
+      "when": "5th century BCE",
+      "at": 16.4,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.3,
+          25.5
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "rajagriha",
+          "to": "pataliputra",
+          "traveller": "chronicle",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "To face the Vajjis, Ajatashatru’s ministers fortify a village, Pataligrama, where the Son river meets the Ganga. A Buddhist text says the Buddha passed by and foretold a great city, threatened only by fire, flood and quarrels. Jain and Puranic tradition say Ajatashatru’s son Udayin later made it Magadha’s capital.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "ujjain",
+      "phase": "rise",
+      "title": "Shishunaga defeats Avanti",
+      "native": "अवन्ति",
+      "when": "5th or 4th century BCE",
+      "at": 21.2,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          80.5,
+          25
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "ujjain",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.12
+        }
+      ],
+      "text": "Sri Lankan chronicles say the people of Magadha, tired of kings who killed their fathers, set aside Bimbisara’s line and made a minister, Shishunaga, king. The Puranas say he broke the power of Avanti, Magadha’s great rival in the west, ruled from Ujjain. Kosala and Vatsa also pass to Magadha, though exactly when is uncertain.",
+      "today": "Today: Ujjain, Madhya Pradesh, India."
+    },
+    {
+      "place": "vaishali",
+      "phase": "rise",
+      "title": "The council at Vaishali",
+      "native": "वैशाली",
+      "when": "4th century BCE",
+      "at": 26.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.2,
+          25.8
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Sri Lankan chronicles say that about a hundred years after the Buddha’s death, in the reign of Kalashoka, son of Shishunaga, monks gather at Vaishali to settle a quarrel over the rules, such as whether monks may accept gold and silver. It is remembered as the Second Buddhist Council. Kalashoka may be the king the Puranas call Kakavarna.",
+      "today": "Today: Vaishali, Bihar, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "nandas",
+      "title": "A barber’s son?",
+      "native": "नन्द",
+      "when": "4th century BCE",
+      "at": 30.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          85.3,
+          25.5
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "The Nandas’ rise is told in different ways. The Roman writer Curtius says the reigning king’s father was a barber who became the queen’s lover, murdered the old king and his sons. Jain tradition also calls the first Nanda a barber’s son. The poet Bana tells of a Shishunaga king, Kakavarna, stabbed in the throat near his city.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "nandas",
+      "title": "Mahapadma, sole ruler",
+      "native": "महापद्म",
+      "when": "perhaps from about 345 BCE",
+      "at": 35.6,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          82,
+          25.5
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "The Puranas name the first Nanda Mahapadma, son of the last Shishunaga king by a Shudra mother. They call him sole ruler (ekarat), destroyer of all the old warrior (kshatriya) lines, who brought the earth under one umbrella. They give him 88 years and his eight sons twelve more. Sri Lankan chronicles instead count nine brothers ruling 22 years.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "udayagiri",
+      "phase": "nandas",
+      "title": "The Nandas in Kalinga",
+      "native": "हाथीगुम्फा",
+      "when": "4th century BCE, recalled two or three centuries later",
+      "at": 40.4,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          85.6,
+          22.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "udayagiri",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.12
+        }
+      ],
+      "text": "Two or three centuries later, Kharavela, king of Kalinga, has his deeds carved above a cave at Udayagiri. The inscription names a Nanda king (Nandaraja) twice: for a canal he opened in Kalinga, and for a Jain image (Kalinga Jina) he carried off, which Kharavela proudly brings home. So the Nandas probably ruled Kalinga.",
+      "today": "Today: the Hathigumpha cave, Udayagiri, near Bhubaneswar, Odisha."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "nandas",
+      "title": "An army the Greeks feared",
+      "native": "प्राच्य",
+      "when": "about 326 BCE",
+      "at": 45.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          83,
+          25.5
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "Greek and Latin writers describe the king of the Prasii (from prachya, ‘easterners’) and the Gangaridai, whom they call Agrammes or Xandrames. Curtius gives him 200,000 foot soldiers, 20,000 horsemen, 2,000 chariots and 3,000 elephants; Plutarch says 8,000 chariots and 6,000 elephants. The numbers may be exaggerated, but they echo Indian memories of Nanda might.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "nandas",
+      "title": "The Nanda treasure",
+      "native": "धननन्द",
+      "when": "4th century BCE, remembered centuries later",
+      "at": 50.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          81,
+          20
+        ],
+        "width": 26
+      },
+      "legs": [],
+      "text": "The last Nanda is remembered as Dhana Nanda, ‘Nanda of wealth’. A Sri Lankan commentary says he taxed even skins, gums, trees and stones, and hid a vast hoard in a rock under the Ganga. Far to the south, the Tamil poet Mamulanar recalls the wealth of the Nandas, gathered at Pataliputra and hidden in the Ganga’s floods.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "nandas",
+      "title": "Ministers and magic",
+      "native": "कथासरित्सागर",
+      "when": "told from the early centuries CE to the 11th",
+      "at": 54.8,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.3,
+          25.5
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Later stories fill the Nanda court with clever ministers. Jain tradition names Shakatala, minister of the last Nanda, whose son Sthulabhadra became a leading Jain monk. The 11th-century Kathasaritsagara tells of the grammarian Vararuchi, and of a man who entered a dead Nanda king’s body by magic and ruled as ‘Yogananda’. None of it can be checked.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "hydaspes",
+      "phase": "alexander",
+      "title": "Alexander crosses the Indus",
+      "native": "वितस्ता",
+      "when": "326 BCE",
+      "at": 59.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          72.5,
+          33.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hindu-kush",
+          "to": "taxila",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        },
+        {
+          "from": "taxila",
+          "to": "hydaspes",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 326 BCE Alexander of Macedon crosses the Indus into the Punjab. Ambhi, king of Taxila, welcomes him, and at the Hydaspes (Jhelum) Alexander defeats King Porus in a hard battle against war elephants, then keeps him as an ally. He marches east, towards the Ganga plain and the Nanda kingdom.",
+      "today": "Today: the Jhelum river, Punjab, Pakistan."
+    },
+    {
+      "place": "beas",
+      "phase": "alexander",
+      "title": "Turned back at the Beas",
+      "native": "विपाशा",
+      "when": "326 BCE",
+      "at": 64.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          79,
+          29
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "hydaspes",
+          "to": "beas",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.1
+        }
+      ],
+      "text": "At the Hyphasis (Beas) a local king, Phegeus, tells Alexander of the mighty king on the Ganga. His soldiers, worn out by years of marching and weeks of monsoon rain, refuse to go on; his officer Coenus speaks for them. Alexander raises twelve altars and turns back. How much the Nanda army’s fame mattered is debated.",
+      "today": "Today: the Beas river, Punjab, India."
+    },
+    {
+      "place": "taxila",
+      "phase": "alexander",
+      "title": "A young man meets Alexander",
+      "native": "चन्द्रगुप्त",
+      "when": "about 326 to 325 BCE",
+      "at": 69.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          73.5,
+          32.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Plutarch writes that the young Chandragupta, Sandrokottos to the Greeks, saw Alexander, and later said Alexander could easily have taken the east, because its king was hated for his wickedness and low birth. The Roman historian Justin says Sandrokottos offended Alexander with his boldness and escaped being killed. Where they met is not recorded.",
+      "today": "Today: Taxila’s ruins are a World Heritage Site."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "fall",
+      "title": "Chanakya’s vow",
+      "native": "चाणक्य",
+      "when": "about 325 BCE",
+      "at": 74.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.3,
+          25.5
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "In tradition, Chanakya, a Brahmin scholar, perhaps from Taxila, is insulted at Dhana Nanda’s court: in a Buddhist version he is thrown out of the seat of honour in the king’s alms hall. He vows to destroy the Nandas, and later tellings say he left his topknot (shikha) untied until he did. He finds Chandragupta to lead the fight.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "taxila",
+      "phase": "fall",
+      "title": "Start from the edges",
+      "when": "about 325 to 322 BCE",
+      "at": 78.8,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          76,
+          30.5
+        ],
+        "width": 18
+      },
+      "legs": [],
+      "text": "Buddhist and Jain stories say a first attack on the heart of Magadha failed. In hiding, the pair heard a mother scold her child for burning his fingers in the middle of a dish of hot food: eat from the cool edges first. So they took the borderlands first. Justin says Sandrokottos drove out Alexander’s governors once Alexander died.",
+      "today": "Today: Taxila, Punjab, Pakistan."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "fall",
+      "title": "The fall of the Nandas",
+      "native": "पाटलिपुत्र",
+      "when": "about 322 BCE",
+      "at": 83.6,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          80,
+          28
+        ],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "taxila",
+          "to": "pataliputra",
+          "traveller": "chandragupta",
+          "style": "march",
+          "bend": 0.08
+        }
+      ],
+      "text": "About 322 BCE Chandragupta and Chanakya take Pataliputra. The Buddhist Milindapanha recalls a vast battle against Bhaddasala, the Nanda general. Jain tradition says the defeated king was allowed to leave with what one chariot could carry, and his daughter chose to go with Chandragupta. Other tellings say Dhana Nanda was killed. Either way, the Maurya age begins.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "fall",
+      "title": "Rakshasa’s loyalty",
+      "native": "मुद्राराक्षस",
+      "when": "a play of perhaps the 4th to 8th century CE",
+      "at": 88.4,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.3,
+          25.5
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "The play Mudrarakshasa (Rakshasa’s Signet Ring), by Vishakhadatta, imagines what came next. Rakshasa, the last Nanda’s loyal minister, plots to restore his master’s line. Chanakya outwits him with Rakshasa’s own signet ring and a forged letter, then wins him over to serve Chandragupta. Its date is debated, and it is drama, not history.",
+      "today": "Today: still performed and studied in India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "memory",
+      "title": "Coins without names",
+      "native": "कार्षापण",
+      "when": "about the 5th to 2nd century BCE",
+      "at": 93.2,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          82,
+          25
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "Magadha’s silver coins (karshapana) were bent bars and flat pieces stamped with symbols such as suns, wheels, animals and hills, but no names or dates. Hoards show these coins spreading across north India as Magadha grew. Experts sort them into series and suggest which belong to the Nanda years, but no coin can be tied to a named king.",
+      "today": "Today: hoards are held in museums across India."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "memory",
+      "title": "What the Mauryas inherited",
+      "native": "नन्द वंश",
+      "when": "from about 322 BCE",
+      "at": 98.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          80,
+          26
+        ],
+        "width": 22
+      },
+      "legs": [],
+      "text": "The Nandas ruled for a short time, perhaps a few decades, but they joined most of the Ganga plain under one king, with a standing army, a full treasury and a tax system. Chandragupta took over that machine and built the first empire to cover most of the subcontinent. Their capital now lies beneath modern Patna.",
+      "today": "Today: Patna, capital of Bihar, India."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "magadha",
+        "name": "Magadha",
+        "native": "मगध",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            0,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Magadha",
+          "at": [
+            86.0,
+            24.5
+          ],
+          "moves": [
+            {
+              "from": 2,
+              "at": [
+                83.6,
+                24.6
+              ]
+            },
+            {
+              "from": 4,
+              "at": [
+                80.6,
+                24.85
+              ]
+            },
+            {
+              "from": 7,
+              "at": [
+                80.4,
+                25.0
+              ]
+            },
+            {
+              "from": 17,
+              "at": [
+                79.0,
+                26.8
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  84.3,
+                  25.6
+                ],
+                [
+                  85.6,
+                  25.75
+                ],
+                [
+                  86.6,
+                  25.3
+                ],
+                [
+                  86.6,
+                  24.6
+                ],
+                [
+                  85.6,
+                  24.2
+                ],
+                [
+                  84.4,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  84.3,
+                  25.6
+                ],
+                [
+                  85.6,
+                  25.75
+                ],
+                [
+                  87.2,
+                  25.4
+                ],
+                [
+                  87.9,
+                  25.2
+                ],
+                [
+                  87.8,
+                  24.4
+                ],
+                [
+                  86.6,
+                  24.3
+                ],
+                [
+                  85.6,
+                  24.2
+                ],
+                [
+                  84.4,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  82.6,
+                  25.6
+                ],
+                [
+                  83.6,
+                  25.55
+                ],
+                [
+                  85.6,
+                  25.75
+                ],
+                [
+                  87.2,
+                  25.4
+                ],
+                [
+                  87.9,
+                  25.2
+                ],
+                [
+                  87.8,
+                  24.4
+                ],
+                [
+                  86.6,
+                  24.3
+                ],
+                [
+                  85.6,
+                  24.0
+                ],
+                [
+                  84.4,
+                  24.2
+                ],
+                [
+                  83.2,
+                  24.6
+                ],
+                [
+                  82.6,
+                  25.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                3
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  82.6,
+                  25.6
+                ],
+                [
+                  83.4,
+                  25.9
+                ],
+                [
+                  84.1,
+                  26.6
+                ],
+                [
+                  85.2,
+                  26.9
+                ],
+                [
+                  86.3,
+                  26.6
+                ],
+                [
+                  86.8,
+                  25.6
+                ],
+                [
+                  87.9,
+                  25.3
+                ],
+                [
+                  87.8,
+                  24.4
+                ],
+                [
+                  86.6,
+                  24.3
+                ],
+                [
+                  85.6,
+                  24.0
+                ],
+                [
+                  84.4,
+                  24.2
+                ],
+                [
+                  83.2,
+                  24.6
+                ],
+                [
+                  82.6,
+                  25.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                4,
+                6
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  79.0,
+                  27.0
+                ],
+                [
+                  81.0,
+                  27.8
+                ],
+                [
+                  83.8,
+                  27.5
+                ],
+                [
+                  85.2,
+                  26.9
+                ],
+                [
+                  86.3,
+                  26.6
+                ],
+                [
+                  86.8,
+                  25.6
+                ],
+                [
+                  87.9,
+                  25.3
+                ],
+                [
+                  87.8,
+                  24.4
+                ],
+                [
+                  86.6,
+                  24.3
+                ],
+                [
+                  85.6,
+                  24.0
+                ],
+                [
+                  84.4,
+                  24.2
+                ],
+                [
+                  82.5,
+                  24.4
+                ],
+                [
+                  80.5,
+                  24.6
+                ],
+                [
+                  79.0,
+                  25.2
+                ],
+                [
+                  78.6,
+                  26.2
+                ]
+              ],
+              [
+                [
+                  74.5,
+                  24.5
+                ],
+                [
+                  77.5,
+                  24.8
+                ],
+                [
+                  78.5,
+                  23.0
+                ],
+                [
+                  77.0,
+                  21.8
+                ],
+                [
+                  74.8,
+                  22.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.5,
+                  28.5
+                ],
+                [
+                  77.5,
+                  30.0
+                ],
+                [
+                  84.0,
+                  27.5
+                ],
+                [
+                  88.0,
+                  26.5
+                ],
+                [
+                  89.0,
+                  24.5
+                ],
+                [
+                  88.0,
+                  22.0
+                ],
+                [
+                  86.5,
+                  21.5
+                ],
+                [
+                  85.0,
+                  23.0
+                ],
+                [
+                  82.01,
+                  24.0
+                ],
+                [
+                  79.0,
+                  24.0
+                ],
+                [
+                  76.5,
+                  26.0
+                ]
+              ],
+              [
+                [
+                  86.8,
+                  21.6
+                ],
+                [
+                  86.9,
+                  21.2
+                ],
+                [
+                  86.6,
+                  20.6
+                ],
+                [
+                  86.0,
+                  19.95
+                ],
+                [
+                  85.2,
+                  19.6
+                ],
+                [
+                  84.6,
+                  19.4
+                ],
+                [
+                  84.3,
+                  20.2
+                ],
+                [
+                  84.8,
+                  21.0
+                ],
+                [
+                  85.6,
+                  21.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.5,
+                  28.0
+                ],
+                [
+                  72.0,
+                  32.5
+                ],
+                [
+                  74.5,
+                  34.0
+                ],
+                [
+                  77.5,
+                  30.0
+                ],
+                [
+                  84.0,
+                  27.5
+                ],
+                [
+                  88.0,
+                  26.5
+                ],
+                [
+                  89.0,
+                  24.5
+                ],
+                [
+                  88.0,
+                  22.0
+                ],
+                [
+                  86.5,
+                  21.5
+                ],
+                [
+                  85.0,
+                  23.0
+                ],
+                [
+                  82.01,
+                  24.0
+                ],
+                [
+                  79.0,
+                  24.0
+                ],
+                [
+                  76.5,
+                  26.0
+                ],
+                [
+                  75.49,
+                  28.49
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Rajagriha, then Pataliputra",
+          "Dynasties": "Bimbisara’s line, the Shishunagas, the Nandas, then the Mauryas",
+          "Today": "Bihar at its heart; at its largest, most of the Ganga plain"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Bimbisara, in Buddhist texts"
+          },
+          {
+            "from": 2,
+            "text": "Ajatashatru, son of Bimbisara"
+          },
+          {
+            "from": 4,
+            "text": "Shishunaga, made king, the chronicles say, by the people"
+          },
+          {
+            "from": 5,
+            "text": "Kalashoka, son of Shishunaga"
+          },
+          {
+            "from": 6,
+            "text": "Not certain: the sources tell different stories"
+          },
+          {
+            "from": 7,
+            "text": "Mahapadma Nanda, in the Puranas"
+          },
+          {
+            "from": 9,
+            "text": "The king Greek writers call Agrammes or Xandrames"
+          },
+          {
+            "from": 10,
+            "text": "The last Nanda, Dhana Nanda in later sources"
+          },
+          {
+            "from": 17,
+            "text": "Chandragupta Maurya"
+          }
+        ],
+        "role": "A kingdom of south Bihar that swallowed its neighbours one by one, until the Nandas ruled most of the Ganga plain.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Takes Anga"
+          },
+          {
+            "from": 3,
+            "text": "Defeats the Vajji confederacy"
+          },
+          {
+            "from": 4,
+            "text": "Breaks the power of Avanti"
+          },
+          {
+            "from": 8,
+            "text": "Rules Kalinga, Kharavela’s inscription suggests"
+          },
+          {
+            "from": 13,
+            "text": "Its army’s fame reaches Alexander’s camp"
+          },
+          {
+            "from": 17,
+            "text": "Taken by Chandragupta and Chanakya"
+          }
+        ]
+      },
+      {
+        "id": "vajji",
+        "name": "Vajji confederacy",
+        "native": "वृजि",
+        "color": "#2fa39a",
+        "active": [
+          [
+            0,
+            2
+          ]
+        ],
+        "label": {
+          "text": "Vajji",
+          "at": [
+            85.6,
+            26.5
+          ]
+        },
+        "area": [
+          [
+            84.1,
+            26.6
+          ],
+          [
+            85.2,
+            26.95
+          ],
+          [
+            86.3,
+            26.65
+          ],
+          [
+            86.6,
+            26.0
+          ],
+          [
+            85.6,
+            25.85
+          ],
+          [
+            84.6,
+            25.8
+          ],
+          [
+            84.0,
+            26.0
+          ]
+        ],
+        "facts": {
+          "Capital": "Vaishali",
+          "Government": "Assemblies of clan chiefs, the Lichchhavis the best known",
+          "Today": "North Bihar, India"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "An assembly, not a king"
+          }
+        ],
+        "role": "A league of republics north of the Ganga, praised by the Buddha for meeting often and in harmony.",
+        "ties": [
+          {
+            "from": 2,
+            "text": "At war with Ajatashatru"
+          }
+        ]
+      },
+      {
+        "id": "kosala",
+        "name": "Kosala",
+        "native": "कोसल",
+        "color": "#4f6fd0",
+        "active": [
+          [
+            0,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Kosala",
+          "at": [
+            81.8,
+            27.0
+          ]
+        },
+        "area": [
+          [
+            80.5,
+            28.0
+          ],
+          [
+            82.2,
+            27.9
+          ],
+          [
+            83.8,
+            27.5
+          ],
+          [
+            84.0,
+            26.6
+          ],
+          [
+            83.3,
+            25.9
+          ],
+          [
+            82.0,
+            25.8
+          ],
+          [
+            80.8,
+            26.2
+          ]
+        ],
+        "facts": {
+          "Capitals": "Shravasti and Ayodhya (Saketa)",
+          "Today": "Central and eastern Uttar Pradesh, India"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Prasenajit, in Buddhist texts"
+          },
+          {
+            "from": 3,
+            "text": "Not certain; Kosala later passes to Magadha"
+          }
+        ],
+        "role": "Magadha’s great rival in the north, tied to it by marriage and war.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "A Kosala princess marries Bimbisara"
+          },
+          {
+            "from": 2,
+            "text": "At war with Ajatashatru"
+          }
+        ]
+      },
+      {
+        "id": "avanti",
+        "name": "Avanti",
+        "native": "अवन्ति",
+        "color": "#c2477a",
+        "active": [
+          [
+            0,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Avanti",
+          "at": [
+            76.5,
+            23.4
+          ]
+        },
+        "area": [
+          [
+            74.5,
+            24.5
+          ],
+          [
+            77.5,
+            24.8
+          ],
+          [
+            78.5,
+            23.0
+          ],
+          [
+            77.0,
+            21.8
+          ],
+          [
+            74.8,
+            22.3
+          ]
+        ],
+        "facts": {
+          "Capital": "Ujjain",
+          "Today": "Western Madhya Pradesh, India"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Pradyota, in Buddhist and Puranic texts"
+          },
+          {
+            "from": 2,
+            "text": "Not certain"
+          }
+        ],
+        "role": "The strongest kingdom of the west, until Shishunaga breaks its power.",
+        "ties": []
+      },
+      {
+        "id": "alexander",
+        "name": "Alexander’s empire",
+        "color": "#e0573a",
+        "active": [
+          [
+            12,
+            16
+          ]
+        ],
+        "label": {
+          "text": "Alexander",
+          "at": [
+            69.5,
+            31.5
+          ]
+        },
+        "area": [
+          [
+            62.0,
+            25.3
+          ],
+          [
+            62.5,
+            30.0
+          ],
+          [
+            64.0,
+            33.0
+          ],
+          [
+            68.0,
+            35.2
+          ],
+          [
+            71.5,
+            36.0
+          ],
+          [
+            74.5,
+            34.5
+          ],
+          [
+            76.2,
+            32.3
+          ],
+          [
+            75.6,
+            31.0
+          ],
+          [
+            73.5,
+            30.0
+          ],
+          [
+            71.5,
+            28.0
+          ],
+          [
+            69.5,
+            25.5
+          ],
+          [
+            67.5,
+            24.2
+          ],
+          [
+            66.4,
+            25.2
+          ]
+        ],
+        "facts": {
+          "Ruled from": "Babylon, at Alexander’s death",
+          "In India": "The Punjab and the Indus valley, briefly",
+          "Today": "Afghanistan and Pakistan, in these chapters"
+        },
+        "rulers": [
+          {
+            "from": 12,
+            "text": "Alexander of Macedon"
+          },
+          {
+            "from": 16,
+            "text": "Alexander’s governors (satraps); Alexander dies in 323 BCE"
+          }
+        ],
+        "role": "Reaches the Beas in 326 BCE, then turns back.",
+        "ties": [
+          {
+            "from": 12,
+            "text": "Porus becomes Alexander’s ally"
+          },
+          {
+            "from": 13,
+            "text": "The army refuses to march to the Ganga"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "bimbisara",
+        "name": "Bimbisara",
+        "native": "बिम्बिसार",
+        "life": "6th or 5th century BCE; dates debated",
+        "role": "King of Magadha",
+        "steps": [
+          0,
+          1
+        ],
+        "text": "Buddhist texts make Bimbisara a friend and patron of the Buddha, who gave the young order a park near Rajagriha. He built Magadha’s power by conquest, taking Anga, and by marriage. Buddhist tradition says his son Ajatashatru imprisoned him and he died in prison. Jain tradition knows him as Shrenika."
+      },
+      {
+        "id": "ajatashatru",
+        "name": "Ajatashatru",
+        "native": "अजातशत्रु",
+        "life": "5th century BCE; dates debated",
+        "role": "King of Magadha",
+        "steps": [
+          2,
+          3
+        ],
+        "text": "Son of Bimbisara, called Kunika in Jain texts. Buddhist tradition says he seized the throne, later regretted his father’s death and turned to the Buddha, and that the First Buddhist Council met at Rajagriha in his reign. He defeated Kosala and the Vajjis, and fortified Pataligrama on the Ganga."
+      },
+      {
+        "id": "shishunaga",
+        "name": "Shishunaga",
+        "native": "शिशुनाग",
+        "life": "5th or 4th century BCE; dates debated",
+        "role": "King of Magadha, founder of a dynasty",
+        "steps": [
+          4,
+          5
+        ],
+        "text": "A minister made king, Sri Lankan chronicles say, when the people set aside Bimbisara’s line. The Puranas say he broke the power of Avanti. His son, Kalashoka, may be the Kakavarna of the Puranas; the Second Buddhist Council met at Vaishali in his reign. Indian and Sri Lankan lists of these kings do not agree."
+      },
+      {
+        "id": "mahapadma",
+        "name": "Mahapadma Nanda",
+        "native": "महापद्म नन्द",
+        "life": "4th century BCE",
+        "role": "Founder of the Nanda dynasty, in the Puranas",
+        "steps": [
+          6,
+          7,
+          8
+        ],
+        "text": "The Puranas name Mahapadma as the first Nanda, son of a Shudra mother, and the first sole ruler (ekarat) of the north, who ended the old warrior lines. Jain tradition calls the first Nanda a barber’s son. Curtius’s barber-king, father of the reigning king, may be him. A later Buddhist list instead begins the nine Nandas with Ugrasena."
+      },
+      {
+        "id": "kharavela",
+        "name": "Kharavela",
+        "native": "खारवेल",
+        "life": "about the 1st century BCE; dates debated",
+        "role": "King of Kalinga",
+        "steps": [
+          8
+        ],
+        "text": "A Jain king of Kalinga whose long inscription at the Hathigumpha cave, Udayagiri, records his reign year by year: wars, festivals and buildings. It is one of the few early sources to name a Nanda king, and so one of the best clues that the Nandas ruled Kalinga."
+      },
+      {
+        "id": "dhana-nanda",
+        "name": "Dhana Nanda",
+        "native": "धननन्द",
+        "life": "ruled until about 322 BCE",
+        "role": "Last Nanda king, in later sources",
+        "steps": [
+          9,
+          10,
+          15,
+          17
+        ],
+        "text": "The last Nanda is named Dhana Nanda only in later Buddhist sources; Greek and Latin writers call the king of their day Agrammes or Xandrames, perhaps the same man. Tradition remembers him as rich, greedy and unpopular. He was overthrown by Chandragupta and Chanakya; whether he was killed or sent away, the stories disagree."
+      },
+      {
+        "id": "mamulanar",
+        "name": "Mamulanar",
+        "native": "மாமூலனார்",
+        "lang": "ta",
+        "life": "Not known; a poet of the Sangam age",
+        "role": "Tamil poet",
+        "steps": [
+          10
+        ],
+        "text": "A poet of the early Tamil Sangam anthologies. In a poem of the Akananuru he mentions the wealth of the Nandas, gathered at Pataliputra and hidden in the Ganga’s floods. That a poet so far south knew the story shows how famous the Nanda treasure was. He also mentions the Mauryas."
+      },
+      {
+        "id": "alexander",
+        "name": "Alexander of Macedon",
+        "life": "356 to 323 BCE",
+        "role": "King of Macedon, conqueror of the Persian Empire",
+        "steps": [
+          12,
+          13,
+          14
+        ],
+        "text": "After conquering the Persian Empire, Alexander crossed the Hindu Kush and the Indus in 327 to 326 BCE. He beat Porus at the Hydaspes, but at the Beas his army refused to march on towards the Ganga and the Nanda kingdom. He turned back down the Indus and died at Babylon in 323 BCE."
+      },
+      {
+        "id": "porus",
+        "name": "Porus",
+        "life": "died about 317 BCE",
+        "role": "King between the Jhelum and the Chenab",
+        "steps": [
+          12
+        ],
+        "text": "Porus, perhaps Puru or Paurava in Indian languages, faced Alexander at the Hydaspes with war elephants and lost. Greek writers say that, asked how he wished to be treated, he answered ‘like a king’. Alexander kept him as ruler and ally. His Indian name and family are not recorded in Indian sources."
+      },
+      {
+        "id": "coenus",
+        "name": "Coenus",
+        "life": "died 326 BCE",
+        "role": "One of Alexander’s senior officers",
+        "steps": [
+          13
+        ],
+        "text": "A Macedonian commander who had fought in all of Alexander’s great battles. At the Beas, Arrian says, he spoke for the exhausted army, telling Alexander the men longed to see their homes again. Alexander gave way. Coenus died of illness soon afterwards, back at the Hydaspes."
+      },
+      {
+        "id": "chanakya",
+        "name": "Chanakya",
+        "native": "चाणक्य",
+        "life": "4th century BCE, in tradition",
+        "role": "Brahmin teacher and minister, in tradition",
+        "steps": [
+          15,
+          16,
+          17,
+          18
+        ],
+        "text": "Also called Kautilya and Vishnugupta. Indian, Buddhist and Jain traditions all make him the mind behind Chandragupta, who swore to destroy the Nandas after being insulted at their court. Tradition credits him with the Arthashastra, a treatise on statecraft; scholars think it was written or revised later. Greek writers never mention him."
+      },
+      {
+        "id": "chandragupta",
+        "name": "Chandragupta Maurya",
+        "native": "चन्द्रगुप्त मौर्य",
+        "life": "ruled about 322 to 298 BCE",
+        "role": "Founder of the Maurya Empire",
+        "steps": [
+          14,
+          16,
+          17,
+          18,
+          20
+        ],
+        "text": "His origins are uncertain: Buddhist texts make him a Moriya of warrior rank, some later works call him low-born. Greek writers name him Sandrokottos. With Chanakya he drove out Alexander’s governors and overthrew the Nandas, taking their army and treasury, then built an empire from Afghanistan to Bengal."
+      },
+      {
+        "id": "rakshasa",
+        "name": "Rakshasa",
+        "native": "राक्षस",
+        "life": "Known only from the play",
+        "role": "Minister of the last Nanda, in Mudrarakshasa",
+        "steps": [
+          18
+        ],
+        "text": "In Vishakhadatta’s play, Rakshasa is the last Nanda’s chief minister, so loyal that he keeps plotting after his master’s fall. Chanakya admires that loyalty and wants it for Chandragupta. The play ends with Rakshasa, outwitted, agreeing to serve the new king. No other source mentions him."
+      }
+    ]
+  }
+}

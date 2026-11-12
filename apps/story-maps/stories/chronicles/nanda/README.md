@@ -1,0 +1,8 @@
+# The Nanda Dynasty
+
+Status: built. The rise of Magadha and its Nanda kings, from the 6th or 5th century BCE to about 322 BCE: Rajagriha among the sixteen great kingdoms, Bimbisara and Anga, Ajatashatru's war with the Vajjis and the fort at Pataligrama, Shishunaga and Avanti, the council at Vaishali, the stories of the Nandas' low birth, Mahapadma the sole ruler, the Nandas in Kalinga (Kharavela's inscription), the army the Greeks feared, the Nanda treasure, the court legends, Alexander at the Hydaspes and the Beas, the young Chandragupta, Chanakya's vow, the fall of the Nandas, Mudrarakshasa, Magadha's punch-marked coins and what the Mauryas inherited. 21 chapters, a **Powers** layer (Magadha growing chapter by chapter, the Vajjis, Kosala, Avanti and Alexander's empire) and 13 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes show only for the current chapter.
+- Source: Greek and Latin writers, and later Indian texts read as history, are **History**; Kharavela's inscription and the coins are **Archaeology**; Puranic, Buddhist, Jain, Sri Lankan and Tamil accounts written down centuries later, and the play Mudrarakshasa, are **Tradition**.
+- Native names are in Sanskrit (`sa`), in Devanagari; the Tamil poet Mamulanar's name is in Tamil (`ta`).
+- The sources disagree on almost everything before 326 BCE: the order and length of reigns, how the Nandas came to power, how many Nanda kings there were and how they fell. The cards give each version and say whose it is. Powers areas are loose regions, not borders.

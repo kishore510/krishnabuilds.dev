@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.0
+
+- New story map in Chronicles: The Nanda Dynasty. The rise of Magadha from Bimbisara’s hill-ringed Rajagriha, Anga, Ajatashatru’s war with the Vajjis and the fort at Pataligrama, Shishunaga’s victory over Avanti and the council at Vaishali, through the Nanda kings (the barber’s-son stories, Mahapadma the sole ruler, Kalinga in Kharavela’s inscription, the army the Greeks feared, the Nanda treasure and the court legends), Alexander’s halt at the Beas, to Chanakya’s vow, the fall of the Nandas about 322 BCE, Mudrarakshasa, Magadha’s nameless coins and what the Mauryas inherited: 21 chapters, a Powers layer that changes chapter by chapter, and 13 people cards.
+- Catalogue: the Nanda dynasty entry now opens the story.
+
 ## 0.17.0
 
 - New story map in Chronicles: The Vedic Age. From the Indo-European roots of Vedic Sanskrit, the Sinauli carts and the Mitanni treaty's Vedic gods, through the Rigveda's land of seven rivers (fire and soma, Indra, Vishvamitra and the rivers, the Battle of the Ten Kings, the Sarasvati), the Kuru kingdom, the four Vedas, Painted Grey Ware, iron, varna and the horse sacrifice, the fire carried east to Videha, Janaka's court and the Upanishads, to the sixteen great kingdoms, the Buddha and Mahavira, Sayana's commentary, Max Müller's printed Rigveda and the 1975 agnicayana at Panjal: 26 chapters, a Lands layer that changes chapter by chapter, and 12 people cards.
