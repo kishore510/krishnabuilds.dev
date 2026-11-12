@@ -26,6 +26,8 @@ hub/page.html      the shell every page is rendered into
 hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
 hub/hub.js         the hub in the browser: story cards, Atlas, Timeline and Browse
 hub/progress.js    story pages only: remembers the last chapter read (the engine itself stores nothing)
+hub/tour.js        the guided tour on the hub and story pages, and the button that reopens it; remembers that it has been shown (`sm-tour`)
+hub/tour.css       styles for the tour
 hub/explore.css    styles for the hub and entry pages
 src/theme-picker.js Parchment / Night / Auto picker; test/prepaint.test.js fails if it writes a different cookie from packages/ui
 src/theme.css      painted theme (saffron, lapis, gold), light and dark

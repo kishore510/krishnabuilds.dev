@@ -1,0 +1,136 @@
+/* The guided tour (hub/tour.js): the button that starts it, the light on the
+   part being explained and the card that explains it. */
+
+.sm-tour-open {
+  font-family: var(--sm-font-head);
+  cursor: pointer;
+}
+/* On a story: a round "?" on the map, under the zoom buttons. */
+.sm-stage .sm-tour-open {
+  position: absolute;
+  right: 10px;
+  top: 144px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(242, 193, 78, 0.6);
+  background: rgba(14, 28, 46, 0.84);
+  color: #f3e9d2;
+  font-size: 20px;
+  line-height: 1;
+}
+.sm-stage .sm-tour-open:hover {
+  filter: brightness(1.15);
+}
+/* On the hub: "How it works", level with the heading. */
+.sm-hero {
+  position: relative;
+}
+.sm-hero .sm-tour-open {
+  position: absolute;
+  right: 0;
+  top: 4px;
+  min-height: 36px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sm-lapis);
+  background: transparent;
+  color: var(--sm-ink);
+  font-size: 14px;
+}
+.sm-hero .sm-tour-open:hover {
+  background: var(--sm-lapis);
+  color: var(--sm-lapis-ink);
+}
+
+/* Covers the page so nothing under the tour can be tapped by mistake. */
+.sm-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+.sm-tour--centre {
+  background: rgba(8, 14, 24, 0.62);
+}
+/* The light is a clear box; its huge shadow dims everything else. */
+.sm-tour-light {
+  position: fixed;
+  border-radius: 14px;
+  border: 2px solid #f2c14e;
+  box-shadow: 0 0 0 200vmax rgba(8, 14, 24, 0.62);
+  pointer-events: none;
+  transition:
+    left 0.25s,
+    top 0.25s,
+    width 0.25s,
+    height 0.25s;
+}
+.sm-tour--centre .sm-tour-light {
+  display: none;
+}
+.sm-tour-card {
+  position: fixed;
+  width: min(340px, calc(100vw - 24px));
+  box-sizing: border-box;
+  padding: 14px 16px 12px;
+  border-radius: 16px;
+  border: 2px solid var(--sm-gold);
+  background: var(--sm-panel);
+  color: var(--sm-ink);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.sm-tour-count {
+  margin: 0;
+  font-family: var(--sm-font-head);
+  font-size: 13px;
+  color: var(--sm-muted);
+}
+.sm-tour-title {
+  margin: 2px 0 0;
+  font-size: 20px;
+  line-height: 1.25;
+}
+.sm-tour-text {
+  margin: 6px 0 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.sm-tour-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sm-tour-row button {
+  min-height: 40px;
+  padding: 4px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--sm-lapis);
+  background: transparent;
+  color: var(--sm-ink);
+  font-family: var(--sm-font-head);
+  font-size: 15px;
+  cursor: pointer;
+}
+.sm-tour-row button[hidden] {
+  display: none;
+}
+.sm-tour-row .sm-tour-skip {
+  margin-right: auto;
+  padding-left: 0;
+  border-color: transparent;
+  color: var(--sm-muted);
+  text-decoration: underline;
+}
+.sm-tour-row .sm-tour-next {
+  margin-left: auto;
+  background: var(--sm-lapis);
+  color: var(--sm-lapis-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-tour-light {
+    transition: none;
+  }
+}
