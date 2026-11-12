@@ -350,7 +350,8 @@
         .join("")}</g>`,
     );
 
-    const ov = basemap.overview;
+    // A story may frame its own whole-map view; otherwise the basemap's.
+    const ov = story.overview || basemap.overview;
     const [ox, oy] = P(ov.at);
     return {
       svg: out.join(""),
@@ -390,6 +391,7 @@
     for (const item of langs) {
       for (const key of ["nativeLang", "lang"]) if (item[key] !== undefined) need(isLang(item[key]), `${key} ${item[key]} is not a language tag such as "hi" or "mi"`);
     }
+    if (story.overview !== undefined) need(isLonLat(story.overview.at) && story.overview.width > 0, "overview needs at [lon, lat] and a width in degrees");
     for (const key of ["title", "description", "mapLabel", "note"]) need(typeof story[key] === "string" && story[key].trim() !== "", `missing ${key}`);
 
     for (const [id, p] of Object.entries(story.places)) {

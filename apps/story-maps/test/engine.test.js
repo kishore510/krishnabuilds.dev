@@ -66,6 +66,12 @@ describe("validate", () => {
     expect(map.validate(story, basemap, art).join("\n")).toContain("unknown place");
   });
 
+  it("catches a bad story overview", () => {
+    const { story, basemap, art } = fresh();
+    story.overview = { at: [80], width: 0 };
+    expect(map.validate(story, basemap, art).join("\n")).toContain("overview needs at [lon, lat] and a width");
+  });
+
   it("catches a card over 60 words", () => {
     const { story, basemap, art } = fresh();
     story.steps[0].text = Array(61).fill("word").join(" ");
@@ -166,6 +172,15 @@ describe("buildMap", () => {
     expect(svg).toMatch(/<circle class="sm-realm-shape sm-realm-dot"[^>]* r="10"/); // 0.5 degrees at 20 units per degree
     expect(svg).toContain('data-steps="0-1" x=');
     expect(svg).toContain(`data-steps="2-${last}" x=`);
+  });
+
+  it("uses the story's own overview when it sets one, else the basemap's", () => {
+    const { story, basemap, art } = structuredClone(loadStoryData(entry));
+    const k = basemap.projection.unitsPerDegree;
+    expect(map.buildMap(story, basemap, art).overview.w).toBe(basemap.overview.width * k);
+    story.overview = { at: basemap.overview.at, width: 3 };
+    expect(map.validate(story, basemap, art)).toEqual([]);
+    expect(map.buildMap(story, basemap, art).overview.w).toBe(3 * k);
   });
 
   it("cuts holes in land with the even-odd rule", () => {

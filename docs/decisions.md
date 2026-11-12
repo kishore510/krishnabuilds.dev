@@ -341,6 +341,12 @@ The Maya story's native names are mostly Classic Maya, read from inscriptions (M
 
 The Life of Krishna needs Mathura, Gokul, Vrindavan and Govardhan as separate places, but they lie within about 30 km of one another, and on the `south-asia` map (20 units per degree) a pin is 1.4° across. The player never zooms in further than about 17° across, so pins that close would always overlap. The four are drawn about 1.6° apart, keeping their rough directions from one another, and Indraprastha, Hastinapura and Kurukshetra are moved north to make room. That moves real places by up to about 130 km, much further than the small nudges on the Near East and Mesoamerica maps, so the story's note says so. The alternatives were worse: one Braj pin would hide most of the story's geography, and a Braj basemap would need about 300 units per degree, too fine for a story that also reaches Dwaraka and Assam. No pin-collision logic is added to the engine.
 
+## 2026-11-12 — Story Maps: the Near East map widened west for Greece
+
+Greece and Persia needs mainland Greece, west of the `near-east` map's edge at 25°E. The map's land data already ran west to 18°E, so no new data was needed: the projection's left edge moves from 25°E to 19°E and the size from 2590 × 1610 to 3010 × 1871. Both grow together, so the map keeps its shape and the other stories on it (Mesopotamia, Egypt) frame their chapters as before; their cameras are in degrees and don't move. The map is still one basemap rather than a separate Aegean map, since the story runs from Olympia to Bactria.
+
+A story's whole-map view came only from its basemap, which centres on Mesopotamia. A story can now set its own `overview` (`at` and `width` in degrees), a general engine feature rather than a special case; Greece and Persia uses it to frame Greece to Iran.
+
 ## 2026-11-12 — Portal landing page: one colour per app, groups as labels
 
 The landing page looked plainer than the apps it links to, so each app now has its own colour on its card, borrowed from that app's palette (Chalkline teal, Stickyard purple, Sumyard green, Arcade amber, Story Maps saffron), with a fuller hand-written SVG scene drawn in it. The five colours are used only on this page, so they are local variables in the Portal's stylesheet, not shared tokens; the shared tokens still supply everything else. No new font, dependency or image: system fonts, plain CSS, and small CSS-only motion that is off under `prefers-reduced-motion`.

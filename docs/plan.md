@@ -126,6 +126,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Mahabharata (0.23.0)
 - [x] The Life of Krishna (0.26.0)
 - [x] The Churning of the Ocean (Samudra Manthan) (0.27.0)
+- [x] Greece and Persia (0.28.0)
 
 ### Stickyard
 

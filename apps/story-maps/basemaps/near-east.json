@@ -2,11 +2,11 @@
   "id": "near-east",
   "name": "The Near East",
   "projection": {
-    "lon0": 25,
+    "lon0": 19,
     "lat0": 43,
     "unitsPerDegree": 70
   },
-  "size": [2590, 1610],
+  "size": [3010, 1871],
   "sea": {
     "top": "#1f4f78",
     "middle": "#15385c",
@@ -290,12 +290,26 @@
       "jitter": 11,
       "color": "#b9824a",
       "seed": 9
+    },
+    {
+      "kind": "peaks",
+      "name": "Pindus",
+      "points": [[20.5, 40.6], [21.1, 39.9], [21.6, 39.2], [22.0, 38.75]],
+      "step": 56,
+      "size": [18, 8],
+      "drop": 10,
+      "seed": 12
     }
   ],
   "forests": {
     "colors": ["#2f6b3d", "#3f7d4e", "#2c5e3a"],
     "seed": 10,
     "clusters": [
+      {
+        "at": [21.8, 40.9],
+        "count": 6,
+        "radius": 40
+      },
       {
         "at": [35.95, 34.1],
         "count": 6,
@@ -314,7 +328,7 @@
     ]
   },
   "waves": {
-    "count": 90,
+    "count": 100,
     "seed": 11
   },
   "ships": [
@@ -328,6 +342,11 @@
     }
   ],
   "labels": [
+    {
+      "text": "Aegean Sea",
+      "at": [25.1, 39.2],
+      "kind": "sea"
+    },
     {
       "text": "Mediterranean Sea",
       "at": [30.2, 34.2],
