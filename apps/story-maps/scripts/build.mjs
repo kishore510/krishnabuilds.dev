@@ -66,6 +66,15 @@ for (const entry of manifest.stories.filter((s) => s.status === "built")) {
     process.exit(1);
   }
 }
+// An entry's chapter must exist in its story.
+for (const e of catalogue.entries.filter((x) => x.chapter !== undefined)) {
+  const s = manifest.stories.find((x) => x.id === e.story);
+  const n = s?.status === "built" ? loadStoryData(s).story.steps.length : 0;
+  if (/** @type {number} */ (e.chapter) > n) {
+    console.error(`catalogue.json: entry ${e.id}: chapter ${e.chapter} is not in story ${e.story} (${n} chapters)`);
+    process.exit(1);
+  }
+}
 
 // --- fonts -------------------------------------------------------------------
 
@@ -303,7 +312,14 @@ const storyCards = builtStories
 const hubData = {
   regions: catalogue.regions,
   entries: catalogue.entries,
-  stories: Object.fromEntries(manifest.stories.map((s) => [s.id, { title: s.title, built: s.status === "built", era: s.era, builtAt: s.builtAt }])),
+  stories: Object.fromEntries(
+    manifest.stories.map((s) => {
+      // The region to colour a story's card by: its main entry's (the one with no chapter), else the first that links to it.
+      const linked = catalogue.entries.filter((e) => e.story === s.id);
+      const region = (linked.find((e) => e.chapter === undefined) ?? linked[0])?.region;
+      return [s.id, { title: s.title, built: s.status === "built", era: s.era, added: s.added, region }];
+    }),
+  ),
   // The atlas projects [lon, lat] the same way the world basemap does.
   world: { ...world.projection, size: world.size },
 };
@@ -414,7 +430,11 @@ function entryPage(e) {
   const kicker = [KIND[/** @type {keyof typeof KIND} */ (e.kind)], [region?.title, lane].filter(Boolean).join(" › ")].join(" · ");
 
   let storyPanel;
-  if (story && isBuilt(e)) {
+  if (story && isBuilt(e) && e.chapter) {
+    // Part of a larger story: open it at this entry's chapter.
+    const step = loadStoryData(story).story.steps[e.chapter - 1];
+    storyPanel = `<section class="sm-panel sm-panel--map"><h2>Part of the story map: ${esc(story.title)}</h2><p>It is told in chapter ${e.chapter}, “${esc(step.title)}”, of the larger story.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/#${e.chapter}">Open at chapter ${e.chapter}</a><a class="sm-btn" href="/${story.id}/">Start from the beginning</a></div></section>`;
+  } else if (story && isBuilt(e)) {
     storyPanel = `<section class="sm-panel sm-panel--map"><h2>Story map: ${esc(story.title)}</h2><p>Follow it across an illustrated map, chapter by chapter.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/">Open the story map</a></div></section>`;
   } else if (story) {
     storyPanel = `<section class="sm-panel"><h2>Story map coming: ${esc(story.title)}</h2><p class="sm-muted">This map is still being drawn.</p></section>`;

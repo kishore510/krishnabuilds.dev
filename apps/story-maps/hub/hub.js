@@ -42,6 +42,10 @@
   var href = function (e) {
     return "/explore/" + e.id + "/";
   };
+  // An entry with a chapter is part of a larger story map; link straight to its chapter.
+  var mapHref = function (e) {
+    return "/" + e.story + "/" + (e.chapter ? "#" + e.chapter : "");
+  };
 
   // Per-viewer conveniences only; everything works without storage.
   var store = {
@@ -360,10 +364,33 @@
 
   // ---------- Browse ----------
 
+  // "New story maps": every finished map, newest first (the manifest's added), however old.
+  // Catalogue entries without a finished map are placeholders, so they are never listed.
+  var NEWEST = Object.keys(STORIES)
+    .map(function (id) { return Object.assign({ id: id }, STORIES[id]); })
+    .filter(function (s) { return s.built && s.added; })
+    .sort(function (a, b) { return b.added.localeCompare(a.added); });
+  // The New pill is only for maps finished in the last 45 days.
+  var FRESH = NEWEST.filter(function (s) { return Date.now() - Date.parse(s.added + (s.added.length > 10 ? "Z" : "")) < 45 * 864e5; });
+  var isFresh = function (storyId) {
+    return FRESH.some(function (s) { return s.id === storyId; });
+  };
+
+  function storyCard(s) {
+    var r = REGION[s.region];
+    return '<li><a class="sm-entry-card" href="/' + s.id + '/"' + (r ? ' style="' + hue(r.id) + '"' : "") + ">" +
+      '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + (r ? esc(r.short) + " · " : "") + "Story map</span>" +
+      '<span class="sm-entry-card__name">' + esc(s.title) + "</span>" +
+      '<span class="sm-entry-card__dates">' + esc(s.era) + "</span>" +
+      (isFresh(s.id) ? '<span class="sm-entry-card__tags"><span class="sm-pill sm-pill--new">New</span></span>' : "") + "</a></li>";
+  }
+
   function card(e) {
     var r = REGION[e.region];
-    var isNew = e.added && Date.now() - Date.parse(e.added) < 45 * 864e5;
-    var tags = (built(e) ? '<span class="sm-pill sm-pill--map">Story map</span>' : "") +
+    // Only the entry a new map is about says New; entries that are a chapter of it don't.
+    var isNew = built(e) && !e.chapter && isFresh(e.story);
+    var map = !built(e) ? "" : e.chapter ? "Part of " + esc(STORIES[e.story].title) : "Story map";
+    var tags = (map ? '<span class="sm-pill sm-pill--map">' + map + "</span>" : "") +
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
       (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
@@ -371,16 +398,6 @@
       '<span class="sm-entry-card__name">' + esc(e.name) + "</span>" +
       '<span class="sm-entry-card__dates">' + X.rangeText(e) + "</span>" +
       (tags ? '<span class="sm-entry-card__tags">' + tags + "</span>" : "") + "</a></li>";
-  }
-
-  /** A card that opens a story map itself, in the colour of the first entry that links to it. */
-  function storyCard(id) {
-    var s = STORIES[id];
-    var e = E.filter(function (x) { return x.story === id; })[0];
-    return '<li><a class="sm-entry-card" href="/' + id + '/"' + (e ? ' style="' + hue(e.region) + '"' : "") + ">" +
-      '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + esc(s.era) + "</span>" +
-      '<span class="sm-entry-card__name">' + esc(s.title) + "</span>" +
-      '<span class="sm-entry-card__tags"><span class="sm-pill sm-pill--map">Story map</span></span></a></li>';
   }
 
   function haystack(e) {
@@ -409,9 +426,6 @@
     list.sort(b.sort === "az" ? function (x, y) { return x.name.localeCompare(y.name); } : byDate);
     var plain = b.region === "all" && b.kind === "all" && !b.maps && !q;
     var recent = explored.slice(0, 8).map(function (id) { return BY[id]; });
-    // Every built story, newest first, however long ago it was built.
-    var fresh = Object.keys(STORIES).filter(function (id) { return STORIES[id].built; })
-      .sort(function (x, y) { return Date.parse(STORIES[y].builtAt) - Date.parse(STORIES[x].builtAt); });
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
     var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"]];
 
@@ -421,7 +435,7 @@
         return '<button type="button" class="sm-chip-btn" data-bk="' + o[0] + '" aria-pressed="' + (b.kind === o[0]) + '">' + o[1] + "</button>";
       }).join("") + '<button type="button" class="sm-chip-btn sm-chip-btn--maps" data-bm aria-pressed="' + b.maps + '">Story maps only</button></div>' +
       (plain && recent.length ? '<h2 class="sm-browse-h">Pick up where you left off</h2><ul class="sm-entry-row">' + recent.map(card).join("") + "</ul>" : "") +
-      (plain && fresh.length ? '<h2 class="sm-browse-h">New story maps</h2><ul class="sm-entry-row">' + fresh.map(storyCard).join("") + "</ul>" : "") +
+      (plain && NEWEST.length ? '<h2 class="sm-browse-h">New story maps</h2><ul class="sm-entry-row">' + NEWEST.map(storyCard).join("") + "</ul>" : "") +
       '<div class="sm-browse-bar"><h2 class="sm-browse-h">' + (plain ? "Everything" : "Results") + ' <span class="sm-browse-n">' + list.length + "</span></h2>" +
       '<label class="sm-sort">Sort <select id="sm-sort"><option value="date"' + (b.sort === "date" ? " selected" : "") + '>Oldest first</option>' +
       '<option value="az"' + (b.sort === "az" ? " selected" : "") + ">A to Z</option></select></label></div>" +
@@ -661,7 +675,7 @@
       '<p class="sm-at-dates">' + X.rangeText(e) + "</p>" +
       '<p class="sm-at-summary">' + esc(e.summary) + "</p>" +
       '<div class="sm-at-links">' +
-      (built(e) ? '<a class="sm-btn sm-btn--primary" href="/' + e.story + '/">Open the story map</a>' : "") +
+      (built(e) ? '<a class="sm-btn sm-btn--primary" href="' + mapHref(e) + '">' + (e.chapter ? "Open at its chapter" : "Open the story map") + "</a>" : "") +
       '<a class="sm-btn" href="' + href(e) + '">Read more</a>' +
       (next && next.at ? '<button type="button" class="sm-btn" data-next="' + next.id + '">Next here: ' + esc(next.name) + " →</button>" : "") +
       "</div>";

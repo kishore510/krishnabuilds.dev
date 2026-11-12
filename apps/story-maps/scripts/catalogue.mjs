@@ -13,7 +13,7 @@ import { APP_DIR } from "./manifest.mjs";
  * @typedef {{ id: string, title: string, short: string, hue: string, lanes: Lane[] }} Region
  * @typedef {{
  *   id: string, name: string, kind: string, source: string, region: string, lane?: string,
- *   from?: number, to?: number, approx?: boolean, story?: string, after?: string[],
+ *   from?: number, to?: number, approx?: boolean, story?: string, chapter?: number, after?: string[],
  *   native?: string, lang?: string, note?: string, added?: string, summary: string,
  *   at?: number[], radius?: number
  * }} Entry
@@ -26,7 +26,7 @@ export const SOURCES = ["History", "Archaeology", "Tradition"];
 export const HUES = ["saffron", "lapis", "jade", "ochre", "plum", "rose"];
 const FIELDS = new Set([
   "id", "name", "kind", "source", "region", "lane", "from", "to", "approx",
-  "story", "after", "native", "lang", "note", "added", "summary", "at", "radius",
+  "story", "chapter", "after", "native", "lang", "note", "added", "summary", "at", "radius",
 ]);
 const SLUG = /^[a-z][a-z0-9-]{0,39}$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -80,6 +80,8 @@ export function validateCatalogue(catalogue, stories) {
   const storyIds = new Set(stories.map((s) => s.id));
   const ids = new Set(catalogue.entries.map((e) => e.id));
   const seen = new Set();
+  /** @type {Map<string, string>} story id to the one entry that links to the whole story (no chapter) */
+  const mains = new Map();
   const used = new Set();
   for (const e of catalogue.entries) {
     const where = `entry ${e.id}`;
@@ -131,6 +133,13 @@ export function validateCatalogue(catalogue, stories) {
     if (e.story !== undefined) {
       if (!storyIds.has(e.story)) problems.push(`${where}: unknown story ${e.story}`);
       used.add(e.story);
+      if (e.chapter === undefined) {
+        if (mains.has(e.story)) problems.push(`${where}: ${mains.get(e.story)} already links to story ${e.story}; give one of them a chapter`);
+        else mains.set(e.story, e.id);
+      }
+    }
+    if (e.chapter !== undefined && (e.story === undefined || !Number.isInteger(e.chapter) || e.chapter < 1)) {
+      problems.push(`${where}: chapter must be a whole number from 1, with a story`);
     }
     for (const next of e.after ?? []) {
       const n = catalogue.entries.find((x) => x.id === next);

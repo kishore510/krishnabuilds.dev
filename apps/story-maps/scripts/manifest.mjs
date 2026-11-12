@@ -8,14 +8,12 @@ import { fileURLToPath } from "node:url";
 /**
  * @typedef {{ id: string, title: string, blurb: string }} Section
  * @typedef {{ id: string, section: string, title: string }} Collection
- * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string, builtAt?: string }} Story
+ * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string, added?: string }} Story
  * @typedef {{ sections: Section[], collections: Collection[], stories: Story[] }} Manifest
  */
 
 export const APP_DIR = fileURLToPath(new URL("..", import.meta.url));
 export const SECTIONS = ["legends", "chronicles", "deep-time"];
-/** When a story was built: a UTC time to the second. The hub lists stories newest first by it. */
-const BUILT_AT = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/;
 export const STATUSES = ["built", "coming-soon"];
 
 // Story ids become page paths (/<id>/), so keep them to plain slugs.
@@ -34,6 +32,8 @@ export function storyDir(story) {
   const parts = ["stories", story.section, story.collection, story.id];
   return parts.filter(Boolean).join("/");
 }
+
+const ADDED = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/;
 
 /**
  * @param {Manifest} manifest
@@ -64,11 +64,10 @@ export function validateManifest(manifest) {
     if (!STATUSES.includes(story.status)) problems.push(`${where}: unknown status ${story.status}`);
     if (!story.title?.trim()) problems.push(`${where}: missing title`);
     if (!story.era?.trim()) problems.push(`${where}: missing era`);
-    if (story.status === "built") {
-      if (!BUILT_AT.test(story.builtAt ?? "") || Number.isNaN(Date.parse(story.builtAt ?? ""))) {
-        problems.push(`${where}: a built story needs builtAt, the UTC time it was built, such as 2026-11-12T21:22:31Z`);
-      }
-    } else if (story.builtAt !== undefined) problems.push(`${where}: only a built story has builtAt`);
+    // When the map was finished, in UTC; drives the hub's New row. Every built story needs one.
+    if (story.added !== undefined ? !ADDED.test(story.added) : story.status === "built") {
+      problems.push(`${where}: a built story needs added, as YYYY-MM-DD or YYYY-MM-DDTHH:MM (UTC)`);
+    }
     if (story.collection !== undefined) {
       const c = collections.get(story.collection);
       if (!c) problems.push(`${where}: unknown collection ${story.collection}`);

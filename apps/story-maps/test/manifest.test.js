@@ -35,17 +35,22 @@ describe("manifest.json", () => {
     expect(problems).toContain("story x-1: unknown status done");
   });
 
-  it("wants a build time on every built story, and only on those", () => {
+  it("needs a finished time on every built story, and only on a known format", () => {
     const first = manifest.stories.find((s) => s.status === "built");
-    const undated = { ...first, builtAt: undefined };
+    const coming = manifest.stories.find((s) => s.status === "coming-soon");
     const broken = {
       ...manifest,
-      stories: [{ ...undated, id: "x-1" }, { ...first, id: "x-2", builtAt: "2026-11-12" }, { ...first, id: "x-3", status: "coming-soon" }],
+      stories: [
+        ...manifest.stories,
+        { ...first, id: "x-undated", added: undefined },
+        { ...first, id: "x-baddate", added: "12 Nov 2026" },
+        { ...coming, id: "x-placeholder", added: undefined },
+      ],
     };
     const problems = validateManifest(broken).join("\n");
-    expect(problems).toContain("story x-1: a built story needs builtAt");
-    expect(problems).toContain("story x-2: a built story needs builtAt");
-    expect(problems).toContain("story x-3: only a built story has builtAt");
+    expect(problems).toContain("story x-undated: a built story needs added");
+    expect(problems).toContain("story x-baddate: a built story needs added");
+    expect(problems).not.toContain("x-placeholder: a built story needs added");
   });
 
   it("allows a story with no collection", () => {
