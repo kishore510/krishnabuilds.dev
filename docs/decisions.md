@@ -336,3 +336,7 @@ The Valley of Mexico packs Tenochtitlan, Texcoco, Azcapotzalco, Chapultepec and 
 ## 2026-11-12 — Story Maps: Classic Maya names use the `emy` language tag
 
 The Maya story's native names are mostly Classic Maya, read from inscriptions (Mutul, Lakamha', Oxwitik). The story sets `nativeLang` to `emy`, the ISO 639-3 code for Epigraphic Mayan, rather than a modern Maya language, and uses `yua`, `quc` and `itz` for Yucatec, K'iche' and Itza' names. Lake Petén Itzá, too small for the 1:10m data, is added to the `mesoamerica` basemap by hand, as Lake Pátzcuaro was.
+
+## 2026-11-12 — Story Maps: Braj spread out on the South Asia map
+
+The Life of Krishna needs Mathura, Gokul, Vrindavan and Govardhan as separate places, but they lie within about 30 km of one another, and on the `south-asia` map (20 units per degree) a pin is 1.4° across. The player never zooms in further than about 17° across, so pins that close would always overlap. The four are drawn about 1.6° apart, keeping their rough directions from one another, and Indraprastha, Hastinapura and Kurukshetra are moved north to make room. That moves real places by up to about 130 km, much further than the small nudges on the Near East and Mesoamerica maps, so the story's note says so. The alternatives were worse: one Braj pin would hide most of the story's geography, and a Braj basemap would need about 300 units per degree, too fine for a story that also reaches Dwaraka and Assam. No pin-collision logic is added to the engine.

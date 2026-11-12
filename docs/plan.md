@@ -124,7 +124,8 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Portal card in a new Explore group
 - [x] Engine and the first story, Rama’s Journey; Story Maps goes live (0.2.0)
 - [x] The Mahabharata (0.23.0)
-- [ ] Next stories: Krishna, Samudra Manthan
+- [x] The Life of Krishna (0.26.0)
+- [ ] Next story: Samudra Manthan
 
 ### Stickyard
 
