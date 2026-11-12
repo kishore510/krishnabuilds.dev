@@ -17,13 +17,32 @@ describe("layoutWarnings", () => {
     expect(layoutWarnings(story({ a: place([10, 20]), b: place([15, 12]) }), basemap)).toEqual([]);
   });
 
-  it("flags one pin hiding another", () => {
-    expect(layoutWarnings(story({ a: place([10, 20], "left"), b: place([10.3, 20], "right") }), basemap).join("\n")).toMatch(/one pin hides the other/);
+  // A chapter shows in full its own place and the ends of its routes, so two
+  // places can only collide in a chapter that has a route between them.
+  const joined = (/** @type {Record<string, any>} */ places) => {
+    const ids = Object.keys(places);
+    const steps = [{ place: ids[0], phase: "one", title: "T", camera: { at: places[ids[0]].at, width: 10 }, legs: ids.slice(1).map((id) => ({ from: id, to: ids[0], traveller: "t", style: "s" })) }];
+    return { ...story(places, steps), travellers: { t: {} }, routeStyles: { s: {} } };
+  };
+
+  it("flags one pin hiding another in a chapter that shows both", () => {
+    const places = { a: place([10, 20], "left"), b: place([10.3, 20], "right") };
+    expect(layoutWarnings(joined(places), basemap).join("\n")).toMatch(/step 1: places a and b: one pin hides the other/);
+  });
+
+  it("passes close places that no chapter shows together", () => {
+    expect(layoutWarnings(story({ a: place([10, 20], "left"), b: place([10.3, 20], "right") }), basemap)).toEqual([]);
+    expect(layoutWarnings(story({ a: place([10, 20], "right"), b: place([12, 20], "right") }), basemap)).toEqual([]);
   });
 
   it("flags a label over a neighbouring pin, and clears when the label moves", () => {
-    expect(layoutWarnings(story({ a: place([10, 20], "right"), b: place([12, 20], "right") }), basemap).join("\n")).toMatch(/place a: its label \(right\) covers the pin of b/);
-    expect(layoutWarnings(story({ a: place([10, 20], "left"), b: place([12, 20], "right") }), basemap)).toEqual([]);
+    expect(layoutWarnings(joined({ a: place([10, 20], "right"), b: place([12, 20], "right") }), basemap).join("\n")).toMatch(/step 1: place a: its label \(right\) covers the pin of b/);
+    expect(layoutWarnings(joined({ a: place([10, 20], "left"), b: place([12, 20], "right") }), basemap)).toEqual([]);
+  });
+
+  it("flags a chapter that shows too many places in full", () => {
+    const places = Object.fromEntries([0, 1, 2, 3, 4, 5].map((n) => [`p${n}`, place([4 + n * 4, 20 - (n % 2) * 4], "top")]));
+    expect(layoutWarnings(joined(places), basemap).join("\n")).toMatch(/step 1: shows 6 places in full; keep it to 5/);
   });
 
   it("flags a label off the map edge, but not a hidden waypoint beyond it", () => {

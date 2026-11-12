@@ -354,3 +354,9 @@ The landing page looked plainer than the apps it links to, so each app now has i
 The five groups stay, in the same order, but as a label on each card rather than a heading: with five apps in five groups, most headings sat over a single card. This changes how groups are shown in "Portal structure: grouped apps with story pages", not the groups themselves. On wide screens the first two cards are larger; revisit the grid at around 10 apps, with filtering.
 
 The hero shows three figures that are computed or fixed (apps live, decisions logged, ads and trackers), and the page ends with the three newest entries from this log. Counts that would go stale between Portal deploys, such as games or story maps, are left out.
+
+## 2026-11-12 — Story Maps: a chapter shows only its own places
+
+Every place in a story used to be drawn from the first chapter, with those not yet reached faded to half strength. Stories have grown to 25 to 35 places, and pins scale with the map, so a dense region (twelve Maratha places within about 3° of Pune) was a pile of glyphs and names at every zoom. A chapter now draws in full only its own place and the ends of its routes. Places from earlier chapters are small dots, still tappable; later places are not drawn until their chapter, and "Whole map" adds them as dots.
+
+This is a rule about what to show, not pin-collision logic: the engine still places nothing automatically. The layout checks follow it, comparing pins and labels only within a chapter and warning above 5 places in full. Merging close places into one pin was rejected because each fort has its own chapter; pins of constant screen size were left out as a larger change that this makes unnecessary for now. The cost is that readers no longer see faded pins for what lies ahead; the timeline and the chapter list still show that.

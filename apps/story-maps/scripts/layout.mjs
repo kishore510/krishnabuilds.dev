@@ -3,9 +3,20 @@
 // engine/src/map.js draws a pin (disc radius 14, label 10.5px on one of four
 // sides). Pins and labels scale with the map, so one pass covers every zoom.
 //
+// A chapter draws in full only its own place and the ends of its routes
+// (placesNow in map.js); every other place is a small dot or not drawn. So
+// pins and labels are checked chapter by chapter, among the places that
+// chapter shows in full, and a chapter that shows too many is flagged.
+//
 // These are warnings, not build failures: a label estimate can be a little off,
 // and a close pair is sometimes right. Look at the flagged chapters, then decide.
 
+import { loadMapFunctions } from "./engine.mjs";
+
+const { placesNow } = loadMapFunctions();
+
+/** A chapter that shows more full pins than this reads as clutter on a phone. */
+export const MAX_PINS_PER_CHAPTER = 5;
 const DISC = 14;
 const FONT = 10.5;
 /** Average glyph width of the heading font, as a share of the font size. */
@@ -69,20 +80,34 @@ export function layoutWarnings(story, basemap) {
     if (box.x0 < 0 || box.x1 > W || box.y0 < 0 || box.y1 > H) warnings.push(`place ${id}: its label runs off the map edge; try another label side`);
     pins.push({ id, x, y, box, side: p.label });
   }
-  for (let i = 0; i < pins.length; i++) {
-    for (let j = i + 1; j < pins.length; j++) {
-      const [a, b] = [pins[i], pins[j]];
-      const gap = Math.hypot(a.x - b.x, a.y - b.y);
-      // Neighbouring pins may touch; one sitting on another's centre hides it.
-      if (gap < DISC) {
-        warnings.push(`places ${a.id} and ${b.id}: one pin hides the other (${deg(gap)} apart; a pin is ${deg(DISC * 2)} wide). Merge them, or hide one and name it in the card`);
-        continue;
-      }
-      if (boxesOverlap(a.box, b.box)) warnings.push(`places ${a.id} and ${b.id}: labels overlap (${a.side} and ${b.side}); move one to another side`);
-      if (boxHitsCircle(a.box, b.x, b.y, DISC)) warnings.push(`place ${a.id}: its label (${a.side}) covers the pin of ${b.id}`);
-      if (boxHitsCircle(b.box, a.x, a.y, DISC)) warnings.push(`place ${b.id}: its label (${b.side}) covers the pin of ${a.id}`);
+  // Pins and labels that collide in a chapter that shows both in full. A pair
+  // is reported once, with the chapters it happens in.
+  /** @type {Map<string, Set<number>>} */
+  const clashes = new Map();
+  const clash = (/** @type {string} */ text, /** @type {number} */ step) => clashes.set(text, (clashes.get(text) || new Set()).add(step + 1));
+  const byId = new Map(pins.map((p) => [p.id, p]));
+  story.steps.forEach((/** @type {any} */ s, /** @type {number} */ n) => {
+    if (!story.places[s.place]) return;
+    const shown = placesNow(story, n).map((/** @type {string} */ id) => byId.get(id)).filter(Boolean);
+    if (shown.length > MAX_PINS_PER_CHAPTER) {
+      warnings.push(`step ${n + 1}: shows ${shown.length} places in full; keep it to ${MAX_PINS_PER_CHAPTER} (split the chapter's routes, or hide a waypoint)`);
     }
-  }
+    for (let i = 0; i < shown.length; i++) {
+      for (let j = i + 1; j < shown.length; j++) {
+        const [a, b] = [shown[i], shown[j]];
+        const gap = Math.hypot(a.x - b.x, a.y - b.y);
+        // Neighbouring pins may touch; one sitting on another's centre hides it.
+        if (gap < DISC) {
+          clash(`places ${a.id} and ${b.id}: one pin hides the other (${deg(gap)} apart; a pin is ${deg(DISC * 2)} wide). Merge them, or hide one and name it in the card`, n);
+          continue;
+        }
+        if (boxesOverlap(a.box, b.box)) clash(`places ${a.id} and ${b.id}: labels overlap (${a.side} and ${b.side}); move one to another side`, n);
+        if (boxHitsCircle(a.box, b.x, b.y, DISC)) clash(`place ${a.id}: its label (${a.side}) covers the pin of ${b.id}`, n);
+        if (boxHitsCircle(b.box, a.x, a.y, DISC)) clash(`place ${b.id}: its label (${b.side}) covers the pin of ${a.id}`, n);
+      }
+    }
+  });
+  for (const [text, at] of clashes) warnings.push(`step ${[...at].join(", ")}: ${text}`);
 
   // Each chapter's camera should frame its place and both ends of its routes.
   story.steps.forEach((/** @type {any} */ s, /** @type {number} */ i) => {

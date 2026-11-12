@@ -802,19 +802,86 @@ body.sm-story-page {
 .sm-effect {
   pointer-events: none;
 }
-/* Every pin can be tapped at any point in the story, not only once visited. */
+/* A chapter shows in full (glyph and name) only its own place and the ends of
+   its routes: "now". Places from earlier chapters are dots ("past") and later
+   ones are not drawn ("future") until Whole map (sm-all) shows them as dots.
+   A dot can be tapped like a pin; hovering, focusing or opening one shows it in full. */
 .sm-pin {
   cursor: pointer;
   outline: none;
+}
+.sm-pin-full,
+.sm-dot {
   transition: opacity 0.5s;
 }
-.sm-pin.future:hover,
-.sm-pin.future.selected {
+.sm-dot {
+  fill: #f6e6c0;
+  stroke: #7a3b12;
+  stroke-width: 1.6;
+  opacity: 0;
+}
+.sm-dot-hit {
+  fill: none;
+  pointer-events: none;
+}
+.sm-pin.past .sm-dot-hit,
+.sm-all .sm-pin.future .sm-dot-hit {
+  pointer-events: all;
+}
+.sm-pin.past .sm-dot,
+.sm-all .sm-pin.future .sm-dot {
   opacity: 1;
+}
+.sm-all .sm-pin.future .sm-dot {
+  fill: #d8c7a0;
+  stroke-dasharray: 2.5 2;
+}
+.sm-pin-full {
+  opacity: 0;
+  pointer-events: none;
+}
+.sm-pin.now .sm-pin-full,
+.sm-pin.selected .sm-pin-full,
+.sm-pin:focus-visible .sm-pin-full {
+  opacity: 1;
+  pointer-events: auto;
+}
+.sm-pin.selected .sm-dot,
+.sm-pin:focus-visible .sm-dot {
+  opacity: 0;
+}
+/* Only where there is a real pointer: on a phone, hover sticks after a tap. */
+@media (hover: hover) {
+  .sm-pin:hover .sm-pin-full {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .sm-pin:hover .sm-dot {
+    opacity: 0;
+  }
+}
+.sm-pin.future {
+  visibility: hidden;
+}
+.sm-all .sm-pin.future,
+.sm-pin.future.selected {
+  visibility: visible;
+}
+.sm-pin.arriving .sm-pin-full {
+  animation: sm-pin-in 0.5s ease-out 1;
+}
+@keyframes sm-pin-in {
+  from {
+    opacity: 0;
+  }
 }
 .sm-pin:hover .sm-disc,
 .sm-pin:focus-visible .sm-disc,
 .sm-pin.selected .sm-disc {
+  stroke: #1f4e8c;
+  stroke-width: 3;
+}
+.sm-disc {
   stroke: #1f4e8c;
   stroke-width: 3;
 }
@@ -980,7 +1047,11 @@ body.sm-story-page {
   .sm-effect.on .flame {
     animation: none;
   }
-  .sm-pin,
+  .sm-pin.arriving .sm-pin-full {
+    animation: none;
+  }
+  .sm-pin-full,
+  .sm-dot,
   .sm-effect,
   .sm-realms .sm-realm {
     transition: none;

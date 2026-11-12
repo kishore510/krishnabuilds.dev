@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.34.0
+
+- Maps are far less crowded. A chapter now draws in full, with its picture and name, only its own place and the places its routes start and end at. Places from earlier chapters shrink to small dots and later places wait their turn, so a busy region such as the forts around Pune in The Marathas no longer shows every name at once. A dot can still be tapped for its chapters, “Whole map” also shows the places still to come as dots, and on a computer pointing at a dot shows its name.
+- Fixes to pins and names that still met in the same chapter: label sides in The Mahabharata, The Chola Empire and The Vijayanagara Empire, and small moves to Varanavata and Ahichchhatra (The Mahabharata), Rajagriha (The Nanda Dynasty), Kalyan (The Satavahanas) and Fatehpur Sikri (The Mughal Empire, whose note now says so).
+- For maintainers: `pnpm story:check` judges pins and labels chapter by chapter, among the places that chapter shows in full, and warns when a chapter shows more than 5. The `new-story-map` skill carries the rule.
+
 ## 0.33.0
 
 - New story map in Chronicles: The Marathas. From the Varkari saint-poets of Pandharpur and Shivaji’s birth at Shivneri, through the first forts above Pune, Afzal Khan at Pratapgad, Pavan Khind, the raid on Shaista Khan, the sack of Surat, Sindhudurg, Purandar and Agra, the coronation at Raigad and the southern campaign; Sambhaji, Rajaram at Gingee, Tarabai and Shahu’s return; Kanhoji Angre, Balaji Vishwanath’s march to Delhi, Baji Rao at Palkhed, Malwa and Bhopal, Vasai, the raids into Bengal and the flags beyond Attock; the third battle of Panipat, Madhavrao, Ahilyabai Holkar and Mahadji Scindia; the Treaty of Bassein, Assaye and the last Peshwa, to the UNESCO listing of the Maratha forts in 2025: 30 chapters, a Powers layer that changes chapter by chapter, and 8 people cards.
