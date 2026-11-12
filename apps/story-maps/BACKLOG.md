@@ -9,8 +9,7 @@ To change the plan, edit **Next**: the order is the order to build in.
 Agreed order (see `docs/plan.md`):
 
 1. The Silk Road (`silk-road`, already on the hub as coming soon; `world` map)
-2. The Marathas (`south-asia` map)
-3. The Mahajanapadas and the Buddha (`south-asia` map)
+2. The Mahajanapadas and the Buddha (`south-asia` map)
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
@@ -41,6 +40,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Marathas (`marathas`), 2026-11-12
 - The Delhi Sultanate (`delhi-sultanate`), 2026-11-12
 - The Mughal Empire (`mughal`), 2026-11-12
 - Greece and Persia (`greece-persia`), 2026-11-12
