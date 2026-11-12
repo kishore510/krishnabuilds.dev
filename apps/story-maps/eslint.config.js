@@ -7,6 +7,7 @@ const browser = {
   document: "readonly",
   Element: "readonly",
   localStorage: "readonly",
+  KeyboardEvent: "readonly",
   location: "readonly",
   performance: "readonly",
   requestAnimationFrame: "readonly",

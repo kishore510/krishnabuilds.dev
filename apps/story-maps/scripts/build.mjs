@@ -113,10 +113,12 @@ const exploreCss = read(`${APP_DIR}hub/explore.css`);
 const exploreJs = read(`${APP_DIR}hub/explore.js`);
 const hubJs = read(`${APP_DIR}hub/hub.js`);
 const progressJs = read(`${APP_DIR}hub/progress.js`);
+const tourJs = read(`${APP_DIR}hub/tour.js`);
+const tourCss = read(`${APP_DIR}hub/tour.css`);
 const themePickerJs = read(`${APP_DIR}src/theme-picker.js`);
 
 /**
- * @param {{ title: string, description: string, path: string, body: string, noindex?: boolean, story?: boolean, explore?: boolean }} page
+ * @param {{ title: string, description: string, path: string, body: string, noindex?: boolean, story?: boolean, explore?: boolean, tour?: boolean }} page
  */
 function render(page) {
   /** @type {Record<string, string>} */
@@ -126,7 +128,7 @@ function render(page) {
     url: `${ORIGIN}${page.path}`,
     robots: page.noindex ? '<meta name="robots" content="noindex">\n' : "",
     prepaint,
-    styles: page.story ? `${styles}\n${engine.css}` : page.explore ? `${styles}\n${exploreCss}` : styles,
+    styles: page.story ? `${styles}\n${engine.css}\n${tourCss}` : page.explore ? `${styles}\n${exploreCss}${page.tour ? `\n${tourCss}` : ""}` : styles,
     bodyAttrs: page.story ? ' class="sm-story-page"' : "",
     body: page.body,
   };
@@ -183,7 +185,7 @@ function storyPage(entry) {
     },
     "engine/src/player.html",
   );
-  return `${page}\n<script>\n${progressJs}</script>`;
+  return `${page}\n<script>\n${progressJs}</script>\n<script>\n${tourJs}</script>`;
 }
 
 // --- hub: timeline and Browse ------------------------------------------------
@@ -315,6 +317,7 @@ write(
     description: "Illustrated maps that follow a story across the land, and a timeline of the civilisations, dynasties and empires behind them.",
     path: "/",
     explore: true,
+    tour: true,
     body: [
       HOME,
       '<main class="sm-page sm-hub">',
@@ -357,6 +360,7 @@ write(
       "</main>",
       `<script type="application/json" id="sm-catalogue">${hubJson}</script>`,
       `<script>\n${exploreJs}\n${hubJs}</script>`,
+      `<script>\n${tourJs}</script>`,
       THEME_SCRIPT,
     ].join("\n"),
   }),

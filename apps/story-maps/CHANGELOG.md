@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.29.0
+
+- A guided tour for first-time visitors. On a first visit the hub and the first story opened each show a short tour: a few cards that light up one part of the page at a time (the story cards, Atlas, Timeline and Browse on the hub; the chapter buttons, the chapter card, the map, the timeline and the chapter list on a story). It can be skipped at any point, and Escape closes it.
+- The tour can be taken again at any time: “How it works” beside the hub’s heading, and a “?” button on every story’s map, under the zoom buttons.
+- It opens by itself only once per device for the hub and once for stories, and not on a story for someone who has already read chapters here. It lives in `hub/tour.js`; the engine is unchanged and still stores nothing.
+
 ## 0.28.0
 
 - New story map in Chronicles: Greece and Persia, the Greek city-states and the Persian empire, and where they met. From the games at Olympia, Delphi and the colonies and the thinkers of Miletus, through Cyrus and the Medes, Croesus at Sardis, Babylon and Egypt, Darius at Behistun, Persepolis, the Royal Road, Scylax down the Indus and the bridge over the Bosporus, Athens’ democracy, the Ionian Revolt, Marathon, the silver of Laurion, Xerxes at the Hellespont, Thermopylae, Salamis, Plataea and Mycale, the Delian League, the Parthenon, Persian gold and Sparta’s victory, the Ten Thousand and Mausolus, to Philip of Macedon, Alexander at the Granicus, Issus and Gaugamela, the burning of Persepolis, the last Achaemenid, the weddings at Susa and Alexander’s death in Babylon, then the first marathon in 1896 and the digging of Persepolis: 34 chapters, a Powers layer that changes chapter by chapter, and 19 people cards.
