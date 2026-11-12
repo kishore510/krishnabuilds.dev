@@ -64,7 +64,7 @@ scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are t
 - **Chronicles**: civilisations, empires and routes, from archaeology and the historical record (ancient and modern). No collections.
 - **Deep Time**: the Earth and the sky before people. Empty for now.
 
-`manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
+`manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A `built` story also has `builtAt`, the UTC time it was built to the second (`date -u +%Y-%m-%dT%H:%M:%SZ`); the hub's "New story maps" row in Browse lists every built story newest first by it, and the build fails without it. A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
 
 ## Engine and data
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.32.0
+
+- Browse: the New row is now “New story maps”: every built story, newest first, however long ago it was built. Each card opens the story itself. Before, it listed catalogue entries added in the last 45 days, with or without a story.
+- Each built story records when it was built (`builtAt` in `manifest.json`, a UTC time to the second), so stories built on the same day sort correctly. The build fails if a built story has none.
+- For maintainers: `pnpm story:ref`, `story:check` and `story:shots`, and the `new-story-map` skill, for adding a story without reading the engine.
+
 ## 0.31.0
 
 - New story map in Chronicles: The Delhi Sultanate. From the raids out of Ghazni and the battles of Tarain, through Muinuddin Chishti at Ajmer, the Qutb Minar, Bakhtiyar Khalji in Bihar and Bengal, Aibak at Lahore, Chinggis Khan on the Indus, Iltutmish and Razia, Balban and the Mongol frontier, Alauddin Khalji (Devagiri, Gujarat and Malik Kafur, the Mongols at Delhi, Ranthambore and Chittor, the fixed markets, Warangal and the far south), the Tughlaqs (‘Delhi is still far’, Daulatabad, the token coins, Ibn Battuta, the breakaway of Madurai, Vijayanagara, Bengal and the Bahmanis, Firuz Shah and Ashoka’s pillars), Timur’s sack of Delhi, the regional sultanates and the Sayyids, the Lodis at Jaunpur and Agra, Kabir and Guru Nanak, to Panipat in 1526 and the sultanate’s legacy: 30 chapters, a Powers layer that changes chapter by chapter, and 23 people cards.

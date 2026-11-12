@@ -373,6 +373,16 @@
       (tags ? '<span class="sm-entry-card__tags">' + tags + "</span>" : "") + "</a></li>";
   }
 
+  /** A card that opens a story map itself, in the colour of the first entry that links to it. */
+  function storyCard(id) {
+    var s = STORIES[id];
+    var e = E.filter(function (x) { return x.story === id; })[0];
+    return '<li><a class="sm-entry-card" href="/' + id + '/"' + (e ? ' style="' + hue(e.region) + '"' : "") + ">" +
+      '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + esc(s.era) + "</span>" +
+      '<span class="sm-entry-card__name">' + esc(s.title) + "</span>" +
+      '<span class="sm-entry-card__tags"><span class="sm-pill sm-pill--map">Story map</span></span></a></li>';
+  }
+
   function haystack(e) {
     return [e.name, e.native, REGION[e.region].title, e.lane && LANE[e.lane].title, KIND[e.kind], X.rangeText(e),
       e.story && STORIES[e.story] && STORIES[e.story].title, e.note, e.summary]
@@ -399,9 +409,9 @@
     list.sort(b.sort === "az" ? function (x, y) { return x.name.localeCompare(y.name); } : byDate);
     var plain = b.region === "all" && b.kind === "all" && !b.maps && !q;
     var recent = explored.slice(0, 8).map(function (id) { return BY[id]; });
-    var fresh = E.filter(function (e) {
-      return e.added && Date.now() - Date.parse(e.added) < 45 * 864e5;
-    });
+    // Every built story, newest first, however long ago it was built.
+    var fresh = Object.keys(STORIES).filter(function (id) { return STORIES[id].built; })
+      .sort(function (x, y) { return Date.parse(STORIES[y].builtAt) - Date.parse(STORIES[x].builtAt); });
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
     var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"]];
 
@@ -411,7 +421,7 @@
         return '<button type="button" class="sm-chip-btn" data-bk="' + o[0] + '" aria-pressed="' + (b.kind === o[0]) + '">' + o[1] + "</button>";
       }).join("") + '<button type="button" class="sm-chip-btn sm-chip-btn--maps" data-bm aria-pressed="' + b.maps + '">Story maps only</button></div>' +
       (plain && recent.length ? '<h2 class="sm-browse-h">Pick up where you left off</h2><ul class="sm-entry-row">' + recent.map(card).join("") + "</ul>" : "") +
-      (plain && fresh.length ? '<h2 class="sm-browse-h">New</h2><ul class="sm-entry-row">' + fresh.map(card).join("") + "</ul>" : "") +
+      (plain && fresh.length ? '<h2 class="sm-browse-h">New story maps</h2><ul class="sm-entry-row">' + fresh.map(storyCard).join("") + "</ul>" : "") +
       '<div class="sm-browse-bar"><h2 class="sm-browse-h">' + (plain ? "Everything" : "Results") + ' <span class="sm-browse-n">' + list.length + "</span></h2>" +
       '<label class="sm-sort">Sort <select id="sm-sort"><option value="date"' + (b.sort === "date" ? " selected" : "") + '>Oldest first</option>' +
       '<option value="az"' + (b.sort === "az" ? " selected" : "") + ">A to Z</option></select></label></div>" +

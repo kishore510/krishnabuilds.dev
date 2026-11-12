@@ -303,7 +303,7 @@ const storyCards = builtStories
 const hubData = {
   regions: catalogue.regions,
   entries: catalogue.entries,
-  stories: Object.fromEntries(manifest.stories.map((s) => [s.id, { title: s.title, built: s.status === "built" }])),
+  stories: Object.fromEntries(manifest.stories.map((s) => [s.id, { title: s.title, built: s.status === "built", era: s.era, builtAt: s.builtAt }])),
   // The atlas projects [lon, lat] the same way the world basemap does.
   world: { ...world.projection, size: world.size },
 };

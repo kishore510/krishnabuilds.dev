@@ -129,6 +129,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Greece and Persia (0.28.0)
 - [x] The Mughal Empire (0.30.0)
 - [x] The Delhi Sultanate (0.31.0)
+- [x] Browse lists every built story newest first; `story:ref`, `story:check`, `story:shots` and the `new-story-map` skill for adding stories (0.32.0)
 - [ ] The Silk Road (already listed on the hub as coming soon)
 - [ ] The Marathas
 - [ ] The Mahajanapadas and the Buddha
