@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.15.0
+
+- New story map in Chronicles: The Vijayanagara Empire. From Delhi's raid on Kampili in 1327 and the founding of the city of victory on the Tungabhadra, through the Bahmani wars, Madurai, Abdur Razzaq's visit and Krishnadevaraya's reign (Goa's horse trade, the Kalinga campaigns, Raichur, the court poets and Hampi's temples), to Talikota and the sack of 1565, the last capitals at Penukonda, Chandragiri and Vellore, the Madras grant of 1639 and the ruins' rediscovery: 24 chapters, a Powers layer that changes chapter by chapter, and 15 people cards.
+- South Asia map: the Krishna, Tungabhadra and Kaveri rivers, which every story on this map now shows.
+- Catalogue: the Vijayanagara Empire, the Bahmani Sultanate and the Battle of Talikota link to the new story.
+- Art: a temple gateway tower (gopuram) glyph and a horse traveller.
+
 ## 0.14.0
 
 - New **Atlas** on the hub, and the first thing you see: a world map and a year. Drag the year (or press play) and every civilisation and empire alive then appears as a circle on its heartland; tap one for its summary, its story map, and what came next in the same place. Circles mark a heartland and a rough reach, never a border. The atlas and the timeline share one year, so switching tabs keeps your place in time.

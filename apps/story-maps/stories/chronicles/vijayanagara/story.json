@@ -1,0 +1,2897 @@
+{
+  "id": "vijayanagara",
+  "title": "The Vijayanagara Empire",
+  "description": "An illustrated map of the Vijayanagara Empire, from its founding on the Tungabhadra in 1336, through Krishnadevaraya’s reign and the battle of Talikota in 1565, to its last capitals and the rediscovery of Hampi.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "kn",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Vijayanagara Empire from 1327 to 1646, and the ruins of Hampi",
+  "note": "Based on inscriptions, the excavated city, Persian and Portuguese travellers and chroniclers, and Kannada, Telugu, Tamil and Sanskrit literature; each chapter says which it follows. The founding story is tradition, and the founders’ origins are debated. Army sizes and death tolls from chronicles are given as they state them and are disputed. The map is stylised and not to scale, and the Powers areas are painted loosely: borders shifted constantly, and the nayakas often ruled on their own.",
+  "places": {
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.2,
+        28.6
+      ],
+      "hidden": true
+    },
+    "arabian-sea": {
+      "name": "Across the Arabian Sea",
+      "at": [
+        64.5,
+        19.0
+      ],
+      "hidden": true
+    },
+    "hampi": {
+      "name": "Vijayanagara",
+      "at": [
+        76.46,
+        15.33
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "sringeri": {
+      "name": "Sringeri",
+      "at": [
+        75.25,
+        13.42
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "dorasamudra": {
+      "name": "Dorasamudra (Halebidu)",
+      "at": [
+        75.99,
+        13.21
+      ],
+      "hidden": true
+    },
+    "armagon": {
+      "name": "Armagon",
+      "at": [
+        80.17,
+        13.98
+      ],
+      "hidden": true
+    },
+    "gulbarga": {
+      "name": "Gulbarga",
+      "at": [
+        76.83,
+        17.33
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "madurai": {
+      "name": "Madurai",
+      "at": [
+        78.12,
+        9.92
+      ],
+      "glyph": "gopuram",
+      "label": "left"
+    },
+    "calicut": {
+      "name": "Calicut",
+      "at": [
+        75.78,
+        11.25
+      ],
+      "glyph": "trading-post",
+      "label": "left"
+    },
+    "cuttack": {
+      "name": "Cuttack",
+      "at": [
+        85.88,
+        20.46
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "chandragiri": {
+      "name": "Chandragiri",
+      "at": [
+        79.31,
+        13.59
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "goa": {
+      "name": "Goa",
+      "at": [
+        73.91,
+        15.5
+      ],
+      "glyph": "anchor",
+      "label": "left"
+    },
+    "udayagiri": {
+      "name": "Udayagiri",
+      "at": [
+        79.31,
+        14.87
+      ],
+      "hidden": true
+    },
+    "kondavidu": {
+      "name": "Kondavidu",
+      "at": [
+        80.05,
+        16.25
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "potnuru": {
+      "name": "Potnuru",
+      "at": [
+        83.25,
+        17.95
+      ],
+      "glyph": "pillar",
+      "label": "right"
+    },
+    "raichur": {
+      "name": "Raichur",
+      "at": [
+        77.36,
+        16.2
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "bijapur": {
+      "name": "Bijapur",
+      "at": [
+        75.71,
+        16.83
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "rakkasagi": {
+      "name": "Rakkasagi",
+      "at": [
+        76.2,
+        16.3
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "penukonda": {
+      "name": "Penukonda",
+      "at": [
+        77.59,
+        14.08
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "madras": {
+      "name": "Madras",
+      "at": [
+        80.28,
+        13.08
+      ],
+      "glyph": "trading-post",
+      "label": "bottom"
+    },
+    "vellore": {
+      "name": "Vellore",
+      "at": [
+        79.13,
+        12.92
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    }
+  },
+  "travellers": {
+    "sultanate": {
+      "name": "A Delhi Sultanate army",
+      "icon": "horse"
+    },
+    "brothers": {
+      "name": "Harihara and Bukka",
+      "icon": "prince"
+    },
+    "army": {
+      "name": "The Vijayanagara army",
+      "icon": "war-elephant"
+    },
+    "deccan": {
+      "name": "A Deccan army",
+      "icon": "horse"
+    },
+    "envoy": {
+      "name": "A traveller",
+      "icon": "scroll"
+    },
+    "ship": {
+      "name": "A ship",
+      "icon": "east-indiaman"
+    },
+    "horses": {
+      "name": "War horses",
+      "icon": "horse"
+    },
+    "court": {
+      "name": "The court and treasury",
+      "icon": "ox-cart"
+    }
+  },
+  "phases": {
+    "founding": {
+      "name": "Founding an empire",
+      "color": "#4fc3b0"
+    },
+    "sangama": {
+      "name": "The Sangama kings",
+      "color": "#f29a2e"
+    },
+    "height": {
+      "name": "Krishnadevaraya and the high noon",
+      "color": "#a678e0"
+    },
+    "fall": {
+      "name": "Talikota",
+      "color": "#e0573a"
+    },
+    "aravidu": {
+      "name": "The last capitals",
+      "color": "#5b8fd0"
+    },
+    "legacy": {
+      "name": "Ruins and rediscovery",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "enemy": {
+      "color": "#2b5fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "sea": {
+      "color": "#1f7a8c",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 20.8,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 29.1,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 62.5,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 75.0,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 91.8,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "1327"
+      },
+      {
+        "at": 31.2,
+        "text": "1509"
+      },
+      {
+        "at": 68.8,
+        "text": "1565"
+      },
+      {
+        "at": 89.7,
+        "text": "1646"
+      },
+      {
+        "at": 98.0,
+        "text": "1986"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "hampi",
+      "phase": "founding",
+      "title": "Delhi comes south",
+      "native": "ಕಂಪಿಲಿ",
+      "when": "1327",
+      "at": 2.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          77,
+          21
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "delhi",
+          "to": "hampi",
+          "traveller": "sultanate",
+          "style": "enemy",
+          "bend": 0.08
+        }
+      ],
+      "text": "In the 1320s the armies of Muhammad bin Tughluq, Sultan of Delhi, reach deep into the south. In 1327 they destroy Kampili, a small kingdom on the Tungabhadra river that had sheltered a rebel. Later accounts say two brothers who served Kampili, Harihara and Bukka, were taken to Delhi; historians still debate their origins.",
+      "today": "Today: Kampili, a town near Hampi, Karnataka, India."
+    },
+    {
+      "place": "hampi",
+      "phase": "founding",
+      "title": "A city of victory",
+      "native": "ವಿಜಯನಗರ",
+      "when": "1336, in tradition",
+      "at": 6.2,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          76.4,
+          15.0
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Tradition says Harihara and Bukka founded a new city on the south bank of the Tungabhadra in 1336, blessed by the sage Vidyaranya. One story has hunting dogs chased off by a brave hare, a sign that the ground bred courage. They named it Vijayanagara, ‘city of victory’, among boulder hills sacred to the god Virupaksha.",
+      "today": "Today: Hampi, Vijayanagara district, Karnataka."
+    },
+    {
+      "place": "sringeri",
+      "phase": "founding",
+      "title": "From sea to sea",
+      "native": "ಶೃಂಗೇರಿ",
+      "when": "1343 to 1346",
+      "at": 10.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.2,
+          13.8
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "dorasamudra",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1343 the last great Hoysala king, Veera Ballala III, is killed fighting the Madurai Sultanate, and the Sangama brothers take over his lands. In 1346 the five brothers gather at Sringeri to make a grant to its monastery (matha), celebrating rule ‘from the eastern to the western sea’, a proud claim not yet true.",
+      "today": "Today: Sringeri, Chikkamagaluru district, Karnataka."
+    },
+    {
+      "place": "gulbarga",
+      "phase": "founding",
+      "title": "The Bahmani rival",
+      "native": "ಕಲಬುರಗಿ",
+      "when": "1347",
+      "at": 14.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.8,
+          16.4
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "gulbarga",
+          "to": "raichur",
+          "traveller": "deccan",
+          "style": "enemy",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1347 Delhi’s nobles in the Deccan rebel and found the Bahmani Sultanate, ruled from Gulbarga. Between the two new powers lies the Raichur doab, fertile land between the Krishna and Tungabhadra rivers. For two centuries they fight over it, nearly every generation. Firishta, a later Persian chronicler, gives huge death tolls; historians treat them as exaggerated.",
+      "today": "Today: Kalaburagi, Karnataka; the Bahmani fort and mosque survive."
+    },
+    {
+      "place": "madurai",
+      "phase": "founding",
+      "title": "The conquest of Madurai",
+      "native": "மதுரை",
+      "lang": "ta",
+      "when": "about 1371",
+      "at": 18.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          77.6,
+          11.2
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "madurai",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Bukka I’s son Kumara Kampana marches south, conquers the Madurai Sultanate and restores worship at temples such as Srirangam. His wife Gangadevi tells the story in a Sanskrit poem, the Conquest of Madurai (Madhuravijayam), in which a goddess hands Kampana a sword. The sultanate is gone by 1378, and Vijayanagara rules almost the whole south.",
+      "today": "Today: Madurai, Tamil Nadu."
+    },
+    {
+      "place": "hampi",
+      "phase": "sangama",
+      "title": "A Persian envoy’s wonder",
+      "native": "ವಿಜಯನಗರ",
+      "when": "1442 to 1443",
+      "at": 22.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          72.5,
+          14.5
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "arabian-sea",
+          "to": "calicut",
+          "traveller": "envoy",
+          "style": "sea",
+          "bend": -0.1
+        },
+        {
+          "from": "calicut",
+          "to": "hampi",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": 0.1
+        }
+      ],
+      "text": "Abdur Razzaq, envoy of the Timurid ruler Shah Rukh, sails to Calicut, then travels to Deva Raya II’s capital in 1443. The eye has never seen such a place, he writes, describing seven rings of walls, bazaars of jewels and flowers, and the nine-night Mahanavami festival, with elephants, dancers and fireworks before the king.",
+      "today": "Today: the ruins of Hampi’s royal centre."
+    },
+    {
+      "place": "chandragiri",
+      "phase": "sangama",
+      "title": "Invasions and usurpers",
+      "native": "చంద్రగిరి",
+      "lang": "te",
+      "when": "1460s to 1505",
+      "at": 27.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          81,
+          16
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "cuttack",
+          "to": "udayagiri",
+          "traveller": "army",
+          "style": "enemy",
+          "bend": 0.12
+        },
+        {
+          "from": "chandragiri",
+          "to": "hampi",
+          "traveller": "army",
+          "style": "march",
+          "bend": -0.1
+        }
+      ],
+      "text": "After Deva Raya II the Sangama line weakens. Kapilendra, Gajapati king of Odisha, pushes far down the east coast, and the Bahmanis take Goa. Saluva Narasimha, governor at Chandragiri, drives back the invaders and in 1485 takes the throne himself. In 1505 Vira Narasimha of the Tuluva family seizes it in turn.",
+      "today": "Today: Chandragiri fort, near Tirupati, Andhra Pradesh."
+    },
+    {
+      "place": "hampi",
+      "phase": "height",
+      "title": "Krishnadevaraya crowned",
+      "native": "ಕೃಷ್ಣದೇವರಾಯ",
+      "when": "1509",
+      "at": 31.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.4,
+          15.0
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In 1509 Vira Narasimha’s half-brother Krishnadevaraya is crowned. He rules for twenty years and becomes the empire’s most celebrated king: general, poet and builder. His minister Saluva Timmarasu, remembered as Appaji, guides him. In 1510 he adds a gateway tower (gopuram) to the Virupaksha temple, the shrine at the heart of Hampi.",
+      "today": "Today: the Virupaksha temple, Hampi, still in worship."
+    },
+    {
+      "place": "goa",
+      "phase": "height",
+      "title": "Horses and the Portuguese",
+      "native": "गोंय",
+      "lang": "kok",
+      "when": "1498 to 1510",
+      "at": 35.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          72.5,
+          15
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "arabian-sea",
+          "to": "goa",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": 0.1
+        },
+        {
+          "from": "goa",
+          "to": "hampi",
+          "traveller": "horses",
+          "style": "envoy",
+          "bend": 0.08
+        }
+      ],
+      "text": "War horses do not breed well in the south, so every army depends on Arabian and Persian horses shipped across the sea. Vasco da Gama reaches Calicut in 1498, and in 1510 Afonso de Albuquerque takes Goa from Bijapur. Vijayanagara and the Portuguese become trading partners, and Goa’s horses flow inland to the capital.",
+      "today": "Today: Old Goa, a World Heritage Site."
+    },
+    {
+      "place": "kondavidu",
+      "phase": "height",
+      "title": "The Kalinga campaigns",
+      "native": "కొండవీడు",
+      "lang": "te",
+      "when": "1513 to 1518",
+      "at": 39.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.8,
+          16.0
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "udayagiri",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        },
+        {
+          "from": "udayagiri",
+          "to": "kondavidu",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        },
+        {
+          "from": "kondavidu",
+          "to": "potnuru",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Krishnadevaraya turns on the Gajapatis. He takes the hill fort of Udayagiri in 1514 and Kondavidu in 1515, then marches up the coast and raises a victory pillar at Potnuru. Peace follows. Tradition says he married a daughter of the Gajapati king Prataparudra, though accounts disagree about her name and the marriage.",
+      "today": "Today: Kondavidu fort, Guntur district, Andhra Pradesh."
+    },
+    {
+      "place": "raichur",
+      "phase": "height",
+      "title": "The battle of Raichur",
+      "native": "ರಾಯಚೂರು",
+      "when": "1520",
+      "at": 43.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.8,
+          16.2
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "raichur",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        },
+        {
+          "from": "bijapur",
+          "to": "raichur",
+          "traveller": "deccan",
+          "style": "enemy",
+          "bend": -0.1
+        }
+      ],
+      "text": "In 1520 Krishnadevaraya besieges Raichur, and Ismail Adil Shah of Bijapur comes to relieve it. Vijayanagara wins a great battle by the Krishna, and Portuguese musketeers help take the fort. The chronicler Fernão Nunes gives the king’s army as more than 700,000 men, surely an exaggeration. The doab is Vijayanagara’s again.",
+      "today": "Today: Raichur fort, Karnataka."
+    },
+    {
+      "place": "hampi",
+      "phase": "height",
+      "title": "As large as Rome",
+      "native": "ಹಂಪಿ",
+      "when": "about 1520 to 1522",
+      "at": 47.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.46,
+          15.33
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "The Portuguese visitor Domingo Paes finds the capital ‘as large as Rome, and very beautiful to the sight’, and calls it the best provided city in the world. He describes markets of rice, rubies and pearls, and a king who rises before dawn to exercise. Modern estimates of the population, often about half a million, are debated.",
+      "today": "Today: Hampi Bazaar, the old market street before the Virupaksha temple."
+    },
+    {
+      "place": "hampi",
+      "phase": "height",
+      "title": "Poets at court",
+      "native": "ఆముక్తమాల్యద",
+      "lang": "te",
+      "when": "1509 to 1529",
+      "at": 52.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.46,
+          15.33
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "Krishnadevaraya writes in Sanskrit and Telugu. His Telugu poem Amuktamalyada retells the life of the poet-saint Andal and declares Telugu the finest language of the land. Eight great poets (ashtadiggajas) are said to grace his court, among them Allasani Peddana. Folk tales add the witty jester Tenali Rama; those stories are tradition.",
+      "today": "Today: Krishnadevaraya’s poems are still read in Telugu classrooms."
+    },
+    {
+      "place": "hampi",
+      "phase": "height",
+      "title": "Temples of stone",
+      "native": "ಕಲ್ಲಿನ ರಥ",
+      "when": "1500s",
+      "at": 56.3,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          76.47,
+          15.33
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "The kings pour wealth into temples. At the Vitthala temple a shrine to the bird Garuda is carved as a stone chariot (ratha), and the hall’s slender pillars ring when tapped. Krishnadevaraya gives lavishly to the god at Tirumala, where bronze statues of him and his two queens, Chinna Devi and Tirumala Devi, still stand.",
+      "today": "Today: the stone chariot is on India’s 50 rupee note."
+    },
+    {
+      "place": "madurai",
+      "phase": "height",
+      "title": "The nayakas",
+      "native": "நாயக்கர்",
+      "lang": "ta",
+      "when": "1529 to 1542",
+      "at": 60.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.2,
+          11.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Krishnadevaraya dies in 1529; his brother Achyuta Deva Raya succeeds him, and a great temple at Hampi is built in his name in 1534. The empire is held together by nayakas, military chiefs who govern lands in return for troops and tribute. In Madurai and Thanjavur new nayaka houses take root, loyal for now.",
+      "today": "Today: the Achyutaraya temple ruins, Hampi."
+    },
+    {
+      "place": "bijapur",
+      "phase": "fall",
+      "title": "Rama Raya’s gamble",
+      "native": "ಅಳಿಯ ರಾಮರಾಯ",
+      "when": "1542 to 1564",
+      "at": 64.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.2,
+          17.2
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "bijapur",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "From 1542 the young king Sadashiva reigns in name, while Aliya Rama Raya, Krishnadevaraya’s son-in-law (aliya), rules in fact. He plays the five Deccan Sultanates against one another, joining first one and then another in their wars. His armies sack Ahmadnagar, and the sultans come to fear him more than they distrust each other.",
+      "today": "Today: Vijayapura, Karnataka, the old Bijapur."
+    },
+    {
+      "place": "rakkasagi",
+      "phase": "fall",
+      "title": "The battle of Talikota",
+      "native": "ರಕ್ಕಸ-ತಂಗಡಿ",
+      "when": "23 January 1565",
+      "at": 68.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.4,
+          16.3
+        ],
+        "width": 5
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "rakkasagi",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        },
+        {
+          "from": "bijapur",
+          "to": "rakkasagi",
+          "traveller": "deccan",
+          "style": "enemy",
+          "bend": -0.1
+        }
+      ],
+      "text": "Bijapur, Ahmadnagar, Golconda and Bidar unite against Vijayanagara. Their armies meet Rama Raya’s south of the Krishna, near Rakkasagi and Tangadagi, a battle named after nearby Talikota. The aged regent is captured and beheaded. Some accounts say two Muslim commanders in his army changed sides; historians disagree. His army breaks and flees.",
+      "today": "Today: the villages of Rakkasagi and Tangadagi, Vijayapura district."
+    },
+    {
+      "place": "hampi",
+      "phase": "fall",
+      "title": "The sack of the city",
+      "native": "ಹಂಪಿ",
+      "when": "1565 to 1567",
+      "at": 73.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.6,
+          15.0
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "hampi",
+          "to": "penukonda",
+          "traveller": "court",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rama Raya’s brother Tirumala flees south with the king and, say Portuguese writers, the treasury loaded on hundreds of elephants. The victors plunder the capital for months, burning palaces and smashing temples. In 1567 the Italian merchant Cesare Federici finds the houses standing but empty, with tigers and wild beasts living in them.",
+      "today": "Today: the burnt platforms of Hampi’s royal centre."
+    },
+    {
+      "place": "penukonda",
+      "phase": "aravidu",
+      "title": "Penukonda and the Aravidus",
+      "native": "పెనుకొండ",
+      "lang": "te",
+      "when": "about 1570 onwards",
+      "at": 77.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.2,
+          14.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Tirumala crowns himself at Penukonda, a hill fortress to the south-east, and founds the Aravidu dynasty, the empire’s fourth. The old capital is never rebuilt. The empire still has a king, an army and great nayakas under it, but the Deccan Sultanates now hold the Raichur doab, and the nayakas grow ever more independent.",
+      "today": "Today: Penukonda, Sri Sathya Sai district, Andhra Pradesh."
+    },
+    {
+      "place": "chandragiri",
+      "phase": "aravidu",
+      "title": "Venkata II at Chandragiri",
+      "native": "చంద్రగిరి",
+      "lang": "te",
+      "when": "1586 to 1614",
+      "at": 81.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.4,
+          13.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Venkata II, the last strong emperor, moves the court to Chandragiri, safer from the sultanates. Jesuit missionaries visit him, and he holds his nayakas mostly in check. In 1610 Raja Wodeyar of Mysore takes Srirangapatna from the imperial governor, the start of the Mysore kingdom. Venkata’s death in 1614 brings a ruinous civil war.",
+      "today": "Today: the Raja Mahal at Chandragiri, now a museum."
+    },
+    {
+      "place": "madras",
+      "phase": "aravidu",
+      "title": "A grant to the English",
+      "native": "சென்னப்பட்டணம்",
+      "lang": "ta",
+      "when": "1639",
+      "at": 85.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          79.8,
+          13.2
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "armagon",
+          "to": "madras",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": -0.2
+        }
+      ],
+      "text": "In 1639 Damarla Venkatadri Nayaka, a local chief under the emperor Venkata III, grants a strip of coast to Francis Day of the English East India Company. There the English build Fort St George, around which Madras grows. His successor, Sriranga III, confirms the grant in 1645: one of the empire’s last acts reaches far into the future.",
+      "today": "Today: Fort St George, Chennai, seat of Tamil Nadu’s government."
+    },
+    {
+      "place": "vellore",
+      "phase": "aravidu",
+      "title": "The last emperor",
+      "native": "வேலூர்",
+      "lang": "ta",
+      "when": "about 1646",
+      "at": 89.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.4,
+          13.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "bijapur",
+          "to": "vellore",
+          "traveller": "deccan",
+          "style": "enemy",
+          "bend": 0.1
+        }
+      ],
+      "text": "Armies of Bijapur and Golconda overrun the last imperial lands in the 1640s; Vellore falls about 1646. Sriranga III, the last emperor, wanders between the courts of his former nayakas seeking help and dies in exile, by most accounts in the 1670s. The nayakas of Mysore, Madurai, Thanjavur and Keladi rule on as kings.",
+      "today": "Today: Vellore Fort, Tamil Nadu."
+    },
+    {
+      "place": "hampi",
+      "phase": "legacy",
+      "title": "A forgotten empire",
+      "native": "ಹಂಪಿ",
+      "when": "1800 to 1900",
+      "at": 93.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.46,
+          15.33
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "After Tipu Sultan’s fall in 1799, the surveyor Colin Mackenzie maps the ruins at Hampi and gathers inscriptions and local histories. In 1856 Alexander Greenlaw photographs them. In 1900 Robert Sewell publishes A Forgotten Empire, translating the chronicles of Paes and Nunes, and the city of victory returns to the history books.",
+      "today": "Today: Mackenzie’s collections are in Chennai and London."
+    },
+    {
+      "place": "hampi",
+      "phase": "legacy",
+      "title": "World Heritage",
+      "native": "ಹಂಪಿ",
+      "when": "1986 onwards",
+      "at": 98.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.46,
+          15.33
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "In 1986 the ruins of Hampi become a World Heritage Site: more than 1,600 surviving structures across some 4,000 hectares of boulder hills, temples, bazaars, aqueducts and palace platforms. Excavations still uncover the royal centre, and the Virupaksha temple has never stopped holding worship. Each year the Hampi Utsav festival recalls the old Mahanavami.",
+      "today": "Today: the Group of Monuments at Hampi, Karnataka."
+    }
+  ],
+  "effects": [
+    {
+      "type": "lamps",
+      "place": "hampi",
+      "steps": [
+        5
+      ]
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "vijayanagara",
+        "name": "Vijayanagara Empire",
+        "native": "ವಿಜಯನಗರ ಸಾಮ್ರಾಜ್ಯ",
+        "color": "#e0892e",
+        "active": [
+          [
+            1,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Vijayanagara",
+          "at": [
+            76.4,
+            13.9
+          ],
+          "moves": [
+            {
+              "from": 4,
+              "at": [
+                76.8,
+                12.35
+              ]
+            },
+            {
+              "from": 20,
+              "at": [
+                79.9,
+                14.5
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.3,
+                  14.4
+                ],
+                [
+                  75.6,
+                  15.6
+                ],
+                [
+                  76.4,
+                  16.0
+                ],
+                [
+                  77.4,
+                  15.8
+                ],
+                [
+                  77.8,
+                  15.0
+                ],
+                [
+                  77.2,
+                  14.2
+                ],
+                [
+                  76.2,
+                  14.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                3
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  74.6,
+                  15.6
+                ],
+                [
+                  76.4,
+                  16.1
+                ],
+                [
+                  77.6,
+                  15.9
+                ],
+                [
+                  78.6,
+                  15.2
+                ],
+                [
+                  79.2,
+                  13.8
+                ],
+                [
+                  78.8,
+                  12.6
+                ],
+                [
+                  78.0,
+                  11.6
+                ],
+                [
+                  76.8,
+                  11.2
+                ],
+                [
+                  75.8,
+                  11.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                4,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  76.4,
+                  9.5
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.25,
+                  14.6
+                ],
+                [
+                  79.4,
+                  15.4
+                ],
+                [
+                  78.0,
+                  15.9
+                ],
+                [
+                  76.4,
+                  16.1
+                ],
+                [
+                  74.6,
+                  15.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  76.4,
+                  9.5
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  81.0,
+                  15.8
+                ],
+                [
+                  80.4,
+                  16.5
+                ],
+                [
+                  79.3,
+                  16.4
+                ],
+                [
+                  78.3,
+                  16.0
+                ],
+                [
+                  77.0,
+                  15.95
+                ],
+                [
+                  75.6,
+                  15.8
+                ],
+                [
+                  74.6,
+                  15.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  76.4,
+                  9.5
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  81.0,
+                  15.8
+                ],
+                [
+                  80.4,
+                  16.5
+                ],
+                [
+                  79.3,
+                  16.5
+                ],
+                [
+                  78.6,
+                  16.2
+                ],
+                [
+                  77.5,
+                  16.45
+                ],
+                [
+                  76.4,
+                  16.4
+                ],
+                [
+                  75.6,
+                  16.0
+                ],
+                [
+                  74.6,
+                  15.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.6,
+                  14.6
+                ],
+                [
+                  76.6,
+                  15.0
+                ],
+                [
+                  78.0,
+                  15.3
+                ],
+                [
+                  79.4,
+                  15.2
+                ],
+                [
+                  80.25,
+                  14.6
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  79.4,
+                  11.9
+                ],
+                [
+                  78.3,
+                  12.0
+                ],
+                [
+                  77.0,
+                  11.6
+                ],
+                [
+                  76.0,
+                  11.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                20,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.5,
+                  12.4
+                ],
+                [
+                  78.0,
+                  13.4
+                ],
+                [
+                  78.6,
+                  14.4
+                ],
+                [
+                  79.6,
+                  14.6
+                ],
+                [
+                  80.25,
+                  14.4
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.1,
+                  12.4
+                ],
+                [
+                  79.4,
+                  12.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Vijayanagara (Hampi); after 1565 Penukonda, Chandragiri and Vellore",
+          "Founded": "1336, in tradition",
+          "Dynasties": "Sangama, Saluva, Tuluva and Aravidu",
+          "Today": "Karnataka, Andhra Pradesh, Tamil Nadu and Kerala"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Harihara I, with his brother Bukka"
+          },
+          {
+            "from": 4,
+            "text": "Bukka I"
+          },
+          {
+            "from": 5,
+            "text": "Deva Raya II"
+          },
+          {
+            "from": 6,
+            "text": "Saluva Narasimha, from 1485"
+          },
+          {
+            "from": 7,
+            "text": "Krishnadevaraya"
+          },
+          {
+            "from": 14,
+            "text": "Achyuta Deva Raya"
+          },
+          {
+            "from": 15,
+            "text": "Sadashiva, with Rama Raya as regent"
+          },
+          {
+            "from": 17,
+            "text": "Sadashiva, with Tirumala as regent"
+          },
+          {
+            "from": 18,
+            "text": "Tirumala Deva Raya"
+          },
+          {
+            "from": 19,
+            "text": "Venkata II"
+          },
+          {
+            "from": 20,
+            "text": "Venkata III, then Sriranga III from 1642"
+          }
+        ],
+        "role": "The great power of the south for three centuries, from the Tungabhadra to the tip of India.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Fights the Bahmanis for the Raichur doab"
+          },
+          {
+            "from": 4,
+            "text": "Conquers the Madurai Sultanate"
+          },
+          {
+            "from": 8,
+            "text": "Buys war horses through the Portuguese at Goa"
+          },
+          {
+            "from": 9,
+            "text": "Takes the Gajapatis’ southern forts (1514 to 1515)"
+          },
+          {
+            "from": 10,
+            "text": "Wins Raichur from Bijapur (1520)"
+          },
+          {
+            "from": 16,
+            "text": "Defeated at Talikota by four Deccan Sultanates (1565)"
+          },
+          {
+            "from": 20,
+            "text": "Its nayaka grants the English the site of Madras (1639)"
+          }
+        ]
+      },
+      {
+        "id": "delhi",
+        "name": "Delhi Sultanate",
+        "color": "#4f6fd0",
+        "active": [
+          [
+            0,
+            0
+          ]
+        ],
+        "label": {
+          "text": "Delhi Sultanate",
+          "at": [
+            77.5,
+            23
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  70,
+                  24
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  75.5,
+                  16.2
+                ],
+                [
+                  78,
+                  16.5
+                ],
+                [
+                  80.5,
+                  17.2
+                ],
+                [
+                  82,
+                  20
+                ],
+                [
+                  84,
+                  24
+                ],
+                [
+                  88,
+                  26.5
+                ],
+                [
+                  84,
+                  28
+                ],
+                [
+                  77.5,
+                  30.5
+                ],
+                [
+                  74,
+                  31
+                ]
+              ],
+              {
+                "at": [
+                  78.12,
+                  9.92
+                ],
+                "radius": 0.8
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Delhi, briefly Daulatabad",
+          "Ruler": "Muhammad bin Tughluq"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Muhammad bin Tughluq"
+          }
+        ],
+        "role": "In the 1320s and 1330s Delhi’s power reaches the far south, then quickly falls back.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Destroys Kampili (1327)"
+          }
+        ]
+      },
+      {
+        "id": "hoysala",
+        "name": "Hoysala kingdom",
+        "native": "ಹೊಯ್ಸಳ",
+        "color": "#a678e0",
+        "minor": true,
+        "active": [
+          [
+            0,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Hoysalas",
+          "at": [
+            76.6,
+            12.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  77.2,
+                  10.6
+                ],
+                [
+                  78.6,
+                  11.2
+                ],
+                [
+                  79.0,
+                  12.4
+                ],
+                [
+                  78.4,
+                  13.6
+                ],
+                [
+                  77.2,
+                  14.2
+                ],
+                [
+                  75.6,
+                  14.4
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Dorasamudra (Halebidu)",
+          "Ended": "1343, with the death of Veera Ballala III"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Veera Ballala III"
+          }
+        ],
+        "role": "The old kingdom of southern Karnataka, whose lands pass to the Sangama brothers.",
+        "ties": []
+      },
+      {
+        "id": "madurai-sultanate",
+        "name": "Madurai Sultanate",
+        "color": "#5b6fa8",
+        "minor": true,
+        "active": [
+          [
+            1,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Madurai Sultanate",
+          "at": [
+            78.5,
+            10.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  79.0,
+                  11.4
+                ],
+                [
+                  78.0,
+                  11.0
+                ],
+                [
+                  77.4,
+                  10.0
+                ],
+                [
+                  77.2,
+                  8.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Madurai",
+          "Founded": "1335, breaking away from Delhi",
+          "Ended": "By 1378"
+        },
+        "rulers": [],
+        "role": "A short-lived sultanate in the far south, conquered by Kumara Kampana.",
+        "ties": [
+          {
+            "from": 2,
+            "text": "Kills the Hoysala king Veera Ballala III (1343)"
+          }
+        ]
+      },
+      {
+        "id": "bahmani",
+        "name": "Bahmani Sultanate",
+        "native": "بهمنی",
+        "lang": "fa",
+        "color": "#2f8f6b",
+        "active": [
+          [
+            3,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Bahmani Sultanate",
+          "at": [
+            76.6,
+            18.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  73,
+                  18.5
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  74.5,
+                  20.6
+                ],
+                [
+                  76.8,
+                  20.9
+                ],
+                [
+                  78.6,
+                  20.2
+                ],
+                [
+                  79.8,
+                  19.0
+                ],
+                [
+                  80.6,
+                  17.6
+                ],
+                [
+                  80.3,
+                  16.6
+                ],
+                [
+                  78.6,
+                  16.2
+                ],
+                [
+                  77.5,
+                  16.45
+                ],
+                [
+                  76.4,
+                  16.4
+                ],
+                [
+                  75.6,
+                  16.0
+                ],
+                [
+                  74.6,
+                  15.6
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Gulbarga, then Bidar",
+          "Founded": "1347, by Alauddin Hasan Bahman Shah",
+          "Ended": "Broke up into five sultanates, from about 1490"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Alauddin Hasan Bahman Shah"
+          }
+        ],
+        "role": "Vijayanagara’s great rival to the north for a century and a half.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Fights Vijayanagara for the Raichur doab"
+          },
+          {
+            "from": 6,
+            "text": "Takes Goa from Vijayanagara"
+          }
+        ]
+      },
+      {
+        "id": "deccan-sultanates",
+        "name": "Deccan Sultanates",
+        "color": "#3a9b78",
+        "active": [
+          [
+            9,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Deccan Sultanates",
+          "at": [
+            76.6,
+            18.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                9,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  73,
+                  18.5
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  74.5,
+                  20.6
+                ],
+                [
+                  76.8,
+                  20.9
+                ],
+                [
+                  78.6,
+                  20.2
+                ],
+                [
+                  79.8,
+                  19.0
+                ],
+                [
+                  80.6,
+                  17.6
+                ],
+                [
+                  80.6,
+                  16.7
+                ],
+                [
+                  79.3,
+                  16.6
+                ],
+                [
+                  78.6,
+                  16.3
+                ],
+                [
+                  77.5,
+                  16.55
+                ],
+                [
+                  76.4,
+                  16.5
+                ],
+                [
+                  75.6,
+                  16.1
+                ],
+                [
+                  74.6,
+                  15.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  73,
+                  18.5
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  74.5,
+                  20.6
+                ],
+                [
+                  76.8,
+                  20.9
+                ],
+                [
+                  78.6,
+                  20.2
+                ],
+                [
+                  79.8,
+                  19.0
+                ],
+                [
+                  80.6,
+                  17.6
+                ],
+                [
+                  80.6,
+                  16.7
+                ],
+                [
+                  80.2,
+                  16.0
+                ],
+                [
+                  78.4,
+                  15.6
+                ],
+                [
+                  76.8,
+                  15.3
+                ],
+                [
+                  75.4,
+                  15.1
+                ],
+                [
+                  74.6,
+                  15.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                21,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  73,
+                  18.5
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  74.5,
+                  20.6
+                ],
+                [
+                  76.8,
+                  20.9
+                ],
+                [
+                  78.6,
+                  20.2
+                ],
+                [
+                  79.8,
+                  19.0
+                ],
+                [
+                  80.6,
+                  17.6
+                ],
+                [
+                  81.3,
+                  16
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.1,
+                  12.4
+                ],
+                [
+                  78.6,
+                  12.3
+                ],
+                [
+                  77.0,
+                  12.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Kingdoms": "Bijapur, Golconda, Ahmadnagar, Bidar and Berar",
+          "Ended": "Conquered by the Mughals, 1636 to 1687"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Ismail Adil Shah of Bijapur, among others"
+          },
+          {
+            "from": 16,
+            "text": "Ali Adil Shah I of Bijapur, Hussain Nizam Shah I of Ahmadnagar, Ibrahim Qutb Shah of Golconda and Ali Barid Shah of Bidar"
+          }
+        ],
+        "role": "Five kingdoms that grow out of the Bahmani Sultanate; four of them unite against Vijayanagara.",
+        "ties": [
+          {
+            "from": 16,
+            "text": "Bijapur, Ahmadnagar, Golconda and Bidar win at Talikota (1565)"
+          },
+          {
+            "from": 21,
+            "text": "Bijapur and Golconda share out the last imperial lands"
+          }
+        ]
+      },
+      {
+        "id": "gajapati",
+        "name": "Gajapati kingdom",
+        "native": "ଗଜପତି",
+        "lang": "or",
+        "color": "#c2477a",
+        "minor": true,
+        "active": [
+          [
+            6,
+            9
+          ]
+        ],
+        "label": {
+          "text": "Gajapatis",
+          "at": [
+            84,
+            20.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.6,
+                  21.5
+                ],
+                [
+                  86.8,
+                  20.6
+                ],
+                [
+                  85.5,
+                  19.8
+                ],
+                [
+                  84.7,
+                  19
+                ],
+                [
+                  83.5,
+                  18
+                ],
+                [
+                  82.3,
+                  16.8
+                ],
+                [
+                  81.3,
+                  16
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  79.5,
+                  15.3
+                ],
+                [
+                  79.7,
+                  16.6
+                ],
+                [
+                  80.6,
+                  17.6
+                ],
+                [
+                  81.6,
+                  19.2
+                ],
+                [
+                  82.4,
+                  21.0
+                ],
+                [
+                  84.5,
+                  22.2
+                ],
+                [
+                  86.6,
+                  22.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.6,
+                  21.5
+                ],
+                [
+                  86.8,
+                  20.6
+                ],
+                [
+                  85.5,
+                  19.8
+                ],
+                [
+                  84.7,
+                  19
+                ],
+                [
+                  83.5,
+                  18
+                ],
+                [
+                  82.3,
+                  16.8
+                ],
+                [
+                  81.3,
+                  16
+                ],
+                [
+                  80.9,
+                  16.4
+                ],
+                [
+                  80.9,
+                  17.6
+                ],
+                [
+                  81.6,
+                  19.2
+                ],
+                [
+                  82.4,
+                  21.0
+                ],
+                [
+                  84.5,
+                  22.2
+                ],
+                [
+                  86.6,
+                  22.3
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Cuttack",
+          "Today": "Odisha and coastal Andhra Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Kapilendra, then his successors"
+          },
+          {
+            "from": 9,
+            "text": "Prataparudra"
+          }
+        ],
+        "role": "Kings of Odisha who push down the east coast until Krishnadevaraya drives them back.",
+        "ties": []
+      },
+      {
+        "id": "portuguese",
+        "name": "Portuguese Goa",
+        "native": "Estado da Índia",
+        "lang": "pt",
+        "color": "#2b7fb4",
+        "minor": true,
+        "active": [
+          [
+            8,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Portuguese Goa",
+          "at": [
+            72.6,
+            15.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                8,
+                21
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  73.91,
+                  15.5
+                ],
+                "radius": 0.35
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Taken": "1510, by Afonso de Albuquerque",
+          "Held until": "1961"
+        },
+        "rulers": [],
+        "role": "The Portuguese base on the west coast and Vijayanagara’s source of war horses.",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Portuguese musketeers fight for Krishnadevaraya at Raichur"
+          }
+        ]
+      },
+      {
+        "id": "nayakas",
+        "name": "Nayaka kingdoms",
+        "native": "நாயக்கர்",
+        "lang": "ta",
+        "color": "#8a6bd1",
+        "minor": true,
+        "active": [
+          [
+            14,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Nayakas",
+          "at": [
+            78.5,
+            10.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                14,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  79.3,
+                  12.5
+                ],
+                [
+                  78.4,
+                  12.1
+                ],
+                [
+                  77.4,
+                  11.0
+                ],
+                [
+                  77.2,
+                  9.6
+                ],
+                [
+                  77.0,
+                  8.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Madurai, Thanjavur and Gingee",
+          "Today": "Tamil Nadu"
+        },
+        "rulers": [],
+        "role": "Military governors under the emperor who become kings in all but name as the empire weakens.",
+        "ties": []
+      },
+      {
+        "id": "mysore",
+        "name": "Kingdom of Mysore",
+        "native": "ಮೈಸೂರು",
+        "color": "#b5a33a",
+        "minor": true,
+        "active": [
+          [
+            19,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Mysore",
+          "at": [
+            76.6,
+            11.5
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                19,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  76.0,
+                  11.9
+                ],
+                [
+                  76.2,
+                  12.9
+                ],
+                [
+                  77.0,
+                  13.0
+                ],
+                [
+                  77.4,
+                  12.3
+                ],
+                [
+                  76.8,
+                  11.7
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Srirangapatna, from 1610",
+          "Rulers": "The Wodeyars"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Raja Wodeyar"
+          }
+        ],
+        "role": "A former vassal that takes Srirangapatna in 1610 and grows into a major kingdom.",
+        "ties": []
+      },
+      {
+        "id": "english",
+        "name": "English East India Company",
+        "color": "#b3261e",
+        "minor": true,
+        "active": [
+          [
+            20,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Madras",
+          "at": [
+            81.2,
+            13.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                20,
+                21
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  80.28,
+                  13.08
+                ],
+                "radius": 0.25
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Settlement": "Fort St George, from 1639",
+          "Today": "Chennai"
+        },
+        "rulers": [],
+        "role": "English traders granted a strip of coast by a Vijayanagara nayaka.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "harihara",
+        "name": "Harihara I",
+        "native": "ಹರಿಹರ",
+        "life": "ruled 1336 to 1356",
+        "role": "Founder of the Sangama dynasty",
+        "steps": [
+          0,
+          1,
+          2
+        ],
+        "text": "The eldest of the five sons of Sangama, Harihara is remembered as the empire’s first king, though he never takes an imperial title. With his brother Bukka he wins the Hoysala lands and holds the line against the new Bahmani Sultanate. Whether the brothers were Kannada or Telugu by origin is still argued."
+      },
+      {
+        "id": "bukka",
+        "name": "Bukka I",
+        "native": "ಬುಕ್ಕ",
+        "life": "ruled 1356 to 1377",
+        "role": "Co-founder and second king",
+        "steps": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "text": "Harihara’s brother and successor, Bukka fights the Bahmanis and sends his son Kumara Kampana to conquer the Madurai Sultanate. By his death the empire covers nearly all of the south. Later inscriptions praise him as protector of all faiths, and one records him settling a dispute between Jains and Vaishnavas."
+      },
+      {
+        "id": "vidyaranya",
+        "name": "Vidyaranya",
+        "native": "ವಿದ್ಯಾರಣ್ಯ",
+        "life": "14th century",
+        "role": "Sage and head of the Sringeri monastery, in tradition the empire’s founder-guide",
+        "steps": [
+          1,
+          2
+        ],
+        "text": "Tradition makes Vidyaranya the guru who inspired Harihara and Bukka to found the city. He headed the Sringeri monastery and is often identified with the scholar Madhava, though historians debate whether they were the same man, and the earliest records of the empire do not mention his role."
+      },
+      {
+        "id": "gangadevi",
+        "name": "Gangadevi",
+        "native": "ಗಂಗಾದೇವಿ",
+        "life": "14th century",
+        "role": "Poet and wife of Kumara Kampana",
+        "steps": [
+          4
+        ],
+        "text": "A princess and poet, Gangadevi wrote the Madhuravijayam, a Sanskrit poem on her husband’s conquest of Madurai. It mixes history with legend and describes the ruined temples of the south. Lost for centuries, the manuscript was found and printed in 1916."
+      },
+      {
+        "id": "deva-raya-ii",
+        "name": "Deva Raya II",
+        "native": "ಎರಡನೇ ದೇವರಾಯ",
+        "life": "ruled about 1424 to 1446",
+        "role": "The greatest Sangama king",
+        "steps": [
+          5
+        ],
+        "text": "Deva Raya II modernised his army by recruiting Muslim horse archers, and Firishta says he gave them land and a mosque in the capital. His court welcomed Abdur Razzaq. In 1443, the envoy reports, the king survived an assassination plot by a close relative at a feast."
+      },
+      {
+        "id": "abdur-razzaq",
+        "name": "Abdur Razzaq Samarqandi",
+        "life": "1413 to 1482",
+        "role": "Envoy of the Timurid ruler Shah Rukh",
+        "steps": [
+          5
+        ],
+        "text": "Sent from Herat to the ruler of Calicut, Abdur Razzaq went on to Vijayanagara in 1443. His travel account, part of a larger Persian history, is among the most vivid descriptions of the city at its height, from its walls and markets to the king’s festival."
+      },
+      {
+        "id": "krishnadevaraya",
+        "name": "Krishnadevaraya",
+        "native": "ಕೃಷ್ಣದೇವರಾಯ",
+        "life": "ruled 1509 to 1529",
+        "role": "Tuluva emperor, the empire’s most celebrated king",
+        "steps": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13
+        ],
+        "text": "Undefeated in battle, Krishnadevaraya wins back the Raichur doab, humbles the Gajapatis and keeps peace with the Portuguese. A poet in Telugu and Sanskrit, he gathers great writers at his court and endows temples from Hampi to Tirumala. Kannada and Telugu speakers alike remember him as their own."
+      },
+      {
+        "id": "paes",
+        "name": "Domingo Paes",
+        "life": "16th century",
+        "role": "Portuguese traveller",
+        "steps": [
+          11
+        ],
+        "text": "A Portuguese visitor, probably a trader from Goa, Paes spent time at the capital around 1520 to 1522. His long, admiring account describes the king, the festivals, the markets and the palaces. It survives in a single copy, bound together with the chronicle of Fernão Nunes."
+      },
+      {
+        "id": "nunes",
+        "name": "Fernão Nunes",
+        "life": "16th century",
+        "role": "Portuguese horse trader and chronicler",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "Nunes lived at Vijayanagara in the 1530s, trading horses. He wrote a history of the kings from the founding to his own day, including the most detailed account of the battle of Raichur, with army sizes historians treat as inflated."
+      },
+      {
+        "id": "peddana",
+        "name": "Allasani Peddana",
+        "native": "అల్లసాని పెద్దన",
+        "lang": "te",
+        "life": "15th to 16th century",
+        "role": "Telugu poet at Krishnadevaraya’s court",
+        "steps": [
+          12
+        ],
+        "text": "Peddana is honoured as ‘grandfather of Telugu poetry’ (Andhra Kavitapitamaha). His Manucharitramu, the tale of a Brahmin who flies to the Himalaya and resists a celestial nymph, set the style of the great Telugu court epics (prabandhas). Tradition says the king himself helped carry his palanquin."
+      },
+      {
+        "id": "tenali",
+        "name": "Tenali Rama",
+        "native": "తెనాలి రామకృష్ణ",
+        "lang": "te",
+        "life": "16th century",
+        "role": "Poet, and the clever jester of folk tales",
+        "steps": [
+          12
+        ],
+        "text": "Tenali Ramakrishna was a real Telugu poet, but he is best known from folk stories, in which he outwits rivals, swindlers and even the king. Those tales are tradition, retold across India in comics, schoolbooks and cartoons, and are not evidence of what happened at court."
+      },
+      {
+        "id": "rama-raya",
+        "name": "Aliya Rama Raya",
+        "native": "ಅಳಿಯ ರಾಮರಾಯ",
+        "life": "died 1565",
+        "role": "Regent of the empire",
+        "steps": [
+          15,
+          16
+        ],
+        "text": "Krishnadevaraya’s son-in-law, from the Aravidu family, Rama Raya ruled for over twenty years in the name of Sadashiva. A skilled but overbearing diplomat, he drew the Deccan Sultanates into an alliance against him. Captured at Talikota, he was beheaded, by Firishta’s account on the order of Hussain Nizam Shah."
+      },
+      {
+        "id": "venkata-ii",
+        "name": "Venkata II",
+        "native": "వెంకటపతి దేవరాయలు",
+        "lang": "te",
+        "life": "ruled 1586 to 1614",
+        "role": "Aravidu emperor",
+        "steps": [
+          19
+        ],
+        "text": "Venkata II held the shrinking empire together for almost thirty years, ruling from Penukonda and then Chandragiri. He beat back attacks from Golconda and welcomed Jesuits to his court. He died without a son, and the fight over his throne broke the empire’s last strength."
+      },
+      {
+        "id": "mackenzie",
+        "name": "Colin Mackenzie",
+        "life": "1754 to 1821",
+        "role": "Surveyor, later first Surveyor General of India",
+        "steps": [
+          22
+        ],
+        "text": "A Scottish army engineer, Mackenzie surveyed Mysore after 1799 and made the first plan of the ruins at Hampi. With Indian assistants he gathered thousands of inscriptions, manuscripts and local histories, a collection still used by historians of the south."
+      },
+      {
+        "id": "sewell",
+        "name": "Robert Sewell",
+        "life": "1845 to 1925",
+        "role": "Civil servant and historian",
+        "steps": [
+          22
+        ],
+        "text": "A British official in the Madras Presidency, Sewell wrote A Forgotten Empire (1900), the first full history of Vijayanagara in English. It includes his translations of the Portuguese chronicles of Paes and Nunes, and brought the empire to a wide audience."
+      }
+    ]
+  }
+}
