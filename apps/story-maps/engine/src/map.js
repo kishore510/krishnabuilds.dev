@@ -20,6 +20,21 @@
     return ([lon, lat]) => [(lon - lon0) * k, (lat0 - lat) * k];
   }
 
+  /** Radius of the dot an earlier chapter's place is drawn as, in map units. */
+  const PIN_DOT = 4.5;
+
+  /**
+   * The places a chapter draws in full, with glyph and name: its own place and
+   * both ends of its routes. Every other place is a dot (seen in an earlier
+   * chapter) or not drawn yet, so a crowded region never shows all its names at once.
+   */
+  function placesNow(story, i) {
+    const step = story.steps[i];
+    const ids = [step.place];
+    for (const leg of step.legs || []) ids.push(leg.from, leg.to);
+    return [...new Set(ids)].filter((id) => story.places[id] && !story.places[id].hidden);
+  }
+
   /** Small seeded generator, so decoration is the same on every load. */
   function seeded(seed) {
     let s = seed >>> 0;
@@ -325,12 +340,14 @@
           x,
           y,
           1,
-          `<circle class="sm-pulse" r="15"/><circle class="sm-disc" r="14"/><g transform="scale(.92)">${art.glyphs[p.glyph]}</g>` +
-            `<text class="sm-pin-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${esc(p.name)}</text>`,
+          // The dot is what an earlier chapter's place shrinks to; the player picks which shows.
+          `<circle class="sm-dot" r="${PIN_DOT}"/><circle class="sm-dot-hit" r="10"/>` +
+            `<g class="sm-pin-full"><circle class="sm-pulse" r="15"/><circle class="sm-disc" r="14"/><g transform="scale(.92)">${art.glyphs[p.glyph]}</g>` +
+            `<text class="sm-pin-label" x="${lx}" y="${ly}" text-anchor="${anchor}">${esc(p.name)}</text></g>`,
           ` class="sm-pin future" data-place="${esc(id)}" role="button" tabindex="0" aria-label="${esc(p.name)}: about this place"`,
         );
       }
-      out.push(s);
+      out.push(`<g class="sm-pins">${s}</g>`);
     }
 
     // Effects tied to steps (for now: celebration lamps around a place).
@@ -475,5 +492,5 @@
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
-  Object.assign(SM, { buildMap, landPaths, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
+  Object.assign(SM, { buildMap, placesNow, landPaths, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
 })((globalThis.StoryMap = globalThis.StoryMap || {}));

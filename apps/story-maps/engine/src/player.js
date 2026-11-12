@@ -254,12 +254,37 @@
     renderPeople(i);
   }
 
+  // A chapter draws in full only its own place and the ends of its routes
+  // (SM.placesNow). Places from earlier chapters shrink to a dot and later ones
+  // wait, so a crowded region never shows every glyph and name at once.
+  // "Whole map" (sm-all on the map) adds the later places as dots too.
+  const pinLayer = svg.querySelector(".sm-pins");
+  const seenBy = [];
+  {
+    const seen = new Set();
+    steps.forEach((s, n) => {
+      for (const id of SM.placesNow(story, n)) seen.add(id);
+      seenBy.push(new Set(seen));
+    });
+  }
   function renderPins(i) {
-    const visited = new Set(steps.slice(0, i + 1).map((s) => s.place));
+    const now = new Set(SM.placesNow(story, i));
+    let active = null;
     for (const pin of pins) {
-      pin.classList.toggle("future", !visited.has(pin.dataset.place));
-      pin.classList.toggle("active", pin.dataset.place === steps[i].place);
+      const id = pin.dataset.place;
+      const isNow = now.has(id);
+      const arriving = isNow && !pin.classList.contains("now");
+      pin.classList.toggle("now", isNow);
+      pin.classList.toggle("past", !isNow && seenBy[i].has(id));
+      pin.classList.toggle("future", !isNow && !seenBy[i].has(id));
+      pin.classList.toggle("active", id === steps[i].place);
+      // Full pins are drawn over the dots, and the chapter's own place over all.
+      // A moved node loses its transition, so an arriving pin fades in by animation.
+      pin.classList.toggle("arriving", arriving);
+      if (arriving) pinLayer.appendChild(pin);
+      if (id === steps[i].place) active = pin;
     }
+    if (active && pinLayer.lastElementChild !== active) pinLayer.appendChild(active);
     for (const e of effects) {
       const effect = story.effects[Number(e.dataset.effect)];
       e.classList.toggle("on", effect.steps.includes(i));
@@ -306,6 +331,7 @@
     closeContents();
     closeEnd();
     readerCamera = false;
+    svg.classList.remove("sm-all");
     const headFrom = headAt;
     const dir = i > current ? "next" : "prev";
     const moved = current >= 0 && i !== current;
@@ -434,6 +460,7 @@
     stopPlaying();
     if (anim) goTo(current, { instant: true });
     readerCamera = true;
+    svg.classList.add("sm-all");
     moveCamera(overviewCamera(), 1000);
   });
   document.addEventListener("keydown", (e) => {

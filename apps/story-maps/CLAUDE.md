@@ -19,7 +19,7 @@ From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnab
 Adding a story: use the `new-story-map` skill (`.claude/skills/new-story-map/SKILL.md` at the repo root). It needs no engine or hub code read. From `apps/story-maps`:
 
 - `pnpm story:ref` prints what a story's data may refer to: basemap extents, glyph and traveller ids, lanes, taken ids.
-- `pnpm story:check <id>` runs the build's data checks on one story, plus layout warnings (`scripts/layout.mjs`): pins hiding each other, labels over pins or off the map, cameras that miss their place, unused data. Warnings don't fail the build; older stories carry some.
+- `pnpm story:check <id>` runs the build's data checks on one story, plus layout warnings (`scripts/layout.mjs`): in each chapter, pins hiding each other, labels over pins and more than 5 places shown in full; labels off the map, cameras that miss their place, unused data. Warnings don't fail the build; older stories carry some.
 - `pnpm story:shots <id> [steps]` saves phone screenshots of chosen chapters to `.work/<id>/` (ignored by git). It needs Playwright, which is not a dependency here; Claude Code cloud sessions have it.
 
 ## Layout
@@ -74,6 +74,7 @@ scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are t
 - A new story is new **data**, never new engine code. If a story needs something the engine can't do, add a general feature to the engine and describe it in data.
 - A built story is three kinds of data: its `story.json`, a basemap from `basemaps/` (reuse one for stories in the same region) and drawings from `art/glyphs.json`. A new drawing goes in the art library, not in engine code.
 - `story.json` (see `stories/legends/indian/ramayana/story.json`): `id`, `title`, `description`, `canvas`, `basemap`, `source` (Tradition, Archaeology or History; a step may override it), `mapLabel`, `note`; `places` (`at` is [lon, lat], `glyph`, `label` side; `hidden` for route waypoints); `travellers` (icon from the art library); `phases`, `routeStyles`; `timeline` (`track` segments and `ticks`, 0 to 100); `steps` in order (`place`, `phase`, `title`, `native`, `when`, `at` on the timeline, `camera` {`at`, `width` in degrees}, `legs` {`from`, `to`, `traveller`, `style`, `bend`}, `text`, `today`); optional `effects`, `realms` and `people` (`heading`, and `items` with `id`, `name`, `native`, `life`, `role`, `text` and the `steps` they appear in, by index).
+- **What a chapter shows.** A chapter draws in full (glyph and name) only its own `place` and the ends of its `legs`. Places from earlier chapters are small dots, later ones are not drawn until their chapter, and “Whole map” adds them as dots. So a story may have many places close together, as long as no single chapter shows two that collide: keep a chapter to 5 places in full at most (`pnpm story:check` warns), and never add a leg only to put a name on the map. Context that should stay on the map for many chapters, such as a rival capital, is a realm, not a place.
 - Optional story settings: `nativeLang`, the language tag for `native` text (Hindi, `hi`, if unset; a step, realm or person can set its own `lang`), and `routes`: `journey` (the default) keeps earlier chapters' routes on the map, `chapter` shows only the current chapter's, and `overview` (`{ at: [lon, lat], width }` in degrees), the story's own whole-map view when the basemap's doesn't frame it.
 - A realm gives either `area` (one outline for the whole story) or `pieces`: `[{ steps: [[from, to], ...], areas: [outline or { at, radius }] }]`, each piece shown only in its own steps, so an empire can gain and lose lands chapter by chapter. `{ at: [lon, lat], radius }` (in degrees) is a dot for a port or island too small to outline. `label.moves` (`[{ from, at }]`) moves the label as the realm changes.
 - Basemap extras: a land shape can list `holes` (inland seas, cut out with the even-odd rule), and `sea.shallowsWidth` draws the coastal glow thinner on a wide map.
@@ -105,7 +106,7 @@ Phones first. In the map:
 - No infinite SVG animations. Run an effect a few times, then stop, and respect `prefers-reduced-motion`.
 - Don't re-centre the camera while the story sheet is being dragged; do it once when the drag ends.
 - Coalesce resize and ResizeObserver work into one `requestAnimationFrame`. Zoom and pan also draw at most once a frame.
-- Pins are tappable at any time (they open a place card); legs, the marker and effects stay `pointer-events: none` so taps reach the pins.
+- Every place drawn, pin or dot, is tappable (it opens a place card); legs, the marker and effects stay `pointer-events: none` so taps reach the pins.
 - Only the map zooms: it has `touch-action: none` and handles pinch, wheel and drag itself. Never block page zoom elsewhere (no `user-scalable=no`).
 - Keep decoration counts modest (trees, waves, mountains): tens per layer, not hundreds.
 
