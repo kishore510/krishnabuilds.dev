@@ -340,3 +340,11 @@ The Maya story's native names are mostly Classic Maya, read from inscriptions (M
 ## 2026-11-12 — Story Maps: Braj spread out on the South Asia map
 
 The Life of Krishna needs Mathura, Gokul, Vrindavan and Govardhan as separate places, but they lie within about 30 km of one another, and on the `south-asia` map (20 units per degree) a pin is 1.4° across. The player never zooms in further than about 17° across, so pins that close would always overlap. The four are drawn about 1.6° apart, keeping their rough directions from one another, and Indraprastha, Hastinapura and Kurukshetra are moved north to make room. That moves real places by up to about 130 km, much further than the small nudges on the Near East and Mesoamerica maps, so the story's note says so. The alternatives were worse: one Braj pin would hide most of the story's geography, and a Braj basemap would need about 300 units per degree, too fine for a story that also reaches Dwaraka and Assam. No pin-collision logic is added to the engine.
+
+## 2026-11-12 — Portal landing page: one colour per app, groups as labels
+
+The landing page looked plainer than the apps it links to, so each app now has its own colour on its card, borrowed from that app's palette (Chalkline teal, Stickyard purple, Sumyard green, Arcade amber, Story Maps saffron), with a fuller hand-written SVG scene drawn in it. The five colours are used only on this page, so they are local variables in the Portal's stylesheet, not shared tokens; the shared tokens still supply everything else. No new font, dependency or image: system fonts, plain CSS, and small CSS-only motion that is off under `prefers-reduced-motion`.
+
+The five groups stay, in the same order, but as a label on each card rather than a heading: with five apps in five groups, most headings sat over a single card. This changes how groups are shown in "Portal structure: grouped apps with story pages", not the groups themselves. On wide screens the first two cards are larger; revisit the grid at around 10 apps, with filtering.
+
+The hero shows three figures that are computed or fixed (apps live, decisions logged, ads and trackers), and the page ends with the three newest entries from this log. Counts that would go stale between Portal deploys, such as games or story maps, are left out.

@@ -14,21 +14,134 @@ body {
   padding: var(--kb-space-8) var(--kb-space-4);
 }
 
+/* Landing page (App.tsx).
+
+   App colours: one per app, borrowed from that app's own palette (Chalkline's
+   teal, Stickyard's purple, Arcade's amber, Story Maps' saffron). They are
+   only used on this page, so they live here rather than in packages/tokens.
+   Each is AA on --kb-color-surface in its theme. Same theme switching as the
+   tokens: no data-theme follows the OS, data-theme forces one. */
+:root {
+  --pt-teal: #0f766e;
+  --pt-purple: #6a2aa8;
+  --pt-green: #1e7a3a;
+  --pt-amber: #8a5300;
+  --pt-saffron: #b5301a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pt-teal: #5fd0c2;
+    --pt-purple: #c9a6ff;
+    --pt-green: #6fd68e;
+    --pt-amber: #ffb703;
+    --pt-saffron: #ff8a5c;
+  }
+}
+
+:root[data-theme="dark"] {
+  --pt-teal: #5fd0c2;
+  --pt-purple: #c9a6ff;
+  --pt-green: #6fd68e;
+  --pt-amber: #ffb703;
+  --pt-saffron: #ff8a5c;
+}
+
+[data-app="chalkline"] {
+  --hue: var(--pt-teal);
+}
+
+[data-app="stickyard"] {
+  --hue: var(--pt-purple);
+}
+
+[data-app="sumyard"] {
+  --hue: var(--pt-green);
+}
+
+[data-app="arcade"] {
+  --hue: var(--pt-amber);
+}
+
+[data-app="story-maps"] {
+  --hue: var(--pt-saffron);
+}
+
+/* Backdrop behind the hero: graph-paper dots and two washes of app colour,
+   faded out down the page. z-index -1 inside an isolated stacking context,
+   so the header's menu panel still opens over the page. */
+.home {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.home::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 34rem;
+  background:
+    radial-gradient(40rem 22rem at 85% -10%, color-mix(in srgb, var(--pt-teal) 20%, transparent), transparent 70%),
+    radial-gradient(32rem 20rem at 0% 20%, color-mix(in srgb, var(--pt-purple) 14%, transparent), transparent 70%),
+    radial-gradient(circle, var(--kb-color-border) 1px, transparent 1.5px) 0 0 / 1.5rem 1.5rem;
+  mask-image: linear-gradient(#000 40%, transparent);
+}
+
+.eyebrow,
+.card__group,
+.facts dt,
+.latest time,
+.latest__tag {
+  font-family: var(--kb-font-family-mono);
+  font-size: var(--kb-font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  margin: 0 0 var(--kb-space-4);
+  color: var(--kb-color-text-muted);
+}
+
 .hero {
   padding: var(--kb-space-8) 0 var(--kb-space-4);
 }
 
 .hero h1 {
-  margin: 0 0 var(--kb-space-4);
-  font-size: var(--kb-font-size-3xl);
-  line-height: var(--kb-font-line-height-tight);
+  max-width: 14em;
+  margin: 0;
+  font-size: clamp(2.25rem, 7vw + 0.5rem, 4.25rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
-.hero p {
-  max-width: 40rem;
+.hero__mark {
+  color: var(--kb-color-accent);
+}
+
+/* One block per app, in its colour: the page's palette in miniature. */
+.hero__strip {
+  display: flex;
+  gap: var(--kb-space-1);
+  margin: var(--kb-space-6) 0;
+}
+
+.hero__strip span {
+  width: 2.5rem;
+  height: 0.375rem;
+  border-radius: var(--kb-radius-full);
+  background: var(--hue);
+}
+
+.hero__lede {
+  max-width: 34rem;
   margin: 0;
   color: var(--kb-color-text-muted);
-  font-size: var(--kb-font-size-lg);
+  font-size: var(--kb-font-size-xl);
 }
 
 .hero__links {
@@ -36,6 +149,580 @@ body {
   flex-wrap: wrap;
   gap: var(--kb-space-3);
   margin: var(--kb-space-6) 0 0;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-4) var(--kb-space-8);
+  margin: var(--kb-space-8) 0 0;
+  padding: var(--kb-space-4) 0 0;
+  border-top: 1px solid var(--kb-color-border);
+}
+
+.facts div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.facts dt {
+  color: var(--kb-color-text-muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-size: var(--kb-font-size-3xl);
+  font-weight: var(--kb-font-weight-bold);
+  line-height: var(--kb-font-line-height-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.section {
+  margin: var(--kb-space-12) 0 0;
+  scroll-margin-top: var(--kb-space-4);
+}
+
+.section__head {
+  margin: 0 0 var(--kb-space-6);
+}
+
+.section__head h2 {
+  margin: 0 0 var(--kb-space-1);
+  font-size: var(--kb-font-size-3xl);
+  line-height: var(--kb-font-line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.section__head p {
+  margin: 0;
+  color: var(--kb-color-text-muted);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--kb-space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-lg);
+  background: var(--kb-color-surface);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Stretched link: the title link's ::after covers the whole card. A second link
+   in a card (e.g. "Read the story") must sit above it with position: relative
+   and a higher z-index. */
+.card--link {
+  position: relative;
+}
+
+.card--link:hover,
+.card--link:focus-within {
+  border-color: var(--hue);
+  box-shadow: 0 0.75rem 2rem -1rem var(--hue);
+}
+
+/* The art: the app's colour washed over the page background, with the scene
+   from Preview.tsx on top. */
+.card__art {
+  border-bottom: 1px solid var(--kb-color-border);
+  background:
+    radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--hue) 26%, transparent), transparent 70%),
+    color-mix(in srgb, var(--hue) 7%, var(--kb-color-bg));
+}
+
+/* Chalkline's canvas has a dot grid. */
+[data-app="chalkline"] .card__art {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--hue) 40%, transparent) 1px, transparent 1.5px) 0 0 / 1rem 1rem,
+    radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--hue) 22%, transparent), transparent 70%),
+    color-mix(in srgb, var(--hue) 7%, var(--kb-color-bg));
+}
+
+.card__preview {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--kb-space-4) var(--kb-space-4) var(--kb-space-6);
+}
+
+.card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--kb-space-2);
+  margin: 0 0 var(--kb-space-2);
+}
+
+.card__group {
+  color: var(--hue);
+  font-weight: var(--kb-font-weight-semibold);
+}
+
+.card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--kb-space-2);
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-xs);
+  font-weight: var(--kb-font-weight-medium);
+}
+
+.card__badge::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--kb-color-text-muted);
+  border-radius: var(--kb-radius-full);
+}
+
+.card__badge[data-status="live"]::before {
+  border-color: var(--hue);
+  background: var(--hue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--hue) 25%, transparent);
+}
+
+.card__title {
+  margin: 0 0 var(--kb-space-2);
+  font-size: var(--kb-font-size-2xl);
+  line-height: var(--kb-font-line-height-tight);
+  letter-spacing: -0.02em;
+}
+
+.card__title a {
+  color: var(--kb-color-text);
+  text-decoration: none;
+}
+
+.card__title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--kb-radius-lg);
+}
+
+/* Draw the focus ring around the whole card, not just the title. */
+.card__title a:focus-visible {
+  outline: none;
+}
+
+.card__title a:focus-visible::after {
+  outline: 2px solid var(--kb-color-focus-ring);
+  outline-offset: -2px;
+}
+
+.card__blurb {
+  margin: 0;
+  color: var(--kb-color-text-muted);
+}
+
+.card__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-2);
+  margin: var(--kb-space-4) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card__tag {
+  padding: var(--kb-space-1) var(--kb-space-2);
+  border: 1px solid var(--kb-color-border);
+  border-radius: var(--kb-radius-full);
+  color: var(--kb-color-text-muted);
+  font-size: var(--kb-font-size-xs);
+}
+
+.card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--kb-space-2) var(--kb-space-4);
+  margin: auto 0 0;
+  font-size: var(--kb-font-size-sm);
+  font-weight: var(--kb-font-weight-semibold);
+}
+
+.card__open {
+  color: var(--hue);
+}
+
+.card__arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.card--link:hover .card__arrow {
+  transform: translateX(0.25rem);
+}
+
+/* Second link in a card: sits above the stretched title link. The padding
+   makes it a comfortable tap target without moving the text. */
+.card .card__story {
+  position: relative;
+  z-index: 1;
+  margin: calc(var(--kb-space-3) * -1);
+  padding: var(--kb-space-3);
+  border-radius: var(--kb-radius-sm);
+  color: var(--kb-color-text-muted);
+  font-weight: var(--kb-font-weight-medium);
+}
+
+.card .card__story:hover {
+  color: var(--kb-color-text);
+}
+
+.card__story:focus-visible,
+.latest__more a:focus-visible {
+  outline: 2px solid var(--kb-color-focus-ring);
+  outline-offset: -2px;
+}
+
+/* Card art (Preview.tsx). */
+.pv-panel,
+.pv-pin {
+  fill: var(--kb-color-surface);
+  stroke: color-mix(in srgb, var(--hue) 45%, var(--kb-color-border));
+  stroke-width: 1.5;
+}
+
+.pv-pin {
+  stroke: var(--hue);
+  stroke-width: 2;
+}
+
+.pv-land {
+  fill: color-mix(in srgb, var(--hue) 16%, var(--kb-color-surface));
+  stroke: color-mix(in srgb, var(--hue) 55%, var(--kb-color-border));
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.pv-frame {
+  fill: none;
+  stroke: color-mix(in srgb, var(--hue) 40%, var(--kb-color-border));
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.pv-line,
+.pv-grid {
+  fill: none;
+  stroke: color-mix(in srgb, var(--hue) 35%, var(--kb-color-text-muted));
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pv-grid {
+  stroke-width: 1;
+  opacity: 0.45;
+}
+
+.pv-line--dash {
+  stroke-dasharray: 4 5;
+}
+
+.pv-hue-fill {
+  fill: var(--hue);
+}
+
+.pv-hue-stroke {
+  fill: none;
+  stroke: var(--hue);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.pv-hue-stroke--wide {
+  stroke-width: 3;
+}
+
+.pv-area {
+  fill: var(--hue);
+  opacity: 0.16;
+}
+
+.pv-halo {
+  fill: var(--hue);
+  opacity: 0.25;
+}
+
+.pv-ring {
+  fill: none;
+  stroke: color-mix(in srgb, var(--hue) 22%, var(--kb-color-surface));
+  stroke-width: 10;
+}
+
+/* About two thirds of the ring (circumference 176). */
+.pv-ring--hue {
+  stroke: var(--hue);
+  stroke-dasharray: 116 176;
+  stroke-linecap: round;
+}
+
+.pv-select {
+  fill: none;
+  stroke: var(--kb-color-text);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.pv-handle {
+  fill: var(--kb-color-bg);
+  stroke: var(--kb-color-text);
+  stroke-width: 1.5;
+}
+
+.pv-text,
+.pv-star,
+.pv-dot {
+  fill: var(--kb-color-text-muted);
+}
+
+.pv-text {
+  opacity: 0.7;
+}
+
+.pv-text--on-hue {
+  fill: var(--kb-color-bg);
+  opacity: 0.85;
+}
+
+.pv-ball,
+.pv-paddle,
+.pv-cursor--ink {
+  fill: var(--kb-color-text);
+}
+
+.pv-cursor {
+  stroke: var(--kb-color-bg);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.pv-tint {
+  fill: color-mix(in srgb, var(--c, var(--hue)) 30%, var(--kb-color-surface));
+  stroke: var(--c, var(--hue));
+  stroke-width: 1.5;
+}
+
+.pv-rule {
+  fill: none;
+  stroke: var(--c, var(--hue));
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+.pv-fill--teal,
+.pv-tint--teal,
+.pv-rule--teal {
+  --c: var(--pt-teal);
+}
+
+.pv-fill--purple,
+.pv-tint--purple,
+.pv-rule--purple {
+  --c: var(--pt-purple);
+}
+
+.pv-fill--green,
+.pv-tint--green,
+.pv-rule--green {
+  --c: var(--pt-green);
+}
+
+.pv-fill--amber,
+.pv-tint--amber,
+.pv-rule--amber {
+  --c: var(--pt-amber);
+}
+
+.pv-fill--saffron,
+.pv-tint--saffron,
+.pv-rule--saffron {
+  --c: var(--pt-saffron);
+}
+
+[class*="pv-fill--"] {
+  fill: var(--c);
+}
+
+/* Small, slow motion in the art; none for people who ask for less. */
+@media (prefers-reduced-motion: no-preference) {
+  .card--link:hover {
+    transform: translateY(-0.25rem);
+  }
+
+  .pv-march {
+    stroke-dasharray: 5 6;
+    animation: pv-march 1.4s linear infinite;
+  }
+
+  .pv-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pv-pulse 2.6s ease-in-out infinite;
+  }
+
+  .pv-drift {
+    animation: pv-drift 5s ease-in-out infinite alternate;
+  }
+
+  .pv-drift--late {
+    animation-duration: 7s;
+    animation-direction: alternate-reverse;
+  }
+
+  .pv-ball {
+    animation: pv-ball 2.4s linear infinite;
+  }
+}
+
+@keyframes pv-march {
+  to {
+    stroke-dashoffset: -22;
+  }
+}
+
+@keyframes pv-pulse {
+  50% {
+    transform: scale(1.5);
+    opacity: 0.05;
+  }
+}
+
+@keyframes pv-drift {
+  to {
+    transform: translate(-14px, 10px);
+  }
+}
+
+/* Paddle, gap in the wall, side wall, back to the paddle. */
+@keyframes pv-ball {
+  0%,
+  100% {
+    transform: translate(-28px, 42px);
+  }
+
+  35% {
+    transform: translate(10px, -34px);
+  }
+
+  65% {
+    transform: translate(112px, 4px);
+  }
+}
+
+/* The newest entries from docs/decisions.md. */
+.latest {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--kb-color-border);
+  list-style: none;
+}
+
+.latest li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--kb-space-1) var(--kb-space-4);
+  padding: var(--kb-space-4) 0;
+  border-bottom: 1px solid var(--kb-color-border);
+}
+
+.latest time,
+.latest__tag {
+  color: var(--kb-color-text-muted);
+}
+
+.latest__tag {
+  text-align: right;
+}
+
+.latest__title {
+  grid-column: 1 / -1;
+  font-size: var(--kb-font-size-lg);
+  font-weight: var(--kb-font-weight-medium);
+}
+
+.latest__more {
+  margin: var(--kb-space-6) 0 0;
+}
+
+@media (min-width: 40em) {
+  .hero {
+    padding-top: var(--kb-space-16);
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* An odd one out at the end takes the full row, art beside the text. */
+  .card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .card:last-child:nth-child(odd) .card__art {
+    flex: 0 0 50%;
+    border-right: 1px solid var(--kb-color-border);
+    border-bottom: 0;
+  }
+
+  .latest li {
+    grid-template-columns: 7rem 1fr auto;
+    align-items: baseline;
+  }
+
+  .latest__title {
+    grid-column: auto;
+  }
+}
+
+/* Wide screens: the first two apps large, the rest three to a row. */
+@media (min-width: 64em) {
+  .cards {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .card {
+    grid-column: span 2;
+  }
+
+  .card:nth-child(-n + 2) {
+    grid-column: span 3;
+  }
+
+  .card:last-child:nth-child(odd) {
+    grid-column: span 2;
+    flex-direction: column;
+  }
+
+  .card:last-child:nth-child(odd) .card__art {
+    flex: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--kb-color-border);
+  }
 }
 
 .button {
@@ -67,190 +754,6 @@ body {
   outline-offset: 2px;
 }
 
-.group {
-  margin: var(--kb-space-8) 0 0;
-}
-
-.group__title {
-  margin: 0 0 var(--kb-space-4);
-  font-size: var(--kb-font-size-2xl);
-  line-height: var(--kb-font-line-height-tight);
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--kb-space-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.card {
-  padding: var(--kb-space-4);
-  border: 1px solid var(--kb-color-border);
-  border-radius: var(--kb-radius-lg);
-  background: var(--kb-color-surface);
-}
-
-/* Stretched link: the title link's ::after covers the whole card. A second link
-   in a card (e.g. "Read the story") must sit above it with position: relative
-   and a higher z-index. */
-.card--link {
-  position: relative;
-}
-
-.card--link:hover {
-  border-color: var(--kb-color-accent);
-}
-
-.card__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--kb-space-2);
-  margin: 0 0 var(--kb-space-2);
-}
-
-.card__title {
-  margin: 0;
-  font-size: var(--kb-font-size-xl);
-}
-
-.card__title a {
-  color: var(--kb-color-accent);
-  text-decoration: none;
-  border-radius: var(--kb-radius-sm);
-}
-
-.card--link:hover .card__title a {
-  text-decoration: underline;
-}
-
-.card__title a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--kb-radius-lg);
-}
-
-/* Draw the focus ring around the whole card, not just the title. */
-.card__title a:focus-visible {
-  outline: none;
-}
-
-.card__title a:focus-visible::after {
-  outline: 2px solid var(--kb-color-focus-ring);
-  outline-offset: 2px;
-}
-
-.card__blurb {
-  margin: 0;
-  color: var(--kb-color-text-muted);
-}
-
-.card__badge {
-  flex-shrink: 0;
-  padding: var(--kb-space-1) var(--kb-space-2);
-  border: 1px solid var(--kb-color-border);
-  border-radius: var(--kb-radius-full);
-  color: var(--kb-color-text-muted);
-  font-size: var(--kb-font-size-xs);
-  font-weight: var(--kb-font-weight-medium);
-}
-
-/* accent / accent-fg is checked for AA contrast in both themes by the tokens build. */
-.card__badge[data-status="live"] {
-  border-color: var(--kb-color-accent);
-  background: var(--kb-color-accent);
-  color: var(--kb-color-accent-fg);
-}
-
-.card__stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--kb-space-2);
-  margin: var(--kb-space-3) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.card__tag {
-  padding: var(--kb-space-1) var(--kb-space-2);
-  border-radius: var(--kb-radius-sm);
-  background: var(--kb-color-bg);
-  color: var(--kb-color-text-muted);
-  font-size: var(--kb-font-size-xs);
-}
-
-/* Card previews (Preview.tsx): hand-written SVG drawn with the shared tokens. */
-.card__preview {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin: 0 0 var(--kb-space-3);
-  border-radius: var(--kb-radius-md);
-  background: var(--kb-color-bg);
-}
-
-.pv-box,
-.pv-frame,
-.pv-note {
-  fill: var(--kb-color-surface);
-  stroke: var(--kb-color-border);
-  stroke-width: 1.5;
-}
-
-.pv-frame {
-  fill: none;
-  stroke-dasharray: 4 4;
-}
-
-.pv-box--accent,
-.pv-note--accent,
-.pv-accent-fill {
-  fill: var(--kb-color-accent);
-  stroke: var(--kb-color-accent);
-}
-
-.pv-line {
-  fill: none;
-  stroke: var(--kb-color-border);
-  stroke-width: 2;
-}
-
-.pv-line--dash {
-  stroke-dasharray: 4 4;
-}
-
-.pv-accent-stroke {
-  fill: var(--kb-color-accent);
-  stroke: var(--kb-color-accent);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
-.pv-accent-stroke--wide {
-  fill: none;
-  stroke-width: 3;
-  stroke-linecap: round;
-}
-
-.pv-text {
-  fill: var(--kb-color-text-muted);
-}
-
-.pv-text--on-accent {
-  fill: var(--kb-color-accent-fg);
-}
-
-.pv-pointer {
-  fill: var(--kb-color-text);
-  stroke: var(--kb-color-bg);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
 .footer {
   max-width: 64rem;
   margin: var(--kb-space-12) auto 0;
@@ -277,18 +780,6 @@ body {
   color: var(--kb-color-accent);
 }
 
-@media (min-width: 40em) {
-  .cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 64em) {
-  .cards {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 /* Story pages (StoryPage.tsx). */
 .story {
   max-width: 44rem;
@@ -298,8 +789,7 @@ body {
   margin: 0 0 var(--kb-space-6);
 }
 
-.story a:not(.button),
-.card__story {
+.story a:not(.button) {
   color: var(--kb-color-accent);
 }
 
@@ -348,16 +838,6 @@ body {
 
 .todo strong {
   color: var(--kb-color-danger);
-}
-
-/* Second link in a card: sits above the stretched title link. */
-.card__story {
-  position: relative;
-  z-index: 1;
-  display: inline-block;
-  margin: var(--kb-space-3) 0 0;
-  font-size: var(--kb-font-size-sm);
-  font-weight: var(--kb-font-weight-medium);
 }
 
 .visually-hidden {
