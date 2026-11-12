@@ -14,7 +14,8 @@ import { APP_DIR } from "./manifest.mjs";
  * @typedef {{
  *   id: string, name: string, kind: string, source: string, region: string, lane?: string,
  *   from?: number, to?: number, approx?: boolean, story?: string, after?: string[],
- *   native?: string, lang?: string, note?: string, added?: string, summary: string
+ *   native?: string, lang?: string, note?: string, added?: string, summary: string,
+ *   at?: number[], radius?: number
  * }} Entry
  * @typedef {{ regions: Region[], entries: Entry[] }} Catalogue
  */
@@ -25,7 +26,7 @@ export const SOURCES = ["History", "Archaeology", "Tradition"];
 export const HUES = ["saffron", "lapis", "jade", "ochre", "plum", "rose"];
 const FIELDS = new Set([
   "id", "name", "kind", "source", "region", "lane", "from", "to", "approx",
-  "story", "after", "native", "lang", "note", "added", "summary",
+  "story", "after", "native", "lang", "note", "added", "summary", "at", "radius",
 ]);
 const SLUG = /^[a-z][a-z0-9-]{0,39}$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -113,6 +114,17 @@ export function validateCatalogue(catalogue, stories) {
     if (e.kind === "legend") {
       if (hasFrom || hasTo || e.lane !== undefined) problems.push(`${where}: legends have no dates or lane`);
       if (e.source !== "Tradition") problems.push(`${where}: legends are tagged Tradition`);
+    }
+    // The atlas: a heartland as [lon, lat] and a rough reach in degrees. Never a border.
+    if (isSpan && (e.at === undefined || e.radius === undefined)) problems.push(`${where}: a ${e.kind} needs at and radius for the atlas`);
+    if (e.at !== undefined) {
+      const [lon, lat] = Array.isArray(e.at) ? e.at : [];
+      if (!Array.isArray(e.at) || e.at.length !== 2 || !(Math.abs(lon) <= 180) || !(Math.abs(lat) <= 75)) {
+        problems.push(`${where}: at must be [longitude, latitude]`);
+      }
+    }
+    if (e.radius !== undefined && !(typeof e.radius === "number" && e.radius >= 1 && e.radius <= 15)) {
+      problems.push(`${where}: radius must be 1 to 15 degrees`);
     }
     if (e.approx !== undefined && typeof e.approx !== "boolean") problems.push(`${where}: approx must be true or false`);
 

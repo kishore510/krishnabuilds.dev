@@ -112,6 +112,7 @@ const engine = loadEngineAssets();
 const exploreCss = read(`${APP_DIR}hub/explore.css`);
 const exploreJs = read(`${APP_DIR}hub/explore.js`);
 const hubJs = read(`${APP_DIR}hub/hub.js`);
+const progressJs = read(`${APP_DIR}hub/progress.js`);
 const themePickerJs = read(`${APP_DIR}src/theme-picker.js`);
 
 /**
@@ -168,10 +169,10 @@ function fill(template, vars, name) {
 
 /** @param {Story} entry */
 function storyPage(entry) {
-  const data = loadStoryData(entry);
+  const data = { ...loadStoryData(entry), more: storyLinks(entry) };
   // JSON inside <script>: escape "<" so no "</script>" can end it early.
   const json = JSON.stringify(data).replace(/</g, "\\u003c");
-  return fill(
+  const page = fill(
     engine.html,
     {
       title: esc(data.story.title),
@@ -182,6 +183,7 @@ function storyPage(entry) {
     },
     "engine/src/player.html",
   );
+  return `${page}\n<script>\n${progressJs}</script>`;
 }
 
 // --- hub: timeline and Browse ------------------------------------------------
@@ -197,10 +199,111 @@ const laneTitle = new Map(catalogue.regions.flatMap((r) => r.lanes.map((l) => [l
 const hueOf = (regionId) => `--hue:var(--sm-hue-${regionById.get(regionId)?.hue})`;
 const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route" };
 
+const builtStories = manifest.stories.filter((s) => s.status === "built");
+
+/**
+ * Where a story's last chapter and its text can send the reader: the other
+ * built stories, the ones to offer next (stories about its neighbours first)
+ * and the catalogue entries around it.
+ * @param {Story} entry
+ */
+function storyLinks(entry) {
+  const mine = catalogue.entries.filter((e) => e.story === entry.id);
+  /** @type {Map<string, Entry>} */
+  const related = new Map(mine.map((e) => [e.id, e]));
+  for (const e of mine) {
+    const { before, after } = X.neighbours(e, catalogue.entries);
+    for (const x of [after, before]) if (x) related.set(x.id, x);
+  }
+  for (const e of mine) {
+    for (const m of X.meanwhile(e, catalogue.entries, 2)) related.set(m.entry.id, m.entry);
+  }
+  const at = builtStories.indexOf(entry);
+  const inOrder = [...builtStories.slice(at + 1), ...builtStories.slice(0, Math.max(at, 0))];
+  // Offer first the stories that share the most years with this one; then the rest in manifest order.
+  /** @param {Story} s */
+  const shared = (s) => {
+    let years = 0;
+    for (const a of mine) {
+      for (const b of catalogue.entries) {
+        if (b.story !== s.id || a.from === undefined || a.to === undefined || b.from === undefined || b.to === undefined) continue;
+        years = Math.max(years, Math.min(a.to, b.to) - Math.max(a.from, b.from));
+      }
+    }
+    return years;
+  };
+  const next = inOrder.map((s, i) => ({ s, i, years: shared(s) })).sort((a, b) => b.years - a.years || a.i - b.i).map((x) => x.s);
+  return {
+    stories: inOrder.map((s) => ({ title: s.title, href: `/${s.id}/` })),
+    next: next.slice(0, 2).map((s) => ({ title: s.title, href: `/${s.id}/`, era: s.era })),
+    related: [...related.values()].slice(0, 6).map((e) => ({ name: e.name, href: `/explore/${e.id}/`, dates: X.rangeText(e) })),
+  };
+}
+
+// --- the world, for the atlas and the story cards ----------------------------
+
+const world = JSON.parse(read(`${APP_DIR}basemaps/world.json`));
+const worldP = /** @type {(at: number[]) => number[]} */ (mapFunctions.projector(world.projection));
+const [WORLD_W, WORLD_H] = world.size;
+const n1 = (/** @type {number} */ n) => Math.round(n * 10) / 10;
+// One copy of the coastlines; the atlas and every story card draw it with <use>.
+const WORLD_DEFS =
+  '<svg class="sm-defs" width="0" height="0" aria-hidden="true"><defs>' +
+  `<path id="sm-world-land" fill-rule="evenodd" d="${/** @type {string[]} */ (mapFunctions.landPaths(world)).join("")}"/>` +
+  `<linearGradient id="sm-world-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${world.sea.top}"/><stop offset=".55" stop-color="${world.sea.middle}"/><stop offset="1" stop-color="${world.sea.bottom}"/></linearGradient>` +
+  `<linearGradient id="sm-world-fill" gradientUnits="userSpaceOnUse" x1="0" y1="${n1(WORLD_H * 0.18)}" x2="0" y2="${n1(WORLD_H * 0.94)}"><stop offset="0" stop-color="${world.land.top}"/><stop offset=".5" stop-color="${world.land.middle}"/><stop offset="1" stop-color="${world.land.bottom}"/></linearGradient>` +
+  "</defs></svg>";
+const WORLD_LAYERS =
+  `<rect x="${-WORLD_W}" y="${-WORLD_H * 2}" width="${WORLD_W * 3}" height="${WORLD_H * 5}" fill="url(#sm-world-sea)"/>` +
+  `<use href="#sm-world-land" fill="none" stroke="${world.sea.shallows}" stroke-width="7" stroke-linejoin="round" opacity=".3"/>` +
+  `<use href="#sm-world-land" fill="url(#sm-world-fill)" stroke="${world.land.edge}" stroke-width="1" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+
+/** A small map for a story's card: the world cropped to the story's places, with its routes and pins. @param {Story} entry */
+function storyThumb(entry) {
+  const { story } = loadStoryData(entry);
+  /** @type {Record<string, number[]>} */
+  const where = {};
+  for (const [id, place] of Object.entries(story.places)) where[id] = worldP(/** @type {{ at: number[] }} */ (place).at);
+  const shown = Object.entries(story.places).filter(([, p]) => !(/** @type {{ hidden?: boolean }} */ (p).hidden)).map(([id]) => where[id]);
+  const xs = shown.map((p) => p[0]);
+  const ys = shown.map((p) => p[1]);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+  const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+  // 16:9, with room around the places, and never closer than about 30 degrees across.
+  const w = Math.max((Math.max(...xs) - Math.min(...xs)) * 1.3, (Math.max(...ys) - Math.min(...ys)) * 1.3 * (16 / 9), 150);
+  const h = (w * 9) / 16;
+  const u = w / 320;
+  const legs = story.steps
+    .flatMap((/** @type {{ legs: { from: string, to: string }[] }} */ step) => step.legs)
+    .map((/** @type {{ from: string, to: string }} */ l) => `M${n1(where[l.from][0])} ${n1(where[l.from][1])}L${n1(where[l.to][0])} ${n1(where[l.to][1])}`)
+    .join("");
+  return (
+    `<svg class="sm-story-card__map" viewBox="${n1(cx - w / 2)} ${n1(cy - h / 2)} ${n1(w)} ${n1(h)}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">` +
+    WORLD_LAYERS +
+    (legs ? `<path d="${legs}" fill="none" stroke="#fff6dc" stroke-width="${n1(u * 1.6)}" stroke-dasharray="${n1(u * 5)} ${n1(u * 4)}" stroke-linecap="round" opacity=".85"/>` : "") +
+    shown.map(([x, y]) => `<circle cx="${n1(x)}" cy="${n1(y)}" r="${n1(u * 4)}" fill="#f6e6c0" stroke="#7a3b12" stroke-width="${n1(u * 1.3)}"/>`).join("") +
+    "</svg>"
+  );
+}
+
+const storyCards = builtStories
+  .map((s) => {
+    const n = loadStoryData(s).story.steps.length;
+    return (
+      `<li><a class="sm-story-card" href="/${s.id}/" data-story="${s.id}">${storyThumb(s)}` +
+      `<span class="sm-story-card__body"><span class="sm-story-card__kicker">${esc(s.era)}</span>` +
+      `<span class="sm-story-card__name">${esc(s.title)}</span>` +
+      `<span class="sm-story-card__meta" data-meta>${n} chapters</span></span></a></li>`
+    );
+  })
+  .join("");
+
 const hubData = {
   regions: catalogue.regions,
   entries: catalogue.entries,
   stories: Object.fromEntries(manifest.stories.map((s) => [s.id, { title: s.title, built: s.status === "built" }])),
+  // The atlas projects [lon, lat] the same way the world basemap does.
+  world: { ...world.projection, size: world.size },
 };
 // JSON inside <script>: escape "<" so no "</script>" can end it early.
 const hubJson = JSON.stringify(hubData).replace(/</g, "\\u003c");
@@ -215,8 +318,24 @@ write(
     body: [
       HOME,
       '<main class="sm-page sm-hub">',
-      '<section class="sm-hero"><h1>Story Maps</h1><p>Illustrated maps that follow a story across the land, and a timeline of who ruled where, and when.</p></section>',
-      '<div class="sm-hub-bar"><nav class="sm-tabs" aria-label="Views"><a id="sm-tab-timeline" href="#timeline">Timeline</a><a id="sm-tab-browse" href="#browse">Browse</a></nav><p class="sm-count" id="sm-count"></p></div>',
+      WORLD_DEFS,
+      '<section class="sm-hero"><h1>Story Maps</h1><p>Follow a story across an illustrated map, or move through time and watch who ruled where.</p></section>',
+      `<section class="sm-stories" aria-labelledby="sm-stories-h"><h2 id="sm-stories-h">Start with a story</h2><ul class="sm-story-row" id="sm-story-row">${storyCards}</ul></section>`,
+      '<div class="sm-hub-bar"><nav class="sm-tabs" aria-label="Views"><a id="sm-tab-atlas" href="#atlas">Atlas</a><a id="sm-tab-timeline" href="#timeline">Timeline</a><a id="sm-tab-browse" href="#browse">Browse</a></nav><p class="sm-count" id="sm-count"></p></div>',
+      '<section class="sm-v-atlas" id="sm-v-atlas" aria-label="Atlas" hidden>',
+      '<div class="sm-at">',
+      '<div class="sm-at-stage" id="sm-at-stage">',
+      `<svg id="sm-at-map" role="group" aria-label="The world in the chosen year. Each circle is a civilisation or empire; tap one to read about it.">${WORLD_LAYERS}<g id="sm-at-blobs"></g><g id="sm-at-labels"></g></svg>`,
+      '<p class="sm-at-year" id="sm-at-year" aria-live="polite"></p>',
+      '<div class="sm-at-zoom" role="group" aria-label="Zoom the map"><button type="button" id="sm-at-in" aria-label="Zoom in">+</button><button type="button" id="sm-at-out" aria-label="Zoom out">−</button></div>',
+      '<div class="sm-at-card" id="sm-at-card" hidden></div>',
+      "</div>",
+      '<div class="sm-at-bar"><button type="button" class="sm-at-play" id="sm-at-play" aria-label="Play through time"></button>',
+      '<div class="sm-at-slider"><label class="sm-sr" for="sm-at-range">Year</label><input type="range" id="sm-at-range" step="10"><div class="sm-at-ticks" id="sm-at-ticks" aria-hidden="true"></div></div></div>',
+      "</div>",
+      '<div class="sm-tl-now" id="sm-at-now"></div>',
+      '<p class="sm-key"><span>Drag the year to move through time. Each circle marks a heartland and a rough reach, not a border.</span></p>',
+      "</section>",
       '<section class="sm-v-timeline" id="sm-v-timeline" aria-label="Timeline">',
       '<div class="sm-chips" id="sm-tl-regions" role="group" aria-label="Regions"></div>',
       '<div class="sm-tl-now" id="sm-tl-now" aria-live="polite"></div>',
@@ -312,7 +431,9 @@ function entryPage(e) {
     `<p class="sm-entry-summary">${esc(e.summary)}</p>`,
     contextStrip(e),
     storyPanel,
-    e.lane && X.isDated(e) ? `<div class="sm-btns"><a class="sm-btn" href="/?at=${e.id}#timeline">Show on the timeline</a></div>` : "",
+    e.lane && X.isDated(e)
+      ? `<div class="sm-btns">${e.at ? `<a class="sm-btn" href="/?at=${e.id}#atlas">Show on the atlas</a>` : ""}<a class="sm-btn" href="/?at=${e.id}#timeline">Show on the timeline</a></div>`
+      : "",
     e.lane || before || after ? `<div class="sm-pair">${mini("Before", before)}${mini("After", after)}</div>` : "",
     "</div>",
   ];

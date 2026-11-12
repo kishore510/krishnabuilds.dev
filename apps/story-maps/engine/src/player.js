@@ -12,6 +12,9 @@
 
   const data = JSON.parse(document.getElementById("sm-data").textContent);
   const { story, basemap, art } = data;
+  // Links out of the story, worked out by the build: other built stories and
+  // catalogue entries around this one. A story page works without them.
+  const more = data.more || { stories: [], next: [], related: [] };
   const steps = story.steps;
   const LAST = steps.length - 1;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -147,30 +150,43 @@
 
   const el = {
     title: $("sm-title"), native: $("sm-native"), text: $("sm-text"), today: $("sm-today"), phase: $("sm-phase"),
-    phaseDot: $("sm-phase-dot"), source: $("sm-source"), counter: $("sm-counter"), when: $("sm-when"),
-    play: $("sm-play"), prev: $("sm-prev"), next: $("sm-next"), overview: $("sm-overview"), chapters: $("sm-chapters"),
-    scroll: $("sm-scroll"), grip: $("sm-grip"), timeline: $("sm-timeline"), track: $("sm-track"),
+    phaseDot: $("sm-phase-dot"), source: $("sm-source"), counter: $("sm-counter"), counterText: $("sm-counter-text"), when: $("sm-when"),
+    play: $("sm-play"), prev: $("sm-prev"), next: $("sm-next"), overview: $("sm-overview"), contents: $("sm-contents"),
+    scroll: $("sm-scroll"), grip: $("sm-grip"), timeline: $("sm-timeline"), track: $("sm-track"), scrub: $("sm-scrub"),
+    step: $("sm-step"), resume: $("sm-resume"), allChapters: $("sm-all-chapters"),
   };
 
   el.track.style.background = `linear-gradient(90deg,${story.timeline.track
     .map((seg, i, all) => `${seg.color} ${i ? all[i - 1].until : 0}% ${seg.until}%`)
     .join(",")})`;
 
+  // The chapter list: every chapter by name and date, under its phase.
   const chapterButtons = [];
   const dots = [];
+  const tag = (cls, text) => {
+    const node = document.createElement("span");
+    node.className = cls;
+    node.textContent = text;
+    return node;
+  };
   steps.forEach((step, i) => {
     const color = story.phases[step.phase].color;
+    if (i === 0 || steps[i - 1].phase !== step.phase) {
+      const h = document.createElement("h3");
+      const dot = document.createElement("i");
+      dot.style.background = color;
+      h.append(dot, story.phases[step.phase].name);
+      el.contents.appendChild(h);
+    }
     const b = document.createElement("button");
     b.type = "button";
-    b.textContent = String(i + 1);
-    b.title = step.title;
-    b.setAttribute("aria-label", `Step ${i + 1}: ${step.title}`);
     b.style.setProperty("--phase", color);
+    b.append(tag("sm-contents-n", String(i + 1)), tag("sm-contents-t", step.title), tag("sm-contents-w", step.when));
     b.addEventListener("click", () => {
       stopPlaying();
       goTo(i);
     });
-    el.chapters.appendChild(b);
+    el.contents.appendChild(b);
     chapterButtons.push(b);
     const dot = document.createElement("i");
     dot.className = "sm-dot";
@@ -194,20 +210,39 @@
     el.timeline.style.setProperty("--x", `${r1(x)}%`);
   }
 
+  /** Card text, with the first mention of another built story turned into a link to it. */
+  function fillText(node, text) {
+    node.replaceChildren();
+    let best = null;
+    for (const other of more.stories) {
+      const at = text.indexOf(other.title);
+      if (at >= 0 && (!best || at < best.at)) best = { at, other };
+    }
+    if (!best) {
+      node.textContent = text;
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = best.other.href;
+    a.textContent = best.other.title;
+    node.append(text.slice(0, best.at), a, text.slice(best.at + best.other.title.length));
+  }
+
   function renderCard(i) {
     const step = steps[i];
     const phase = story.phases[step.phase];
     el.title.textContent = step.title;
     setNative(el.native, step);
-    el.text.textContent = step.text;
+    fillText(el.text, step.text);
     el.today.textContent = step.today || "";
     el.phase.textContent = phase.name;
     el.phaseDot.style.background = phase.color;
     el.source.textContent = step.source || story.source;
-    el.counter.textContent = `${i + 1} of ${steps.length}`;
+    el.counterText.textContent = `${i + 1} of ${steps.length}`;
+    el.counter.setAttribute("aria-label", `Chapter ${i + 1} of ${steps.length}. Show all chapters`);
     el.when.textContent = step.when;
     el.prev.disabled = i === 0;
-    el.next.disabled = i === LAST;
+    el.next.textContent = i === LAST ? "What next?" : "Next";
     chapterButtons.forEach((b, j) => {
       if (j === i) b.setAttribute("aria-current", "step");
       else b.removeAttribute("aria-current");
@@ -237,8 +272,20 @@
   let playing = false;
   let holdTimer = 0;
 
+  const ICON = {
+    play: '<path d="M6 4l13 8-13 8z"/>',
+    pause: '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>',
+    replay: '<path d="M12 5a7 7 0 1 1-6.6 4.7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M2 5l4 6 5-5z"/>',
+  };
+  let playState = "";
   function setPlayLabel() {
-    el.play.textContent = playing ? "Pause" : current === LAST && !anim ? "Replay" : "Play";
+    const state = playing ? "pause" : current === LAST && !anim ? "replay" : "play";
+    if (state === playState) return;
+    playState = state;
+    const label = { play: "Play the story", pause: "Pause", replay: "Play again from the start" }[state];
+    el.play.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">${ICON[state]}</svg>`;
+    el.play.setAttribute("aria-label", label);
+    el.play.title = label;
   }
   function stopPlaying() {
     playing = false;
@@ -256,10 +303,24 @@
     closeRealm();
     closePerson();
     closePlace();
+    closeContents();
+    closeEnd();
     readerCamera = false;
     const headFrom = headAt;
+    const dir = i > current ? "next" : "prev";
+    const moved = current >= 0 && i !== current;
     current = i;
     renderCard(i);
+    if (moved) {
+      el.resume.hidden = true;
+      remember();
+      // A short slide so a swipe or a tap visibly turns the page.
+      if (!instant) {
+        el.step.classList.remove("sm-in-next", "sm-in-prev");
+        void el.step.offsetWidth;
+        el.step.classList.add(`sm-in-${dir}`);
+      }
+    }
     renderPins(i);
     for (const leg of legs) showLeg(leg, keepRoutes && leg.step < i ? 1 : 0);
 
@@ -336,12 +397,13 @@
 
   function afterStep() {
     if (!playing) return;
+    const hold = reduce ? 3500 : 1800 + steps[current].text.length * 9;
     if (current >= LAST) {
       playing = false;
       setPlayLabel();
+      holdTimer = setTimeout(openEnd, hold);
       return;
     }
-    const hold = reduce ? 3500 : 1800 + steps[current].text.length * 9;
     holdTimer = setTimeout(() => goTo(current + 1), hold);
   }
   function startPlaying() {
@@ -361,7 +423,8 @@
   el.play.addEventListener("click", () => (playing ? stopPlaying() : startPlaying()));
   el.next.addEventListener("click", () => {
     stopPlaying();
-    goTo(current + 1);
+    if (current >= LAST) openEnd();
+    else goTo(current + 1);
   });
   el.prev.addEventListener("click", () => {
     stopPlaying();
@@ -399,6 +462,19 @@
     });
     return best;
   }
+  /** The label under the timeline: which chapter is under the finger or the mouse. */
+  function showScrub(i) {
+    const step = steps[i];
+    el.scrub.replaceChildren(tag("sm-scrub-w", step.when), tag("sm-scrub-t", `${i + 1}. ${step.title}`));
+    el.scrub.hidden = false;
+    const w = el.timeline.clientWidth;
+    const half = el.scrub.offsetWidth / 2;
+    const x = (step.at / 100) * w;
+    el.scrub.style.left = `${Math.round(Math.max(half - 4, Math.min(w - half + 4, x)))}px`;
+  }
+  const hideScrub = () => {
+    el.scrub.hidden = true;
+  };
   let scrubbing = false;
   let scrubbed = false;
   el.timeline.addEventListener("pointerdown", (e) => {
@@ -406,10 +482,18 @@
     scrubbed = false;
     el.timeline.setPointerCapture?.(e.pointerId);
     stopPlaying();
+    showScrub(nearestStep(e.clientX));
+  });
+  el.timeline.addEventListener("pointerleave", () => {
+    if (!scrubbing) hideScrub();
   });
   el.timeline.addEventListener("pointermove", (e) => {
-    if (!scrubbing) return;
+    if (!scrubbing) {
+      if (e.pointerType === "mouse") showScrub(nearestStep(e.clientX));
+      return;
+    }
     const i = nearestStep(e.clientX);
+    showScrub(i);
     if (i !== current) {
       scrubbed = true;
       goTo(i, { instant: true });
@@ -418,10 +502,12 @@
   el.timeline.addEventListener("pointerup", (e) => {
     if (!scrubbing) return;
     scrubbing = false;
+    if (e.pointerType !== "mouse") hideScrub();
     if (!scrubbed) goTo(nearestStep(e.clientX));
   });
   el.timeline.addEventListener("pointercancel", () => {
     scrubbing = false;
+    hideScrub();
   });
 
   // --- the story sheet (phones): tap or drag the grip -------------------------------------
@@ -531,7 +617,33 @@
     if (sheet.classList.contains("open") && sheet.offsetHeight > min + 14) animateSheet(min);
     else animateSheet(openHeight());
   }
-  el.scroll.addEventListener("click", () => {
+  // Phones: swipe the card sideways to turn the page; tap it for the full story.
+  const VIEWS = ["realm-view", "person-view", "place-view", "contents-view", "end-view"];
+  const inView = () => VIEWS.some((v) => sheet.classList.contains(v));
+  let swipe = null;
+  let swipedAt = 0;
+  el.scroll.addEventListener("pointerdown", (e) => {
+    swipe = e.pointerType === "mouse" || wide.matches || inView() ? null : { x: e.clientX, y: e.clientY };
+  });
+  el.scroll.addEventListener("pointermove", (e) => {
+    if (!swipe) return;
+    const dx = e.clientX - swipe.x;
+    const dy = e.clientY - swipe.y;
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    swipe = null;
+    swipedAt = performance.now();
+    stopPlaying();
+    if (dx < 0 && current >= LAST) openEnd();
+    else goTo(current + (dx < 0 ? 1 : -1));
+  });
+  const endSwipe = () => {
+    swipe = null;
+  };
+  el.scroll.addEventListener("pointerup", endSwipe);
+  el.scroll.addEventListener("pointercancel", endSwipe);
+  el.scroll.addEventListener("click", (e) => {
+    if (performance.now() - swipedAt < 400) return;
+    if (e.target instanceof Element && e.target.closest("a, button")) return;
     if (!wide.matches && !sheet.classList.contains("open")) animateSheet(openHeight());
   });
   el.grip.addEventListener("pointerdown", (e) => {
@@ -620,6 +732,8 @@
     const realm = byId[id];
     if (!realm || !realmsOn || !activeAt(realm, current)) return;
     stopPlaying();
+    closeContents();
+    closeEnd();
     closePerson();
     closePlace();
     openRealmId = id;
@@ -662,7 +776,7 @@
     for (const realm of realms.items) byId[realm.id] = realm;
     $("sm-main-heading").textContent = realms.mainHeading;
     $("sm-minor-heading").textContent = realms.minorHeading;
-    const label = () => `${realms.toggle} ${realmsOn ? "on" : "off"}`;
+    const label = () => `${realmsOn ? "Hide" : "Show"} ${realms.toggle.toLowerCase()}`;
     realmToggle.hidden = false;
     realmToggle.textContent = label();
     realmToggle.addEventListener("click", () => {
@@ -705,6 +819,8 @@
     const person = people && people.items.find((p) => p.id === id);
     if (!person) return;
     stopPlaying();
+    closeContents();
+    closeEnd();
     closeRealm();
     closePlace();
     openPersonId = id;
@@ -753,6 +869,8 @@
     if (!place) return;
     const list = chaptersAt(id);
     stopPlaying();
+    closeContents();
+    closeEnd();
     closeRealm();
     closePerson();
     openPlaceId = id;
@@ -806,6 +924,119 @@
     if (!pin || (e.key !== "Enter" && e.key !== " ")) return;
     e.preventDefault();
     openPlace(pin.dataset.place);
+  });
+
+  // --- the chapter list and the end of the story ----------------------------------------------------
+
+  function openView(name) {
+    stopPlaying();
+    closeRealm();
+    closePerson();
+    closePlace();
+    closeContents();
+    closeEnd();
+    sheet.classList.add(name);
+    el.scroll.scrollTop = 0;
+    if (!wide.matches && sheet.offsetHeight < closedHeight() + 60) animateSheet(openHeight());
+  }
+  function openContents() {
+    if (sheet.classList.contains("contents-view")) return closeContents();
+    openView("contents-view");
+    // Bring the current chapter into view without moving anything else.
+    const b = chapterButtons[current];
+    el.scroll.scrollTop = Math.max(0, b.offsetTop - el.scroll.offsetTop - 90);
+  }
+  function closeContents() {
+    sheet.classList.remove("contents-view");
+  }
+  el.counter.addEventListener("click", openContents);
+  el.allChapters.textContent = `All ${steps.length} chapters`;
+  el.allChapters.addEventListener("click", openContents);
+  $("sm-contents-close").addEventListener("click", closeContents);
+
+  function openEnd() {
+    if (current < LAST) return;
+    openView("end-view");
+  }
+  function closeEnd() {
+    sheet.classList.remove("end-view");
+  }
+  {
+    const nextBox = $("sm-end-next");
+    for (const s of more.next) {
+      const a = document.createElement("a");
+      a.className = "sm-end-story";
+      a.href = s.href;
+      a.append(tag("sm-end-story-t", s.title), tag("sm-end-story-e", s.era));
+      nextBox.appendChild(a);
+    }
+    $("sm-end-next-box").hidden = !more.next.length;
+    const relatedBox = $("sm-end-related");
+    for (const r of more.related) {
+      const a = document.createElement("a");
+      a.className = "sm-chip-button";
+      a.href = r.href;
+      a.textContent = r.name;
+      a.title = r.dates;
+      relatedBox.appendChild(a);
+    }
+    $("sm-end-related-box").hidden = !more.related.length;
+    $("sm-end-close").addEventListener("click", closeEnd);
+    $("sm-end-again").addEventListener("click", () => goTo(0));
+  }
+
+  // --- the address and where the reader left off -------------------------------------------------------
+  // The chapter is in the address (#12), so a chapter can be shared and a reload
+  // stays put. The engine keeps nothing itself: it announces each chapter with an
+  // "sm:chapter" event, and the page may call StoryMap.offerResume to offer the
+  // chapter a reader stopped at (Story Maps does both in hub/progress.js).
+
+  let rememberTimer = 0;
+  /** Coalesced: scrubbing passes many chapters, and browsers limit address changes. */
+  function remember() {
+    clearTimeout(rememberTimer);
+    rememberTimer = setTimeout(() => {
+      try {
+        window.history.replaceState(null, "", current ? `#${current + 1}` : location.pathname + location.search);
+      } catch {
+        /* too many address changes; the next one will catch up */
+      }
+      document.dispatchEvent(new window.CustomEvent("sm:chapter", { detail: { story: story.id, chapter: current, chapters: steps.length } }));
+    }, 350);
+  }
+  function chapterInAddress() {
+    const n = /^#(\d+)$/.exec(location.hash);
+    return n && Number(n[1]) >= 1 && Number(n[1]) <= steps.length ? Number(n[1]) - 1 : null;
+  }
+  window.addEventListener("hashchange", () => {
+    const i = chapterInAddress();
+    if (i !== null && i !== current) {
+      stopPlaying();
+      goTo(i);
+    }
+  });
+  let resumeAt = -1;
+  /** Offer to continue from chapter i (0-based). Ignored once the reader has moved, or for a link to a chapter. */
+  SM.offerResume = (i) => {
+    if (!Number.isInteger(i) || i <= 0 || i >= LAST || current !== 0 || chapterInAddress() !== null) return;
+    resumeAt = i;
+    el.resume.textContent = `Continue from chapter ${i + 1}: ${steps[i].title}`;
+    el.resume.hidden = false;
+  };
+  el.resume.addEventListener("click", () => {
+    if (resumeAt > 0) goTo(resumeAt);
+  });
+  // Back goes to wherever the reader came from on this site (the atlas, the
+  // timeline, an entry page), and to the hub otherwise.
+  $("sm-back").addEventListener("click", (e) => {
+    try {
+      if (document.referrer && new window.URL(document.referrer).origin === location.origin && window.history.length > 1) {
+        e.preventDefault();
+        window.history.back();
+      }
+    } catch {
+      /* follow the link */
+    }
   });
 
   // --- zoom and pan: pinch, wheel, drag, double-click, + and - ---------------------------------
@@ -983,6 +1214,7 @@
     onResize();
   });
 
-  setHead(steps[0].at);
-  goTo(0, { instant: true });
+  const startAt = chapterInAddress();
+  setHead(steps[startAt || 0].at);
+  goTo(startAt || 0, { instant: true });
 })((globalThis.StoryMap = globalThis.StoryMap || {}));

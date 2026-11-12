@@ -57,6 +57,25 @@ describe("catalogue.json", () => {
     expect(problems).toContain("entry x-civ: a civilisation needs a lane");
   });
 
+  it("places every civilisation and dynasty on the atlas, and catches a bad position", () => {
+    for (const e of catalogue.entries.filter((x) => X.isSpan(x))) {
+      expect(e.at, e.id).toHaveLength(2);
+      expect(e.radius, e.id).toBeGreaterThanOrEqual(1);
+    }
+    const base = { kind: "dynasty", source: "History", region: "india", lane: "north", from: 1, to: 2, summary: "A test." };
+    const problems = validateCatalogue(
+      withEntries(
+        { ...base, id: "x-nowhere", name: "Nowhere" },
+        { ...base, id: "x-far", name: "Too far", at: [200, 10], radius: 3 },
+        { ...base, id: "x-huge", name: "Too big", at: [80, 20], radius: 40 },
+      ),
+      stories,
+    ).join("\n");
+    expect(problems).toContain("entry x-nowhere: a dynasty needs at and radius for the atlas");
+    expect(problems).toContain("entry x-far: at must be [longitude, latitude]");
+    expect(problems).toContain("entry x-huge: radius must be 1 to 15 degrees");
+  });
+
   it("catches a duplicate id and a story no entry links to", () => {
     const problems = validateCatalogue(withEntries({ ...byId("gupta") }), [...stories, { id: "unlinked" }]).join("\n");
     expect(problems).toContain("entry gupta: duplicate id");

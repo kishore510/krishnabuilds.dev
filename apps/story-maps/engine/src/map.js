@@ -101,6 +101,21 @@
   }
   const stepsAttr = (ranges) => ranges.map(([a, b]) => `${a}-${b}`).join(",");
 
+  /**
+   * Land outlines as SVG path data, closed at the map edge where `extend` says
+   * so. `holes` (inland seas such as the Caspian) are cut out with the even-odd rule.
+   */
+  function landPaths(basemap) {
+    const P = projector(basemap.projection);
+    const pts = (list) => list.map(P);
+    return basemap.land.shapes.map((shape) => {
+      const holes = (shape.holes || []).map((h) => smoothPath(pts(h), true)).join("");
+      if (shape.closed) return smoothPath(pts(shape.points), true) + holes;
+      const tail = pts(shape.extend || []).map(([x, y]) => `L${r1(x)} ${r1(y)}`).join("");
+      return `${smoothPath(pts(shape.points), false)}${tail}Z${holes}`;
+    });
+  }
+
   // --- the map ------------------------------------------------------------------
 
   /**
@@ -112,15 +127,7 @@
     const out = [];
     const [W, H] = basemap.size;
 
-    // Land outlines, closed at the map edge where `extend` says so. `holes`
-    // (inland seas such as the Caspian) are cut out with the even-odd rule.
-    const shapeD = (shape) => {
-      const holes = (shape.holes || []).map((h) => smoothPath(pts(h), true)).join("");
-      if (shape.closed) return smoothPath(pts(shape.points), true) + holes;
-      const tail = pts(shape.extend || []).map(([x, y]) => `L${r1(x)} ${r1(y)}`).join("");
-      return `${smoothPath(pts(shape.points), false)}${tail}Z${holes}`;
-    };
-    const lands = basemap.land.shapes.map(shapeD);
+    const lands = landPaths(basemap);
     const sea = basemap.sea;
     const land = basemap.land;
 
@@ -466,5 +473,5 @@
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
-  Object.assign(SM, { buildMap, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
+  Object.assign(SM, { buildMap, landPaths, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
 })((globalThis.StoryMap = globalThis.StoryMap || {}));

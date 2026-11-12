@@ -922,3 +922,366 @@ a.sm-mini:hover {
   color: var(--sm-muted);
   font-variant-numeric: tabular-nums;
 }
+
+/* Story cards: the built story maps, each with a small map of where it happens. */
+.sm-defs {
+  position: absolute;
+}
+.sm-stories h2 {
+  margin: 0 0 var(--kb-space-2);
+  font-size: var(--kb-font-size-xl);
+}
+.sm-story-row {
+  list-style: none;
+  margin: 0 calc(var(--kb-space-4) * -1);
+  padding: 2px var(--kb-space-4) 8px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(13.5rem, 1fr);
+  gap: var(--kb-space-3);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: var(--kb-space-4);
+  scrollbar-width: none;
+}
+.sm-story-row::-webkit-scrollbar {
+  display: none;
+}
+.sm-story-row li {
+  scroll-snap-align: start;
+}
+.sm-story-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  text-decoration: none;
+  background: var(--sm-panel);
+  border: 1px solid var(--sm-line);
+  border-radius: var(--kb-radius-lg);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.sm-story-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+}
+.sm-story-card__map {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #15385c;
+}
+.sm-story-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--kb-space-3) var(--kb-space-4) var(--kb-space-4);
+}
+.sm-story-card__kicker {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sm-muted);
+}
+.sm-story-card__name {
+  font-family: var(--sm-font-head);
+  font-size: var(--kb-font-size-lg);
+  line-height: 1.2;
+}
+.sm-story-card__meta {
+  font-size: var(--kb-font-size-sm);
+  color: var(--sm-muted);
+}
+.sm-story-card.sm-started .sm-story-card__meta {
+  color: var(--sm-saffron);
+}
+/* How far the reader has got, as a line along the bottom of the card. */
+.sm-story-card.sm-started::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: var(--read, 0%);
+  background: var(--sm-saffron);
+}
+
+/* Atlas: the world in one year. The map keeps its painted colours in both themes. */
+.sm-js .sm-v-atlas:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-space-3);
+}
+.sm-v-atlas {
+  display: none;
+}
+.sm-at {
+  border: 1px solid var(--sm-line);
+  border-radius: var(--kb-radius-lg);
+  overflow: hidden;
+  background: var(--sm-panel);
+}
+.sm-at-stage {
+  position: relative;
+  height: min(62dvh, 40rem);
+  min-height: 20rem;
+  overflow: hidden;
+  background: #15385c;
+  /* Circles sit on painted land and sea, so their colours do not change with the theme. */
+  --sm-hue-saffron: #c2341b;
+  --sm-hue-lapis: #23508f;
+  --sm-hue-jade: #17734f;
+  --sm-hue-ochre: #6f3a05;
+  --sm-hue-plum: #5b3a86;
+  --sm-hue-rose: #a3245a;
+}
+#sm-at-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#sm-at-map.sm-zoomed {
+  touch-action: none;
+}
+.sm-at-blob {
+  fill: var(--hue);
+  fill-opacity: 0.42;
+  stroke: var(--hue);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 3;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+.sm-at-blob.sm-on {
+  opacity: 1;
+}
+.sm-at-blob.sm-built {
+  stroke-dasharray: none;
+  stroke-width: 2.5px;
+  fill-opacity: 0.55;
+}
+.sm-at-blob.sm-sel {
+  fill-opacity: 0.7;
+  stroke: #fff6dc;
+  stroke-width: 3px;
+  stroke-dasharray: none;
+}
+.sm-at-label {
+  display: none;
+  font-family: var(--sm-font-head);
+  fill: #fff6dc;
+  stroke: #1b1209;
+  stroke-width: 0.26em;
+  paint-order: stroke;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.sm-at-label.sm-on {
+  display: inline;
+}
+.sm-at-year {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  margin: 0;
+  padding: 4px 16px;
+  font-family: var(--sm-font-head);
+  font-size: var(--kb-font-size-xl);
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  color: #1b1209;
+  background: #f2c14e;
+  border-radius: var(--kb-radius-full);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+.sm-at-zoom {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(242, 193, 78, 0.6);
+  background: rgba(14, 28, 46, 0.84);
+}
+.sm-at-zoom button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #f3e9d2;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sm-at-zoom button + button {
+  border-top: 1px solid rgba(242, 193, 78, 0.4);
+}
+.sm-at-card {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  padding: 12px 14px 14px;
+  background: var(--sm-panel);
+  border: 1px solid var(--sm-line);
+  border-top: 4px solid var(--hue);
+  border-radius: var(--kb-radius-lg);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+.sm-at-card[hidden] {
+  display: none;
+}
+.sm-at-card h3 {
+  margin: 2px 40px 0 0;
+  font-size: var(--kb-font-size-xl);
+}
+.sm-at-card h3 a {
+  text-decoration: none;
+}
+.sm-at-kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 40px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sm-muted);
+}
+.sm-at-dates {
+  margin: 2px 0 0;
+  font-size: var(--kb-font-size-sm);
+  color: var(--sm-muted);
+  font-variant-numeric: tabular-nums;
+}
+.sm-at-summary {
+  margin: 6px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sm-at-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.sm-at-links .sm-btn {
+  min-height: 38px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: var(--kb-font-size-sm);
+  cursor: pointer;
+}
+.sm-at-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--sm-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.sm-at-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--kb-space-3);
+  padding: 10px 14px 8px;
+}
+.sm-at-play {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--sm-lapis-ink);
+  background: var(--sm-lapis);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.sm-at-slider {
+  flex: 1;
+  min-width: 0;
+}
+.sm-at-slider input {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  accent-color: var(--sm-saffron);
+  cursor: pointer;
+}
+.sm-at-ticks {
+  position: relative;
+  height: 16px;
+  margin: -6px 10px 0;
+  font-size: 11px;
+  color: var(--sm-muted);
+  font-variant-numeric: tabular-nums;
+}
+.sm-at-ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.sm-tl-now button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font: inherit;
+  color: var(--sm-ink);
+  border-radius: var(--kb-radius-full);
+  background: var(--sm-panel);
+  border: 1px solid var(--sm-line);
+  cursor: pointer;
+}
+/* Narrow screens: every other thousand, so the year labels never collide. */
+@media (max-width: 519.98px) {
+  .sm-at-ticks span:nth-child(2) {
+    display: none;
+  }
+}
+@media (min-width: 720px) {
+  .sm-story-row {
+    margin: 0;
+    padding: 2px 2px 8px;
+    grid-auto-columns: minmax(11rem, 1fr);
+  }
+  .sm-at-card {
+    right: auto;
+    width: 24rem;
+  }
+  .sm-at-summary {
+    display: block;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sm-at-blob,
+  .sm-story-card {
+    transition: none;
+  }
+}
