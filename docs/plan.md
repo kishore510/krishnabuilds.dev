@@ -127,6 +127,13 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Life of Krishna (0.26.0)
 - [x] The Churning of the Ocean (Samudra Manthan) (0.27.0)
 - [x] Greece and Persia (0.28.0)
+- [x] The Mughal Empire (0.30.0)
+- [ ] The Delhi Sultanate
+- [ ] The Silk Road (already listed on the hub as coming soon)
+- [ ] The Marathas
+- [ ] The Mahajanapadas and the Buddha
+
+Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 
 ### Stickyard
 
