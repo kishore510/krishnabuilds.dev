@@ -1,0 +1,3525 @@
+{
+  "id": "maya",
+  "title": "The Maya",
+  "description": "An illustrated map of the Maya, from the first platforms and cities of the forest, through the Classic kingdoms of Tikal, Calakmul, Palenque and Copán and their collapse, to the northern and highland kingdoms, the Spanish conquest, the fall of the last kingdom in 1697, and the Maya today.",
+  "canvas": "geo",
+  "basemap": "mesoamerica",
+  "source": "History",
+  "nativeLang": "emy",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Maya, from Aguada Fénix and El Mirador through the Classic kingdoms to the fall of Nojpetén in 1697 and the Maya today",
+  "note": "Based on archaeology, Maya inscriptions as read today, Maya books written after the conquest, and Spanish chronicles; each chapter says which it follows. Classic dates come from inscriptions and are given to the year or month, since modern correlations differ by a few days. Native names are Classic Maya unless marked. The areas under Powers are drawn loosely and are not borders.",
+  "places": {
+    "aguada-fenix": {
+      "name": "Aguada Fénix",
+      "at": [
+        -91.28,
+        17.8
+      ],
+      "glyph": "step-temple",
+      "label": "left"
+    },
+    "el-mirador": {
+      "name": "El Mirador",
+      "at": [
+        -89.92,
+        17.75
+      ],
+      "glyph": "maya-temple",
+      "label": "left"
+    },
+    "san-bartolo": {
+      "name": "San Bartolo",
+      "at": [
+        -89.39,
+        17.52
+      ],
+      "glyph": "codex",
+      "label": "right"
+    },
+    "kaminaljuyu": {
+      "name": "Kaminaljuyu",
+      "at": [
+        -90.55,
+        14.63
+      ],
+      "glyph": "beads",
+      "label": "bottom"
+    },
+    "tikal": {
+      "name": "Tikal",
+      "at": [
+        -89.62,
+        17.22
+      ],
+      "glyph": "maya-temple",
+      "label": "left"
+    },
+    "teotihuacan": {
+      "name": "Teotihuacan",
+      "at": [
+        -98.84,
+        19.69
+      ],
+      "glyph": "step-temple",
+      "label": "right"
+    },
+    "copan": {
+      "name": "Copán",
+      "at": [
+        -89.14,
+        14.84
+      ],
+      "glyph": "ballcourt",
+      "label": "right"
+    },
+    "caracol": {
+      "name": "Caracol",
+      "at": [
+        -89.12,
+        16.76
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "calakmul": {
+      "name": "Calakmul",
+      "at": [
+        -89.81,
+        18.1
+      ],
+      "glyph": "maya-temple",
+      "label": "right"
+    },
+    "palenque": {
+      "name": "Palenque",
+      "at": [
+        -92.05,
+        17.48
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "dos-pilas": {
+      "name": "Dos Pilas",
+      "at": [
+        -90.29,
+        16.44
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "naranjo": {
+      "name": "Naranjo",
+      "at": [
+        -89.25,
+        17.13
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "yaxchilan": {
+      "name": "Yaxchilan",
+      "at": [
+        -90.96,
+        16.9
+      ],
+      "glyph": "gate",
+      "label": "left"
+    },
+    "quirigua": {
+      "name": "Quiriguá",
+      "at": [
+        -89.04,
+        15.27
+      ],
+      "glyph": "stela",
+      "label": "right"
+    },
+    "bonampak": {
+      "name": "Bonampak",
+      "at": [
+        -91.06,
+        16.7
+      ],
+      "glyph": "codex",
+      "label": "bottom"
+    },
+    "tonina": {
+      "name": "Toniná",
+      "at": [
+        -92.01,
+        16.9
+      ],
+      "glyph": "stela",
+      "label": "left"
+    },
+    "piedras-negras": {
+      "name": "Piedras Negras",
+      "at": [
+        -91.26,
+        17.18
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "uxmal": {
+      "name": "Uxmal",
+      "at": [
+        -89.77,
+        20.36
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "chichen-itza": {
+      "name": "Chichen Itza",
+      "at": [
+        -88.57,
+        20.68
+      ],
+      "glyph": "step-temple",
+      "label": "right"
+    },
+    "mayapan": {
+      "name": "Mayapan",
+      "at": [
+        -89.46,
+        20.63
+      ],
+      "glyph": "fort",
+      "label": "top"
+    },
+    "mani": {
+      "name": "Maní",
+      "at": [
+        -89.39,
+        20.39
+      ],
+      "glyph": "memorial",
+      "label": "bottom"
+    },
+    "merida": {
+      "name": "Mérida",
+      "at": [
+        -89.62,
+        20.97
+      ],
+      "glyph": "flag",
+      "label": "top"
+    },
+    "tulum": {
+      "name": "Tulum",
+      "at": [
+        -87.43,
+        20.21
+      ],
+      "glyph": "trading-post",
+      "label": "right"
+    },
+    "guanaja": {
+      "name": "Guanaja",
+      "at": [
+        -85.88,
+        16.45
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "qumarkaj": {
+      "name": "Q’umarkaj",
+      "at": [
+        -91.17,
+        15.02
+      ],
+      "glyph": "codex",
+      "label": "right"
+    },
+    "xelaju": {
+      "name": "Xelajú",
+      "at": [
+        -91.52,
+        14.84
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "uspantan": {
+      "name": "Uspantán",
+      "at": [
+        -90.87,
+        15.35
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "champoton": {
+      "name": "Champotón",
+      "at": [
+        -90.72,
+        19.35
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "nojpeten": {
+      "name": "Nojpetén",
+      "at": [
+        -89.89,
+        16.93
+      ],
+      "glyph": "crown",
+      "label": "bottom"
+    },
+    "chan-santa-cruz": {
+      "name": "Chan Santa Cruz",
+      "at": [
+        -88.05,
+        19.58
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "waka": {
+      "name": "Waka’ (El Perú)",
+      "at": [
+        -90.36,
+        17.26
+      ],
+      "hidden": true
+    },
+    "dzibanche": {
+      "name": "Dzibanche",
+      "at": [
+        -88.76,
+        18.64
+      ],
+      "hidden": true
+    },
+    "cuba": {
+      "name": "Western Cuba",
+      "at": [
+        -84.95,
+        21.86
+      ],
+      "hidden": true
+    },
+    "catoche": {
+      "name": "Cape Catoche",
+      "at": [
+        -87.1,
+        21.6
+      ],
+      "hidden": true
+    },
+    "oaxaca": {
+      "name": "Oaxaca",
+      "at": [
+        -96.72,
+        17.06
+      ],
+      "hidden": true
+    },
+    "soconusco": {
+      "name": "Soconusco",
+      "at": [
+        -92.3,
+        14.95
+      ],
+      "hidden": true
+    },
+    "campeche": {
+      "name": "Campeche",
+      "at": [
+        -90.53,
+        19.85
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "warriors": {
+      "name": "Maya lords and warriors",
+      "icon": "maya-warrior"
+    },
+    "canoe": {
+      "name": "A trading canoe",
+      "icon": "canoe"
+    },
+    "spanish": {
+      "name": "Spanish soldiers and their allies",
+      "icon": "conquistador"
+    },
+    "fleet": {
+      "name": "Spanish ships",
+      "icon": "east-indiaman"
+    }
+  },
+  "phases": {
+    "first": {
+      "name": "The first Maya",
+      "color": "#4fc3b0"
+    },
+    "kings": {
+      "name": "Kings of the Classic",
+      "color": "#ff8a1f"
+    },
+    "rivals": {
+      "name": "Tikal and the Snake kingdom",
+      "color": "#e0573a"
+    },
+    "collapse": {
+      "name": "The southern collapse",
+      "color": "#a678e0"
+    },
+    "north": {
+      "name": "The last kingdoms",
+      "color": "#e0b43a"
+    },
+    "conquest": {
+      "name": "The Spanish conquest",
+      "color": "#2b7fb4"
+    },
+    "memory": {
+      "name": "What remains",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "army": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "spanish": {
+      "color": "#55606e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "6 6",
+      "cap": "round"
+    },
+    "canoe": {
+      "color": "#2fa39a",
+      "width": 3,
+      "dash": "4 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 11.1,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 19.8,
+        "color": "rgba(255,138,31,.35)"
+      },
+      {
+        "until": 48.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 54.3,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 71.7,
+        "color": "rgba(224,180,58,.35)"
+      },
+      {
+        "until": 86.0,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 1.0,
+        "text": "1000 BCE"
+      },
+      {
+        "at": 21.2,
+        "text": "562"
+      },
+      {
+        "at": 52.9,
+        "text": "909"
+      },
+      {
+        "at": 73.1,
+        "text": "1517"
+      },
+      {
+        "at": 84.6,
+        "text": "1697"
+      },
+      {
+        "at": 99.0,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "aguada-fenix",
+      "phase": "first",
+      "title": "The first great platform",
+      "when": "About 1000 to 800 BCE",
+      "at": 1.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -90.9,
+          17.5
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Long before Maya kings, people in the lowlands of Tabasco raised Aguada Fénix: an artificial plateau about 1,400 metres long and up to 15 metres high, the oldest and largest monument yet found in the Maya area. Spotted in 2017 on airborne laser (lidar) maps, it has no statues of rulers; perhaps a whole community built it together.",
+      "today": "Today: Balancán, Tabasco, Mexico, on farmland."
+    },
+    {
+      "place": "el-mirador",
+      "phase": "first",
+      "title": "The first cities",
+      "when": "About 300 BCE to 150 CE",
+      "at": 3.9,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -89.8,
+          17.5
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "In the forests of northern Petén, El Mirador grew into one of the first Maya cities. Its La Danta complex rises about 70 metres and is among the largest pyramids in the world by volume. Raised white causeways (sacbeob) linked it to Nakbe and other towns. By about 150 CE it was largely abandoned; why is debated.",
+      "today": "Today: Petén, Guatemala, two days’ walk from the nearest road."
+    },
+    {
+      "place": "san-bartolo",
+      "phase": "first",
+      "title": "The maize god’s mural",
+      "when": "About 300 to 100 BCE",
+      "at": 6.8,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -89.6,
+          17.4
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "In 2001 the archaeologist William Saturno, sheltering from the heat in a looters’ tunnel, found painted walls at San Bartolo. The murals, from about 100 BCE, show the maize god’s death and rebirth and the crowning of a king. Glyphs found nearby date to about 300 to 200 BCE, among the oldest Maya writing yet known.",
+      "today": "Today: Petén, Guatemala."
+    },
+    {
+      "place": "kaminaljuyu",
+      "phase": "first",
+      "title": "Highland jade and obsidian",
+      "native": "Kaminaljuyu",
+      "lang": "quc",
+      "when": "About 400 BCE to 200 CE",
+      "at": 9.6,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -90.1,
+          15.0
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "In the southern highlands, Kaminaljuyu dug canals from a lake to water its fields and controlled a nearby source of obsidian, the volcanic glass for blades. Jade, the most precious stone, came from the Motagua valley, the only known source of jadeite in Mesoamerica. Most of the ancient city now lies beneath Guatemala City.",
+      "today": "Today: Guatemala City; a few mounds survive in a park."
+    },
+    {
+      "place": "tikal",
+      "phase": "kings",
+      "title": "The first dated stone",
+      "native": "Yax Mutul",
+      "when": "292 CE",
+      "at": 12.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.7,
+          17.3
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Tikal’s kings traced their line to a founder, Yax Ehb Xook. Stela 29 shows a king with a date equal to 292 CE, the earliest Long Count date yet found in the Maya lowlands. The Long Count numbered every day from a creation date in 3114 BCE, using a sign for zero, invented independently of the Old World.",
+      "today": "Today: Tikal National Park, Petén, Guatemala."
+    },
+    {
+      "place": "tikal",
+      "phase": "kings",
+      "title": "The arrival of strangers",
+      "native": "Mutul",
+      "when": "January 378",
+      "at": 15.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -94.2,
+          18.4
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "teotihuacan",
+          "to": "waka",
+          "traveller": "warriors",
+          "style": "army",
+          "bend": 0.12
+        },
+        {
+          "from": "waka",
+          "to": "tikal",
+          "traveller": "warriors",
+          "style": "army",
+          "bend": 0.1
+        }
+      ],
+      "text": "In January 378 a warlord named Sihyaj K’ahk’ reached Waka’, then Tikal; that same day Tikal’s king, Chak Tok Ich’aak, died. A year later the young Yax Nuun Ahiin, son of a lord called Spearthrower Owl, perhaps ruler of Teotihuacan, became king. Whether Teotihuacan itself conquered Tikal is debated.",
+      "today": "Today: Tikal; Waka’ is El Perú, in Laguna del Tigre National Park, Guatemala."
+    },
+    {
+      "place": "copan",
+      "phase": "kings",
+      "title": "The founder of Copán",
+      "native": "Oxwitik",
+      "when": "426 to 427",
+      "at": 18.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.4,
+          16.0
+        ],
+        "width": 5
+      },
+      "legs": [
+        {
+          "from": "tikal",
+          "to": "copan",
+          "traveller": "warriors",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "In 426 a lord named K’inich Yax K’uk’ Mo’ took royal insignia at a distant shrine; the next year he arrived at Copán and founded a dynasty that lasted four centuries. Isotopes in his bones suggest he grew up in the central lowlands, perhaps near Tikal. Altar Q, carved in 776, shows him wearing goggles, a Teotihuacan sign.",
+      "today": "Today: Copán Ruinas, Honduras."
+    },
+    {
+      "place": "caracol",
+      "phase": "rivals",
+      "title": "Tikal falls",
+      "native": "Oxwitza’",
+      "when": "562",
+      "at": 21.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.4,
+          17.0
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "caracol",
+          "to": "tikal",
+          "traveller": "warriors",
+          "style": "army",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 562 Tikal was defeated, and its king, Wak Chan K’awiil, was probably killed. The victory is recorded at Caracol, but its overlord, the Snake kingdom (Kaanul), may have led the war. Tikal raised no dated monuments for over a century, while Caracol grew, by some estimates, to 100,000 people or more; the figure is disputed.",
+      "today": "Today: Chiquibul forest, Cayo District, Belize."
+    },
+    {
+      "place": "calakmul",
+      "phase": "rivals",
+      "title": "The Snake kingdom",
+      "native": "Chiik Nahb",
+      "when": "636 to 686",
+      "at": 24.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.5,
+          17.9
+        ],
+        "width": 4.5
+      },
+      "legs": [
+        {
+          "from": "dzibanche",
+          "to": "calakmul",
+          "traveller": "warriors",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Snake kings (Kaanul) moved their court from Dzibanche to Calakmul by the 630s. Yuknoom Ch’een II, who ruled from 636 to 686, made it the strongest power of the Classic lowlands, binding Dos Pilas, Naranjo and other kingdoms to him as vassals. Calakmul has more than a hundred stelae, more than any other Maya city.",
+      "today": "Today: Calakmul Biosphere Reserve, Campeche, Mexico."
+    },
+    {
+      "place": "palenque",
+      "phase": "rivals",
+      "title": "Pakal of Palenque",
+      "native": "Lakamha’",
+      "when": "615 to 683",
+      "at": 26.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          -91.6,
+          17.3
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Calakmul sacked Palenque in 599 and again in 611. In 615 a twelve-year-old, K’inich Janaab Pakal, took its throne and ruled for 68 years, building much of its great palace. His Temple of the Inscriptions holds one of the longest Maya texts. In 1952 the archaeologist Alberto Ruz found his tomb deep inside it.",
+      "today": "Today: Palenque, Chiapas, Mexico."
+    },
+    {
+      "place": "dos-pilas",
+      "phase": "rivals",
+      "title": "Brother against brother",
+      "native": "Mutul",
+      "when": "648 to 679",
+      "at": 29.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          -90.0,
+          16.85
+        ],
+        "width": 3.5
+      },
+      "legs": [
+        {
+          "from": "dos-pilas",
+          "to": "tikal",
+          "traveller": "warriors",
+          "style": "army",
+          "bend": -0.12
+        }
+      ],
+      "text": "Bajlaj Chan K’awiil, a prince of Tikal’s royal house, ruled Dos Pilas under Tikal’s own emblem. Beaten by Calakmul in 648, he became its vassal and turned on Tikal and its king, Nuun Ujol Chaak, probably his brother. His stairway records the wars. In 679 he won a great victory over Tikal.",
+      "today": "Today: Petexbatún, Petén, Guatemala."
+    },
+    {
+      "place": "naranjo",
+      "phase": "rivals",
+      "title": "Lady Six Sky",
+      "native": "Sa’aal",
+      "when": "682 to 741",
+      "at": 32.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.75,
+          16.85
+        ],
+        "width": 3.5
+      },
+      "legs": [
+        {
+          "from": "dos-pilas",
+          "to": "naranjo",
+          "traveller": "warriors",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "In 682, after years of war had broken Naranjo’s royal line, a princess of Dos Pilas, Lady Six Sky, arrived to restore it. Her son became king in 693, aged five. Naranjo’s stelae show her standing over bound captives, and wars were fought in her son’s name; many historians think she directed them. She died in 741.",
+      "today": "Today: Petén, Guatemala, near the Belize border."
+    },
+    {
+      "place": "tikal",
+      "phase": "rivals",
+      "title": "Tikal rises again",
+      "native": "Mutul",
+      "when": "August 695",
+      "at": 35.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.7,
+          17.65
+        ],
+        "width": 3.5
+      },
+      "legs": [
+        {
+          "from": "tikal",
+          "to": "calakmul",
+          "traveller": "warriors",
+          "style": "army",
+          "bend": 0.12
+        }
+      ],
+      "text": "In August 695 Tikal’s king, Jasaw Chan K’awiil, defeated Calakmul’s king, Yuknoom Yich’aak K’ahk’, ending the Snake kingdom’s dominance. Carved wooden lintels in his funeral temple, now called Temple I, recall the victory. Tikal entered a new age of building: most of the great temples that rise above its forest date from the following century.",
+      "today": "Today: Temple I stands on Tikal’s Great Plaza, Guatemala."
+    },
+    {
+      "place": "yaxchilan",
+      "phase": "rivals",
+      "title": "Visions in blood",
+      "native": "Pa’ Chan",
+      "when": "709 to 742",
+      "at": 38.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -91.0,
+          16.95
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "At Yaxchilan, on the Usumacinta river, carved lintels show Lady K’abal Xook, wife of King Itzamnaaj Bahlam III, drawing a thorned rope through her tongue in 709, and then a vision serpent rising from the smoke. Royal bloodletting fed the gods and called up the ancestors. Two of these lintels are now in the British Museum.",
+      "today": "Today: Chiapas, Mexico, reached by boat on the river border with Guatemala."
+    },
+    {
+      "place": "quirigua",
+      "phase": "rivals",
+      "title": "The beheading of 18 Rabbit",
+      "when": "738",
+      "at": 41.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.15,
+          15.1
+        ],
+        "width": 2.5
+      },
+      "legs": [
+        {
+          "from": "quirigua",
+          "to": "copan",
+          "traveller": "warriors",
+          "style": "army",
+          "bend": 0.15
+        }
+      ],
+      "text": "Waxaklajuun Ub’aah K’awiil, known as 18 Rabbit, ruled Copán for 43 years and filled its plaza with stelae carved almost in the round. In 738 his vassal at Quiriguá, K’ahk’ Tiliw Chan Yopaat, captured and beheaded him. Quiriguá then raised the tallest Maya stelae; Stela E stands about ten metres high.",
+      "today": "Today: Izabal, Guatemala, among banana plantations."
+    },
+    {
+      "place": "copan",
+      "phase": "rivals",
+      "title": "The stairway of history",
+      "native": "Oxwitik",
+      "when": "755 to 776",
+      "at": 44.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.2,
+          14.95
+        ],
+        "width": 2.5
+      },
+      "legs": [],
+      "text": "Copán recovered. In 755 its king K’ahk’ Yipyaj Chan K’awiil dedicated the Hieroglyphic Stairway, carved with about 2,200 glyphs, the longest known Maya text, telling the city’s royal history. Beside it lies the ballcourt, where players kept a heavy rubber ball in play with their hips. In 776 Altar Q showed all sixteen kings of the dynasty.",
+      "today": "Today: Copán Ruinas, Honduras; the stairway is under a protective roof."
+    },
+    {
+      "place": "bonampak",
+      "phase": "rivals",
+      "title": "The painted walls",
+      "native": "Bonampak",
+      "lang": "yua",
+      "when": "About 791",
+      "at": 47.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -91.0,
+          16.8
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "Around 791 painters covered three rooms at Bonampak, a vassal of Yaxchilan, with the finest surviving Maya murals: musicians and dancers, a battle in the forest, and captives bleeding before the king. Outsiders first saw them in 1946, guided by Lacandón Maya. The name Bonampak, painted walls, was coined in Yucatec Maya after the discovery.",
+      "today": "Today: Chiapas, Mexico, in the Lacandón forest."
+    },
+    {
+      "place": "tikal",
+      "phase": "collapse",
+      "title": "The cities fall silent",
+      "native": "Mutul",
+      "when": "About 800 to 900",
+      "at": 50.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          -90.3,
+          16.6
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "In the 800s the southern lowland kingdoms failed one by one. Copán’s last royal altar, about 822, was left unfinished; Tikal set up its last dated stela in 869. Lake sediments and cave stalagmites record severe droughts, and endless war, crowding and worn-out soils may have played a part. The causes are debated, but the people did not vanish.",
+      "today": "Today: Tikal’s temples stand in forest that grew back over the city."
+    },
+    {
+      "place": "tonina",
+      "phase": "collapse",
+      "title": "The last Long Count",
+      "native": "Po’",
+      "when": "909",
+      "at": 52.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          -91.8,
+          17.0
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "Toniná, a hilltop kingdom in the Chiapas highlands, had captured a king of Palenque in 711. In January 909 it carved the last known Long Count date. After that the old custom of dated royal monuments ended. Many lowland people moved north or to the highlands, and the forest closed over the southern cities.",
+      "today": "Today: Ocosingo, Chiapas, Mexico."
+    },
+    {
+      "place": "uxmal",
+      "phase": "north",
+      "title": "Uxmal and the Puuc hills",
+      "native": "Uxmal",
+      "lang": "yua",
+      "when": "About 850 to 925",
+      "at": 55.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.6,
+          20.4
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "In the dry Puuc hills of Yucatán, with no rivers at all, cities stored rain in underground cisterns (chultun). Uxmal flourished around 900 under a ruler known as Lord Chahk. Its Governor’s Palace and Nunnery Quadrangle are covered in stone mosaics: lattices, step-frets and masks of the long-nosed rain god, Chaak.",
+      "today": "Today: Yucatán, Mexico."
+    },
+    {
+      "place": "chichen-itza",
+      "phase": "north",
+      "title": "Chichen Itza",
+      "native": "Chi’ch’en Itza’",
+      "lang": "yua",
+      "when": "About 850 to 1100",
+      "at": 58.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -88.9,
+          20.6
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "Chichen Itza, mouth of the well of the Itza, became the greatest city of the north. Its Temple of the Feathered Serpent (Kukulkan) has four stairways of 91 steps, 365 with the top platform. Its ballcourt, about 168 metres long, is the largest in Mesoamerica. Into its sacred well (cenote) people threw jade, gold and human offerings.",
+      "today": "Today: Yucatán, Mexico, one of the most visited sites in the country."
+    },
+    {
+      "place": "mayapan",
+      "phase": "north",
+      "title": "The walled city",
+      "native": "Mayapan",
+      "lang": "yua",
+      "when": "About 1220 to 1441",
+      "at": 61.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.3,
+          20.6
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "After Chichen Itza declined, Mayapan led Yucatán. A wall about nine kilometres round enclosed some 4,000 buildings and perhaps 15,000 people. Lords from across Yucatán lived there, led by the Cocom family. In the mid-1400s, about 1441 though sources differ, the Xiu and other lords rose and sacked it; Yucatán split into some sixteen small states.",
+      "today": "Today: Yucatán, Mexico, south of Mérida."
+    },
+    {
+      "place": "tulum",
+      "phase": "north",
+      "title": "A city on the sea cliffs",
+      "native": "Zamá",
+      "lang": "yua",
+      "when": "About 1200 to 1520",
+      "at": 64.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -87.6,
+          20.2
+        ],
+        "width": 3.5
+      },
+      "legs": [],
+      "text": "On the Caribbean coast, walled Tulum watched over a busy sea route. Canoes carried salt, cotton cloth, honey, jade and cacao, whose beans also served as money, around the peninsula. Pilgrims crossed to Cozumel to honour Ix Chel, goddess of childbirth and healing. In 1518 Spanish sailors saw a coastal town, probably Tulum, and compared it to Seville.",
+      "today": "Today: Quintana Roo, Mexico."
+    },
+    {
+      "place": "qumarkaj",
+      "phase": "north",
+      "title": "The council book",
+      "native": "Q’umarkaj",
+      "lang": "quc",
+      "when": "About 1400 to 1524",
+      "at": 67.3,
+      "source": "History",
+      "camera": {
+        "at": [
+          -91.0,
+          15.1
+        ],
+        "width": 3
+      },
+      "legs": [],
+      "text": "In the highlands the K’iche’ ruled from Q’umarkaj, strongest under King K’iq’ab in the 1400s, until the Kaqchikel broke away. After the conquest, K’iche’ nobles wrote down their sacred history, the Popol Vuh (council book): how the gods made people from maize, and how the Hero Twins beat the lords of the underworld (Xibalba) at the ballgame.",
+      "today": "Today: Santa Cruz del Quiché, Guatemala; Maya priests still hold ceremonies in the ruins."
+    },
+    {
+      "place": "guanaja",
+      "phase": "north",
+      "title": "The great canoe",
+      "when": "1502",
+      "at": 70.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -86.7,
+          18.3
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "tulum",
+          "to": "guanaja",
+          "traveller": "canoe",
+          "style": "canoe",
+          "bend": 0.15
+        }
+      ],
+      "text": "Off the island of Guanaja in 1502, on his fourth voyage, Christopher Columbus met a trading canoe as long as a galley, paddled by about 25 men. It carried cotton cloth, copper, obsidian-edged swords and cacao beans. The traders were probably Maya; this was Europe’s first known meeting with the peoples of Mesoamerica.",
+      "today": "Today: Guanaja, Bay Islands, Honduras."
+    },
+    {
+      "place": "champoton",
+      "phase": "conquest",
+      "title": "Battle at Champotón",
+      "native": "Chakán Putum",
+      "lang": "yua",
+      "when": "1511 to 1517",
+      "at": 73.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -88.0,
+          20.4
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "cuba",
+          "to": "catoche",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": 0.1
+        },
+        {
+          "from": "catoche",
+          "to": "champoton",
+          "traveller": "fleet",
+          "style": "sea",
+          "bend": -0.2
+        }
+      ],
+      "text": "In 1511 a Spanish shipwreck left survivors on Yucatán; one, Gonzalo Guerrero, married into a Maya family and fought for them. In 1517 Francisco Hernández de Córdoba sailed from Cuba. At Champotón the Maya routed his men and killed about fifty; he died of his wounds in Cuba. Two years later Cortés passed by, bound for Mexico.",
+      "today": "Today: Champotón, Campeche, Mexico."
+    },
+    {
+      "place": "xelaju",
+      "phase": "conquest",
+      "title": "Alvarado in the highlands",
+      "native": "Xelajuj",
+      "lang": "quc",
+      "when": "1524",
+      "at": 75.9,
+      "source": "History",
+      "camera": {
+        "at": [
+          -93.4,
+          16.0
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "oaxaca",
+          "to": "soconusco",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        },
+        {
+          "from": "soconusco",
+          "to": "xelaju",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        },
+        {
+          "from": "xelaju",
+          "to": "qumarkaj",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 1524 Pedro de Alvarado marched from Mexico with a few hundred Spaniards and thousands of Nahua allies. Near Xelajú (Quetzaltenango) the K’iche’ were defeated; their tradition names a hero, Tecún Umán, killed by Alvarado. At Q’umarkaj Alvarado burned the K’iche’ kings and the city. The Kaqchikel, his allies, soon rebelled against his demands.",
+      "today": "Today: Quetzaltenango, Guatemala’s second city."
+    },
+    {
+      "place": "merida",
+      "phase": "conquest",
+      "title": "Mérida on T’Hó",
+      "native": "T’Hó",
+      "lang": "yua",
+      "when": "1527 to 1547",
+      "at": 78.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.4,
+          20.6
+        ],
+        "width": 3.5
+      },
+      "legs": [],
+      "text": "Conquering Yucatán, with no single capital to seize, took the Montejos, father and son, twenty years. In 1542 Francisco de Montejo the Younger founded Mérida on the Maya city of T’Hó, whose pyramid stones went into its cathedral. The Xiu of Maní allied with Spain; the eastern Maya rose in 1546 and were crushed in 1547.",
+      "today": "Today: Mérida, capital of Yucatán state, Mexico."
+    },
+    {
+      "place": "mani",
+      "phase": "conquest",
+      "title": "The burning of the books",
+      "native": "Maní",
+      "lang": "yua",
+      "when": "July 1562",
+      "at": 81.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.45,
+          20.55
+        ],
+        "width": 2.5
+      },
+      "legs": [],
+      "text": "Finding Maya still honouring the old gods, the Franciscan friar Diego de Landa held an inquisition: thousands were tortured, and many died. At Maní, in July 1562, he burned their books, which, he wrote, they regretted to an amazing degree. Only four Maya books (codices) survive. Yet Landa’s own notes on the script later helped scholars read it.",
+      "today": "Today: Maní, Yucatán, Mexico; the four codices are in Dresden, Madrid, Paris and Mexico City."
+    },
+    {
+      "place": "nojpeten",
+      "phase": "conquest",
+      "title": "The last kingdom",
+      "native": "Nojpetén",
+      "lang": "itz",
+      "when": "13 March 1697",
+      "at": 84.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          -90.1,
+          18.3
+        ],
+        "width": 4.5
+      },
+      "legs": [
+        {
+          "from": "campeche",
+          "to": "nojpeten",
+          "traveller": "spanish",
+          "style": "spanish",
+          "bend": 0.1
+        }
+      ],
+      "text": "On their island capital, Nojpetén, in Lake Petén Itzá, the Itza held out long after the conquest. Cortés passed in 1525 and left a lame horse, of which they made a statue. On 13 March 1697 Martín de Ursúa crossed the lake in a galley built on its shore and took the island. The Itza king, Kan Ek’, was captured.",
+      "today": "Today: the island town of Flores, Petén, Guatemala."
+    },
+    {
+      "place": "copan",
+      "phase": "memory",
+      "title": "Fifty dollars for Copán",
+      "when": "1839 to 1841",
+      "at": 87.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.3,
+          15.2
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "In 1839 the American writer John Lloyd Stephens bought the ruins of Copán for fifty dollars, and the English artist Frederick Catherwood drew its stelae. Their books, from 1841, made the Maya cities famous. Against claims that Egyptians or lost peoples had built them, Stephens argued they were the work of the ancestors of the Maya living nearby.",
+      "today": "Today: Copán is a UNESCO World Heritage Site."
+    },
+    {
+      "place": "chan-santa-cruz",
+      "phase": "memory",
+      "title": "The Caste War",
+      "native": "Noh Cah Santa Cruz",
+      "lang": "yua",
+      "when": "1847 to 1901",
+      "at": 90.4,
+      "source": "History",
+      "camera": {
+        "at": [
+          -88.6,
+          19.9
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "In 1847 Maya farmers in Yucatán, squeezed by land seizures, debt and taxes, rose in revolt and nearly took Mérida. From 1850 rebels followed a Talking Cross at Chan Santa Cruz and held eastern Yucatán, trading for guns in British Honduras (Belize). Mexico’s army took the town in 1901. Tens of thousands died; estimates vary widely.",
+      "today": "Today: Felipe Carrillo Puerto, Quintana Roo, Mexico."
+    },
+    {
+      "place": "piedras-negras",
+      "phase": "memory",
+      "title": "Reading the stones",
+      "native": "Yokib",
+      "when": "1952 to 1973",
+      "at": 93.2,
+      "source": "History",
+      "camera": {
+        "at": [
+          -91.6,
+          17.2
+        ],
+        "width": 4
+      },
+      "legs": [],
+      "text": "For a century the glyphs resisted. In 1952 Yuri Knorozov, in Leningrad, showed that many signs stood for syllables, using Landa’s notes. In 1960 Tatiana Proskouriakoff showed that the monuments of Piedras Negras recorded rulers’ births, accessions and deaths: history, not only calendars. In 1973 scholars at Palenque worked out its king list. Most texts can now be read.",
+      "today": "Today: Petén, Guatemala, on the Usumacinta river."
+    },
+    {
+      "place": "tikal",
+      "phase": "memory",
+      "title": "Cities under the canopy",
+      "native": "Mutul",
+      "when": "2018",
+      "at": 96.1,
+      "source": "History",
+      "camera": {
+        "at": [
+          -89.9,
+          17.4
+        ],
+        "width": 4.5
+      },
+      "legs": [],
+      "text": "In 2018 a lidar survey of more than 2,100 square kilometres of Petén forest, around Tikal and other sites, mapped over 60,000 structures, with causeways, canals, terraced fields and fortresses. Its authors estimated that 7 to 11 million people lived in the Classic lowlands, far more than once thought; the figure is debated.",
+      "today": "Today: Tikal, Guatemala, a UNESCO World Heritage Site since 1979."
+    },
+    {
+      "place": "uspantan",
+      "phase": "memory",
+      "title": "The Maya today",
+      "when": "Today",
+      "at": 99.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          -90.0,
+          16.6
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Several million Maya people live in Mexico, Guatemala, Belize and Honduras, speaking about thirty Maya languages. In Guatemala’s civil war (1960 to 1996) a UN-backed truth commission estimated more than 200,000 dead or disappeared, most of them Maya, and found acts of genocide. In 1992 Rigoberta Menchú, a K’iche’ woman from Uspantán, won the Nobel Peace Prize.",
+      "today": "Today: Uspantán, Quiché, Guatemala."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "mirador",
+        "name": "El Mirador and its basin",
+        "color": "#2fa39a",
+        "active": [
+          [
+            1,
+            2
+          ]
+        ],
+        "label": {
+          "text": "Mirador",
+          "at": [
+            -89.85,
+            18.15
+          ]
+        },
+        "area": [
+          [
+            -89.28,
+            17.72
+          ],
+          [
+            -89.34,
+            17.89
+          ],
+          [
+            -89.54,
+            17.98
+          ],
+          [
+            -89.75,
+            18.01
+          ],
+          [
+            -90.0,
+            18.03
+          ],
+          [
+            -90.14,
+            17.88
+          ],
+          [
+            -90.18,
+            17.72
+          ],
+          [
+            -90.12,
+            17.57
+          ],
+          [
+            -89.99,
+            17.43
+          ],
+          [
+            -89.75,
+            17.37
+          ],
+          [
+            -89.55,
+            17.48
+          ],
+          [
+            -89.36,
+            17.56
+          ]
+        ],
+        "facts": {
+          "Capital": "El Mirador",
+          "Today": "Northern Petén, Guatemala"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Not named"
+          }
+        ],
+        "role": "The largest of the early lowland cities, linked to its neighbours by causeways.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Linked by causeways to Nakbe and other towns"
+          }
+        ]
+      },
+      {
+        "id": "teotihuacan",
+        "name": "Teotihuacan",
+        "color": "#a678e0",
+        "minor": true,
+        "active": [
+          [
+            5,
+            5
+          ]
+        ],
+        "label": {
+          "text": "Teotihuacan",
+          "at": [
+            -98.6,
+            20.3
+          ]
+        },
+        "area": [
+          [
+            -98.26,
+            19.69
+          ],
+          [
+            -98.36,
+            19.88
+          ],
+          [
+            -98.6,
+            19.98
+          ],
+          [
+            -98.84,
+            20.1
+          ],
+          [
+            -99.13,
+            20.04
+          ],
+          [
+            -99.29,
+            19.87
+          ],
+          [
+            -99.36,
+            19.69
+          ],
+          [
+            -99.31,
+            19.5
+          ],
+          [
+            -99.15,
+            19.32
+          ],
+          [
+            -98.84,
+            19.34
+          ],
+          [
+            -98.58,
+            19.38
+          ],
+          [
+            -98.34,
+            19.49
+          ]
+        ],
+        "facts": {
+          "Language": "Unknown",
+          "Today": "State of Mexico"
+        },
+        "rulers": [
+          {
+            "from": 5,
+            "text": "Not named for certain; Spearthrower Owl may have ruled here"
+          }
+        ],
+        "role": "The great city of central Mexico, whose styles and warriors appear in the Maya lowlands.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Linked to the new kings of Tikal"
+          }
+        ]
+      },
+      {
+        "id": "tikal",
+        "name": "Tikal",
+        "native": "Mutul",
+        "color": "#d9432a",
+        "active": [
+          [
+            4,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Tikal",
+          "at": [
+            -90.1,
+            17.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                4,
+                6
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.2,
+                  17.22
+                ],
+                [
+                  -89.32,
+                  17.36
+                ],
+                [
+                  -89.42,
+                  17.5
+                ],
+                [
+                  -89.62,
+                  17.57
+                ],
+                [
+                  -89.82,
+                  17.49
+                ],
+                [
+                  -89.95,
+                  17.37
+                ],
+                [
+                  -90.0,
+                  17.22
+                ],
+                [
+                  -90.01,
+                  17.04
+                ],
+                [
+                  -89.82,
+                  16.94
+                ],
+                [
+                  -89.62,
+                  16.93
+                ],
+                [
+                  -89.42,
+                  16.94
+                ],
+                [
+                  -89.26,
+                  17.05
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.39,
+                  17.22
+                ],
+                [
+                  -89.45,
+                  17.3
+                ],
+                [
+                  -89.51,
+                  17.38
+                ],
+                [
+                  -89.62,
+                  17.42
+                ],
+                [
+                  -89.73,
+                  17.37
+                ],
+                [
+                  -89.8,
+                  17.31
+                ],
+                [
+                  -89.83,
+                  17.22
+                ],
+                [
+                  -89.83,
+                  17.12
+                ],
+                [
+                  -89.73,
+                  17.06
+                ],
+                [
+                  -89.62,
+                  17.06
+                ],
+                [
+                  -89.51,
+                  17.06
+                ],
+                [
+                  -89.42,
+                  17.13
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.14,
+                  17.2
+                ],
+                [
+                  -89.29,
+                  17.36
+                ],
+                [
+                  -89.41,
+                  17.51
+                ],
+                [
+                  -89.65,
+                  17.6
+                ],
+                [
+                  -89.88,
+                  17.5
+                ],
+                [
+                  -90.05,
+                  17.37
+                ],
+                [
+                  -90.1,
+                  17.2
+                ],
+                [
+                  -90.12,
+                  17.0
+                ],
+                [
+                  -89.89,
+                  16.89
+                ],
+                [
+                  -89.65,
+                  16.88
+                ],
+                [
+                  -89.4,
+                  16.88
+                ],
+                [
+                  -89.22,
+                  17.01
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.43,
+                  17.22
+                ],
+                [
+                  -89.48,
+                  17.29
+                ],
+                [
+                  -89.53,
+                  17.35
+                ],
+                [
+                  -89.62,
+                  17.39
+                ],
+                [
+                  -89.71,
+                  17.35
+                ],
+                [
+                  -89.77,
+                  17.29
+                ],
+                [
+                  -89.79,
+                  17.22
+                ],
+                [
+                  -89.8,
+                  17.14
+                ],
+                [
+                  -89.71,
+                  17.09
+                ],
+                [
+                  -89.62,
+                  17.09
+                ],
+                [
+                  -89.53,
+                  17.09
+                ],
+                [
+                  -89.46,
+                  17.14
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Emblem": "Mutul, a knot of hair",
+          "Language": "Classic Maya",
+          "Today": "Petén, Guatemala"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Kings of Yax Ehb Xook’s line"
+          },
+          {
+            "from": 5,
+            "text": "Yax Nuun Ahiin I, from 379"
+          },
+          {
+            "from": 7,
+            "text": "Wak Chan K’awiil, defeated in 562"
+          },
+          {
+            "from": 10,
+            "text": "Nuun Ujol Chaak"
+          },
+          {
+            "from": 12,
+            "text": "Jasaw Chan K’awiil I"
+          },
+          {
+            "from": 17,
+            "text": "Jasaw Chan K’awiil II, named on the last dated stela (869)"
+          }
+        ],
+        "role": "One of the two great powers of the Classic lowlands, at war with the Snake kingdom for two centuries.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "A new line of kings, tied to Teotihuacan"
+          },
+          {
+            "from": 6,
+            "text": "Linked to Copán’s founder"
+          },
+          {
+            "from": 7,
+            "text": "Defeated in 562"
+          },
+          {
+            "from": 10,
+            "text": "At war with Dos Pilas"
+          },
+          {
+            "from": 12,
+            "text": "Defeats Calakmul"
+          }
+        ]
+      },
+      {
+        "id": "kaanul",
+        "name": "The Snake kingdom",
+        "native": "Kaanul",
+        "color": "#3f7d4e",
+        "active": [
+          [
+            7,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Snake kingdom",
+          "at": [
+            -88.9,
+            19.05
+          ],
+          "moves": [
+            {
+              "from": 8,
+              "at": [
+                -89.75,
+                18.65
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -88.4,
+                  18.64
+                ],
+                [
+                  -88.44,
+                  18.8
+                ],
+                [
+                  -88.58,
+                  18.91
+                ],
+                [
+                  -88.76,
+                  18.92
+                ],
+                [
+                  -88.92,
+                  18.88
+                ],
+                [
+                  -89.1,
+                  18.81
+                ],
+                [
+                  -89.1,
+                  18.64
+                ],
+                [
+                  -89.04,
+                  18.5
+                ],
+                [
+                  -88.93,
+                  18.39
+                ],
+                [
+                  -88.76,
+                  18.32
+                ],
+                [
+                  -88.57,
+                  18.36
+                ],
+                [
+                  -88.5,
+                  18.51
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.19,
+                  18.15
+                ],
+                [
+                  -89.24,
+                  18.39
+                ],
+                [
+                  -89.47,
+                  18.55
+                ],
+                [
+                  -89.75,
+                  18.57
+                ],
+                [
+                  -90.01,
+                  18.51
+                ],
+                [
+                  -90.29,
+                  18.41
+                ],
+                [
+                  -90.29,
+                  18.15
+                ],
+                [
+                  -90.2,
+                  17.94
+                ],
+                [
+                  -90.02,
+                  17.77
+                ],
+                [
+                  -89.75,
+                  17.67
+                ],
+                [
+                  -89.46,
+                  17.73
+                ],
+                [
+                  -89.34,
+                  17.96
+                ]
+              ],
+              [
+                [
+                  -88.49,
+                  18.64
+                ],
+                [
+                  -88.54,
+                  18.75
+                ],
+                [
+                  -88.64,
+                  18.83
+                ],
+                [
+                  -88.76,
+                  18.83
+                ],
+                [
+                  -88.9,
+                  18.85
+                ],
+                [
+                  -88.99,
+                  18.76
+                ],
+                [
+                  -88.99,
+                  18.64
+                ],
+                [
+                  -88.97,
+                  18.53
+                ],
+                [
+                  -88.89,
+                  18.45
+                ],
+                [
+                  -88.76,
+                  18.39
+                ],
+                [
+                  -88.65,
+                  18.47
+                ],
+                [
+                  -88.55,
+                  18.54
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.5,
+                  18.1
+                ],
+                [
+                  -89.53,
+                  18.24
+                ],
+                [
+                  -89.66,
+                  18.33
+                ],
+                [
+                  -89.81,
+                  18.34
+                ],
+                [
+                  -89.95,
+                  18.31
+                ],
+                [
+                  -90.11,
+                  18.25
+                ],
+                [
+                  -90.1,
+                  18.1
+                ],
+                [
+                  -90.05,
+                  17.98
+                ],
+                [
+                  -89.96,
+                  17.88
+                ],
+                [
+                  -89.81,
+                  17.82
+                ],
+                [
+                  -89.65,
+                  17.86
+                ],
+                [
+                  -89.59,
+                  17.99
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Dzibanche, then Calakmul",
+          "Language": "Classic Maya",
+          "Today": "Campeche and Quintana Roo, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Kings ruling from Dzibanche"
+          },
+          {
+            "from": 8,
+            "text": "Yuknoom Ch’een II, 636 to 686"
+          },
+          {
+            "from": 12,
+            "text": "Yuknoom Yich’aak K’ahk’, defeated in 695"
+          }
+        ],
+        "role": "Tikal’s great rival, which ruled less by conquest than through a web of vassal kings.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Overlord of Caracol"
+          },
+          {
+            "from": 10,
+            "text": "Overlord of Dos Pilas"
+          },
+          {
+            "from": 11,
+            "text": "Overlord of Naranjo"
+          },
+          {
+            "from": 12,
+            "text": "Defeated by Tikal"
+          }
+        ]
+      },
+      {
+        "id": "caracol",
+        "name": "Caracol",
+        "native": "Oxwitza’",
+        "color": "#e0b43a",
+        "minor": true,
+        "active": [
+          [
+            7,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Caracol",
+          "at": [
+            -88.75,
+            16.5
+          ]
+        },
+        "area": [
+          [
+            -88.83,
+            16.76
+          ],
+          [
+            -88.87,
+            16.88
+          ],
+          [
+            -89.0,
+            16.94
+          ],
+          [
+            -89.12,
+            17.01
+          ],
+          [
+            -89.27,
+            16.99
+          ],
+          [
+            -89.35,
+            16.87
+          ],
+          [
+            -89.39,
+            16.76
+          ],
+          [
+            -89.35,
+            16.64
+          ],
+          [
+            -89.28,
+            16.53
+          ],
+          [
+            -89.12,
+            16.53
+          ],
+          [
+            -88.99,
+            16.57
+          ],
+          [
+            -88.87,
+            16.63
+          ]
+        ],
+        "facts": {
+          "Today": "Cayo District, Belize"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Yajaw Te’ K’inich II"
+          }
+        ],
+        "role": "A kingdom in the Maya Mountains that grew rich after Tikal’s defeat.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Ally of the Snake kingdom"
+          }
+        ]
+      },
+      {
+        "id": "palenque",
+        "name": "Palenque",
+        "native": "Baakal",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            9,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Palenque",
+          "at": [
+            -92.15,
+            17.95
+          ]
+        },
+        "area": [
+          [
+            -91.57,
+            17.42
+          ],
+          [
+            -91.69,
+            17.54
+          ],
+          [
+            -91.81,
+            17.63
+          ],
+          [
+            -92.0,
+            17.71
+          ],
+          [
+            -92.2,
+            17.64
+          ],
+          [
+            -92.33,
+            17.55
+          ],
+          [
+            -92.37,
+            17.42
+          ],
+          [
+            -92.38,
+            17.28
+          ],
+          [
+            -92.21,
+            17.18
+          ],
+          [
+            -92.0,
+            17.19
+          ],
+          [
+            -91.8,
+            17.19
+          ],
+          [
+            -91.64,
+            17.29
+          ]
+        ],
+        "facts": {
+          "Capital": "Lakamha’",
+          "Today": "Chiapas, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "K’inich Janaab Pakal, 615 to 683"
+          },
+          {
+            "from": 10,
+            "text": "Pakal’s sons and heirs"
+          }
+        ],
+        "role": "The leading kingdom of the western lowlands, famed for its architecture and long texts.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Attacked by Calakmul in 599 and 611"
+          }
+        ]
+      },
+      {
+        "id": "copan",
+        "name": "Copán",
+        "native": "Oxwitik",
+        "color": "#a678e0",
+        "active": [
+          [
+            6,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Copán",
+          "at": [
+            -88.75,
+            14.5
+          ]
+        },
+        "area": [
+          [
+            -88.73,
+            14.85
+          ],
+          [
+            -88.81,
+            14.97
+          ],
+          [
+            -88.89,
+            15.12
+          ],
+          [
+            -89.1,
+            15.14
+          ],
+          [
+            -89.29,
+            15.09
+          ],
+          [
+            -89.4,
+            14.98
+          ],
+          [
+            -89.49,
+            14.85
+          ],
+          [
+            -89.47,
+            14.69
+          ],
+          [
+            -89.27,
+            14.63
+          ],
+          [
+            -89.1,
+            14.58
+          ],
+          [
+            -88.91,
+            14.6
+          ],
+          [
+            -88.74,
+            14.7
+          ]
+        ],
+        "facts": {
+          "Today": "Western Honduras"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "K’inich Yax K’uk’ Mo’, from 427"
+          },
+          {
+            "from": 7,
+            "text": "His descendants"
+          },
+          {
+            "from": 14,
+            "text": "Waxaklajuun Ub’aah K’awiil, killed in 738"
+          },
+          {
+            "from": 15,
+            "text": "K’ahk’ Yipyaj Chan K’awiil, then Yax Pasaj Chan Yopaat"
+          }
+        ],
+        "role": "The south-eastern kingdom of the Maya world, with sixteen kings in one line.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Founded by a lord linked to Tikal"
+          },
+          {
+            "from": 14,
+            "text": "Loses Quiriguá"
+          }
+        ]
+      },
+      {
+        "id": "quirigua",
+        "name": "Quiriguá",
+        "color": "#e0573a",
+        "minor": true,
+        "active": [
+          [
+            14,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Quiriguá",
+          "at": [
+            -88.62,
+            15.12
+          ]
+        },
+        "area": [
+          [
+            -88.87,
+            15.27
+          ],
+          [
+            -88.86,
+            15.35
+          ],
+          [
+            -88.93,
+            15.41
+          ],
+          [
+            -89.04,
+            15.42
+          ],
+          [
+            -89.13,
+            15.39
+          ],
+          [
+            -89.21,
+            15.34
+          ],
+          [
+            -89.27,
+            15.27
+          ],
+          [
+            -89.21,
+            15.2
+          ],
+          [
+            -89.13,
+            15.15
+          ],
+          [
+            -89.04,
+            15.12
+          ],
+          [
+            -88.93,
+            15.13
+          ],
+          [
+            -88.86,
+            15.19
+          ]
+        ],
+        "facts": {
+          "Today": "Izabal, Guatemala"
+        },
+        "rulers": [
+          {
+            "from": 14,
+            "text": "K’ahk’ Tiliw Chan Yopaat"
+          }
+        ],
+        "role": "Copán’s vassal on the Motagua river, until it broke free in 738.",
+        "ties": [
+          {
+            "from": 14,
+            "text": "Breaks free of Copán"
+          }
+        ]
+      },
+      {
+        "id": "yaxchilan",
+        "name": "Yaxchilan",
+        "native": "Pa’ Chan",
+        "color": "#e0b43a",
+        "minor": true,
+        "active": [
+          [
+            13,
+            16
+          ]
+        ],
+        "label": {
+          "text": "Yaxchilan",
+          "at": [
+            -91.35,
+            16.45
+          ]
+        },
+        "area": [
+          [
+            -90.73,
+            16.82
+          ],
+          [
+            -90.74,
+            16.95
+          ],
+          [
+            -90.86,
+            17.03
+          ],
+          [
+            -91.0,
+            17.05
+          ],
+          [
+            -91.13,
+            17.01
+          ],
+          [
+            -91.27,
+            16.95
+          ],
+          [
+            -91.29,
+            16.82
+          ],
+          [
+            -91.22,
+            16.71
+          ],
+          [
+            -91.14,
+            16.62
+          ],
+          [
+            -91.0,
+            16.57
+          ],
+          [
+            -90.85,
+            16.59
+          ],
+          [
+            -90.79,
+            16.71
+          ]
+        ],
+        "facts": {
+          "Today": "Chiapas, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 13,
+            "text": "Itzamnaaj Bahlam III, 681 to 742"
+          },
+          {
+            "from": 16,
+            "text": "His descendants"
+          }
+        ],
+        "role": "A river kingdom on the Usumacinta, long a rival of Piedras Negras.",
+        "ties": [
+          {
+            "from": 16,
+            "text": "Overlord of Bonampak"
+          }
+        ]
+      },
+      {
+        "id": "chichen",
+        "name": "Chichen Itza",
+        "color": "#d9432a",
+        "active": [
+          [
+            19,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Chichen Itza",
+          "at": [
+            -88.2,
+            21.1
+          ]
+        },
+        "area": [
+          [
+            -87.96,
+            20.6
+          ],
+          [
+            -88.06,
+            20.77
+          ],
+          [
+            -88.3,
+            20.88
+          ],
+          [
+            -88.6,
+            20.88
+          ],
+          [
+            -88.92,
+            20.89
+          ],
+          [
+            -89.17,
+            20.77
+          ],
+          [
+            -89.16,
+            20.6
+          ],
+          [
+            -89.1,
+            20.45
+          ],
+          [
+            -88.9,
+            20.33
+          ],
+          [
+            -88.6,
+            20.24
+          ],
+          [
+            -88.32,
+            20.34
+          ],
+          [
+            -88.13,
+            20.45
+          ]
+        ],
+        "facts": {
+          "Today": "Yucatán, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Little known; a lord, K’ak’upakal, is named in its inscriptions"
+          }
+        ],
+        "role": "The leading city of northern Yucatán after the southern collapse.",
+        "ties": [
+          {
+            "from": 20,
+            "text": "Trades by sea around the peninsula"
+          }
+        ]
+      },
+      {
+        "id": "uxmal",
+        "name": "Uxmal",
+        "color": "#2b7fb4",
+        "minor": true,
+        "active": [
+          [
+            19,
+            19
+          ]
+        ],
+        "label": {
+          "text": "Uxmal",
+          "at": [
+            -90.0,
+            20.05
+          ]
+        },
+        "area": [
+          [
+            -89.44,
+            20.3
+          ],
+          [
+            -89.48,
+            20.4
+          ],
+          [
+            -89.62,
+            20.46
+          ],
+          [
+            -89.75,
+            20.49
+          ],
+          [
+            -89.92,
+            20.49
+          ],
+          [
+            -90.0,
+            20.4
+          ],
+          [
+            -90.04,
+            20.3
+          ],
+          [
+            -90.0,
+            20.2
+          ],
+          [
+            -89.92,
+            20.11
+          ],
+          [
+            -89.75,
+            20.09
+          ],
+          [
+            -89.62,
+            20.15
+          ],
+          [
+            -89.48,
+            20.2
+          ]
+        ],
+        "facts": {
+          "Today": "Yucatán, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Lord Chahk, about 900"
+          }
+        ],
+        "role": "The greatest of the Puuc cities.",
+        "ties": [
+          {
+            "from": 19,
+            "text": "Linked to Kabah by a causeway"
+          }
+        ]
+      },
+      {
+        "id": "mayapan",
+        "name": "The Mayapan league",
+        "color": "#3f7d4e",
+        "active": [
+          [
+            21,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Mayapan",
+          "at": [
+            -89.0,
+            20.95
+          ]
+        },
+        "area": [
+          [
+            -88.44,
+            20.6
+          ],
+          [
+            -88.65,
+            20.81
+          ],
+          [
+            -88.97,
+            20.95
+          ],
+          [
+            -89.35,
+            21.1
+          ],
+          [
+            -89.78,
+            20.99
+          ],
+          [
+            -90.06,
+            20.82
+          ],
+          [
+            -90.14,
+            20.6
+          ],
+          [
+            -90.12,
+            20.36
+          ],
+          [
+            -89.82,
+            20.17
+          ],
+          [
+            -89.35,
+            20.2
+          ],
+          [
+            -88.93,
+            20.21
+          ],
+          [
+            -88.59,
+            20.37
+          ]
+        ],
+        "facts": {
+          "Capital": "Mayapan",
+          "Language": "Yucatec Maya",
+          "Today": "Yucatán, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "A council of lords, led by the Cocom family"
+          }
+        ],
+        "role": "A league of Yucatán’s lords, ruled from one walled city, until its fall in the mid-1400s.",
+        "ties": [
+          {
+            "from": 21,
+            "text": "Overthrown in a revolt led by the Xiu"
+          }
+        ]
+      },
+      {
+        "id": "kiche",
+        "name": "K’iche’ kingdom",
+        "native": "Q’umarkaj",
+        "lang": "quc",
+        "color": "#e0573a",
+        "active": [
+          [
+            23,
+            26
+          ]
+        ],
+        "label": {
+          "text": "K’iche’",
+          "at": [
+            -91.6,
+            15.55
+          ]
+        },
+        "area": [
+          [
+            -90.64,
+            15.0
+          ],
+          [
+            -90.8,
+            15.16
+          ],
+          [
+            -90.93,
+            15.35
+          ],
+          [
+            -91.25,
+            15.4
+          ],
+          [
+            -91.54,
+            15.32
+          ],
+          [
+            -91.74,
+            15.18
+          ],
+          [
+            -91.84,
+            15.0
+          ],
+          [
+            -91.84,
+            14.78
+          ],
+          [
+            -91.53,
+            14.69
+          ],
+          [
+            -91.25,
+            14.64
+          ],
+          [
+            -90.94,
+            14.66
+          ],
+          [
+            -90.7,
+            14.8
+          ]
+        ],
+        "facts": {
+          "Capital": "Q’umarkaj",
+          "Language": "K’iche’",
+          "Today": "Western highlands of Guatemala"
+        },
+        "rulers": [
+          {
+            "from": 23,
+            "text": "K’iq’ab, in the 15th century"
+          },
+          {
+            "from": 24,
+            "text": "His successors"
+          },
+          {
+            "from": 26,
+            "text": "Oxib Keej and Beleje’ Tz’i’, burned by Alvarado in 1524"
+          }
+        ],
+        "role": "The strongest highland kingdom, until the Kaqchikel broke away.",
+        "ties": [
+          {
+            "from": 23,
+            "text": "The Kaqchikel break away, about 1470"
+          },
+          {
+            "from": 26,
+            "text": "Conquered by Alvarado and his allies"
+          }
+        ]
+      },
+      {
+        "id": "itza",
+        "name": "The Itza kingdom",
+        "native": "Nojpetén",
+        "lang": "itz",
+        "color": "#2fa39a",
+        "active": [
+          [
+            23,
+            29
+          ]
+        ],
+        "label": {
+          "text": "Itza",
+          "at": [
+            -90.3,
+            17.05
+          ]
+        },
+        "area": [
+          [
+            -89.42,
+            16.95
+          ],
+          [
+            -89.39,
+            17.19
+          ],
+          [
+            -89.61,
+            17.36
+          ],
+          [
+            -89.9,
+            17.4
+          ],
+          [
+            -90.15,
+            17.31
+          ],
+          [
+            -90.38,
+            17.18
+          ],
+          [
+            -90.52,
+            16.95
+          ],
+          [
+            -90.34,
+            16.74
+          ],
+          [
+            -90.16,
+            16.58
+          ],
+          [
+            -89.9,
+            16.5
+          ],
+          [
+            -89.6,
+            16.53
+          ],
+          [
+            -89.43,
+            16.73
+          ]
+        ],
+        "facts": {
+          "Capital": "Nojpetén",
+          "Language": "Itza’",
+          "Today": "Petén, Guatemala"
+        },
+        "rulers": [
+          {
+            "from": 23,
+            "text": "Kings named Kan Ek’"
+          },
+          {
+            "from": 29,
+            "text": "Ajaw Kan Ek’, captured in 1697"
+          }
+        ],
+        "role": "The last independent Maya kingdom, in the forests of Petén.",
+        "ties": [
+          {
+            "from": 29,
+            "text": "Falls to Spain, 13 March 1697"
+          }
+        ]
+      },
+      {
+        "id": "spain",
+        "name": "Spain in the Americas",
+        "native": "Nueva España",
+        "lang": "es",
+        "color": "#e0b43a",
+        "active": [
+          [
+            25,
+            29
+          ]
+        ],
+        "label": {
+          "text": "Spain",
+          "at": [
+            -83.7,
+            22.9
+          ],
+          "moves": [
+            {
+              "from": 26,
+              "at": [
+                -91.0,
+                14.3
+              ]
+            },
+            {
+              "from": 27,
+              "at": [
+                -88.8,
+                21.0
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                25,
+                29
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -84.95,
+                  21.86
+                ],
+                [
+                  -84.3,
+                  22.4
+                ],
+                [
+                  -83.5,
+                  22.85
+                ],
+                [
+                  -82.5,
+                  23.15
+                ],
+                [
+                  -82.5,
+                  22.6
+                ],
+                [
+                  -83.2,
+                  22.25
+                ],
+                [
+                  -84.2,
+                  21.95
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                26,
+                29
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -90.17,
+                  14.95
+                ],
+                [
+                  -90.28,
+                  15.14
+                ],
+                [
+                  -90.5,
+                  15.35
+                ],
+                [
+                  -91.0,
+                  15.37
+                ],
+                [
+                  -91.44,
+                  15.31
+                ],
+                [
+                  -91.71,
+                  15.14
+                ],
+                [
+                  -91.97,
+                  14.95
+                ],
+                [
+                  -91.84,
+                  14.72
+                ],
+                [
+                  -91.4,
+                  14.63
+                ],
+                [
+                  -91.0,
+                  14.53
+                ],
+                [
+                  -90.54,
+                  14.58
+                ],
+                [
+                  -90.15,
+                  14.72
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                27,
+                29
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -90.2,
+                  20.9
+                ],
+                [
+                  -89.6,
+                  21.18
+                ],
+                [
+                  -88.2,
+                  21.4
+                ],
+                [
+                  -87.35,
+                  21.3
+                ],
+                [
+                  -87.5,
+                  20.4
+                ],
+                [
+                  -88.2,
+                  19.8
+                ],
+                [
+                  -89.6,
+                  19.7
+                ],
+                [
+                  -90.5,
+                  19.6
+                ],
+                [
+                  -90.3,
+                  20.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                29,
+                29
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -89.42,
+                  16.95
+                ],
+                [
+                  -89.39,
+                  17.19
+                ],
+                [
+                  -89.61,
+                  17.36
+                ],
+                [
+                  -89.9,
+                  17.4
+                ],
+                [
+                  -90.15,
+                  17.31
+                ],
+                [
+                  -90.38,
+                  17.18
+                ],
+                [
+                  -90.52,
+                  16.95
+                ],
+                [
+                  -90.34,
+                  16.74
+                ],
+                [
+                  -90.16,
+                  16.58
+                ],
+                [
+                  -89.9,
+                  16.5
+                ],
+                [
+                  -89.6,
+                  16.53
+                ],
+                [
+                  -89.43,
+                  16.73
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Ruled from": "Cuba, then Mexico City and Santiago de Guatemala",
+          "Today": "Mexico and Guatemala, independent since 1821"
+        },
+        "rulers": [
+          {
+            "from": 25,
+            "text": "Charles I of Spain (the emperor Charles V)"
+          },
+          {
+            "from": 28,
+            "text": "Philip II"
+          },
+          {
+            "from": 29,
+            "text": "Charles II"
+          }
+        ],
+        "role": "Expeditions from Cuba and Mexico that became the colonies of New Spain and Guatemala.",
+        "ties": [
+          {
+            "from": 27,
+            "text": "Allied with the Xiu of Maní"
+          }
+        ]
+      },
+      {
+        "id": "cruzob",
+        "name": "The rebels of the Talking Cross",
+        "native": "Cruzo’ob",
+        "lang": "yua",
+        "color": "#d9432a",
+        "active": [
+          [
+            31,
+            31
+          ]
+        ],
+        "label": {
+          "text": "Rebel Maya",
+          "at": [
+            -88.35,
+            20.3
+          ]
+        },
+        "area": [
+          [
+            -88.8,
+            20.6
+          ],
+          [
+            -87.75,
+            20.75
+          ],
+          [
+            -87.55,
+            20.2
+          ],
+          [
+            -87.75,
+            19.6
+          ],
+          [
+            -87.9,
+            19.0
+          ],
+          [
+            -88.3,
+            18.6
+          ],
+          [
+            -88.8,
+            19.0
+          ],
+          [
+            -89.0,
+            19.8
+          ]
+        ],
+        "facts": {
+          "Capital": "Chan Santa Cruz",
+          "Today": "Quintana Roo, Mexico"
+        },
+        "rulers": [
+          {
+            "from": 31,
+            "text": "Leaders who spoke for the Talking Cross"
+          }
+        ],
+        "role": "Maya rebels who held eastern Yucatán for half a century.",
+        "ties": [
+          {
+            "from": 31,
+            "text": "Trade with British Honduras for guns"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "sihyaj-kahk",
+        "name": "Sihyaj K’ahk’",
+        "native": "Sihyaj K’ahk’",
+        "life": "active in 378",
+        "role": "Warlord who arrived at Tikal",
+        "steps": [
+          5
+        ],
+        "text": "His name means fire is born. Inscriptions at Tikal, Waka’, Uaxactun and other cities record his arrival in 378 and the kings installed under his authority. He is linked to Spearthrower Owl, perhaps a ruler of Teotihuacan. Who he served, and whether he came from Teotihuacan itself, is debated."
+      },
+      {
+        "id": "yax-kuk-mo",
+        "name": "K’inich Yax K’uk’ Mo’",
+        "native": "K’inich Yax K’uk’ Mo’",
+        "life": "ruled 426 to about 437",
+        "role": "Founder of Copán’s dynasty",
+        "steps": [
+          6,
+          15
+        ],
+        "text": "His name means sun-eyed green quetzal macaw. Copán’s later kings counted from him and built temple over temple above his tomb, which archaeologists found in the 1990s. His bones show healed injuries, perhaps from war or the ballgame. Altar Q shows him handing the staff of office to Copán’s sixteenth king, centuries later."
+      },
+      {
+        "id": "yuknoom-cheen",
+        "name": "Yuknoom Ch’een II",
+        "native": "Yuknoom Ch’een",
+        "life": "ruled 636 to 686",
+        "role": "King of the Snake kingdom at Calakmul",
+        "steps": [
+          8,
+          10,
+          11
+        ],
+        "text": "Called Yuknoom the Great by modern scholars, he ruled for fifty years. Inscriptions across the lowlands name him as overlord: he oversaw the crowning of kings at Cancuén and elsewhere, took Dos Pilas as a vassal and made alliances by marriage. Under him Calakmul was the strongest kingdom of its day, though Tikal was never subdued for good."
+      },
+      {
+        "id": "pakal",
+        "name": "K’inich Janaab Pakal",
+        "native": "K’inich Janaab Pakal",
+        "life": "603 to 683",
+        "role": "King of Palenque from 615",
+        "steps": [
+          9
+        ],
+        "text": "Pakal came to the throne at twelve, after his mother, Sak K’uk’, had ruled for three years. His carved sarcophagus lid shows him at the moment of death, between the underworld and the world tree. His tomb held a mosaic mask of jade, shell and obsidian, stolen from Mexico’s national museum in 1985 and recovered in 1989."
+      },
+      {
+        "id": "bajlaj",
+        "name": "Bajlaj Chan K’awiil",
+        "native": "Bajlaj Chan K’awiil",
+        "life": "625 to about 692",
+        "role": "King of Dos Pilas",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "A prince of Tikal’s royal family, sent perhaps to hold the Petexbatún region for Tikal. Defeated by Calakmul in 648, he served Calakmul for the rest of his life. His hieroglyphic stairway at Dos Pilas tells of his exile, his return and his victory over Tikal in 679. His daughter, Lady Six Sky, went to Naranjo."
+      },
+      {
+        "id": "lady-six-sky",
+        "name": "Lady Six Sky",
+        "native": "Ix Wak Chan Ajaw",
+        "life": "died 741",
+        "role": "Queen at Naranjo",
+        "steps": [
+          11
+        ],
+        "text": "Daughter of Bajlaj Chan K’awiil of Dos Pilas, she came to Naranjo in 682 and refounded its dynasty. She held power while her young son, K’ahk’ Tiliw Chan Chaak, was king. Stelae show her standing over a bound captive in a warrior’s pose, an image usually kept for kings."
+      },
+      {
+        "id": "jasaw",
+        "name": "Jasaw Chan K’awiil I",
+        "native": "Jasaw Chan K’awiil",
+        "life": "ruled 682 to about 734",
+        "role": "King of Tikal",
+        "steps": [
+          12
+        ],
+        "text": "Son of Nuun Ujol Chaak, he came to the throne after his father’s defeats and in 695 beat Calakmul. He rebuilt Tikal’s Great Plaza and was buried beneath Temple I with jade, shell and carved bones. His son, Yik’in Chan K’awiil, went on to defeat other allies of Calakmul."
+      },
+      {
+        "id": "kabal-xook",
+        "name": "Lady K’abal Xook",
+        "native": "Ix K’abal Xook",
+        "life": "died 749",
+        "role": "Queen of Yaxchilan",
+        "steps": [
+          13
+        ],
+        "text": "Chief wife of Itzamnaaj Bahlam III, she was honoured with her own temple, Structure 23, whose lintels show her rituals. On one she pulls a thorned rope through her tongue; on another a vision serpent rises before her, with a warrior in its jaws. Few Maya queens are shown so prominently."
+      },
+      {
+        "id": "eighteen-rabbit",
+        "name": "Waxaklajuun Ub’aah K’awiil",
+        "native": "Waxaklajuun Ub’aah K’awiil",
+        "life": "ruled 695 to 738",
+        "role": "King of Copán",
+        "steps": [
+          14,
+          15
+        ],
+        "text": "His name means eighteen are the images of K’awiil; 18 Rabbit comes from an early misreading. Copán’s thirteenth king, he set up the great stelae of its plaza and rebuilt the ballcourt. His capture and beheading by Quiriguá, once a vassal, shook Copán, which raised no monuments for some years."
+      },
+      {
+        "id": "kiqab",
+        "name": "K’iq’ab",
+        "native": "K’iq’ab",
+        "lang": "quc",
+        "life": "15th century",
+        "role": "King of the K’iche’",
+        "steps": [
+          23
+        ],
+        "text": "Remembered in highland histories as the greatest K’iche’ king, he spread K’iche’ power across much of the highlands. In his old age a revolt by his own sons and lords weakened him, and the Kaqchikel lords left to found their own capital at Iximche."
+      },
+      {
+        "id": "guerrero",
+        "name": "Gonzalo Guerrero",
+        "native": "Gonzalo Guerrero",
+        "lang": "es",
+        "life": "died 1536?",
+        "role": "Spanish sailor who joined the Maya",
+        "steps": [
+          25
+        ],
+        "text": "Shipwrecked in 1511, he was enslaved, then became a war leader for the lord of Chetumal, married a Maya noblewoman and had children. In 1519, according to Bernal Díaz, he refused Cortés’s call to rejoin the Spanish, saying his face was tattooed and his ears pierced. He is thought to have died fighting the Spanish in Honduras."
+      },
+      {
+        "id": "tecun-uman",
+        "name": "Tecún Umán",
+        "native": "Tecún Umán",
+        "lang": "es",
+        "life": "died 1524, in tradition",
+        "role": "K’iche’ hero",
+        "steps": [
+          26
+        ],
+        "text": "K’iche’ accounts written after the conquest tell that Tecún Umán led their army at Xelajú and was killed by Alvarado in single combat; tradition adds that a quetzal fell on his body, staining its breast red. Alvarado’s own letters do not name him. Guatemala declared him a national hero in 1960."
+      },
+      {
+        "id": "landa",
+        "name": "Diego de Landa",
+        "native": "Diego de Landa",
+        "lang": "es",
+        "life": "1524 to 1579",
+        "role": "Franciscan friar, later bishop of Yucatán",
+        "steps": [
+          28,
+          32
+        ],
+        "text": "Landa came to Yucatán in 1549 and learned Yucatec Maya. After the inquisition of 1562 he was sent to Spain to answer charges of exceeding his authority, and was cleared. There he wrote an account of Yucatán, with a mistaken Maya alphabet that, found again in 1862, helped decipher the script. He returned as bishop in 1573."
+      },
+      {
+        "id": "kan-ek",
+        "name": "Ajaw Kan Ek’",
+        "native": "Ajaw Kan Ek’",
+        "lang": "itz",
+        "life": "ruled in the 1690s",
+        "role": "Last king of the Itza",
+        "steps": [
+          29
+        ],
+        "text": "Spanish envoys and friars visited him in the 1690s, and at times he seemed ready to accept Spanish rule and Christianity, while other Itza lords resisted. After Nojpetén fell he was taken to Santiago de Guatemala, the colonial capital, and held there; little is known of his later life."
+      },
+      {
+        "id": "stephens",
+        "name": "John Lloyd Stephens",
+        "native": "John Lloyd Stephens",
+        "lang": "en",
+        "life": "1805 to 1852",
+        "role": "American writer and diplomat",
+        "steps": [
+          30
+        ],
+        "text": "Sent as a US envoy to Central America, Stephens spent much of his mission among ruins. With Frederick Catherwood he visited Copán, Palenque, Uxmal and dozens of other sites, and his travel books became bestsellers. He later helped build the Panama Railroad, and died of a fever caught there."
+      },
+      {
+        "id": "knorozov",
+        "name": "Yuri Knorozov",
+        "native": "Юрий Кнорозов",
+        "lang": "ru",
+        "life": "1922 to 1999",
+        "role": "Soviet linguist",
+        "steps": [
+          32
+        ],
+        "text": "Knorozov did not visit a Maya site until 1990. Working in Leningrad from published copies of the three codices then known, and Landa’s notes, he argued in 1952 that Maya writing mixed word signs and syllables. Cold War suspicion delayed his acceptance in the West, but his method became the basis of decipherment."
+      },
+      {
+        "id": "proskouriakoff",
+        "name": "Tatiana Proskouriakoff",
+        "native": "Татьяна Проскурякова",
+        "lang": "ru",
+        "life": "1909 to 1985",
+        "role": "Architect and Maya scholar",
+        "steps": [
+          32
+        ],
+        "text": "Born in Russia and trained as an architect in the United States, she began by drawing reconstructions of Maya cities. Studying the stelae of Piedras Negras, she noticed groups of dates that fit the lifetimes of single rulers, and in 1960 showed that they recorded history. Her ashes were buried at Piedras Negras in 1998."
+      },
+      {
+        "id": "menchu",
+        "name": "Rigoberta Menchú",
+        "native": "Rigoberta Menchú",
+        "lang": "es",
+        "life": "born 1959",
+        "role": "K’iche’ campaigner for Indigenous rights",
+        "steps": [
+          34
+        ],
+        "text": "A K’iche’ woman from Chimel, near Uspantán, she lost her father, mother and a brother to violence in the civil war. Her book of testimony, I, Rigoberta Menchú (1983), told the world of the killings, though some details were later disputed. In 1992 she received the Nobel Peace Prize for her work for Indigenous rights."
+      }
+    ]
+  }
+}

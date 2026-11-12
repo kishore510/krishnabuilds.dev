@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.20.0
+
+- New story map in Chronicles: The Maya. From Aguada Fénix, the oldest Maya monument, El Mirador, the San Bartolo murals and highland Kaminaljuyu, through the Classic kingdoms (Tikal's first dated stela, the arrival of Sihyaj K'ahk' in 378, Copán's founder, Tikal's defeat in 562, Calakmul and the Snake kingdom, Pakal of Palenque, Dos Pilas, Lady Six Sky of Naranjo, Tikal's victory of 695, the Yaxchilan lintels, the beheading of 18 Rabbit, Copán's Hieroglyphic Stairway and the Bonampak murals), the southern collapse and the last Long Count date in 909, to Uxmal, Chichen Itza, Mayapan, Tulum, the K'iche' and the Popol Vuh, Columbus's trading canoe, the Spanish conquest from Champotón to the burning of the books at Maní and the fall of Nojpetén in 1697, and what remains: Stephens and Catherwood, the Caste War, the decipherment, the 2018 lidar survey and the Maya today. 35 chapters, a Powers layer that changes chapter by chapter, and 18 people cards.
+- Mesoamerica map: Lake Petén Itzá, drawn by hand around the island of Nojpetén (Flores).
+- Catalogue: the Maya civilisation now opens the story; new entries for the fall of Nojpetén (an event) and, in legends, the Popol Vuh.
+- Art: new place glyphs (a Maya temple with a roof comb, a ballcourt) and travellers (a Maya warrior and a trading canoe).
+
 ## 0.19.0
 
 - New story map in Chronicles: The Aztec Empire, the first in the Americas. From the migration out of Aztlan, the Seven Caves and Serpent Hill, through Chapultepec, Culhuacan and the eagle on the cactus (Tenochtitlan, by tradition 1325), the Tepanecs, the chinampas and Teotihuacan, the Triple Alliance of 1428 (Itzcoatl, Nezahualcoyotl, Moctezuma I, the flowery wars, the Purépecha, the Great Temple, Soconusco and the empire of tribute), to the Spanish conquest from Cozumel and Malintzin to Cholula, the Sad Night, smallpox and the fall of Tenochtitlan in 1521, and what remains: 34 chapters, a Powers layer that changes chapter by chapter, and 15 people cards.
