@@ -1,0 +1,8 @@
+# The Vedic Age
+
+Status: built. The Vedic age, from the roots of Vedic Sanskrit (the Indo-European family, the Swat graves, the Sinauli carts and the Mitanni treaty of about 1380 BCE) through the Rigveda's land of seven rivers (the fire ritual and soma, Indra, Vishvamitra and the rivers, the Battle of the Ten Kings, the Sarasvati), the Kuru kingdom, the four Vedas, Painted Grey Ware, iron and the plough, the four varnas and the horse sacrifice, the fire carried east to Videha, Janaka's court, Pravahana Jaivali and Uddalaka Aruni in the Upanishads, the move to Kaushambi, to the sixteen great kingdoms and the teachers who questioned the sacrifice, and the living tradition: Sayana at Vijayanagara, Max Müller's printed Rigveda, the Pune manuscripts and the 1975 agnicayana at Panjal. 26 chapters, a **Lands** layer that changes chapter by chapter, and 12 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes show only for the current chapter.
+- Source: stories the hymns, Brahmanas, Upanishads and Puranas tell are **Tradition**; what the texts describe of daily life and society is **History**, as are the treaty, the great kingdoms and the modern record; Sinauli, Painted Grey Ware, iron and the Swat graves are **Archaeology**.
+- Native names are in Sanskrit (`sa`), in Devanagari.
+- Dates for the Vedic texts are the usual ranges and are debated. How Vedic Sanskrit reached South Asia is debated, and the cards say so. The Sarasvati's identity is debated and the river is not drawn, as in The Indus Cities. Lands areas are loose regions, not borders.

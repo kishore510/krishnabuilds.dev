@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.17.0
+
+- New story map in Chronicles: The Vedic Age. From the Indo-European roots of Vedic Sanskrit, the Sinauli carts and the Mitanni treaty's Vedic gods, through the Rigveda's land of seven rivers (fire and soma, Indra, Vishvamitra and the rivers, the Battle of the Ten Kings, the Sarasvati), the Kuru kingdom, the four Vedas, Painted Grey Ware, iron, varna and the horse sacrifice, the fire carried east to Videha, Janaka's court and the Upanishads, to the sixteen great kingdoms, the Buddha and Mahavira, Sayana's commentary, Max Müller's printed Rigveda and the 1975 agnicayana at Panjal: 26 chapters, a Lands layer that changes chapter by chapter, and 12 people cards.
+- Catalogue: the Vedic period now opens the story, and a new legend entry, the Battle of the Ten Kings, links to it.
+
 ## 0.16.0
 
 - New story map in Chronicles: Pharaonic Egypt. From the standing stones of Nabta Playa, about 5000 BCE, and the first writing at Abydos, through the unification, the pyramids of Saqqara and Giza and the town that fed their builders, the Middle Kingdom's Nubian forts and the first alphabet, the Hyksos, Hatshepsut, Megiddo, Amarna, Kadesh and Abu Simbel, to Kush, Persia, Alexander, the Ptolemies and the last hieroglyphs at Philae, and the rediscovery from the Rosetta Stone to the Grand Egyptian Museum: 29 chapters, a Powers layer that changes chapter by chapter, and 17 people cards.
