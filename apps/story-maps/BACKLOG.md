@@ -11,7 +11,6 @@ Suggested after those. These fit a map that already exists, so each is one sessi
 - The Sikh Empire (`south-asia`)
 - The Deccan Sultanates (`south-asia`)
 - The Chalukyas and Rashtrakutas (`south-asia`)
-- Harsha (`south-asia`)
 - The Palas (`south-asia`)
 - Mysore under Haidar Ali and Tipu Sultan (`south-asia`)
 - The Hittites (`near-east`)
@@ -33,6 +32,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Harsha’s Empire (`harsha`), 2026-11-13
 - The Silk Road (`silk-road`), 2026-11-13
 - The Vakataka Dynasty (`vakataka`), 2026-11-13
 - The Pallavas (`pallava`), 2026-11-13

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.42.0
+
+- New story map in Chronicles: Harsha’s Empire. From the Pushyabhutis of Thanesar, Rajyashri’s marriage to the Maukhari Grahavarman and the death of Prabhakaravardhana, through the murder at Kannauj, Rajyavardhana’s fall, Harsha’s accession, the Kamarupa alliance and the rescue in the Vindhya forest, to the move to Kannauj, the war with Valabhi, the stand on the Narmada against Pulakeshin II, Shashanka of Gauda and the Banskhera copper plate, Xuanzang at Nalanda, Kajangala, the assemblies of Kannauj and Prayag, Harsha’s plays, the Tang envoys, the usurper Aluonashun and the fight over Kannauj afterwards. 21 chapters, a Powers layer (the Pushyabhutis, Maukharis, Gauda, Kamarupa, the Chalukyas of Vatapi and the Maitrakas of Valabhi) and 10 people cards.
+- Catalogue: the Harsha’s empire entry now opens the story.
+
 ## 0.41.0
 
 - New story map in Chronicles: The Silk Road. From Zhang Qian’s mission west in 139 or 138 BCE, the Jade Gate at Dunhuang and the war for Ferghana’s heavenly horses, through silk in Rome, Palmyra’s caravans, Sogdian merchants, Kumarajiva of Kucha, the smuggled silkworms, Xuanzang’s journey and Tang Chang’an, to the battle of Talas, paper in Baghdad, the sealed library at Dunhuang, William of Rubruck at Karakorum, Marco Polo, plague at Caffa, Clavijo at Samarkand and the turn to the sea. 19 chapters, a Powers layer (Han and Tang China, Rome, Parthia, the Kushans, Sasanian Persia, Byzantium, the Abbasids, the Mongols and Timur) and 4 people cards.
