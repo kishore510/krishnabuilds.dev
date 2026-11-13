@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.37.0
+
+- New story map in Chronicles: The Kalinga War. From the coastal land of Kalinga and Sisupalgarh, the Nandas’ hold on it and Pliny’s count of its army, through Ashoka’s march south and the battle by the Daya (tradition), the Thirteenth Rock Edict at Kalsi and in Greek at Kandahar, the special edicts at Dhauli and Jaugada that leave the confession out and Ashoka’s turn to the Buddha, to Kharavela’s inscription at Udayagiri and his march on Magadha, Prinsep’s reading of the Dhauli edicts and the Shanti Stupa. 13 chapters, a Powers layer (the Maurya Empire, Kalinga and the Satavahanas) and 4 people cards.
+- Catalogue: the Kalinga War entry now opens the story.
+
 ## 0.36.0
 
 - New story map in Chronicles: The Shunga Dynasty. From Pushyamitra’s killing of the last Maurya about 185 BCE, the two horse sacrifices and Agnimitra at Vidisha, through the Greek siege of Saketa, the horse on the Sindhu, Menander at Sagala and the Divyavadana’s persecution story, to Sanchi and Bharhut, Heliodorus’s pillar, the Kanvas, and Bharhut’s railing in Calcutta. 12 chapters, a Powers layer (the Shunga kingdom, the Kanvas, the Indo-Greek kingdoms and Vidarbha) and 8 people cards.
