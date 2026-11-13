@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.36.0
+
+- New story map in Chronicles: The Shunga Dynasty. From Pushyamitra’s killing of the last Maurya about 185 BCE, the two horse sacrifices and Agnimitra at Vidisha, through the Greek siege of Saketa, the horse on the Sindhu, Menander at Sagala and the Divyavadana’s persecution story, to Sanchi and Bharhut, Heliodorus’s pillar, the Kanvas, and Bharhut’s railing in Calcutta. 12 chapters, a Powers layer (the Shunga kingdom, the Kanvas, the Indo-Greek kingdoms and Vidarbha) and 8 people cards.
+- Catalogue: the Shunga dynasty entry now opens the story, and a new Kanva dynasty entry opens it at chapter 11.
+
 ## 0.35.0
 
 - New story map in Chronicles: The Mahajanapadas and the Buddha. From the sixteen great kingdoms of the Ganga plain, Gandhara under Persia and the first coins, through Udayana and Vasavadatta, the republics and Mahavira, to the Buddha’s life from Lumbini to Kushinagar, the first council, Magadha swallowing its rivals and Bodh Gaya today. 23 chapters, a Powers layer (Magadha growing, Kosala, Vatsa, Avanti, the Vajjis and Gandhara) and 5 people cards.
