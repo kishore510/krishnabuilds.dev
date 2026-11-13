@@ -6,10 +6,6 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-Agreed order (see `docs/plan.md`):
-
-1. The Silk Road (`silk-road`, already on the hub as coming soon; `world` map)
-
 Suggested after those. These fit a map that already exists, so each is one session:
 
 - The Sikh Empire (`south-asia`)
@@ -37,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Silk Road (`silk-road`), 2026-11-13
 - The Vakataka Dynasty (`vakataka`), 2026-11-13
 - The Pallavas (`pallava`), 2026-11-13
 - The Kushan Empire (`kushan`), 2026-11-13
