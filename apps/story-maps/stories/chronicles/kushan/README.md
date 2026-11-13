@@ -1,0 +1,8 @@
+# The Kushan Empire
+
+Status: built. The Kushan Empire, about 130 BCE to 375 CE: the Yuezhi reaching Bactria, Kujula Kadphises uniting the five chiefdoms, Gandhara, Wima Kadphises's gold and Shiva, Kanishka's Rabatak inscription, Bala's Bodhisattva at Sarnath, the great stupa at Purushapura, the fourth council, Gandhara and Mathura sculpture, the Begram treasure, Vasudeva, the Sasanian conquest of Bactria and the Allahabad pillar. 13 chapters, a **Powers** layer (the Yuezhi, the Kushans, the Indo-Parthians, the Western Kshatrapas, the Satavahanas, the Sasanians and the Guptas) and 6 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes show only for the current chapter. Bactria proper and the Indus mouth lie just beyond the west edge, so routes arrive from hidden waypoints there.
+- Source: Chinese histories, the Shapur and Allahabad inscriptions and Kushan coins read for events are **History**; the Rabatak, Mat and Sarnath inscriptions, the Peshawar casket, Gandhara and Mathura sculpture and the Begram hoard are **Archaeology**; the fourth council and Ashvaghosha at Kanishka's court are **Tradition**.
+- Native names are in Sanskrit (`sa`), with Chinese (`zh`) for Zhang Qian.
+- Disputed: almost every Kushan date, above all the start of Kanishka's era (127 CE now usual; 78 CE, the Shaka era, once favoured); whether the Rabatak list means rule or raids as far as Pataliputra and Champa; the Kushans' relation to the Yuezhi's five chiefdoms; whether the Gandhara or Mathura school made the first Buddha image; where the fourth council met; whether Bodiao is Vasudeva; who the Daivaputra Shahi Shahanushahi were. Powers areas are loose regions, not borders.

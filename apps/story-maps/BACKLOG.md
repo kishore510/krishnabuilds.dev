@@ -12,7 +12,6 @@ Agreed order (see `docs/plan.md`):
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
-- The Kushans (`south-asia`; Bactria arrives from beyond the map edge)
 - The Sikh Empire (`south-asia`)
 - The Deccan Sultanates (`south-asia`)
 - The Pallavas (`south-asia`)
@@ -39,6 +38,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Kushan Empire (`kushan`), 2026-11-13
 - The Kalinga War (`kalinga`), 2026-11-13
 - The Shunga Dynasty (`shunga`), 2026-11-13
 - The Mahajanapadas and the Buddha (`mahajanapadas`), 2026-11-13
