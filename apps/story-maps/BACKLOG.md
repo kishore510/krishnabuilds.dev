@@ -37,6 +37,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Vakataka Dynasty (`vakataka`), 2026-11-13
 - The Pallavas (`pallava`), 2026-11-13
 - The Kushan Empire (`kushan`), 2026-11-13
 - The Kalinga War (`kalinga`), 2026-11-13

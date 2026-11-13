@@ -1,0 +1,8 @@
+# The Vakataka Dynasty
+
+Status: built. The Vakataka dynasty of the northern Deccan, from about 250 to about 500 CE: Vindhyashakti and a homeland nobody can place, Pravarasena I’s horse sacrifices and the Bharashiva marriage, the split into two branches, Samudragupta’s pillar, Prabhavatigupta’s marriage and regency and her seal at Nagardhan, Ramagiri and Kalidasa’s cloud, Pravarasena II’s new capital and the Setubandha, the dated lake at Hisse Borala, the Nala raid, Vyaghradeva at Nachna, Harishena and the painted caves of Ajanta, the end of the line and John Smith’s tiger hunt in 1819. 20 chapters, a **Powers** layer (the two Vakataka lines, the Guptas, the Western Kshatrapas, the Nagas of Padmavati, the Nalas and the Vishnukundins) and 8 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes show only for the current chapter.
+- Source: copper-plate grants, cave and stone inscriptions and excavations are **Archaeology**; the Puranas’ king lists and dynastic history read from the grants are **History**; Kalidasa’s link with the court and the Setubandha’s authorship are **Tradition**.
+- Native names are in Sanskrit (`sa`), in Devanagari.
+- Where the family came from, the dates of nearly every king, the identification of Rudradeva, Kanchanaka and Pravarapura, the extent of Harishena’s conquests and how the dynasty ended are all debated; the cards say so where it matters. Ajanta’s chronology follows Walter Spink’s short chronology as one view among several. Powers areas are loose regions, not borders.

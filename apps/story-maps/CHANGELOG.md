@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.40.0
+
+- New story map in Chronicles: The Vakataka Dynasty. From Vindhyashakti and a homeland nobody can place, Pravarasena I’s horse sacrifices and the Bharashiva marriage, through the split into two branches, Samudragupta’s pillar, Prabhavatigupta’s marriage and regency and her seal at Nagardhan, Ramagiri and Kalidasa’s cloud, Pravarasena II’s new capital and the Setubandha, to the dated lake at Hisse Borala, the Nala raid, Vyaghradeva at Nachna, Harishena and the painted caves of Ajanta, the end of the line and John Smith’s tiger hunt in 1819. 20 chapters, a Powers layer (the two Vakataka lines, the Guptas, the Western Kshatrapas, the Nagas of Padmavati, the Nalas and the Vishnukundins) and 8 people cards.
+- Catalogue: the Vakataka dynasty entry now opens the story.
+
 ## 0.39.0
 
 - New story map in Chronicles: The Pallavas. From the first Prakrit copper plates of Kanchi, Samudragupta’s pillar at Prayag and the Kadamba founder who left Kanchi’s college for the sword, through Simhavishnu’s revival, Mahendravarman’s cave temples and farce, Xuanzang in Kanchi, the long war with the Chalukyas of Badami and Narasimhavarman’s taking of Vatapi, to Rajasimha’s Shore Temple and Kailasanatha, the envoy to the Tang, Nandivarman II, the poet-saints, the battle of Sripurambiyam and the last Pallava king about 897, and the script that crossed the sea. 24 chapters, a Powers layer (the Pallavas, Guptas, Kadambas, Chalukyas of Badami, Rashtrakutas, Pandyas and Cholas) and 7 people cards.
