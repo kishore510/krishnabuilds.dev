@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.38.0
+
+- New story map in Chronicles: The Kushan Empire. From the Yuezhi nomads reaching Bactria about 130 BCE, Kujula Kadphises uniting the five chiefdoms and taking Gandhara, and Wima Kadphises’s gold coins, through Kanishka’s Rabatak inscription, Bala’s Bodhisattva at Sarnath, the great stupa at Purushapura and the fourth council (tradition), to Gandhara and Mathura art, the Begram treasure, Vasudeva, the Sasanian conquest of Bactria and the Allahabad pillar. 13 chapters, a Powers layer (the Yuezhi, the Kushans, the Indo-Parthians, the Western Kshatrapas, the Satavahanas, the Sasanians and the Guptas) and 6 people cards.
+- Catalogue: the Kushan Empire entry now opens the story.
+
 ## 0.37.0
 
 - New story map in Chronicles: The Kalinga War. From the coastal land of Kalinga and Sisupalgarh, the Nandas’ hold on it and Pliny’s count of its army, through Ashoka’s march south and the battle by the Daya (tradition), the Thirteenth Rock Edict at Kalsi and in Greek at Kandahar, the special edicts at Dhauli and Jaugada that leave the confession out and Ashoka’s turn to the Buddha, to Kharavela’s inscription at Udayagiri and his march on Magadha, Prinsep’s reading of the Dhauli edicts and the Shanti Stupa. 13 chapters, a Powers layer (the Maurya Empire, Kalinga and the Satavahanas) and 4 people cards.

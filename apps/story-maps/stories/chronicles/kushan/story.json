@@ -1,0 +1,1543 @@
+{
+  "id": "kushan",
+  "title": "The Kushan Empire",
+  "description": "An illustrated map of the Kushan Empire, from the Yuezhi nomads in Bactria about 130 BCE through Kujula, Wima and Kanishka, Gandhara and Mathura art and the Begram treasure, to the Sasanian conquest and the last Kushan kings about 375 CE.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "overview": {
+    "at": [
+      76,
+      30
+    ],
+    "width": 18
+  },
+  "mapLabel": "Illustrated map of the Kushan Empire from Bactria to the Ganges plain, about 130 BCE to 375 CE",
+  "note": "Based on Chinese histories (the Shiji, the Book of the Later Han and the Records of the Three Kingdoms), inscriptions at Rabatak, Mat, Sarnath, Naqsh-e Rustam and Allahabad, coins, and Buddhist tradition recorded by Faxian and Xuanzang; each chapter says which it follows. Kushan dates are disputed. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders.",
+  "places": {
+    "bactria": {
+      "name": "Bactria",
+      "at": [
+        68.86,
+        36.73
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "rabatak": {
+      "name": "Rabatak",
+      "at": [
+        68.75,
+        36.1
+      ],
+      "glyph": "tablet",
+      "label": "right"
+    },
+    "kapisa": {
+      "name": "Kapisa (Begram)",
+      "at": [
+        69.29,
+        34.96
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [
+        72.83,
+        33.75
+      ],
+      "glyph": "brick-city",
+      "label": "bottom"
+    },
+    "mathura": {
+      "name": "Mathura",
+      "at": [
+        77.67,
+        27.49
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "sarnath": {
+      "name": "Sarnath",
+      "at": [
+        83.02,
+        25.38
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "purushapura": {
+      "name": "Purushapura (Peshawar)",
+      "at": [
+        71.57,
+        34
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "kashmir": {
+      "name": "Kashmir",
+      "at": [
+        74.8,
+        34.08
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "takht-i-bahi": {
+      "name": "Takht-i-Bahi",
+      "at": [
+        71.99,
+        34.29
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "prayag": {
+      "name": "Prayag",
+      "at": [
+        81.88,
+        25.43
+      ],
+      "glyph": "pillar",
+      "label": "left"
+    },
+    "north": {
+      "name": "north of the Oxus",
+      "at": [
+        69,
+        38.6
+      ],
+      "glyph": "crown",
+      "label": "right",
+      "hidden": true
+    },
+    "barbarikon": {
+      "name": "Barbarikon",
+      "at": [
+        67.4,
+        24.6
+      ],
+      "glyph": "crown",
+      "label": "right",
+      "hidden": true
+    },
+    "persia": {
+      "name": "Persia",
+      "at": [
+        64.5,
+        35.2
+      ],
+      "glyph": "crown",
+      "label": "right",
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "yuezhi": {
+      "name": "Yuezhi horsemen",
+      "icon": "horse"
+    },
+    "kushans": {
+      "name": "Kushan army",
+      "icon": "soldier"
+    },
+    "statue": {
+      "name": "Bala’s Bodhisattva",
+      "icon": "ox-cart"
+    },
+    "caravan": {
+      "name": "Traders",
+      "icon": "ox-cart"
+    },
+    "sasanians": {
+      "name": "Sasanian army",
+      "icon": "soldier"
+    }
+  },
+  "phases": {
+    "yuezhi": {
+      "name": "From the steppe to Bactria",
+      "color": "#8fcf8a"
+    },
+    "kings": {
+      "name": "The great kings",
+      "color": "#e0573a"
+    },
+    "art": {
+      "name": "Buddhas, stupas and trade",
+      "color": "#f29a2e"
+    },
+    "end": {
+      "name": "Decline",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "yuezhi": {
+      "color": "#5a9a4f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "kushan": {
+      "color": "#d9432a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "statue": {
+      "color": "#8a7560",
+      "width": 3,
+      "dash": "7 5",
+      "cap": "butt"
+    },
+    "caravan": {
+      "color": "#c9a227",
+      "width": 3,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "sasanian": {
+      "color": "#7a4fc0",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 41,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 57,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 67,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "130 BCE"
+      },
+      {
+        "at": 25,
+        "text": "1 CE"
+      },
+      {
+        "at": 48,
+        "text": "127"
+      },
+      {
+        "at": 76,
+        "text": "229"
+      },
+      {
+        "at": 97,
+        "text": "375 CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "bactria",
+      "phase": "yuezhi",
+      "title": "The Yuezhi reach Bactria",
+      "native": "बाह्लीक",
+      "when": "about 130 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          69.5,
+          36.5
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "north",
+          "to": "bactria",
+          "traveller": "yuezhi",
+          "style": "yuezhi",
+          "bend": 0.15
+        }
+      ],
+      "text": "Driven out of western China by the Xiongnu, the Yuezhi, a nomad people, moved west and settled by the Oxus (Amu Darya). Here they mastered Bactria (Daxia), a land of towns once ruled by Greek kings. The Chinese envoy Zhang Qian reached them about 128 BCE; his report survives in Sima Qian’s history, the Shiji.",
+      "today": "Today: northern Afghanistan, with southern Uzbekistan and Tajikistan. Balkh, ancient Bactra, lies just west of this map."
+    },
+    {
+      "place": "kapisa",
+      "phase": "yuezhi",
+      "title": "Kujula unites the five",
+      "native": "कपिशा",
+      "when": "1st century CE",
+      "at": 36,
+      "camera": {
+        "at": [
+          70.6,
+          35.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "The Yuezhi split into five chiefdoms. According to the Chinese Book of the Later Han, Kujula Kadphises, chief of the Guishuang (Kushan), conquered the other four and made himself king, then crossed the Hindu Kush and took the Kabul valley. His copper coins copy the last Greek king here, Hermaeus. His dates are disputed.",
+      "today": "Today: Begram, north of Kabul, Afghanistan. The site lies beside the Bagram air base."
+    },
+    {
+      "place": "taxila",
+      "phase": "yuezhi",
+      "title": "Into Gandhara",
+      "native": "तक्षशिला",
+      "when": "later 1st century CE",
+      "at": 40,
+      "camera": {
+        "at": [
+          71,
+          34.5
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "kapisa",
+          "to": "taxila",
+          "traveller": "kushans",
+          "style": "kushan",
+          "bend": 0.15
+        }
+      ],
+      "text": "Gandhara was held by Indo-Parthian kings, among them Gondophares. Kujula’s Kushans took it from them, and his coins are found in great numbers at Taxila. Some of Kujula’s coins show a head copied from a Roman emperor’s. The Book of the Later Han says he lived past eighty, and his son went on to conquer India.",
+      "today": "Today: Taxila, Punjab, Pakistan, a World Heritage Site with three ancient cities: Bhir Mound, Sirkap and Sirsukh."
+    },
+    {
+      "place": "mathura",
+      "phase": "kings",
+      "title": "Gold and Shiva",
+      "native": "मथुरा",
+      "when": "about 100 CE (dates disputed)",
+      "at": 45,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          75,
+          30.5
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "taxila",
+          "to": "mathura",
+          "traveller": "kushans",
+          "style": "kushan",
+          "bend": 0.15
+        }
+      ],
+      "text": "Wima Kadphises carried Kushan rule into India and struck the first Kushan gold coins. Many show Shiva with his bull, and call the king a devotee of Shiva (maheshvara). At Mat, near Mathura, a royal shrine (devakula) held statues of the kings: a seated king inscribed with the name Wima, and a headless standing Kanishka.",
+      "today": "Today: Mathura, Uttar Pradesh. The statues from Mat are in the Government Museum, Mathura."
+    },
+    {
+      "place": "rabatak",
+      "phase": "kings",
+      "title": "Kanishka’s inscription",
+      "when": "about 127 CE",
+      "at": 48,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          69,
+          36.1
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Found in 1993, the Rabatak inscription is in Bactrian, written in Greek letters. Kanishka records his year one, names his great-grandfather Kujula, grandfather Wima Takto and father Wima Kadphises, and lists Indian cities under his rule: Saketa, Kaushambi, Pataliputra and Champa. When year one fell is disputed; 127 CE is the most widely used date.",
+      "today": "Today: Baghlan province, Afghanistan. The inscription went to the National Museum in Kabul."
+    },
+    {
+      "place": "sarnath",
+      "phase": "kings",
+      "title": "A Bodhisattva for Sarnath",
+      "native": "ऋषिपतन",
+      "when": "year 3 of Kanishka",
+      "at": 52,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          81.2,
+          26.2
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "mathura",
+          "to": "sarnath",
+          "traveller": "statue",
+          "style": "statue",
+          "bend": 0.15
+        }
+      ],
+      "text": "In Kanishka’s third year, a monk named Bala set up a tall standing Bodhisattva and a great stone umbrella at Sarnath, where the Buddha first taught. The statue is red sandstone carved at Mathura and carried over 500 kilometres east. It shows how far Kushan rule and Kushan art reached down the Ganges plain.",
+      "today": "Today: Sarnath, near Varanasi, Uttar Pradesh. Bala’s Bodhisattva is in the Sarnath Museum."
+    },
+    {
+      "place": "purushapura",
+      "phase": "kings",
+      "title": "Kanishka’s great stupa",
+      "native": "पुरुषपुर",
+      "when": "2nd century CE",
+      "at": 54,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          72,
+          34
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "At Purushapura, Kanishka built a great stupa. Chinese pilgrims, Faxian about 400 CE and Xuanzang about 630, describe it as among the tallest buildings they saw. In 1908 and 1909 excavators at Shah-ji-ki-Dheri found its relic casket. The lid shows the Buddha; the side shows a king, read as Kanishka. The inscription names Kanishka.",
+      "today": "Today: Peshawar, Pakistan. The casket is in the Peshawar Museum; its relics were sent to Mandalay, Myanmar."
+    },
+    {
+      "place": "kashmir",
+      "phase": "kings",
+      "title": "The fourth council",
+      "native": "कश्मीर",
+      "when": "2nd century CE",
+      "at": 56,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          74.5,
+          34
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Buddhist tradition, recorded by Xuanzang, says Kanishka called a council of monks in Kashmir, led by Vasumitra, to settle the teaching of the Sarvastivada school; its commentaries were written on copper sheets. Another tradition places the council at Jalandhar. The poet Ashvaghosha is traditionally placed at Kanishka’s court. No inscription records the council.",
+      "today": "Today: the Kashmir valley around Srinagar. Where the council met is not known."
+    },
+    {
+      "place": "takht-i-bahi",
+      "phase": "art",
+      "title": "Buddhas in stone",
+      "when": "1st to 3rd centuries CE",
+      "at": 58,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          72,
+          34.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Under the Kushans, sculptors made some of the earliest images of the Buddha in human form. In Gandhara they carved grey schist with Greek and Roman touches: wavy hair, draped robes. At Mathura they used red sandstone in an Indian style. Which school came first is disputed. Monasteries such as Takht-i-Bahi were filled with such work.",
+      "today": "Today: Takht-i-Bahi, near Mardan, Pakistan, a World Heritage Site and among Gandhara’s best-kept monasteries."
+    },
+    {
+      "place": "kapisa",
+      "phase": "art",
+      "title": "The Begram treasure",
+      "native": "कपिशा",
+      "when": "1st to 2nd centuries CE",
+      "at": 62,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          70,
+          30
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "barbarikon",
+          "to": "kapisa",
+          "traveller": "caravan",
+          "style": "caravan",
+          "bend": 0.2
+        }
+      ],
+      "text": "In 1937 to 1939, French archaeologists at Begram opened two sealed rooms full of goods: carved Indian ivories, Roman glass and bronzes, and Chinese lacquer. Kushan lands sat where trade routes from India, China and Rome met. Western goods often came by sea to Barbarikon, at the mouth of the Indus, and north from there.",
+      "today": "Today: Begram, Afghanistan. Pieces are in the National Museum in Kabul and the Musée Guimet in Paris."
+    },
+    {
+      "place": "mathura",
+      "phase": "end",
+      "title": "Vasudeva, the last great king",
+      "native": "वासुदेव",
+      "when": "about 190 to 230 CE",
+      "at": 72,
+      "camera": {
+        "at": [
+          77.5,
+          28
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "After Huvishka came Vasudeva, the first Kushan king with an Indian name. His coins show Shiva, and his inscriptions are found mostly around Mathura. In 229 CE, says China’s Records of the Three Kingdoms, a king of the Great Yuezhi named Bodiao, usually taken to be Vasudeva, sent an envoy to the Wei court.",
+      "today": "Today: Mathura, Uttar Pradesh. Kushan coins and sculpture fill the Government Museum, Mathura."
+    },
+    {
+      "place": "bactria",
+      "phase": "end",
+      "title": "The Sasanians take Bactria",
+      "native": "बाह्लीक",
+      "when": "about 230 to 260 CE",
+      "at": 82,
+      "camera": {
+        "at": [
+          69.4,
+          35.9
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "persia",
+          "to": "bactria",
+          "traveller": "sasanians",
+          "style": "sasanian",
+          "bend": 0.15
+        }
+      ],
+      "text": "In Iran a new dynasty, the Sasanians, overthrew the Parthians in 224 CE and turned east. Shapur I’s inscription at Naqsh-e Rustam claims the Kushan land (Kushanshahr) as far as Peshawar. Sasanian princes then ruled Bactria as Kushan kings (Kushanshahs). Kushan kings kept Gandhara, Punjab and Mathura for a while, in smaller and divided kingdoms.",
+      "today": "Today: northern Afghanistan. Naqsh-e Rustam, with Shapur’s inscription, is near Persepolis in Fars, Iran."
+    },
+    {
+      "place": "prayag",
+      "phase": "end",
+      "title": "Homage to Samudragupta",
+      "native": "प्रयाग",
+      "when": "about 350 to 375 CE",
+      "at": 96,
+      "camera": {
+        "at": [
+          81.9,
+          26
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "On the Allahabad pillar, the court poet Harishena lists the kings who offered homage to Samudragupta, the Gupta emperor. Among them is the ‘Daivaputra Shahi Shahanushahi’: titles that echo the Kushans’ ‘son of god, king of kings’, and usually taken to mean the last Kushan kings of the north-west. Soon after, the Kidarites took Gandhara.",
+      "today": "Today: Prayagraj, Uttar Pradesh. The pillar stands inside Allahabad Fort, closed to most visitors."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "yuezhi",
+        "name": "Yuezhi chiefdoms",
+        "color": "#8a6d3b",
+        "active": [
+          [
+            0,
+            0
+          ]
+        ],
+        "label": {
+          "text": "Yuezhi",
+          "at": [
+            69.4,
+            36.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  37.2
+                ],
+                [
+                  71,
+                  37.2
+                ],
+                [
+                  71,
+                  35.6
+                ],
+                [
+                  69.5,
+                  35.5
+                ],
+                [
+                  68,
+                  35.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "People": "Yuezhi, nomads from western China",
+          "Arrived": "About 130 BCE",
+          "Split into": "Five chiefdoms"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Not named in the sources"
+          }
+        ],
+        "role": "Nomads who settled Bactria between the Oxus and the Hindu Kush.",
+        "ties": []
+      },
+      {
+        "id": "kushan",
+        "name": "Kushan Empire",
+        "native": "कुषाण",
+        "color": "#d9432a",
+        "active": [
+          [
+            1,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Kushan Empire",
+          "at": [
+            69.6,
+            36.4
+          ],
+          "moves": [
+            {
+              "from": 3,
+              "at": [
+                76,
+                31.6
+              ]
+            },
+            {
+              "from": 11,
+              "at": [
+                75.6,
+                30.6
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  37.2
+                ],
+                [
+                  71.5,
+                  37.2
+                ],
+                [
+                  71.8,
+                  35.3
+                ],
+                [
+                  70.8,
+                  34.2
+                ],
+                [
+                  69.2,
+                  33.8
+                ],
+                [
+                  68,
+                  34.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  37.2
+                ],
+                [
+                  71.5,
+                  37.2
+                ],
+                [
+                  72.8,
+                  36
+                ],
+                [
+                  74,
+                  34.6
+                ],
+                [
+                  73.8,
+                  33.2
+                ],
+                [
+                  72.5,
+                  32.8
+                ],
+                [
+                  71.2,
+                  33.6
+                ],
+                [
+                  69.5,
+                  33.5
+                ],
+                [
+                  68,
+                  34.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                3
+              ],
+              [
+                10,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  37.2
+                ],
+                [
+                  71.5,
+                  37.2
+                ],
+                [
+                  72.8,
+                  36
+                ],
+                [
+                  74.5,
+                  34.8
+                ],
+                [
+                  75.7,
+                  32.8
+                ],
+                [
+                  77.4,
+                  30.5
+                ],
+                [
+                  78.2,
+                  28.6
+                ],
+                [
+                  78.4,
+                  27.2
+                ],
+                [
+                  77.2,
+                  26.6
+                ],
+                [
+                  75.8,
+                  27.3
+                ],
+                [
+                  74.4,
+                  29.2
+                ],
+                [
+                  72.2,
+                  30.4
+                ],
+                [
+                  70.6,
+                  31.8
+                ],
+                [
+                  69.5,
+                  33.2
+                ],
+                [
+                  68,
+                  34.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                4,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  37.2
+                ],
+                [
+                  71.5,
+                  37.2
+                ],
+                [
+                  72.8,
+                  36
+                ],
+                [
+                  74.5,
+                  34.8
+                ],
+                [
+                  75.7,
+                  32.8
+                ],
+                [
+                  77.6,
+                  30.6
+                ],
+                [
+                  79.4,
+                  29.2
+                ],
+                [
+                  81.5,
+                  27.9
+                ],
+                [
+                  83.6,
+                  26.6
+                ],
+                [
+                  83.6,
+                  25
+                ],
+                [
+                  81.5,
+                  24.9
+                ],
+                [
+                  79.5,
+                  25.4
+                ],
+                [
+                  78,
+                  26
+                ],
+                [
+                  76.6,
+                  26.6
+                ],
+                [
+                  75.2,
+                  27.5
+                ],
+                [
+                  74,
+                  29.2
+                ],
+                [
+                  72.2,
+                  30.4
+                ],
+                [
+                  70.6,
+                  31.8
+                ],
+                [
+                  69.5,
+                  33.2
+                ],
+                [
+                  68,
+                  34.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.6,
+                  34.6
+                ],
+                [
+                  72.8,
+                  35.4
+                ],
+                [
+                  74.5,
+                  34.8
+                ],
+                [
+                  75.7,
+                  32.8
+                ],
+                [
+                  77.4,
+                  30.5
+                ],
+                [
+                  78.2,
+                  28.6
+                ],
+                [
+                  78.4,
+                  27.2
+                ],
+                [
+                  77.2,
+                  26.6
+                ],
+                [
+                  75.8,
+                  27.3
+                ],
+                [
+                  74.4,
+                  29.2
+                ],
+                [
+                  72.2,
+                  30.4
+                ],
+                [
+                  70.8,
+                  31.8
+                ],
+                [
+                  70.6,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.4,
+                  34.7
+                ],
+                [
+                  72.8,
+                  35.3
+                ],
+                [
+                  74.2,
+                  34.4
+                ],
+                [
+                  74.4,
+                  32.6
+                ],
+                [
+                  73.4,
+                  31
+                ],
+                [
+                  72,
+                  30.6
+                ],
+                [
+                  70.8,
+                  31.6
+                ],
+                [
+                  70.6,
+                  33.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Bactria, Purushapura and Mathura",
+          "Founded": "1st century CE",
+          "Ended": "About 375 CE, in small kingdoms",
+          "Title": "‘king of kings, son of god’"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Kujula Kadphises"
+          },
+          {
+            "from": 3,
+            "text": "Wima Kadphises"
+          },
+          {
+            "from": 4,
+            "text": "Kanishka"
+          },
+          {
+            "from": 8,
+            "text": "Kanishka and Huvishka"
+          },
+          {
+            "from": 10,
+            "text": "Vasudeva I"
+          },
+          {
+            "from": 11,
+            "text": "Not named in this map (smaller kingdoms)"
+          },
+          {
+            "from": 12,
+            "text": "Not named in the sources"
+          }
+        ],
+        "role": "The empire of the Yuezhi’s Kushan chiefdom, from Bactria and the Kabul valley to the Ganges plain.",
+        "ties": []
+      },
+      {
+        "id": "indo-parthian",
+        "name": "Indo-Parthian kingdom",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            1,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Indo-Parthians",
+          "at": [
+            73,
+            33.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.4,
+                  34.8
+                ],
+                [
+                  72.8,
+                  35
+                ],
+                [
+                  74,
+                  34.2
+                ],
+                [
+                  74,
+                  32.5
+                ],
+                [
+                  72.4,
+                  32.2
+                ],
+                [
+                  71.4,
+                  33.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Best-known king": "Gondophares",
+          "Capital": "Taxila"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Gondophares and successors"
+          }
+        ],
+        "role": "The kingdom of Gandhara and the Indus north of about 32° N before the Kushans took it.",
+        "ties": []
+      },
+      {
+        "id": "kshatrapa",
+        "name": "Western Kshatrapas",
+        "native": "क्षत्रप",
+        "color": "#c9a227",
+        "active": [
+          [
+            3,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Western Kshatrapas",
+          "at": [
+            72,
+            23.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.6,
+                  24.4
+                ],
+                [
+                  70.4,
+                  24.8
+                ],
+                [
+                  72.4,
+                  24.8
+                ],
+                [
+                  74,
+                  24.6
+                ],
+                [
+                  75.8,
+                  24.6
+                ],
+                [
+                  76.4,
+                  23.2
+                ],
+                [
+                  75.4,
+                  22.2
+                ],
+                [
+                  73.6,
+                  21.6
+                ],
+                [
+                  72.8,
+                  20.9
+                ],
+                [
+                  71,
+                  20.8
+                ],
+                [
+                  69.6,
+                  21.7
+                ],
+                [
+                  68.8,
+                  22.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Ujjain",
+          "Best-known king": "Rudradaman I, Junagadh inscription 150 CE"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Nahapana, then Chashtana"
+          },
+          {
+            "from": 5,
+            "text": "Rudradaman I and successors"
+          }
+        ],
+        "role": "Rulers of Gujarat (Saurashtra), Malwa around Ujjain and lower Sindh.",
+        "ties": []
+      },
+      {
+        "id": "satavahana",
+        "name": "Satavahanas",
+        "native": "सातवाहन",
+        "color": "#3d9a6a",
+        "active": [
+          [
+            3,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Satavahanas",
+          "at": [
+            77.2,
+            17.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.4,
+                  19.8
+                ],
+                [
+                  76.4,
+                  20.4
+                ],
+                [
+                  78.6,
+                  20
+                ],
+                [
+                  80.6,
+                  18.6
+                ],
+                [
+                  81.6,
+                  16.6
+                ],
+                [
+                  80.6,
+                  15.9
+                ],
+                [
+                  79,
+                  15.4
+                ],
+                [
+                  77,
+                  15.6
+                ],
+                [
+                  75.2,
+                  16.6
+                ],
+                [
+                  74.2,
+                  18.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Pratishthana"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Gautamiputra Satakarni"
+          },
+          {
+            "from": 5,
+            "text": "Vasishthiputra Pulumavi and successors"
+          }
+        ],
+        "role": "The Deccan kingdom from Pratishthana (Paithan) across to the Krishna delta.",
+        "ties": []
+      },
+      {
+        "id": "sasanian",
+        "name": "Sasanian Empire",
+        "color": "#7a4fc0",
+        "active": [
+          [
+            11,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Sasanians",
+          "at": [
+            69.6,
+            36.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                11,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  37.2
+                ],
+                [
+                  71,
+                  37.2
+                ],
+                [
+                  71.2,
+                  36
+                ],
+                [
+                  69.8,
+                  35.6
+                ],
+                [
+                  68,
+                  35.7
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Founded": "224 CE",
+          "Capital": "Ctesiphon"
+        },
+        "rulers": [
+          {
+            "from": 11,
+            "text": "Shapur I"
+          },
+          {
+            "from": 12,
+            "text": "Shapur II"
+          }
+        ],
+        "role": "The Iranian empire that took Bactria (Kushanshahr), entering from the west.",
+        "ties": []
+      },
+      {
+        "id": "gupta",
+        "name": "Gupta Empire",
+        "native": "गुप्त साम्राज्य",
+        "color": "#e08a2b",
+        "active": [
+          [
+            12,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Gupta Empire",
+          "at": [
+            84,
+            27.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                12,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.6,
+                  27.6
+                ],
+                [
+                  79.5,
+                  27.8
+                ],
+                [
+                  82,
+                  27.2
+                ],
+                [
+                  85,
+                  26.8
+                ],
+                [
+                  88,
+                  26.2
+                ],
+                [
+                  89,
+                  24.6
+                ],
+                [
+                  88.4,
+                  23.4
+                ],
+                [
+                  86.4,
+                  23.4
+                ],
+                [
+                  84,
+                  24.2
+                ],
+                [
+                  81.8,
+                  24.6
+                ],
+                [
+                  79.6,
+                  25.2
+                ],
+                [
+                  77.9,
+                  26
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Pataliputra"
+        },
+        "rulers": [
+          {
+            "from": 12,
+            "text": "Samudragupta"
+          }
+        ],
+        "role": "The empire of the Ganga plain from Mathura to Bengal.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "Kings and witnesses",
+    "items": [
+      {
+        "id": "zhang-qian",
+        "name": "Zhang Qian",
+        "native": "张骞",
+        "lang": "zh",
+        "life": "died about 113 BCE",
+        "role": "Han envoy to the west",
+        "steps": [
+          0
+        ],
+        "text": "Sent west by the Han emperor Wu to win the Yuezhi as allies against the Xiongnu, Zhang Qian was held captive by the Xiongnu for about ten years. When he reached the Yuezhi, they had settled and refused to fight. His report on the western lands helped open China’s trade with Central Asia."
+      },
+      {
+        "id": "kujula",
+        "name": "Kujula Kadphises",
+        "life": "1st century CE (dates disputed)",
+        "role": "Founder of the Kushan kingdom",
+        "steps": [
+          1,
+          2,
+          4
+        ],
+        "text": "The Kushan chief who, says the Book of the Later Han, united the five Yuezhi chiefdoms and took the Kabul valley and Gandhara. His coins borrow from Greek, Parthian and Roman models, and are written in Greek and Kharoshthi. Kanishka’s Rabatak inscription names him as his great-grandfather."
+      },
+      {
+        "id": "wima",
+        "name": "Wima Kadphises",
+        "life": "about 100 CE (dates disputed)",
+        "role": "Conqueror and first Kushan gold coinage",
+        "steps": [
+          3,
+          4
+        ],
+        "text": "Son of Wima Takto and father of Kanishka, Wima Kadphises ruled from Bactria into northern India. He issued the first Kushan gold coins, heavy pieces close in weight to Roman gold, and many show Shiva with his bull. A seated royal statue at Mat, near Mathura, is often identified as him."
+      },
+      {
+        "id": "kanishka",
+        "name": "Kanishka",
+        "native": "कनिष्क",
+        "life": "ruled from about 127 CE",
+        "role": "The greatest Kushan king",
+        "steps": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "text": "Kanishka ruled from Bactria to the Ganges plain. His coins name Greek, Iranian and Indian gods, and among them is one of the first named images of the Buddha (Boddo). Buddhist tradition remembers him as a second Ashoka, patron of a great stupa and a council. When his reign began is disputed."
+      },
+      {
+        "id": "huvishka",
+        "name": "Huvishka",
+        "native": "हुविष्क",
+        "life": "ruled about 150 to 190 CE",
+        "role": "Kanishka’s successor",
+        "steps": [
+          8,
+          10
+        ],
+        "text": "Huvishka followed Kanishka and his short-lived successor Vasishka. His long reign left more coin types than any other Kushan king, with gods from Greek, Iranian and Indian worship, among them Skanda and the Iranian goddess Nana. His inscriptions are found at Mathura, where many Buddhist and Jain images date from his time."
+      },
+      {
+        "id": "vasudeva",
+        "name": "Vasudeva I",
+        "native": "वासुदेव",
+        "life": "ruled about 190 to 230 CE",
+        "role": "The last great Kushan king",
+        "steps": [
+          10,
+          11
+        ],
+        "text": "Vasudeva bore the name of a Hindu god, and almost all his coins show Shiva. He is usually taken to be the Bodiao who sent an envoy to China in 229 CE. In or soon after his reign, the rising Sasanians took Bactria, and the empire broke into smaller kingdoms."
+      }
+    ]
+  }
+}
