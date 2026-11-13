@@ -143,6 +143,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Big Bang and Marie Curie, the first stories on the Nature and Science shelves (0.44.0)
 - [x] Lives, a subject for people; Marie Curie moves there; Radioactivity in Physics and Astronomy (0.45.0)
 - [x] Front page: links to each shelf and to Explore under the heading; arrows on long story rows (0.46.0)
+- [x] The Spanish Empire (0.47.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 

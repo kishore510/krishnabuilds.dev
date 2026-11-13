@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.47.0
+
+- New story map in Chronicles: The Spanish Empire. From the fall of Granada and Columbus’s landfall in 1492, through Tordesillas, the first colony, the fall of Tenochtitlan, Magellan’s voyage and the taking of the Inca empire, to silver, the treasure fleets and the Manila galleons, the Habsburg wars, Bourbon Spain, independence in the Americas and the last colony in Africa in 1976. 24 chapters on the world map, a Powers layer (the Spanish and Portuguese empires, the Aztec and Inca empires, and the Dutch Republic) and 13 people cards.
+- Catalogue: the Spanish Empire entry opens the story; Columbus reaches the Americas opens it at chapter 2 and Pizarro captures Atahualpa at chapter 7.
 ## 0.46.0
 
 - Front page: four links under the heading, one to each shelf (with its number of story maps) and one to Explore, so nothing important sits below a long shelf. The Explore card inside the Humankind shelf is gone.
