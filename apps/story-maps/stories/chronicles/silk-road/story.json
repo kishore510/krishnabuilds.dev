@@ -1,0 +1,3476 @@
+{
+ "id": "silk-road",
+ "title": "The Silk Road",
+ "description": "An illustrated map of the Silk Road, the web of overland routes between China and the Mediterranean, from Zhang Qian’s mission in the 2nd century BCE to the turn to the sea at the end of the 15th century.",
+ "canvas": "geo",
+ "basemap": "world",
+ "source": "History",
+ "nativeLang": "zh-Hant",
+ "routes": "chapter",
+ "overview": {
+  "at": [
+   64,
+   38
+  ],
+  "width": 115
+ },
+ "mapLabel": "Illustrated map of the Silk Road from Chang’an to Rome, 2nd century BCE to 15th century CE",
+ "note": "Based on standard histories of the Silk Road and the sources named on the cards: Sima Qian, Procopius, Xuanzang, William of Rubruck, Marco Polo and Clavijo. The name ‘Silk Road’ was coined by the German geographer Ferdinand von Richthofen in 1877; at the time the routes had no single name. The map is stylised and not to scale: routes are drawn as simple arcs, not the roads actually travelled, and the powers under Powers are painted loosely on today’s coastlines. A few close places (Samarkand and Balkh; Rome, Venice and Messina) have pins that touch. Coastlines: Natural Earth.",
+ "places": {
+  "changan": {
+   "name": "Chang’an",
+   "at": [
+    108.94,
+    34.27
+   ],
+   "glyph": "palace",
+   "label": "bottom"
+  },
+  "bactra": {
+   "name": "Bactra",
+   "at": [
+    66.9,
+    36.76
+   ],
+   "glyph": "trading-post",
+   "label": "bottom"
+  },
+  "dunhuang": {
+   "name": "Dunhuang",
+   "at": [
+    94.66,
+    40.14
+   ],
+   "glyph": "gate",
+   "label": "top"
+  },
+  "ferghana": {
+   "name": "Ferghana",
+   "at": [
+    71.5,
+    40.7
+   ],
+   "glyph": "crossed-swords",
+   "label": "bottom"
+  },
+  "rome": {
+   "name": "Rome",
+   "at": [
+    12.5,
+    41.9
+   ],
+   "glyph": "greek-temple",
+   "label": "bottom"
+  },
+  "palmyra": {
+   "name": "Palmyra",
+   "at": [
+    38.27,
+    34.55
+   ],
+   "glyph": "pillar",
+   "label": "bottom"
+  },
+  "samarkand": {
+   "name": "Samarkand",
+   "at": [
+    66.96,
+    39.65
+   ],
+   "glyph": "dome",
+   "label": "top"
+  },
+  "kucha": {
+   "name": "Kucha",
+   "at": [
+    82.96,
+    41.72
+   ],
+   "glyph": "stupa",
+   "label": "top"
+  },
+  "constantinople": {
+   "name": "Constantinople",
+   "at": [
+    28.98,
+    41.01
+   ],
+   "glyph": "dome",
+   "label": "bottom"
+  },
+  "nalanda": {
+   "name": "Nalanda",
+   "at": [
+    85.44,
+    25.14
+   ],
+   "glyph": "palm-leaf",
+   "label": "bottom"
+  },
+  "talas": {
+   "name": "Talas",
+   "at": [
+    71.4,
+    42.9
+   ],
+   "glyph": "crossed-swords",
+   "label": "top"
+  },
+  "baghdad": {
+   "name": "Baghdad",
+   "at": [
+    44.36,
+    33.31
+   ],
+   "glyph": "palace",
+   "label": "bottom"
+  },
+  "karakorum": {
+   "name": "Karakorum",
+   "at": [
+    102.83,
+    47.2
+   ],
+   "glyph": "crown",
+   "label": "top"
+  },
+  "khanbaliq": {
+   "name": "Khanbaliq",
+   "at": [
+    116.4,
+    39.9
+   ],
+   "glyph": "palace",
+   "label": "left"
+  },
+  "venice": {
+   "name": "Venice",
+   "at": [
+    12.33,
+    45.44
+   ],
+   "glyph": "anchor",
+   "label": "top"
+  },
+  "caffa": {
+   "name": "Caffa",
+   "at": [
+    35.38,
+    45.03
+   ],
+   "glyph": "fort",
+   "label": "top"
+  },
+  "messina": {
+   "name": "Messina",
+   "at": [
+    15.55,
+    38.19
+   ],
+   "glyph": "anchor",
+   "label": "bottom"
+  },
+  "bosporus": {
+   "name": "Bosporus",
+   "at": [
+    29.1,
+    41.15
+   ],
+   "hidden": true
+  },
+  "dardanelles": {
+   "name": "Dardanelles",
+   "at": [
+    26.2,
+    40.0
+   ],
+   "hidden": true
+  },
+  "aegean": {
+   "name": "Aegean Sea",
+   "at": [
+    25.5,
+    36.0
+   ],
+   "hidden": true
+  },
+  "ionian": {
+   "name": "Ionian Sea",
+   "at": [
+    20,
+    35.6
+   ],
+   "hidden": true
+  }
+ },
+ "travellers": {
+  "envoy": {
+   "name": "Zhang Qian",
+   "icon": "horse"
+  },
+  "army": {
+   "name": "A Han army",
+   "icon": "soldier"
+  },
+  "monk": {
+   "name": "A monk",
+   "icon": "monk"
+  },
+  "caravan": {
+   "name": "A caravan",
+   "icon": "camel"
+  },
+  "traveller": {
+   "name": "A traveller",
+   "icon": "horse"
+  },
+  "ship": {
+   "name": "Genoese galleys",
+   "icon": "merchant-ship"
+  }
+ },
+ "phases": {
+  "opening": {
+   "name": "Opening the roads",
+   "color": "#4fc3b0"
+  },
+  "faiths": {
+   "name": "Monks and merchants",
+   "color": "#f29a2e"
+  },
+  "paper": {
+   "name": "The age of paper",
+   "color": "#a678e0"
+  },
+  "mongol": {
+   "name": "The Mongol roads",
+   "color": "#e0573a"
+  },
+  "fade": {
+   "name": "The roads fade",
+   "color": "#8fcf8a"
+  }
+ },
+ "routeStyles": {
+  "road": {
+   "color": "#8a5a2b",
+   "width": 3,
+   "dash": "8 5",
+   "cap": "butt"
+  },
+  "march": {
+   "color": "#b3261e",
+   "width": 3.2,
+   "dash": "9 5",
+   "cap": "butt"
+  },
+  "pilgrim": {
+   "color": "#e08a1e",
+   "width": 3.2,
+   "dash": "1 6",
+   "cap": "round"
+  },
+  "sea": {
+   "color": "#2b7fb4",
+   "width": 3,
+   "dash": "8 5",
+   "cap": "butt"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 24.0,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 56.2,
+    "color": "rgba(242,154,46,.35)"
+   },
+   {
+    "until": 69.6,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 90.7,
+    "color": "rgba(224,87,58,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(143,207,138,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2.7,
+    "text": "100 BCE"
+   },
+   {
+    "at": 39.2,
+    "text": "500"
+   },
+   {
+    "at": 69.6,
+    "text": "1000"
+   },
+   {
+    "at": 99.0,
+    "text": "1500"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "changan",
+   "phase": "opening",
+   "title": "Zhang Qian sets out",
+   "native": "長安",
+   "when": "139 or 138 BCE",
+   "at": 0.4,
+   "camera": { "at": [100, 37], "width": 60 },
+   "legs": [],
+   "text": "In 139 or 138 BCE the Han emperor Wu sends an officer, Zhang Qian, west from the capital Chang’an with about a hundred men. His mission: find the Yuezhi, a people driven out by the Xiongnu nomads, and make them allies. The Xiongnu capture him on the way and hold him for about ten years. He marries, then escapes.",
+   "today": "Today: Xi’an, Shaanxi, China."
+  },
+  {
+   "place": "bactra",
+   "phase": "opening",
+   "title": "Zhang Qian in Bactria",
+   "native": "大夏",
+   "when": "c. 129 to 126 BCE",
+   "at": 1.0,
+   "camera": { "at": [88, 37], "width": 80 },
+   "legs": [
+    {
+     "from": "changan",
+     "to": "bactra",
+     "traveller": "envoy",
+     "style": "road",
+     "bend": 0.1
+    }
+   ],
+   "text": "Zhang Qian finds the Yuezhi settled north of the Oxus, ruling Bactria (Daxia), and in no mood to fight the Xiongnu again. In Bactria’s markets he sees cloth and bamboo canes from Shu, in south-west China, brought by way of India (Shendu). Back in Chang’an in 126 BCE, his reports show the Han a whole world to the west.",
+   "today": "Today: Balkh, northern Afghanistan."
+  },
+  {
+   "place": "dunhuang",
+   "phase": "opening",
+   "title": "The Jade Gate",
+   "native": "敦煌",
+   "when": "Late 2nd century BCE",
+   "at": 1.5,
+   "camera": {
+    "at": [
+     95,
+     38
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Emperor Wu’s armies drive the Xiongnu from the Gansu corridor, and the Han extend their wall of rammed earth and reeds west past Dunhuang. Garrison towns, beacon towers and two passes, the Jade Gate (Yumenguan) and Yangguan, guard the road. Wooden slips found there record travellers’ passes and supplies. The date Dunhuang became a commandery is debated.",
+   "today": "Today: Dunhuang, Gansu, China."
+  },
+  {
+   "place": "ferghana",
+   "phase": "opening",
+   "title": "The heavenly horses",
+   "native": "大宛",
+   "when": "104 to 101 BCE",
+   "at": 2.6,
+   "camera": { "at": [83, 40], "width": 55 },
+   "legs": [
+    {
+     "from": "dunhuang",
+     "to": "ferghana",
+     "traveller": "army",
+     "style": "march",
+     "bend": 0.05
+    }
+   ],
+   "text": "Zhang Qian had reported tall, fast horses in Ferghana (Dayuan), said to sweat blood. When Dayuan refuses to sell them, Emperor Wu sends the general Li Guangli. His first army fails; a second, far larger one besieges the capital, and the nobles kill their king and hand over horses to end the siege. Han prestige reaches beyond the Tian Shan.",
+   "today": "Today: the Ferghana Valley, mostly in Uzbekistan."
+  },
+  {
+   "place": "rome",
+   "phase": "opening",
+   "title": "Silk in Rome",
+   "native": "Roma",
+   "lang": "la",
+   "when": "1st century CE",
+   "at": 13.4,
+   "camera": {
+    "at": [
+     35,
+     40
+    ],
+    "width": 100
+   },
+   "legs": [],
+   "text": "Silk reaches Rome through many hands, and Romans know China only as the land of the Seres, the silk people. Seneca scorns silk dresses that hide nothing; Pliny the Elder complains that India, China and Arabia drain 100 million sesterces a year from the empire. In 97 CE a Han envoy, Gan Ying, heads for Rome (Daqin) but turns back.",
+   "today": "Today: Rome, Italy."
+  },
+  {
+   "place": "palmyra",
+   "phase": "opening",
+   "title": "Palmyra’s caravans",
+   "native": "Tadmor",
+   "lang": "arc-Latn",
+   "when": "1st to 3rd century CE",
+   "at": 17.9,
+   "camera": {
+    "at": [
+     40,
+     35
+    ],
+    "width": 60
+   },
+   "legs": [],
+   "text": "In the Syrian desert, the oasis city of Palmyra grows rich on caravans between the Euphrates and the Roman coast. Its inscriptions honour merchants who led them; its tombs held fragments of Chinese silk. Parthia, and later Sasanian Persia, sits between Rome and China and guards its place as middleman. After Queen Zenobia’s revolt, Rome sacks the city in 273.",
+   "today": "Today: Tadmur, Syria; the ruins were badly damaged in 2015."
+  },
+  {
+   "place": "samarkand",
+   "phase": "faiths",
+   "title": "Sogdian merchants",
+   "native": "Marakanda",
+   "lang": "grc",
+   "when": "c. 313 CE",
+   "at": 27.8,
+   "camera": {
+    "at": [
+     75,
+     38
+    ],
+    "width": 55
+   },
+   "legs": [],
+   "text": "Sogdians, from Samarkand and the cities around it, become the great traders of the eastern roads, with colonies all the way into China. A bundle of their letters, lost in a watchtower west of Dunhuang and found in 1907, tells of famine and of Luoyang burnt by the Xiongnu. One is from a woman, Miwnay, abandoned by her husband.",
+   "today": "Today: Samarkand, Uzbekistan."
+  },
+  {
+   "place": "kucha",
+   "phase": "faiths",
+   "title": "Kumarajiva of Kucha",
+   "native": "龜茲",
+   "when": "384 to 401 CE",
+   "at": 32.6,
+   "camera": { "at": [96, 39], "width": 60 },
+   "legs": [
+    {
+     "from": "kucha",
+     "to": "changan",
+     "traveller": "monk",
+     "style": "pilgrim",
+     "bend": -0.08
+    }
+   ],
+   "text": "Buddhism has been travelling east along the trade roads since about the 1st century CE. Kucha, an oasis kingdom on the northern road around the Taklamakan, is one of its centres. Its most famous son, the monk Kumarajiva, is carried off by a Chinese general in 384 and reaches Chang’an in 401, where his translations shape Chinese Buddhism for centuries.",
+   "today": "Today: Kuqa, Xinjiang, China."
+  },
+  {
+   "place": "constantinople",
+   "phase": "faiths",
+   "title": "Smuggled silkworms",
+   "native": "Kōnstantinoupolis",
+   "lang": "grc",
+   "when": "c. 552 CE",
+   "at": 42.4,
+   "camera": {
+    "at": [
+     40,
+     40
+    ],
+    "width": 80
+   },
+   "legs": [],
+   "text": "Byzantium buys its silk through Sasanian Persia, its enemy. The historian Procopius tells how, in about 552, monks who had lived in a land he calls Serinda offer to bring Emperor Justinian silkworms; they return with eggs hidden, by later accounts, in hollow canes. Silk weaving with home-grown silk begins in the Byzantine empire. Where Serinda was is disputed.",
+   "today": "Today: Istanbul, Türkiye."
+  },
+  {
+   "place": "nalanda",
+   "phase": "faiths",
+   "title": "Xuanzang’s journey",
+   "native": "नालन्दा",
+   "lang": "hi",
+   "when": "629 to 645 CE",
+   "at": 47.5,
+   "camera": { "at": [88, 34], "width": 75 },
+   "legs": [
+    {
+     "from": "changan",
+     "to": "bactra",
+     "traveller": "monk",
+     "style": "pilgrim",
+     "bend": 0.22
+    },
+    {
+     "from": "bactra",
+     "to": "nalanda",
+     "traveller": "monk",
+     "style": "pilgrim",
+     "bend": 0.05
+    }
+   ],
+   "text": "Defying a ban on leaving China, the monk Xuanzang sets out from Chang’an in 629, or 627 by some accounts, to find Buddhist texts. He follows the northern road through Turpan, Samarkand and Balkh, crosses into India and studies for years at Nalanda. In 645 he comes home with 657 texts and dictates an account of the lands he saw.",
+   "today": "Today: the ruins of Nalanda Mahavihara, Bihar, India."
+  },
+  {
+   "place": "changan",
+   "phase": "faiths",
+   "title": "Tang Chang’an",
+   "native": "長安",
+   "when": "7th and 8th centuries CE",
+   "at": 51.4,
+   "camera": { "at": [100, 35], "width": 70 },
+   "legs": [],
+   "text": "Under the Tang, Chang’an is one of the largest cities in the world, its Western Market full of Sogdian, Persian and Turkic traders. Foreign faiths are tolerated: Zoroastrian and Manichaean temples stand beside Buddhist monasteries. In 781 the Church of the East, Syriac Christians who came from Persia, raises a stone recording their mission in Chinese and Syriac.",
+   "today": "Today: Xi’an; the stone is in the Beilin Museum."
+  },
+  {
+   "place": "talas",
+   "phase": "paper",
+   "title": "Battle of Talas",
+   "when": "751 CE",
+   "at": 54.5,
+   "camera": {
+    "at": [
+     70,
+     40
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "Near the Talas river, an Abbasid army with Karluk Turk allies defeats a Tang force under Gao Xianzhi. A story, told centuries later, says Chinese prisoners taught papermaking in Samarkand; historians doubt it, since paper was already known in Central Asia. Four years later the An Lushan rebellion pulls Tang armies home, and China loses its grip on the west.",
+   "today": "Today: near Taraz, Kazakhstan, or across the border in Kyrgyzstan; the exact site is not known."
+  },
+  {
+   "place": "baghdad",
+   "phase": "paper",
+   "title": "Paper in Baghdad",
+   "native": "بغداد",
+   "lang": "ar",
+   "when": "762 to 790s CE",
+   "at": 56.0,
+   "camera": {
+    "at": [
+     50,
+     36
+    ],
+    "width": 70
+   },
+   "legs": [
+    {
+     "from": "samarkand",
+     "to": "baghdad",
+     "traveller": "caravan",
+     "style": "road",
+     "bend": 0.05
+    }
+   ],
+   "text": "The caliph al-Mansur founds Baghdad in 762 as a round city on the Tigris, at a meeting point of river and caravan roads. In the 790s, tradition says, Baghdad gets its first paper mill. Cheaper than papyrus or parchment, paper carries the caliphate’s records and the books of scholars translating Greek, Persian and Indian learning into Arabic.",
+   "today": "Today: Baghdad, Iraq; nothing of the Round City survives above ground."
+  },
+  {
+   "place": "dunhuang",
+   "phase": "paper",
+   "title": "The sealed library",
+   "native": "莫高窟",
+   "when": "Sealed c. 1000 CE; opened 1900",
+   "at": 69.6,
+   "camera": {
+    "at": [
+     100,
+     38
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "At the Mogao caves outside Dunhuang, carved and painted by Buddhist monks from the 4th century, a side chamber is walled up in about 1000 CE, full of manuscripts in Chinese, Tibetan, Sogdian, Sanskrit and other languages. Opened in 1900, it holds the Diamond Sutra of 868, the oldest dated printed book known; explorers later took much of it abroad.",
+   "today": "Today: the Mogao Caves, a World Heritage Site near Dunhuang."
+  },
+  {
+   "place": "karakorum",
+   "phase": "mongol",
+   "title": "A friar at Karakorum",
+   "when": "1253 to 1255",
+   "at": 85.0,
+   "camera": { "at": [66, 44], "width": 125 },
+   "legs": [
+    {
+     "from": "constantinople",
+     "to": "karakorum",
+     "traveller": "monk",
+     "style": "pilgrim",
+     "bend": -0.22
+    }
+   ],
+   "text": "Genghis Khan’s heirs rule from northern China to the Black Sea, and a network of relay posts (yam) speeds messengers across it. In 1253 the Franciscan friar William of Rubruck sets out from Constantinople to the Great Khan Möngke. At Karakorum he finds Muslims, Buddhists and Christians at court, and a silver drinking-fountain tree made by a captured Parisian goldsmith.",
+   "today": "Today: ruins beside Kharkhorin, Mongolia."
+  },
+  {
+   "place": "khanbaliq",
+   "phase": "mongol",
+   "title": "Marco Polo’s China",
+   "native": "大都",
+   "when": "1271 to 1295",
+   "at": 86.8,
+   "camera": { "at": [64, 40], "width": 140 },
+   "legs": [
+    {
+     "from": "venice",
+     "to": "khanbaliq",
+     "traveller": "traveller",
+     "style": "road",
+     "bend": 0.1
+    }
+   ],
+   "text": "The Venetian Marco Polo leaves home in 1271 with his father and uncle, merchants who had already met Kublai Khan. He says he served Kublai for seventeen years before sailing home by way of Sumatra and Persia. His book, written with Rustichello of Pisa in a Genoese prison, makes Europe dream of Cathay. Some scholars doubt parts of it.",
+   "today": "Today: Beijing, China."
+  },
+  {
+   "place": "caffa",
+   "phase": "mongol",
+   "title": "Plague at Caffa",
+   "when": "1346 to 1347",
+   "at": 90.6,
+   "camera": {
+    "at": [
+     26,
+     40.5
+    ],
+    "width": 44
+   },
+   "legs": [
+    {
+     "from": "caffa",
+     "to": "bosporus",
+     "traveller": "ship",
+     "style": "sea",
+     "bend": 0.0
+    },
+    {
+     "from": "bosporus",
+     "to": "dardanelles",
+     "traveller": "ship",
+     "style": "sea",
+     "bend": 0.0
+    },
+    {
+     "from": "dardanelles",
+     "to": "aegean",
+     "traveller": "ship",
+     "style": "sea",
+     "bend": 0.0
+    },
+    {
+     "from": "aegean",
+     "to": "ionian",
+     "traveller": "ship",
+     "style": "sea",
+     "bend": 0.0
+    },
+    {
+     "from": "ionian",
+     "to": "messina",
+     "traveller": "ship",
+     "style": "sea",
+     "bend": 0.0
+    }
+   ],
+   "text": "Plague spreads across the steppe in the 1340s. In 1346 it strikes the Golden Horde army besieging Caffa, a Genoese port in Crimea. A notary, Gabriele de’ Mussis, wrote that corpses were catapulted into the town; historians debate it. In 1347 galleys carry plague to Messina. The Black Death kills perhaps a third to half of Europe; estimates are disputed.",
+   "today": "Today: Feodosia, Crimea."
+  },
+  {
+   "place": "samarkand",
+   "phase": "fade",
+   "title": "Clavijo at Samarkand",
+   "native": "سمرقند",
+   "lang": "fa",
+   "when": "1404",
+   "at": 94.2,
+   "camera": { "at": [48, 40], "width": 70 },
+   "legs": [
+    {
+     "from": "constantinople",
+     "to": "samarkand",
+     "traveller": "traveller",
+     "style": "road",
+     "bend": 0.1
+    }
+   ],
+   "text": "Timur has made Samarkand his capital, filling it with craftsmen taken from conquered cities. In 1404 an embassy from Castile, led by Ruy González de Clavijo, reaches his court after more than a year on the road. Clavijo describes gardens, feasts and the great mosque rising in the city. Months later Timur dies, marching to invade Ming China.",
+   "today": "Today: Samarkand; the Bibi-Khanym mosque still stands, much restored."
+  },
+  {
+   "place": "constantinople",
+   "phase": "fade",
+   "title": "The roads turn to the sea",
+   "when": "1453 to 1498",
+   "at": 98.2,
+   "camera": {
+    "at": [
+     40,
+     38
+    ],
+    "width": 80
+   },
+   "legs": [],
+   "text": "The Mongol khanates have broken up, and the old networks with them. In 1453 the Ottomans take Constantinople. Portuguese sailors, already working down the coast of Africa, reach India by sea in 1498. Caravans keep crossing Central Asia for centuries, but more and more of the trade between Asia and Europe now goes by ship.",
+   "today": "Today: Istanbul, Türkiye."
+  }
+ ],
+ "realms": {
+  "toggle": "Powers",
+  "mainHeading": "Powers at this point",
+  "minorHeading": "Also in play",
+  "items": [
+   {
+    "id": "han",
+    "name": "Han China",
+    "native": "漢",
+    "lang": "zh-Hant",
+    "color": "#d9432a",
+    "active": [
+     [
+      0,
+      5
+     ]
+    ],
+    "label": {
+     "text": "Han China",
+     "at": [
+      114,
+      24
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        0,
+        5
+       ]
+      ],
+      "areas": [
+       [
+        [
+         102,
+         34
+        ],
+        [
+         106,
+         40
+        ],
+        [
+         111,
+         40.5
+        ],
+        [
+         115,
+         40.5
+        ],
+        [
+         118,
+         40
+        ],
+        [
+         118.5,
+         37.5
+        ],
+        [
+         122.5,
+         37.3
+        ],
+        [
+         120,
+         35
+        ],
+        [
+         121.5,
+         32
+        ],
+        [
+         122,
+         30
+        ],
+        [
+         120.5,
+         27
+        ],
+        [
+         117.5,
+         23.5
+        ],
+        [
+         113,
+         22
+        ],
+        [
+         108,
+         22
+        ],
+        [
+         105,
+         25
+        ],
+        [
+         102,
+         28
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        2,
+        5
+       ]
+      ],
+      "areas": [
+       [
+        [
+         102,
+         38.5
+        ],
+        [
+         98,
+         40.2
+        ],
+        [
+         94,
+         41.3
+        ],
+        [
+         93.5,
+         40
+        ],
+        [
+         97,
+         38.2
+        ],
+        [
+         101,
+         37
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        4,
+        5
+       ]
+      ],
+      "areas": [
+       [
+        [
+         74,
+         39.5
+        ],
+        [
+         76,
+         38.0
+        ],
+        [
+         80,
+         36.8
+        ],
+        [
+         85,
+         37.5
+        ],
+        [
+         90,
+         39.5
+        ],
+        [
+         89,
+         41.5
+        ],
+        [
+         84,
+         42
+        ],
+        [
+         79,
+         41.2
+        ],
+        [
+         75,
+         40.8
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Capital": "Chang’an, later Luoyang",
+     "Dates": "206 BCE to 220 CE"
+    },
+    "rulers": [
+     {
+      "from": 0,
+      "text": "Emperor Wu"
+     },
+     {
+      "from": 4,
+      "text": "Later Han emperors"
+     }
+    ],
+    "role": "The dynasty that sent Zhang Qian west and pushed its wall of forts out along the Gansu corridor.",
+    "ties": [
+     {
+      "from": 0,
+      "text": "At war with the Xiongnu; sends envoys west"
+     }
+    ]
+   },
+   {
+    "id": "rome",
+    "name": "Rome",
+    "native": "Roma",
+    "lang": "la",
+    "color": "#8a6bd1",
+    "active": [
+     [
+      0,
+      5
+     ]
+    ],
+    "label": {
+     "text": "Rome",
+     "at": [
+      17,
+      46.5
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        0,
+        3
+       ]
+      ],
+      "areas": [
+       [
+        [
+         7.5,
+         43.8
+        ],
+        [
+         10,
+         44.2
+        ],
+        [
+         12.5,
+         45.5
+        ],
+        [
+         13.7,
+         45.6
+        ],
+        [
+         12.3,
+         44.2
+        ],
+        [
+         14,
+         42.2
+        ],
+        [
+         16.2,
+         41.9
+        ],
+        [
+         18.5,
+         40.2
+        ],
+        [
+         16.5,
+         38.9
+        ],
+        [
+         15.7,
+         38.0
+        ],
+        [
+         16.1,
+         39.8
+        ],
+        [
+         15.0,
+         40.2
+        ],
+        [
+         12.5,
+         41.5
+        ],
+        [
+         10.2,
+         43.3
+        ]
+       ],
+       [
+        [
+         12.4,
+         37.8
+        ],
+        [
+         13.5,
+         38.2
+        ],
+        [
+         15.6,
+         38.2
+        ],
+        [
+         15.1,
+         36.7
+        ],
+        [
+         12.8,
+         37.5
+        ]
+       ],
+       [
+        [
+         8.2,
+         41
+        ],
+        [
+         9.5,
+         41.2
+        ],
+        [
+         9.6,
+         39.2
+        ],
+        [
+         8.4,
+         39
+        ]
+       ],
+       [
+        [
+         -9.0,
+         37.0
+        ],
+        [
+         -6,
+         36.0
+        ],
+        [
+         -2,
+         36.8
+        ],
+        [
+         0,
+         38.8
+        ],
+        [
+         0.8,
+         41
+        ],
+        [
+         3.2,
+         42.2
+        ],
+        [
+         -1.5,
+         42.5
+        ],
+        [
+         -4,
+         40
+        ],
+        [
+         -7,
+         41
+        ],
+        [
+         -8.8,
+         39
+        ]
+       ],
+       [
+        [
+         3.2,
+         42.5
+        ],
+        [
+         7.5,
+         43.7
+        ],
+        [
+         7,
+         44.8
+        ],
+        [
+         4.5,
+         45
+        ],
+        [
+         2,
+         43.6
+        ]
+       ],
+       [
+        [
+         19.5,
+         40
+        ],
+        [
+         21,
+         41.8
+        ],
+        [
+         23,
+         42
+        ],
+        [
+         26,
+         41.3
+        ],
+        [
+         26.2,
+         40.5
+        ],
+        [
+         24,
+         40.2
+        ],
+        [
+         23.2,
+         38
+        ],
+        [
+         24.0,
+         38.0
+        ],
+        [
+         23.2,
+         36.6
+        ],
+        [
+         21.7,
+         36.8
+        ],
+        [
+         21.2,
+         38.5
+        ],
+        [
+         20.4,
+         39.6
+        ]
+       ],
+       [
+        [
+         8.3,
+         37.2
+        ],
+        [
+         10.2,
+         37.3
+        ],
+        [
+         11,
+         36.8
+        ],
+        [
+         11,
+         35
+        ],
+        [
+         10.2,
+         33.8
+        ],
+        [
+         9.5,
+         33.2
+        ],
+        [
+         8.3,
+         34.5
+        ],
+        [
+         8.2,
+         36.5
+        ]
+       ],
+       [
+        [
+         26.2,
+         40.0
+        ],
+        [
+         27.5,
+         40.5
+        ],
+        [
+         29.5,
+         40.3
+        ],
+        [
+         30.5,
+         38.5
+        ],
+        [
+         30,
+         36.5
+        ],
+        [
+         28,
+         36.7
+        ],
+        [
+         27.2,
+         37.5
+        ],
+        [
+         26.4,
+         38.5
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        4,
+        5
+       ]
+      ],
+      "areas": [
+       [
+        [
+         -9.2,
+         43.2
+        ],
+        [
+         -9,
+         37
+        ],
+        [
+         -6,
+         36.1
+        ],
+        [
+         -2,
+         36.7
+        ],
+        [
+         0.5,
+         38.8
+        ],
+        [
+         3.2,
+         42
+        ],
+        [
+         5,
+         43.3
+        ],
+        [
+         7.5,
+         43.8
+        ],
+        [
+         7,
+         46.0
+        ],
+        [
+         8,
+         49.5
+        ],
+        [
+         6.5,
+         51
+        ],
+        [
+         2.5,
+         51
+        ],
+        [
+         -1.5,
+         49.7
+        ],
+        [
+         -4.7,
+         48.4
+        ],
+        [
+         -1.2,
+         46.2
+        ],
+        [
+         -1.8,
+         43.4
+        ]
+       ],
+       [
+        [
+         7.5,
+         43.8
+        ],
+        [
+         10,
+         44.2
+        ],
+        [
+         12.5,
+         45.5
+        ],
+        [
+         13.7,
+         45.6
+        ],
+        [
+         12.3,
+         44.2
+        ],
+        [
+         14,
+         42.2
+        ],
+        [
+         16.2,
+         41.9
+        ],
+        [
+         18.5,
+         40.2
+        ],
+        [
+         16.5,
+         38.9
+        ],
+        [
+         15.7,
+         38.0
+        ],
+        [
+         16.1,
+         39.8
+        ],
+        [
+         15.0,
+         40.2
+        ],
+        [
+         12.5,
+         41.5
+        ],
+        [
+         10.2,
+         43.3
+        ]
+       ],
+       [
+        [
+         12.4,
+         37.8
+        ],
+        [
+         13.5,
+         38.2
+        ],
+        [
+         15.6,
+         38.2
+        ],
+        [
+         15.1,
+         36.7
+        ],
+        [
+         12.8,
+         37.5
+        ]
+       ],
+       [
+        [
+         8.2,
+         41
+        ],
+        [
+         9.5,
+         41.2
+        ],
+        [
+         9.6,
+         39.2
+        ],
+        [
+         8.4,
+         39
+        ]
+       ],
+       [
+        [
+         13.7,
+         45.6
+        ],
+        [
+         16,
+         46.7
+        ],
+        [
+         19,
+         47.5
+        ],
+        [
+         22,
+         47.5
+        ],
+        [
+         29.5,
+         45.2
+        ],
+        [
+         28.5,
+         43.5
+        ],
+        [
+         28,
+         41.8
+        ],
+        [
+         26.2,
+         40.9
+        ],
+        [
+         23.5,
+         40
+        ],
+        [
+         24,
+         38.2
+        ],
+        [
+         23,
+         36.5
+        ],
+        [
+         21.5,
+         37
+        ],
+        [
+         21,
+         39.5
+        ],
+        [
+         19.5,
+         41.5
+        ],
+        [
+         18.5,
+         42.5
+        ],
+        [
+         15,
+         44.5
+        ]
+       ],
+       [
+        [
+         26.3,
+         40
+        ],
+        [
+         29,
+         41.2
+        ],
+        [
+         35,
+         42
+        ],
+        [
+         41,
+         41
+        ],
+        [
+         42,
+         38.5
+        ],
+        [
+         40,
+         36.6
+        ],
+        [
+         40.5,
+         34.5
+        ],
+        [
+         38.5,
+         32.5
+        ],
+        [
+         35,
+         29.7
+        ],
+        [
+         34.3,
+         31.3
+        ],
+        [
+         35.9,
+         34.5
+        ],
+        [
+         36,
+         36.4
+        ],
+        [
+         30,
+         36.3
+        ],
+        [
+         27.5,
+         36.8
+        ],
+        [
+         26.4,
+         38.5
+        ]
+       ],
+       [
+        [
+         25,
+         31.6
+        ],
+        [
+         29,
+         30.9
+        ],
+        [
+         32.3,
+         31.3
+        ],
+        [
+         34.2,
+         31.3
+        ],
+        [
+         34.9,
+         29.5
+        ],
+        [
+         32.6,
+         28
+        ],
+        [
+         32.7,
+         25
+        ],
+        [
+         33,
+         23.5
+        ],
+        [
+         31,
+         24
+        ],
+        [
+         25,
+         25.5
+        ]
+       ],
+       [
+        [
+         -5.9,
+         35.9
+        ],
+        [
+         -2,
+         35.1
+        ],
+        [
+         3,
+         36.8
+        ],
+        [
+         8,
+         37.1
+        ],
+        [
+         11,
+         37.2
+        ],
+        [
+         11,
+         35.5
+        ],
+        [
+         10.3,
+         34
+        ],
+        [
+         15,
+         32.5
+        ],
+        [
+         20,
+         32.6
+        ],
+        [
+         22,
+         32.9
+        ],
+        [
+         25,
+         31.8
+        ],
+        [
+         24.8,
+         30
+        ],
+        [
+         18,
+         30.2
+        ],
+        [
+         11,
+         30.8
+        ],
+        [
+         0,
+         32.5
+        ],
+        [
+         -4,
+         33.5
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Silk": "Bought through middlemen; never met China directly"
+    },
+    "rulers": [
+     {
+      "from": 0,
+      "text": "The Senate; no single ruler"
+     },
+     {
+      "from": 4,
+      "text": "Emperors, Augustus to Aurelian"
+     }
+    ],
+    "role": "The far western end of the roads, which knew China only as the land of the Seres, the silk people.",
+    "ties": [
+     {
+      "from": 0,
+      "text": "Buys silk through Parthian and other middlemen"
+     }
+    ]
+   },
+   {
+    "id": "parthia",
+    "name": "Parthia",
+    "color": "#2fa39a",
+    "active": [
+     [
+      0,
+      5
+     ]
+    ],
+    "label": {
+     "text": "Parthia",
+     "at": [
+      52,
+      33
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        0,
+        5
+       ]
+      ],
+      "areas": [
+       [
+        [
+         40.5,
+         37
+        ],
+        [
+         44,
+         39.5
+        ],
+        [
+         48,
+         39
+        ],
+        [
+         53.5,
+         38.5
+        ],
+        [
+         57,
+         38
+        ],
+        [
+         60.5,
+         36.5
+        ],
+        [
+         61,
+         34.5
+        ],
+        [
+         62,
+         32
+        ],
+        [
+         61.5,
+         29
+        ],
+        [
+         57,
+         26
+        ],
+        [
+         51,
+         27.8
+        ],
+        [
+         50,
+         30
+        ],
+        [
+         48,
+         30.2
+        ],
+        [
+         47,
+         32
+        ],
+        [
+         41,
+         34.5
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Capital": "Ctesiphon",
+     "Role": "Middleman between Rome and China",
+     "Rome": "Defeats Rome at Carrhae, 53 BCE"
+    },
+    "rulers": [
+     {
+      "from": 0,
+      "text": "Arsacid kings"
+     },
+     {
+      "from": 1,
+      "text": "Mithridates II"
+     },
+     {
+      "from": 4,
+      "text": "Arsacid kings"
+     }
+    ],
+    "role": "An empire between Rome and China that guarded its place as the middleman.",
+    "ties": []
+   },
+   {
+    "id": "kushan",
+    "name": "Kushan Empire",
+    "native": "कुषाण",
+    "lang": "hi",
+    "color": "#e0a82e",
+    "active": [
+     [
+      4,
+      6
+     ]
+    ],
+    "label": {
+     "text": "Kushan Empire",
+     "at": [
+      71,
+      32
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        4,
+        6
+       ]
+      ],
+      "areas": [
+       [
+        [
+         64.5,
+         37.3
+        ],
+        [
+         67,
+         38.5
+        ],
+        [
+         73,
+         38.5
+        ],
+        [
+         75,
+         37
+        ],
+        [
+         76,
+         35.5
+        ],
+        [
+         77.5,
+         34.5
+        ],
+        [
+         79,
+         32
+        ],
+        [
+         79.5,
+         29
+        ],
+        [
+         79,
+         26.5
+        ],
+        [
+         77,
+         25.8
+        ],
+        [
+         74,
+         26
+        ],
+        [
+         71,
+         25.5
+        ],
+        [
+         68,
+         25.2
+        ],
+        [
+         66,
+         28
+        ],
+        [
+         62.5,
+         33.5
+        ],
+        [
+         64,
+         35
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Origin": "Grew out of the Yuezhi Zhang Qian visited",
+     "Faith": "Buddhist patrons"
+    },
+    "rulers": [
+     {
+      "from": 4,
+      "text": "Kujula Kadphises, Kanishka"
+     }
+    ],
+    "role": "A Buddhist empire astride the roads between Central Asia and India.",
+    "ties": []
+   },
+   {
+    "id": "sasanian",
+    "name": "Sasanian Persia",
+    "color": "#2b7fb4",
+    "active": [
+     [
+      6,
+      9
+     ]
+    ],
+    "label": {
+     "text": "Sasanian Persia",
+     "at": [
+      54,
+      32.5
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        6,
+        9
+       ]
+      ],
+      "areas": [
+       [
+        [
+         41,
+         37
+        ],
+        [
+         44,
+         39
+        ],
+        [
+         48,
+         39.2
+        ],
+        [
+         53.5,
+         38.5
+        ],
+        [
+         60,
+         37.5
+        ],
+        [
+         65,
+         37.5
+        ],
+        [
+         66,
+         36
+        ],
+        [
+         63.5,
+         33.5
+        ],
+        [
+         63,
+         30
+        ],
+        [
+         61.5,
+         27
+        ],
+        [
+         57,
+         25.7
+        ],
+        [
+         51,
+         27.8
+        ],
+        [
+         50,
+         30
+        ],
+        [
+         48,
+         30.3
+        ],
+        [
+         47.5,
+         32
+        ],
+        [
+         41,
+         34.5
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Rival": "Rome, then Byzantium",
+     "Silk": "Controls the silk trade to the west"
+    },
+    "rulers": [
+     {
+      "from": 6,
+      "text": "Shapur II"
+     },
+     {
+      "from": 8,
+      "text": "Khosrow I"
+     },
+     {
+      "from": 9,
+      "text": "Khosrow II and Yazdegerd III"
+     }
+    ],
+    "role": "The Persian empire between Byzantium and the east, through which Byzantium bought its silk.",
+    "ties": []
+   },
+   {
+    "id": "byzantine",
+    "name": "Byzantine Empire",
+    "native": "Rhōmaioi",
+    "lang": "grc",
+    "color": "#b83a7a",
+    "active": [
+     [
+      8,
+      8
+     ]
+    ],
+    "label": {
+     "text": "Byzantine Empire",
+     "at": [
+      33,
+      39.2
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        8,
+        8
+       ]
+      ],
+      "areas": [
+       [
+        [
+         13.7,
+         45.5
+        ],
+        [
+         15,
+         44.5
+        ],
+        [
+         19,
+         44.5
+        ],
+        [
+         22.5,
+         44.5
+        ],
+        [
+         26,
+         44
+        ],
+        [
+         28.7,
+         44.2
+        ],
+        [
+         28.5,
+         43.5
+        ],
+        [
+         28,
+         41.8
+        ],
+        [
+         26.2,
+         40.9
+        ],
+        [
+         23.5,
+         40
+        ],
+        [
+         24,
+         38.2
+        ],
+        [
+         23,
+         36.5
+        ],
+        [
+         21.5,
+         37
+        ],
+        [
+         21,
+         39.5
+        ],
+        [
+         19.5,
+         41.5
+        ],
+        [
+         18.5,
+         42.5
+        ]
+       ],
+       [
+        [
+         26.3,
+         40
+        ],
+        [
+         29,
+         41.2
+        ],
+        [
+         35,
+         42
+        ],
+        [
+         41,
+         41
+        ],
+        [
+         42,
+         38.5
+        ],
+        [
+         40,
+         36.6
+        ],
+        [
+         40.5,
+         34.5
+        ],
+        [
+         38.5,
+         32.5
+        ],
+        [
+         35,
+         29.7
+        ],
+        [
+         34.3,
+         31.3
+        ],
+        [
+         35.9,
+         34.5
+        ],
+        [
+         36,
+         36.4
+        ],
+        [
+         30,
+         36.3
+        ],
+        [
+         27.5,
+         36.8
+        ],
+        [
+         26.4,
+         38.5
+        ]
+       ],
+       [
+        [
+         25,
+         31.6
+        ],
+        [
+         29,
+         30.9
+        ],
+        [
+         32.3,
+         31.3
+        ],
+        [
+         34.2,
+         31.3
+        ],
+        [
+         34.9,
+         29.5
+        ],
+        [
+         32.6,
+         28
+        ],
+        [
+         32.7,
+         25
+        ],
+        [
+         33,
+         23.5
+        ],
+        [
+         31,
+         24
+        ],
+        [
+         25,
+         25.5
+        ]
+       ],
+       [
+        [
+         8.3,
+         37.2
+        ],
+        [
+         11,
+         37.2
+        ],
+        [
+         11,
+         35.5
+        ],
+        [
+         10.3,
+         34
+        ],
+        [
+         15,
+         32.5
+        ],
+        [
+         20,
+         32.6
+        ],
+        [
+         22,
+         32.9
+        ],
+        [
+         25,
+         31.8
+        ],
+        [
+         24.8,
+         30
+        ],
+        [
+         18,
+         30.2
+        ],
+        [
+         11,
+         30.8
+        ],
+        [
+         8.5,
+         33
+        ]
+       ],
+       [
+        [
+         7.5,
+         43.8
+        ],
+        [
+         10,
+         44.2
+        ],
+        [
+         12.5,
+         45.5
+        ],
+        [
+         13.7,
+         45.6
+        ],
+        [
+         12.3,
+         44.2
+        ],
+        [
+         14,
+         42.2
+        ],
+        [
+         16.2,
+         41.9
+        ],
+        [
+         18.5,
+         40.2
+        ],
+        [
+         16.5,
+         38.9
+        ],
+        [
+         15.7,
+         38.0
+        ],
+        [
+         16.1,
+         39.8
+        ],
+        [
+         15.0,
+         40.2
+        ],
+        [
+         12.5,
+         41.5
+        ],
+        [
+         10.2,
+         43.3
+        ]
+       ],
+       [
+        [
+         12.4,
+         37.8
+        ],
+        [
+         13.5,
+         38.2
+        ],
+        [
+         15.6,
+         38.2
+        ],
+        [
+         15.1,
+         36.7
+        ],
+        [
+         12.8,
+         37.5
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Capital": "Constantinople"
+    },
+    "rulers": [
+     {
+      "from": 8,
+      "text": "Justinian I"
+     }
+    ],
+    "role": "The eastern Roman empire in 552, with Italy being reconquered.",
+    "ties": []
+   },
+   {
+    "id": "tang",
+    "name": "Tang China",
+    "native": "唐",
+    "lang": "zh-Hant",
+    "color": "#c2411f",
+    "active": [
+     [
+      9,
+      11
+     ]
+    ],
+    "label": {
+     "text": "Tang China",
+     "at": [
+      114,
+      24
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        9,
+        11
+       ]
+      ],
+      "areas": [
+       [
+        [
+         102,
+         34
+        ],
+        [
+         106,
+         40
+        ],
+        [
+         111,
+         40.5
+        ],
+        [
+         115,
+         40.5
+        ],
+        [
+         118,
+         40
+        ],
+        [
+         118.5,
+         37.5
+        ],
+        [
+         122.5,
+         37.3
+        ],
+        [
+         120,
+         35
+        ],
+        [
+         121.5,
+         32
+        ],
+        [
+         122,
+         30
+        ],
+        [
+         120.5,
+         27
+        ],
+        [
+         117.5,
+         23.5
+        ],
+        [
+         113,
+         22
+        ],
+        [
+         108,
+         22
+        ],
+        [
+         105,
+         25
+        ],
+        [
+         102,
+         28
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        9,
+        11
+       ]
+      ],
+      "areas": [
+       [
+        [
+         75,
+         38.5
+        ],
+        [
+         77,
+         40.3
+        ],
+        [
+         80,
+         42
+        ],
+        [
+         85,
+         42.8
+        ],
+        [
+         90,
+         42.8
+        ],
+        [
+         94,
+         41.5
+        ],
+        [
+         98,
+         40.5
+        ],
+        [
+         102,
+         38.5
+        ],
+        [
+         101,
+         37
+        ],
+        [
+         95,
+         38.5
+        ],
+        [
+         90,
+         38.8
+        ],
+        [
+         85,
+         37.2
+        ],
+        [
+         79,
+         36.5
+        ],
+        [
+         76,
+         37.2
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Protectorates": "In the Tarim basin and beyond until 751 to 755"
+    },
+    "rulers": [
+     {
+      "from": 9,
+      "text": "Taizong"
+     },
+     {
+      "from": 10,
+      "text": "Xuanzong"
+     }
+    ],
+    "role": "The dynasty of the great cosmopolitan Chang’an, with garrisons far out along the roads.",
+    "ties": []
+   },
+   {
+    "id": "abbasid",
+    "name": "Abbasid Caliphate",
+    "native": "العباسيون",
+    "lang": "ar",
+    "color": "#4f8a3b",
+    "active": [
+     [
+      11,
+      12
+     ]
+    ],
+    "label": {
+     "text": "Abbasid Caliphate",
+     "at": [
+      46,
+      26
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        11,
+        12
+       ]
+      ],
+      "areas": [
+       [
+        [
+         41,
+         37
+        ],
+        [
+         44,
+         39
+        ],
+        [
+         48,
+         39.2
+        ],
+        [
+         53.5,
+         38.5
+        ],
+        [
+         60,
+         37.5
+        ],
+        [
+         62,
+         39.5
+        ],
+        [
+         66,
+         40.5
+        ],
+        [
+         70,
+         40
+        ],
+        [
+         69,
+         37.5
+        ],
+        [
+         65,
+         36.5
+        ],
+        [
+         63.5,
+         33.5
+        ],
+        [
+         61.5,
+         27
+        ],
+        [
+         57,
+         25.7
+        ],
+        [
+         51,
+         27.8
+        ],
+        [
+         48,
+         30
+        ],
+        [
+         47.5,
+         32
+        ]
+       ],
+       [
+        [
+         34.9,
+         29.6
+        ],
+        [
+         36.4,
+         28
+        ],
+        [
+         39,
+         22.5
+        ],
+        [
+         41.5,
+         17
+        ],
+        [
+         43.2,
+         15.5
+        ],
+        [
+         46,
+         15.3
+        ],
+        [
+         48,
+         17
+        ],
+        [
+         47,
+         22
+        ],
+        [
+         48,
+         29.5
+        ],
+        [
+         47.5,
+         32
+        ],
+        [
+         40.5,
+         34.5
+        ],
+        [
+         38.5,
+         32.5
+        ]
+       ],
+       [
+        [
+         36,
+         36.5
+        ],
+        [
+         40,
+         36.6
+        ],
+        [
+         41,
+         37
+        ],
+        [
+         42,
+         37
+        ],
+        [
+         40.8,
+         35
+        ],
+        [
+         40.5,
+         34.5
+        ],
+        [
+         38.5,
+         32.5
+        ],
+        [
+         35,
+         31
+        ],
+        [
+         34.8,
+         31.3
+        ],
+        [
+         35.9,
+         34.5
+        ],
+        [
+         35.9,
+         36.2
+        ]
+       ],
+       [
+        [
+         8.3,
+         37.2
+        ],
+        [
+         11,
+         37.2
+        ],
+        [
+         10.3,
+         34
+        ],
+        [
+         15,
+         32.5
+        ],
+        [
+         25,
+         31.8
+        ],
+        [
+         29,
+         30.9
+        ],
+        [
+         32.3,
+         31.3
+        ],
+        [
+         34.2,
+         31.3
+        ],
+        [
+         34.9,
+         29.5
+        ],
+        [
+         32.7,
+         25
+        ],
+        [
+         24.8,
+         30
+        ],
+        [
+         11,
+         30.8
+        ],
+        [
+         8.5,
+         33
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Capital": "Baghdad from 762"
+    },
+    "rulers": [
+     {
+      "from": 11,
+      "text": "al-Saffah"
+     },
+     {
+      "from": 12,
+      "text": "al-Mansur, then Harun al-Rashid"
+     }
+    ],
+    "role": "The caliphate that took over the western end of the roads, with its capital at Baghdad.",
+    "ties": []
+   },
+   {
+    "id": "mongol",
+    "name": "Mongol Empire",
+    "color": "#6a4fb0",
+    "active": [
+     [
+      14,
+      16
+     ]
+    ],
+    "label": {
+     "text": "Mongol Empire",
+     "at": [
+      88,
+      47
+     ],
+     "moves": [
+      {
+       "from": 15,
+       "at": [
+        92,
+        45
+       ]
+      }
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        14,
+        14
+       ]
+      ],
+      "areas": [
+       [
+        [
+         31,
+         46.6
+        ],
+        [
+         32,
+         50
+        ],
+        [
+         37,
+         52.5
+        ],
+        [
+         46,
+         53.5
+        ],
+        [
+         56,
+         54
+        ],
+        [
+         64,
+         54
+        ],
+        [
+         68,
+         51
+        ],
+        [
+         63,
+         46
+        ],
+        [
+         56,
+         45
+        ],
+        [
+         53,
+         46.5
+        ],
+        [
+         49,
+         46.2
+        ],
+        [
+         47,
+         44
+        ],
+        [
+         44,
+         45.5
+        ],
+        [
+         38,
+         46.5
+        ],
+        [
+         34,
+         45.5
+        ]
+       ],
+       [
+        [
+         64,
+         43
+        ],
+        [
+         75,
+         52
+        ],
+        [
+         85,
+         52
+        ],
+        [
+         95,
+         52
+        ],
+        [
+         105,
+         51.5
+        ],
+        [
+         116,
+         49.5
+        ],
+        [
+         126,
+         46
+        ],
+        [
+         124,
+         40
+        ],
+        [
+         118,
+         38.8
+        ],
+        [
+         111,
+         35
+        ],
+        [
+         106,
+         35
+        ],
+        [
+         100,
+         37
+        ],
+        [
+         92,
+         38
+        ],
+        [
+         84,
+         41
+        ],
+        [
+         70,
+         41
+        ]
+       ],
+       [
+        [
+         41,
+         37.5
+        ],
+        [
+         44,
+         39.3
+        ],
+        [
+         48,
+         39
+        ],
+        [
+         54,
+         38
+        ],
+        [
+         60,
+         37.5
+        ],
+        [
+         64,
+         36
+        ],
+        [
+         63,
+         33
+        ],
+        [
+         62,
+         29
+        ],
+        [
+         57,
+         26
+        ],
+        [
+         51,
+         28
+        ],
+        [
+         48.5,
+         30
+        ],
+        [
+         47,
+         32.5
+        ],
+        [
+         44,
+         35
+        ],
+        [
+         43,
+         36.5
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        15,
+        16
+       ]
+      ],
+      "areas": [
+       [
+        [
+         31,
+         46.6
+        ],
+        [
+         32,
+         50
+        ],
+        [
+         37,
+         52.5
+        ],
+        [
+         46,
+         53.5
+        ],
+        [
+         56,
+         54
+        ],
+        [
+         64,
+         54
+        ],
+        [
+         68,
+         51
+        ],
+        [
+         63,
+         46
+        ],
+        [
+         56,
+         45
+        ],
+        [
+         53,
+         46.5
+        ],
+        [
+         49,
+         46.2
+        ],
+        [
+         47,
+         44
+        ],
+        [
+         44,
+         45.5
+        ],
+        [
+         38,
+         46.5
+        ],
+        [
+         34,
+         45.5
+        ]
+       ],
+       [
+        [
+         64,
+         43
+        ],
+        [
+         75,
+         52
+        ],
+        [
+         85,
+         52
+        ],
+        [
+         95,
+         52
+        ],
+        [
+         105,
+         51.5
+        ],
+        [
+         116,
+         49.5
+        ],
+        [
+         126,
+         46
+        ],
+        [
+         124,
+         40
+        ],
+        [
+         118,
+         38.8
+        ],
+        [
+         111,
+         35
+        ],
+        [
+         106,
+         35
+        ],
+        [
+         100,
+         37
+        ],
+        [
+         92,
+         38
+        ],
+        [
+         84,
+         41
+        ],
+        [
+         70,
+         41
+        ]
+       ],
+       [
+        [
+         41,
+         37.5
+        ],
+        [
+         44,
+         39.3
+        ],
+        [
+         48,
+         39
+        ],
+        [
+         54,
+         38
+        ],
+        [
+         60,
+         37.5
+        ],
+        [
+         64,
+         36
+        ],
+        [
+         63,
+         33
+        ],
+        [
+         62,
+         29
+        ],
+        [
+         57,
+         26
+        ],
+        [
+         51,
+         28
+        ],
+        [
+         48.5,
+         30
+        ],
+        [
+         47,
+         32.5
+        ],
+        [
+         44,
+         35
+        ],
+        [
+         43,
+         36.5
+        ]
+       ],
+       [
+        [
+         102,
+         28
+        ],
+        [
+         105,
+         25
+        ],
+        [
+         108,
+         22
+        ],
+        [
+         113,
+         22
+        ],
+        [
+         117.5,
+         23.5
+        ],
+        [
+         120.5,
+         27
+        ],
+        [
+         122,
+         30
+        ],
+        [
+         121.5,
+         32
+        ],
+        [
+         120,
+         34.5
+        ],
+        [
+         111,
+         35
+        ],
+        [
+         106,
+         34
+        ],
+        [
+         102,
+         32
+        ]
+       ],
+       [
+        [
+         39.5,
+         33
+        ],
+        [
+         42.5,
+         37
+        ],
+        [
+         44,
+         37.2
+        ],
+        [
+         46,
+         35.5
+        ],
+        [
+         48,
+         33.5
+        ],
+        [
+         48,
+         30.2
+        ],
+        [
+         47,
+         29.2
+        ],
+        [
+         44,
+         30
+        ],
+        [
+         42,
+         32
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Relay posts": "The yam",
+     "Peace": "The Pax Mongolica"
+    },
+    "rulers": [
+     {
+      "from": 14,
+      "text": "Möngke"
+     },
+     {
+      "from": 15,
+      "text": "Kublai (Yuan), and the khans of the Golden Horde, the Ilkhanate and Chagatai"
+     }
+    ],
+    "role": "Genghis Khan’s heirs, whose relay posts carried messengers from northern China to the Black Sea.",
+    "ties": []
+   },
+   {
+    "id": "timur",
+    "name": "Timur’s empire",
+    "native": "تیموریان",
+    "lang": "fa",
+    "color": "#d98a1f",
+    "active": [
+     [
+      17,
+      17
+     ]
+    ],
+    "label": {
+     "text": "Timur’s empire",
+     "at": [
+      58,
+      36
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        17,
+        17
+       ]
+      ],
+      "areas": [
+       [
+        [
+         38,
+         38
+        ],
+        [
+         42,
+         41
+        ],
+        [
+         46,
+         40
+        ],
+        [
+         54,
+         40.5
+        ],
+        [
+         62,
+         43.5
+        ],
+        [
+         72,
+         43
+        ],
+        [
+         75,
+         40
+        ],
+        [
+         72,
+         37.5
+        ],
+        [
+         70,
+         35
+        ],
+        [
+         69,
+         31
+        ],
+        [
+         67,
+         28
+        ],
+        [
+         62,
+         25.5
+        ],
+        [
+         57,
+         25.8
+        ],
+        [
+         51,
+         28
+        ],
+        [
+         48,
+         30.2
+        ],
+        [
+         47,
+         32
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Capital": "Samarkand"
+    },
+    "rulers": [
+     {
+      "from": 17,
+      "text": "Timur"
+     }
+    ],
+    "role": "The conqueror who made Samarkand his capital.",
+    "ties": []
+   }
+  ]
+ },
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "zhang-qian",
+    "name": "Zhang Qian",
+    "native": "張騫",
+    "life": "died 113 BCE",
+    "role": "Han envoy",
+    "steps": [
+     0,
+     1,
+     3
+    ],
+    "text": "An officer at Emperor Wu’s court, Zhang Qian spent about thirteen years on his first mission west, ten of them as a captive of the Xiongnu, and came home with only one companion, Ganfu. He later led a second embassy to the Wusun. Sima Qian’s history preserves his reports, the first Chinese account of Central Asia."
+   },
+   {
+    "id": "kumarajiva",
+    "name": "Kumarajiva",
+    "native": "鳩摩羅什",
+    "life": "344 to 413, or 350 to 409; dates debated",
+    "role": "Buddhist monk and translator",
+    "steps": [
+     7
+    ],
+    "text": "Born in Kucha to an Indian father and a Kuchean princess, Kumarajiva studied Buddhism in Kashmir as a boy. Captured when Kucha fell in 384, he spent seventeen years in Liangzhou before the Later Qin ruler brought him to Chang’an. There, with a large team, he translated texts such as the Lotus Sutra, and his versions are still read."
+   },
+   {
+    "id": "xuanzang",
+    "name": "Xuanzang",
+    "native": "玄奘",
+    "life": "c. 602 to 664",
+    "role": "Buddhist monk and pilgrim",
+    "steps": [
+     9
+    ],
+    "text": "Ordained young in Luoyang, Xuanzang found the Chinese Buddhist texts of his day contradictory and went to India for better ones. He studied at Nalanda under the abbot Shilabhadra and met King Harsha. Back in Chang’an the Tang emperor welcomed him, and he spent his last nineteen years translating. Legend turned his journey into the novel Journey to the West."
+   },
+   {
+    "id": "marco-polo",
+    "name": "Marco Polo",
+    "life": "1254 to 1324",
+    "role": "Venetian merchant",
+    "steps": [
+     15
+    ],
+    "text": "Son of a Venetian merchant family, Marco Polo was about seventeen when he set out for Kublai Khan’s court. His book, The Description of the World, describes Chinese cities, paper money and coal with wonder. Captured in a war between Venice and Genoa, he dictated it in prison. He died in Venice in 1324."
+   }
+  ]
+ }
+}

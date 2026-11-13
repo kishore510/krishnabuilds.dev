@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.41.0
+
+- New story map in Chronicles: The Silk Road. From Zhang Qian’s mission west in 139 or 138 BCE, the Jade Gate at Dunhuang and the war for Ferghana’s heavenly horses, through silk in Rome, Palmyra’s caravans, Sogdian merchants, Kumarajiva of Kucha, the smuggled silkworms, Xuanzang’s journey and Tang Chang’an, to the battle of Talas, paper in Baghdad, the sealed library at Dunhuang, William of Rubruck at Karakorum, Marco Polo, plague at Caffa, Clavijo at Samarkand and the turn to the sea. 19 chapters, a Powers layer (Han and Tang China, Rome, Parthia, the Kushans, Sasanian Persia, Byzantium, the Abbasids, the Mongols and Timur) and 4 people cards.
+- New camel traveller icon in the art library, used for the caravan in the Baghdad chapter.
+- Catalogue: the Silk Road entry opens the story; the Han, Tang, Mongol and Yuan entries now open it at their chapters.
+
 ## 0.40.0
 
 - New story map in Chronicles: The Vakataka Dynasty. From Vindhyashakti and a homeland nobody can place, Pravarasena I’s horse sacrifices and the Bharashiva marriage, through the split into two branches, Samudragupta’s pillar, Prabhavatigupta’s marriage and regency and her seal at Nagardhan, Ramagiri and Kalidasa’s cloud, Pravarasena II’s new capital and the Setubandha, to the dated lake at Hisse Borala, the Nala raid, Vyaghradeva at Nachna, Harishena and the painted caves of Ajanta, the end of the line and John Smith’s tiger hunt in 1819. 20 chapters, a Powers layer (the two Vakataka lines, the Guptas, the Western Kshatrapas, the Nagas of Padmavati, the Nalas and the Vishnukundins) and 8 people cards.

@@ -131,7 +131,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Delhi Sultanate (0.31.0)
 - [x] Browse lists every finished story map newest first; `story:ref`, `story:check`, `story:shots` and the `new-story-map` skill for adding stories (0.32.0)
 - [x] The Marathas (0.33.0)
-- [ ] The Silk Road (already listed on the hub as coming soon)
+- [x] The Silk Road (0.41.0)
 - [x] The Mahajanapadas and the Buddha (0.35.0)
 - [x] The Shunga Dynasty (0.36.0)
 - [x] The Kalinga War (0.37.0)
