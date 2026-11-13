@@ -118,6 +118,46 @@
         lateQ: [[40, 0.95], [100, 0.7], [180, 0.3], [210, 0.05]],
       },
       smash: {},
+      // Swipe play (a swing asked for with opts.touch): a swipe made any
+      // time the ball is on its way is held and fires at the ideal moment,
+      // so it never misses for being early; the closer its release to the
+      // ideal moment the better the shot. Late swipes are judged as taps.
+      // A swiped shot lands scatter metres (standard deviation) from its
+      // target: base + poor * (1 - quality), times the shot's own factor;
+      // nothing on a Perfect. So a mistimed flat drive at the lines goes
+      // out, and a mistimed topspin to the middle stays in.
+      touch: {
+        perfectMs: 70, bufferMs: 4000, earlyGraceMs: 0,
+        goodMs: 130, poorMs: 210, lateGraceMs: 40,
+        earlyQ: [[70, 0.9], [220, 0.74], [500, 0.55], [1100, 0.42]],
+        lateQ: [[70, 0.92], [130, 0.68], [210, 0.35], [250, 0.1]],
+        scatter: { base: 0.3, poor: 2.0, flat: 1.5, top: 1, lob: 1.2, drop: 0.5, smash: 1.2 },
+      },
+    },
+
+    // Swipe gestures (classifySwipe). Distances in CSS px, speeds in px/ms,
+    // measured over the last `window` ms before the finger lifts.
+    //   up, slow      lob            up, medium   topspin
+    //   up, fast      flat drive     down         drop shot
+    //   a bent path   the ball curves in the air (flat, topspin, serves)
+    // The swipe's direction aims left/right (aimAngle degrees = the
+    // sideline); its length sets depth (lenShort..lenLong).
+    swipe: {
+      tapDist: 14, minDist: 26, window: 140,
+      lobSpeed: 0.34, flatSpeed: 1.0,
+      aimAngle: 36, lenShort: 60, lenLong: 230, shortY: 0.35,
+      downRatio: 0.55,          // down by at least this share of the sideways travel: a drop
+      curveMin: 0.14, curveFull: 0.38, curveSpin: 190, // bend (sagitta / chord) -> sidespin (rad/s)
+    },
+    // Sidespin: the ball bends sideways in the air (the same lift law as
+    // topspin, turned on its side) and kicks that way off the bounce.
+    curve: { kick: 0.004, keep: 0.5 },
+
+    // Court surfaces: bounce height and grip. The default CONFIG is hard.
+    surfaces: {
+      hard:  { label: 'Hard',  restitution: 0.82, friction: 0.6 },
+      clay:  { label: 'Clay',  restitution: 0.87, friction: 0.74 },
+      grass: { label: 'Grass', restitution: 0.75, friction: 0.46 },
     },
 
     // Where the ball should be at contact, relative to the player (m).
@@ -269,6 +309,7 @@
       backswing: 0.18,
       perfectMs: 45, missMs: 240,
       q: [[45, 0.95], [110, 0.7], [200, 0.3], [240, 0.1]],
+      touch: { perfectMs: 75, missMs: 330, q: [[75, 0.95], [160, 0.72], [260, 0.35], [330, 0.12]] }, // swipe serves
       paceMin: 0.82, perfectPace: 1.05,
       shots: { flat: 'serveFlat', top: 'serveKick' }, // button -> CONFIG.shots key (Lob and Drop don't serve)
       first:  { margin: 0.25, pace: 1.0,  spread: 0.25, spreadPoor: 1.1, angleErr: 2.2 },
@@ -299,6 +340,7 @@
     //   serveMargin m inside the box lines on a first serve (+0.3 second)
     //   mercyAim    Easy only: aim pulled this far towards the player
     //   rallyRamp   extra error chance a shot past match.rallySoft
+    //   attack      chance a drive goes for the open court (the far corner from the opponent)
     cpu: {
       easy:   { label: 'Easy', reaction: 0.32, speedMul: 0.80, predictErr: 1.2, refine: 0.5, tapMean: 25, tapSd: 80,
                 errorRate: 0.12, aimMargin: 1.6, aimSpread: 0.9, deep: 0, paceMul: 0.85, topShare: 0.7,
@@ -307,16 +349,53 @@
       medium: { label: 'Medium', reaction: 0.24, speedMul: 0.92, predictErr: 0.7, refine: 0.6, tapMean: 10, tapSd: 55,
                 errorRate: 0.08, aimMargin: 1.1, aimSpread: 0.55, deep: 0.3, paceMul: 0.93, topShare: 0.6,
                 approachRate: 0.45, approachDepth: 7.5, netY: 3.0, lobRate: 0.25, dropRate: 0.05,
-                firstFlat: 0.5, secondFlat: 0.1, serveAimX: 0.7, serveMargin: 0.6, mercyAim: 0, rallyRamp: 0.04 },
-      hard:   { label: 'Hard', reaction: 0.16, speedMul: 1.0, predictErr: 0.35, refine: 0.75, tapMean: 0, tapSd: 32,
-                errorRate: 0.045, aimMargin: 0.7, aimSpread: 0.35, deep: 0.6, paceMul: 1.0, topShare: 0.5,
+                firstFlat: 0.5, secondFlat: 0.1, serveAimX: 0.7, serveMargin: 0.6, mercyAim: 0, rallyRamp: 0.04, attack: 0.2 },
+      hard:   { label: 'Hard', reaction: 0.16, speedMul: 1.0, predictErr: 0.35, refine: 0.75, tapMean: 0, tapSd: 24,
+                errorRate: 0.03, aimMargin: 0.7, aimSpread: 0.35, deep: 0.6, paceMul: 1.0, topShare: 0.5,
                 approachRate: 0.75, approachDepth: 7.5, netY: 2.8, lobRate: 0.35, dropRate: 0.08,
-                firstFlat: 0.7, secondFlat: 0.15, serveAimX: 0.9, serveMargin: 0.4, mercyAim: 0, rallyRamp: 0.04 },
+                firstFlat: 0.7, secondFlat: 0.15, serveAimX: 0.9, serveMargin: 0.4, mercyAim: 0, rallyRamp: 0.025, attack: 0.45 },
       defaultLevel: 'medium',
       brake: 0.7,               // fraction of the player's deceleration it plans to stop with
       homeBehind: 0.4,          // baseline home: this far behind the baseline
     },
+
+    // World Tour: opponents in order. Each is a CPU level (`base`) with a
+    // few of its numbers replaced (`over`), on a surface, in a format.
+    tour: [
+      { id: 'milo',   name: 'MILO',   title: 'The Rookie',       base: 'easy',   surface: 'hard',  format: 'quick',
+        blurb: 'New on tour. Keeps the ball in play and not much else.', kit: ['#f2c94c', '#2b3a67'],
+        over: { errorRate: 0.16, paceMul: 0.8 } },
+      { id: 'ines',   name: 'INES',   title: 'The Wall',         base: 'easy',   surface: 'clay',  format: 'quick',
+        blurb: 'Gets everything back from the baseline. Be patient, then go for the corner.', kit: ['#ff8a5c', '#5a2d1a'],
+        over: { errorRate: 0.06, speedMul: 0.9, reaction: 0.26, approachRate: 0, topShare: 0.9, paceMul: 0.84 } },
+      { id: 'bruno',  name: 'BRUNO',  title: 'The Big Server',   base: 'medium', surface: 'grass', format: 'quick',
+        blurb: 'Huge first serve, shaky in long rallies. Get the return back.', kit: ['#f4f4f0', '#1d5c3a'],
+        over: { firstFlat: 0.9, serveAimX: 0.9, serveMargin: 0.45, errorRate: 0.12, rallyRamp: 0.06 } },
+      { id: 'sana',   name: 'SANA',   title: 'The Net Rusher',   base: 'medium', surface: 'grass', format: 'quick',
+        blurb: 'Follows everything in to the net. Lob her or pass her.', kit: ['#c3a6ff', '#3a2a6a'],
+        over: { approachRate: 0.95, approachDepth: 10.5, dropRate: 0.12 } },
+      { id: 'tomas',  name: 'TOMAS',  title: 'The Magician',     base: 'medium', surface: 'clay',  format: 'quick',
+        blurb: 'Drop shots, lobs and angles. Never the same ball twice.', kit: ['#5ee0c0', '#134a44'],
+        over: { dropRate: 0.3, lobRate: 0.6, aimMargin: 0.9, reaction: 0.2 } },
+      { id: 'kenji',  name: 'KENJI',  title: 'The Counterpuncher', base: 'hard', surface: 'hard',  format: 'quick',
+        blurb: 'Fast, deep and steady. You have to win the point yourself.', kit: ['#ff5e7a', '#3a1020'],
+        over: { errorRate: 0.03, approachRate: 0.3, paceMul: 0.95, attack: 0.3 } },
+      { id: 'astrid', name: 'ASTRID', title: 'The Champion',     base: 'hard',   surface: 'hard',  format: 'standard',
+        blurb: 'World number one. No weaknesses, a full set to prove yourself.', kit: ['#16181f', '#d4af37'],
+        over: { tapSd: 20, aimMargin: 0.6, errorRate: 0.025, dropRate: 0.12, lobRate: 0.45, attack: 0.6 } },
+    ],
   };
+
+  // A config for one match: CONFIG on `surface`, and (opts.tour = a
+  // CONFIG.tour row or its id) that opponent as the CPU level 'tour'.
+  function configFor(opts) {
+    opts = opts || {};
+    const sf = CONFIG.surfaces[opts.surface] || CONFIG.surfaces.hard;
+    const cfg = Object.assign({}, CONFIG, { restitution: sf.restitution, friction: sf.friction, surface: CONFIG.surfaces[opts.surface] ? opts.surface : 'hard' });
+    const row = typeof opts.tour === 'string' ? CONFIG.tour.find(r => r.id === opts.tour) : opts.tour;
+    if (row) cfg.cpu = Object.assign({}, CONFIG.cpu, { tour: Object.assign({}, CONFIG.cpu[row.base], row.over, { label: row.name }) });
+    return cfg;
+  }
 
   // Real court dimensions (m), measured to the outside of the lines.
   const COURT = {
@@ -358,6 +437,7 @@
       X: 0, Y: 0, H: 0, vx: 0, vy: 0, vz: 0,
       spin: 0, ax: 0, ay: -1,      // spin axis direction (unit, horizontal)
       grip: 1,                     // bounce friction multiplier (drop shot)
+      curve: 0,                    // sidespin (rad/s): + bends to the hitter's right
       side: 'near', phase: 'idle', bounces: 0, touchedNet: false, rolling: false,
       t: 0, result: null,
     };
@@ -371,7 +451,7 @@
     ball.ax = shot.vx / u; ball.ay = shot.vy / u;
     ball.side = from.side;
     ball.phase = 'flight'; ball.bounces = 0; ball.touchedNet = false; ball.rolling = false;
-    ball.t = 0; ball.result = null; ball.grip = shot.grip || 1;
+    ball.t = 0; ball.result = null; ball.grip = shot.grip || 1; ball.curve = shot.curve || 0;
   }
 
   function bounce(ball, cfg) {
@@ -392,6 +472,12 @@
     const latKeep = lat > 0 ? Math.max(0, lat - Math.min(maxDu, lat / (1 + k) * k)) / lat : 0;
     ball.vx = u2 * ball.ax + lx * latKeep;
     ball.vy = u2 * ball.ay + ly * latKeep;
+    // Sidespin kicks the ball sideways off the court and is mostly spent.
+    if (ball.curve) {
+      const kick = cfg.curve.kick * ball.curve;
+      ball.vx += -ball.ay * kick; ball.vy += ball.ax * kick;
+      ball.curve *= cfg.curve.keep;
+    }
   }
 
   // Advance one fixed step. Returns an array of events.
@@ -414,6 +500,8 @@
     const u = ball.vx * ball.ax + ball.vy * ball.ay;
     const m = cfg.magnus * ball.spin;
     axx += m * ball.vz * ball.ax; ayy += m * ball.vz * ball.ay; azz += -m * u;
+    // Sidespin: the same lift, sideways (at right angles to the flight).
+    if (ball.curve) { const c = cfg.magnus * ball.curve; axx += -c * ball.vy; ayy += c * ball.vx; ball.curve *= 1 - cfg.spinDecay * dt; }
     ball.vx += axx * dt; ball.vy += ayy * dt; ball.vz += azz * dt;
     ball.spin *= 1 - cfg.spinDecay * dt;
 
@@ -496,7 +584,7 @@
     const d = Math.hypot(dx, dy) || 1;
     const a = angleDeg * Math.PI / 180;
     const hs = def.speed * Math.cos(a);
-    return { vx: hs * dx / d, vy: hs * dy / d, vz: def.speed * Math.sin(a), spin: def.spin, grip: def.grip || 1 };
+    return { vx: hs * dx / d, vy: hs * dy / d, vz: def.speed * Math.sin(a), spin: def.spin, grip: def.grip || 1, curve: def.curve || 0 };
   }
 
   // Aim solver: find the launch angle (within the shot's range) whose first
@@ -507,6 +595,7 @@
     let def = cfg.shots[shotKey];
     if (opts && opts.speedMul) def = Object.assign({}, def, { speed: def.speed * opts.speedMul });
     if (opts && opts.angles) def = Object.assign({}, def, { angles: opts.angles });
+    if (opts && opts.curve) def = Object.assign({}, def, { curve: opts.curve });
     const want = Math.hypot(target.X - from.X, target.Y - from.Y);
     if (def.speedRef) {
       const k = Math.sqrt(want / def.speedRef), c = def.speedClamp || [0, Infinity];
@@ -548,6 +637,23 @@
       }
     }
     return Object.assign(shotFromAngle(from, target, def, angle), { angle, key: shotKey });
+  }
+
+  // solveShot for a ball with sidespin (opts.curve): it bends in the air,
+  // so aim off to the side until the first bounce lands on the target.
+  function solveCurved(from, target, shotKey, cfg, opts) {
+    let shot = solveShot(from, target, shotKey, cfg, opts);
+    if (!opts || !opts.curve) return shot;
+    const aim = { X: target.X, Y: target.Y };
+    for (let i = 0; i < 4; i++) {
+      const s = simulate(from, shot, cfg);
+      if (!s.firstBounce || s.net) break;
+      const ex = target.X - s.firstBounce.X;
+      if (Math.abs(ex) < 0.05) break;
+      aim.X += ex;
+      shot = solveShot(from, aim, shotKey, cfg, opts);
+    }
+    return shot;
   }
 
   // Seeded RNG so the ball machine (and tests) are repeatable.
@@ -713,19 +819,20 @@
     const c = (cfg || CONFIG).contact;
     return Object.assign({}, c, kind && kind !== 'ground' ? c[kind] : {});
   }
-  function timingFor(cfg, kind) {
+  function timingFor(cfg, kind, touch) {
     const T = (cfg || CONFIG).timing;
-    return Object.assign({}, T, kind && kind !== 'ground' ? T[kind] : {});
+    return Object.assign({}, T, kind && kind !== 'ground' ? T[kind] : {}, touch ? T.touch : {});
   }
   // On-screen name of a stroke.
-  function strokeLabel(kind, shot, cfg) {
+  function strokeLabel(kind, shot, cfg, curve) {
     if (kind === 'smash') return 'SMASH';
+    if (curve && kind !== 'volley' && (shot === 'flat' || shot === 'top')) return 'CURVEBALL';
     if (kind === 'volley') return shot === 'drop' ? 'DROP VOLLEY' : shot === 'lob' ? 'LOB VOLLEY' : 'VOLLEY';
     return (cfg || CONFIG).shots[shot].name;
   }
 
-  function timingScore(err, cfg, kind) {
-    const T = timingFor(cfg, kind), a = Math.abs(err);
+  function timingScore(err, cfg, kind, touch) {
+    const T = timingFor(cfg, kind, touch), a = Math.abs(err);
     if (a <= T.perfectMs) return 1;
     return table(err < 0 ? T.earlyQ : T.lateQ, a);
   }
@@ -746,7 +853,8 @@
   function judgeContact(b, p, cfg, tm) {
     cfg = cfg || CONFIG;
     const kind = (tm && tm.stroke) || 'ground';
-    const c = contactFor(cfg, kind), q = cfg.quality, T = timingFor(cfg, kind);
+    const touch = !!(tm && tm.touch);
+    const c = contactFor(cfg, kind), q = cfg.quality, T = timingFor(cfg, kind, touch);
     const stroke = strokeFor(b.X - p.X, cfg), F = stroke === 'fh' ? 1 : -1;
     const idealX = p.X + F * c.side, lat = Math.abs(b.X - idealX);
     const planeY = p.Y - c.ahead;
@@ -773,7 +881,7 @@
     if (out.reason) return out;
     out.contact = true;
     out.perfect = Math.abs(errMs) <= T.perfectMs && dist <= q.perfectDist;
-    out.quality = out.perfect ? 1 : clamp(timingScore(errMs, cfg, kind) * (1 - q.wDist * Math.min(1, dist / c.reach)), 0, 1);
+    out.quality = out.perfect ? 1 : clamp(timingScore(errMs, cfg, kind, touch) * (1 - q.wDist * Math.min(1, dist / c.reach)), 0, 1);
     out.band = out.perfect ? 'PERFECT' : out.quality >= q.good ? 'GOOD' : 'POOR';
     // Sideways pull: a buffered early tap fires on time (no pull); the
     // early grace pulls a little; late pushes more the later it is.
@@ -1042,17 +1150,24 @@
   }
 
   // Queue a swing tapped at sim time t (pr.t's clock).
-  function requestSwing(pr, shot, t) {
-    pr.queue.push({ shot, t: (t == null ? pr.t : t) - pr.cfg.timing.inputLagMs / 1000 });
+  // opts (swipe play): { touch: true, aim: {x, y} (used instead of the
+  // stick at contact), curve (sidespin, rad/s) }.
+  function requestSwing(pr, shot, t, opts) {
+    pr.queue.push(Object.assign({ shot, t: (t == null ? pr.t : t) - pr.cfg.timing.inputLagMs / 1000 }, opts || null));
   }
 
   // Plan a tap: when the swing starts and how long its backswing is.
   function planSwing(pr, r) {
-    const cfg = pr.cfg, T = cfg.timing;
+    const cfg = pr.cfg;
     const pred = predictContact(pr);
+    const T = timingFor(cfg, pred.stroke, r.touch);
     const sw = swingPreset(cfg, r.shot, pred.stroke || 'ground');
     const plan = { shot: r.shot, tap: r.t, start: r.t, bs: sw.backswing, tapErr: null, kind: pred.kind, predX: pred.X,
-      stroke: pred.stroke || 'ground', follow: sw.follow, recovery: sw.recovery };
+      stroke: pred.stroke || 'ground', follow: sw.follow, recovery: sw.recovery,
+      req: r, touch: !!r.touch, aim: r.aim || null, curve: r.curve || 0 };
+    // A swipe waits for a ball it can't yet reach (the player is still
+    // getting to it); it is planned again every step until it starts.
+    if (r.touch && pred.kind !== 'ok') plan.start = Infinity;
     if (pred.kind === 'ok') {
       const ideal = pred.t - sw.backswing;
       plan.tapErr = (r.t - ideal) * 1000;
@@ -1068,9 +1183,29 @@
     pr.swing = {
       t0: plan.start, bs: plan.bs, shot: plan.shot, done: false, stroke: strokeFor(guessX - pr.player.X, pr.cfg),
       result: null, tapErr: plan.tapErr, kind: plan.kind, strokeKind: plan.stroke, follow: plan.follow, recovery: plan.recovery,
+      touch: plan.touch, aim: plan.aim, curve: plan.curve,
     };
     pr.pending = null;
     ev.push({ type: 'swing', shot: plan.shot, t: plan.start, tap: plan.tap, tapErr: plan.tapErr, bs: plan.bs, stroke: plan.stroke });
+  }
+
+  // Take the taps that fall before t1: plan each (buffered, on time or
+  // catching up), one swing at a time. A swipe replaces a waiting one and
+  // is ignored when no ball is on its way; a waiting swipe is planned
+  // again each step, because the player is still moving.
+  function takeTaps(pr, t1, ev) {
+    pr.queue.sort((a, c) => a.t - c.t);
+    while (pr.queue.length && pr.queue[0].t < t1) {
+      const r = pr.queue.shift(), s = pr.swing;
+      if (r.touch && (!incoming(pr) || pr.whiffed)) continue;
+      if (pr.pending && !(r.touch && pr.pending.touch)) continue;
+      if (swingPhase(s.t0 == null ? null : r.t - s.t0, pr.cfg, s.bs, s) !== 'ready') continue;
+      const plan = planSwing(pr, r);
+      if (plan.tapErr != null && !pr.pending) { pr.taps.n++; pr.taps.sum += plan.tapErr; }
+      pr.pending = plan;
+    }
+    if (pr.pending && pr.pending.touch) pr.pending = incoming(pr) ? planSwing(pr, pr.pending.req) : null;
+    if (pr.pending && pr.pending.start < t1) startSwing(pr, pr.pending, ev);
   }
 
   function swinging(pr) {
@@ -1223,14 +1358,22 @@
       X: b.X + b.vx * back, Y: b.Y + b.vy * back, H: Math.max(cfg.ballRadius, b.H + b.vz * back), vy: b.vy,
       live, phase: b.phase,
     };
-    const j = judgeContact(bs, pr.player, cfg, { tapErr: s.tapErr, kind: s.kind, stroke: s.strokeKind });
+    const j = judgeContact(bs, pr.player, cfg, { tapErr: s.tapErr, kind: s.kind, stroke: s.strokeKind, touch: s.touch });
+    if (s.aim) stick = s.aim;
     s.stroke = j.stroke; s.result = j; pr.last = j;
     const out = { j, bs, live };
     if (!j.contact) return out;
     let aim = aimReturn(j, stick, s.shot, cfg, pr.rand, Math.hypot(b.vx, b.vy, b.vz));
     if (adjust) aim = adjust(aim, j) || aim;
+    if (s.touch && !j.perfect && !aim.mishit) {
+      const sc = timingFor(cfg, j.kind, true).scatter;
+      const sd = (sc.base + sc.poor * (1 - j.quality)) * (sc[aim.defKey] || 1);
+      aim.target = { X: aim.target.X + gauss(pr.rand) * sd, Y: Math.min(COURT.netY - 0.8, aim.target.Y + gauss(pr.rand) * sd) };
+    }
     const from = { side: 'near', X: bs.X, Y: bs.Y, H: bs.H };
-    let shot = solveShot(from, aim.target, aim.defKey, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles });
+    const curve = s.curve && !aim.mishit && j.kind === 'ground' && (aim.defKey === 'flat' || aim.defKey === 'top') ? s.curve : 0;
+    let shot = solveCurved(from, aim.target, aim.defKey, cfg, { speedMul: aim.pace, clearNet: !aim.noClear, angles: aim.angles, curve });
+    out.curve = curve;
     if (aim.lift) shot = liftShot(shot, aim.lift);
     if (aim.spinMul != null && aim.spinMul !== 1) shot = Object.assign({}, shot, { spin: shot.spin * aim.spinMul });
     return Object.assign(out, { aim, shot, from });
@@ -1245,17 +1388,7 @@
 
     // Taps that fall inside this step: plan each (buffered, on time or
     // catching up); one swing at a time.
-    pr.queue.sort((a, c) => a.t - c.t);
-    while (pr.queue.length && pr.queue[0].t < t1) {
-      const r = pr.queue.shift();
-      const s = pr.swing;
-      if (pr.pending || swingPhase(s.t0 == null ? null : r.t - s.t0, cfg, s.bs, s) !== 'ready') continue;
-      const plan = planSwing(pr, r);
-      if (plan.tapErr != null) { pr.taps.n++; pr.taps.sum += plan.tapErr; }
-      if (plan.start < t1) startSwing(pr, plan, ev);
-      else pr.pending = plan;
-    }
-    if (pr.pending && pr.pending.start < t1) startSwing(pr, pr.pending, ev);
+    takeTaps(pr, t1, ev);
 
     movePlayer(pr, stick, dt);
 
@@ -1301,7 +1434,7 @@
         launch(b, from, shot);
         pr.hitBy = 'player'; pr.shotKey = s.shot; pr.aim = { target: aim.target, miss: aim.mishit }; pr.path = null;
         ev.push(Object.assign({ type: 'hit', by: 'player', side: 'near', X: from.X, Y: from.Y, H: from.H,
-          shot: s.shot, label: strokeLabel(j.kind, s.shot, cfg), angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit, risk: aim.risk || null,
+          shot: s.shot, label: strokeLabel(j.kind, s.shot, cfg, c.curve), curve: c.curve, speed: Math.hypot(shot.vx, shot.vy, shot.vz), angle: shot.angle, target: aim.target, pace: aim.pace, mishit: aim.mishit, risk: aim.risk || null,
           stick: { x: stick.x || 0, y: stick.y || 0 } }, j));
       } else {
         if (live) { pr.whiffed = true; countMiss(pr, j.reason); }
@@ -1310,7 +1443,7 @@
     }
 
     // A fed ball that got past the player.
-    if (pr.live && pr.hitBy === 'machine' && s.done && !pr.pending) {
+    if (pr.live && pr.hitBy === 'machine' && s.done && (!pr.pending || pr.pending.start === Infinity)) {
       const off = b.Y > cfg.player.maxY + 2.2 || Math.abs(b.X) > 9 || b.t > 6;
       if (b.phase === 'dead' || b.phase === 'net' || off) {
         pr.rally = 0;
@@ -1517,7 +1650,7 @@
       cfg, rand, t: 0, ball: createBall(), path: null,
       phase: 'pre', timer: 0, serveNo: 1, serve: null, rally: null, call: null, banner: null,
       stats: [newStats(), newStats()], longest: 0, points: 0, drill: !!opts.serveDrill, drillN: 0,
-      humanStick: { x: 0, y: 0 }, winner: null,
+      humanStick: { x: 0, y: 0 }, winner: null, names: opts.names || ['YOU', 'CPU'],
     };
     m.actors = [createActor(m, 'near', opts.near || 'human'), createActor(m, 'far', opts.far || 'none')];
     m.actors.forEach(a => { if (CPU_LEVELS && cfg.cpu && cfg.cpu[a.ctl]) a.cpu = createCpu(m, a); });
@@ -1589,7 +1722,7 @@
   // A shot button during a match. The serving player's first tap throws
   // the toss; the next Flat or Topspin tap is the serve. Otherwise it's a
   // swing, timed exactly as in practice.
-  function matchSwing(m, shot, t) {
+  function matchSwing(m, shot, t, opts) {
     const me = m.actors[0];
     if (me.ctl !== 'human' || m.phase === 'over') return;
     t = t == null ? m.t : t;
@@ -1598,17 +1731,19 @@
       if (m.phase !== 'serve') return;
       if (S.state === 'wait') { tossNow(m, m.pendingEv || (m.pendingEv = [])); return; }
       if (S.state === 'toss' && !S.tap && m.cfg.serve.shots[shot]) {
-        S.tap = { shot, t: t - m.cfg.timing.inputLagMs / 1000, stick: null };
+        S.tap = { shot, t: t - m.cfg.timing.inputLagMs / 1000, stick: (opts && opts.aim) || null,
+          touch: !!(opts && opts.touch), curve: (opts && opts.curve) || 0 };
       }
       return;
     }
-    requestSwing(me, shot, t);
+    requestSwing(me, shot, t, opts);
   }
 
   // The serve's contact: judge the timing, aim in the box, scatter and
   // launch. Returns true if a ball was served.
   function serveContact(m, t1, ev) {
-    const cfg = m.cfg, SV = cfg.serve, S = m.serve, a = m.actors[S.server], b = m.ball;
+    const cfg = m.cfg, S = m.serve, a = m.actors[S.server], b = m.ball;
+    const SV = S.tap.touch ? Object.assign({}, cfg.serve, cfg.serve.touch) : cfg.serve;
     const errMs = (S.tap.t - (S.tossT0 + S.peakT)) * 1000, ae = Math.abs(errMs);
     if (ae > SV.missMs) { retoss(m, ev, errMs < 0 ? 'early' : 'late'); return false; }
     const back = S.tap.t + SV.backswing - t1; // <= 0: rewind to the contact instant
@@ -1627,7 +1762,7 @@
     X += gauss(m.rand) * sigma; Y += gauss(m.rand) * sigma;
     const pace = (perfect ? SV.perfectPace : SV.paceMin + (1 - SV.paceMin) * q) * sv.pace;
     const key = SV.shots[S.tap.shot];
-    let shot = solveShot(from, { X, Y }, key, cfg, { speedMul: pace, clearNet: true });
+    let shot = solveCurved(from, { X, Y }, key, cfg, { speedMul: pace, clearNet: true, curve: S.tap.curve || 0 });
     const tilt = gauss(m.rand) * sv.angleErr * (1 - q);
     if (tilt) shot = liftShot(shot, tilt);
     const real = a.side === 'near' ? shot : Object.assign({}, shot, { vx: -shot.vx, vy: -shot.vy });
@@ -1640,7 +1775,8 @@
     refHit(m.rally, S.server);
     m.phase = 'rally';
     afterHit(m, a);
-    ev.push({ type: 'serve', who: a.idx, side: a.side, shot: S.tap.shot, label: cfg.shots[key].name, serveNo: m.serveNo,
+    ev.push({ type: 'serve', who: a.idx, side: a.side, shot: S.tap.shot, label: S.tap.curve ? 'CURVE SERVE' : cfg.shots[key].name, serveNo: m.serveNo,
+      curve: S.tap.curve || 0, speed: Math.hypot(shot.vx, shot.vy, shot.vz),
       errMs, quality: q, perfect, pace, X: rf.X, Y: rf.Y, H: from.H, target: toReal(a, target), aimed: toReal(a, { X, Y }) });
     return true;
   }
@@ -1676,7 +1812,7 @@
     refHit(r, a.idx);
     afterHit(m, a);
     ev.push(Object.assign({ type: 'hit', who: a.idx, side: a.side, by: a.side, X: rf.X, Y: rf.Y, H: c.from.H,
-      shot: a.swing.shot, label: strokeLabel(j.kind, a.swing.shot, cfg), angle: c.shot.angle,
+      shot: a.swing.shot, label: strokeLabel(j.kind, a.swing.shot, cfg, c.curve), curve: c.curve, speed: Math.hypot(c.shot.vx, c.shot.vy, c.shot.vz), angle: c.shot.angle,
       target: toReal(a, c.aim.target), pace: c.aim.pace, mishit: c.aim.mishit, risk: c.aim.risk || null, rally: r.hits }, j));
   }
 
@@ -1737,11 +1873,11 @@
 
   // The score banner after a point: { title, sub }.
   function bannerFor(m, sev) {
-    const names = ['YOU', 'CPU'], sc = m.score;
+    const names = m.names, sc = m.score;
     if (m.drill) return { title: m.call.label, sub: '' };
     const has = t => sev.find(e => e.type === t);
     const set = has('set'), game = has('game');
-    if (has('match')) return { title: (sc.winner === 0 ? 'YOU WIN' : 'CPU WINS'), sub: setsText(sc) };
+    if (has('match')) return { title: (sc.winner === 0 ? (names[0] === 'YOU' ? 'YOU WIN' : names[0] + ' WINS') : names[1] + ' WINS'), sub: setsText(sc) };
     if (set) return { title: 'SET ' + names[set.who], sub: setsText(sc) };
     if (game) {
       const g = game.games;
@@ -1761,17 +1897,8 @@
 
   // Taps queued for an actor that fall inside this step (as practice).
   function actorTaps(a, t1, ev) {
-    a.queue.sort((p, q) => p.t - q.t);
     const sev = [];
-    while (a.queue.length && a.queue[0].t < t1) {
-      const r = a.queue.shift(), s = a.swing;
-      if (a.pending || swingPhase(s.t0 == null ? null : r.t - s.t0, a.cfg, s.bs, s) !== 'ready') continue;
-      const plan = planSwing(a, r);
-      if (plan.tapErr != null) { a.taps.n++; a.taps.sum += plan.tapErr; }
-      if (plan.start < t1) startSwing(a, plan, sev);
-      else a.pending = plan;
-    }
-    if (a.pending && a.pending.start < t1) startSwing(a, a.pending, sev);
+    takeTaps(a, t1, sev);
     for (const e of sev) ev.push(Object.assign(e, { who: a.idx, side: a.side }));
   }
 
@@ -1899,7 +2026,12 @@
       if (oppAtNet && R() < lv.lobRate) { shot = 'lob'; sx = away * 0.5 * R(); }
       else if (oppAtNet) { shot = R() < 0.5 ? 'top' : 'flat'; sx = away * (0.75 + 0.2 * R()); }
       else if (me.Y - COURT.netY < cfg.zones.back + 1 && COURT.netY - op.Y > cfg.zones.back && R() < lv.dropRate) { shot = 'drop'; sx = away * R(); }
-      else { shot = R() < lv.topShare ? 'top' : 'flat'; sx = clamp(sx + away * 0.3, -1, 1); }
+      else {
+        shot = R() < lv.topShare ? 'top' : 'flat';
+        // attack: the chance it goes for the open court, wide of the opponent.
+        if (lv.attack && R() < lv.attack) sx = -Math.sign(op.X || sx) * (0.55 + 0.3 * R());
+        else sx = clamp(sx + away * 0.3, -1, 1);
+      }
       c.net = inside && shot !== 'lob' && shot !== 'drop' && R() < lv.approachRate;
     }
     // Its margin limits where it means to aim (the stick), before timing
@@ -2013,10 +2145,55 @@
     } else a.move = { x: 0, y: 0 };
   }
 
+  // ---------------------------------------------------------------------
+  // Swipe gestures. pts = [{ x, y, t }] in CSS px and ms, y down the
+  // screen. Returns { kind: 'none' | 'tap' | 'swipe' } and for a swipe
+  // { shot, aim: {x, y} (as a stick: x right, y -1 deeper), curve
+  // (sidespin, rad/s), speed (px/ms), len, bend }.
+  // ---------------------------------------------------------------------
+  function classifySwipe(pts, cfg) {
+    const S = (cfg || CONFIG).swipe;
+    if (!pts || !pts.length) return { kind: 'none' };
+    const a = pts[0], b = pts[pts.length - 1];
+    const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy);
+    if (len < S.tapDist) return { kind: 'tap', x: b.x, y: b.y };
+    if (len < S.minDist) return { kind: 'none' };
+    // Speed over the last `window` ms (a finger often rests, then flicks).
+    let i = pts.length - 1, path = 0;
+    while (i > 0 && b.t - pts[i - 1].t <= S.window) { path += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); i--; }
+    const span = b.t - pts[i].t;
+    const speed = span > 0 ? path / span : len / Math.max(1, b.t - a.t);
+    // Bend: the furthest the path strays from the straight line, signed
+    // (+ = to the right of the direction of travel).
+    let bend = 0;
+    for (const p of pts) {
+      const c = (dx * (p.y - a.y) - dy * (p.x - a.x)) / len;
+      if (Math.abs(c) > Math.abs(bend)) bend = c;
+    }
+    bend = bend / len;
+    const down = dy > 0 && dy >= Math.abs(dx) * S.downRatio;
+    const out = { kind: 'swipe', speed, len, bend, curve: 0 };
+    const depth = lerp(S.shortY, -1, clamp((len - S.lenShort) / (S.lenLong - S.lenShort), 0, 1));
+    if (down) {
+      out.shot = 'drop';
+      out.aim = { x: clamp(Math.atan2(dx, dy) * 180 / Math.PI / S.aimAngle, -1, 1), y: -depth * 0.5 };
+      return out;
+    }
+    out.shot = speed >= S.flatSpeed ? 'flat' : speed < S.lobSpeed ? 'lob' : 'top';
+    out.aim = { x: clamp(Math.atan2(dx, Math.max(1e-6, -dy)) * 180 / Math.PI / S.aimAngle, -1, 1), y: depth };
+    // A path that bulges left sends the ball out left and bends it back
+    // to the right (and the other way round).
+    if (out.shot !== 'lob' && Math.abs(bend) >= S.curveMin) {
+      out.curve = -Math.sign(bend) * S.curveSpin * clamp((Math.abs(bend) - S.curveMin) / (S.curveFull - S.curveMin), 0.35, 1);
+    }
+    return out;
+  }
+
   const api = {
+    configFor, solveCurved, classifySwipe, timingFor,
     CONFIG, COURT, netHeight, toWorld, judgeBounce, createBall, launch, step,
     simulate, solveShot, shotFromAngle, rng, createMachine, machineStep,
-    strokeFor, swingPhase, swingPreset, timingScore, zoneOf, contactFor, timingFor, strokeLabel, predictFor, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
+    strokeFor, swingPhase, swingPreset, timingScore, zoneOf, contactFor, strokeLabel, predictFor, judgeContact, aimReturn, createPractice, requestSwing, practiceStep,
     playerBounds, tracePath, predictCrossing, predictContact, reachPlan, assistTarget, missReason, MISS_TEXT,
     SIDES, createScore, serverOf, courtOf, pointWon, pointsText, serviceBox, judgeServe,
     createRally, refHit, refBall,

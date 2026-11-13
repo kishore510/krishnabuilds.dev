@@ -376,3 +376,17 @@ The engine's `cosmic` canvas is a sky basemap in plain units, used first as a di
 ## 2026-11-13 — Story Maps: people go in Lives, discoveries in Science
 
 A life is told in **Lives**, a subject on the Humankind shelf; the discovery or idea is told in its own subject. Marie Curie is in Lives and Radioactivity is in Physics and Astronomy; Einstein, Darwin, Socrates and Ashoka will be Lives too. This ends the question of which science a person belongs to, and makes a Science story follow the idea from one person and place to the next. Philosophy stays as a subject for schools of thought. The catalogue gains the kind `discovery` beside `person`.
+
+## 2026-11-13 — Tennis: landscape, a stick to run and swipes to hit
+
+Tennis is now landscape and full screen (the Dojo Duel pattern: `data-fullscreen="landscape"`, a rotate prompt in portrait, chrome hidden during play). The court sits in the middle, so the left thumb (a floating stick that runs the player) and the right thumb (swipes that hit) never cover it. The four shot buttons are gone. The keyboard still works (arrows or WASD, H J K L).
+
+The swipe is the shot (`classifySwipe` in engine.js, numbers in `CONFIG.swipe`): up is topspin, a fast flick is flat, a slow swipe is a lob, down is a drop, and a bent path adds sidespin so the ball curves in the air. Its direction aims and its length sets depth, so the movement stick no longer aims.
+
+Running stays the player's job. A first version ran the player to the ball automatically and left only the swipe; the owner turned that down as not being tennis, and a bot confirmed it (with auto-running, a careless bot beat Hard 30 games to 1). What is left is the footwork assist from Stage 2: with the stick let go, the feet settle onto the spot for the coming ball. It defaults to Strong and can be set to Light or Off.
+
+Striking is forgiving on timing and strict on risk. A swipe made any time the ball is on its way is held and played at the right moment, so being early is never a miss; the closer the release to the ideal moment the better the contact (`CONFIG.timing.touch`). A swiped shot that isn't Perfect is scattered around its target by an amount that grows as timing gets worse, and more for a flat drive than for topspin, so going for the lines is a real choice.
+
+Also new: sidespin in the physics (the topspin lift law turned on its side, plus a sideways kick off the bounce; `solveCurved` aims off so the ball still lands on the target), three surfaces that change bounce height and grip (`CONFIG.surfaces`, applied per match by `configFor`), and a World Tour of seven opponents, each a CPU level with a few numbers replaced (`CONFIG.tour`). Hard and Medium gained `attack`, the chance a drive goes for the open court. Tour stars and lifetime numbers are kept in localStorage (`tennisTour`, `tennisStats`). All sound is synthesised with WebAudio; there are no audio files.
+
+Difficulty was set with headless bots that run and swipe with human-like delays and errors, not with people: a beginner-like bot beats Easy, splits with Medium and loses to Hard. It needs checking against real play.
