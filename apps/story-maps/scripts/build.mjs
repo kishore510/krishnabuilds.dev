@@ -324,18 +324,19 @@ const shelves = manifest.shelves
     const open = withStories.filter((x) => x.stories.length);
     const toCome = withStories.filter((x) => !x.stories.length).map((x) => x.section.title);
     return [
-      `<section class="sm-shelf sm-shelf--${shelf.id}" aria-labelledby="sm-shelf-${shelf.id}">`,
+      `<section class="sm-shelf sm-shelf--${shelf.id}" id="${shelf.id}" aria-labelledby="sm-shelf-${shelf.id}">`,
       `<div class="sm-shelf__head"><h2 id="sm-shelf-${shelf.id}">${esc(shelf.title)}</h2><p>${esc(shelf.blurb)}</p></div>`,
       ...open.map(({ section, stories }) => {
         const newestFirst = [...stories].sort((x, y) => String(y.added).localeCompare(String(x.added)));
         return (
           `<div class="sm-subject"><h3>${esc(section.title)} <span class="sm-subject__n">${stories.length} ${stories.length === 1 ? "story map" : "story maps"}</span></h3>` +
-          `<p class="sm-subject__blurb">${esc(section.blurb)}</p><ul class="sm-story-row">${newestFirst.map(storyCard).join("")}</ul></div>`
+          `<p class="sm-subject__blurb">${esc(section.blurb)}</p>` +
+          // The arrows are for a mouse, which cannot swipe; hub/front.js shows them only on a row that overflows.
+          `<div class="sm-row"><button type="button" class="sm-row__go" data-go="-1" aria-label="Earlier ${esc(section.title)} story maps" hidden>‹</button>` +
+          `<ul class="sm-story-row">${newestFirst.map(storyCard).join("")}</ul>` +
+          `<button type="button" class="sm-row__go" data-go="1" aria-label="More ${esc(section.title)} story maps" hidden>›</button></div></div>`
         );
       }),
-      shelf.id === "humankind"
-        ? '<a class="sm-explore-link" href="/explore/"><span class="sm-explore-link__t">Explore through time</span><span>An atlas and a timeline of who ruled where and when, and a list of everything by name.</span></a>'
-        : "",
       toCome.length ? `<p class="sm-shelf__next">To come: ${toCome.map(esc).join(", ")}.</p>` : "",
       "</section>",
     ].join("\n");
@@ -354,7 +355,14 @@ write(
       HOME,
       '<main class="sm-page sm-hub sm-front">',
       WORLD_DEFS,
-      '<section class="sm-hero"><h1>Story Maps</h1><p>Follow a story across an illustrated map: what happened, what people did, and how we found out.</p></section>',
+      '<section class="sm-hero"><h1>Story Maps</h1><p>Follow a story across an illustrated map: what happened, what people did, and how we found out.</p>' +
+        `<nav class="sm-doors" aria-label="Where to start">${manifest.shelves
+          .map((shelf) => {
+            const ids = manifest.sections.filter((x) => x.shelf === shelf.id).map((x) => x.id);
+            const n = builtStories.filter((x) => ids.includes(x.section)).length;
+            return `<a class="sm-door sm-shelf--${shelf.id}" href="#${shelf.id}"><span class="sm-door__t">${esc(shelf.title)}</span><span class="sm-door__n">${n} ${n === 1 ? "story map" : "story maps"}</span></a>`;
+          })
+          .join("")}<a class="sm-door sm-explore-link" href="/explore/"><span class="sm-door__t">Explore through time</span><span class="sm-door__n">Atlas, timeline and search</span></a></nav></section>`,
       shelves,
       FOOT,
       "</main>",

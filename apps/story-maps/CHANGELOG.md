@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.46.0
+
+- Front page: four links under the heading, one to each shelf (with its number of story maps) and one to Explore, so nothing important sits below a long shelf. The Explore card inside the Humankind shelf is gone.
+- Front page: a row of story cards too long to fit now has arrow buttons, for a mouse that cannot swipe.
+
 ## 0.45.0
 
 - New subject on the Humankind shelf: Lives, for people followed from place to place. Marie Curie moves there from Physics and Astronomy; her address is unchanged. Science subjects now hold discoveries and ideas, not biographies.

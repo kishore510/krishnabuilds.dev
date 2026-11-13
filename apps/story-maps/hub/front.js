@@ -1,5 +1,6 @@
 // The front page in the browser: on each story card, pick up where the reader
-// left off. Everything on the page works without it.
+// left off, and arrows on a row of cards too long to fit, for a mouse that
+// cannot swipe. Everything on the page works without it.
 
 (function () {
   "use strict";
@@ -26,5 +27,27 @@
       }
     });
     started.sort(function (x, y) { return x.t - y.t; }).forEach(function (x) { row.prepend(x.li); });
+
+    var buttons = row.parentNode.querySelectorAll(".sm-row__go");
+    var raf = 0;
+    function update() {
+      raf = 0;
+      var fits = row.scrollWidth <= row.clientWidth + 2;
+      Array.prototype.forEach.call(buttons, function (b) {
+        b.hidden = fits;
+        b.disabled = b.dataset.go === "-1" ? row.scrollLeft < 2 : row.scrollLeft > row.scrollWidth - row.clientWidth - 2;
+      });
+    }
+    function later() {
+      if (!raf) raf = requestAnimationFrame(update);
+    }
+    Array.prototype.forEach.call(buttons, function (b) {
+      b.addEventListener("click", function () {
+        row.scrollBy({ left: Number(b.dataset.go) * row.clientWidth * 0.8, behavior: "smooth" });
+      });
+    });
+    row.addEventListener("scroll", later, { passive: true });
+    window.addEventListener("resize", later);
+    update();
   });
 })();

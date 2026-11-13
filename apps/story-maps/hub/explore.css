@@ -1342,7 +1342,14 @@ a.sm-mini:hover {
   font-size: var(--kb-font-size-sm);
   color: var(--sm-muted);
 }
-.sm-explore-link {
+/* The doors under the heading: one to each shelf, and one to Explore. */
+.sm-doors {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--kb-space-3);
+  margin-top: var(--kb-space-4);
+}
+.sm-door {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -1351,14 +1358,65 @@ a.sm-mini:hover {
   color: inherit;
   background: var(--sm-panel);
   border: 1px solid var(--sm-line);
+  border-top: 3px solid var(--shelf, var(--sm-saffron));
   border-radius: var(--kb-radius-lg);
-  font-size: var(--kb-font-size-sm);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.sm-explore-link__t {
+.sm-door:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+}
+.sm-door__t {
   font-family: var(--sm-font-head);
   font-size: var(--kb-font-size-lg);
-  color: var(--sm-saffron);
+  color: var(--shelf, var(--sm-saffron));
 }
-.sm-explore-link__t::after {
+.sm-door__n {
+  font-size: var(--kb-font-size-sm);
+  color: var(--sm-muted);
+}
+.sm-explore-link .sm-door__t::after {
   content: " →";
+}
+.sm-shelf {
+  scroll-margin-top: var(--kb-space-4);
+}
+/* A row of story cards with arrows for a mouse. */
+.sm-row {
+  position: relative;
+}
+.sm-row__go {
+  position: absolute;
+  top: 34%;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--sm-line);
+  background: var(--sm-panel);
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+.sm-row__go[data-go="-1"] {
+  left: -8px;
+}
+.sm-row__go[data-go="1"] {
+  right: -8px;
+}
+.sm-row__go:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+@media (hover: none) {
+  .sm-row__go {
+    display: none;
+  }
+}
+@media (max-width: 44rem) {
+  .sm-doors {
+    grid-template-columns: 1fr 1fr;
+  }
 }
