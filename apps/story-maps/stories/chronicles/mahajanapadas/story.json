@@ -1,0 +1,1485 @@
+{
+  "id": "mahajanapadas",
+  "title": "The Mahajanapadas and the Buddha",
+  "description": "An illustrated map of the sixteen great kingdoms of ancient India and the teachers who walked among them, from the new cities of the Ganga plain and Persian Gandhara to the lives of the Buddha and Mahavira and Magadha’s rise over its rivals.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the sixteen great kingdoms (mahajanapadas) and the lives of the Buddha and Mahavira, about the 6th to 4th century BCE",
+  "note": "Based on Buddhist and Jain texts written down centuries later, Persian inscriptions, Greek writers and archaeology; each chapter says which it follows. The dates of the Buddha and Mahavira are debated by a century or more. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders. Assaka’s pin stands at Bodhan, one claimed site of its capital.",
+  "places": {
+    "kashi": {
+      "name": "Kashi",
+      "at": [
+        83.01,
+        25.32
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "kaushambi": {
+      "name": "Kaushambi",
+      "at": [
+        81.39,
+        25.34
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [
+        72.83,
+        33.75
+      ],
+      "glyph": "gate",
+      "label": "right"
+    },
+    "mathura": {
+      "name": "Mathura",
+      "at": [
+        77.67,
+        27.49
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "ujjain": {
+      "name": "Ujjain",
+      "at": [
+        75.78,
+        23.18
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "vaishali": {
+      "name": "Vaishali",
+      "at": [
+        85.13,
+        25.99
+      ],
+      "glyph": "flag",
+      "label": "right"
+    },
+    "kundagrama": {
+      "name": "Kundagrama",
+      "at": [
+        85.17,
+        26.04
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "lumbini": {
+      "name": "Lumbini",
+      "at": [
+        83.28,
+        27.47
+      ],
+      "glyph": "pillar",
+      "label": "right"
+    },
+    "kapilavastu": {
+      "name": "Kapilavastu",
+      "at": [
+        83.05,
+        27.57
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "bodh-gaya": {
+      "name": "Bodh Gaya",
+      "at": [
+        84.99,
+        24.7
+      ],
+      "glyph": "shrine",
+      "label": "bottom"
+    },
+    "sarnath": {
+      "name": "Sarnath",
+      "at": [
+        83.02,
+        25.38
+      ],
+      "glyph": "deer",
+      "label": "left"
+    },
+    "rajagriha": {
+      "name": "Rajagriha",
+      "at": [
+        85.42,
+        25.03
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "shravasti": {
+      "name": "Shravasti",
+      "at": [
+        82.04,
+        27.51
+      ],
+      "glyph": "garden",
+      "label": "left"
+    },
+    "assaka": {
+      "name": "Assaka",
+      "at": [
+        77.88,
+        18.67
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "pavapuri": {
+      "name": "Pavapuri",
+      "at": [
+        85.54,
+        25.09
+      ],
+      "glyph": "shrine",
+      "label": "bottom"
+    },
+    "kushinagar": {
+      "name": "Kushinagar",
+      "at": [
+        83.89,
+        26.74
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [
+        85.14,
+        25.61
+      ],
+      "glyph": "palace",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "buddha": {
+      "name": "The Buddha",
+      "icon": "monk"
+    },
+    "udayana": {
+      "name": "Udayana and Vasavadatta",
+      "icon": "prince"
+    },
+    "pupils": {
+      "name": "Bavari’s pupils",
+      "icon": "monk"
+    }
+  },
+  "phases": {
+    "kingdoms": {
+      "name": "Sixteen great kingdoms",
+      "color": "#4fc3b0"
+    },
+    "republics": {
+      "name": "Republics and new teachers",
+      "color": "#a678e0"
+    },
+    "buddha": {
+      "name": "The Buddha’s life",
+      "color": "#e0a73a"
+    },
+    "endings": {
+      "name": "Endings and an empire",
+      "color": "#e0573a"
+    },
+    "today": {
+      "name": "What remains",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "flight": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 30.4,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 39.1,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 74,
+        "color": "rgba(224,167,58,.35)"
+      },
+      {
+        "until": 95.8,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "6th c. BCE"
+      },
+      {
+        "at": 41.3,
+        "text": "5th c."
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "kashi",
+      "phase": "kingdoms",
+      "title": "The land of sixteen kingdoms",
+      "native": "षोडश महाजनपद",
+      "when": "about the 6th to 5th century BCE",
+      "at": 2,
+      "source": "History",
+      "camera": {
+        "at": [
+          80.5,
+          27.5
+        ],
+        "width": 20
+      },
+      "legs": [],
+      "text": "Buddhist and Jain texts remember northern India in the Buddha’s time as sixteen great kingdoms (mahajanapadas): Kashi, Kosala, Anga, Magadha, Vajji, Malla, Chedi, Vatsa, Kuru, Panchala, Matsya, Shurasena, Assaka, Avanti, Gandhara and Kamboja. The lists differ in places. Kashi, around Varanasi, was once among the strongest, but by the Buddha’s day it had passed to Kosala.",
+      "today": "Today: Varanasi, Uttar Pradesh, India."
+    },
+    {
+      "place": "kaushambi",
+      "phase": "kingdoms",
+      "title": "Walls on the Yamuna",
+      "native": "कौशाम्बी",
+      "when": "about the 6th to 4th century BCE",
+      "at": 6.4,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          81.4,
+          25.5
+        ],
+        "width": 8.5
+      },
+      "legs": [],
+      "text": "Cities rise again on the Ganga plain, more than a thousand years after the Indus cities. At Kaushambi, capital of Vatsa, excavators found huge earth ramparts faced with brick; how early they were built is debated. Iron tools clear forest and till rice fields, and a glossy black tableware, Northern Black Polished Ware, spreads from city to city.",
+      "today": "Today: Kosam, near Prayagraj, Uttar Pradesh."
+    },
+    {
+      "place": "taxila",
+      "phase": "kingdoms",
+      "title": "Gandhara under Persia",
+      "native": "गन्धार",
+      "when": "from about 518 BCE",
+      "at": 10.7,
+      "source": "History",
+      "camera": {
+        "at": [
+          73.2,
+          33.5
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In the far north-west, Gandhara, with its city of Taxila, falls under Persian rule. Inscriptions of the Persian king Darius I list Gandara and Hindush, the Indus lands, among his provinces. The Greek writer Herodotus says the Indians paid the largest tribute of all, in gold dust, though his figure is hard to trust.",
+      "today": "Today: Taxila, near Islamabad, Pakistan."
+    },
+    {
+      "place": "taxila",
+      "phase": "kingdoms",
+      "title": "Silver stamped with symbols",
+      "native": "कार्षापण",
+      "when": "perhaps the 6th to 4th century BCE (debated)",
+      "at": 15.1,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          73.2,
+          33.5
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "India’s first coins appear: pieces of silver stamped one punch at a time with symbols such as a sun, a wheel or a hill. Texts call such coins karshapana. When they began is debated. A hoard dug up at Taxila’s Bhir Mound mixed them with bent silver bars and Greek coins of Alexander’s time.",
+      "today": "Today: Bhir Mound, Taxila; such coins are in museums across South Asia."
+    },
+    {
+      "place": "mathura",
+      "phase": "kingdoms",
+      "title": "Old kingdoms of the west",
+      "native": "शूरसेन",
+      "when": "about the 6th to 5th century BCE",
+      "at": 19.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          78,
+          27
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "West of the Ganga lie older kingdoms of the Vedic age: Kuru around Indraprastha, Panchala in the upper Ganga plain, Matsya, and Shurasena with its capital Mathura on the Yamuna. Once the heart of Vedic ritual, they now matter less than the rising powers to the east. A Buddhist text lists Mathura’s faults: dusty roads, fierce dogs and scarce alms.",
+      "today": "Today: Mathura, Uttar Pradesh, India."
+    },
+    {
+      "place": "ujjain",
+      "phase": "kingdoms",
+      "title": "Avanti and its fierce king",
+      "native": "अवन्ति",
+      "when": "6th or 5th century BCE",
+      "at": 23.8,
+      "source": "History",
+      "camera": {
+        "at": [
+          76.5,
+          24.5
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Avanti, in today’s Malwa, rules from Ujjain. Its king Pradyota is called Chanda, the fierce. Buddhist texts say Ajatashatru of Magadha fortified Rajagriha for fear of him, and that the physician Jivaka was sent to cure him. Jivaka, the story goes, fled on a fast elephant before the king learned the medicine was ghee, which he hated.",
+      "today": "Today: Ujjain, Madhya Pradesh, India."
+    },
+    {
+      "place": "kaushambi",
+      "phase": "kingdoms",
+      "title": "Udayana and Vasavadatta",
+      "native": "वासवदत्ता",
+      "when": "a story told in later plays and tales",
+      "at": 28.2,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          78.6,
+          24.3
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "ujjain",
+          "to": "kaushambi",
+          "traveller": "udayana",
+          "style": "flight",
+          "bend": 0.15
+        }
+      ],
+      "text": "Udayana, king of Vatsa, was famed for taming elephants with his lute. Later stories say Pradyota trapped him with a wooden elephant hiding soldiers, then set him to teach music to his daughter Vasavadatta. The two fell in love and escaped to Kaushambi on a she-elephant. Plays credited to Bhasa, rediscovered in Kerala in the early 1900s, tell the tale.",
+      "today": "Today: Kosam, near Prayagraj, Uttar Pradesh."
+    },
+    {
+      "place": "vaishali",
+      "phase": "republics",
+      "title": "Kingdoms and republics",
+      "native": "गणसङ्घ",
+      "when": "about the 6th to 5th century BCE",
+      "at": 32.5,
+      "source": "History",
+      "camera": {
+        "at": [
+          85.1,
+          26
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Not every great state had a king. The Vajji confederacy, led by the Lichchhavis of Vaishali, and smaller peoples such as the Shakyas and Mallas, were ruled by assemblies of clan chiefs (gana-sangha). In a Buddhist text, the Buddha says the Vajjis will prosper as long as they meet often, decide in harmony and honour their elders.",
+      "today": "Today: Vaishali, Bihar, India."
+    },
+    {
+      "place": "kundagrama",
+      "phase": "republics",
+      "title": "Vardhamana becomes Mahavira",
+      "native": "वर्धमान महावीर",
+      "when": "Jain tradition: 599 to 527 BCE; many historians place him later",
+      "at": 36.9,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.2,
+          26
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Jain tradition says Vardhamana was born a prince at Kundagrama, near Vaishali; Jains also honour another site in Bihar as his birthplace. At thirty he left home, wandered for twelve years in hard austerities, then reached perfect knowledge. As Mahavira, the great hero, he taught non-violence (ahimsa) towards every living thing. Jains revere him as the twenty-fourth teacher (tirthankara).",
+      "today": "Today: Vasokund, near Vaishali, Bihar; Kshatriyakund, near Lachhuar in Jamui district, is the other claimant."
+    },
+    {
+      "place": "lumbini",
+      "phase": "buddha",
+      "title": "Born in a garden",
+      "native": "लुम्बिनी",
+      "when": "traditionally 624 or 563 BCE; many historians now say about 480 BCE",
+      "at": 41.3,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          83.3,
+          27.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Buddhist tradition says Siddhartha Gautama was born in the Lumbini garden to Maya, queen of the Shakya chief Shuddhodana, as she travelled to her parents’ home. His dates are debated: traditions give 624 or 563 BCE, and many historians now prefer about 480. Ashoka later raised a pillar here whose inscription names the Buddha’s birthplace.",
+      "today": "Today: Lumbini, Nepal; a World Heritage Site."
+    },
+    {
+      "place": "kapilavastu",
+      "phase": "buddha",
+      "title": "The prince leaves home",
+      "native": "कपिलवस्तु",
+      "when": "traditionally at twenty-nine",
+      "at": 45.6,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          83.2,
+          27.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "The Shakyas govern from Kapilavastu. Tradition says Siddhartha grew up there in comfort, married Yashodhara and had a son, Rahula. Then, seeing an old man, a sick man, a corpse and a wandering holy man, he left home at twenty-nine to seek an end to suffering. Two places claim Kapilavastu: Tilaurakot in Nepal and Piprahwa in India.",
+      "today": "Today: Tilaurakot, Nepal, or Piprahwa, Uttar Pradesh; which one is disputed."
+    },
+    {
+      "place": "bodh-gaya",
+      "phase": "buddha",
+      "title": "Awakening under the tree",
+      "native": "सम्बोधि",
+      "when": "traditionally at thirty-five",
+      "at": 50,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          84,
+          26.1
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "kapilavastu",
+          "to": "bodh-gaya",
+          "traveller": "buddha",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "After years with teachers and severe fasting, tradition says, Siddhartha chose a middle way. Sitting under a pipal tree near Uruvela, by the Niranjana river, he resolved not to rise until he understood. That night he became the Buddha, the awakened one. The tree that grows at the spot today, the Bodhi tree, is held to be its descendant.",
+      "today": "Today: Bodh Gaya, Bihar; the Mahabodhi Temple is a World Heritage Site."
+    },
+    {
+      "place": "sarnath",
+      "phase": "buddha",
+      "title": "The first teaching",
+      "native": "धर्मचक्रप्रवर्तन",
+      "when": "soon after the awakening",
+      "at": 54.4,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          84,
+          25
+        ],
+        "width": 8.5
+      },
+      "legs": [
+        {
+          "from": "bodh-gaya",
+          "to": "sarnath",
+          "traveller": "buddha",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "The Buddha walked to the Deer Park at Isipatana, outside Varanasi, to find five former companions. There, tradition says, he gave his first teaching, ‘setting in motion the wheel of the dharma’: the four noble truths of suffering, its cause, its end, and the eightfold path that leads there. The five became the first monks of his order (sangha).",
+      "today": "Today: Sarnath, near Varanasi, Uttar Pradesh."
+    },
+    {
+      "place": "rajagriha",
+      "phase": "buddha",
+      "title": "A bamboo grove for the order",
+      "native": "वेणुवन",
+      "when": "early in the Buddha’s teaching",
+      "at": 58.7,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          84.2,
+          25.2
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "sarnath",
+          "to": "rajagriha",
+          "traveller": "buddha",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "The Buddha came to Rajagriha, capital of Magadha. Buddhist texts say King Bimbisara heard him, became a lay follower and gave the order a bamboo grove (Venuvana) to stay in during the rains. Here two friends, Shariputra and Maudgalyayana, joined him and became his chief disciples. Jain texts, for their part, claim Bimbisara as a follower of Mahavira.",
+      "today": "Today: Rajgir, Bihar, India."
+    },
+    {
+      "place": "shravasti",
+      "phase": "buddha",
+      "title": "A park paved with coins",
+      "native": "जेतवन",
+      "when": "during the Buddha’s teaching",
+      "at": 63.1,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          83.7,
+          26.2
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "rajagriha",
+          "to": "shravasti",
+          "traveller": "buddha",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "Anathapindika, a rich merchant of Shravasti, capital of Kosala, met the Buddha at Rajagriha and invited him home. Tradition says Prince Jeta would sell his park only for as many coins as would cover its ground, and the merchant paid. The scene is carved at Bharhut. The Buddha spent more rainy seasons at this Jetavana than anywhere else.",
+      "today": "Today: Saheth-Maheth, Shravasti district, Uttar Pradesh."
+    },
+    {
+      "place": "assaka",
+      "phase": "buddha",
+      "title": "Sixteen pupils from the south",
+      "native": "अश्मक",
+      "when": "as told in the Sutta Nipata",
+      "at": 67.5,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          81.6,
+          22
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "assaka",
+          "to": "rajagriha",
+          "traveller": "pupils",
+          "style": "walk",
+          "bend": -0.5
+        }
+      ],
+      "text": "Assaka, on the Godavari, is the only great kingdom south of the Vindhya hills. The Sutta Nipata, an early Buddhist text, tells of an old brahmin teacher, Bavari, living there by the river, who sent sixteen pupils north to question the Buddha. Their road ran through Ujjain, Kaushambi and Shravasti to a shrine in Magadha.",
+      "today": "Today: the Godavari valley in Maharashtra and Telangana; Bodhan is one claimed site of Assaka’s capital."
+    },
+    {
+      "place": "kapilavastu",
+      "phase": "buddha",
+      "title": "The fall of the Shakyas",
+      "native": "विडूडभ",
+      "when": "late in the Buddha’s life",
+      "at": 71.8,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          83.2,
+          27.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Kosala’s king Prasenajit asked the Shakyas for a bride; tradition says they sent him a chief’s daughter by a slave woman. Their son Vidudabha, learning of the insult, seized Kosala’s throne and fell on Kapilavastu, killing many Shakyas. The story is only in Buddhist texts. Soon afterwards Kosala itself fades from the record, absorbed by Magadha.",
+      "today": "Today: Tilaurakot, Nepal, or Piprahwa, Uttar Pradesh."
+    },
+    {
+      "place": "pavapuri",
+      "phase": "endings",
+      "title": "Mahavira’s release",
+      "native": "पावा",
+      "when": "Jain tradition: 527 BCE",
+      "at": 76.2,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.4,
+          25.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Jain tradition says Mahavira died at Pava, aged seventy-two, and reached final liberation (moksha). The Kalpa Sutra says the chiefs of the Mallas and Lichchhavis lit lamps, since the light of knowledge had gone, and Jains mark the night at Diwali. Pavapuri in Bihar is the main claimant; some scholars place Pava near Kushinagar instead.",
+      "today": "Today: Pavapuri, Bihar; the Jal Mandir stands in a lotus pond."
+    },
+    {
+      "place": "kushinagar",
+      "phase": "endings",
+      "title": "The last journey",
+      "native": "महापरिनिर्वाण",
+      "when": "aged about eighty; about 483 or about 400 BCE (debated)",
+      "at": 80.5,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          84.5,
+          26.3
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "vaishali",
+          "to": "kushinagar",
+          "traveller": "buddha",
+          "style": "walk",
+          "bend": 0.12
+        }
+      ],
+      "text": "At about eighty, the Buddha set out north from Rajagriha through Vaishali. At Pava he ate a meal from the smith Chunda and fell ill. He reached a grove of sal trees outside Kushinagar, a town of the Mallas, and lay down between two trees. His last words, the texts say: all things decay; strive on with care.",
+      "today": "Today: Kushinagar, Uttar Pradesh; a reclining Buddha lies in the Mahaparinirvana Temple."
+    },
+    {
+      "place": "kushinagar",
+      "phase": "endings",
+      "title": "Eight shares of ashes",
+      "native": "धातुविभाग",
+      "when": "after the Buddha’s death",
+      "at": 84.9,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          83.9,
+          26.6
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "The Mallas cremated him, and eight peoples claimed his remains, among them Magadha, the Lichchhavis and the Shakyas. A brahmin named Drona divided the ashes into eight shares, each placed in a mound (stupa). In 1898 a stone casket dug up at Piprahwa carried an inscription that many read as naming relics of the Buddha of the Shakyas.",
+      "today": "Today: Kushinagar; the Piprahwa relics are in museums in Kolkata and New Delhi."
+    },
+    {
+      "place": "rajagriha",
+      "phase": "endings",
+      "title": "The first council",
+      "native": "प्रथम सङ्गीति",
+      "when": "soon after the Buddha’s death",
+      "at": 89.3,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.4,
+          25.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Tradition says five hundred senior monks met in a cave hall outside Rajagriha, under Ajatashatru’s protection, to agree on what the Buddha had taught. Ananda, his companion, recited the sermons from memory; Upali recited the rules of the order. Many historians doubt the details, but the teachings were passed on by memory for centuries before being written down.",
+      "today": "Today: the Saptaparni cave, Rajgir, Bihar."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "endings",
+      "title": "One kingdom swallows the rest",
+      "native": "मगध",
+      "when": "5th to 4th century BCE",
+      "at": 93.6,
+      "source": "History",
+      "camera": {
+        "at": [
+          83.8,
+          26
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "Magadha gains as the others fall. Ajatashatru, the texts say, broke the Vajji confederacy and built a fort on the Ganga that grew into Pataliputra. Kosala and Kashi were absorbed, and the Shishunaga kings defeated Avanti. By the time of the Nandas, about 345 BCE, most of the sixteen great kingdoms were one, ruled from Pataliputra.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "bodh-gaya",
+      "phase": "today",
+      "title": "Where pilgrims still come",
+      "native": "महाबोधि",
+      "when": "from the 3rd century BCE to today",
+      "at": 98,
+      "source": "History",
+      "camera": {
+        "at": [
+          85,
+          24.9
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Ashoka, his edicts say, went to the place of awakening in the 3rd century BCE; the stone seat there is credited to him. The brick Mahabodhi Temple, rebuilt over centuries, was restored by British archaeologists in the 1880s and listed as a World Heritage Site in 2002. Pilgrims come from Sri Lanka, Thailand, Tibet, Japan and far beyond.",
+      "today": "Today: Bodh Gaya, Bihar, India."
+    }
+  ],
+  "effects": [
+    {
+      "type": "lamps",
+      "place": "pavapuri",
+      "steps": [
+        17
+      ]
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "magadha",
+        "name": "Magadha",
+        "native": "मगध",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            0,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Magadha",
+          "at": [
+            85.9,
+            24.3
+          ],
+          "moves": [
+            {
+              "from": 13,
+              "at": [
+                87.5,
+                24.6
+              ]
+            },
+            {
+              "from": 21,
+              "at": [
+                87,
+                26.2
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  84.3,
+                  25.6
+                ],
+                [
+                  85.6,
+                  25.75
+                ],
+                [
+                  86.6,
+                  25.3
+                ],
+                [
+                  86.6,
+                  24.6
+                ],
+                [
+                  85.6,
+                  24.2
+                ],
+                [
+                  84.4,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  84.3,
+                  25.6
+                ],
+                [
+                  85.6,
+                  25.75
+                ],
+                [
+                  87.2,
+                  25.4
+                ],
+                [
+                  87.9,
+                  25.2
+                ],
+                [
+                  87.8,
+                  24.4
+                ],
+                [
+                  86.6,
+                  24.3
+                ],
+                [
+                  85.6,
+                  24.2
+                ],
+                [
+                  84.4,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                21,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.3,
+                  27.9
+                ],
+                [
+                  80,
+                  28.4
+                ],
+                [
+                  82.3,
+                  28
+                ],
+                [
+                  84,
+                  27.7
+                ],
+                [
+                  86,
+                  27.3
+                ],
+                [
+                  87.6,
+                  26.7
+                ],
+                [
+                  88.6,
+                  26
+                ],
+                [
+                  89,
+                  24.6
+                ],
+                [
+                  88.2,
+                  23.3
+                ],
+                [
+                  86.6,
+                  23.4
+                ],
+                [
+                  85.2,
+                  23.8
+                ],
+                [
+                  83.5,
+                  24
+                ],
+                [
+                  81.5,
+                  24.2
+                ],
+                [
+                  79.5,
+                  24.6
+                ],
+                [
+                  78.3,
+                  25.6
+                ]
+              ],
+              [
+                [
+                  74.5,
+                  24.3
+                ],
+                [
+                  76.8,
+                  24.5
+                ],
+                [
+                  77.4,
+                  23.4
+                ],
+                [
+                  76.8,
+                  22.3
+                ],
+                [
+                  75,
+                  22.2
+                ],
+                [
+                  74.4,
+                  23.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Rajagriha, then Pataliputra",
+          "Today": "Bihar at its heart"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Bimbisara, in Buddhist texts"
+          },
+          {
+            "from": 18,
+            "text": "Ajatashatru, son of Bimbisara"
+          },
+          {
+            "from": 21,
+            "text": "The Shishunagas, then the Nandas"
+          }
+        ],
+        "role": "A kingdom of south Bihar that outgrew all its neighbours.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Wary of Avanti"
+          },
+          {
+            "from": 21,
+            "text": "Absorbs the Vajjis, Kosala, Kashi and Avanti"
+          }
+        ]
+      },
+      {
+        "id": "kosala",
+        "name": "Kosala",
+        "native": "कोसल",
+        "color": "#d1884a",
+        "active": [
+          [
+            0,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Kosala",
+          "at": [
+            81.7,
+            26.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  80.6,
+                  26.9
+                ],
+                [
+                  80.9,
+                  27.7
+                ],
+                [
+                  82.3,
+                  27.9
+                ],
+                [
+                  82.7,
+                  27.25
+                ],
+                [
+                  83.6,
+                  27.1
+                ],
+                [
+                  83.7,
+                  25.9
+                ],
+                [
+                  83.9,
+                  25.5
+                ],
+                [
+                  83.6,
+                  25.1
+                ],
+                [
+                  82.6,
+                  25
+                ],
+                [
+                  82.4,
+                  25.6
+                ],
+                [
+                  81.8,
+                  26
+                ],
+                [
+                  80.9,
+                  26.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                16,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  80.6,
+                  26.9
+                ],
+                [
+                  80.9,
+                  27.7
+                ],
+                [
+                  82.3,
+                  27.95
+                ],
+                [
+                  83.5,
+                  27.85
+                ],
+                [
+                  83.8,
+                  27.5
+                ],
+                [
+                  83.7,
+                  25.9
+                ],
+                [
+                  83.9,
+                  25.5
+                ],
+                [
+                  83.6,
+                  25.1
+                ],
+                [
+                  82.6,
+                  25
+                ],
+                [
+                  82.4,
+                  25.6
+                ],
+                [
+                  81.8,
+                  26
+                ],
+                [
+                  80.9,
+                  26.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Shravasti; also Saketa (Ayodhya)",
+          "Today": "Awadh and eastern Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Prasenajit"
+          },
+          {
+            "from": 16,
+            "text": "Vidudabha, his son"
+          }
+        ],
+        "role": "The great kingdom north of the Ganga, holding Kashi.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Holds Kashi; marriage ties with Magadha"
+          },
+          {
+            "from": 16,
+            "text": "Destroys the Shakyas"
+          }
+        ]
+      },
+      {
+        "id": "vatsa",
+        "name": "Vatsa",
+        "native": "वत्स",
+        "color": "#3f9ac4",
+        "active": [
+          [
+            0,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Vatsa",
+          "at": [
+            81.2,
+            24.7
+          ]
+        },
+        "area": [
+          [
+            80.6,
+            25.7
+          ],
+          [
+            81.4,
+            25.8
+          ],
+          [
+            82,
+            25.45
+          ],
+          [
+            81.7,
+            24.9
+          ],
+          [
+            80.8,
+            24.9
+          ],
+          [
+            80.4,
+            25.3
+          ]
+        ],
+        "facts": {
+          "Capital": "Kaushambi",
+          "Today": "Around Prayagraj"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Udayana"
+          }
+        ],
+        "role": "A kingdom on the Yamuna, ruled from Kaushambi.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Marriage tie with Avanti, in later stories"
+          }
+        ]
+      },
+      {
+        "id": "avanti",
+        "name": "Avanti",
+        "native": "अवन्ति",
+        "color": "#c4574a",
+        "active": [
+          [
+            0,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Avanti",
+          "at": [
+            76,
+            23.7
+          ]
+        },
+        "area": [
+          [
+            74.5,
+            24.3
+          ],
+          [
+            76.8,
+            24.5
+          ],
+          [
+            77.4,
+            23.4
+          ],
+          [
+            76.8,
+            22.3
+          ],
+          [
+            75,
+            22.2
+          ],
+          [
+            74.4,
+            23.2
+          ]
+        ],
+        "facts": {
+          "Capital": "Ujjain; also Mahishmati on the Narmada",
+          "Today": "Malwa, Madhya Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Pradyota, called Chanda"
+          }
+        ],
+        "role": "The power of the west-central plateau.",
+        "ties": []
+      },
+      {
+        "id": "vajji",
+        "name": "Vajji confederacy",
+        "native": "वज्जि",
+        "color": "#2fa39a",
+        "active": [
+          [
+            0,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Vajji",
+          "at": [
+            85.6,
+            26.5
+          ]
+        },
+        "area": [
+          [
+            84.1,
+            26.6
+          ],
+          [
+            85.2,
+            26.95
+          ],
+          [
+            86.3,
+            26.65
+          ],
+          [
+            86.6,
+            26
+          ],
+          [
+            85.6,
+            25.85
+          ],
+          [
+            84.6,
+            25.8
+          ],
+          [
+            84,
+            26
+          ]
+        ],
+        "facts": {
+          "Centre": "Vaishali",
+          "Today": "North Bihar"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "An assembly of Lichchhavi and other clan chiefs"
+          }
+        ],
+        "role": "A league of clans ruled by assembly.",
+        "ties": []
+      },
+      {
+        "id": "gandhara",
+        "name": "Gandhara",
+        "native": "गन्धार",
+        "color": "#b8a23a",
+        "minor": true,
+        "active": [
+          [
+            2,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Gandhara",
+          "at": [
+            72.3,
+            34.2
+          ]
+        },
+        "area": [
+          [
+            71.3,
+            34.2
+          ],
+          [
+            72.4,
+            34.5
+          ],
+          [
+            73.3,
+            34
+          ],
+          [
+            73.3,
+            33.3
+          ],
+          [
+            72.2,
+            33.1
+          ],
+          [
+            71.4,
+            33.5
+          ]
+        ],
+        "facts": {
+          "Capital": "Taxila",
+          "Today": "Northern Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 2,
+            "text": "The Persian kings, through a governor (satrap)"
+          }
+        ],
+        "role": "A north-western kingdom that became a Persian province.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "buddha",
+        "name": "Siddhartha Gautama",
+        "native": "सिद्धार्थ गौतम",
+        "life": "about the 5th century BCE; dates debated",
+        "role": "Teacher; the Buddha",
+        "steps": [
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          18,
+          19
+        ],
+        "text": "Born a Shakya chief’s son, Siddhartha Gautama left home to seek an end to suffering and, tradition says, awoke under a tree at Bodh Gaya. For about forty-five years he walked the Ganga plain teaching a middle way between pleasure and harsh self-denial. He welcomed people of every class into his order, and later women too."
+      },
+      {
+        "id": "mahavira",
+        "name": "Mahavira",
+        "native": "वर्धमान महावीर",
+        "life": "Jain tradition: 599 to 527 BCE; many historians place him later",
+        "role": "Twenty-fourth Jain tirthankara",
+        "steps": [
+          8,
+          17
+        ],
+        "text": "Born Vardhamana to a chief’s family near Vaishali, he renounced everything at thirty. Jain texts say he gave up all possessions and, after twelve years of austerity, reached perfect knowledge. He taught non-violence to all life, truthfulness, not stealing, chastity and non-possession. Buddhist texts know him as Nigantha Nataputta, a rival of the Buddha."
+      },
+      {
+        "id": "prasenajit",
+        "name": "Prasenajit",
+        "native": "प्रसेनजित्",
+        "life": "6th or 5th century BCE",
+        "role": "King of Kosala",
+        "steps": [
+          14,
+          16
+        ],
+        "text": "King of Kosala in the Buddha’s day, ruling from Shravasti, with Kashi in his hands. Buddhist texts make him a friend of the Buddha, and of the same age, and tell of his wars with his nephew Ajatashatru over a village in Kashi. Tradition says his son Vidudabha took his throne and he died outside the gates of Rajagriha."
+      },
+      {
+        "id": "pradyota",
+        "name": "Pradyota",
+        "native": "प्रद्योत",
+        "life": "6th or 5th century BCE",
+        "role": "King of Avanti",
+        "steps": [
+          5,
+          6
+        ],
+        "text": "Called Chanda, the fierce, Pradyota ruled Avanti from Ujjain. Buddhist texts say Magadha feared him enough to strengthen Rajagriha’s walls, and that the physician Jivaka cured his sickness. Later stories make him the father of Vasavadatta and the captor of Udayana of Vatsa. The Puranas place him in a short dynasty of Avanti."
+      },
+      {
+        "id": "anathapindika",
+        "name": "Anathapindika",
+        "native": "अनाथपिण्डिक",
+        "life": "6th or 5th century BCE",
+        "role": "Merchant of Shravasti",
+        "steps": [
+          14
+        ],
+        "text": "His name means ‘one who gives food to the unprotected’; the texts give his own name as Sudatta. A rich merchant of Shravasti, he bought Prince Jeta’s park for the Buddha’s order. Buddhist tradition remembers him as the greatest of the Buddha’s lay supporters, who spent almost his whole fortune on the order."
+      }
+    ]
+  }
+}
