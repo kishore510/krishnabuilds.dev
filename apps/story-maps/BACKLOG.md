@@ -14,7 +14,6 @@ Suggested after those. These fit a map that already exists, so each is one sessi
 
 - The Sikh Empire (`south-asia`)
 - The Deccan Sultanates (`south-asia`)
-- The Pallavas (`south-asia`)
 - The Chalukyas and Rashtrakutas (`south-asia`)
 - Harsha (`south-asia`)
 - The Palas (`south-asia`)
@@ -38,6 +37,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Pallavas (`pallava`), 2026-11-13
 - The Kushan Empire (`kushan`), 2026-11-13
 - The Kalinga War (`kalinga`), 2026-11-13
 - The Shunga Dynasty (`shunga`), 2026-11-13
