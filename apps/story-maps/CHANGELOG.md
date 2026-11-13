@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.44.0
+
+- New story map in Universe, the first on the Nature shelf: The Big Bang. From the first instant, inflation, the first particles and nuclei and the first light, through the Dark Ages, the first stars and galaxies, the Milky Way, cosmic noon and the expansion speeding up, to the Sun, the Earth and Moon, the universe today and how the story was found. 15 chapters and 3 people cards. Each card ends with how we know.
+- New sky map, `cosmos`, for the cosmic canvas: a diagram of time from the Big Bang on the left to today on the right.
+- New story map in Physics and Astronomy, the first on the Science shelf: Marie Curie. From Warsaw under Russian rule and the Flying University, through Paris, Pierre, polonium and radium and two Nobel Prizes, to the X-ray cars of the First World War, the gram of radium from America, the Radium Institute in Warsaw and the Panthéon. 19 chapters and 5 people cards.
+- New Europe map, from Ireland and Portugal to the Baltic states and the Black Sea, simplified from Natural Earth’s public-domain 1:50m coastlines, with the Seine, Rhine and Vistula drawn by hand.
+- Art library: 16 new glyphs and 5 new traveller icons for the two stories.
+- Catalogue: Marie Curie (a person) and The Big Bang (deep time) open their stories.
+
 ## 0.43.0
 
 - New front page with three shelves: Nature (what happened), Humankind (what people did) and Science (how we found out). Each shelf lists its subjects with their story maps, newest first, and names the subjects still to come. Chronicles and Legends sit on Humankind.

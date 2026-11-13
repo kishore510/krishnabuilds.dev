@@ -1,0 +1,751 @@
+{
+ "id": "marie-curie",
+ "title": "Marie Curie",
+ "description": "An illustrated map of the life of Marie Skłodowska-Curie, from Warsaw under Russian rule to Paris, the discovery of polonium and radium, two Nobel Prizes, X-ray cars at the front in the First World War, and the Panthéon.",
+ "canvas": "geo",
+ "basemap": "europe",
+ "source": "History",
+ "nativeLang": "pl",
+ "routes": "chapter",
+ "mapLabel": "Illustrated map of Europe following the life of Marie Curie, 1867 to 1934",
+ "note": "Based on Marie Curie’s own autobiographical notes, Ève Curie’s biography of her mother, the Nobel Foundation’s records and later biographies. Borders are today’s coasts only: in 1867 Warsaw was in the Russian Empire and St Joachimsthal in Austria-Hungary. The map is stylised and not to scale.",
+ "places": {
+  "warsaw": {
+   "name": "Warsaw",
+   "at": [
+    21.01,
+    52.23
+   ],
+   "glyph": "palace",
+   "label": "right"
+  },
+  "szczuki": {
+   "name": "Szczuki",
+   "at": [
+    20.3,
+    53
+   ],
+   "glyph": "village",
+   "label": "left"
+  },
+  "paris": {
+   "name": "Paris",
+   "at": [
+    2.35,
+    48.86
+   ],
+   "glyph": "dome",
+   "label": "left"
+  },
+  "jachymov": {
+   "name": "St Joachimsthal",
+   "at": [
+    12.93,
+    50.37
+   ],
+   "glyph": "mine",
+   "label": "top"
+  },
+  "stockholm": {
+   "name": "Stockholm",
+   "at": [
+    18.07,
+    59.33
+   ],
+   "glyph": "medal",
+   "label": "right"
+  },
+  "brussels": {
+   "name": "Brussels",
+   "at": [
+    4.35,
+    50.85
+   ],
+   "glyph": "treaty",
+   "label": "right"
+  },
+  "bordeaux": {
+   "name": "Bordeaux",
+   "at": [
+    -0.58,
+    44.84
+   ],
+   "glyph": "anchor",
+   "label": "right"
+  },
+  "hoogstade": {
+   "name": "Hoogstade",
+   "at": [
+    2.69,
+    50.98
+   ],
+   "glyph": "field-hospital",
+   "label": "top"
+  },
+  "cherbourg": {
+   "name": "Cherbourg",
+   "at": [
+    -1.62,
+    49.64
+   ],
+   "glyph": "lighthouse",
+   "label": "bottom"
+  },
+  "passy": {
+   "name": "Sancellemoz",
+   "at": [
+    6.69,
+    45.92
+   ],
+   "glyph": "mountain",
+   "label": "right"
+  },
+  "atlantic": {
+   "name": "To New York",
+   "at": [
+    -10.6,
+    48.6
+   ],
+   "hidden": true
+  }
+ },
+ "travellers": {
+  "marie": {
+   "name": "Marie",
+   "icon": "scientist"
+  },
+  "train": {
+   "name": "By train",
+   "icon": "train"
+  },
+  "ore": {
+   "name": "Pitchblende ore",
+   "icon": "ox-cart"
+  },
+  "car": {
+   "name": "An X-ray car",
+   "icon": "motor-car"
+  },
+  "liner": {
+   "name": "The liner Olympic",
+   "icon": "liner"
+  }
+ },
+ "phases": {
+  "poland": {
+   "name": "Warsaw under the tsar",
+   "color": "#e0573a"
+  },
+  "student": {
+   "name": "Paris and the Sorbonne",
+   "color": "#4fc3b0"
+  },
+  "discovery": {
+   "name": "Radioactivity",
+   "color": "#8fcf8a"
+  },
+  "fame": {
+   "name": "Loss and honours",
+   "color": "#f2c14e"
+  },
+  "war": {
+   "name": "The war",
+   "color": "#a678e0"
+  },
+  "legacy": {
+   "name": "Radium for the world",
+   "color": "#2b7fb4"
+  }
+ },
+ "routeStyles": {
+  "journey": {
+   "color": "#b3261e",
+   "width": 3.2,
+   "dash": "9 5",
+   "cap": "butt"
+  },
+  "rail": {
+   "color": "#3a3a44",
+   "width": 3.2,
+   "dash": "2 5",
+   "cap": "butt"
+  },
+  "ore": {
+   "color": "#8a5a2b",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "road": {
+   "color": "#ff8a1f",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "sea": {
+   "color": "#2b7fb4",
+   "width": 3.2,
+   "dash": "9 5",
+   "cap": "butt"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 20.7,
+    "color": "rgba(224,87,58,.35)"
+   },
+   {
+    "until": 31.4,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 47.4,
+    "color": "rgba(143,207,138,.35)"
+   },
+   {
+    "until": 68.7,
+    "color": "rgba(242,193,78,.35)"
+   },
+   {
+    "until": 79.4,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(43,127,180,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2,
+    "text": "1867"
+   },
+   {
+    "at": 23.3,
+    "text": "1891"
+   },
+   {
+    "at": 39.3,
+    "text": "1898"
+   },
+   {
+    "at": 60.7,
+    "text": "1911"
+   },
+   {
+    "at": 76.7,
+    "text": "1914"
+   },
+   {
+    "at": 92.7,
+    "text": "1934"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "warsaw",
+   "phase": "poland",
+   "title": "A teacher’s daughter in Warsaw",
+   "native": "Maria Skłodowska",
+   "when": "1867",
+   "camera": {
+    "at": [
+     21.01,
+     52.23
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "Maria Skłodowska is born on 7 November 1867 in Warsaw, the youngest of five children of two teachers. Poland is partitioned and Warsaw is ruled by the Russian tsar; schools must teach in Russian. Her sister Zofia dies of typhus and her mother of tuberculosis before Maria is eleven. At fifteen she finishes school with a gold medal.",
+   "today": "Today: her birthplace at 16 Freta Street, Warsaw, is the Maria Skłodowska-Curie Museum.",
+   "at": 2
+  },
+  {
+   "place": "warsaw",
+   "phase": "poland",
+   "title": "The Flying University",
+   "native": "Uniwersytet Latający",
+   "when": "1883 to 1885",
+   "camera": {
+    "at": [
+     21.01,
+     52.23
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "The University of Warsaw does not admit women. Maria joins the Flying University, secret classes that move from flat to flat to avoid the Russian police. She and her sister Bronisława make a pact: Maria will work to pay for Bronisława’s medical studies in Paris, and Bronisława will then help her follow.",
+   "today": "Today: Warsaw, capital of Poland.",
+   "at": 7.3
+  },
+  {
+   "place": "szczuki",
+   "phase": "poland",
+   "title": "The governess at Szczuki",
+   "when": "1886 to 1889",
+   "camera": {
+    "at": [
+     20.6,
+     52.65
+    ],
+    "width": 7
+   },
+   "legs": [
+    {
+     "from": "warsaw",
+     "to": "szczuki",
+     "traveller": "marie",
+     "style": "journey",
+     "bend": 0.12
+    }
+   ],
+   "text": "For three years Maria is governess to the Żorawski family on a sugar-beet estate north of Warsaw, sending money to Paris. In her spare hours she teaches village children to read in Polish and studies physics and mathematics alone. She and the eldest son, Kazimierz, wish to marry; his parents refuse a penniless governess.",
+   "today": "Today: Szczuki, Masovia, Poland.",
+   "at": 12.7
+  },
+  {
+   "place": "warsaw",
+   "phase": "poland",
+   "title": "A first laboratory",
+   "when": "1890 to 1891",
+   "camera": {
+    "at": [
+     20.6,
+     52.65
+    ],
+    "width": 7
+   },
+   "legs": [
+    {
+     "from": "szczuki",
+     "to": "warsaw",
+     "traveller": "marie",
+     "style": "journey",
+     "bend": -0.12
+    }
+   ],
+   "text": "Back in Warsaw, Maria is let into a small laboratory at the Museum of Industry and Agriculture, run by her cousin Józef Boguski. On evenings and Sundays she repeats experiments from physics and chemistry textbooks. She later wrote that here she found her taste for experimental research. Bronisława, now a doctor in Paris, writes: come.",
+   "today": "Today: the museum’s building stands at 66 Krakowskie Przedmieście, Warsaw.",
+   "at": 18
+  },
+  {
+   "place": "paris",
+   "phase": "student",
+   "title": "To Paris, fourth class",
+   "when": "November 1891",
+   "camera": {
+    "at": [
+     11.6,
+     51
+    ],
+    "width": 24
+   },
+   "legs": [
+    {
+     "from": "warsaw",
+     "to": "paris",
+     "traveller": "train",
+     "style": "rail",
+     "bend": 0.08
+    }
+   ],
+   "text": "At twenty-four Maria takes the train across Germany, the cheapest way, on a folding stool she brought herself. She enrols at the Sorbonne as Marie, lives in an unheated attic in the Latin Quarter and sometimes faints from hunger. In 1893 she comes first in the physics degree; in 1894, second in mathematics.",
+   "today": "Today: the Sorbonne, in the Latin Quarter of Paris.",
+   "at": 23.3
+  },
+  {
+   "place": "paris",
+   "phase": "student",
+   "title": "Pierre",
+   "when": "1894 to 1895",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "Looking for laboratory space, Marie is introduced to Pierre Curie, a physicist known for his work on crystals and magnetism. They marry on 26 July 1895 at Sceaux, south of Paris, with no rings and no priest; her dark blue dress will serve afterwards in the laboratory. They spend a wedding gift on two bicycles and tour the countryside.",
+   "today": "Today: Sceaux is a suburb about 10 km south of central Paris.",
+   "at": 28.7
+  },
+  {
+   "place": "paris",
+   "phase": "discovery",
+   "title": "Rays from uranium",
+   "when": "1896 to early 1898",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "In 1896 Henri Becquerel finds that uranium gives off invisible rays. Marie makes them her doctoral subject. With an electrometer built by Pierre and his brother she measures them exactly and shows that thorium does the same, as Gerhard Schmidt in Germany found independently. She argues the rays come from the atom itself, and names the property radioactivity.",
+   "today": "Today: the unit of radioactivity is the becquerel; an older one is the curie.",
+   "at": 34
+  },
+  {
+   "place": "paris",
+   "phase": "discovery",
+   "title": "Polonium and radium",
+   "when": "July and December 1898",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "Pitchblende, the ore of uranium, is far more radioactive than its uranium can explain. Something else must be in it. Pierre drops his own research to join her. In July 1898 they announce a new element and Marie names it polonium, for her country, which is on no map. In December, with Gustave Bémont, they announce radium.",
+   "today": "Today: polonium is element 84 and radium element 88.",
+   "at": 39.3
+  },
+  {
+   "place": "jachymov",
+   "phase": "discovery",
+   "title": "Tonnes of ore from Bohemia",
+   "native": "Sankt Joachimsthal",
+   "lang": "de",
+   "when": "1899 to 1902",
+   "camera": {
+    "at": [
+     7.6,
+     49.8
+    ],
+    "width": 15
+   },
+   "legs": [
+    {
+     "from": "jachymov",
+     "to": "paris",
+     "traveller": "ore",
+     "style": "ore",
+     "bend": -0.1
+    }
+   ],
+   "text": "To prove radium exists she must isolate it. The Austrian government lets her have waste ore from the mine at St Joachimsthal in Bohemia. In a leaking Paris shed she boils it down in iron pots, stirring with a rod as tall as herself. In 1902, from tonnes of ore, she has a tenth of a gram of radium chloride.",
+   "today": "Today: Jáchymov, Czech Republic.",
+   "at": 44.7
+  },
+  {
+   "place": "stockholm",
+   "phase": "fame",
+   "title": "The Nobel Prize in Physics",
+   "when": "1903",
+   "camera": {
+    "at": [
+     10.4,
+     54.2
+    ],
+    "width": 22
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "stockholm",
+     "traveller": "marie",
+     "style": "journey",
+     "bend": -0.1
+    }
+   ],
+   "text": "In June 1903 Marie defends her doctoral thesis. In December the Nobel Prize in Physics goes half to Becquerel and half to the Curies. The first nomination had left her out; warned by a Swedish mathematician, Pierre insisted she be included. Too ill and busy to travel, they reach Stockholm only in 1905.",
+   "today": "Today: the Nobel Prizes are still presented in Stockholm each 10 December.",
+   "at": 50
+  },
+  {
+   "place": "paris",
+   "phase": "fame",
+   "title": "Rue Dauphine",
+   "when": "19 April 1906",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "On a wet afternoon Pierre, crossing the rue Dauphine, slips under a horse-drawn wagon and is killed at once. He is forty-six. Marie is left with two daughters, Irène and Ève. The Sorbonne gives her his chair, making her its first woman professor. In November she begins her first lecture at the sentence where his stopped.",
+   "today": "Today: the rue Dauphine runs south from the Pont Neuf in Paris.",
+   "at": 55.3
+  },
+  {
+   "place": "brussels",
+   "phase": "fame",
+   "title": "Solvay and a scandal",
+   "when": "1911",
+   "camera": {
+    "at": [
+     3.4,
+     49.9
+    ],
+    "width": 7
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "brussels",
+     "traveller": "train",
+     "style": "rail",
+     "bend": 0.1
+    }
+   ],
+   "text": "In January 1911 the French Academy of Sciences narrowly rejects her. In autumn she is the only woman among the physicists at the first Solvay Conference in Brussels, with Einstein, Planck and Rutherford. While she is there, Paris newspapers print her letters to the married physicist Paul Langevin, and a crowd gathers outside her house.",
+   "today": "Today: Brussels, Belgium. The Solvay Conferences are still held there.",
+   "at": 60.7
+  },
+  {
+   "place": "stockholm",
+   "phase": "fame",
+   "title": "A second Nobel Prize",
+   "when": "December 1911",
+   "camera": {
+    "at": [
+     10.4,
+     54.2
+    ],
+    "width": 22
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "stockholm",
+     "traveller": "marie",
+     "style": "journey",
+     "bend": -0.1
+    }
+   ],
+   "text": "The Nobel Prize in Chemistry is hers alone, for discovering polonium and radium and isolating radium. A committee member suggests she stay away until the scandal passes. She replies that the prize is for her work, not her private life, and goes, with Bronisława and Irène. She remains the only person to win in two sciences.",
+   "today": "Today: Stockholm, Sweden.",
+   "at": 66
+  },
+  {
+   "place": "bordeaux",
+   "phase": "war",
+   "title": "A gram of radium on a train",
+   "when": "September 1914",
+   "camera": {
+    "at": [
+     0.9,
+     46.9
+    ],
+    "width": 9
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "bordeaux",
+     "traveller": "train",
+     "style": "rail",
+     "bend": 0.1
+    }
+   ],
+   "text": "The Radium Institute in Paris is finished just as war begins. As the German army nears the city, the government asks Marie to take France’s whole stock of radium to safety. She carries it by train to Bordeaux in a lead-lined case too heavy to lift alone, leaves it in safe keeping and returns to Paris the next day.",
+   "today": "Today: Bordeaux, on the Garonne in south-west France.",
+   "at": 71.3
+  },
+  {
+   "place": "hoogstade",
+   "phase": "war",
+   "title": "X-rays at the front",
+   "native": "Les petites Curies",
+   "lang": "fr",
+   "when": "1914 to 1918",
+   "camera": {
+    "at": [
+     2.6,
+     49.95
+    ],
+    "width": 7
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "hoogstade",
+     "traveller": "car",
+     "style": "road",
+     "bend": 0.1
+    }
+   ],
+   "text": "Army surgeons are cutting blind. Marie fits out cars with X-ray machines, soon called little Curies, learns to drive and takes them to field hospitals from Flanders to Verdun, with Irène, seventeen, beside her. About twenty cars and two hundred fixed posts are set up, and she trains 150 women to run them. Over a million wounded men are examined.",
+   "today": "Today: Hoogstade, West Flanders, Belgium, where she and Irène worked at a Belgian field hospital.",
+   "at": 76.7
+  },
+  {
+   "place": "cherbourg",
+   "phase": "legacy",
+   "title": "A gram from America",
+   "when": "May 1921",
+   "camera": {
+    "at": [
+     -3.6,
+     49.1
+    ],
+    "width": 15
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "cherbourg",
+     "traveller": "train",
+     "style": "rail",
+     "bend": 0.1
+    },
+    {
+     "from": "cherbourg",
+     "to": "atlantic",
+     "traveller": "liner",
+     "style": "sea",
+     "bend": -0.08
+    }
+   ],
+   "text": "Radium now costs more than her laboratory can pay: about 100,000 dollars a gram. The American journalist Marie Meloney raises the sum from women across the United States. Marie sails from Cherbourg on the liner Olympic with her daughters, and on 20 May President Harding hands her the key to a casket holding one gram of radium.",
+   "today": "Today: Cherbourg, Normandy, France.",
+   "at": 82
+  },
+  {
+   "place": "warsaw",
+   "phase": "legacy",
+   "title": "A radium institute for Warsaw",
+   "native": "Instytut Radowy",
+   "when": "29 May 1932",
+   "camera": {
+    "at": [
+     11.6,
+     51
+    ],
+    "width": 24
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "warsaw",
+     "traveller": "train",
+     "style": "rail",
+     "bend": -0.08
+    }
+   ],
+   "text": "Poland has been a country again since 1918. Marie helps found a Radium Institute in Warsaw for research and cancer treatment, with Bronisława as director. A second American gift, in 1929, buys its radium. She opens it in May 1932. It is her last visit home.",
+   "today": "Today: the Maria Skłodowska-Curie National Research Institute of Oncology, Warsaw.",
+   "at": 87.3
+  },
+  {
+   "place": "passy",
+   "phase": "legacy",
+   "title": "Sancellemoz",
+   "when": "4 July 1934",
+   "camera": {
+    "at": [
+     4.5,
+     47.4
+    ],
+    "width": 9
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "passy",
+     "traveller": "marie",
+     "style": "journey",
+     "bend": 0.1
+    }
+   ],
+   "text": "Years of handling radium with bare hands, and the wartime X-rays, have worn her down; her fingers are scarred and she is nearly blind from cataracts. She dies at the Sancellemoz sanatorium in the Alps on 4 July 1934, aged sixty-six, of aplastic anaemia, almost certainly caused by radiation. She is buried at Sceaux beside Pierre.",
+   "today": "Today: Passy, Haute-Savoie, France, facing Mont Blanc.",
+   "at": 92.7
+  },
+  {
+   "place": "paris",
+   "phase": "legacy",
+   "title": "The Panthéon",
+   "when": "1935 and 1995",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "In 1935 Irène and her husband Frédéric Joliot win the Nobel Prize in Chemistry for making new radioactive elements. In 1995 Marie and Pierre are reburied in the Panthéon in Paris; she is the first woman honoured there for her own work. Her notebooks are still radioactive and are kept in lead-lined boxes. The element curium bears their name.",
+   "today": "Today: the Panthéon and the Musée Curie, in her old laboratory, are both in the Latin Quarter.",
+   "at": 98
+  }
+ ],
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "pierre",
+    "name": "Pierre Curie",
+    "life": "1859 to 1906",
+    "role": "Physicist; Marie’s husband and partner in research",
+    "steps": [
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ],
+    "text": "Before he met Marie he had discovered, with his brother Jacques, that squeezed crystals produce electricity (piezoelectricity), and the temperature above which a magnet loses its pull, still called the Curie point. He gave up his own work to join hers, refused to patent radium, and shared the 1903 Nobel Prize."
+   },
+   {
+    "id": "bronia",
+    "name": "Bronisława Dłuska",
+    "life": "1865 to 1939",
+    "role": "Marie’s elder sister; physician",
+    "steps": [
+     1,
+     3,
+     4,
+     12,
+     16
+    ],
+    "text": "Bronia studied medicine in Paris on Maria’s governess wages, then housed her when she arrived. With her husband Kazimierz Dłuski she founded a sanatorium at Zakopane in the Tatra mountains. She travelled with Marie to Stockholm in 1911 and became the first director of the Radium Institute in Warsaw."
+   },
+   {
+    "id": "becquerel",
+    "name": "Henri Becquerel",
+    "life": "1852 to 1908",
+    "role": "Physicist; discoverer of uranium rays",
+    "steps": [
+     6,
+     9
+    ],
+    "text": "In 1896, testing whether glowing minerals give off X-rays, he left uranium salts on a wrapped photographic plate in a drawer. The plate fogged without any sunlight: the uranium was radiating by itself. He shared the 1903 Nobel Prize with the Curies. The unit of radioactivity, the becquerel, is named after him."
+   },
+   {
+    "id": "irene",
+    "name": "Irène Joliot-Curie",
+    "life": "1897 to 1956",
+    "role": "Marie’s elder daughter; chemist",
+    "steps": [
+     10,
+     12,
+     14,
+     15,
+     18
+    ],
+    "text": "At seventeen she ran X-ray posts at the front beside her mother, then became her assistant at the Radium Institute. In 1934 she and Frédéric Joliot made radioactive forms of ordinary elements, which won them the 1935 Nobel Prize in Chemistry. She died of leukaemia at fifty-eight, probably also caused by radiation."
+   },
+   {
+    "id": "meloney",
+    "name": "Marie Meloney",
+    "life": "1878 to 1943",
+    "role": "American journalist and editor",
+    "steps": [
+     15,
+     16
+    ],
+    "text": "Editor of the women’s magazine The Delineator, she interviewed Marie in 1920 and asked what she most wished for. The answer was a gram of radium to continue her research. Meloney raised the money within a year and organised the American tour of 1921, and a second in 1929."
+   }
+  ]
+ }
+}

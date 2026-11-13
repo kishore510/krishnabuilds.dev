@@ -6,6 +6,8 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
+One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy (Socrates), Mathematics (the journey of zero), Chemistry, Biology and Medicine, and Invention. Earth and Life need the `earth-deep` canvas first.
+
 Suggested after those. These fit a map that already exists, so each is one session:
 
 - The Sikh Empire (`south-asia`)
@@ -32,6 +34,8 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Big Bang (`big-bang`), 2026-11-13
+- Marie Curie (`marie-curie`), 2026-11-13
 - Harsha’s Empire (`harsha`), 2026-11-13
 - The Silk Road (`silk-road`), 2026-11-13
 - The Vakataka Dynasty (`vakataka`), 2026-11-13
