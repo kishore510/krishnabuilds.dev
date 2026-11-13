@@ -1,0 +1,9 @@
+# The Kalinga War
+
+Status: built. The Kalinga War, about 261 BCE, and what came after: the coastal land between the Mahanadi and Godavari and the walls of Sisupalgarh, the Nandas in Kalinga and Pliny’s count of its army, Ashoka’s march south, the battle by the Daya (tradition), the Thirteenth Rock Edict at Kalsi and in Greek at Kandahar, the two special edicts at Dhauli and Jaugada that leave the confession out, Ashoka’s turn to the Buddha, Kharavela’s inscription at Udayagiri and his march on Magadha, Prinsep’s reading of the Dhauli edicts and the Shanti Stupa. 13 chapters, a **Powers** layer (the Maurya Empire, Kalinga and the Satavahanas) and 4 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes stay on the map from chapter to chapter.
+- Source: Ashoka’s inscriptions, Kharavela’s inscription and the excavations are **Archaeology**; the Greek and Latin writers and the recorded history of the 19th and 20th centuries are **History**; the battle beside the Daya is local **Tradition**.
+- Native names are in Odia (`or`), in Odia script; steps and people outside Odisha set their own language (`hi` for Hindi, `grc` for the Greek edict).
+- Sources: Ashoka’s inscriptions (above all Rock Edict XIII and the two Separate Edicts at Dhauli and Jaugada), Pliny’s Natural History (probably drawing on Megasthenes), Kharavela’s Hathigumpha inscription, the excavations at Sisupalgarh, and later Buddhist chronicles. Disputed: the exact year of the war (262 to 260 BCE), the size of Ashoka’s casualty figures, where the battle was fought (Dhauli is tradition), whether Sisupalgarh was Tosali, why the confession is left out in Kalinga, and Kharavela’s date and the name of the Magadhan king he defeated.
+- Powers areas are loose regions, not borders.
