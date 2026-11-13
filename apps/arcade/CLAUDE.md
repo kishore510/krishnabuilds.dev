@@ -53,8 +53,8 @@ games/globe-quiz/index.html   — Globe Quiz (DOM, timed multiple-choice trivia:
 games/fuseblock/index.html    — Fuseblock (canvas, bomb-placement grid arena: 5 bot tiers, roguelike level progression, power-ups)
 games/mosaica/index.html      — Mosaica (canvas, drag-to-column/rotate tetromino stacker, ceramic-tile visual theme; Phase 1 core loop only)
 games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fighter vs CPU; see "Dojo Duel notes" below for its layout and tuning tables)
-games/tennis/index.html       — Tennis (canvas, match vs CPU + ball-machine practice; page, rendering and input)
-games/tennis/engine.js        — Tennis's pure logic (physics, swing, rules, CPU; CONFIG tables at the top), tested by scripts/tennis.test.js
+games/tennis/index.html       — Tennis (canvas, landscape fullscreen like Dojo Duel: left-thumb stick, right-thumb swipes; World Tour, quick match, practice; page, rendering, sound and input)
+games/tennis/engine.js        — Tennis's pure logic (physics, swing, swipe gestures, rules, CPU, surfaces, tour; CONFIG tables at the top), tested by scripts/tennis.test.js
 games/<slug>/index.html       — next game goes here
 ```
 

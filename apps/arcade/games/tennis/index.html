@@ -8,7 +8,7 @@
   html, body {
     margin: 0;
     height: 100%;
-    background: #0b1120;
+    background: #070b16;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
     overflow: hidden;
     overscroll-behavior: none;
@@ -19,76 +19,78 @@
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
   }
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    padding-top: var(--kb-navbar-h, 0px);
-    padding-bottom: var(--kb-bottom-reserve, 0px);
-    padding-left: env(safe-area-inset-left, 0px);
-    padding-right: env(safe-area-inset-right, 0px);
+  body { display: flex; align-items: center; justify-content: center; }
+  #wrap { position: relative; }
+  canvas { display: block; background: #101a30; touch-action: none; }
+  /* The game is landscape only; portrait shows this and pauses. */
+  #rotateHint {
+    display: none; position: fixed; inset: 0; z-index: 50;
+    background: #0b1326; color: #fff;
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 24px; box-sizing: border-box;
   }
-  #wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
-  canvas {
-    display: block;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    background: #18223a;
-    touch-action: none;
-  }
-
-  /* Settings (gear in the HUD): ball machine feed, pace and assist. Open
-     from the start with ?machine=1 or ?debug=1. */
-  #gear {
+  #rotateHint .icon { font-size: 48px; margin-bottom: 12px; animation: rotateWiggle 1.6s ease-in-out infinite; }
+  #rotateHint p { font-size: 16px; font-weight: 700; max-width: 260px; }
+  @keyframes rotateWiggle { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+  .hudBtn {
     position: absolute;
-    left: calc(4px * var(--game-scale, 1));
-    top: calc(3px * var(--game-scale, 1));
-    width: calc(30px * var(--game-scale, 1));
-    height: calc(28px * var(--game-scale, 1));
+    top: calc(6px * var(--game-scale, 1));
+    width: calc(32px * var(--game-scale, 1));
+    height: calc(32px * var(--game-scale, 1));
+    min-width: 32px; min-height: 32px;
     padding: 0;
-    border-radius: 8px;
-    border: 1.5px solid rgba(255,255,255,0.55);
-    background: #18223a;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    background: rgba(10,16,30,0.86);
     color: #fff;
-    font-size: calc(16px * var(--game-scale, 1));
+    font-size: calc(15px * var(--game-scale, 1));
     line-height: 1;
     cursor: pointer;
-    z-index: 2;
+    z-index: 5;
   }
-  #gear.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
-  /* Pop-up sheets (settings, start menu, pause, match over): cover the
-     court and the controls while open; the game is frozen under them.
-     Settings: Done or a tap outside the card closes it. */
+  #gear { right: calc(46px * var(--game-scale, 1)); }
+  #pauseBtn { right: calc(8px * var(--game-scale, 1)); font-size: calc(12px * var(--game-scale, 1)); }
+  #gear.on { background: #d8ec3a; color: #10203a; border-color: #d8ec3a; }
+
+  /* Pop-up sheets (menu, tour, how to play, settings, pause, match over):
+     cover the court while open; the game is frozen under them. */
   .sheet {
     position: absolute;
     inset: 0;
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(5,8,16,0.72);
-    border-radius: 12px;
-    z-index: 4;
+    background: rgba(4,7,15,0.74);
+    z-index: 6;
+    overflow: hidden;
   }
   .sheet.show { display: flex; }
   .sheet .card {
-    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
-    padding: 14px 12px;
-    border-radius: 14px;
-    background: #18223a;
-    border: 1.5px solid rgba(255,255,255,0.35);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    max-width: calc(100% - 24px);
+    display: flex; flex-direction: column; align-items: stretch; gap: 7px;
+    box-sizing: border-box;
+    width: min(400px, calc(100% - 120px));
+    max-height: calc(100% - 12px);
+    overflow-y: auto;
+    touch-action: pan-y;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: linear-gradient(170deg, #1b2a4c 0%, #111a30 70%);
+    border: 1.5px solid rgba(255,255,255,0.28);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.65);
+    color: #e7ebf3;
   }
-  .sheet h2 { margin: 0 0 2px; font-size: 15px; font-weight: 800; color: #fff; text-align: center; letter-spacing: 0.06em; }
+  .sheet h2 { margin: 0 0 2px; font-size: 15px; font-weight: 800; color: #fff; text-align: center; letter-spacing: 0.08em; }
+  .sheet h2.title { font-size: 26px; letter-spacing: 0.14em; margin-bottom: 0; }
+  .sheet .card.wide { width: min(580px, calc(100% - 120px)); }
+  .sheet .two { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; align-items: stretch; }
+  .sheet .two.mid { align-items: center; }
+  .sheet .tag { margin: 0 0 2px; text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #d8ec3a; }
   .sheet .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-  .sheet .row span {
-    width: 52px;
+  .sheet .row > span {
+    width: 58px;
     font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
     color: rgba(255,255,255,0.75);
   }
-  .sheet .row .more { width: 52px; }
   .sheet button {
     font: inherit;
     font-weight: 700;
@@ -96,171 +98,144 @@
     min-height: 40px;
     padding: 6px 12px;
     border-radius: 20px;
-    border: 1.5px solid rgba(255,255,255,0.45);
-    background: rgba(13,19,34,0.88);
+    border: 1.5px solid rgba(255,255,255,0.42);
+    background: rgba(9,14,27,0.9);
     color: #eee;
     cursor: pointer;
   }
-  .sheet #done { margin-top: 4px; background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
   .sheet button.on { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; }
-
-  #settings { z-index: 6; }
-  #gear { z-index: 5; }
-  .sheet h2.title { font-size: 24px; letter-spacing: 0.12em; margin-bottom: 4px; }
-  .sheet .primary { background: #cfe3f7; color: #0c447c; border-color: #cfe3f7; min-height: 48px; font-size: 16px; font-weight: 800; }
-  .sheet .hint { margin: 0; font-size: 11px; line-height: 1.35; color: rgba(255,255,255,0.7); text-align: center; max-width: 250px; align-self: center; }
+  .sheet .primary {
+    background: linear-gradient(180deg, #e6f65a, #c5da2c); color: #152238; border-color: #e6f65a;
+    min-height: 46px; font-size: 16px; font-weight: 800; letter-spacing: 0.03em;
+    box-shadow: 0 4px 0 #8a9a16;
+  }
+  .sheet .primary small { display: block; font-size: 11px; font-weight: 700; opacity: 0.75; letter-spacing: 0.02em; }
+  .sheet .hint { margin: 0; font-size: 11.5px; line-height: 1.4; color: rgba(255,255,255,0.72); text-align: center; }
   .sheet .score { margin: 0; font-size: 22px; font-weight: 800; color: #d8ec3a; text-align: center; letter-spacing: 0.04em; }
+  .sheet .stars { margin: 0; text-align: center; font-size: 30px; letter-spacing: 6px; color: #ffd166; }
+  .sheet .stars i { font-style: normal; color: rgba(255,255,255,0.2); }
   .sheet table { border-collapse: collapse; color: #e7ebf3; font-size: 13px; align-self: center; }
   .sheet td, .sheet th { padding: 3px 10px; text-align: center; }
   .sheet th { font-size: 11px; letter-spacing: 0.06em; color: rgba(255,255,255,0.7); }
   .sheet td:first-child { text-align: left; color: rgba(255,255,255,0.8); }
   #over h2.win { color: #8ef0a0; }
   #over h2.lose { color: #ff8f86; }
-  /* Pause (top right of the HUD, in a match or practice). */
-  #pauseBtn {
-    position: absolute;
-    right: calc(4px * var(--game-scale, 1));
-    top: calc(3px * var(--game-scale, 1));
-    width: calc(30px * var(--game-scale, 1));
-    height: calc(28px * var(--game-scale, 1));
-    padding: 0;
-    border-radius: 8px;
-    border: 1.5px solid rgba(255,255,255,0.55);
-    background: #18223a;
-    color: #fff;
-    font-size: calc(13px * var(--game-scale, 1));
-    line-height: 1;
-    cursor: pointer;
-    z-index: 2;
+  .statline { display: flex; justify-content: space-around; margin: 2px 0 0; font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; color: rgba(255,255,255,0.6); }
+  .statline b { display: block; font-size: 16px; color: #fff; text-align: center; }
+
+  /* World Tour ladder. */
+  #tourList { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  #tourList button {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 8px;
+    text-align: left; border-radius: 12px; min-height: 40px; padding: 3px 10px;
   }
-  /* Control deck below the court. Its top overlaps the canvas's ad-board
-     strip (nothing to play there), set from fitCanvas(). */
-  #deck {
-    position: relative;
-    height: 164px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-sizing: content-box;
-    touch-action: none;
-    z-index: 3;
-  }
-  #stickZone {
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 50%;
-    touch-action: none;
-  }
-  #stickBase {
-    position: absolute;
-    width: 112px; height: 112px;
-    margin: -56px 0 0 -56px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.55);
-    background: rgba(13,19,34,0.55);
-    box-sizing: border-box;
-    pointer-events: none;
-  }
-  #stickKnob {
-    position: absolute;
-    left: 50%; top: 50%;
-    width: 52px; height: 52px;
-    margin: -26px 0 0 -26px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    border: 2px solid rgba(255,255,255,0.75);
-    box-sizing: border-box;
-  }
-  #stickBase.active { border-color: #fff; background: rgba(13,19,34,0.7); }
-  #stickBase.active #stickKnob { background: rgba(255,255,255,0.75); }
-  #stickLabel {
-    position: absolute;
-    left: 0; right: 0; top: 100%;
-    margin-top: 2px;
-    text-align: center;
-    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-    color: rgba(255,255,255,0.55);
-  }
-  .shot {
-    position: absolute;
-    border-radius: 50%;
-    box-sizing: border-box;
-    border: 3px solid var(--c);
-    background: rgba(13,19,34,0.88);
-    color: var(--c);
-    font: inherit;
-    font-weight: 800;
-    font-size: 12px;
-    letter-spacing: 0.02em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    touch-action: none;
-    cursor: pointer;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-    transition: transform 0.05s ease;
-  }
-  .shot.off { opacity: 0.3; }
-  .shot.pressed { background: var(--c); color: #0d1322; transform: scale(0.93); box-shadow: 0 0 16px var(--c); }
-  .shot small { font-size: 10px; font-weight: 700; opacity: 0.65; display: none; }
-  @media (hover: hover) and (pointer: fine) { .shot small { display: block; } }
-  /* Four shots as a face-button arc under the right thumb (160 x 156 px,
-     every button 60 px or more, gaps 8 px or more). */
-  #bTop  { --c: #7fe3ff; width: 72px; height: 72px; right: 12px; bottom: 12px; font-size: 12px; }
-  #bFlat { --c: #ffd166; width: 64px; height: 64px; right: 96px; bottom: 14px; }
-  #bLob  { --c: #c3a6ff; width: 64px; height: 64px; right: 16px; bottom: 92px; }
-  #bDrop { --c: #ff8fc8; width: 60px; height: 60px; right: 90px; bottom: 86px; }
+  #tourList button .n { font-weight: 800; color: #d8ec3a; text-align: center; }
+  #tourList button .who b { display: block; font-size: 13px; letter-spacing: 0.05em; }
+  #tourList button .who small { display: block; font-size: 10.5px; font-weight: 600; opacity: 0.7; }
+  #tourList button .st { font-size: 13px; color: #ffd166; letter-spacing: 1px; white-space: nowrap; }
+  #tourList button .st i { font-style: normal; color: rgba(255,255,255,0.22); }
+  #tourList button.locked { opacity: 0.42; }
+  #tourList button.sel { border-color: #d8ec3a; background: rgba(216,236,58,0.12); }
+
+  /* How to play: one gesture per row. */
+  .how { display: grid; grid-template-columns: 40px 1fr 40px 1fr; gap: 6px 8px; align-items: center; }
+  .how svg { width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.07); }
+  .how p { margin: 0; font-size: 11px; line-height: 1.3; color: rgba(255,255,255,0.78); }
+  .how p b { color: #fff; font-size: 11.5px; letter-spacing: 0.03em; }
 </style>
 </head>
 <body>
+<div id="rotateHint"><div class="icon">📱</div><p>Rotate your device to landscape to play Tennis</p></div>
 <div id="wrap">
   <canvas id="c"></canvas>
-  <button id="gear" aria-label="Settings" aria-expanded="false">⚙</button>
-  <button id="pauseBtn" aria-label="Pause">❚❚</button>
-  <div id="settings" class="sheet" role="dialog" aria-label="Settings">
-    <div class="card">
-      <h2>SETTINGS</h2>
-      <div class="row" data-k="mode"><span>FEED</span><button data-v="auto">Auto</button><button data-v="flat">Flat</button><button data-v="top">Top</button><button data-v="lob">Lob</button></div>
-      <div class="row" data-k="mode"><span class="more"></span><button data-v="drop">Drop</button><button data-v="short">Short</button></div>
-      <div class="row" data-k="mode"><span class="more"></span><button data-v="volley">Volley</button><button data-v="overhead">Overhead</button></div>
-      <div class="row" data-k="pace"><span>PACE</span><button data-v="slow">Slow</button><button data-v="match">Match</button></div>
-      <div class="row" data-k="assist"><span>ASSIST</span><button data-v="off">Off</button><button data-v="light">Light</button><button data-v="strong">Strong</button></div>
-      <button id="done">Done</button>
-    </div>
-  </div>
+  <button id="gear" class="hudBtn" aria-label="Settings" aria-expanded="false">⚙</button>
+  <button id="pauseBtn" class="hudBtn" aria-label="Pause">❚❚</button>
+
   <div id="menu" class="sheet" role="dialog" aria-label="Tennis">
     <div class="card">
       <h2 class="title">TENNIS</h2>
-      <button id="playMatch" class="primary" data-kb-play>Quick Match</button>
-      <div class="row" data-k="level"><span>CPU</span><button data-v="easy">Easy</button><button data-v="medium">Medium</button><button data-v="hard">Hard</button></div>
-      <div class="row" data-k="format"><span>MATCH</span><button data-v="quick">Quick</button><button data-v="standard">Standard</button></div>
-      <p class="hint" id="formatHint"></p>
-      <button id="playPractice">Practice</button>
-      <p class="hint">Serve: tap to toss, then Flat or Topspin as the ball peaks. The joystick moves you and aims.</p>
+      <p class="tag">LEFT THUMB RUNS · RIGHT THUMB SWIPES</p>
+      <button id="playTour" class="primary">World Tour<small id="tourNext"></small></button>
+      <div class="two"><button id="openQuick">Quick Match</button><button id="playPractice">Practice</button></div>
+      <button id="openHow">How to play</button>
+      <div class="statline">
+        <span><b id="stWins">0</b>WINS</span><span><b id="stStars">0</b>STARS</span><span><b id="stRally">0</b>BEST RALLY</span><span><b id="stPerfect">0</b>PERFECTS</span>
+      </div>
     </div>
   </div>
+
+  <div id="tour" class="sheet" role="dialog" aria-label="World Tour">
+    <div class="card wide">
+      <h2>WORLD TOUR</h2>
+      <div id="tourList"></div>
+      <p class="hint" id="tourBlurb"></p>
+      <div class="two"><button class="back">Back</button><button id="tourPlay" class="primary" data-kb-play>Play</button></div>
+    </div>
+  </div>
+
+  <div id="quick" class="sheet" role="dialog" aria-label="Quick Match">
+    <div class="card">
+      <h2>QUICK MATCH</h2>
+      <div class="row" data-k="level"><span>CPU</span><button data-v="easy">Easy</button><button data-v="medium">Medium</button><button data-v="hard">Hard</button></div>
+      <div class="row" data-k="surface"><span>COURT</span><button data-v="hard">Hard</button><button data-v="clay">Clay</button><button data-v="grass">Grass</button></div>
+      <div class="row" data-k="format"><span>MATCH</span><button data-v="quick">Quick</button><button data-v="standard">Standard</button></div>
+      <p class="hint" id="formatHint"></p>
+      <div class="two"><button class="back">Back</button><button id="playMatch" class="primary" data-kb-play>Play</button></div>
+    </div>
+  </div>
+
+  <div id="how" class="sheet" role="dialog" aria-label="How to play">
+    <div class="card wide">
+      <h2>HOW TO PLAY</h2>
+      <div class="how">
+        <svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="15" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/><circle cx="29" cy="18" r="7" fill="#fff"/></svg>
+        <p><b>LEFT THUMB · RUN</b><br>Drag anywhere on the left to run. Get beside the ball; let go and your feet settle the last step.</p>
+        <svg viewBox="0 0 46 46"><path d="M23 36V12m-7 7 7-8 7 8" fill="none" stroke="#7fe3ff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>RIGHT THUMB · SWIPE UP</b><br>Topspin. Swipe as the ring closes on the ball. The swipe's direction aims; a longer swipe goes deeper.</p>
+        <svg viewBox="0 0 46 46"><path d="M23 40V8m-8 8 8-9 8 9" fill="none" stroke="#ffd166" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 30v8M35 30v8" stroke="#ffd166" stroke-width="2" stroke-linecap="round" opacity=".6"/></svg>
+        <p><b>FAST FLICK · FLAT DRIVE</b><br>Harder and lower, but it sprays if your timing is off.</p>
+        <svg viewBox="0 0 46 46"><path d="M23 34V20m-5 5 5-6 5 6" fill="none" stroke="#c3a6ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 38c6-30 24-30 30 0" fill="none" stroke="#c3a6ff" stroke-width="1.6" stroke-dasharray="2 4" stroke-linecap="round"/></svg>
+        <p><b>SLOW SWIPE · LOB</b><br>High and deep, over a player at the net.</p>
+        <svg viewBox="0 0 46 46"><path d="M23 10v24m-7-7 7 8 7-8" fill="none" stroke="#ff8fc8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>SWIPE DOWN · DROP SHOT</b><br>Soft, with backspin, just over the net.</p>
+        <svg viewBox="0 0 46 46"><path d="M30 38C8 30 10 14 28 9m-9-1 9 1-4 8" fill="none" stroke="#8ef0a0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>CURVED SWIPE · CURVEBALL</b><br>Bend the swipe and the ball bends in the air, then kicks sideways.</p>
+        <svg viewBox="0 0 46 46"><path d="M6 30h34M6 30v-9M40 30v-9M6 21h34" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/><path d="M23 44V34m-5 4 5-5 5 5" fill="none" stroke="#ffd166" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>COME TO THE NET</b><br>Run forward behind a deep shot. At the net any swipe volleys, and a high ball is a smash.</p>
+        <svg viewBox="0 0 46 46"><circle cx="23" cy="12" r="5" fill="#d8ec3a"/><path d="M23 40V24m-6 6 6-7 6 7" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <p><b>SERVE</b><br>Touch and hold on the right to toss, then flick up as the ball reaches the top. Fast is flat, gentler is a kick.</p>
+      </div>
+      <button id="howDone" class="primary">Got it</button>
+    </div>
+  </div>
+
+  <div id="settings" class="sheet" role="dialog" aria-label="Settings">
+    <div class="card wide">
+      <h2>SETTINGS</h2>
+      <div class="row" data-k="sound"><span>SOUND</span><button data-v="on">On</button><button data-v="off">Off</button></div>
+      <div class="row" data-k="assist"><span>FOOTWORK</span><button data-v="off">Off</button><button data-v="light">Light</button><button data-v="strong">Strong</button></div>
+      <div class="row" data-k="mode"><span>FEED</span><button data-v="auto">Auto</button><button data-v="flat">Flat</button><button data-v="top">Top</button><button data-v="lob">Lob</button><button data-v="drop">Drop</button><button data-v="short">Short</button><button data-v="volley">Volley</button><button data-v="overhead">Overhead</button></div>
+      <div class="row" data-k="pace"><span>PACE</span><button data-v="slow">Slow</button><button data-v="match">Match</button></div>
+      <button id="done" class="primary">Done</button>
+    </div>
+  </div>
+
   <div id="pause" class="sheet" role="dialog" aria-label="Paused">
     <div class="card">
       <h2 class="title">PAUSED</h2>
       <button id="resume" class="primary">Resume</button>
-      <button id="pauseMenu">Back to Menu</button>
+      <div class="two"><button id="pauseHow">How to play</button><button id="pauseMenu">Back to Menu</button></div>
     </div>
   </div>
+
   <div id="over" class="sheet" role="dialog" aria-label="Match over">
-    <div class="card">
-      <h2 class="title" id="overTitle"></h2>
-      <p class="score" id="overScore"></p>
-      <table id="overStats"></table>
-      <button id="again" class="primary" data-kb-play>Play Again</button>
-      <button id="overMenu">Back to Menu</button>
+    <div class="card wide">
+      <div class="two mid">
+        <div><h2 class="title" id="overTitle"></h2><p class="stars" id="overStars"></p><p class="score" id="overScore"></p><p class="hint" id="overNote"></p></div>
+        <table id="overStats"></table>
+      </div>
+      <div class="two"><button id="overMenu">Back to Menu</button><button id="again" class="primary" data-kb-play>Play Again</button></div>
     </div>
-  </div>
-  <div id="deck">
-    <div id="stickZone"><div id="stickBase"><div id="stickKnob"></div><div id="stickLabel">MOVE · AIM</div></div></div>
-    <button class="shot" id="bDrop" data-shot="drop">DROP<small>H</small></button>
-    <button class="shot" id="bLob" data-shot="lob">LOB<small>L</small></button>
-    <button class="shot" id="bFlat" data-shot="flat">FLAT<small>K</small></button>
-    <button class="shot" id="bTop" data-shot="top">TOPSPIN<small>J</small></button>
   </div>
 </div>
 
@@ -271,52 +246,70 @@
   const E = window.TennisEngine, CFG = E.CONFIG, COURT = E.COURT;
 
   // --- URL options: ?debug=1 overlay, ?slow=0.3 time scale,
-  // ?feed=<mode>, ?pace=slow|match, ?assist=off|light|strong,
-  // ?seed=N (repeatable practice feeds and matches), ?serve=1 serve drill -
+  // ?feed=<mode>, ?pace=slow|match, ?seed=N (repeatable feeds and matches),
+  // ?serve=1 serve drill, ?match=1 (&level= &format= &surface=), ?tour=<id>,
+  // ?practice=1, ?mute=1, ?assist=off|light|strong, ?touch=1 -----------------------------------------------------
   const qs = new URLSearchParams(location.search);
   const DEBUG = qs.get('debug') === '1';
   const SLOW = Math.min(2, Math.max(0.05, parseFloat(qs.get('slow')) || 1));
   const RC = CFG.render;
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
+  function stored(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
+  function storedJson(k, d) { try { return Object.assign(d, JSON.parse(localStorage.getItem(k)) || {}); } catch (_) { return d; } }
 
-  // --- Canvas, deck and fit (same pattern as Fin Dash) --------------------
-  const W = 360, H = 500;
-  const OVERLAP = 56; // canvas px at the bottom (ad board) the deck may cover
-  const canvas = document.getElementById('c'), g = canvas.getContext('2d');
-  const wrap = document.getElementById('wrap'), deck = document.getElementById('deck');
-  let scale = 1;
+  // --- Canvas and fit --------------------------------------------------------
+  // Landscape, full screen: 360 logical px high, as wide as the screen (600
+  // to 840). The court sits in the middle, which leaves the left side for
+  // the thumb that runs and the right side for the thumb that swipes.
+  const H = 360, YT = 106, YB = 312, CW = 198; // far / near baseline (px), court half-width at the near one
+  let W = 720;
+  const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('wrap'), rotateHint = document.getElementById('rotateHint');
+  const bg = document.createElement('canvas'), bgx = bg.getContext('2d');
+  let g = ctx, scale = 1, bgDirty = true, fitted = false;
   function fitCanvas() {
-    const reserved = (window.kbNavbarHeight || 0) + (window.kbBottomReserve || 0);
-    const availH = window.innerHeight - reserved - deck.offsetHeight;
-    scale = Math.max(0.3, Math.min(window.innerWidth / W, availH / (H - OVERLAP)));
-    const dpr = window.devicePixelRatio || 1;
+    const iw = window.innerWidth, ih = window.innerHeight - (window.kbNavbarHeight || 0) - (window.kbBottomReserve || 0);
+    scale = Math.max(0.3, Math.min(ih / H, iw / 600));
+    W = Math.round(Math.max(600, Math.min(840, iw / scale)));
+    const dpr = Math.min(3, window.devicePixelRatio || 1);
     canvas.style.width = (W * scale) + 'px';
     canvas.style.height = (H * scale) + 'px';
-    canvas.width = Math.round(W * scale * dpr);
-    canvas.height = Math.round(H * scale * dpr);
-    g.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+    bg.width = canvas.width = Math.round(W * scale * dpr);
+    bg.height = canvas.height = Math.round(H * scale * dpr);
+    ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
+    bgx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
     wrap.style.setProperty('--game-scale', scale);
-    deck.style.width = Math.min(window.innerWidth, Math.max(W * scale, 340), 480) + 'px';
-    deck.style.marginTop = (-OVERLAP * scale) + 'px';
-    resetStick();
+    bgDirty = true;
+    const portrait = window.innerWidth < window.innerHeight;
+    rotateHint.style.display = portrait ? 'flex' : 'none';
+    if (portrait && fitted && screen === null && !settingsOpen) showScreen('pause');
   }
   window.addEventListener('resize', fitCanvas);
-  window.addEventListener('kb-navbar-ready', fitCanvas);
+  window.addEventListener('orientationchange', () => { fitCanvas(); setTimeout(fitCanvas, 350); });
+  window.addEventListener('kb-navbar-ready', () => { fitCanvas(); if (fitted && window.kbSetChromeHidden) window.kbSetChromeHidden(screen === null); });
 
-  // --- Projection (from the prototype) ----------------------------------
-  const YT = 128, YB = 410; // YT leaves room for a far player behind the baseline under the ad board
+  // --- Projection: court metres -> canvas px ----------------------------------
+  // A real perspective: things at the far baseline are drawn FAR_S the size
+  // of those at the near one, and the far half of the court takes less of
+  // the screen than the near half, as from a camera behind the player.
+  const FAR_S = 0.5, HPX = 66;
   function P(x, z, h) {
-    const s = 0.42 + 0.58 * z;
-    return [W / 2 + x * W * 0.46 * s, YT + (YB - YT) * z - h * 70 * s, s];
+    const s = 1 / Math.max(0.4, (1 - z) / FAR_S + z);
+    return [W / 2 + x * CW * s, YT + (YB - YT) * (s - FAR_S) / (1 - FAR_S) - h * HPX * s, s];
   }
   function Pm(X, Y, Hm) { const w = E.toWorld(X, Y, Hm); return P(w.x, w.z, w.h); }
   // Pixels per metre at projection scale s (across, and up).
-  const MX = W * 0.46 / COURT.doublesHalf, MH = CFG.hScale * 70;
+  const MX = CW / COURT.doublesHalf, MH = CFG.hScale * HPX;
 
-  // --- Static scenery ----------------------------------------------------
-  const crowd = [], cp = ['#7a8bb5', '#b5707a', '#c9b36e', '#6fa58a', '#8f7ab5'];
-  const seed = E.rng(7);
-  for (let i = 0; i < 110; i++) crowd.push([seed() * W, 38 + seed() * 52, cp[i % 5], seed() * 6]);
+  // --- Surfaces (look; the physics is CONFIG.surfaces) ------------------------
+  const LOOK = {
+    hard:  { inner: '#2f6bc0', inner2: '#3a79cf', outer: '#1d4a86', outer2: '#17396b', mark: 'rgba(10,20,50,.35)', dust: '225,238,255', wall: '#0f2244', accent: '#d8ec3a' },
+    clay:  { inner: '#c9643a', inner2: '#d37445', outer: '#a94f2c', outer2: '#8a3f23', mark: 'rgba(90,30,10,.45)', dust: '236,170,130', wall: '#3a1d12', accent: '#ffd9a0' },
+    grass: { inner: '#4f9f49', inner2: '#44913f', outer: '#37803a', outer2: '#2b682f', mark: 'rgba(20,60,20,.35)', dust: '210,240,190', wall: '#12351f', accent: '#f4f4f0' },
+  };
+  let surface = 'hard', look = LOOK.hard;
 
+  // --- Static scenery, drawn once into `bg` -----------------------------------
   function poly(pts, fill, stroke, lw) {
     g.beginPath();
     pts.forEach((p, i) => { const q = P(p[0], p[1], p[2] || 0); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); });
@@ -329,29 +322,111 @@
     g.beginPath(); g.moveTo(p[0], p[1]); g.lineTo(q[0], q[1]);
     g.strokeStyle = col; g.lineWidth = lw; g.stroke();
   }
+  function rrect(x, y, w, h, r) {
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
   const SX = COURT.singlesHalf / COURT.doublesHalf;
   const SV1 = (COURT.netY - COURT.serviceFromNet) / COURT.length;
   const SV2 = (COURT.netY + COURT.serviceFromNet) / COURT.length;
+  let crowd = [], crowdW = 0;
+  const CROWD_COL = ['#7a8bb5', '#b5707a', '#c9b36e', '#6fa58a', '#8f7ab5', '#d9d2c4', '#5d6f96'];
+  function seatCrowd() {
+    const r = E.rng(7);
+    crowd = []; crowdW = W;
+    for (let row = 0; row < 4; row++) for (let x = -4 + (row % 2) * 4; x < W + 4; x += 8) {
+      crowd.push({ x: x + (r() - 0.5) * 3, y: 14 + row * 12 + (r() - 0.5) * 2, c: CROWD_COL[Math.floor(r() * CROWD_COL.length)], ph: r() * 6.3, row });
+    }
+  }
+  const WALL_T = 54, WALL_B = 72;
 
-  function drawBg() {
-    g.fillStyle = '#18223a'; g.fillRect(0, 0, W, 110);
+  function drawStatic() {
+    // Stands under the lights.
+    let gr = g.createLinearGradient(0, 0, 0, WALL_T);
+    gr.addColorStop(0, '#060a16'); gr.addColorStop(1, '#16203a');
+    g.fillStyle = gr; g.fillRect(0, 0, W, WALL_T);
+    if (crowdW !== W) seatCrowd();
+    for (let row = 0; row < 4; row++) { g.fillStyle = 'rgba(255,255,255,' + (0.03 + row * 0.008) + ')'; g.fillRect(0, 18 + row * 12, W, 3); }
     crowd.forEach(d => {
-      const bob = Math.max(0, Math.sin(clock * 3 + d[3])) * cheer * 3;
-      g.fillStyle = d[2]; g.fillRect(d[0], d[1] - bob, 4, 4);
+      const k = 0.6 + d.row * 0.1;
+      g.globalAlpha = k;
+      g.fillStyle = d.c; g.beginPath(); g.arc(d.x, d.y, 3, Math.PI, 0); g.rect(d.x - 3, d.y, 6, 4); g.fill();
+      g.fillStyle = '#e5c3a3'; g.beginPath(); g.arc(d.x, d.y - 4, 2, 0, 7); g.fill();
     });
-    g.fillStyle = '#0f1626'; g.fillRect(0, 92, W, 18);
-    g.fillStyle = 'rgba(255,255,255,.65)'; g.font = 'bold 11px system-ui, sans-serif'; g.textAlign = 'center';
-    g.fillText('krishnabuilds   ·   krishnabuilds   ·   krishnabuilds', W / 2, 105);
-    g.fillStyle = '#3c8d5a'; g.fillRect(-10, 110, W + 20, H - 110);
-    for (let i = 0; i < 10; i++) { const a = i / 10, b = (i + 1) / 10; poly([[-1, a], [1, a], [1, b], [-1, b]], i % 2 ? '#3377bd' : '#2f6fb3'); }
-    const L = 'rgba(255,255,255,.92)';
-    poly([[-1, 0], [1, 0], [1, 1], [-1, 1]], null, L, 2);
-    line([-SX, 0], [-SX, 1], L, 1.5); line([SX, 0], [SX, 1], L, 1.5);
-    line([-SX, SV1], [SX, SV1], L, 1.5); line([-SX, SV2], [SX, SV2], L, 1.5);
-    line([0, SV1], [0, SV2], L, 1.5);
-    line([0, 0], [0, 0.012], L, 1.5); line([0, 1], [0, 0.988], L, 1.5);
-    // Near-side ad board.
-    g.fillStyle = 'rgba(0,0,0,.28)'; g.fillRect(-10, 428, W + 20, H - 428);
+    g.globalAlpha = 1;
+    // Floodlights.
+    for (const x of [W * 0.1, W * 0.36, W * 0.64, W * 0.9]) {
+      const fl = g.createRadialGradient(x, 6, 0, x, 6, 90);
+      fl.addColorStop(0, 'rgba(255,250,225,.5)'); fl.addColorStop(0.25, 'rgba(255,250,225,.12)'); fl.addColorStop(1, 'rgba(255,250,225,0)');
+      g.fillStyle = fl; g.fillRect(x - 90, 0, 180, WALL_T);
+      g.fillStyle = '#fffbe6'; rrect(x - 12, 2, 24, 6, 3); g.fill();
+    }
+    // Back wall with boards.
+    g.fillStyle = look.wall; g.fillRect(0, WALL_T, W, WALL_B - WALL_T);
+    g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(0, WALL_T, W, 2);
+    g.font = '800 10px system-ui, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    ['ARCADE', 'KRISHNABUILDS', 'ARCADE OPEN', 'KRISHNABUILDS', 'ARCADE'].forEach((t, i) => {
+      const x = W / 2 + (i - 2) * 124;
+      g.fillStyle = i === 2 ? look.accent : 'rgba(255,255,255,.1)'; rrect(x - 54, WALL_T + 3, 108, 14, 3); g.fill();
+      g.fillStyle = i === 2 ? look.wall : 'rgba(255,255,255,.85)'; g.fillText(t, x, WALL_T + 10.5);
+    });
+    g.textBaseline = 'alphabetic';
+    // Surround.
+    gr = g.createLinearGradient(0, WALL_B, 0, H);
+    gr.addColorStop(0, look.outer2); gr.addColorStop(0.25, look.outer); gr.addColorStop(1, look.outer2);
+    g.fillStyle = gr; g.fillRect(0, WALL_B, W, H - WALL_B);
+    g.fillStyle = 'rgba(0,0,0,.28)'; g.fillRect(0, WALL_B, W, 5);
+    // Court.
+    if (surface === 'grass') {
+      for (let i = 0; i < 12; i++) poly([[-1, i / 12], [1, i / 12], [1, (i + 1) / 12], [-1, (i + 1) / 12]], i % 2 ? look.inner : look.inner2);
+    } else {
+      poly([[-1, 0], [1, 0], [1, 1], [-1, 1]], look.inner);
+      const a = P(0, 0, 0), b = P(0, 1, 0);
+      gr = g.createLinearGradient(0, a[1], 0, b[1]);
+      gr.addColorStop(0, 'rgba(255,255,255,.10)'); gr.addColorStop(0.5, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(0,0,0,.10)');
+      poly([[-1, 0], [1, 0], [1, 1], [-1, 1]], gr);
+    }
+    if (surface !== 'hard') {
+      // Scuffs: brushed clay, worn grass along the baselines.
+      const r = E.rng(11);
+      for (let i = 0; i < 260; i++) {
+        const z = surface === 'grass' ? (r() < 0.5 ? r() * 0.07 : 1 - r() * 0.07) : r(), x = (r() * 2 - 1) * (surface === 'grass' ? 0.5 : 1);
+        const q = P(x, z, 0);
+        g.fillStyle = surface === 'grass' ? 'rgba(170,150,90,.22)' : (r() < 0.5 ? 'rgba(255,220,190,.10)' : 'rgba(80,25,5,.10)');
+        g.fillRect(q[0], q[1], 5 * q[2] + r() * 8, 1.4);
+      }
+    }
+    // Lines.
+    const L = 'rgba(255,255,255,.95)';
+    poly([[-1, 0], [1, 0], [1, 1], [-1, 1]], null, L, 2.2);
+    line([-SX, 0], [-SX, 1], L, 1.8); line([SX, 0], [SX, 1], L, 1.8);
+    line([-SX, SV1], [SX, SV1], L, 1.8); line([-SX, SV2], [SX, SV2], L, 1.8);
+    line([0, SV1], [0, SV2], L, 1.8);
+    line([0, 0], [0, 0.014], L, 1.8); line([0, 1], [0, 0.986], L, 1.8);
+    // Net shadow on the near court.
+    const px = COURT.postX / COURT.doublesHalf;
+    poly([[-px, 0.5], [px, 0.5], [px, 0.535], [-px, 0.535]], 'rgba(0,0,0,.16)');
+    // Vignette.
+    gr = g.createRadialGradient(W / 2, (YT + YB) / 2, 150, W / 2, (YT + YB) / 2, 470);
+    gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,10,.38)');
+    g.fillStyle = gr; g.fillRect(0, WALL_B, W, H - WALL_B);
+  }
+  function drawBg() {
+    if (bgDirty) { g = bgx; drawStatic(); g = ctx; bgDirty = false; }
+    g.drawImage(bg, 0, 0, W, H);
+    // The crowd gets up when it likes a point.
+    if (cheer > 0.02) {
+      crowd.forEach(d => {
+        const up = Math.max(0, Math.sin(clock * 9 + d.ph)) * cheer;
+        if (up < 0.25) return;
+        g.fillStyle = d.c; g.fillRect(d.x - 3, d.y - up * 3.5, 6, 5);
+        g.fillStyle = '#e5c3a3'; g.beginPath(); g.arc(d.x, d.y - 4 - up * 3.5, 2, 0, 7); g.fill();
+      });
+      for (let i = 0; i < 3; i++) if (Math.random() < cheer * 0.35) {
+        const d = crowd[Math.floor(Math.random() * crowd.length)];
+        g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(d.x, d.y - 3, 2.6, 0, 7); g.fill();
+      }
+    }
   }
 
   function drawNet() {
@@ -359,12 +434,72 @@
     const top = x => E.netHeight(x * COURT.doublesHalf) * hs;
     const pts = [];
     for (let i = 0; i <= 12; i++) { const x = -px + 2 * px * i / 12; pts.push([x, 0.5, top(x)]); }
-    poly([[-px, 0.5, 0], [px, 0.5, 0]].concat(pts.slice().reverse()), 'rgba(15,22,38,.5)');
-    for (let x = -px; x <= px + 1e-6; x += 0.12) line([x, 0.5, 0], [x, 0.5, top(x)], 'rgba(255,255,255,.18)', 0.6);
-    for (let i = 0; i < 12; i++) line(pts[i], pts[i + 1], '#fff', 3);
-    line([-px, 0.5, 0], [-px, 0.5, top(px)], '#d8dbe3', 3);
-    line([px, 0.5, 0], [px, 0.5, top(px)], '#d8dbe3', 3);
+    poly([[-px, 0.5, 0], [px, 0.5, 0]].concat(pts.slice().reverse()), 'rgba(10,16,30,.42)');
+    for (let x = -px; x <= px + 1e-6; x += 0.06) line([x, 0.5, 0], [x, 0.5, top(x)], 'rgba(255,255,255,.16)', 0.5);
+    for (let k = 1; k < 5; k++) { g.beginPath(); pts.forEach((p, i) => { const q = P(p[0], 0.5, p[2] * k / 5); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 0.5; g.stroke(); }
+    line([0, 0.5, 0], [0, 0.5, top(0)], 'rgba(255,255,255,.85)', 2);
+    g.lineCap = 'round';
+    for (let i = 0; i < 12; i++) line(pts[i], pts[i + 1], '#fff', 3.2);
+    g.lineCap = 'butt';
+    for (const s of [-1, 1]) {
+      line([s * px, 0.5, 0], [s * px, 0.5, top(px) + 0.02], '#10182c', 4.5);
+      line([s * px, 0.5, 0], [s * px, 0.5, top(px) + 0.02], '#c9cfdc', 2.5);
+    }
   }
+
+  // --- Sound: everything is synthesised (no files) ----------------------------
+  // iOS only starts audio inside a gesture, so every touch resumes it.
+  const AU = { ctx: null, out: null, noise: null, muted: stored('tennisMuted') === '1' || qs.get('mute') === '1', hum: null };
+  function audio() {
+    if (AU.muted) return null;
+    try {
+      if (!AU.ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        AU.ctx = new AC();
+        AU.out = AU.ctx.createGain(); AU.out.gain.value = 0.9; AU.out.connect(AU.ctx.destination);
+        const n = AU.ctx.sampleRate * 2, buf = AU.ctx.createBuffer(1, n, AU.ctx.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+        AU.noise = buf;
+      }
+      if (AU.ctx.state === 'suspended') AU.ctx.resume();
+      return AU.ctx;
+    } catch (_) { return null; }
+  }
+  function tone(type, f0, f1, dur, vol, when) {
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + (when || 0), o = a.createOscillator(), v = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+    v.gain.setValueAtTime(vol, t); v.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    o.connect(v); v.connect(AU.out); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function noise(freq, q, dur, vol, type, when, attack) {
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + (when || 0), s = a.createBufferSource(), f = a.createBiquadFilter(), v = a.createGain();
+    s.buffer = AU.noise; s.loop = true; f.type = type || 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+    v.gain.setValueAtTime(0.0008, t); v.gain.linearRampToValueAtTime(vol, t + (attack || 0.004)); v.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    s.connect(f); f.connect(v); v.connect(AU.out); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+  }
+  const SND = {
+    hit(power, soft) { // power 0..1
+      noise(soft ? 1100 : 1500 + power * 1300, 1.1, soft ? 0.05 : 0.07, soft ? 0.22 : 0.4 + power * 0.35);
+      tone('sine', soft ? 190 : 230 + power * 60, 80, soft ? 0.06 : 0.1, soft ? 0.25 : 0.5 + power * 0.3);
+    },
+    bounce(v) { tone('sine', 250, 110, 0.07, Math.min(0.5, 0.12 + v * 0.03)); noise(700, 0.8, 0.04, 0.08, 'lowpass'); },
+    net() { noise(320, 0.7, 0.18, 0.4, 'lowpass'); tone('sine', 120, 70, 0.12, 0.25); },
+    perfect() { tone('triangle', 988, 988, 0.09, 0.16); tone('triangle', 1480, 1480, 0.16, 0.16, 0.07); },
+    whiff() { noise(900, 0.6, 0.16, 0.12, 'bandpass', 0, 0.06); },
+    callOut() { tone('square', 520, 380, 0.16, 0.08); },
+    click() { tone('triangle', 660, 660, 0.04, 0.1); },
+    cheer(level) { // applause: bright noise that swells and dies
+      noise(2400, 0.5, 1.0 + level * 1.4, 0.10 + level * 0.14, 'bandpass', 0, 0.25);
+      noise(900, 0.4, 0.8 + level, 0.05 + level * 0.07, 'bandpass', 0.05, 0.3);
+    },
+    groan() { noise(420, 0.9, 0.9, 0.14, 'bandpass', 0, 0.2); },
+    win() { [523, 659, 784, 1047].forEach((f, i) => tone('triangle', f, f, 0.22, 0.2, i * 0.13)); SND.cheer(1); },
+    lose() { [392, 330, 262].forEach((f, i) => tone('triangle', f, f, 0.28, 0.16, i * 0.18)); },
+  };
+  function buzz(ms) { try { if (!AU.muted && navigator.vibrate) navigator.vibrate(ms); } catch (_) {} }
 
   // --- Game state ----------------------------------------------------------
   // mode: 'practice' (the ball machine), 'drill' (serve practice, ?serve=1)
@@ -374,134 +509,196 @@
   const SEED = parseInt(qs.get('seed'), 10);
   const seedNow = () => Number.isFinite(SEED) ? SEED : (Date.now() & 0xffff) + 1;
   const practice = E.createPractice(seedNow());
-  let mode = 'practice', match = null;
+  let mode = 'practice', match = null, cfgNow = CFG, oppRow = null;
   let pr = practice, ball = pr.ball, me = pr.player;
+  const TOUR = CFG.tour;
+  const NEAR_PAL = { shirt: '#f4f4f0', trim: '#e8483b', short: '#1c2640', skin: '#e0ac82', hair: '#3a2416', cap: '#e8483b', frame: '#e8483b', shoe: '#fff' };
+  const FAR_LOOKS = [
+    { skin: '#8d5a3b', hair: '#1a1008' }, { skin: '#e8b98f', hair: '#6b3a1c', pony: true }, { skin: '#d9a070', hair: '#c9a24a' },
+    { skin: '#a8714a', hair: '#161616', pony: true }, { skin: '#e3b089', hair: '#3b2a20' }, { skin: '#c68c5e', hair: '#101010' }, { skin: '#f0c9a8', hair: '#e8dcc0', pony: true },
+  ];
+  let palF = farPal(null);
+  function farPal(row) {
+    const i = row ? TOUR.indexOf(row) : 0, lk = FAR_LOOKS[Math.max(0, i) % FAR_LOOKS.length];
+    const kit = row ? row.kit : ['#f2c94c', '#2b3a67'];
+    return Object.assign({ shirt: kit[0], trim: kit[1], short: kit[1], cap: kit[1], frame: kit[0], shoe: '#fff' }, lk);
+  }
+  // opts: { far (CPU level), format, surface, tour (a CONFIG.tour row) }.
   function startMode(next, opts) {
-    mode = next;
-    if (next === 'practice') pr = practice;
+    mode = next; opts = opts || {};
+    oppRow = next === 'match' ? opts.tour || null : null;
+    const sf = next === 'match' ? (oppRow ? oppRow.surface : opts.surface) || 'hard' : 'hard';
+    if (sf !== surface) { surface = sf; look = LOOK[sf]; bgDirty = true; }
+    if (next === 'practice') { pr = practice; cfgNow = CFG; }
     else {
-      match = E.createMatch(Object.assign({ seed: seedNow(), serveDrill: next === 'drill' }, opts || {}));
+      cfgNow = E.configFor({ surface: sf, tour: oppRow });
+      match = E.createMatch({
+        seed: seedNow(), serveDrill: next === 'drill', far: next === 'drill' ? 'none' : oppRow ? 'tour' : opts.far,
+        format: oppRow ? oppRow.format : opts.format, names: ['YOU', oppRow ? oppRow.name : 'CPU'],
+      }, cfgNow);
       pr = match.actors[0];
       pr.assist = practice.assist;
     }
+    palF = farPal(oppRow);
     ball = pr.ball; me = pr.player;
-    landing = null; contactPt = null; trail = []; racketTrail = []; lastHit = null;
-    pop.life = 0; call.life = 0; tag.life = 0; big.life = 0;
+    landing = null; contactPt = null; trail = []; racketTrail = []; lastHit = null; marks = []; aimMark = null; stickT = null;
+    pop.life = 0; call.life = 0; tag.life = 0; big.life = 0; speedChip.life = 0; streak = 0; pointTag = ''; gesture = null;
     acc = 0; anchor = { real: performance.now(), sim: pr.t, rate: SLOW };
     settings.querySelectorAll('.row[data-k="mode"], .row[data-k="pace"]').forEach(r => { r.style.display = next === 'practice' ? '' : 'none'; });
   }
   const inMatch = () => mode !== 'practice';
-  let clock = 0, hitStop = 0, shake = 0, cheer = 0, flash = 0;
-  let trail = [], parts = [], fx = [], racketTrail = [];
+  let clock = 0, hitStop = 0, shake = 0, cheer = 0, flash = 0, acc = 0;
+  let trail = [], parts = [], fx = [], racketTrail = [], marks = [];
   let pop = { txt: '', sub: '', life: 0, col: '#fff', big: false }, call = { txt: '', life: 0, x: 0, y: 0, col: '#fff' };
   let tag = { txt: '', life: 0, col: '#fff' };
   // Match calls (WINNER, OUT, FAULT, ...) and the score banner.
   let big = { txt: '', sub: '', life: 0, col: '#fff', banner: false };
-  let squash = { t: 0, kind: 'hit' }, ballRot = 0;
+  let speedChip = { txt: '', life: 0 }, streak = 0, pointTag = '';
+  let squash = { t: 0, kind: 'hit' }, ballRot = 0, ballCol = null, fire = 0;
   let lastResult = '-', lastAngle = null, lastHit = null, fps = 0, fpsAcc = 0, fpsN = 0, stepsLast = 0;
-  let landing = null, contactPt = null;
+  let landing = null, contactPt = null, aimMark = null, machineKick = 0;
+  // Lifetime numbers for the menu.
+  const stats = storedJson('tennisStats', { wins: 0, played: 0, bestRally: 0, perfects: 0 });
+  const tourSave = storedJson('tennisTour', { stars: {} });
+  function saveStats() { store('tennisStats', JSON.stringify(stats)); }
 
-  const SHOT_COL = { flat: '#ffd166', top: '#7fe3ff', lob: '#c3a6ff', drop: '#ff8fc8' };
+  const SHOT_COL = { flat: '#ffd166', top: '#7fe3ff', lob: '#c3a6ff', drop: '#ff8fc8', curve: '#8ef0a0' };
   const CALL = { IN: ['IN', '#8ef0a0'], OUT_LONG: ['OUT', '#ff6b5e'], OUT_WIDE: ['WIDE', '#ff6b5e'], NET: ['NET', '#ff9f43'] };
 
-  function burst(x, y, n, spread) {
-    for (let i = 0; i < n; i++) parts.push({ x, y, vx: (Math.random() - 0.5) * 140 * spread, vy: (Math.random() - 0.8) * 90 * spread, l: 0.8, c: '255,255,255' });
+  function burst(x, y, n, spread, col) {
+    for (let i = 0; i < n; i++) parts.push({ x, y, vx: (Math.random() - 0.5) * 140 * spread, vy: (Math.random() - 0.8) * 90 * spread, l: 0.8, c: col || '255,255,255' });
   }
-
   function missTag(reason, j) {
     const txt = E.MISS_TEXT[reason];
     if (!txt) return;
     tag = { txt, life: RC.missMs / 1000, col: '#ff9f9f' };
     if (DEBUG) console.log('[tennis] miss', txt, j ? { errMs: Math.round(j.errMs), lat: +j.lat.toFixed(2), H: +j.H.toFixed(2) } : '(no swing)');
   }
+  const kmh = v => Math.round(v * 3.6) + ' km/h';
 
   function onEvent(e) {
     if (e.type === 'hit') {
       const q = Pm(e.X, e.Y, e.H);
       squash = { t: 0.08, kind: 'hit' };
-      lastAngle = e.angle; trail = [];
-      if (e.by === 'machine' || e.who === 1) { landing = e.landing || pathLanding(); contactPt = null; burst(q[0], q[1], 4, 0.5); return; }
+      lastAngle = e.angle; trail = []; fire = 0; ballCol = null;
+      if (e.by === 'machine' || e.who === 1) {
+        landing = e.landing || pathLanding(); contactPt = null; burst(q[0], q[1], 4, 0.5);
+        if (e.by === 'machine') { machineKick = 0.25; SND.hit(0.2, true); } else SND.hit(Math.min(1, (e.speed || 22) / 36) * 0.8, e.shot === 'drop');
+        return;
+      }
       // The player's contact: hit-stop, shake, flash, stroke label.
       lastHit = e; landing = null;
       contactPt = { X: e.X, Y: e.Y, H: e.H, t0: pr.swing.t0 };
+      aimMark = e.mishit ? null : { X: e.target.X, Y: e.target.Y, l: 1.2, col: e.curve ? SHOT_COL.curve : SHOT_COL[e.shot] };
       // Feel by stroke: soft for drops and volleys, big for smashes.
       const smash = e.kind === 'smash', soft = !smash && (e.shot === 'drop' || e.kind === 'volley');
-      hitStop = smash ? 0.08 : soft ? 0.025 : 0.05; shake = smash ? 0.22 : soft ? 0.05 : 0.14;
+      hitStop = smash ? 0.08 : soft ? 0.025 : e.perfect ? 0.06 : 0.04; shake = smash ? 0.22 : soft ? 0.05 : 0.12;
       fx.push({ x: q[0], y: q[1], l: soft ? 0.6 : 1 });
       burst(q[0], q[1], (e.perfect || smash ? 12 : 7) >> (soft ? 1 : 0), smash ? 1.4 : soft ? 0.5 : 1);
+      SND.hit(smash ? 1 : Math.min(1, (e.speed || 24) / 34), soft); buzz(e.perfect || smash ? 22 : 10);
+      ballCol = e.curve ? SHOT_COL.curve : SHOT_COL[e.shot];
       const label = e.label || CFG.shots[e.shot].name;
+      const T = E.timingFor(CFG, e.kind, true);
       if (e.perfect) {
-        flash = 1;
-        pop = { txt: 'PERFECT', sub: label, life: 1.1, col: '#ffe066', big: true };
+        streak++; stats.perfects++; fire = 1;
+        flash = 1; SND.perfect();
+        pop = { txt: streak > 1 ? 'PERFECT ×' + streak : 'PERFECT', sub: label, life: 1.1, col: '#ffe066', big: true };
       } else {
-        const hint = e.band === 'GOOD' ? '' : (e.errMs < 0 ? 'EARLY' : 'LATE');
+        streak = 0;
+        const hint = Math.abs(e.errMs) <= T.perfectMs * 1.5 ? '' : e.errMs < 0 ? 'A LITTLE EARLY' : 'LATE';
         if (smash) flash = 0.6;
-        pop = { txt: label, sub: hint, life: 1.1, col: smash ? '#ff9f43' : SHOT_COL[e.shot], big: smash };
+        pop = { txt: label, sub: hint, life: 1.1, col: smash ? '#ff9f43' : ballCol, big: smash };
       }
+      if (smash) speedChip = { txt: kmh(e.speed), life: 1.6 };
       const side = e.stroke === 'fh' ? 'FOREHAND' : 'BACKHAND';
-      tag = { txt: smash ? 'OVERHEAD' : e.kind === 'volley' ? side + ' VOLLEY' : side, life: 1, col: e.stroke === 'fh' ? '#ffd166' : '#7fe3ff' };
+      tag = { txt: smash ? 'OVERHEAD' : e.kind === 'volley' ? side + ' VOLLEY' : side, life: 0.8, col: 'rgba(255,255,255,.85)' };
     } else if (e.type === 'serve') {
-      trail = []; squash = { t: 0.08, kind: 'hit' };
+      trail = []; squash = { t: 0.08, kind: 'hit' }; fire = 0; ballCol = null;
       const q = Pm(e.X, e.Y, e.H);
+      speedChip = { txt: kmh(e.speed), life: 1.8 };
+      SND.hit(Math.min(1, e.speed / 44), false);
       if (e.who === 1) { landing = pathLanding(); burst(q[0], q[1], 5, 0.7); return; }
       landing = null; lastHit = null;
       hitStop = e.perfect ? 0.06 : 0.035; shake = e.perfect ? 0.14 : 0.06;
-      fx.push({ x: q[0], y: q[1], l: 1 });
+      fx.push({ x: q[0], y: q[1], l: 1 }); buzz(e.perfect ? 22 : 10);
       burst(q[0], q[1], e.perfect ? 12 : 7, 1);
-      if (e.perfect) { flash = 1; pop = { txt: 'PERFECT', sub: e.label, life: 1.1, col: '#ffe066', big: true }; }
-      else pop = { txt: e.label, sub: e.quality >= CFG.quality.good ? '' : e.errMs < 0 ? 'EARLY' : 'LATE', life: 1.1, col: SHOT_COL[e.shot], big: false };
+      ballCol = e.curve ? SHOT_COL.curve : SHOT_COL[e.shot];
+      if (e.perfect) { flash = 1; fire = 1; SND.perfect(); pop = { txt: 'PERFECT', sub: e.label, life: 1.1, col: '#ffe066', big: true }; }
+      else pop = { txt: e.label, sub: e.quality >= CFG.quality.good ? '' : e.errMs < 0 ? 'EARLY' : 'LATE', life: 1.1, col: ballCol, big: false };
       tag = { txt: e.serveNo === 1 ? '1ST SERVE' : '2ND SERVE', life: 0.9, col: '#ffd166' };
     } else if (e.type === 'retoss') {
-      if (match && match.serve.server === 0) tag = { txt: e.why === 'early' ? 'TOO EARLY' : e.why === 'late' ? 'TOO LATE' : 'TAP AT THE TOP', life: 0.9, col: '#ff9f9f' };
+      if (match && match.serve.server === 0) tag = { txt: e.why === 'early' ? 'TOO EARLY' : e.why === 'late' ? 'TOO LATE' : 'FLICK UP AT THE TOP', life: 0.9, col: '#ff9f9f' };
     } else if (e.type === 'fault' || e.type === 'let') {
-      big = { txt: e.type === 'let' ? 'LET' : 'FAULT', sub: e.type === 'let' ? 'REPLAY THE SERVE' : 'SECOND SERVE', life: CFG.match.faultTime, col: '#ff9f43', banner: false };
-      shake = Math.max(shake, 0.06);
+      big = { txt: e.type === 'let' ? 'LET' : 'FAULT', sub: e.type === 'let' ? 'REPLAY THE SERVE' : 'SECOND SERVE', life: cfgNow.match.faultTime, col: '#ff9f43', banner: false };
+      shake = Math.max(shake, 0.06); SND.callOut();
     } else if (e.type === 'pointEnd') {
       const mine = e.winner === 0;
-      big = { txt: e.reason, sub: mode === 'drill' ? '' : mine ? 'POINT YOU' : 'POINT CPU', life: CFG.match.callTime, col: mine ? '#8ef0a0' : '#ff6b5e', banner: false };
-      if (mine) cheer = 1;
-      landing = null;
+      big = { txt: e.reason, sub: mode === 'drill' ? '' : mine ? 'YOUR POINT' : match.names[1] + '’S POINT', life: cfgNow.match.callTime, col: mine ? '#8ef0a0' : '#ff6b5e', banner: false };
+      if (e.reason === 'OUT' || e.reason === 'NET' || e.reason === 'DOUBLE FAULT') SND.callOut();
+      const lively = Math.min(1, 0.25 + e.hits / 10 + (e.reason === 'ACE' || e.reason === 'WINNER' ? 0.3 : 0));
+      if (mine) { cheer = Math.max(cheer, lively); SND.cheer(lively); } else if (mode !== 'drill') { SND.groan(); streak = 0; }
+      if (e.hits > stats.bestRally) { stats.bestRally = e.hits; saveStats(); }
+      landing = null; pointTag = '';
     } else if (e.type === 'matchOver') {
       showOver();
     } else if (e.type === 'banner') {
-      if (mode !== 'drill') big = { txt: e.banner.title, sub: e.banner.sub, life: CFG.match.bannerTime, col: '#fff', banner: true };
+      if (mode !== 'drill') big = { txt: e.banner.title, sub: e.banner.sub, life: cfgNow.match.bannerTime, col: '#fff', banner: true };
     } else if (e.type === 'whiff') {
-      lastHit = e;
-      if (e.live) missTag(e.reason, e);
+      lastHit = e; streak = 0;
+      if (e.live) { missTag(e.reason, e); SND.whiff(); }
     } else if (e.type === 'missed') {
       if (!e.whiffed) missTag(e.reason);
-      landing = null;
+      landing = null; streak = 0;
     } else if (e.type === 'bounce') {
       const q = Pm(e.X, e.Y, 0);
       squash = { t: 0.06, kind: 'bounce' };
+      SND.bounce(e.impact);
+      if (e.n === 1) marks.push({ X: e.X, Y: e.Y, l: 5, out: e.result && e.result !== 'IN' });
+      if (marks.length > 14) marks.shift();
       const n = Math.min(12, 4 + Math.round(e.impact));
-      for (let i = 0; i < n; i++) parts.push({ x: q[0], y: q[1], vx: (Math.random() - 0.5) * 90 * q[2], vy: -Math.random() * 70 * q[2], l: 1, c: '220,235,255' });
+      for (let i = 0; i < n; i++) parts.push({ x: q[0], y: q[1], vx: (Math.random() - 0.5) * 90 * q[2], vy: -Math.random() * 70 * q[2], l: 1, c: look.dust });
     } else if (e.type === 'return') {
       lastResult = e.result;
       const q = Pm(e.X, e.Y, 0), c = CALL[e.result];
       call = { txt: c[0], life: 1.1, x: q[0], y: q[1], col: c[1] };
-      if (e.result !== 'IN') shake = Math.max(shake, 0.1);
+      if (e.result !== 'IN') { shake = Math.max(shake, 0.1); SND.callOut(); }
       if (e.rally >= 6) cheer = 1;
+      if (e.rally > stats.bestRally) { stats.bestRally = e.rally; saveStats(); }
     } else if (e.type === 'net') {
       if (e.stopped) shake = Math.max(shake, 0.12);
+      SND.net();
       const q = Pm(e.X, e.Y, e.H);
       for (let i = 0; i < 5; i++) parts.push({ x: q[0], y: q[1], vx: (Math.random() - 0.5) * 60, vy: -Math.random() * 40, l: 0.7, c: '255,255,255' });
     }
   }
 
+  // MATCH / SET / BREAK POINT, worked out by playing the next point both ways.
+  function pointLabel() {
+    if (mode !== 'match') return '';
+    const si = E.matchServer(match);
+    let out = '';
+    for (const who of [0, 1]) {
+      const sc = JSON.parse(JSON.stringify(match.score)), ev = E.pointWon(sc, who), has = t => ev.some(x => x.type === t);
+      if (has('match')) return 'MATCH POINT';
+      if (has('set')) out = 'SET POINT';
+      else if (has('game') && who !== si && !match.score.tiebreak && !out) out = 'BREAK POINT';
+    }
+    return out;
+  }
+
   // --- Input: time mapping -------------------------------------------------
   // Each frame records where sim time was at that real time and how fast it
-  // runs, so a tap's own event timestamp maps to the sim instant it
+  // runs, so a gesture's own event timestamp maps to the sim instant it
   // happened, however late the frame that handles it is.
   let anchor = { real: performance.now(), sim: 0, rate: SLOW };
   function simTimeAt(ts) {
     if (!(ts > 0)) ts = performance.now();
     return anchor.sim + Math.max(0, ts - anchor.real) / 1000 * anchor.rate;
   }
-  function swing(shot, ts) {
+  function swing(shot, ts, opts) {
     if (frozen()) return;
-    if (inMatch()) E.matchSwing(match, shot, simTimeAt(ts));
-    else E.requestSwing(pr, shot, simTimeAt(ts));
+    if (inMatch()) E.matchSwing(match, shot, simTimeAt(ts), opts);
+    else E.requestSwing(pr, shot, simTimeAt(ts), opts);
   }
   // Where the ball the opponent just hit will bounce (match), for the ring.
   function pathLanding() {
@@ -510,119 +707,110 @@
     for (let i = 1; i < p.length; i++) if (p[i - 1].phase === 'flight' && p[i].phase !== 'flight') return { X: p[i].X, Y: p[i].Y, t: p[i].t };
     return null;
   }
+  const myServe = () => inMatch() && match.serve && match.serve.server === 0 && (match.phase === 'pre' || match.phase === 'serve');
 
-  // --- Input: touch (pointer events, multi-touch) --------------------------
-  const active = new Map(); // pointerId -> role, for the debug overlay
-  const zone = document.getElementById('stickZone');
-  const base = document.getElementById('stickBase'), knob = document.getElementById('stickKnob');
-  const TRAVEL = 44;
-  let touchStick = { x: 0, y: 0 }, stickId = null, centre = { x: 0, y: 0 };
-
-  function restPos() { return { x: 80, y: zone.clientHeight - 74 }; }
-  function placeBase(c) { base.style.left = c.x + 'px'; base.style.top = c.y + 'px'; }
-  function setKnob(dx, dy) { knob.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; }
-  function resetStick() {
-    stickId = null; touchStick = { x: 0, y: 0 };
-    base.classList.remove('active'); setKnob(0, 0); placeBase(restPos());
+  // --- Input: touch (pointer events, multi-touch) -----------------------------
+  // The left side of the screen is a floating stick that runs the player;
+  // the right side takes swipes. Touching down on the right on your serve
+  // tosses the ball; lifting after a swipe hits (see CONFIG.swipe for the
+  // shots). A mouse swipes anywhere (the keyboard runs).
+  const TRAVEL = 46, STICK_SIDE = 0.42;
+  let stickT = null;  // { id, ox, oy, x, y }: origin (client px) and stick value
+  let gesture = null; // { id, pts: [{x, y, t}] }
+  function onDown(e) {
+    if (e.target !== canvas && e.target !== wrap && e.target !== document.body && e.target !== document.documentElement) return;
+    e.preventDefault(); audio();
+    if (frozen()) return;
+    const r = canvas.getBoundingClientRect();
+    if (e.pointerType !== 'mouse' && e.clientX < r.left + r.width * STICK_SIDE) {
+      if (!stickT) stickT = { id: e.pointerId, ox: e.clientX, oy: e.clientY, x: 0, y: 0 };
+      return;
+    }
+    if (gesture) return;
+    gesture = { id: e.pointerId, pts: [{ x: e.clientX, y: e.clientY, t: e.timeStamp }] };
+    if (myServe() && match.phase === 'serve' && match.serve.state === 'wait') E.matchSwing(match, 'top', simTimeAt(e.timeStamp));
   }
-  function moveStick(e) {
-    const r = zone.getBoundingClientRect();
-    let dx = e.clientX - r.left - centre.x, dy = e.clientY - r.top - centre.y;
-    const d = Math.hypot(dx, dy);
-    if (d > TRAVEL) { dx *= TRAVEL / d; dy *= TRAVEL / d; }
-    setKnob(dx, dy);
-    touchStick = { x: dx / TRAVEL, y: dy / TRAVEL };
+  function onMove(e) {
+    if (stickT && e.pointerId === stickT.id) {
+      let dx = e.clientX - stickT.ox, dy = e.clientY - stickT.oy;
+      const d = Math.hypot(dx, dy);
+      // Past full travel the stick's centre follows the thumb, so turning
+      // back is immediate.
+      if (d > TRAVEL) { stickT.ox += dx * (1 - TRAVEL / d); stickT.oy += dy * (1 - TRAVEL / d); dx *= TRAVEL / d; dy *= TRAVEL / d; }
+      stickT.x = dx / TRAVEL; stickT.y = dy / TRAVEL;
+      return;
+    }
+    if (!gesture || e.pointerId !== gesture.id) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : null;
+    for (const c of evs && evs.length ? evs : [e]) gesture.pts.push({ x: c.clientX, y: c.clientY, t: c.timeStamp || e.timeStamp });
+    if (gesture.pts.length > 240) gesture.pts.splice(1, gesture.pts.length - 240);
   }
-  zone.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    if (stickId !== null) return;
-    try { zone.setPointerCapture(e.pointerId); } catch (_) {}
-    stickId = e.pointerId; active.set(e.pointerId, 'stick');
-    const r = zone.getBoundingClientRect();
-    // The stick centres where the thumb lands (kept fully inside the zone).
-    centre = {
-      x: Math.min(r.width - 56, Math.max(56, e.clientX - r.left)),
-      y: Math.min(r.height - 56, Math.max(56, e.clientY - r.top)),
-    };
-    placeBase(centre); base.classList.add('active');
-    moveStick(e);
-  });
-  zone.addEventListener('pointermove', e => { if (e.pointerId === stickId) moveStick(e); });
-  function endStick(e) {
-    active.delete(e.pointerId);
-    if (e.pointerId === stickId) resetStick();
+  function playSwipe(sw, ts) {
+    const opts = { touch: true, aim: sw.aim, curve: sw.curve };
+    if (myServe()) { if (match.phase === 'serve' && match.serve.state === 'toss') E.matchSwing(match, sw.shot === 'flat' ? 'flat' : 'top', simTimeAt(ts), opts); return; }
+    swing(sw.shot, ts, opts);
   }
-  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => zone.addEventListener(t, endStick));
-
-  document.querySelectorAll('.shot').forEach(btn => {
-    const shot = btn.dataset.shot, held = new Set();
-    btn.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      try { btn.setPointerCapture(e.pointerId); } catch (_) {}
-      held.add(e.pointerId); active.set(e.pointerId, shot);
-      btn.classList.add('pressed');
-      swing(shot, e.timeStamp);
-    });
-    const up = e => {
-      held.delete(e.pointerId); active.delete(e.pointerId);
-      if (!held.size) btn.classList.remove('pressed');
-    };
-    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(t => btn.addEventListener(t, up));
-    btn.addEventListener('click', e => e.preventDefault());
-    btn._release = () => { held.clear(); btn.classList.remove('pressed'); };
-  });
-
+  function onUp(e) {
+    if (stickT && e.pointerId === stickT.id) { stickT = null; return; }
+    if (!gesture || e.pointerId !== gesture.id) return;
+    const gs = gesture; gesture = null;
+    if (e.type === 'pointercancel' || frozen()) return;
+    gs.pts.push({ x: e.clientX, y: e.clientY, t: e.timeStamp });
+    const sw = E.classifySwipe(gs.pts, CFG);
+    if (sw.kind === 'swipe') playSwipe(sw, e.timeStamp);
+  }
+  document.addEventListener('pointerdown', onDown, { passive: false });
+  window.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onUp);
   ['contextmenu', 'selectstart', 'dblclick'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
   document.addEventListener('gesturestart', e => e.preventDefault());
 
-  // --- Input: keyboard fallback --------------------------------------------
+  // --- Input: keyboard --------------------------------------------------------
+  // Arrows / WASD move (and aim), H drop, J topspin, K flat, L lob.
   const keys = new Set();
   const MOVE_KEYS = { ArrowLeft: 'l', KeyA: 'l', ArrowRight: 'r', KeyD: 'r', ArrowUp: 'u', KeyW: 'u', ArrowDown: 'd', KeyS: 'd' };
-  const SHOT_KEYS = { KeyH: 'drop', KeyJ: 'top', KeyK: 'flat', KeyL: 'lob' };
+  const SHOT_KEYS = { KeyH: 'drop', KeyJ: 'top', KeyK: 'flat', KeyL: 'lob', Space: 'top' };
   window.addEventListener('keydown', e => {
+    audio();
     if (MOVE_KEYS[e.code]) { keys.add(MOVE_KEYS[e.code]); e.preventDefault(); }
     else if (SHOT_KEYS[e.code]) {
       e.preventDefault();
-      if (!e.repeat) {
-        swing(SHOT_KEYS[e.code], e.timeStamp);
-        const b = document.querySelector('.shot[data-shot="' + SHOT_KEYS[e.code] + '"]');
-        b.classList.add('pressed'); setTimeout(() => b.classList.remove('pressed'), 120);
-      }
+      if (!e.repeat) swing(SHOT_KEYS[e.code], e.timeStamp);
     } else if (e.code === 'KeyM' && !e.repeat && !inMatch()) {
       const order = [...settings.querySelectorAll('.row[data-k="mode"] button')].map(b => b.dataset.v);
       setFeed(order[(order.indexOf(practice.mode) + 1) % order.length]);
     }
   });
   window.addEventListener('keyup', e => { if (MOVE_KEYS[e.code]) keys.delete(MOVE_KEYS[e.code]); });
-
   function currentStick() {
-    if (stickId !== null) return touchStick;
+    if (stickT) return { x: stickT.x, y: stickT.y };
+    if (testStick) return testStick;
     let x = (keys.has('r') ? 1 : 0) - (keys.has('l') ? 1 : 0), y = (keys.has('d') ? 1 : 0) - (keys.has('u') ? 1 : 0);
     const m = Math.hypot(x, y);
     if (m > 1) { x /= m; y /= m; }
     return { x, y };
   }
+  let testStick = null; // set through window.tennis.stick() by headless checks
+  function dropInput() { keys.clear(); gesture = null; stickT = null; }
 
-  function dropInput() {
-    resetStick(); keys.clear(); active.clear();
-    document.querySelectorAll('.shot').forEach(b => b._release());
-  }
-
-  // --- Settings: feed, pace, assist (gear in the HUD) -----------------------
-  // Pace and assist are remembered (localStorage); the feed resets to Auto.
+  // --- Settings: sound, footwork assist, and the practice feed and pace -------
   const settings = document.getElementById('settings'), gear = document.getElementById('gear');
   const PACES = { slow: CFG.feed.pace, match: 1 };
-  function store(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
-  function stored(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }
   function mark(k, v) { settings.querySelectorAll('.row[data-k="' + k + '"] button').forEach(o => o.classList.toggle('on', o.dataset.v === v)); }
   function setFeed(v) { practice.mode = v; mark('mode', v); }
   function setPace(v, save) { if (!PACES[v]) return; practice.pace = PACES[v]; mark('pace', v); if (save) store('tennisPace', v); }
+  // Footwork assist: with the stick let go, the player's feet settle onto
+  // the spot for the ball that's coming (CONFIG.assist).
   function setAssist(v, save) {
     if (!(v in CFG.assist.speed)) return;
     practice.assist = v; if (match) match.actors[0].assist = v;
     mark('assist', v); if (save) store('tennisAssist', v);
   }
-  // Open: the game pauses (see frame) and held input is dropped.
+  function setSound(v, save) {
+    AU.muted = v === 'off'; mark('sound', AU.muted ? 'off' : 'on');
+    if (save) { store('tennisMuted', AU.muted ? '1' : '0'); if (!AU.muted) SND.click(); }
+  }
   let settingsOpen = false;
   function showSettings(on) {
     settingsOpen = on;
@@ -632,116 +820,175 @@
   setFeed('auto');
   if (qs.get('feed') && settings.querySelector('.row[data-k="mode"] button[data-v="' + qs.get('feed') + '"]')) setFeed(qs.get('feed'));
   setPace('slow'); setPace(stored('tennisPace')); setPace(qs.get('pace'));
-  setAssist(CFG.assist.level); setAssist(stored('tennisAssist')); setAssist(qs.get('assist'));
-  showSettings(false);
+  setSound(AU.muted ? 'off' : 'on');
+  setAssist('strong'); setAssist(stored('tennisAssist')); setAssist(qs.get('assist'));
   gear.addEventListener('click', () => showSettings(!settingsOpen));
   document.getElementById('done').addEventListener('click', () => showSettings(false));
   settings.addEventListener('click', e => { if (e.target === settings) showSettings(false); });
   settings.querySelectorAll('.row').forEach(row => row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
     const k = row.dataset.k, v = b.dataset.v;
-    if (k === 'mode') setFeed(v); else if (k === 'pace') setPace(v, true); else setAssist(v, true);
+    if (k === 'mode') setFeed(v); else if (k === 'pace') setPace(v, true); else if (k === 'assist') setAssist(v, true); else setSound(v, true);
   })));
 
-  // --- Drawing the ball ---------------------------------------------------
-  // A ball rolling far beyond the far baseline (no opponent returns it yet)
-  // leaves the projection; don't draw it there.
+  // --- Drawing: court marks, markers, the ball --------------------------------
+  // A ball rolling far beyond the far baseline leaves the projection.
   const ballGone = () => ball.phase === 'idle' || ball.Y < -8;
   // Ball size: set directly in CONFIG.render (not from metres), larger
   // near the camera, never below ballMin.
   function ballD(Y) {
-    const z = Math.max(0, Math.min(1, Y / COURT.length));
-    return Math.max(RC.ballMin, RC.ballFar + (RC.ballNear - RC.ballFar) * z);
+    const z = Math.max(0, Math.min(1.1, Y / COURT.length));
+    return Math.max(RC.ballMin, RC.ballFar + (RC.ballNear - RC.ballFar) * z) * 1.15;
+  }
+  function groundRing(X, Y, rm, col, a, lw, fill) {
+    const [x, y, s] = Pm(X, Y, 0), rx = rm * MX * s;
+    g.globalAlpha = Math.max(0, a);
+    g.beginPath(); g.ellipse(x, y, rx, rx * 0.36, 0, 0, 7);
+    if (fill) { g.fillStyle = col; g.fill(); } else { g.strokeStyle = col; g.lineWidth = lw || 1.5; g.stroke(); }
+    g.globalAlpha = 1;
+  }
+  function drawMarks() {
+    // Ball marks left where it bounced (the line calls are easy to read).
+    marks.forEach(m => groundRing(m.X, m.Y, 0.17, m.out ? 'rgba(255,90,80,.9)' : look.mark, Math.min(1, m.l / 2), 0, true));
+    // Where the opponent's ball will bounce.
+    if (landing && E.incoming(pr) && pr.t <= landing.t + 0.15) {
+      const a = pr.t > landing.t ? 1 - (pr.t - landing.t) / 0.15 : 1, k = 0.5 + 0.5 * Math.sin(clock * 12);
+      groundRing(landing.X, landing.Y, 0.5 + 0.08 * k, '#fff', 0.55 * a, 1.6);
+      groundRing(landing.X, landing.Y, 0.14, '#fff', 0.5 * a, 0, true);
+    }
+    // Where your shot was aimed.
+    if (aimMark && aimMark.l > 0) {
+      const a = Math.min(1, aimMark.l);
+      groundRing(aimMark.X, aimMark.Y, 0.55, aimMark.col, 0.7 * a, 1.6);
+      groundRing(aimMark.X, aimMark.Y, 0.2, aimMark.col, 0.5 * a, 0, true);
+    }
   }
   function drawShadow() {
     if (ballGone()) return;
     const sp = Pm(ball.X, ball.Y, 0), hw = ball.H * CFG.hScale, d = ballD(ball.Y);
     const w = Math.max(RC.shadowMin, d * (1 + hw * 0.15));
-    g.fillStyle = 'rgba(0,0,0,' + Math.max(0.3, 0.5 / (1 + hw)).toFixed(2) + ')';
+    g.fillStyle = 'rgba(0,0,0,' + Math.max(0.28, 0.5 / (1 + hw)).toFixed(2) + ')';
     g.beginPath(); g.ellipse(sp[0], sp[1], w / 2, w * 0.2, 0, 0, 7); g.fill();
   }
   function drawBall() {
     if (ballGone()) return;
     const d = ballD(ball.Y), r = d / 2;
-    trail.forEach((q, i) => {
-      const k = (i + 1) / (trail.length + 1);
-      g.fillStyle = 'rgba(216,236,58,' + (0.35 * k).toFixed(2) + ')';
-      g.beginPath(); g.arc(q[0], q[1], r * (0.45 + 0.4 * k), 0, 7); g.fill();
-    });
     const [x, y] = Pm(ball.X, ball.Y, ball.H);
+    // Trail: a tapering ribbon in the shot's colour (gold after a Perfect).
+    if (trail.length > 1) {
+      const col = fire > 0 ? '255,214,90' : '236,246,160';
+      g.lineCap = 'round';
+      for (let i = 1; i < trail.length; i++) {
+        const k = i / trail.length;
+        g.strokeStyle = 'rgba(' + col + ',' + (0.5 * k * k).toFixed(2) + ')'; g.lineWidth = d * (0.25 + 0.7 * k) * (fire > 0 ? 1.25 : 1);
+        g.beginPath(); g.moveTo(trail[i - 1][0], trail[i - 1][1]); g.lineTo(trail[i][0], trail[i][1]); g.stroke();
+      }
+      g.strokeStyle = 'rgba(' + col + ',.5)'; g.lineWidth = d;
+      const tl = trail[trail.length - 1]; g.beginPath(); g.moveTo(tl[0], tl[1]); g.lineTo(x, y); g.stroke();
+      g.lineCap = 'butt';
+    }
     let sxF = 1, syF = 1;
     if (squash.t > 0) {
       const k = squash.t / (squash.kind === 'hit' ? 0.08 : 0.06);
       sxF = 1 + 0.3 * k; syF = 1 - 0.28 * k;
     }
-    g.fillStyle = '#d8ec3a'; g.strokeStyle = '#fff'; g.lineWidth = 1.5;
+    const glow = g.createRadialGradient(x, y, r * 0.5, x, y, r * 2.6);
+    glow.addColorStop(0, fire > 0 ? 'rgba(255,200,80,.55)' : 'rgba(230,250,120,.35)'); glow.addColorStop(1, 'rgba(230,250,120,0)');
+    g.fillStyle = glow; g.beginPath(); g.arc(x, y, r * 2.6, 0, 7); g.fill();
+    const bgd = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r * 1.1);
+    bgd.addColorStop(0, '#f6ff9a'); bgd.addColorStop(0.6, '#d8ec3a'); bgd.addColorStop(1, '#9fb31c');
+    g.fillStyle = bgd; g.strokeStyle = 'rgba(20,30,10,.7)'; g.lineWidth = 1;
     g.beginPath(); g.ellipse(x, y, r * sxF, r * syF, 0, 0, 7); g.fill(); g.stroke();
-    g.strokeStyle = 'rgba(110,128,20,.9)'; g.lineWidth = 1;
-    g.beginPath(); g.arc(x, y, r * 0.62, 2.4 + ballRot, 4.2 + ballRot); g.stroke();
+    g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 1;
+    g.beginPath(); g.arc(x - r * 0.9, y, r * 0.9, -0.9 + ballRot, 0.9 + ballRot); g.stroke();
   }
 
-  // Landing marker: a faint ring where the fed ball will bounce.
-  function drawLanding() {
-    if (!landing || !E.incoming(pr) || pr.t > landing.t + 0.15) return;
-    const [x, y, s] = Pm(landing.X, landing.Y, 0), rx = 0.45 * MX * s;
-    const a = pr.t > landing.t ? 0.45 * (1 - (pr.t - landing.t) / 0.15) : 0.45;
-    g.strokeStyle = 'rgba(255,255,255,' + a.toFixed(2) + ')'; g.lineWidth = 1.5;
-    g.beginPath(); g.ellipse(x, y, rx, rx * 0.32, 0, 0, 7); g.stroke();
+  // Timing ring: closes on the spot where you'll meet the ball; swipe as
+  // it lands on the inner circle (gold = Perfect). Also for the serve toss.
+  function drawRing() {
+    let at = null, lead = 0, perfect = 0, queued = false;
+    if (myServe() && match.phase === 'serve' && match.serve.state === 'toss' && !match.serve.tap) {
+      const S = match.serve;
+      lead = S.tossT0 + S.peakT - (match.t + acc); perfect = CFG.serve.touch.perfectMs / 1000;
+      at = Pm(ball.X, ball.Y, ball.H + ball.vz * Math.max(0, lead) * 0.5);
+    } else if (E.incoming(pr) && !pr.whiffed) {
+      const sw = pr.swing;
+      if (sw.t0 != null && !sw.done) return;
+      const pred = E.predictContact(pr);
+      if (pred.kind !== 'ok') return;
+      lead = pred.t - E.swingPreset(CFG, 'top', pred.stroke).backswing - (pr.t + acc);
+      perfect = E.timingFor(CFG, pred.stroke, true).perfectMs / 1000;
+      at = Pm(pred.X, pred.Y, pred.H); queued = !!pr.pending;
+    }
+    if (!at || lead > 1.1 || lead < -0.22) return;
+    const hot = Math.abs(lead) <= perfect, a = lead > 0.9 ? (1.1 - lead) / 0.2 : 1;
+    const base = 10 * at[2] + 3, r = base + Math.max(0, lead) * 52;
+    g.globalAlpha = a * (queued ? 0.35 : 1);
+    g.strokeStyle = hot ? '#ffe066' : 'rgba(255,255,255,.55)'; g.lineWidth = hot ? 3 : 1.5;
+    g.beginPath(); g.arc(at[0], at[1], base, 0, 7); g.stroke();
+    g.strokeStyle = hot ? '#ffe066' : '#fff'; g.lineWidth = hot ? 3.5 : 2.2;
+    g.beginPath(); g.arc(at[0], at[1], r, 0, 7); g.stroke();
+    g.globalAlpha = 1;
   }
 
-  // Swing cue: a glow at the player's feet that builds over cueLead before
-  // the ideal tap and peaks through the Perfect window.
-  function cueLevel() {
-    if (!E.incoming(pr) || pr.whiffed || pr.pending) return 0;
-    const sw = pr.swing;
-    if (sw.t0 != null && E.swingPhase(pr.t - sw.t0, CFG, sw.bs, sw) !== 'ready') return 0;
-    const pred = E.predictContact(pr);
-    if (pred.kind !== 'ok') return 0;
-    const lead = pred.t - E.swingPreset(CFG, 'top', pred.stroke).backswing - (pr.t + acc), pm = CFG.timing.perfectMs / 1000;
-    if (lead > RC.cueLead || lead < -pm - 0.1) return 0;
-    if (lead >= 0) return 1 - lead / RC.cueLead;
-    return lead >= -pm ? 1 : 1 + (lead + pm) / 0.1;
+  // The finger's path, in the colour of the shot it would play right now.
+  function drawSwipe() {
+    if (!gesture || gesture.pts.length < 2) return;
+    const r = canvas.getBoundingClientRect(), sw = E.classifySwipe(gesture.pts, CFG);
+    if (sw.kind !== 'swipe') return;
+    const col = sw.curve ? SHOT_COL.curve : SHOT_COL[sw.shot], pts = gesture.pts, n = pts.length;
+    g.lineCap = 'round'; g.lineJoin = 'round';
+    for (let i = Math.max(1, n - 40); i < n; i++) {
+      const k = (i - (n - 40)) / 40;
+      g.strokeStyle = col; g.globalAlpha = 0.15 + 0.75 * Math.max(0, k); g.lineWidth = 2 + 7 * Math.max(0, k);
+      g.beginPath(); g.moveTo((pts[i - 1].x - r.left) / scale, (pts[i - 1].y - r.top) / scale); g.lineTo((pts[i].x - r.left) / scale, (pts[i].y - r.top) / scale); g.stroke();
+    }
+    g.globalAlpha = 1; g.lineCap = 'butt';
+    const e = pts[n - 1], ex = (e.x - r.left) / scale, ey = (e.y - r.top) / scale;
+    const name = myServe() ? (sw.curve ? 'CURVE SERVE' : sw.shot === 'flat' ? 'FLAT SERVE' : 'KICK SERVE') : sw.curve ? 'CURVEBALL' : { flat: 'FLAT', top: 'TOPSPIN', lob: 'LOB', drop: 'DROP' }[sw.shot];
+    outlinedText(name, Math.min(W - 50, Math.max(50, ex)), Math.max(60, ey - 26), 13, col, 1);
   }
-  function drawCue() {
-    const k = cueLevel();
-    if (k <= 0) return;
-    const [x, y, s] = Pm(me.X, me.Y, 0), rx = 0.55 * FK * s;
-    g.fillStyle = 'rgba(255,224,102,' + (0.12 + 0.3 * k).toFixed(2) + ')';
-    g.beginPath(); g.ellipse(x, y, rx * (1 + 0.25 * k), rx * 0.34 * (1 + 0.25 * k), 0, 0, 7); g.fill();
-    g.strokeStyle = 'rgba(255,224,102,' + (0.3 + 0.6 * k).toFixed(2) + ')'; g.lineWidth = 1 + 1.5 * k;
-    g.stroke();
+  // The stick under the left thumb; before a touch, where the thumbs go.
+  function drawStick() {
+    if (stickT) {
+      const r = canvas.getBoundingClientRect(), x = (stickT.ox - r.left) / scale, y = (stickT.oy - r.top) / scale, t = TRAVEL / scale;
+      g.fillStyle = 'rgba(8,13,26,.35)'; g.strokeStyle = 'rgba(255,255,255,.6)'; g.lineWidth = 2;
+      g.beginPath(); g.arc(x, y, t + 12, 0, 7); g.fill(); g.stroke();
+      g.fillStyle = 'rgba(255,255,255,.75)'; g.beginPath(); g.arc(x + stickT.x * t, y + stickT.y * t, 20, 0, 7); g.fill();
+    } else if (touchy && screen === null) {
+      g.strokeStyle = 'rgba(255,255,255,.28)'; g.lineWidth = 2; g.setLineDash([5, 6]);
+      g.beginPath(); g.arc(78, H - 86, 46, 0, 7); g.stroke(); g.setLineDash([]);
+      outlinedText('RUN', 78, H - 82, 11, '#fff', 0.5);
+      if (!gesture && stats.played < 3) outlinedText('SWIPE HERE', W - 84, H - 82, 11, '#fff', 0.5);
+    }
   }
+  const touchy = (navigator.maxTouchPoints || 0) > 0 || qs.get('touch') === '1';
 
-  // --- Placeholder players (simple shapes; jointed art is Stage 4) ---------
-  const palN = { shirt: '#e8483b', short: '#1c2640', skin: '#e0ac82', hair: '#2a1a10', cap: '#f4f4f0', frame: '#111' };
-  const palF = { shirt: '#f2c94c', short: '#222a3a', skin: '#8d5a3b', hair: '#1a1008', cap: '#2b3a67', frame: '#c0392b' };
-
+  // --- Players ---------------------------------------------------------------
   // Figures are drawn in their own "figure metres" (a 1.79 m figure), at
   // FK px per figure metre at the near baseline: CONFIG.render.playerH sets
-  // the drawn height directly, apart from the court's metres.
+  // the drawn height directly, apart from the court's metres. The near
+  // player is seen from behind and the far one from the front, so the two
+  // face each other across the net.
   const FIG_H = 1.79, FK = RC.playerH / FIG_H;
   const R_LEN = RC.racketLen * RC.playerH / FK;      // racket length (figure m)
   const R_HEAD = RC.racketHead / 2 / FK;             // head half-length (figure m)
   const R_REACH = R_LEN - R_HEAD;                    // hand to head centre
-  // A stroke kind's ideal contact point (CONFIG.contact), as the near
-  // player's figure sees it: side and height in court metres, plus `ahead`
-  // up the screen; and the pose row that puts the racket head centre on it
-  // with the racket at `ang` degrees.
+  // A stroke kind's ideal contact point (CONFIG.contact) as the figure sees
+  // it, and the pose row that puts the racket head centre on it with the
+  // racket at `ang` degrees.
   function contactRow(kind, ang) {
     const c = E.contactFor(CFG, kind);
-    const fx = c.side * MX / FK, fy = (c.height * MH + (YB - YT) * c.ahead / COURT.length) / FK, a = ang * Math.PI / 180;
+    const fx = c.side * MX / FK, fy = (c.height * MH + 16 * c.ahead) / FK, a = ang * Math.PI / 180;
     return [0, fx - R_REACH * Math.cos(a), fy - R_REACH * Math.sin(a), ang];
   }
-  // Racket hand pose along the swing, tau = seconds from contact. [tau,
-  // hand out to the stroke side, hand height (figure m), racket angle
-  // (deg, 0 = pointing out to the side, 90 = up)]. Placeholders for the
-  // volley punch and the overhead; jointed poses come with the Stage 4 art.
-  const READY = [-0.6, 0.2, 1.0, 70], READY_END = [0.6, 0.2, 1.0, 70];
+  // Racket hand along the swing, tau = seconds from contact: [tau, hand out
+  // to the stroke side, hand height (figure m), racket angle (deg, 0 =
+  // pointing out to the side, 90 = up)].
+  const READY = [-0.6, 0.24, 0.98, 52], READY_END = [0.6, 0.24, 0.98, 52];
   const POSES = {
-    ground: [READY, [-0.16, 0.55, 1.35, 125], [-0.05, 0.42, 0.98, -55], contactRow('ground', -35), [0.18, -0.15, 1.5, 160], READY_END],
-    // Short punch: barely any take-back, a firm block, a short finish.
-    volley: [READY, [-0.16, 0.45, 1.2, 80], [-0.04, 0.35, 1.0, 35], contactRow('volley', 20), [0.12, 0.3, 1.05, 10], READY_END],
-    // Overhead: racket up behind the head, reach up, finish down across.
-    smash: [READY, [-0.16, 0.05, 1.85, 150], [-0.05, 0.08, 1.6, 115], contactRow('smash', 80), [0.2, -0.25, 0.9, -110], READY_END],
+    ground: [READY, [-0.16, 0.62, 1.3, 140], [-0.05, 0.46, 0.95, -50], contactRow('ground', -30), [0.09, 0.2, 1.25, 60], [0.2, -0.28, 1.55, 150], READY_END],
+    volley: [READY, [-0.16, 0.45, 1.25, 85], [-0.04, 0.38, 1.05, 40], contactRow('volley', 22), [0.12, 0.3, 1.02, 8], READY_END],
+    smash: [READY, [-0.2, 0.1, 1.5, 200], [-0.07, 0.12, 1.75, 130], contactRow('smash', 82), [0.1, 0.0, 1.3, -40], [0.22, -0.3, 0.85, -115], READY_END],
   };
   function pose(tau, kind) {
     const POSE = POSES[kind] || POSES.ground;
@@ -749,14 +996,15 @@
     for (let i = 0; i < POSE.length - 1; i++) {
       const a = POSE[i], b = POSE[i + 1];
       if (tau <= b[0]) {
-        const f = (tau - a[0]) / (b[0] - a[0]);
+        let f = (tau - a[0]) / (b[0] - a[0]);
+        f = f * f * (3 - 2 * f);
         return a.map((v, j) => v + (b[j] - v) * f);
       }
     }
     return POSE[POSE.length - 1];
   }
   // The swing's time from contact. The backswing (shortened for a late
-  // tap) squeezes the prototype's take-back and forward swing.
+  // swipe) squeezes the take-back and forward swing.
   function swingTau(s) {
     s = s || pr.swing;
     const bs = s.bs;
@@ -768,14 +1016,29 @@
     if (e < bs) return -0.16 + (e - prep) / (bs - prep) * 0.16;
     return Math.min(0.6, e - bs);
   }
-
-  function seg(a, b, w, col) {
-    g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = w + 1.8; g.lineCap = 'round';
+  const INK = 'rgba(8,12,24,.9)';
+  function limb(a, b, w, col) {
+    g.lineCap = 'round';
+    g.strokeStyle = INK; g.lineWidth = w + 2;
     g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
     g.strokeStyle = col; g.lineWidth = w;
     g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
   }
-
+  // The joint of a two-bone limb from a to b (figure metres, y up); bend
+  // picks which side it folds to.
+  function joint(a, b, l1, l2, bend) {
+    const dx = b[0] - a[0], dy = b[1] - a[1], d0 = Math.hypot(dx, dy) || 1e-6, d = Math.min(d0, l1 + l2 - 1e-3);
+    const k = (d * d + l1 * l1 - l2 * l2) / (2 * d), h = Math.sqrt(Math.max(0, l1 * l1 - k * k));
+    const ux = dx / d0, uy = dy / d0;
+    return [a[0] + ux * k - uy * h * bend, a[1] + uy * k + ux * h * bend];
+  }
+  // An elbow: of the two ways the arm can fold, the one that points out
+  // (to side F) and down.
+  function elbow(sh, hand, F) {
+    const a = joint(sh, hand, 0.29, 0.28, 1), b = joint(sh, hand, 0.29, 0.28, -1);
+    return F * a[0] * 0.6 - a[1] >= F * b[0] * 0.6 - b[1] ? a : b;
+  }
+  const mixP = (a, b, f) => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
   // Where the near player's racket head should snap to near contact: the
   // ball just before, the contact point just after (hits only).
   function magnetTarget(tau) {
@@ -784,88 +1047,151 @@
     return contactPt && contactPt.t0 === pr.swing.t0 ? Pm(contactPt.X, contactPt.Y, contactPt.H) : null;
   }
 
-  // One figure. front = facing the camera (far player). F = stroke side
-  // (+1 to the right of the screen).
-  function figure(X, Y, pal, front, tau, F, speed, isNear, kind) {
-    const [fx, fy, s] = Pm(X, Y, 0), u = FK * s;
-    const pt = (lat, h) => [fx + lat * u, fy - h * u];
+  // One figure. o: { X, Y (real court m), pal, front (facing the camera),
+  // tau, F (stroke side on screen, +1 right), vx, vy (screen-wise m/s),
+  // kind, near, alert (a ball is coming), toss (serving arm up), idx }.
+  function figure(o) {
+    const [fx, fy, s] = Pm(o.X, o.Y, 0), u = FK * s, pal = o.pal, F = o.F;
+    const pt = p => [fx + p[0] * u, fy - p[1] * u];
+    const speed = Math.hypot(o.vx, o.vy), run = Math.min(1, speed / 3.5), ph = clock * 15 + o.idx * 2;
+    const swinging = o.tau > -0.6 && o.tau < 0.6, sw = swinging ? 1 - Math.min(1, Math.abs(o.tau) / 0.6) : 0;
+    const crouch = (o.alert ? 0.07 : 0.03) + run * 0.03 + sw * 0.05;
+    const bob = run > 0.1 ? Math.abs(Math.sin(ph)) * 0.035 * run : o.alert ? Math.abs(Math.sin(clock * 8 + o.idx)) * 0.025 : Math.sin(clock * 2.4 + o.idx) * 0.006;
+    const hipH = 0.9 - crouch + bob;
+    const lean = Math.max(-1, Math.min(1, o.vx / 7)) * 0.1 + F * sw * 0.07 * (o.tau < 0 ? 1 : -0.6);
+    const twist = sw * (o.kind === 'volley' ? 0.4 : 0.9);
     // Shadow.
     g.fillStyle = 'rgba(0,0,0,.3)';
-    g.beginPath(); g.ellipse(fx, fy, 0.42 * u, 0.13 * u, 0, 0, 7); g.fill();
-    // Legs with a little stride while moving.
-    const stride = Math.min(1, speed / 3);
+    g.beginPath(); g.ellipse(fx, fy + 1, 0.46 * u, 0.14 * u, 0, 0, 7); g.fill();
+    // Legs: hip, knee, ankle; the feet cycle while running.
+    const dirx = Math.abs(o.vx) > 0.4 ? Math.sign(o.vx) : 0;
     for (const sg of [-1, 1]) {
-      const ph = clock * 14 + (sg > 0 ? Math.PI : 0);
-      const lift = stride * Math.max(0, Math.sin(ph)) * 0.08;
-      const foot = pt(sg * 0.2 + stride * Math.cos(ph) * 0.06, lift);
-      seg(pt(sg * 0.11, 0.8), foot, 0.11 * u, pal.skin);
-      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(foot[0], foot[1], 0.09 * u, 0.05 * u, 0, 0, 7); g.fill();
+      const p2 = ph + (sg > 0 ? Math.PI : 0);
+      const hip = [sg * 0.1 + lean * 0.3, hipH];
+      const foot = [sg * (0.2 + sw * 0.06) + run * Math.sin(p2) * 0.2 * dirx, run * Math.max(0, Math.cos(p2)) * 0.17];
+      const ankle = [foot[0], foot[1] + 0.07], knee = joint(hip, ankle, 0.42, 0.42, sg * (dirx ? dirx * sg : 1));
+      limb(pt(knee), pt(ankle), 0.1 * u, pal.skin);
+      limb(pt(hip), pt(knee), 0.125 * u, pal.skin);
+      limb(pt(hip), pt(mixP(hip, knee, 0.55)), 0.155 * u, pal.short);
+      const f = pt(foot);
+      g.fillStyle = INK; g.beginPath(); g.ellipse(f[0], f[1] - 0.03 * u, 0.1 * u + 1, 0.055 * u + 1, 0, 0, 7); g.fill();
+      g.fillStyle = pal.shoe; g.beginPath(); g.ellipse(f[0], f[1] - 0.03 * u, 0.1 * u, 0.055 * u, 0, 0, 7); g.fill();
     }
-    // Shorts and shirt.
-    const hipL = pt(-0.19, 0.92), hipR = pt(0.19, 0.72);
-    g.fillStyle = pal.short; g.fillRect(hipL[0], hipL[1], hipR[0] - hipL[0], hipR[1] - hipL[1]);
-    const t1 = pt(-0.2, 0.9), t2 = pt(0.2, 0.9), t3 = pt(0.24, 1.45), t4 = pt(-0.24, 1.45);
-    g.fillStyle = pal.shirt; g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = 1.2;
-    g.beginPath(); g.moveTo(t1[0], t1[1]); g.lineTo(t2[0], t2[1]); g.lineTo(t3[0], t3[1]); g.lineTo(t4[0], t4[1]); g.closePath(); g.fill(); g.stroke();
-    if (!front) {
-      const n = pt(0, 1.12);
-      g.fillStyle = '#fff'; g.font = 'bold ' + (0.3 * u).toFixed(1) + 'px sans-serif'; g.textAlign = 'center';
-      g.fillText('7', n[0], n[1] + 0.1 * u);
-    }
-    // Head.
-    const hd = pt(0, 1.66), r = 0.13 * u;
-    g.fillStyle = front ? pal.skin : pal.hair; g.strokeStyle = 'rgba(8,12,24,.85)'; g.lineWidth = 1.2;
+    // Torso: waist to shoulders, narrower as the shoulders turn in a swing.
+    const sw2 = 0.235 * (1 - 0.22 * twist), shY = hipH + 0.52;
+    const wl = pt([-0.16 + lean * 0.3, hipH - 0.02]), wr = pt([0.16 + lean * 0.3, hipH - 0.02]);
+    const sl = pt([-sw2 + lean, shY]), sr = pt([sw2 + lean, shY]), nk = pt([lean, shY + 0.05]);
+    g.beginPath(); g.moveTo(wl[0], wl[1]); g.lineTo(sl[0], sl[1]); g.quadraticCurveTo(nk[0], nk[1] - 0.04 * u, sr[0], sr[1]); g.lineTo(wr[0], wr[1]); g.closePath();
+    g.fillStyle = pal.shirt; g.fill(); g.strokeStyle = INK; g.lineWidth = 1.2; g.lineJoin = 'round'; g.stroke();
+    const band = (h, w) => { const a = pt([-w + lean * (0.3 + 0.7 * (h - hipH) / 0.52), h]), b = pt([w + lean * (0.3 + 0.7 * (h - hipH) / 0.52), h]); g.strokeStyle = pal.trim; g.lineWidth = 0.05 * u; g.lineCap = 'butt'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); };
+    if (o.front) band(hipH + 0.3, 0.19); else { band(hipH + 0.44, 0.2); band(hipH + 0.03, 0.15); }
+    // Head (drawn before the arms so a raised racket arm crosses it).
+    const hd = pt([lean * 1.2, shY + 0.21]), r = 0.125 * u;
+    limb(pt([lean * 1.1, shY + 0.02]), pt([lean * 1.15, shY + 0.1]), 0.07 * u, pal.skin);
+    if (pal.pony && !o.front) { g.fillStyle = pal.hair; g.strokeStyle = INK; g.lineWidth = 1; g.beginPath(); g.ellipse(hd[0] - o.vx * 0.012 * u, hd[1] + r * 1.15, r * 0.4, r * 0.85, -o.vx * 0.08, 0, 7); g.fill(); g.stroke(); }
+    g.fillStyle = o.front ? pal.skin : pal.hair; g.strokeStyle = INK; g.lineWidth = 1.2;
     g.beginPath(); g.arc(hd[0], hd[1], r, 0, 7); g.fill(); g.stroke();
-    g.fillStyle = pal.cap; g.beginPath(); g.arc(hd[0], hd[1] - 0.15 * r, r * 1.04, Math.PI, 0); g.fill();
-    if (front) { g.fillStyle = '#111'; g.fillRect(hd[0] - 0.45 * r, hd[1] + 0.2 * r, 0.2 * r, 0.2 * r); g.fillRect(hd[0] + 0.25 * r, hd[1] + 0.2 * r, 0.2 * r, 0.2 * r); }
-    // Racket arm. The near player's view mirrors left/right for a backhand.
-    const p = pose(tau, kind), a = p[3] * Math.PI / 180;
-    const sh = pt(F * 0.22, 1.42), hand = pt(F * p[1], p[2]);
-    let head = pt(F * p[1] + F * Math.cos(a) * R_REACH, p[2] + Math.sin(a) * R_REACH);
-    if (isNear) {
-      const m = magnetTarget(tau);
-      if (m && Math.hypot(m[0] - head[0], m[1] - head[1]) < 1.2 * RC.racketHead) {
-        const w = 1 - Math.abs(tau) * 1000 / RC.magnetMs;
+    if (o.front) {
+      // Hair, cap with its brim towards us, eyes on the ball.
+      g.fillStyle = pal.hair; g.beginPath(); g.arc(hd[0], hd[1], r, Math.PI * 0.95, Math.PI * 0.05, false); g.fill();
+      g.fillStyle = pal.cap; g.beginPath(); g.arc(hd[0], hd[1] - 0.12 * r, r * 1.02, Math.PI, 0); g.fill();
+      g.beginPath(); g.ellipse(hd[0], hd[1] - 0.1 * r, r * 1.15, r * 0.3, 0, 0, Math.PI); g.fill();
+      const look2 = Math.max(-1, Math.min(1, (ball.X - o.X) / 4)) * 0.18 * r;
+      g.fillStyle = '#10131c';
+      g.beginPath(); g.arc(hd[0] - 0.4 * r + look2, hd[1] + 0.38 * r, Math.max(0.7, 0.13 * r), 0, 7); g.arc(hd[0] + 0.4 * r + look2, hd[1] + 0.38 * r, Math.max(0.7, 0.13 * r), 0, 7); g.fill();
+    } else {
+      // From behind: the cap's dome and strap, neck below the hair.
+      g.fillStyle = pal.cap; g.beginPath(); g.arc(hd[0], hd[1] - 0.05 * r, r * 1.03, Math.PI * 1.02, -0.02 * Math.PI); g.fill();
+      g.fillStyle = pal.hair; g.beginPath(); g.arc(hd[0], hd[1] - 0.02 * r, r * 0.3, Math.PI, 0); g.fill();
+      g.strokeStyle = INK; g.lineWidth = 1; g.beginPath(); g.arc(hd[0], hd[1], r, 0, 7); g.stroke();
+    }
+    // Off arm: balances the swing, points up at a smash, tosses the serve.
+    const shO = [-F * sw2 + lean, shY - 0.03];
+    let handO = [-F * 0.34 + lean, hipH + 0.1 + bob];
+    if (o.toss) handO = [-F * 0.16 + lean, 1.95];
+    else if (swinging && o.kind === 'smash') handO = o.tau < 0 ? [-F * 0.1 + lean, 1.9] : [-F * 0.3 + lean, 1.0];
+    else if (swinging) handO = [-F * (0.42 + 0.1 * sw) + lean, 1.05 + 0.25 * sw];
+    else if (run > 0.2) handO = [-F * 0.3 + lean + Math.sin(ph) * 0.08 * run, hipH + 0.15 + Math.cos(ph) * 0.07 * run];
+    const hdO = Math.hypot(handO[0] - shO[0], handO[1] - shO[1]);
+    if (hdO > 0.56) handO = mixP(shO, handO, 0.56 / hdO);
+    const elO = elbow(shO, handO, -F);
+    limb(pt(shO), pt(elO), 0.095 * u, pal.skin); limb(pt(elO), pt(handO), 0.08 * u, pal.skin);
+    limb(pt(shO), pt(mixP(shO, elO, 0.45)), 0.115 * u, pal.shirt);
+    // Racket arm and racket.
+    const p = pose(o.tau, o.kind), a = p[3] * Math.PI / 180;
+    const sh = [F * sw2 + lean, shY - 0.03];
+    let hand = [F * p[1] + lean * 0.6, p[2] - crouch * 0.6 + bob + (swinging ? 0 : Math.sin(ph) * 0.04 * run)];
+    const hd2 = Math.hypot(hand[0] - sh[0], hand[1] - sh[1]);
+    if (hd2 > 0.56) hand = mixP(sh, hand, 0.56 / hd2);
+    const el = elbow(sh, hand, F);
+    const handP = pt(hand);
+    let head = [handP[0] + F * Math.cos(a) * R_REACH * u, handP[1] - Math.sin(a) * R_REACH * u];
+    if (o.near) {
+      const m = magnetTarget(o.tau);
+      if (m && Math.hypot(m[0] - head[0], m[1] - head[1]) < 1.3 * RC.racketHead) {
+        const w = 1 - Math.abs(o.tau) * 1000 / RC.magnetMs;
         head = [head[0] + (m[0] - head[0]) * w, head[1] + (m[1] - head[1]) * w];
       }
-    }
-    const rot = Math.atan2(head[1] - hand[1], head[0] - hand[0]);
-    const shaft = (R_LEN - 2 * R_HEAD) * u;
-    const throat = [hand[0] + Math.cos(rot) * shaft, hand[1] + Math.sin(rot) * shaft];
-    seg(sh, hand, 0.08 * u, pal.skin);
-    if (isNear) {
-      if (tau > -0.18 && tau < 0.22 && pr.swing.t0 != null) racketTrail.push(head);
+      if (o.tau > -0.18 && o.tau < 0.22 && pr.swing.t0 != null) racketTrail.push(head);
       else if (racketTrail.length) racketTrail.shift();
-      if (racketTrail.length > 10) racketTrail.shift();
+      if (racketTrail.length > 12) racketTrail.shift();
+      g.lineCap = 'round';
       for (let i = 1; i < racketTrail.length; i++) {
         const k = i / racketTrail.length;
-        g.strokeStyle = 'rgba(255,255,255,' + (k * 0.6).toFixed(2) + ')'; g.lineWidth = k * 0.2 * u; g.lineCap = 'round';
+        g.strokeStyle = 'rgba(255,255,255,' + (k * 0.55).toFixed(2) + ')'; g.lineWidth = k * 0.26 * u;
         g.beginPath(); g.moveTo(racketTrail[i - 1][0], racketTrail[i - 1][1]); g.lineTo(racketTrail[i][0], racketTrail[i][1]); g.stroke();
       }
     }
-    g.strokeStyle = '#2a2a2a'; g.lineWidth = 0.05 * u;
-    g.beginPath(); g.moveTo(hand[0], hand[1]); g.lineTo(throat[0], throat[1]); g.stroke();
-    const sq = Math.abs(tau) < 0.04 ? 0.85 : 1;
+    limb(pt(sh), pt(el), 0.1 * u, pal.skin); limb(pt(el), handP, 0.085 * u, pal.skin);
+    limb(pt(sh), pt(mixP(sh, el, 0.45)), 0.12 * u, pal.shirt);
+    const rot = Math.atan2(head[1] - handP[1], head[0] - handP[0]);
+    const shaft = (R_LEN - 2 * R_HEAD) * u;
+    const throat = [handP[0] + Math.cos(rot) * shaft, handP[1] + Math.sin(rot) * shaft];
+    g.lineCap = 'round';
+    g.strokeStyle = INK; g.lineWidth = 0.06 * u + 1.6; g.beginPath(); g.moveTo(handP[0], handP[1]); g.lineTo(throat[0], throat[1]); g.stroke();
+    g.strokeStyle = '#e9e9ee'; g.lineWidth = 0.06 * u; g.beginPath(); g.moveTo(handP[0], handP[1]); g.lineTo(throat[0], throat[1]); g.stroke();
+    const sq = Math.abs(o.tau) < 0.04 ? 0.85 : 1, rh = R_HEAD * u;
     g.save(); g.translate(head[0], head[1]); g.rotate(rot);
-    g.fillStyle = 'rgba(255,255,255,.3)'; g.strokeStyle = pal.frame; g.lineWidth = Math.max(1.2, 0.05 * u);
-    g.beginPath(); g.ellipse(0, 0, R_HEAD * u, 0.75 * R_HEAD * u * sq, 0, 0, 7); g.fill(); g.stroke();
+    g.beginPath(); g.ellipse(0, 0, rh, 0.76 * rh * sq, 0, 0, 7);
+    g.fillStyle = 'rgba(255,255,255,.22)'; g.fill();
+    if (rh > 6) {
+      g.save(); g.clip(); g.strokeStyle = 'rgba(255,255,255,.45)'; g.lineWidth = 0.5;
+      for (let i = -3; i <= 3; i++) { g.beginPath(); g.moveTo(i * rh * 0.28, -rh); g.lineTo(i * rh * 0.28, rh); g.moveTo(-rh, i * rh * 0.22); g.lineTo(rh, i * rh * 0.22); g.stroke(); }
+      g.restore(); g.beginPath(); g.ellipse(0, 0, rh, 0.76 * rh * sq, 0, 0, 7);
+    }
+    g.strokeStyle = INK; g.lineWidth = Math.max(2.4, 0.075 * u) + 1.2; g.stroke();
+    g.strokeStyle = pal.frame; g.lineWidth = Math.max(1.6, 0.075 * u); g.stroke();
     g.restore();
-    g.fillStyle = pal.skin; g.beginPath(); g.arc(hand[0], hand[1], 0.05 * u, 0, 7); g.fill();
+    g.fillStyle = pal.skin; g.strokeStyle = INK; g.lineWidth = 1; g.beginPath(); g.arc(handP[0], handP[1], 0.05 * u, 0, 7); g.fill(); g.stroke();
+    g.lineCap = 'butt';
   }
 
   function drawNear() {
     // Mid-swing: the swing's side. Ready: face the predicted contact's side.
     let stroke = pr.swing.stroke;
-    if (swingTau() <= -0.6 || swingTau() >= 0.6) {
+    const tau = swingTau();
+    if (tau <= -0.6 || tau >= 0.6) {
       const pred = E.predictContact(pr);
       if (pred.kind === 'ok' && pred.t > pr.t) stroke = E.strokeFor(pred.X - me.X);
     }
-    const F = stroke === 'bh' ? -1 : 1;
-    figure(me.X, me.Y, palN, false, swingTau(), F, Math.hypot(me.vx, me.vy), true, pr.swing.t0 != null ? pr.swing.strokeKind : 'ground');
+    const toss = myServe() && (ball.phase === 'toss' || ball.phase === 'held') && pr.swing.t0 == null;
+    figure({ X: me.X, Y: me.Y, pal: NEAR_PAL, front: false, tau, F: toss ? 1 : stroke === 'bh' ? -1 : 1, vx: me.vx, vy: me.vy,
+      kind: pr.swing.t0 != null ? pr.swing.strokeKind : 'ground', near: true, alert: E.incoming(pr), toss: toss && ball.phase === 'toss', idx: 0 });
+  }
+  // Practice: the ball machine at the far end.
+  function drawMachine() {
+    const [x, y, s] = Pm(0, CFG.farContactY - 0.9, 0), u = FK * s, k = machineKick > 0 ? machineKick / 0.25 : 0;
+    g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(x, y + 1, 0.5 * u, 0.14 * u, 0, 0, 7); g.fill();
+    g.fillStyle = '#10182c'; g.beginPath(); g.arc(x - 0.3 * u, y - 0.1 * u, 0.12 * u, 0, 7); g.arc(x + 0.3 * u, y - 0.1 * u, 0.12 * u, 0, 7); g.fill();
+    g.fillStyle = '#e8483b'; g.strokeStyle = INK; g.lineWidth = 1.2; rrect(x - 0.38 * u, y - 0.95 * u + k * 2, 0.76 * u, 0.82 * u, 0.1 * u); g.fill(); g.stroke();
+    g.fillStyle = '#10182c'; g.beginPath(); g.arc(x, y - 0.6 * u + k * 2, 0.17 * u, 0, 7); g.fill();
+    g.fillStyle = k > 0 ? '#fff6a8' : '#2a3350'; g.beginPath(); g.arc(x, y - 0.6 * u + k * 2, 0.11 * u, 0, 7); g.fill();
+    g.fillStyle = '#d8ec3a'; for (let i = -1; i <= 1; i++) { g.beginPath(); g.arc(x + i * 0.2 * u, y - 1.02 * u, 0.08 * u, 0, 7); g.fill(); }
   }
   function drawFar() {
-    if (!inMatch()) { figure(0, CFG.farContactY - 0.6, palF, true, -0.6, -1, 0, false); return; } // practice: a stand-in
-    // The CPU faces the camera, so its forehand side is on the screen's left.
+    if (!inMatch()) { drawMachine(); return; }
+    if (mode === 'drill') return;
+    // The opponent faces the camera, so its forehand side is on the screen's left.
     const o = match.actors[1], p = E.toReal(o, o.player), sw = o.swing;
     let stroke = sw.stroke;
     const tau = swingTau(sw);
@@ -873,7 +1199,9 @@
       const pred = E.predictContact(o);
       if (pred.kind === 'ok' && pred.t > o.t) stroke = E.strokeFor(pred.X - o.player.X);
     }
-    figure(p.X, p.Y, palF, true, tau, stroke === 'bh' ? 1 : -1, Math.hypot(o.player.vx, o.player.vy), false, sw.t0 != null ? sw.strokeKind || 'ground' : 'ground');
+    const serving = match.serve && match.serve.server === 1 && (match.phase === 'pre' || match.phase === 'serve') && sw.t0 == null;
+    figure({ X: p.X, Y: p.Y, pal: palF, front: true, tau, F: serving ? -1 : stroke === 'bh' ? 1 : -1, vx: -o.player.vx, vy: -o.player.vy,
+      kind: sw.t0 != null ? sw.strokeKind || 'ground' : 'ground', near: false, alert: E.incoming(o), toss: serving && ball.phase === 'toss', idx: 1 });
   }
 
   function drawFx() {
@@ -890,211 +1218,210 @@
   }
 
   function outlinedText(txt, x, y, size, col, alpha) {
-    g.globalAlpha = Math.max(0, alpha); g.font = 'bold ' + size + 'px system-ui, sans-serif'; g.textAlign = 'center';
-    g.lineWidth = 4; g.lineJoin = 'round'; g.strokeStyle = '#0d1322'; g.fillStyle = col;
+    g.globalAlpha = Math.max(0, Math.min(1, alpha)); g.font = '800 ' + size + 'px system-ui, sans-serif'; g.textAlign = 'center';
+    g.lineWidth = Math.max(3, size / 6); g.lineJoin = 'round'; g.strokeStyle = '#0a1020'; g.fillStyle = col;
     g.strokeText(txt, x, y); g.fillText(txt, x, y); g.globalAlpha = 1;
   }
 
   function drawLabels() {
-    // Your serve: how to start it (until the toss goes up).
-    if (inMatch() && match.serve && match.serve.server === 0 && match.phase === 'serve' && match.serve.state === 'wait' && big.life <= 0) {
-      const q = Pm(me.X, me.Y, 0);
-      outlinedText('TAP TO TOSS · HIT AT THE TOP', W / 2, q[1] + 20, 11, '#ffe066', 0.6 + 0.4 * Math.sin(clock * 5));
+    const midY = (YT + YB) / 2;
+    // A line of coaching under the player, while it helps.
+    let tip = '';
+    if (myServe() && match.phase === 'serve' && big.life <= 0) tip = match.serve.state === 'wait' ? (touchy ? 'TOUCH AND HOLD ON THE RIGHT TO TOSS' : 'PRESS AND HOLD TO TOSS') : match.serve.tap ? '' : 'FLICK UP AT THE TOP';
+    else if (stats.played < 2 || mode === 'practice') {
+      if (E.incoming(pr) && !pr.pending && pr.swing.done) tip = 'RUN TO THE BALL · SWIPE UP AS THE RING CLOSES';
+      else if (mode === 'practice' && !pr.live) tip = 'SWIPE: SLOW LOB · FAST FLAT · DOWN DROP · BENT CURVE';
     }
+    if (tip) outlinedText(tip, W / 2, H - 7, 11, '#ffe066', 0.65 + 0.35 * Math.sin(clock * 5));
     if (big.life > 0) {
-      const a = Math.min(1, big.life * 3), y = big.banner ? 250 : 210;
-      if (big.banner) { g.globalAlpha = a * 0.75; g.fillStyle = '#0d1322'; g.fillRect(0, y - 30, W, big.sub ? 50 : 40); g.globalAlpha = 1; }
-      outlinedText(big.txt, W / 2, y, big.banner ? 24 : 30, big.col, a);
+      const a = Math.min(1, big.life * 3), y = big.banner ? 150 : 172;
+      if (big.banner) {
+        g.globalAlpha = a * 0.82; g.fillStyle = '#0a1020'; rrect(W / 2 - 150, y - 30, 300, big.sub ? 54 : 42, 12); g.fill();
+        g.fillStyle = look.accent; g.fillRect(W / 2 - 150, y - 30, 4, big.sub ? 54 : 42); g.globalAlpha = 1;
+      }
+      outlinedText(big.txt, W / 2, y, big.banner ? 22 : 32, big.col, a);
       if (big.sub) outlinedText(big.sub, W / 2, y + 17, 12, '#e7ebf3', a);
     }
     if (pop.life > 0) {
       // Above the net, unless the player is up there: then the empty court below.
-      const headY = Pm(me.X, me.Y, 0)[1] - RC.playerH * Pm(me.X, me.Y, 0)[2];
-      const y = (headY < 300 ? 380 : 225) - (1.1 - pop.life) * 18, a = Math.min(1, pop.life);
-      outlinedText(pop.txt, W / 2, y, pop.big ? 30 : 20, pop.col, a);
-      if (pop.sub) outlinedText(pop.sub, W / 2, y + (pop.big ? 20 : 18), 12, pop.big ? '#fff' : '#e7ebf3', a);
+      // Beside the court, so it never covers the ball.
+      const x = Math.max(88, W / 2 - CW - 78), y = 150 - (1.1 - pop.life) * 12, a = Math.min(1, pop.life * 2);
+      const grow = pop.big ? 1 + Math.max(0, pop.life - 0.95) * 2 : 1;
+      outlinedText(pop.txt, x, y, (pop.big ? 22 : 16) * grow, pop.col, a);
+      if (pop.sub) outlinedText(pop.sub, x, y + (pop.big ? 17 : 15), 10, pop.big ? '#fff' : '#e7ebf3', a);
     }
-    if (call.life > 0) outlinedText(call.txt, Math.min(W - 40, Math.max(40, call.x)), Math.max(130, call.y - 18 - (1.1 - call.life) * 12), 15, call.col, Math.min(1, call.life * 1.5));
+    if (call.life > 0) outlinedText(call.txt, Math.min(W - 40, Math.max(40, call.x)), Math.max(YT + 4, call.y - 18 - (1.1 - call.life) * 12), 15, call.col, Math.min(1, call.life * 1.5));
     if (tag.life > 0) {
-      const q = Pm(me.X, me.Y, 0), top = q[1] - RC.playerH * q[2] - 8;
-      outlinedText(tag.txt, Math.min(W - 60, Math.max(60, q[0])), top - (1 - Math.min(1, tag.life)) * 14, 14, tag.col, Math.min(1, tag.life * 1.5));
+      const q = Pm(me.X, me.Y, 0), top = q[1] - RC.playerH * q[2] - 10;
+      outlinedText(tag.txt, Math.min(W - 60, Math.max(60, q[0])), top - (1 - Math.min(1, tag.life)) * 14, 12, tag.col, Math.min(1, tag.life * 1.5));
     }
   }
 
-  function drawHud() {
-    g.fillStyle = '#0d1322'; g.fillRect(0, 0, W, 34);
-    g.font = 'bold 13px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#fff';
-    if (mode === 'drill') {
-      g.textAlign = 'left'; g.fillText('SERVE DRILL', 42, 22);
-      g.textAlign = 'right'; g.fillText((match.serveNo === 1 ? '1ST' : '2ND') + ' SERVE · ' + E.matchCourt(match).toUpperCase(), W - 42, 22);
-      return;
-    }
-    if (mode === 'match') { drawScoreboard(); return; }
-    g.textAlign = 'left'; g.fillText(practice.mode === 'auto' ? 'PRACTICE' : 'FEED ' + practice.mode.toUpperCase(), 42, 22);
-    g.textAlign = 'right'; g.fillText('RALLY ' + practice.rally + '  BEST ' + practice.best, W - 42, 22);
+  // --- HUD -------------------------------------------------------------------
+  function chip(txt, x, y, col, fg) {
+    g.font = '800 10px system-ui, sans-serif'; g.textAlign = 'center';
+    const w = g.measureText(txt).width + 16;
+    g.fillStyle = col; rrect(x - w / 2, y - 9, w, 18, 9); g.fill();
+    g.fillStyle = fg || '#10203a'; g.fillText(txt, x, y + 3.5);
   }
-  // Two rows, YOU and CPU: sets (when more than one), games, points; a
-  // ball by the server.
+  const HW = 360; // the HUD is laid out 360 px wide, centred
+  function drawHud() {
+    g.save(); g.translate(W / 2 - HW / 2, 0);
+    g.fillStyle = 'rgba(8,13,26,.88)'; rrect(46, 5, HW - 92, 34, 10); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.16)'; g.lineWidth = 1; g.stroke();
+    g.font = '800 12px system-ui, sans-serif'; g.fillStyle = '#fff';
+    if (mode === 'drill') {
+      g.textAlign = 'left'; g.fillText('SERVE DRILL', 58, 26);
+      g.textAlign = 'right'; g.fillText((match.serveNo === 1 ? '1ST' : '2ND') + ' · ' + E.matchCourt(match).toUpperCase(), HW - 58, 26);
+    } else if (mode === 'match') drawScoreboard();
+    else {
+      g.textAlign = 'left'; g.fillText(practice.mode === 'auto' ? 'PRACTICE' : 'FEED ' + practice.mode.toUpperCase(), 58, 26);
+      g.textAlign = 'right'; g.fillStyle = '#d8ec3a'; g.fillText('RALLY ' + practice.rally + ' · BEST ' + practice.best, HW - 58, 26);
+    }
+    if (pointTag && inMatch() && match.phase !== 'call' && match.phase !== 'banner') chip(pointTag, HW / 2, 54, pointTag === 'MATCH POINT' ? '#ffd166' : '#fff');
+    else if (inMatch() && match.rally && match.phase === 'rally' && match.rally.hits >= 4) chip('RALLY ' + match.rally.hits, HW / 2, 54, 'rgba(8,13,26,.8)', '#fff');
+    if (speedChip.life > 0) { g.globalAlpha = Math.min(1, speedChip.life * 2); chip(speedChip.txt, HW - 50, 54, '#d8ec3a'); g.globalAlpha = 1; }
+    g.restore();
+  }
+  // Two rows, YOU and the opponent: games (per set), points; a ball by the server.
   function drawScoreboard() {
-    const sc = match.score, si = E.matchServer(match), names = ['YOU', 'CPU'];
+    const sc = match.score, si = E.matchServer(match), names = match.names;
     const pts = i => {
       const p = sc.points;
       if (sc.tiebreak) return String(p[i]);
       if (p[0] >= 3 && p[1] >= 3) return p[i] > p[1 - i] ? 'AD' : p[0] === p[1] ? '40' : '';
       return ['0', '15', '30', '40'][p[i]];
     };
-    g.font = 'bold 11px ui-monospace, Menlo, Consolas, monospace';
     for (let i = 0; i < 2; i++) {
-      const y = 14 + i * 13;
-      g.textAlign = 'left'; g.fillStyle = i === 0 ? '#ffb4ad' : '#ffe08a';
-      g.fillText(names[i], 42, y);
-      if (si === i && match.phase !== 'over') { g.fillStyle = '#d8ec3a'; g.beginPath(); g.arc(80, y - 4, 3, 0, 7); g.fill(); }
+      const y = 19 + i * 14;
+      g.font = '800 11px system-ui, sans-serif';
+      g.textAlign = 'left'; g.fillStyle = i === 0 ? '#fff' : palF.shirt === '#16181f' ? '#d4af37' : palF.shirt;
+      g.fillText(names[i], 66, y);
+      if (si === i && match.phase !== 'over') { g.fillStyle = '#d8ec3a'; g.beginPath(); g.arc(58, y - 4, 3, 0, 7); g.fill(); }
       g.fillStyle = '#fff';
-      sc.sets.forEach((set, k) => { g.textAlign = 'center'; g.fillText(String(set[i]), 100 + k * 18, y); });
-      g.textAlign = 'right'; g.fillStyle = '#d8ec3a'; g.fillText(pts(i), W - 42, y);
+      sc.sets.forEach((set, k) => { g.textAlign = 'center'; g.fillText(String(set[i]), 150 + k * 18, y); });
+      g.fillStyle = '#d8ec3a'; rrect(HW - 92, y - 10, 34, 13, 4); g.fill();
+      g.textAlign = 'center'; g.fillStyle = '#10203a'; g.fillText(pts(i), HW - 75, y);
     }
-    g.textAlign = 'right'; g.fillStyle = 'rgba(255,255,255,.55)'; g.font = 'bold 9px system-ui, sans-serif';
-    g.fillText((sc.tiebreak ? 'TIE-BREAK · ' : '') + sc.f.label.toUpperCase() + ' · ' + match.actors[1].cpu.lv.label.toUpperCase(), W - 72, 14);
+    g.textAlign = 'center'; g.fillStyle = 'rgba(255,255,255,.5)'; g.font = '700 8px system-ui, sans-serif';
+    g.fillText(sc.tiebreak ? 'TIE-BREAK' : CFG.surfaces[surface].label.toUpperCase(), 215, 19);
+    g.fillText(oppRow ? 'TOUR ' + (TOUR.indexOf(oppRow) + 1) + '/' + TOUR.length : match.actors[1].cpu.lv.label.toUpperCase(), 215, 33);
   }
 
-  // Match lines for the debug overlay: score state, server, serve number,
-  // phase, rally and (with a CPU) its level and predicted contact.
-  function matchDebug() {
-    const sc = match.score, S = match.serve, r = match.rally;
-    const lines = [
-      'score sets ' + JSON.stringify(sc.sets) + ' pts ' + sc.points.join('-') + (sc.tiebreak ? ' TB' : '') + '  "' + E.pointsText(sc) + '"  ' + sc.format,
-      'server ' + (E.matchServer(match) === 0 ? 'YOU' : 'CPU') + '  serve ' + match.serveNo + '  court ' + E.matchCourt(match) + '  phase ' + match.phase + (S ? ' / ' + S.state : ''),
-      'rally ' + (r ? r.hits + ' shots, hitter ' + (r.hitter === 0 ? 'YOU' : 'CPU') + (r.serve ? ' (serve)' : '') + (r.bounced ? ' bounced' : '') : '-') + '  longest ' + match.longest,
-    ];
-    return lines.concat(cpuDebug());
-  }
-  function cpuDebug() {
-    const o = match.actors[1];
-    if (!o.cpu) return ['cpu none'];
-    const c = o.cpu, p = c.predPt;
-    return ['cpu ' + c.lv.label + (c.net ? ' (net)' : '') + '  predicted ' + (p ? 'X ' + p.X.toFixed(2) + ' Y ' + p.Y.toFixed(2) + ' H ' + p.H.toFixed(2) : '-') +
-      '  tap ' + (c.tapErr > 0 ? '+' : '') + Math.round(c.tapErr) + ' ms'];
-  }
-  // The CPU's predicted contact point (with its error): a cyan cross.
-  function drawCpuPred() {
-    const o = match && match.actors[1], p = o && o.cpu && o.cpu.predPt;
-    if (!p) return;
-    const q = Pm(p.X, p.Y, p.H), q0 = Pm(p.X, p.Y, 0);
-    g.strokeStyle = '#5ee0ff'; g.lineWidth = 1.5;
-    g.beginPath(); g.moveTo(q[0] - 4, q[1] - 4); g.lineTo(q[0] + 4, q[1] + 4); g.moveTo(q[0] + 4, q[1] - 4); g.lineTo(q[0] - 4, q[1] + 4); g.stroke();
-    g.setLineDash([2, 3]); g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q0[0], q0[1]); g.stroke(); g.setLineDash([]);
-  }
-
+  // --- Debug overlay (?debug=1) ----------------------------------------------
   function drawDebug() {
     const v = Math.hypot(ball.vx, ball.vy, ball.vz), h = lastHit, sw = pr.swing;
     const ph = pr.pending ? 'queued' : E.swingPhase(sw.t0 == null ? null : pr.t - sw.t0, CFG, sw.bs, sw);
-    const B = E.playerBounds(), zoneD = me.Y - COURT.netY, predNow = E.predictContact(pr);
-    const misses = Object.keys(pr.misses).map(k => k + ' ' + pr.misses[k]).join('  ') || 'none';
-    const roles = [...active.values()];
+    const predNow = E.predictContact(pr);
     const lines = [
-      'FPS ' + fps.toFixed(0) + '  steps/frame ' + stepsLast + '  slow ' + SLOW + '  t ' + pr.t.toFixed(2),
-      'ball ' + ball.phase + '  by ' + (pr.hitBy || '-') + (pr.live ? ' live' : '') + '  shot ' + (pr.shotKey || '-'),
-      'm  X ' + ball.X.toFixed(2) + ' Y ' + ball.Y.toFixed(2) + ' H ' + ball.H.toFixed(2) + '  ' + (v * 3.6).toFixed(0) + ' km/h',
-      'spin ' + (ball.spin * 60 / (2 * Math.PI)).toFixed(0) + ' rpm  angle ' + (lastAngle != null ? lastAngle.toFixed(1) + '°' : '-') + '  call ' + lastResult,
-      'player X ' + me.X.toFixed(2) + ' Y ' + me.Y.toFixed(2) + '  v ' + me.vx.toFixed(1) + ', ' + me.vy.toFixed(1) + '  net ' + zoneD.toFixed(1) + ' m',
-      'zone ' + E.zoneOf(me.Y) + '  next ' + (predNow.kind === 'ok' ? predNow.stroke.toUpperCase() : predNow.kind) + (inMatch() ? '' : '  feed ' + practice.mode),
-      'swing ' + ph + (sw.shot ? ' (' + sw.shot + ')' : '') + '  ' + (sw.stroke === 'bh' ? 'BACKHAND' : 'FOREHAND') + '  bs ' + Math.round(sw.bs * 1000) + ' ms',
-      (inMatch() ? '' : 'pace x' + practice.pace + '  ') + 'assist ' + pr.assist + '  taps ' + pr.taps.n + ' avg ' + (pr.taps.n ? (pr.taps.sum / pr.taps.n > 0 ? '+' : '') + Math.round(pr.taps.sum / pr.taps.n) + ' ms' : '-'),
-      'misses ' + misses,
-      h ? 'timing ' + (h.errMs > 0 ? '+' : '') + h.errMs.toFixed(0) + ' ms ' + (h.errMs < 0 ? 'early' : 'late') + '  reach ' + h.lat.toFixed(2) + ' m  dist ' + h.dist.toFixed(2) : 'timing -',
-      h ? 'quality ' + h.quality.toFixed(2) + ' ' + h.band + (h.reason ? ' (' + h.reason + ')' : '') + (h.mishit ? ' mishit ' + h.mishit : '') + (h.pace ? '  pace x' + h.pace.toFixed(2) : '') : 'quality -',
-      'touches ' + (roles.length ? roles.join(', ') : 'none') + '  stick ' + currentStick().x.toFixed(2) + ', ' + currentStick().y.toFixed(2),
-    ].concat(inMatch() ? matchDebug() : []);
-    const top = 38;
-    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, top, 352, lines.length * 12 + 6);
+      'FPS ' + fps.toFixed(0) + '  steps/frame ' + stepsLast + '  slow ' + SLOW + '  t ' + pr.t.toFixed(2) + '  ' + surface,
+      'ball ' + ball.phase + '  by ' + (pr.hitBy || '-') + (pr.live ? ' live' : '') + '  ' + (v * 3.6).toFixed(0) + ' km/h  curve ' + (ball.curve || 0).toFixed(0),
+      'm  X ' + ball.X.toFixed(2) + ' Y ' + ball.Y.toFixed(2) + ' H ' + ball.H.toFixed(2) + '  angle ' + (lastAngle != null ? lastAngle.toFixed(1) + '°' : '-') + '  call ' + lastResult,
+      'player X ' + me.X.toFixed(2) + ' Y ' + me.Y.toFixed(2) + '  zone ' + E.zoneOf(me.Y) + '  assist ' + pr.assist + '  stick ' + currentStick().x.toFixed(2) + ', ' + currentStick().y.toFixed(2),
+      'next ' + (predNow.kind === 'ok' ? predNow.stroke.toUpperCase() : predNow.kind) + '  swing ' + ph + (sw.shot ? ' (' + sw.shot + ')' : '') + '  bs ' + Math.round(sw.bs * 1000) + ' ms',
+      h ? 'timing ' + (h.errMs > 0 ? '+' : '') + h.errMs.toFixed(0) + ' ms  reach ' + h.lat.toFixed(2) + ' m  quality ' + h.quality.toFixed(2) + ' ' + h.band + (h.reason ? ' (' + h.reason + ')' : '') + (h.mishit ? ' mishit ' + h.mishit : '') : 'timing -',
+    ];
+    if (inMatch()) {
+      const sc = match.score, S = match.serve, c = match.actors[1].cpu;
+      lines.push('score ' + JSON.stringify(sc.sets) + ' pts ' + sc.points.join('-') + '  phase ' + match.phase + (S ? ' / ' + S.state : '') + '  serve ' + match.serveNo);
+      if (c) lines.push('cpu ' + c.lv.label + (c.net ? ' (net)' : '') + '  tap ' + Math.round(c.tapErr) + ' ms');
+    }
+    const top = 64;
+    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(4, top, 372, lines.length * 12 + 6);
     g.font = '10px ui-monospace, Menlo, Consolas, monospace'; g.fillStyle = '#9ef'; g.textAlign = 'left';
     lines.forEach((l, i) => g.fillText(l, 8, top + 12 + i * 12));
-    // Reach zone on the ground: an ellipse on the contact plane spanning
-    // both ideal points plus reach; ideal points (forehand yellow, backhand
-    // cyan) at contact height.
-    const c = CFG.contact, py = me.Y - c.ahead, rx = c.side + c.reach;
-    g.strokeStyle = 'rgba(158,238,255,.7)'; g.lineWidth = 1.5;
-    g.beginPath();
-    for (let i = 0; i <= 32; i++) {
-      const a = i / 32 * Math.PI * 2, q = Pm(me.X + Math.cos(a) * rx, py + Math.sin(a) * 0.6, 0);
-      i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]);
-    }
-    g.stroke();
-    for (const [F, col] of [[1, '#ffd166'], [-1, '#7fe3ff']]) {
-      const m = Pm(me.X + F * c.side, py, c.height);
-      g.strokeStyle = col; g.lineWidth = 1.5; g.beginPath(); g.arc(m[0], m[1], 3, 0, 7); g.stroke();
-    }
-    // Predicted contact point: cross at its height, dot on the ground.
-    const pred = E.predictContact(pr);
-    if (pred.kind === 'ok' && pred.t > pr.t) {
-      const q = Pm(pred.X, pred.Y, pred.H), q0 = Pm(pred.X, pred.Y, 0);
+    if (predNow.kind === 'ok' && predNow.t > pr.t) {
+      const q = Pm(predNow.X, predNow.Y, predNow.H);
       g.strokeStyle = '#ff5ec4'; g.lineWidth = 1.5;
       g.beginPath(); g.moveTo(q[0] - 5, q[1] - 5); g.lineTo(q[0] + 5, q[1] + 5); g.moveTo(q[0] + 5, q[1] - 5); g.lineTo(q[0] - 5, q[1] + 5); g.stroke();
-      g.setLineDash([2, 3]); g.beginPath(); g.moveTo(q[0], q[1]); g.lineTo(q0[0], q0[1]); g.stroke(); g.setLineDash([]);
-      g.fillStyle = '#ff5ec4'; g.beginPath(); g.arc(q0[0], q0[1], 2.5, 0, 7); g.fill();
-    } else if (pred.kind === 'deep' || pred.kind === 'short') {
-      outlinedText('→ ' + E.MISS_TEXT[pred.kind], Pm(me.X, me.Y, 0)[0], Pm(me.X, me.Y, 0)[1] + 16, 10, '#ff5ec4', 1);
-    }
-    // Assist target (stance).
-    const at = pr.assist !== 'off' && E.incoming(pr) ? E.assistTarget(pr) : null;
-    if (at) {
-      const q = Pm(at.X, at.Y, 0);
-      g.strokeStyle = '#8ef0a0'; g.lineWidth = 1.5; g.strokeRect(q[0] - 3, q[1] - 3, 6, 6);
-    }
-    if (inMatch()) drawCpuPred();
-    // Movement bounds.
-    g.strokeStyle = 'rgba(255,255,255,.25)'; g.setLineDash([4, 4]); g.lineWidth = 1;
-    const b1 = Pm(B.minX, B.minY, 0), b2 = Pm(B.maxX, B.minY, 0), b3 = Pm(B.maxX, B.maxY, 0), b4 = Pm(B.minX, B.maxY, 0);
-    g.beginPath(); g.moveTo(b1[0], b1[1]); g.lineTo(b2[0], b2[1]); g.lineTo(b3[0], b3[1]); g.lineTo(b4[0], b4[1]); g.closePath(); g.stroke(); g.setLineDash([]);
-    if (pr.aim && ball.phase === 'flight') {
-      const q = Pm(pr.aim.target.X, pr.aim.target.Y, 0);
-      g.strokeStyle = pr.aim.miss ? '#ff6b5e' : '#8ef0a0'; g.lineWidth = 1.5;
-      g.beginPath(); g.moveTo(q[0] - 5, q[1] - 2); g.lineTo(q[0] + 5, q[1] + 2); g.moveTo(q[0] + 5, q[1] - 2); g.lineTo(q[0] - 5, q[1] + 2); g.stroke();
     }
   }
 
-  // --- Screens: start menu, pause, match over ------------------------------
-  // screen: null (playing), 'menu', 'pause' or 'over'. The game is frozen
+  // --- Screens ---------------------------------------------------------------
+  // screen: null (playing) or the id of the open sheet. The game is frozen
   // under any of them (and under settings).
-  const menuEl = document.getElementById('menu'), pauseEl = document.getElementById('pause'), overEl = document.getElementById('over');
-  const pauseBtn = document.getElementById('pauseBtn');
-  let screen = null, matchOpts = null;
+  const SHEETS = ['menu', 'tour', 'quick', 'how', 'pause', 'over'];
+  const $ = id => document.getElementById(id);
+  const pauseBtn = $('pauseBtn');
+  let screen = null, matchOpts = null, howBack = 'menu';
   const frozen = () => settingsOpen || screen !== null;
   function showScreen(name) {
     screen = name;
-    menuEl.classList.toggle('show', name === 'menu');
-    pauseEl.classList.toggle('show', name === 'pause');
-    overEl.classList.toggle('show', name === 'over');
+    SHEETS.forEach(id => $(id).classList.toggle('show', id === name));
     pauseBtn.style.display = name === null ? '' : 'none';
+    gear.style.display = name === null || name === 'pause' ? '' : 'none';
     if (name) dropInput();
+    if (window.kbSetChromeHidden) window.kbSetChromeHidden(name === null);
+    if (name === 'menu') refreshMenu();
   }
-  const pick = { level: CFG.cpu.defaultLevel, format: CFG.match.defaultFormat };
-  function markMenu(k, v) { menuEl.querySelectorAll('.row[data-k="' + k + '"] button').forEach(o => o.classList.toggle('on', o.dataset.v === v)); }
+  document.querySelectorAll('.sheet button').forEach(b => b.addEventListener('click', () => { audio(); SND.click(); }));
+
+  // World Tour: beat an opponent to unlock the next; up to three stars each.
+  const starsOf = id => tourSave.stars[id] || 0;
+  const unlocked = i => i === 0 || starsOf(TOUR[i - 1].id) > 0;
+  const nextTour = () => { const i = TOUR.findIndex(r => !starsOf(r.id)); return i < 0 ? TOUR.length - 1 : i; };
+  const starText = n => '★'.repeat(n) + '<i>' + '★'.repeat(3 - n) + '</i>';
+  let tourPick = 0;
+  function refreshMenu() {
+    const total = TOUR.reduce((s, r) => s + starsOf(r.id), 0), done = TOUR.every(r => starsOf(r.id));
+    $('stWins').textContent = stats.wins; $('stStars').textContent = total + '/' + TOUR.length * 3;
+    $('stRally').textContent = stats.bestRally; $('stPerfect').textContent = stats.perfects;
+    const r = TOUR[nextTour()];
+    $('tourNext').textContent = done ? 'Champion! Replay for three stars' : 'Round ' + (nextTour() + 1) + ' of ' + TOUR.length + ' · vs ' + r.name + ', ' + r.title;
+  }
+  function refreshTour() {
+    $('tourList').innerHTML = TOUR.map((r, i) =>
+      '<button data-i="' + i + '" class="' + (unlocked(i) ? '' : 'locked ') + (i === tourPick ? 'sel' : '') + '">' +
+      '<span class="n">' + (unlocked(i) ? i + 1 : '🔒') + '</span><span class="who"><b>' + r.name + '</b><small>' + r.title + ' · ' + CFG.surfaces[r.surface].label + '</small></span>' +
+      '<span class="st">' + starText(starsOf(r.id)) + '</span></button>').join('');
+    const r = TOUR[tourPick], f = CFG.match.formats[r.format];
+    $('tourBlurb').textContent = unlocked(tourPick) ? r.blurb + ' First to ' + f.games + ' games.' : 'Beat ' + TOUR[tourPick - 1].name + ' to unlock.';
+    $('tourPlay').disabled = !unlocked(tourPick); $('tourPlay').style.opacity = unlocked(tourPick) ? 1 : 0.4;
+    $('tourPlay').textContent = 'Play ' + r.name;
+  }
+  $('tourList').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { tourPick = +b.dataset.i; SND.click(); refreshTour(); } });
+  $('playTour').addEventListener('click', () => { tourPick = nextTour(); refreshTour(); showScreen('tour'); });
+  $('tourPlay').addEventListener('click', () => { if (unlocked(tourPick)) playMatch({ tour: TOUR[tourPick] }); });
+
+  // Quick match: level, court, format (remembered).
+  const quickEl = $('quick');
+  const pick = { level: CFG.cpu.defaultLevel, format: CFG.match.defaultFormat, surface: 'hard' };
   function setPick(k, v, save) {
-    if (k === 'level' && !CFG.cpu[v]) return;
-    if (k === 'format' && !CFG.match.formats[v]) return;
-    pick[k] = v; markMenu(k, v);
-    if (save) store(k === 'level' ? 'tennisLevel' : 'tennisFormat', v);
+    if (v == null || (k === 'level' && !CFG.cpu[v]) || (k === 'format' && !CFG.match.formats[v]) || (k === 'surface' && !CFG.surfaces[v])) return;
+    pick[k] = v;
+    quickEl.querySelectorAll('.row[data-k="' + k + '"] button').forEach(o => o.classList.toggle('on', o.dataset.v === v));
+    if (save) store('tennis' + k[0].toUpperCase() + k.slice(1), v);
     if (k === 'format') {
       const f = CFG.match.formats[v];
-      document.getElementById('formatHint').textContent = 'One set: first to ' + f.games + ' games, tie-break at ' + f.tiebreakAt + '–' + f.tiebreakAt + '.';
+      $('formatHint').textContent = 'One set: first to ' + f.games + ' games, tie-break at ' + f.tiebreakAt + '–' + f.tiebreakAt + '.';
     }
   }
-  setPick('level', pick.level); setPick('level', stored('tennisLevel'));
-  setPick('format', pick.format); setPick('format', stored('tennisFormat'));
-  menuEl.querySelectorAll('.row').forEach(row => row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setPick(row.dataset.k, b.dataset.v, true))));
+  ['level', 'format', 'surface'].forEach(k => { setPick(k, pick[k]); setPick(k, stored('tennis' + k[0].toUpperCase() + k.slice(1))); });
+  quickEl.querySelectorAll('.row').forEach(row => row.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setPick(row.dataset.k, b.dataset.v, true))));
+  $('openQuick').addEventListener('click', () => showScreen('quick'));
+  $('playMatch').addEventListener('click', () => playMatch({ far: pick.level, format: pick.format, surface: pick.surface }));
+  document.querySelectorAll('.sheet .back').forEach(b => b.addEventListener('click', () => showScreen('menu')));
+
+  // The first match opens How to play first.
   function playMatch(opts) {
-    matchOpts = opts || { far: pick.level, format: pick.format };
-    startMode('match', matchOpts);
-    showScreen(null);
+    if (window.kbEnterFullscreen) window.kbEnterFullscreen(document.documentElement);
+    matchOpts = opts;
+    startMode('match', opts);
+    if (stored('tennisHowSeen') !== '1') { howBack = null; showScreen('how'); } else showScreen(null);
   }
-  document.getElementById('playMatch').addEventListener('click', () => playMatch());
-  document.getElementById('playPractice').addEventListener('click', () => { startMode('practice'); showScreen(null); });
-  document.getElementById('again').addEventListener('click', () => playMatch(matchOpts));
-  document.getElementById('resume').addEventListener('click', () => showScreen(null));
+  $('playPractice').addEventListener('click', () => { if (window.kbEnterFullscreen) window.kbEnterFullscreen(document.documentElement); startMode('practice'); if (stored('tennisHowSeen') !== '1') { howBack = null; showScreen('how'); } else showScreen(null); });
+  $('openHow').addEventListener('click', () => { howBack = 'menu'; showScreen('how'); });
+  $('pauseHow').addEventListener('click', () => { howBack = 'pause'; showScreen('how'); });
+  $('howDone').addEventListener('click', () => { store('tennisHowSeen', '1'); showScreen(howBack); });
+  $('again').addEventListener('click', () => {
+    // After a tour win, "Next" moves up the ladder.
+    if (matchOpts.tour && $('again').dataset.next) { tourPick = +$('again').dataset.next; playMatch({ tour: TOUR[tourPick] }); }
+    else playMatch(matchOpts);
+  });
+  $('resume').addEventListener('click', () => showScreen(null));
   const toMenu = () => { startMode('practice'); showScreen('menu'); };
-  document.getElementById('pauseMenu').addEventListener('click', toMenu);
-  document.getElementById('overMenu').addEventListener('click', toMenu);
+  $('pauseMenu').addEventListener('click', toMenu);
+  $('overMenu').addEventListener('click', toMenu);
   pauseBtn.addEventListener('click', () => { if (screen === null && !settingsOpen) showScreen('pause'); });
   window.addEventListener('keydown', e => {
     if ((e.code === 'KeyP' || e.code === 'Escape') && !e.repeat && !settingsOpen) {
@@ -1103,22 +1430,40 @@
     }
   });
 
-  // Match over: result, final score and simple stats.
+  // Match over: result, stars (tour), final score and simple stats.
   function showOver() {
-    const sc = match.score, st = match.stats, won = match.winner === 0;
-    const t = document.getElementById('overTitle');
+    const sc = match.score, st = match.stats, won = match.winner === 0, opp = match.names[1];
+    const t = $('overTitle');
     t.textContent = won ? 'YOU WIN' : 'YOU LOSE'; t.className = 'title ' + (won ? 'win' : 'lose');
-    document.getElementById('overScore').textContent = E.setsText(sc);
+    $('overScore').textContent = E.setsText(sc);
+    stats.played++; if (won) stats.wins++;
+    saveStats();
+    let note = '', next = '';
+    $('overStars').style.display = oppRow ? '' : 'none';
+    if (oppRow) {
+      // Stars by how few games you dropped.
+      const lost = sc.sets.reduce((s, x) => s + x[1], 0), f = sc.f;
+      const n = !won ? 0 : lost <= Math.floor(f.games / 3) ? 3 : lost <= Math.floor(f.games * 2 / 3) ? 2 : 1;
+      const i = TOUR.indexOf(oppRow), first = won && !starsOf(oppRow.id);
+      if (n > starsOf(oppRow.id)) { tourSave.stars[oppRow.id] = n; store('tennisTour', JSON.stringify(tourSave)); }
+      $('overStars').innerHTML = starText(n);
+      if (won && i === TOUR.length - 1) note = first ? 'You are the World Tour champion!' : 'Champion again.';
+      else if (won) { note = (first ? TOUR[i + 1].name + ', ' + TOUR[i + 1].title + ', is next.' : 'Drop fewer games for more stars.'); next = String(i + 1); }
+      else note = oppRow.blurb;
+    }
+    $('overNote').textContent = note; $('overNote').style.display = note ? '' : 'none';
+    $('again').dataset.next = next;
+    $('again').textContent = next ? 'Next: ' + TOUR[+next].name : won ? 'Play Again' : 'Try Again';
     const row = (label, k) => '<tr><td>' + label + '</td><td>' + st[0][k] + '</td><td>' + st[1][k] + '</td></tr>';
-    document.getElementById('overStats').innerHTML = '<tr><th></th><th>YOU</th><th>CPU</th></tr>' +
+    $('overStats').innerHTML = '<tr><th></th><th>YOU</th><th>' + opp + '</th></tr>' +
       row('Aces', 'aces') + row('Winners', 'winners') + row('Errors', 'errors') + row('Double faults', 'doubleFaults') +
       '<tr><td>Longest rally</td><td colspan="2">' + match.longest + ' shots</td></tr>';
+    if (won) { SND.win(); cheer = 1; } else SND.lose();
     showScreen('over');
   }
 
   // --- Main loop: fixed 1/120 s steps, accumulator, rAF rendering --------
-  let acc = 0, last = performance.now(), running = true, dimmed = false;
-  const bLob = document.getElementById('bLob'), bDrop = document.getElementById('bDrop');
+  let last = performance.now(), running = true, lastPhase = '';
   function frame(now) {
     if (!running) return;
     const real = Math.min(0.1, (now - last) / 1000); last = now;
@@ -1129,7 +1474,7 @@
     const dt = still ? 0 : real * SLOW, stick = currentStick();
     stepsLast = 0;
     if (still) {
-      // Frozen under a pop-up (settings, menu, pause, match over).
+      // Frozen under a pop-up.
     } else if (hitStop > 0) {
       hitStop -= real;
     } else {
@@ -1141,42 +1486,45 @@
         if (hitStop > 0) break; // freeze here; the leftover time carries on after
       }
     }
+    if (inMatch() && match.phase !== lastPhase) { lastPhase = match.phase; if (lastPhase === 'pre' && match.serveNo === 1) pointTag = pointLabel(); }
     anchor = { real: now, sim: pr.t + acc, rate: hitStop > 0 || still ? 0 : SLOW };
     const fdt = hitStop > 0 ? 0 : dt;
     clock += fdt;
     ballRot += ball.spin * fdt * 0.05;
-    if (stepsLast && ball.phase !== 'idle') { trail.push(Pm(ball.X, ball.Y, ball.H)); if (trail.length > RC.trail) trail.shift(); }
+    if (stepsLast && ball.phase !== 'idle' && ball.phase !== 'held') { trail.push(Pm(ball.X, ball.Y, ball.H)); if (trail.length > RC.trail + 6) trail.shift(); }
     parts.forEach(p => { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt; p.l -= dt * 1.6; });
     parts = parts.filter(p => p.l > 0);
     fx.forEach(f => f.l -= dt * 4.5); fx = fx.filter(f => f.l > 0);
-    pop.life -= dt; call.life -= dt; tag.life -= dt; big.life -= dt; shake = Math.max(0, shake - real); squash.t -= fdt;
+    marks.forEach(m => m.l -= dt); marks = marks.filter(m => m.l > 0);
+    if (aimMark) aimMark.l -= dt;
+    pop.life -= dt; call.life -= dt; tag.life -= dt; big.life -= dt; speedChip.life -= dt; machineKick -= dt;
+    shake = Math.max(0, shake - real); squash.t -= fdt;
     flash = Math.max(0, flash - real * 6);
-    cheer = Math.max(0, cheer - dt * 0.4);
+    cheer = Math.max(0, cheer - real * 0.45);
 
     g.save();
     if (shake > 0) g.translate((Math.random() - 0.5) * 5 * shake / 0.14, (Math.random() - 0.5) * 5 * shake / 0.14);
     drawBg();
-    drawLanding();
+    drawMarks();
     drawFar();
     const farSide = ball.Y < COURT.netY;
     if (farSide) { drawShadow(); drawBall(); }
     drawNet();
-    drawCue();
     // The near player is always in front of the net. The ball is drawn over
     // them even when it's further up the court, so their body never hides it.
     if (!farSide) {
       if (ball.Y < me.Y) { drawShadow(); drawNear(); } else { drawNear(); drawShadow(); }
       drawBall();
     } else drawNear();
+    drawRing();
     drawFx();
     drawLabels();
     g.restore();
-    if (flash > 0) { g.fillStyle = 'rgba(255,240,180,' + (flash * 0.22).toFixed(2) + ')'; g.fillRect(0, 34, W, H - 34); }
+    drawSwipe();
+    drawStick();
+    if (flash > 0) { g.fillStyle = 'rgba(255,240,180,' + (flash * 0.2).toFixed(2) + ')'; g.fillRect(0, 0, W, H); }
     drawHud();
     if (DEBUG) drawDebug();
-    // Serving: only Flat and Topspin serve, so Lob and Drop dim.
-    const serving = inMatch() && match.serve && match.serve.server === 0 && (match.phase === 'pre' || match.phase === 'serve');
-    if (serving !== dimmed) { dimmed = serving; bLob.classList.toggle('off', serving); bDrop.classList.toggle('off', serving); }
     requestAnimationFrame(frame);
   }
 
@@ -1189,24 +1537,32 @@
     anchor = { real: last, sim: pr.t, rate: SLOW };
     requestAnimationFrame(frame);
   }
-  // In a match, coming back shows the pause screen rather than play.
-  function hide() { if (screen === null && (inMatch() || mode === 'practice') && !settingsOpen) showScreen('pause'); pause(); }
+  // Coming back shows the pause screen rather than play.
+  function hide() { if (screen === null && !settingsOpen) showScreen('pause'); pause(); }
   document.addEventListener('visibilitychange', () => { document.hidden ? hide() : resume(); });
   window.addEventListener('pagehide', hide);
   window.addEventListener('pageshow', resume);
   window.addEventListener('blur', () => { keys.clear(); });
 
-  fitCanvas();
+  fitted = true; fitCanvas();
   // Start on the menu; ?serve=1 opens the serve drill, ?match=1 (with
-  // ?level= and ?format=) a match, and ?practice=1 practice, directly.
-  if (qs.get('serve') === '1') { startMode('drill'); showScreen(null); }
-  else if (qs.get('match') === '1') playMatch({ far: CFG.cpu[qs.get('level')] ? qs.get('level') : pick.level, format: CFG.match.formats[qs.get('format')] ? qs.get('format') : pick.format });
-  else if (qs.get('practice') === '1' || qs.get('feed') || qs.get('machine') === '1') showScreen(null);
+  // ?level=, ?format= and ?surface=) a match, ?tour=<id> a tour match and
+  // ?practice=1 practice, directly (skipping How to play).
+  const go = (m, o) => { startMode(m, o); showScreen(null); };
+  if (qs.get('serve') === '1') go('drill');
+  else if (TOUR.find(r => r.id === qs.get('tour'))) { matchOpts = { tour: TOUR.find(r => r.id === qs.get('tour')) }; go('match', matchOpts); }
+  else if (qs.get('match') === '1') {
+    matchOpts = { far: CFG.cpu[qs.get('level')] ? qs.get('level') : pick.level, format: CFG.match.formats[qs.get('format')] ? qs.get('format') : pick.format, surface: CFG.surfaces[qs.get('surface')] ? qs.get('surface') : pick.surface };
+    go('match', matchOpts);
+  } else if (qs.get('practice') === '1' || qs.get('feed') || qs.get('machine') === '1') go('practice');
   else showScreen('menu');
   // Small test handle for headless checks.
   window.tennis = {
-    practice, engine: E, get match() { return match; }, get mode() { return mode; }, get screen() { return screen; },
-    startMode, showScreen, playMatch,
+    practice, engine: E, stats, tourSave, get match() { return match; }, get mode() { return mode; }, get screen() { return screen; }, get pr() { return pr; },
+    startMode, showScreen, playMatch, showOver,
+    // Play a swipe (points in CSS px, ms) as if the finger lifted now.
+    swipe(pts) { const sw = E.classifySwipe(pts, CFG); if (sw.kind === 'swipe') playSwipe(sw, performance.now()); return sw; },
+    stick(x, y) { testStick = x == null ? null : { x, y }; },
     // Run n fixed steps now, through the page's own event handling.
     step(n) { for (let i = 0; i < n; i++) (inMatch() ? E.matchStep(match, {}) : E.practiceStep(pr, {})).forEach(onEvent); },
   };
@@ -1214,6 +1570,6 @@
 })();
 </script>
 <script src="../../assets/version.js"></script>
-<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox" data-fullscreen="landscape"></script>
 </body>
 </html>

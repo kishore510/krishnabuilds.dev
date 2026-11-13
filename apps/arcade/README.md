@@ -64,7 +64,7 @@ array is the source of truth. As of 1.67.0, by category, oldest first:
 
 - **Air Hockey** (`games/air-hockey/`, 2026-07-06): Best of 7 against the CPU. Easy or Hard.
 - **Hoops** (`games/hoops/`, 2026-07-11): Flick to shoot real arc physics — nail the angle and power as the hoop starts drifting.
-- **Tennis** (`games/tennis/`, 2026-11-08): Serve, rally and come to the net in a real match against the CPU. Easy, Medium or Hard; Quick or Standard set; plus a ball-machine practice mode.
+- **Tennis** (`games/tennis/`, 2026-11-08): Landscape, full screen. Run with the left thumb, swipe with the right to hit (topspin, flat, lob, drop, curveball). World Tour of seven opponents on hard, clay and grass, quick matches, and a ball-machine practice mode.
 
 **Trivia** (1)
 

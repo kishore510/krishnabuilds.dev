@@ -1368,3 +1368,149 @@ test('a person returns the CPU\'s serve with the existing swing, buffering and a
   }
   assert.ok(returned >= 10, `returned ${returned} of ${serves} serves`);
 });
+
+// --- Swipe play: gestures, sidespin, forgiving timing, surfaces, the tour ---
+
+// A straight swipe from (x0, y0) by (dx, dy) px over ms, sampled every 10 ms.
+function swipePts(dx, dy, ms, bulge) {
+  const pts = [], n = Math.max(2, Math.round(ms / 10));
+  for (let i = 0; i <= n; i++) {
+    const f = i / n, len = Math.hypot(dx, dy) || 1, off = (bulge || 0) * Math.sin(Math.PI * f);
+    // bulge > 0 pushes the middle of the path to the right of the direction of travel.
+    pts.push({ x: 300 + dx * f + (-dy / len) * off, y: 500 + dy * f + (dx / len) * off, t: 1000 + ms * f });
+  }
+  return pts;
+}
+
+test('swipes: speed picks lob, topspin or flat; down is a drop; a short touch is a tap', () => {
+  assert.equal(E.classifySwipe(swipePts(0, -150, 600)).shot, 'lob');
+  assert.equal(E.classifySwipe(swipePts(0, -150, 250)).shot, 'top');
+  assert.equal(E.classifySwipe(swipePts(0, -150, 90)).shot, 'flat');
+  assert.equal(E.classifySwipe(swipePts(0, 120, 200)).shot, 'drop');
+  assert.equal(E.classifySwipe(swipePts(3, -4, 80)).kind, 'tap');
+  assert.equal(E.classifySwipe([]).kind, 'none');
+});
+
+test('swipes: direction aims left and right, length sets depth', () => {
+  const left = E.classifySwipe(swipePts(-80, -120, 250)), right = E.classifySwipe(swipePts(80, -120, 250));
+  assert.ok(left.aim.x < -0.5 && right.aim.x > 0.5, `aim ${left.aim.x} / ${right.aim.x}`);
+  assert.ok(Math.abs(E.classifySwipe(swipePts(0, -150, 250)).aim.x) < 0.05, 'straight up aims at the middle');
+  const short = E.classifySwipe(swipePts(0, -60, 150)), long = E.classifySwipe(swipePts(0, -240, 300));
+  assert.ok(long.aim.y < short.aim.y, 'a longer swipe is deeper (stick further up)');
+  assert.ok(E.classifySwipe(swipePts(200, -40, 250)).aim.x === 1, 'a sideways swipe is the sharpest angle');
+});
+
+test('swipes: a bent path adds sidespin, bending back towards the far side of the bulge', () => {
+  assert.equal(E.classifySwipe(swipePts(0, -160, 250)).curve, 0);
+  const bulgeRight = E.classifySwipe(swipePts(0, -160, 250, 50)), bulgeLeft = E.classifySwipe(swipePts(0, -160, 250, -50));
+  assert.ok(bulgeRight.curve < 0, 'a path that bulges right bends the ball left');
+  assert.ok(bulgeLeft.curve > 0, 'a path that bulges left bends the ball right');
+  assert.equal(E.classifySwipe(swipePts(0, -160, 700, 50)).curve, 0, 'a lob does not curve');
+});
+
+test('sidespin: the ball bends in the air, and the solver still lands it on the target', () => {
+  const from = near(0), target = { X: 1.5, Y: 4 };
+  const straight = E.solveShot(from, target, 'top', C);
+  const bent = E.solveCurved(from, target, 'top', C, { curve: 190 });
+  const land = E.simulate(from, bent, C).firstBounce;
+  assert.ok(Math.hypot(land.X - target.X, land.Y - target.Y) < 0.4, `lands ${land.X.toFixed(2)}, ${land.Y.toFixed(2)}`);
+  // + curve bends to the hitter's right, so it has to start out to the left.
+  assert.ok(bent.vx < straight.vx - 0.5, 'launched left of the straight shot');
+  // Without the correction the same spin misses by a clear margin.
+  const raw = E.simulate(from, Object.assign({}, straight, { curve: 190 }), C).firstBounce;
+  assert.ok(raw.X - target.X > 0.8, `uncorrected lands ${(raw.X - target.X).toFixed(2)} m right`);
+});
+
+test('sidespin: the far player\'s curve is the near player\'s, turned around', () => {
+  const shot = { vx: 2, vy: -22, vz: 5, spin: 200, curve: 180 };
+  const a = E.simulate({ side: 'near', X: 1, Y: 22, H: 1 }, shot, C).firstBounce;
+  const b = E.simulate({ side: 'far', X: -1, Y: COURT.length - 22, H: 1 }, Object.assign({}, shot, { vx: -2, vy: 22 }), C).firstBounce;
+  assert.ok(Math.abs(a.X + b.X) < 1e-6 && Math.abs(a.Y - (COURT.length - b.Y)) < 1e-6);
+});
+
+// Practice with a flat feed; returns the hit (or whiff) event for a swing
+// requested `early` s before the ideal tap, with opts.
+function practiceSwing(early, opts, seed) {
+  const pr = E.createPractice(seed || 3);
+  pr.mode = 'flat'; pr.assist = 'strong';
+  let asked = false, out = null;
+  for (let i = 0; i < 120 * 8 && !out; i++) {
+    if (E.incoming(pr) && !asked) {
+      const pred = E.predictContact(pr);
+      if (pred.kind === 'ok' && pr.t >= pred.t - C.swing.backswing - early) { E.requestSwing(pr, 'top', pr.t, opts); asked = true; }
+    }
+    for (const e of E.practiceStep(pr, {})) if ((e.type === 'hit' && e.by === 'player') || e.type === 'whiff') out = e;
+  }
+  return out;
+}
+
+test('swipe timing: a swipe made early is held and still hits; the same tap misses', () => {
+  const tap = practiceSwing(0.6, null), sw = practiceSwing(0.6, { touch: true });
+  assert.equal(tap.type, 'whiff');
+  assert.equal(sw.type, 'hit');
+  assert.ok(!sw.perfect && sw.quality < 0.6, `early swipe quality ${sw.quality}`);
+  const onTime = practiceSwing(0.02, { touch: true });
+  assert.ok(onTime.perfect || onTime.quality > 0.85, `on-time swipe quality ${onTime.quality}`);
+});
+
+test('swipe timing: the swipe aims the shot, not the stick; a Perfect lands on the aim', () => {
+  const pr = E.createPractice(5);
+  pr.mode = 'flat'; pr.assist = 'strong';
+  let asked = false, hit = null;
+  for (let i = 0; i < 120 * 8 && !hit; i++) {
+    if (E.incoming(pr) && !asked) {
+      const pred = E.predictContact(pr);
+      if (pred.kind === 'ok' && pr.t >= pred.t - C.swing.backswing - 0.01) { E.requestSwing(pr, 'top', pr.t, { touch: true, aim: { x: -1, y: 0 } }); asked = true; }
+    }
+    for (const e of E.practiceStep(pr, { stick: { x: 0, y: 0 } })) if (e.type === 'hit' && e.by === 'player') hit = e;
+  }
+  assert.ok(hit, 'hit');
+  if (hit.perfect) assert.ok(Math.abs(hit.target.X + C.aim.x) < 1e-6, `target X ${hit.target.X}`);
+  else assert.ok(hit.target.X < -1, `target X ${hit.target.X}`);
+});
+
+test('swipe scatter: a mistimed flat drive sprays further than a mistimed topspin', () => {
+  const sc = C.timing.touch.scatter;
+  assert.ok(sc.flat > sc.top && sc.poor > sc.base);
+  // Early swipes: spread of where the shot was aimed, over seeds.
+  const spread = seed => { const e = practiceSwing(0.5, { touch: true, aim: { x: 0, y: 0 } }, seed); return e && e.type === 'hit' && !e.mishit ? Math.abs(e.target.X) : null; };
+  const xs = [1, 2, 3, 4, 5, 6, 7, 8].map(spread).filter(v => v != null);
+  assert.ok(xs.length >= 4 && xs.some(v => v > 0.3), `scatter ${xs.map(v => v.toFixed(2))}`);
+});
+
+test('surfaces: clay bounces higher than hard, grass lower; configFor leaves CONFIG alone', () => {
+  const peak = s => dropBall(2, E.configFor({ surface: s }));
+  assert.ok(peak('clay') > peak('hard') && peak('hard') > peak('grass'));
+  assert.equal(E.configFor({ surface: 'nope' }).surface, 'hard');
+  assert.equal(C.restitution, C.surfaces.hard.restitution);
+});
+
+test('tour: every opponent builds a CPU level and can finish a match against a CPU', () => {
+  assert.ok(C.tour.length >= 5);
+  for (const row of C.tour) {
+    assert.ok(C.cpu[row.base] && C.surfaces[row.surface] && C.match.formats[row.format], row.id);
+    const cfg = E.configFor({ surface: row.surface, tour: row.id });
+    assert.equal(cfg.cpu.tour.label, row.name);
+    assert.equal(C.cpu.tour, undefined, 'CONFIG.cpu is not changed');
+  }
+  const row = C.tour[0], cfg = E.configFor({ surface: row.surface, tour: row });
+  const m = E.createMatch({ seed: 4, near: 'medium', far: 'tour', format: 'quick', names: ['YOU', row.name] }, cfg);
+  for (let i = 0; i < 120 * 60 * 30 && m.phase !== 'over'; i++) E.matchStep(m, {});
+  assert.equal(m.phase, 'over');
+  assert.ok(m.banner.title.includes('WIN'));
+});
+
+test('a swiped serve: touch down tosses, a flick at the top serves with the swipe\'s aim', () => {
+  const m = E.createMatch({ seed: 2, far: 'none', serveDrill: true });
+  let served = null;
+  for (let i = 0; i < 120 * 6 && !served; i++) {
+    const S = m.serve;
+    if (m.phase === 'serve' && S.state === 'wait') E.matchSwing(m, 'top', m.t);
+    else if (m.phase === 'serve' && S.state === 'toss' && !S.tap && m.t >= S.tossT0 + S.peakT) E.matchSwing(m, 'flat', m.t, { touch: true, aim: { x: 1, y: 0 }, curve: 150 });
+    for (const e of E.matchStep(m, {})) if (e.type === 'serve') served = e;
+  }
+  assert.ok(served && served.perfect, 'served, on time');
+  assert.equal(served.label, 'CURVE SERVE');
+  const box = E.serviceBox('near', 'deuce');
+  assert.ok(served.target.X > (box.minX + box.maxX) / 2, 'aimed at the right of the box');
+});
