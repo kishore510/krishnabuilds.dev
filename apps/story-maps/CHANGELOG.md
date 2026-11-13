@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.45.0
+
+- New subject on the Humankind shelf: Lives, for people followed from place to place. Marie Curie moves there from Physics and Astronomy; her address is unchanged. Science subjects now hold discoveries and ideas, not biographies.
+- New story map in Physics and Astronomy: Radioactivity. From Röntgen’s X-rays at Würzburg and Becquerel’s fogged plate, through the Curies, Rutherford’s rays, changing atoms and nucleus, the neutron, the Joliot-Curies and Fermi’s slow neutrons, to Hahn and Strassmann’s barium, Meitner and Frisch’s walk in the snow and what followed. 14 chapters and 4 people cards.
+- Catalogue: a new kind, `discovery` (one year, no lane). Radioactivity (1896) opens the story and Nuclear fission (1938) opens it at chapter 11.
+
 ## 0.44.0
 
 - New story map in Universe, the first on the Nature shelf: The Big Bang. From the first instant, inflation, the first particles and nuclei and the first light, through the Dark Ages, the first stars and galaxies, the Milky Way, cosmic noon and the expansion speeding up, to the Sun, the Earth and Moon, the universe today and how the story was found. 15 chapters and 3 people cards. Each card ends with how we know.

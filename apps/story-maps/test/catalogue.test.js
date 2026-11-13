@@ -30,6 +30,7 @@ describe("catalogue.json", () => {
         { ...base, id: "x-life", name: "No dates", kind: "person" },
         { ...base, id: "x-deep", name: "Dated", kind: "deep-time", from: -9000 },
         { ...base, id: "x-when", name: "Stray when", kind: "person", from: 1800, to: 1850, when: "long ago" },
+        { ...base, id: "x-found", name: "Spanned", kind: "discovery", from: 1800, to: 1850, lane: "west" },
       ),
       stories,
     ).join("\n");
@@ -37,6 +38,9 @@ describe("catalogue.json", () => {
     expect(problems).toContain("entry x-deep: deep time has no years or lane");
     expect(problems).toContain("entry x-deep: deep time needs when");
     expect(problems).toContain("entry x-when: only deep time takes when");
+    expect(problems).toContain("entry x-found: a discovery has one year");
+    expect(problems).toContain("entry x-found: a discovery has no lane");
+    expect(X.rangeText(byId("radioactivity"))).toBe("1896 CE");
     expect(X.rangeText(byId("big-bang"))).toBe("13.8 billion years ago");
     expect(X.lives(byId("british-empire"), catalogue.entries).map((e) => e.id)).toContain("marie-curie");
     expect(X.lives(byId("maurya"), catalogue.entries)).toEqual([]);

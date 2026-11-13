@@ -28,7 +28,7 @@
   var ON_TIMELINE = REGIONS.filter(function (r) {
     return r.lanes.length;
   });
-  var KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route", person: "Person", "deep-time": "Deep time" };
+  var KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route", person: "Person", "deep-time": "Deep time", discovery: "Discovery" };
   var built = function (e) {
     return Boolean(e.story && STORIES[e.story] && STORIES[e.story].built);
   };
@@ -406,7 +406,7 @@
     var plain = b.region === "all" && b.kind === "all" && !b.maps && !q;
     var recent = explored.slice(0, 8).map(function (id) { return BY[id]; });
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
-    var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"], ["person", "People"], ["deep-time", "Deep time"]];
+    var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"], ["person", "People"], ["discovery", "Discoveries"], ["deep-time", "Deep time"]];
 
     $("sm-browse-body").innerHTML =
       chipRow("Region", "data-br", regionOpts, b.region) +

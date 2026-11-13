@@ -1,0 +1,592 @@
+{
+ "id": "radioactivity",
+ "title": "Radioactivity",
+ "description": "An illustrated map of the discovery of radioactivity, from Röntgen’s X-rays in 1895 and Becquerel’s fogged plate, through the Curies, Rutherford’s nucleus, the neutron and Fermi’s experiments, to the splitting of the uranium atom in 1938 and what followed.",
+ "canvas": "geo",
+ "basemap": "europe",
+ "source": "History",
+ "nativeLang": "de",
+ "routes": "chapter",
+ "mapLabel": "Illustrated map of Europe following the discovery of radioactivity from laboratory to laboratory, 1895 to 1939",
+ "note": "Based on the discoverers’ own papers and Nobel lectures and on standard histories of nuclear physics. Dotted lines show news of a result travelling, not a person. The map draws today’s coasts, not the borders of the time, and is stylised and not to scale.",
+ "places": {
+  "wurzburg": {
+   "name": "Würzburg",
+   "at": [
+    9.93,
+    49.79
+   ],
+   "glyph": "light-waves",
+   "label": "right"
+  },
+  "paris": {
+   "name": "Paris",
+   "at": [
+    2.35,
+    48.86
+   ],
+   "glyph": "dome",
+   "label": "left"
+  },
+  "cambridge": {
+   "name": "Cambridge",
+   "at": [
+    0.12,
+    52.2
+   ],
+   "glyph": "atom",
+   "label": "right"
+  },
+  "jachymov": {
+   "name": "St Joachimsthal",
+   "at": [
+    12.93,
+    50.37
+   ],
+   "glyph": "mine",
+   "label": "top"
+  },
+  "manchester": {
+   "name": "Manchester",
+   "at": [
+    -2.24,
+    53.48
+   ],
+   "glyph": "particles",
+   "label": "left"
+  },
+  "rome": {
+   "name": "Rome",
+   "at": [
+    12.5,
+    41.9
+   ],
+   "glyph": "greek-temple",
+   "label": "right"
+  },
+  "berlin": {
+   "name": "Berlin",
+   "at": [
+    13.4,
+    52.52
+   ],
+   "glyph": "burst",
+   "label": "right"
+  },
+  "kungalv": {
+   "name": "Kungälv",
+   "at": [
+    11.97,
+    57.87
+   ],
+   "glyph": "village",
+   "label": "right"
+  },
+  "copenhagen": {
+   "name": "Copenhagen",
+   "at": [
+    12.57,
+    55.68
+   ],
+   "glyph": "anchor",
+   "label": "right"
+  },
+  "atlantic": {
+   "name": "To North America",
+   "at": [
+    -10.6,
+    50.5
+   ],
+   "hidden": true
+  }
+ },
+ "travellers": {
+  "news": {
+   "name": "News of a discovery",
+   "icon": "scroll"
+  },
+  "letter": {
+   "name": "Hahn’s letter",
+   "icon": "scroll"
+  },
+  "liner": {
+   "name": "Rutherford sails for Montreal",
+   "icon": "liner"
+  },
+  "ore": {
+   "name": "Pitchblende ore",
+   "icon": "ox-cart"
+  },
+  "train": {
+   "name": "By train",
+   "icon": "train"
+  }
+ },
+ "phases": {
+  "rays": {
+   "name": "New rays",
+   "color": "#4fc3b0"
+  },
+  "atom": {
+   "name": "Inside the atom",
+   "color": "#8fcf8a"
+  },
+  "nucleus": {
+   "name": "Reaching the nucleus",
+   "color": "#f2c14e"
+  },
+  "fission": {
+   "name": "Fission",
+   "color": "#e0573a"
+  },
+  "legacy": {
+   "name": "What it left",
+   "color": "#2b7fb4"
+  }
+ },
+ "routeStyles": {
+  "news": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "2 6",
+   "cap": "round"
+  },
+  "letter": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "2 6",
+   "cap": "round"
+  },
+  "sea": {
+   "color": "#2b7fb4",
+   "width": 3.2,
+   "dash": "9 5",
+   "cap": "butt"
+  },
+  "ore": {
+   "color": "#8a5a2b",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "rail": {
+   "color": "#3a3a44",
+   "width": 3.2,
+   "dash": "2 5",
+   "cap": "butt"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 27.9,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 50,
+    "color": "rgba(143,207,138,.35)"
+   },
+   {
+    "until": 72.2,
+    "color": "rgba(242,193,78,.35)"
+   },
+   {
+    "until": 94.3,
+    "color": "rgba(224,87,58,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(43,127,180,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2,
+    "text": "1895"
+   },
+   {
+    "at": 16.8,
+    "text": "1898"
+   },
+   {
+    "at": 46.3,
+    "text": "1911"
+   },
+   {
+    "at": 61.1,
+    "text": "1934"
+   },
+   {
+    "at": 75.8,
+    "text": "1938"
+   },
+   {
+    "at": 98,
+    "text": "Today"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "wurzburg",
+   "phase": "rays",
+   "title": "A glow in a dark room",
+   "when": "8 November 1895",
+   "camera": {
+    "at": [
+     9.93,
+     49.79
+    ],
+    "width": 9
+   },
+   "legs": [],
+   "text": "On 8 November 1895 Wilhelm Röntgen, working with a covered glass tube in a darkened laboratory at Würzburg, sees a coated screen across the room glow. Unknown rays are passing through the cover. He calls them X-rays, and within weeks sends out a photograph of the bones of his wife’s hand. Physicists everywhere start hunting for new rays.",
+   "today": "Today: Würzburg, Bavaria, Germany. His laboratory is a small museum.",
+   "at": 2
+  },
+  {
+   "place": "paris",
+   "phase": "rays",
+   "title": "Becquerel’s drawer",
+   "when": "1 March 1896",
+   "camera": {
+    "at": [
+     6.14,
+     49.325
+    ],
+    "width": 12
+   },
+   "legs": [
+    {
+     "from": "wurzburg",
+     "to": "paris",
+     "traveller": "news",
+     "style": "news",
+     "bend": 0.1
+    }
+   ],
+   "text": "Henri Becquerel wonders whether minerals that glow after sunlight also give off X-rays. He lays uranium salts on a wrapped photographic plate. Paris is overcast for days, so he puts them away in a drawer, and on 1 March 1896 develops the plate anyway. It is strongly fogged. Uranium is radiating by itself, with no light at all.",
+   "today": "Today: the Muséum national d’Histoire naturelle, Paris, where he worked.",
+   "at": 9.4
+  },
+  {
+   "place": "paris",
+   "phase": "rays",
+   "title": "A name and two elements",
+   "when": "1898",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "Marie Curie measures the rays and finds that thorium gives them too. Their strength depends only on how much of the element is present, so they must come from inside the atom. She names this radioactivity. In 1898, sifting uranium ore with her husband Pierre, she finds two new elements, polonium and radium.",
+   "today": "Today: her story is told in the story map Marie Curie.",
+   "at": 16.8
+  },
+  {
+   "place": "cambridge",
+   "phase": "rays",
+   "title": "Alpha, beta and gamma",
+   "when": "1898 to 1900",
+   "camera": {
+    "at": [
+     1.235,
+     50.53
+    ],
+    "width": 9
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "cambridge",
+     "traveller": "news",
+     "style": "news",
+     "bend": 0.1
+    }
+   ],
+   "text": "At the Cavendish Laboratory in Cambridge, the New Zealander Ernest Rutherford finds that uranium gives off at least two kinds of ray. One is stopped by a sheet of paper; he calls it alpha. The other passes through thin metal; he calls it beta. In 1900 Paul Villard in Paris finds a third, more penetrating still: gamma.",
+   "today": "Today: the old Cavendish Laboratory stands in Free School Lane, Cambridge.",
+   "at": 24.2
+  },
+  {
+   "place": "cambridge",
+   "phase": "atom",
+   "title": "Atoms that change",
+   "when": "1902",
+   "camera": {
+    "at": [
+     -5,
+     51.4
+    ],
+    "width": 14
+   },
+   "legs": [
+    {
+     "from": "cambridge",
+     "to": "atlantic",
+     "traveller": "liner",
+     "style": "sea",
+     "bend": -0.08
+    }
+   ],
+   "text": "Rutherford moves to McGill University in Montreal. There, with the chemist Frederick Soddy, he shows in 1902 that a radioactive atom turns into an atom of a different element as it gives off its ray, something chemists had held impossible. Each kind decays at its own fixed rate; the time for half to go is its half-life.",
+   "today": "Today: McGill University, Montreal, Canada, keeps his apparatus in the Rutherford Museum.",
+   "at": 31.5
+  },
+  {
+   "place": "jachymov",
+   "phase": "atom",
+   "title": "The price of radium",
+   "when": "1900s to 1920s",
+   "camera": {
+    "at": [
+     7.64,
+     49.614999999999995
+    ],
+    "width": 15
+   },
+   "legs": [
+    {
+     "from": "jachymov",
+     "to": "paris",
+     "traveller": "ore",
+     "style": "ore",
+     "bend": -0.1
+    }
+   ],
+   "text": "Radium glows in the dark and seems to cure tumours, and a craze follows: radium water, radium creams, luminous watch dials. The ore comes from mines such as St Joachimsthal. In the 1920s American dial painters, who pointed their brushes with their lips, begin to die of bone disease. Their court cases bring the first safety limits.",
+   "today": "Today: Jáchymov, Czech Republic.",
+   "at": 38.9
+  },
+  {
+   "place": "manchester",
+   "phase": "atom",
+   "title": "The nucleus",
+   "when": "1909 to 1911",
+   "camera": {
+    "at": [
+     -2.24,
+     53.48
+    ],
+    "width": 9
+   },
+   "legs": [],
+   "text": "In Manchester, Rutherford’s assistants Hans Geiger and Ernest Marsden fire alpha particles at thin gold foil. Most pass straight through, but about one in 8,000 bounces back. Rutherford said it was like firing a shell at tissue paper and having it return. In 1911 he concludes that an atom is mostly empty, with a tiny, heavy nucleus.",
+   "today": "Today: the Rutherford Building, University of Manchester.",
+   "at": 46.3
+  },
+  {
+   "place": "cambridge",
+   "phase": "nucleus",
+   "title": "The neutron",
+   "when": "1932",
+   "camera": {
+    "at": [
+     -1.06,
+     52.84
+    ],
+    "width": 8
+   },
+   "legs": [
+    {
+     "from": "manchester",
+     "to": "cambridge",
+     "traveller": "train",
+     "style": "rail",
+     "bend": 0.1
+    }
+   ],
+   "text": "Rutherford now directs the Cavendish. In 1932 his colleague James Chadwick finds the neutron, a particle about as heavy as a proton but with no electric charge. Because the nucleus does not repel it, a neutron can slip inside. That same year, also at the Cavendish, John Cockcroft and Ernest Walton split lithium nuclei with a machine.",
+   "today": "Today: Cambridge, England.",
+   "at": 53.7
+  },
+  {
+   "place": "paris",
+   "phase": "nucleus",
+   "title": "Radioactivity made to order",
+   "when": "January 1934",
+   "camera": {
+    "at": [
+     2.35,
+     48.86
+    ],
+    "width": 7
+   },
+   "legs": [],
+   "text": "In January 1934 Irène Joliot-Curie, Marie’s daughter, and her husband Frédéric bombard aluminium with alpha particles and find it keeps radiating after they stop. They have made a radioactive form of phosphorus that does not exist in nature. Marie Curie lives just long enough to see it. Such made isotopes are now used daily in hospitals.",
+   "today": "Today: the Institut Curie, Paris.",
+   "at": 61.1
+  },
+  {
+   "place": "rome",
+   "phase": "nucleus",
+   "title": "Fermi’s slow neutrons",
+   "when": "October 1934",
+   "camera": {
+    "at": [
+     7.425,
+     45.379999999999995
+    ],
+    "width": 16
+   },
+   "legs": [
+    {
+     "from": "paris",
+     "to": "rome",
+     "traveller": "news",
+     "style": "news",
+     "bend": -0.1
+    }
+   ],
+   "text": "In Rome, Enrico Fermi’s team fires neutrons at every element they can get. In October 1934 they find that neutrons slowed by passing through paraffin wax or water work far better. Bombarding uranium, they get puzzling new activities and think they have made heavier elements. The chemist Ida Noddack suggests the nucleus might have broken up; nobody follows it up.",
+   "today": "Today: the old physics institute in Via Panisperna, Rome, is the Enrico Fermi museum.",
+   "at": 68.5
+  },
+  {
+   "place": "berlin",
+   "phase": "fission",
+   "title": "The uranium nucleus splits",
+   "when": "December 1938",
+   "camera": {
+    "at": [
+     12.95,
+     47.21
+    ],
+    "width": 26
+   },
+   "legs": [
+    {
+     "from": "rome",
+     "to": "berlin",
+     "traveller": "news",
+     "style": "news",
+     "bend": 0.08
+    }
+   ],
+   "text": "In Berlin, Otto Hahn and Fritz Strassmann test Fermi’s uranium products and, in December 1938, find barium, an element not much more than half as heavy. Hahn cannot explain it. He writes to Lise Meitner, his partner of thirty years, who that summer had fled Germany because she was of Jewish descent.",
+   "today": "Today: the building, in Berlin-Dahlem, is named the Hahn-Meitner Building.",
+   "at": 75.8
+  },
+  {
+   "place": "kungalv",
+   "phase": "fission",
+   "title": "A walk in the snow",
+   "when": "Christmas 1938",
+   "camera": {
+    "at": [
+     12.685,
+     55.195
+    ],
+    "width": 11
+   },
+   "legs": [
+    {
+     "from": "berlin",
+     "to": "kungalv",
+     "traveller": "letter",
+     "style": "letter",
+     "bend": -0.1
+    }
+   ],
+   "text": "Meitner is spending Christmas at Kungälv in Sweden with her nephew, the physicist Otto Frisch. Walking in the snow, they work out that the uranium nucleus has split in two like a drop of liquid, releasing enormous energy, as Einstein’s E = mc² predicts. Frisch names it fission. Hahn alone receives the Nobel Prize, a decision still criticised.",
+   "today": "Today: Kungälv, near Gothenburg, Sweden.",
+   "at": 83.2
+  },
+  {
+   "place": "copenhagen",
+   "phase": "fission",
+   "title": "The news crosses the Atlantic",
+   "when": "1939 to 1945",
+   "camera": {
+    "at": [
+     12.27,
+     56.775
+    ],
+    "width": 9
+   },
+   "legs": [
+    {
+     "from": "kungalv",
+     "to": "copenhagen",
+     "traveller": "train",
+     "style": "rail",
+     "bend": 0.1
+    }
+   ],
+   "text": "Frisch tells Niels Bohr in Copenhagen days before Bohr sails for America, where the news spreads at once. Each fission frees neutrons that can split more nuclei: a chain reaction. Fermi, by then in Chicago, runs the first reactor on 2 December 1942. In August 1945 atomic bombs destroy Hiroshima and Nagasaki, killing well over 100,000 people; estimates vary.",
+   "today": "Today: the Niels Bohr Institute, Copenhagen, Denmark.",
+   "at": 90.6
+  },
+  {
+   "place": "paris",
+   "phase": "legacy",
+   "title": "What radioactivity gave us",
+   "when": "Today",
+   "source": "Science",
+   "camera": {
+    "at": [
+     8,
+     50.5
+    ],
+    "width": 30
+   },
+   "legs": [],
+   "text": "Radioactivity is now an everyday tool. Doctors use it to find and treat cancer. Carbon-14, measured by a method Willard Libby devised in 1949, dates wood, bone and cloth up to about 50,000 years old, and other isotopes date the rocks of the Earth itself. Nuclear reactors supply about a tenth of the world’s electricity.",
+   "today": "Today: the unit of radioactivity, one decay a second, is the becquerel.",
+   "at": 98
+  }
+ ],
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "rontgen",
+    "name": "Wilhelm Röntgen",
+    "life": "1845 to 1923",
+    "role": "German physicist; discoverer of X-rays",
+    "steps": [
+     0
+    ],
+    "text": "He told almost no one for seven weeks while he tested the rays alone, then published a ten-page paper that was reprinted around the world within a month. He received the first Nobel Prize in Physics, in 1901, gave the money to his university and refused to patent the discovery."
+   },
+   {
+    "id": "rutherford",
+    "name": "Ernest Rutherford",
+    "life": "1871 to 1937",
+    "role": "New Zealand-born physicist",
+    "steps": [
+     3,
+     4,
+     6,
+     7
+    ],
+    "text": "A farmer’s son from near Nelson, New Zealand, he came to Cambridge on a scholarship in 1895. He named alpha and beta rays, showed with Soddy that atoms change, found the nucleus and, in 1917, changed nitrogen into oxygen. His Nobel Prize, in 1908, was for chemistry, which amused him. Eleven of his students and colleagues won Nobel Prizes."
+   },
+   {
+    "id": "meitner",
+    "name": "Lise Meitner",
+    "life": "1878 to 1968",
+    "role": "Austrian-born physicist",
+    "steps": [
+     10,
+     11
+    ],
+    "text": "The second woman to gain a physics doctorate at Vienna, she worked with Otto Hahn in Berlin from 1907, at first unpaid and in a basement, since women were kept out of the laboratories. She led the physics of the work that ended in fission, and refused to work on the bomb. Element 109 is named meitnerium."
+   },
+   {
+    "id": "fermi",
+    "name": "Enrico Fermi",
+    "life": "1901 to 1954",
+    "role": "Italian physicist",
+    "steps": [
+     9,
+     12
+    ],
+    "text": "Equally gifted in theory and experiment, he won the 1938 Nobel Prize for his neutron work and went straight from the ceremony in Stockholm to the United States; his wife Laura was Jewish and Italy had just passed race laws. In Chicago he built the first nuclear reactor. Element 100 is named fermium."
+   }
+  ]
+ }
+}

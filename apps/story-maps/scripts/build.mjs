@@ -210,7 +210,7 @@ const regionById = new Map(catalogue.regions.map((r) => [r.id, r]));
 const laneTitle = new Map(catalogue.regions.flatMap((r) => r.lanes.map((l) => [l.id, l.title])));
 /** @param {string} regionId */
 const hueOf = (regionId) => `--hue:var(--sm-hue-${regionById.get(regionId)?.hue})`;
-const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route", person: "Person", "deep-time": "Deep time" };
+const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route", person: "Person", "deep-time": "Deep time", discovery: "Discovery" };
 
 const builtStories = manifest.stories.filter((s) => s.status === "built");
 

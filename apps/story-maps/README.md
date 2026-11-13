@@ -7,7 +7,8 @@ The front page has three shelves, Nature, Humankind and Science, each holding su
 - **Legends**: epics and sacred stories, placed where tradition puts them.
 - **Chronicles**: civilisations, empires and the routes that joined them, ancient and modern.
 - **Universe**: the sky and everything in it (the first subject on the Nature shelf; Earth and Life to come).
-- **Physics and Astronomy**: the first subject on the Science shelf.
+- **Lives**: people followed from place to place, on the Humankind shelf.
+- **Physics and Astronomy**: the first subject on the Science shelf; discoveries and ideas, not biographies.
 
 Every story is listed in `manifest.json` and has a folder under `stories/`. The hub's Timeline and Browse, and an entry page for every civilisation, dynasty, event, legend and route, come from `catalogue.json`. A small Node build (`scripts/build.mjs`) turns them into one self-contained HTML page per story and entry, plus the front page and Explore (`/explore/`). No framework, no backend. Deployed as a Cloudflare Worker serving static assets, from `.github/workflows/deploy-story-maps.yml` on pushes to `main`.
 

@@ -372,3 +372,7 @@ A subject appears on the front page once it has a story; until then it is named 
 The atlas, timeline and Browse move from `/` to `/explore/`. They stay one catalogue for now. Splitting `catalogue.json` per subject, a “landmark” flag and a timeline scale for deep time are deferred until a second subject has enough entries to need them. The first cross-subject link is built: an entry page lists the people whose lives overlap it (“At work in these years”).
 
 The engine's `cosmic` canvas is a sky basemap in plain units, used first as a diagram of time for The Big Bang. `earth-deep` is still to build.
+
+## 2026-11-13 — Story Maps: people go in Lives, discoveries in Science
+
+A life is told in **Lives**, a subject on the Humankind shelf; the discovery or idea is told in its own subject. Marie Curie is in Lives and Radioactivity is in Physics and Astronomy; Einstein, Darwin, Socrates and Ashoka will be Lives too. This ends the question of which science a person belongs to, and makes a Science story follow the idea from one person and place to the next. Philosophy stays as a subject for schools of thought. The catalogue gains the kind `discovery` beside `person`.

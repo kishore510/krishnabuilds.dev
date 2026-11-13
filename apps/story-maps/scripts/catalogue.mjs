@@ -22,7 +22,8 @@ import { APP_DIR } from "./manifest.mjs";
 
 // person: one life, from birth to death (Marie Curie). deep-time: something far
 // older than the timeline's years (the Big Bang), with `when` in words instead.
-export const KINDS = ["civilisation", "dynasty", "event", "legend", "route", "person", "deep-time"];
+// discovery: a finding in one year (radioactivity, 1896); like an event, but with no lane.
+export const KINDS = ["civilisation", "dynasty", "event", "legend", "route", "person", "deep-time", "discovery"];
 export const SOURCES = ["History", "Archaeology", "Tradition", "Science"];
 // Region colours; each has light and dark values in src/theme.css (--sm-hue-<name>).
 export const HUES = ["saffron", "lapis", "jade", "ochre", "plum", "rose"];
@@ -111,10 +112,11 @@ export function validateCatalogue(catalogue, stories) {
     if (isSpan || e.kind === "event") {
       if (e.lane === undefined) problems.push(`${where}: a ${e.kind} needs a lane`);
     }
-    if (e.kind === "event") {
-      if (!hasFrom) problems.push(`${where}: an event needs from`);
-      if (hasTo) problems.push(`${where}: an event has one year, from; leave out to`);
+    if (e.kind === "event" || e.kind === "discovery") {
+      if (!hasFrom) problems.push(`${where}: ${e.kind === "event" ? "an event" : "a discovery"} needs from`);
+      if (hasTo) problems.push(`${where}: ${e.kind === "event" ? "an event" : "a discovery"} has one year, from; leave out to`);
     }
+    if (e.kind === "discovery" && e.lane !== undefined) problems.push(`${where}: a discovery has no lane`);
     if (e.kind === "legend") {
       if (hasFrom || hasTo || e.lane !== undefined) problems.push(`${where}: legends have no dates or lane`);
       if (e.source !== "Tradition") problems.push(`${where}: legends are tagged Tradition`);

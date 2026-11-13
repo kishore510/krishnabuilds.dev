@@ -1,3 +1,3 @@
 # Physics and Astronomy
 
-Matter, energy, light and the heavens, and the people who worked them out. On the Science shelf. Lives and discoveries are recorded history, so cards are tagged **History**. A scientist whose work spans two subjects, as Marie Curie's does physics and chemistry, sits in the one her main discovery belongs to.
+Matter, energy, light and the heavens, and how each was worked out. On the Science shelf. A story here follows a discovery or an idea from place to place and from one person to the next, not one person's life: lives are in `stories/lives/`. How a discovery was made is recorded history, so cards are tagged **History**; a card on what the science itself shows may be tagged **Science**.
