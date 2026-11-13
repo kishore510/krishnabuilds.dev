@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.43.0
+
+- New front page with three shelves: Nature (what happened), Humankind (what people did) and Science (how we found out). Each shelf lists its subjects with their story maps, newest first, and names the subjects still to come. Chronicles and Legends sit on Humankind.
+- The atlas, the timeline and Browse move to their own page, Explore (`/explore/`). Story and entry addresses are unchanged.
+- `manifest.json` gains `shelves`, and every section names its shelf. The empty Deep Time section is replaced by Universe, Earth and Life on the Nature shelf.
+- Catalogue: two new kinds, `person` (one life, with birth and death years) and `deep-time` (older than the timeline, with `when` in words), and a fourth source tag, Science. Entry pages gain “At work in these years”: the people whose lives overlap the entry.
+- Engine: the `cosmic` canvas is built. It draws a sky basemap (`kind: "sky"`): a dark ground with painted shapes, glows and stars, in plain units instead of longitude and latitude. A basemap far from the equator can set `projection.stretch` so its lands keep their shape. Stories can tag cards Science.
+
 ## 0.42.0
 
 - New story map in Chronicles: Harsha’s Empire. From the Pushyabhutis of Thanesar, Rajyashri’s marriage to the Maukhari Grahavarman and the death of Prabhakaravardhana, through the murder at Kannauj, Rajyavardhana’s fall, Harsha’s accession, the Kamarupa alliance and the rescue in the Vindhya forest, to the move to Kannauj, the war with Valabhi, the stand on the Narmada against Pulakeshin II, Shashanka of Gauda and the Banskhera copper plate, Xuanzang at Nalanda, Kajangala, the assemblies of Kannauj and Prayag, Harsha’s plays, the Tang envoys, the usurper Aluonashun and the fight over Kannauj afterwards. 21 chapters, a Powers layer (the Pushyabhutis, Maukharis, Gauda, Kamarupa, the Chalukyas of Vatapi and the Maitrakas of Valabhi) and 10 people cards.

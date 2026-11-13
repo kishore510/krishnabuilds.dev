@@ -1,19 +1,87 @@
 {
+  "shelves": [
+    {
+      "id": "nature",
+      "title": "Nature",
+      "blurb": "What happened: the universe, the Earth and life, long before anyone was there to see it."
+    },
+    {
+      "id": "humankind",
+      "title": "Humankind",
+      "blurb": "What people did: their civilisations and empires, and the stories they have told."
+    },
+    {
+      "id": "science",
+      "title": "Science",
+      "blurb": "How we found out: the people, places and discoveries behind what we know."
+    }
+  ],
   "sections": [
     {
-      "id": "legends",
-      "title": "Legends",
-      "blurb": "Epics and sacred stories, mapped to the places tradition gives them."
+      "id": "universe",
+      "shelf": "nature",
+      "title": "Universe",
+      "blurb": "The sky and everything in it, from the first moment to today."
+    },
+    {
+      "id": "earth",
+      "shelf": "nature",
+      "title": "Earth",
+      "blurb": "Continents, oceans and climate through geological time."
+    },
+    {
+      "id": "life",
+      "shelf": "nature",
+      "title": "Life",
+      "blurb": "Evolution, extinctions and the spread of our own species."
     },
     {
       "id": "chronicles",
+      "shelf": "humankind",
       "title": "Chronicles",
       "blurb": "Civilisations, empires and the routes that joined them, from archaeology and the historical record."
     },
     {
-      "id": "deep-time",
-      "title": "Deep Time",
-      "blurb": "The story of the Earth and the sky before people."
+      "id": "legends",
+      "shelf": "humankind",
+      "title": "Legends",
+      "blurb": "Epics and sacred stories, mapped to the places tradition gives them."
+    },
+    {
+      "id": "philosophy",
+      "shelf": "humankind",
+      "title": "Philosophy",
+      "blurb": "Thinkers and teachers, and how their ideas travelled."
+    },
+    {
+      "id": "mathematics",
+      "shelf": "science",
+      "title": "Mathematics",
+      "blurb": "Numbers, proof and the ideas that crossed from one culture to the next."
+    },
+    {
+      "id": "physics",
+      "shelf": "science",
+      "title": "Physics and Astronomy",
+      "blurb": "Matter, energy, light and the heavens, and the people who worked them out."
+    },
+    {
+      "id": "chemistry",
+      "shelf": "science",
+      "title": "Chemistry",
+      "blurb": "The elements and what they make."
+    },
+    {
+      "id": "biology",
+      "shelf": "science",
+      "title": "Biology and Medicine",
+      "blurb": "Living things, the body and the fight against disease."
+    },
+    {
+      "id": "invention",
+      "shelf": "science",
+      "title": "Invention",
+      "blurb": "Tools and machines that changed how people live."
     }
   ],
   "collections": [

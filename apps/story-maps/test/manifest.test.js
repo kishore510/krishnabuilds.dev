@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { APP_DIR, loadManifest, SECTIONS, STATUSES, validateManifest } from "../scripts/manifest.mjs";
+import { APP_DIR, loadManifest, SHELVES, STATUSES, validateManifest } from "../scripts/manifest.mjs";
 
 const manifest = loadManifest();
 
@@ -17,8 +17,10 @@ describe("manifest.json", () => {
   });
 
   it("uses only known sections and statuses", () => {
+    const sections = manifest.sections.map((s) => s.id);
+    for (const section of manifest.sections) expect(SHELVES).toContain(section.shelf);
     for (const story of manifest.stories) {
-      expect(SECTIONS).toContain(story.section);
+      expect(sections).toContain(story.section);
       expect(STATUSES).toContain(story.status);
     }
   });

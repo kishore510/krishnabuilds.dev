@@ -14,10 +14,15 @@
 
   const r1 = (n) => Math.round(n * 10) / 10;
 
-  /** Equirectangular projection: [lon, lat] -> [x, y] in map units. */
+  /**
+   * Equirectangular projection: [lon, lat] -> [x, y] in map units. A map far
+   * from the equator can set `stretch` (about 1 / cos of its middle latitude)
+   * to draw a degree of latitude taller, so its lands keep their shape.
+   */
   function projector(projection) {
     const { lon0, lat0, unitsPerDegree: k } = projection;
-    return ([lon, lat]) => [(lon - lon0) * k, (lat0 - lat) * k];
+    const ky = k * (projection.stretch || 1);
+    return ([lon, lat]) => [(lon - lon0) * k, (lat0 - lat) * ky];
   }
 
   /** Radius of the dot an earlier chapter's place is drawn as, in map units. */
@@ -131,15 +136,56 @@
     });
   }
 
-  // --- the map ------------------------------------------------------------------
+  // --- the ground: land and sea, or the sky -----------------------------------
 
   /**
-   * @returns {{ svg: string, legs: object[], places: Record<string, number[]>, overview: object, size: number[] }}
+   * A sky basemap (`kind: "sky"`, the cosmic canvas) has no land or sea: a dark
+   * ground, painted `shapes`, glows (`washes`) and a few `stars`. Its
+   * coordinates are plain units across and up, not longitude and latitude; the
+   * story's data says what they stand for (in The Big Bang, left to right is time).
    */
-  function buildMap(story, basemap, art) {
+  function skyLayers(basemap, out) {
+    const P = projector(basemap.projection);
+    const [W, H] = basemap.size;
+    const sky = basemap.sky;
+    out.push(
+      `<defs><linearGradient id="sm-sky" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${sky.from}"/><stop offset=".5" stop-color="${sky.middle}"/><stop offset="1" stop-color="${sky.to}"/></linearGradient></defs>` +
+        `<rect x="${-W * 1.5}" y="${-H * 1.3}" width="${W * 4}" height="${H * 3.7}" fill="${sky.edge}"/>` +
+        `<rect x="${-W * 1.5}" y="${-H * 1.3}" width="${W * 4}" height="${H * 3.7}" fill="url(#sm-sky)" opacity=".9"/>`,
+    );
+    let shapes = "";
+    for (const shape of basemap.shapes || []) {
+      const d = smoothPath(shape.points.map(P), Boolean(shape.closed));
+      shapes += `<path d="${d}" fill="${shape.fill || "none"}" fill-opacity="${shape.opacity === undefined ? 1 : shape.opacity}"${
+        shape.stroke ? ` stroke="${shape.stroke}" stroke-width="${shape.width || 1.5}" stroke-linecap="round"${shape.dash ? ` stroke-dasharray="${shape.dash}"` : ""}` : ""
+      }/>`;
+    }
+    out.push(`<g>${shapes}</g>`);
+    // Glows: radial gradients, not blur.
+    let grads = "";
+    let glows = "";
+    (basemap.washes || []).forEach((w, n) => {
+      const [x, y] = P(w.at);
+      grads += `<radialGradient id="sm-wash${n}"><stop offset="0" stop-color="${w.color}" stop-opacity="${w.opacity}"/><stop offset=".5" stop-color="${w.color}" stop-opacity="${r1(w.opacity * 45) / 100}"/><stop offset="1" stop-color="${w.color}" stop-opacity="0"/></radialGradient>`;
+      glows += `<ellipse cx="${r1(x)}" cy="${r1(y)}" rx="${w.rx}" ry="${w.ry}" fill="url(#sm-wash${n})"${w.rotate ? ` transform="rotate(${w.rotate} ${r1(x)} ${r1(y)})"` : ""}/>`;
+    });
+    out.push(`<g><defs>${grads}</defs>${glows}</g>`);
+    let stars = "";
+    for (const field of basemap.stars || []) {
+      const rand = seeded(field.seed);
+      const [a, b] = [P([field.box[0], field.box[3]]), P([field.box[2], field.box[1]])];
+      for (let i = 0; i < field.count; i++) {
+        const x = a[0] + rand() * (b[0] - a[0]);
+        const y = a[1] + rand() * (b[1] - a[1]);
+        stars += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${r1(field.size[0] + rand() * field.size[1])}" fill="${field.color}" opacity="${r1(0.35 + rand() * 0.6)}"/>`;
+      }
+    }
+    out.push(`<g>${stars}</g>`);
+  }
+
+  function landLayers(basemap, art, out) {
     const P = projector(basemap.projection);
     const pts = (list) => list.map(P);
-    const out = [];
     const [W, H] = basemap.size;
 
     const lands = landPaths(basemap);
@@ -254,6 +300,21 @@
       }
       out.push(`<g>${s}</g>`);
     }
+
+  }
+
+  // --- the map ------------------------------------------------------------------
+
+  /**
+   * @returns {{ svg: string, legs: object[], places: Record<string, number[]>, overview: object, size: number[] }}
+   */
+  function buildMap(story, basemap, art) {
+    const P = projector(basemap.projection);
+    const pts = (list) => list.map(P);
+    const out = [];
+
+    if (basemap.kind === "sky") skyLayers(basemap, out);
+    else landLayers(basemap, art, out);
 
     // Realms (kingdoms, empires): painted loosely, shown only while active.
     // Each piece is shown only in its own steps (see realmPieces).
@@ -388,7 +449,8 @@
   // --- validation -----------------------------------------------------------------
 
   const CANVASES = ["geo", "earth-deep", "cosmic"];
-  const SOURCES = ["Tradition", "Archaeology", "History"];
+  // Science: what observation, measurement and experiment show (the age of the universe, a spectrum).
+  const SOURCES = ["Tradition", "Archaeology", "History", "Science"];
   const LABEL_SIDES = ["left", "right", "top", "bottom"];
 
   /** @returns {string[]} problems; empty when the data is usable. */
@@ -399,7 +461,9 @@
     };
     const isLonLat = (v) => Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === "number" && Number.isFinite(n));
     need(CANVASES.includes(story.canvas), `canvas must be one of ${CANVASES.join(", ")}`);
-    need(story.canvas === "geo", `only the geo canvas is built so far, not ${story.canvas}`);
+    need(story.canvas !== "earth-deep", "the earth-deep canvas is not built yet");
+    // The cosmic canvas draws on a sky basemap; geo on a map of land and sea.
+    need((story.canvas === "cosmic") === (basemap.kind === "sky"), `canvas ${story.canvas} cannot use basemap ${basemap.id}`);
     need(story.basemap === basemap.id, `basemap ${story.basemap} does not match ${basemap.id}`);
     need(SOURCES.includes(story.source), `source must be ${SOURCES.join(" or ")}`);
     if (story.routes !== undefined) need(["journey", "chapter"].includes(story.routes), "routes must be journey or chapter");

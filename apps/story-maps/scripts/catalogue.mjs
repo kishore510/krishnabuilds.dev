@@ -15,18 +15,20 @@ import { APP_DIR } from "./manifest.mjs";
  *   id: string, name: string, kind: string, source: string, region: string, lane?: string,
  *   from?: number, to?: number, approx?: boolean, story?: string, chapter?: number, after?: string[],
  *   native?: string, lang?: string, note?: string, added?: string, summary: string,
- *   at?: number[], radius?: number
+ *   at?: number[], radius?: number, when?: string
  * }} Entry
  * @typedef {{ regions: Region[], entries: Entry[] }} Catalogue
  */
 
-export const KINDS = ["civilisation", "dynasty", "event", "legend", "route"];
-export const SOURCES = ["History", "Archaeology", "Tradition"];
+// person: one life, from birth to death (Marie Curie). deep-time: something far
+// older than the timeline's years (the Big Bang), with `when` in words instead.
+export const KINDS = ["civilisation", "dynasty", "event", "legend", "route", "person", "deep-time"];
+export const SOURCES = ["History", "Archaeology", "Tradition", "Science"];
 // Region colours; each has light and dark values in src/theme.css (--sm-hue-<name>).
 export const HUES = ["saffron", "lapis", "jade", "ochre", "plum", "rose"];
 const FIELDS = new Set([
   "id", "name", "kind", "source", "region", "lane", "from", "to", "approx",
-  "story", "chapter", "after", "native", "lang", "note", "added", "summary", "at", "radius",
+  "story", "chapter", "after", "native", "lang", "note", "added", "summary", "at", "radius", "when",
 ]);
 const SLUG = /^[a-z][a-z0-9-]{0,39}$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -102,7 +104,7 @@ export function validateCatalogue(catalogue, stories) {
     if (hasFrom && !isYear(e.from)) problems.push(`${where}: from must be a whole year, not 0 (1 BCE is -1)`);
     if (hasTo && !isYear(e.to)) problems.push(`${where}: to must be a whole year, not 0 (1 BCE is -1)`);
     const isSpan = e.kind === "civilisation" || e.kind === "dynasty";
-    if (isSpan || e.kind === "route") {
+    if (isSpan || e.kind === "route" || e.kind === "person") {
       if (!hasFrom || !hasTo) problems.push(`${where}: a ${e.kind} needs from and to`);
       else if (/** @type {number} */ (e.to) < /** @type {number} */ (e.from)) problems.push(`${where}: to is before from`);
     }
@@ -116,6 +118,12 @@ export function validateCatalogue(catalogue, stories) {
     if (e.kind === "legend") {
       if (hasFrom || hasTo || e.lane !== undefined) problems.push(`${where}: legends have no dates or lane`);
       if (e.source !== "Tradition") problems.push(`${where}: legends are tagged Tradition`);
+    }
+    if (e.kind === "deep-time") {
+      if (hasFrom || hasTo || e.lane !== undefined) problems.push(`${where}: deep time has no years or lane; say when in words`);
+      if (!e.when?.trim()) problems.push(`${where}: deep time needs when, such as "13.8 billion years ago"`);
+    } else if (e.when !== undefined) {
+      problems.push(`${where}: only deep time takes when`);
     }
     // The atlas: a heartland as [lon, lat] and a rough reach in degrees. Never a border.
     if (isSpan && (e.at === undefined || e.radius === undefined)) problems.push(`${where}: a ${e.kind} needs at and radius for the atlas`);

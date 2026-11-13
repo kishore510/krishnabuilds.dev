@@ -1,5 +1,6 @@
-// The hub page in the browser: the story cards, the atlas (the world in one
-// year), the vertical timeline and Browse (filters, search, sort). Inlined after hub/explore.js by scripts/build.mjs; reads the
+// The Explore page (/explore/) in the browser: the atlas (the world in one
+// year), the vertical timeline and Browse (filters, search, sort). The story
+// cards are on the front page (hub/front.js). Inlined after hub/explore.js by scripts/build.mjs; reads the
 // catalogue from the JSON in #sm-catalogue. Entries link to /explore/<id>/.
 
 (function () {
@@ -27,7 +28,7 @@
   var ON_TIMELINE = REGIONS.filter(function (r) {
     return r.lanes.length;
   });
-  var KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route" };
+  var KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route", person: "Person", "deep-time": "Deep time" };
   var built = function (e) {
     return Boolean(e.story && STORIES[e.story] && STORIES[e.story].built);
   };
@@ -117,28 +118,6 @@
 
   // Nothing to count on a first visit, so say nothing.
   if (explored.length) $("sm-count").innerHTML = "<b>" + explored.length + "</b> of " + E.length + " explored";
-
-  // ---------- Story cards: pick up a story where the reader left it ----------
-
-  (function () {
-    var row = $("sm-story-row");
-    var progress = store.get("sm-progress", {}) || {};
-    var started = [];
-    Array.prototype.forEach.call(row.children, function (li) {
-      var a = li.firstElementChild;
-      var p = progress[a.dataset.story];
-      if (!p || !(p.i > 0) || !(p.n > 1)) return;
-      var done = p.i >= p.n - 1;
-      a.querySelector("[data-meta]").textContent = done ? "Read · " + p.n + " chapters" : "Continue · chapter " + (p.i + 1) + " of " + p.n;
-      a.style.setProperty("--read", Math.round(((p.i + 1) / p.n) * 100) + "%");
-      a.classList.add("sm-started");
-      if (!done) {
-        a.href = a.getAttribute("href") + "#" + (p.i + 1);
-        started.push({ li: li, t: p.t || 0 });
-      }
-    });
-    started.sort(function (x, y) { return x.t - y.t; }).forEach(function (x) { row.prepend(x.li); });
-  })();
 
   // ---------- Timeline ----------
 
@@ -427,7 +406,7 @@
     var plain = b.region === "all" && b.kind === "all" && !b.maps && !q;
     var recent = explored.slice(0, 8).map(function (id) { return BY[id]; });
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
-    var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"]];
+    var kindOpts = [["all", "Everything"], ["civilisation", "Civilisations"], ["dynasty", "Dynasties & empires"], ["legend", "Epics & legends"], ["event", "Events"], ["route", "Routes"], ["person", "People"], ["deep-time", "Deep time"]];
 
     $("sm-browse-body").innerHTML =
       chipRow("Region", "data-br", regionOpts, b.region) +

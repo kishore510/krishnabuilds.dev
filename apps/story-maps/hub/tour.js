@@ -72,15 +72,26 @@
 
   function hubSteps() {
     var atlas = $("sm-v-atlas");
+    var row = document.querySelector(".sm-story-row");
     return [
       {
         title: "Welcome to Story Maps",
-        text: "Illustrated maps that tell a story chapter by chapter, and an atlas and a timeline of who ruled where and when. Here is a quick look around.",
+        text: "Illustrated maps that tell a story chapter by chapter, on three shelves: Nature, Humankind and Science. Here is a quick look around.",
       },
       {
-        targets: [$("sm-story-row")],
+        targets: [document.querySelector(".sm-shelf")],
+        title: "Three shelves",
+        text: "Nature is what happened, Humankind is what people did, and Science is how we found out. Each shelf holds subjects, and each subject its story maps.",
+      },
+      {
+        targets: [row],
         title: "Start with a story",
-        text: "Each card is a story told on a map. Swipe sideways to see them all and tap one to open it. The first is a good place to begin.",
+        text: "Each card is a story told on a map. Swipe sideways to see them all and tap one to open it.",
+      },
+      {
+        targets: [document.querySelector(".sm-explore-link")],
+        title: "Explore through time",
+        text: "The atlas and the timeline show who ruled where and when, and Browse lists and searches everything by name.",
       },
       {
         targets: [document.querySelector(".sm-tabs")],
