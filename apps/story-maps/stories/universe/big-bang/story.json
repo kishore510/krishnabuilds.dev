@@ -1,0 +1,616 @@
+{
+ "id": "big-bang",
+ "title": "The Big Bang",
+ "description": "An illustrated map of the history of the universe, from the Big Bang 13.8 billion years ago through the first atoms, the first light, the first stars and galaxies, to the Sun, the Earth and today.",
+ "canvas": "cosmic",
+ "basemap": "cosmos",
+ "source": "Science",
+ "nativeLang": "en",
+ "mapLabel": "Illustrated diagram of the history of the universe, with time running from the Big Bang on the left to today on the right",
+ "note": "This map is a diagram of time, not of space: left is earlier and right is later, and the widening shape stands for the universe expanding. It is not to scale; the first second takes as much room as billions of years. Figures follow NASA, ESA and the Planck satellite’s results; each card says what is measured and what is still theory.",
+ "places": {
+  "bang": {
+   "name": "The Big Bang",
+   "at": [
+    10,
+    45
+   ],
+   "glyph": "burst",
+   "label": "bottom"
+  },
+  "inflation": {
+   "name": "Inflation",
+   "at": [
+    18,
+    52
+   ],
+   "glyph": "swell",
+   "label": "top"
+  },
+  "particles": {
+   "name": "First particles",
+   "at": [
+    25.5,
+    39
+   ],
+   "glyph": "particles",
+   "label": "bottom"
+  },
+  "nuclei": {
+   "name": "First nuclei",
+   "at": [
+    34,
+    50.5
+   ],
+   "glyph": "atom",
+   "label": "top"
+  },
+  "light": {
+   "name": "First light",
+   "at": [
+    46,
+    40
+   ],
+   "glyph": "light-waves",
+   "label": "bottom"
+  },
+  "dark": {
+   "name": "The Dark Ages",
+   "at": [
+    60,
+    50
+   ],
+   "glyph": "gas-cloud",
+   "label": "top"
+  },
+  "stars": {
+   "name": "First stars",
+   "at": [
+    74,
+    40
+   ],
+   "glyph": "star",
+   "label": "bottom"
+  },
+  "galaxies": {
+   "name": "First galaxies",
+   "at": [
+    88,
+    51
+   ],
+   "glyph": "galaxy",
+   "label": "top"
+  },
+  "milkyway": {
+   "name": "The Milky Way",
+   "at": [
+    102,
+    39
+   ],
+   "glyph": "galaxy",
+   "label": "bottom"
+  },
+  "noon": {
+   "name": "Cosmic noon",
+   "at": [
+    116,
+    51.5
+   ],
+   "glyph": "star",
+   "label": "top"
+  },
+  "speedup": {
+   "name": "Expansion speeds up",
+   "at": [
+    130,
+    39
+   ],
+   "glyph": "speed-up",
+   "label": "bottom"
+  },
+  "sun": {
+   "name": "The Sun",
+   "at": [
+    143,
+    52
+   ],
+   "glyph": "sun",
+   "label": "top"
+  },
+  "earth": {
+   "name": "Earth and Moon",
+   "at": [
+    154,
+    40
+   ],
+   "glyph": "earth-moon",
+   "label": "bottom"
+  },
+  "today": {
+   "name": "Today",
+   "at": [
+    167,
+    49
+   ],
+   "glyph": "telescope",
+   "label": "top"
+  }
+ },
+ "travellers": {
+  "light": {
+   "name": "Time passing",
+   "icon": "light"
+  }
+ },
+ "phases": {
+  "start": {
+   "name": "The first moments",
+   "color": "#ff8a3a"
+  },
+  "dark": {
+   "name": "Darkness, then stars",
+   "color": "#a678e0"
+  },
+  "galaxies": {
+   "name": "The age of galaxies",
+   "color": "#4fc3b0"
+  },
+  "home": {
+   "name": "Our corner of it",
+   "color": "#f2c14e"
+  }
+ },
+ "routeStyles": {
+  "time": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 32.8,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 53.5,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 74,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(242,193,78,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2,
+    "text": "Big Bang"
+   },
+   {
+    "at": 29.4,
+    "text": "380,000 yr"
+   },
+   {
+    "at": 50,
+    "text": "1 bn yr"
+   },
+   {
+    "at": 63.7,
+    "text": "4 bn"
+   },
+   {
+    "at": 77.4,
+    "text": "9 bn"
+   },
+   {
+    "at": 91.1,
+    "text": "Today"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "bang",
+   "phase": "start",
+   "title": "The Big Bang",
+   "when": "13.8 bn years ago",
+   "at": 2,
+   "camera": {
+    "at": [
+     10,
+     45
+    ],
+    "width": 26
+   },
+   "legs": [],
+   "text": "About 13.8 billion years ago everything we can observe was packed into a state hotter and denser than anything known. It was not an explosion into empty space: space itself began to expand, everywhere at once. Physics cannot yet describe the very first instant, so the story starts a tiny fraction of a second in.",
+   "today": "How we know: galaxies are moving apart, and running that expansion backwards leads to a hot, dense beginning."
+  },
+  {
+   "place": "inflation",
+   "phase": "start",
+   "title": "Inflation",
+   "when": "The first instant",
+   "at": 8.9,
+   "camera": {
+    "at": [
+     14,
+     48.5
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "bang",
+     "to": "inflation",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "Most cosmologists think that in its first fraction of a second the universe swelled enormously, far faster than at any time since. The idea, proposed by Alan Guth about 1980, explains why the sky looks so even in every direction. It fits the measurements well but has not been confirmed directly, and what caused it is unknown.",
+   "today": "How we know: we do not, yet. Inflation is a well-supported theory, not an observed fact."
+  },
+  {
+   "place": "particles",
+   "phase": "start",
+   "title": "The first particles",
+   "when": "First microsecond",
+   "at": 15.7,
+   "camera": {
+    "at": [
+     21.75,
+     45.5
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "inflation",
+     "to": "particles",
+     "traveller": "light",
+     "style": "time",
+     "bend": -0.14
+    }
+   ],
+   "text": "As space expanded it cooled. Within about a millionth of a second, quarks bound into protons and neutrons. Matter and antimatter destroyed each other in a flash of radiation, leaving a small surplus of matter, roughly one particle in a billion. Why matter won is still an open question. Everything solid today is that leftover.",
+   "today": "How we know: particle colliders recreate these temperatures for an instant and show how quarks behave."
+  },
+  {
+   "place": "nuclei",
+   "phase": "start",
+   "title": "The first nuclei",
+   "when": "First few minutes",
+   "at": 22.6,
+   "camera": {
+    "at": [
+     29.75,
+     44.75
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "particles",
+     "to": "nuclei",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "For a few minutes the whole universe was as hot as the core of a star. Protons and neutrons fused into the first nuclei: about three quarters hydrogen and one quarter helium by mass, with a trace of lithium. Then it cooled too far for fusion. Those proportions, measured in the oldest gas today, match the prediction.",
+   "today": "How we know: the hydrogen and helium in ancient gas clouds, measured from their light."
+  },
+  {
+   "place": "light",
+   "phase": "start",
+   "title": "First light",
+   "when": "380,000 years in",
+   "at": 29.4,
+   "camera": {
+    "at": [
+     40,
+     45.25
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "nuclei",
+     "to": "light",
+     "traveller": "light",
+     "style": "time",
+     "bend": -0.14
+    }
+   ],
+   "text": "For about 380,000 years the universe was a glowing fog: light could not travel far before hitting a loose electron. When it cooled to about 3,000 degrees, electrons joined nuclei to make the first atoms, and light ran free. That light still fills the sky, stretched into microwaves: the cosmic microwave background.",
+   "today": "How we know: the microwave background was found in 1964 and has been mapped by the COBE, WMAP and Planck satellites."
+  },
+  {
+   "place": "dark",
+   "phase": "dark",
+   "title": "The Dark Ages",
+   "when": "To 100 million years",
+   "at": 36.3,
+   "camera": {
+    "at": [
+     53,
+     45
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "light",
+     "to": "dark",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "With the fog cleared and no stars yet, the universe went dark. For over a hundred million years there was only hydrogen and helium gas, thinning as space grew. Gravity was at work, though: unseen dark matter gathered into clumps and threads and pulled the gas in after it. Radio telescopes are still searching for this era’s faint signal.",
+   "today": "How we know: mostly from computer models that start from the microwave background and must end with today’s galaxies."
+  },
+  {
+   "place": "stars",
+   "phase": "dark",
+   "title": "The first stars",
+   "when": "100–200 million years",
+   "at": 43.1,
+   "camera": {
+    "at": [
+     67,
+     45
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "dark",
+     "to": "stars",
+     "traveller": "light",
+     "style": "time",
+     "bend": -0.14
+    }
+   ],
+   "text": "Where gas grew dense enough, it collapsed and lit up as the first stars, perhaps 100 to 200 million years after the Big Bang. Models suggest many were giants, heavier than the Sun, that burned out within a few million years. Inside them, and in their explosions, the first carbon, oxygen and iron were made. None has yet been seen.",
+   "today": "How we know: models, and the very old stars nearby that carry traces of those first explosions."
+  },
+  {
+   "place": "galaxies",
+   "phase": "dark",
+   "title": "The first galaxies",
+   "when": "First billion years",
+   "at": 50,
+   "camera": {
+    "at": [
+     81,
+     45.5
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "stars",
+     "to": "galaxies",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "Stars gathered into small galaxies, which merged into larger ones. Their ultraviolet light stripped the electrons from the gas between them again, a change called reionisation, complete about a billion years in. The James Webb Space Telescope has photographed galaxies already shining less than 300 million years after the Big Bang, earlier and brighter than expected.",
+   "today": "How we know: light from the most distant galaxies has taken over 13 billion years to reach us, so we see them young."
+  },
+  {
+   "place": "milkyway",
+   "phase": "galaxies",
+   "title": "The Milky Way",
+   "when": "13 bn years ago",
+   "at": 56.9,
+   "camera": {
+    "at": [
+     95,
+     45
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "galaxies",
+     "to": "milkyway",
+     "traveller": "light",
+     "style": "time",
+     "bend": -0.14
+    }
+   ],
+   "text": "Our own galaxy began early. Its oldest stars are more than 13 billion years old, and it grew by swallowing smaller galaxies; the stars of one such merger, about 8 to 11 billion years ago, still orbit among us. Today it is a barred spiral of at least 100 billion stars, about 100,000 light years across.",
+   "today": "How we know: the Gaia satellite has measured the positions, motions and ages of over a billion of its stars."
+  },
+  {
+   "place": "noon",
+   "phase": "galaxies",
+   "title": "Cosmic noon",
+   "when": "10 bn years ago",
+   "at": 63.7,
+   "camera": {
+    "at": [
+     109,
+     45.25
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "milkyway",
+     "to": "noon",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "About ten billion years ago, galaxies were making stars roughly ten times faster than they do now. Astronomers call this peak cosmic noon. Giant black holes at the centres of galaxies were growing fastest then too, shining as quasars. Since then star-making has slowly fallen as galaxies use up or lose their cold gas.",
+   "today": "How we know: surveys that count the young stars in galaxies at every distance, and so at every age."
+  },
+  {
+   "place": "speedup",
+   "phase": "galaxies",
+   "title": "The expansion speeds up",
+   "when": "5–6 bn years ago",
+   "at": 70.6,
+   "camera": {
+    "at": [
+     123,
+     45.25
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "noon",
+     "to": "speedup",
+     "traveller": "light",
+     "style": "time",
+     "bend": -0.14
+    }
+   ],
+   "text": "Gravity had been slowing the expansion. Then, about five to six billion years ago, it began to speed up. Two teams found this in 1998 by measuring distant exploding stars, which were fainter than expected. The cause is called dark energy; it makes up about 68 percent of the universe, and nobody yet knows what it is.",
+   "today": "How we know: supernovae of a kind that always reach the same brightness, so their faintness gives their distance."
+  },
+  {
+   "place": "sun",
+   "phase": "home",
+   "title": "The Sun and its planets",
+   "when": "4.6 bn years ago",
+   "at": 77.4,
+   "camera": {
+    "at": [
+     136.5,
+     45.5
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "speedup",
+     "to": "sun",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "About 4.6 billion years ago, in an arm of the Milky Way, a cloud of gas and dust collapsed. Its centre became the Sun; the rest flattened into a spinning disc where dust built up into planets. That cloud held carbon, oxygen, silicon and iron made in earlier generations of stars. The oldest meteorite grains date it: 4.567 billion years.",
+   "today": "How we know: radioactive dating of meteorites, and discs like it seen around young stars today."
+  },
+  {
+   "place": "earth",
+   "phase": "home",
+   "title": "Earth and the Moon",
+   "when": "4.5 bn years ago",
+   "at": 84.3,
+   "camera": {
+    "at": [
+     148.5,
+     46
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "sun",
+     "to": "earth",
+     "traveller": "light",
+     "style": "time",
+     "bend": -0.14
+    }
+   ],
+   "text": "Earth formed within tens of millions of years of the Sun, about 4.54 billion years ago. The leading explanation for the Moon is that a body about the size of Mars struck the young Earth, and the debris gathered in orbit. The oldest known minerals, zircon crystals from Western Australia, are about 4.4 billion years old.",
+   "today": "How we know: the ages of meteorites, Moon rocks brought back by Apollo, and the oldest crystals on Earth."
+  },
+  {
+   "place": "today",
+   "phase": "home",
+   "title": "The universe today",
+   "when": "Today",
+   "at": 91.1,
+   "camera": {
+    "at": [
+     160.5,
+     44.5
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "today",
+     "traveller": "light",
+     "style": "time",
+     "bend": 0.14
+    }
+   ],
+   "text": "The universe is now about 13.8 billion years old and still expanding. The part we can see is about 93 billion light years across and holds hundreds of billions of galaxies, perhaps far more. Ordinary matter, everything made of atoms, is only about 5 percent of it; the rest is dark matter and dark energy.",
+   "today": "How we know: the Planck satellite’s map of the microwave background gives the age as 13.8 billion years, to within about 1 percent."
+  },
+  {
+   "place": "today",
+   "phase": "home",
+   "title": "How the story was found",
+   "when": "1927 to 1964",
+   "at": 98,
+   "camera": {
+    "at": [
+     167,
+     49
+    ],
+    "width": 30
+   },
+   "legs": [],
+   "text": "In 1927 Georges Lemaître, a Belgian priest and physicist, proposed that the universe is expanding; in 1929 Edwin Hubble’s measurements of galaxies showed it. In 1964 Arno Penzias and Robert Wilson, testing a radio antenna in New Jersey, found a faint hiss from every direction: the first light. Fred Hoyle, who doubted it, named it the Big Bang in 1949.",
+   "today": "Today: their antenna, at Holmdel in New Jersey, is a United States National Historic Landmark.",
+   "source": "History"
+  }
+ ],
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "lemaitre",
+    "name": "Georges Lemaître",
+    "life": "1894 to 1966",
+    "role": "Belgian priest and physicist",
+    "steps": [
+     0,
+     14
+    ],
+    "text": "A Catholic priest who studied Einstein’s equations at Cambridge and MIT, he showed in 1927 that they describe an expanding universe, and in 1931 proposed that it began from a single “primeval atom”. Einstein at first disliked the idea, then accepted it. Lemaître kept his science and his faith apart and objected when the Pope linked them."
+   },
+   {
+    "id": "hubble",
+    "name": "Edwin Hubble",
+    "life": "1889 to 1953",
+    "role": "American astronomer",
+    "steps": [
+     14
+    ],
+    "text": "At Mount Wilson in California he proved in 1924 that the Andromeda nebula is a galaxy far outside our own. In 1929, using distances built on Henrietta Leavitt’s work and speeds measured by Vesto Slipher, he showed that the farther a galaxy is, the faster it moves away."
+   },
+   {
+    "id": "penzias-wilson",
+    "name": "Arno Penzias and Robert Wilson",
+    "life": "1933 to 2024; born 1936",
+    "role": "American radio astronomers",
+    "steps": [
+     4,
+     14
+    ],
+    "text": "Working for Bell Laboratories, they could not get rid of a faint, steady noise in their horn antenna, even after clearing out nesting pigeons. A group at nearby Princeton was about to search for exactly that signal, the afterglow predicted by Ralph Alpher and Robert Herman in 1948. They shared the 1978 Nobel Prize in Physics."
+   }
+  ]
+ }
+}

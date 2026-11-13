@@ -1,0 +1,9 @@
+# Marie Curie
+
+Status: built. In Lives; the discovery itself is told in Radioactivity (Physics and Astronomy). The life of Marie Skłodowska-Curie, 1867 to 1934, in 19 chapters: Warsaw under Russian rule, the Flying University, the governess years at Szczuki, a first laboratory, the train to Paris and the Sorbonne, Pierre, the rays from uranium, polonium and radium, the ore from St Joachimsthal, the 1903 Nobel Prize in Physics, Pierre's death, the Solvay Conference and the Langevin scandal, the 1911 Nobel Prize in Chemistry, the radium taken to Bordeaux, X-ray cars at the front, the gram of radium from America, the Radium Institute in Warsaw, Sancellemoz and the Panthéon. 5 people cards.
+
+- `story.json`: the story data. It uses the `europe` basemap, added for this story. Routes show only for the current chapter. The voyage to America leaves the map by a hidden waypoint in the Atlantic.
+- Art added for this story: the `flask`, `medal`, `mine` and `field-hospital` glyphs (`flask` is not used yet) and the `scientist`, `train`, `motor-car` and `liner` traveller icons.
+- Source: every card is **History**.
+- Native names are in Polish (`pl`), with German for St Joachimsthal and French for the X-ray cars.
+- Sources and what is disputed: Marie Curie's autobiographical notes, Ève Curie's biography of her mother, the Nobel Foundation's records and later biographies. The margin by which the French Academy of Sciences rejected her in 1911 is given differently in different accounts, so the card says “narrowly”. The numbers for the war (about twenty cars, two hundred posts, 150 women trained, over a million men examined) are the usual estimates. Her death from aplastic anaemia is attributed to radiation, most likely the wartime X-rays as much as radium; the card says “almost certainly”. The map draws today's coasts, not the borders of her time.

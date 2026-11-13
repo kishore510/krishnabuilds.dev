@@ -360,3 +360,19 @@ The hero shows three figures that are computed or fixed (apps live, decisions lo
 Every place in a story used to be drawn from the first chapter, with those not yet reached faded to half strength. Stories have grown to 25 to 35 places, and pins scale with the map, so a dense region (twelve Maratha places within about 3° of Pune) was a pile of glyphs and names at every zoom. A chapter now draws in full only its own place and the ends of its routes. Places from earlier chapters are small dots, still tappable; later places are not drawn until their chapter, and "Whole map" adds them as dots.
 
 This is a rule about what to show, not pin-collision logic: the engine still places nothing automatically. The layout checks follow it, comparing pins and labels only within a chapter and warning above 5 places in full. Merging close places into one pin was rejected because each fort has its own chapter; pins of constant screen size were left out as a larger change that this makes unnecessary for now. The cost is that readers no longer see faded pins for what lies ahead; the timeline and the chapter list still show that.
+
+## 2026-11-13 — Story Maps: three shelves, and subjects on them
+
+Story Maps grows beyond history. The front page has three shelves: **Nature** (what happened: Universe, Earth, Life), **Humankind** (what people did: Chronicles, Legends, Philosophy) and **Science** (how we found out: Mathematics, Physics and Astronomy, Chemistry, Biology and Medicine, Invention). A shelf is only a heading; each subject is a section in `manifest.json` that names its shelf, so moving a subject or promoting one to its own shelf is a one-line edit. The split between Nature and Science settles overlaps: evolution is Life, Darwin working it out is Biology.
+
+Three shelves rather than five (Cosmos, Earth, Life, Humankind, Science) because the three are of similar weight and each stands for one idea; the Nature subjects keep their order through time.
+
+A subject appears on the front page once it has a story; until then it is named in one line as “to come”. No empty placeholder stories.
+
+The atlas, timeline and Browse move from `/` to `/explore/`. They stay one catalogue for now. Splitting `catalogue.json` per subject, a “landmark” flag and a timeline scale for deep time are deferred until a second subject has enough entries to need them. The first cross-subject link is built: an entry page lists the people whose lives overlap it (“At work in these years”).
+
+The engine's `cosmic` canvas is a sky basemap in plain units, used first as a diagram of time for The Big Bang. `earth-deep` is still to build.
+
+## 2026-11-13 — Story Maps: people go in Lives, discoveries in Science
+
+A life is told in **Lives**, a subject on the Humankind shelf; the discovery or idea is told in its own subject. Marie Curie is in Lives and Radioactivity is in Physics and Astronomy; Einstein, Darwin, Socrates and Ashoka will be Lives too. This ends the question of which science a person belongs to, and makes a Science story follow the idea from one person and place to the next. Philosophy stays as a subject for schools of thought. The catalogue gains the kind `discovery` beside `person`.

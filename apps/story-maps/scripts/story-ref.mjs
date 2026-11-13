@@ -24,7 +24,7 @@ for (const file of readdirSync(`${APP_DIR}basemaps`).sort()) {
   const { lon0, lat0, unitsPerDegree: k } = b.projection;
   const [w, h] = b.size;
   console.log(
-    `  ${b.id}: lon ${round(lon0)} to ${round(lon0 + w / k)}, lat ${round(lat0 - h / k)} to ${round(lat0)}; ` +
+    `  ${b.id}: lon ${round(lon0)} to ${round(lon0 + w / k)}, lat ${round(lat0 - h / (k * (b.projection.stretch || 1)))} to ${round(lat0)}; ` +
       `a pin is ${round(28 / k)}° wide; cameras narrower than ${round(MIN_CAMERA_UNITS / k)}° all look the same on a phone; ` +
       `whole map ${b.overview.width}° at [${b.overview.at}]`,
   );

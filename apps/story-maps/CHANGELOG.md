@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.45.0
+
+- New subject on the Humankind shelf: Lives, for people followed from place to place. Marie Curie moves there from Physics and Astronomy; her address is unchanged. Science subjects now hold discoveries and ideas, not biographies.
+- New story map in Physics and Astronomy: Radioactivity. From Röntgen’s X-rays at Würzburg and Becquerel’s fogged plate, through the Curies, Rutherford’s rays, changing atoms and nucleus, the neutron, the Joliot-Curies and Fermi’s slow neutrons, to Hahn and Strassmann’s barium, Meitner and Frisch’s walk in the snow and what followed. 14 chapters and 4 people cards.
+- Catalogue: a new kind, `discovery` (one year, no lane). Radioactivity (1896) opens the story and Nuclear fission (1938) opens it at chapter 11.
+
+## 0.44.0
+
+- New story map in Universe, the first on the Nature shelf: The Big Bang. From the first instant, inflation, the first particles and nuclei and the first light, through the Dark Ages, the first stars and galaxies, the Milky Way, cosmic noon and the expansion speeding up, to the Sun, the Earth and Moon, the universe today and how the story was found. 15 chapters and 3 people cards. Each card ends with how we know.
+- New sky map, `cosmos`, for the cosmic canvas: a diagram of time from the Big Bang on the left to today on the right.
+- New story map in Physics and Astronomy, the first on the Science shelf: Marie Curie. From Warsaw under Russian rule and the Flying University, through Paris, Pierre, polonium and radium and two Nobel Prizes, to the X-ray cars of the First World War, the gram of radium from America, the Radium Institute in Warsaw and the Panthéon. 19 chapters and 5 people cards.
+- New Europe map, from Ireland and Portugal to the Baltic states and the Black Sea, simplified from Natural Earth’s public-domain 1:50m coastlines, with the Seine, Rhine and Vistula drawn by hand.
+- Art library: 16 new glyphs and 5 new traveller icons for the two stories.
+- Catalogue: Marie Curie (a person) and The Big Bang (deep time) open their stories.
+
+## 0.43.0
+
+- New front page with three shelves: Nature (what happened), Humankind (what people did) and Science (how we found out). Each shelf lists its subjects with their story maps, newest first, and names the subjects still to come. Chronicles and Legends sit on Humankind.
+- The atlas, the timeline and Browse move to their own page, Explore (`/explore/`). Story and entry addresses are unchanged.
+- `manifest.json` gains `shelves`, and every section names its shelf. The empty Deep Time section is replaced by Universe, Earth and Life on the Nature shelf.
+- Catalogue: two new kinds, `person` (one life, with birth and death years) and `deep-time` (older than the timeline, with `when` in words), and a fourth source tag, Science. Entry pages gain “At work in these years”: the people whose lives overlap the entry.
+- Engine: the `cosmic` canvas is built. It draws a sky basemap (`kind: "sky"`): a dark ground with painted shapes, glows and stars, in plain units instead of longitude and latitude. A basemap far from the equator can set `projection.stretch` so its lands keep their shape. Stories can tag cards Science.
+
 ## 0.42.0
 
 - New story map in Chronicles: Harsha’s Empire. From the Pushyabhutis of Thanesar, Rajyashri’s marriage to the Maukhari Grahavarman and the death of Prabhakaravardhana, through the murder at Kannauj, Rajyavardhana’s fall, Harsha’s accession, the Kamarupa alliance and the rescue in the Vindhya forest, to the move to Kannauj, the war with Valabhi, the stand on the Narmada against Pulakeshin II, Shashanka of Gauda and the Banskhera copper plate, Xuanzang at Nalanda, Kajangala, the assemblies of Kannauj and Prayag, Harsha’s plays, the Tang envoys, the usurper Aluonashun and the fight over Kannauj afterwards. 21 chapters, a Powers layer (the Pushyabhutis, Maukharis, Gauda, Kamarupa, the Chalukyas of Vatapi and the Maitrakas of Valabhi) and 10 people cards.

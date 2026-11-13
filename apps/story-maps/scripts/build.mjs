@@ -1,6 +1,7 @@
 // @ts-check
 // Builds Story Maps into dist/:
-//   dist/index.html          the hub, listing every story in manifest.json
+//   dist/index.html          the front page: three shelves, their subjects and story cards
+//   dist/explore/index.html  the atlas, the timeline and Browse (catalogue.json)
 //   dist/<id>/index.html     one page per story
 //   dist/explore/<id>/       one page per catalogue entry (catalogue.json)
 //   dist/404.html            served by Cloudflare for unknown paths
@@ -121,6 +122,7 @@ const engine = loadEngineAssets();
 const exploreCss = read(`${APP_DIR}hub/explore.css`);
 const exploreJs = read(`${APP_DIR}hub/explore.js`);
 const hubJs = read(`${APP_DIR}hub/hub.js`);
+const frontJs = read(`${APP_DIR}hub/front.js`);
 const progressJs = read(`${APP_DIR}hub/progress.js`);
 const tourJs = read(`${APP_DIR}hub/tour.js`);
 const tourCss = read(`${APP_DIR}hub/tour.css`);
@@ -165,7 +167,7 @@ const THEME_SCRIPT = `<script>\n${themePickerJs}</script>`;
 const HOME = `<header class="sm-top"><a href="https://krishnabuilds.dev">← krishnabuilds</a>${THEME_PICKER}</header>`;
 const BACK = `<header class="sm-top"><a href="/">← All story maps</a>${THEME_PICKER}</header>`;
 const FOOT =
-  '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and the historical record. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.</footer>';
+  '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and the historical record; Nature and Science follow the evidence. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.</footer>';
 
 /**
  * Fills {{key}} placeholders in one pass, so inserted text is never scanned again.
@@ -208,7 +210,7 @@ const regionById = new Map(catalogue.regions.map((r) => [r.id, r]));
 const laneTitle = new Map(catalogue.regions.flatMap((r) => r.lanes.map((l) => [l.id, l.title])));
 /** @param {string} regionId */
 const hueOf = (regionId) => `--hue:var(--sm-hue-${regionById.get(regionId)?.hue})`;
-const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route" };
+const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event: "Event", legend: "Epic or legend", route: "Route", person: "Person", "deep-time": "Deep time", discovery: "Discovery" };
 
 const builtStories = manifest.stories.filter((s) => s.status === "built");
 
@@ -271,10 +273,13 @@ const WORLD_LAYERS =
 
 /** A small map for a story's card: the world cropped to the story's places, with its routes and pins. @param {Story} entry */
 function storyThumb(entry) {
-  const { story } = loadStoryData(entry);
+  const { story, basemap } = loadStoryData(entry);
+  // A sky story (the cosmic canvas) has no place in the world: it is drawn on its own dark ground.
+  const sky = basemap.kind === "sky";
+  const project = sky ? /** @type {(at: number[]) => number[]} */ (mapFunctions.projector(basemap.projection)) : worldP;
   /** @type {Record<string, number[]>} */
   const where = {};
-  for (const [id, place] of Object.entries(story.places)) where[id] = worldP(/** @type {{ at: number[] }} */ (place).at);
+  for (const [id, place] of Object.entries(story.places)) where[id] = project(/** @type {{ at: number[] }} */ (place).at);
   const shown = Object.entries(story.places).filter(([, p]) => !(/** @type {{ hidden?: boolean }} */ (p).hidden)).map(([id]) => where[id]);
   const xs = shown.map((p) => p[0]);
   const ys = shown.map((p) => p[1]);
@@ -290,24 +295,75 @@ function storyThumb(entry) {
     .join("");
   return (
     `<svg class="sm-story-card__map" viewBox="${n1(cx - w / 2)} ${n1(cy - h / 2)} ${n1(w)} ${n1(h)}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">` +
-    WORLD_LAYERS +
+    (sky
+      ? `<rect x="${n1(cx - w)}" y="${n1(cy - h)}" width="${n1(w * 2)}" height="${n1(h * 2)}" fill="${basemap.sky.middle}"/>` +
+        `<circle cx="${n1(shown[0][0])}" cy="${n1(shown[0][1])}" r="${n1(u * 70)}" fill="#ff8a3a" opacity=".3"/><circle cx="${n1(shown[0][0])}" cy="${n1(shown[0][1])}" r="${n1(u * 26)}" fill="#fff3c4" opacity=".7"/>`
+      : WORLD_LAYERS) +
     (legs ? `<path d="${legs}" fill="none" stroke="#fff6dc" stroke-width="${n1(u * 1.6)}" stroke-dasharray="${n1(u * 5)} ${n1(u * 4)}" stroke-linecap="round" opacity=".85"/>` : "") +
     shown.map(([x, y]) => `<circle cx="${n1(x)}" cy="${n1(y)}" r="${n1(u * 4)}" fill="#f6e6c0" stroke="#7a3b12" stroke-width="${n1(u * 1.3)}"/>`).join("") +
     "</svg>"
   );
 }
 
-const storyCards = builtStories
-  .map((s) => {
-    const n = loadStoryData(s).story.steps.length;
-    return (
-      `<li><a class="sm-story-card" href="/${s.id}/" data-story="${s.id}">${storyThumb(s)}` +
-      `<span class="sm-story-card__body"><span class="sm-story-card__kicker">${esc(s.era)}</span>` +
-      `<span class="sm-story-card__name">${esc(s.title)}</span>` +
-      `<span class="sm-story-card__meta" data-meta>${n} chapters</span></span></a></li>`
-    );
+/** @param {Story} s */
+function storyCard(s) {
+  const n = loadStoryData(s).story.steps.length;
+  return (
+    `<li><a class="sm-story-card" href="/${s.id}/" data-story="${s.id}">${storyThumb(s)}` +
+    `<span class="sm-story-card__body"><span class="sm-story-card__kicker">${esc(s.era)}</span>` +
+    `<span class="sm-story-card__name">${esc(s.title)}</span>` +
+    `<span class="sm-story-card__meta" data-meta>${n} chapters</span></span></a></li>`
+  );
+}
+
+// The front page: each shelf, its subjects that have a story (newest story first) and, in one line, the subjects to come.
+const shelves = manifest.shelves
+  .map((shelf) => {
+    const sections = manifest.sections.filter((x) => x.shelf === shelf.id);
+    const withStories = sections.map((section) => ({ section, stories: builtStories.filter((x) => x.section === section.id) }));
+    const open = withStories.filter((x) => x.stories.length);
+    const toCome = withStories.filter((x) => !x.stories.length).map((x) => x.section.title);
+    return [
+      `<section class="sm-shelf sm-shelf--${shelf.id}" aria-labelledby="sm-shelf-${shelf.id}">`,
+      `<div class="sm-shelf__head"><h2 id="sm-shelf-${shelf.id}">${esc(shelf.title)}</h2><p>${esc(shelf.blurb)}</p></div>`,
+      ...open.map(({ section, stories }) => {
+        const newestFirst = [...stories].sort((x, y) => String(y.added).localeCompare(String(x.added)));
+        return (
+          `<div class="sm-subject"><h3>${esc(section.title)} <span class="sm-subject__n">${stories.length} ${stories.length === 1 ? "story map" : "story maps"}</span></h3>` +
+          `<p class="sm-subject__blurb">${esc(section.blurb)}</p><ul class="sm-story-row">${newestFirst.map(storyCard).join("")}</ul></div>`
+        );
+      }),
+      shelf.id === "humankind"
+        ? '<a class="sm-explore-link" href="/explore/"><span class="sm-explore-link__t">Explore through time</span><span>An atlas and a timeline of who ruled where and when, and a list of everything by name.</span></a>'
+        : "",
+      toCome.length ? `<p class="sm-shelf__next">To come: ${toCome.map(esc).join(", ")}.</p>` : "",
+      "</section>",
+    ].join("\n");
   })
-  .join("");
+  .join("\n");
+
+write(
+  "index.html",
+  render({
+    title: "Story Maps · krishnabuilds",
+    description: "Illustrated maps that tell a story chapter by chapter: the universe and the Earth, civilisations and legends, and the people and discoveries of science.",
+    path: "/",
+    explore: true,
+    tour: true,
+    body: [
+      HOME,
+      '<main class="sm-page sm-hub sm-front">',
+      WORLD_DEFS,
+      '<section class="sm-hero"><h1>Story Maps</h1><p>Follow a story across an illustrated map: what happened, what people did, and how we found out.</p></section>',
+      shelves,
+      FOOT,
+      "</main>",
+      `<script>\n${frontJs}</script>`,
+      `<script>\n${tourJs}</script>`,
+      THEME_SCRIPT,
+    ].join("\n"),
+  }),
+);
 
 const hubData = {
   regions: catalogue.regions,
@@ -327,19 +383,18 @@ const hubData = {
 const hubJson = JSON.stringify(hubData).replace(/</g, "\\u003c");
 
 write(
-  "index.html",
+  "explore/index.html",
   render({
-    title: "Story Maps · krishnabuilds",
-    description: "Illustrated maps that follow a story across the land, and a timeline of the civilisations, dynasties and empires behind them.",
-    path: "/",
+    title: "Explore · Story Maps · krishnabuilds",
+    description: "An atlas and a timeline of civilisations, dynasties and empires, and a list of everything in Story Maps by name.",
+    path: "/explore/",
     explore: true,
     tour: true,
     body: [
-      HOME,
+      BACK,
       '<main class="sm-page sm-hub">',
       WORLD_DEFS,
-      '<section class="sm-hero"><h1>Story Maps</h1><p>Follow a story across an illustrated map, or move through time and watch who ruled where.</p></section>',
-      `<section class="sm-stories" aria-labelledby="sm-stories-h"><h2 id="sm-stories-h">Start with a story</h2><ul class="sm-story-row" id="sm-story-row">${storyCards}</ul></section>`,
+      '<section class="sm-hero"><h1>Explore</h1><p>Move through time and watch who ruled where, or look anything up by name.</p></section>',
       '<div class="sm-hub-bar"><nav class="sm-tabs" aria-label="Views"><a id="sm-tab-atlas" href="#atlas">Atlas</a><a id="sm-tab-timeline" href="#timeline">Timeline</a><a id="sm-tab-browse" href="#browse">Browse</a></nav><p class="sm-count" id="sm-count"></p></div>',
       '<section class="sm-v-atlas" id="sm-v-atlas" aria-label="Atlas" hidden>',
       '<div class="sm-at">',
@@ -366,7 +421,7 @@ write(
       '<p class="sm-key"><span><i class="sm-key-built"></i>Story map ready</span><span><i></i>Story map to come</span><span><i class="sm-key-event"></i>Event</span><span>Scroll through time; the line shows who ruled at the same moment.</span></p>',
       "</section>",
       '<section class="sm-v-browse" id="sm-v-browse" aria-label="Browse" hidden>',
-      '<div class="sm-search"><label class="sm-sr" for="sm-q">Search</label><input id="sm-q" type="search" placeholder="Search civilisations, empires, legends and regions" autocomplete="off"></div>',
+      '<div class="sm-search"><label class="sm-sr" for="sm-q">Search</label><input id="sm-q" type="search" placeholder="Search civilisations, empires, legends and people" autocomplete="off"></div>',
       '<div class="sm-browse-body" id="sm-browse-body"></div>',
       "</section>",
       `<noscript><div class="sm-noscript"><h2>Everything</h2><ul>${catalogue.entries
@@ -425,6 +480,8 @@ function entryPage(e) {
   const skip = [before?.id, after?.id].filter(Boolean);
   /** @type {Entry[]} */
   const more = X.moreFromRegion(e, catalogue.entries, skip, 6);
+  /** @type {Entry[]} */
+  const lives = X.lives(e, catalogue.entries, 6);
   const story = e.story ? storyById.get(e.story) : undefined;
   const length = X.lengthText(e);
   const kicker = [KIND[/** @type {keyof typeof KIND} */ (e.kind)], [region?.title, lane].filter(Boolean).join(" › ")].join(" · ");
@@ -456,7 +513,7 @@ function entryPage(e) {
     contextStrip(e),
     storyPanel,
     e.lane && X.isDated(e)
-      ? `<div class="sm-btns">${e.at ? `<a class="sm-btn" href="/?at=${e.id}#atlas">Show on the atlas</a>` : ""}<a class="sm-btn" href="/?at=${e.id}#timeline">Show on the timeline</a></div>`
+      ? `<div class="sm-btns">${e.at ? `<a class="sm-btn" href="/explore/?at=${e.id}#atlas">Show on the atlas</a>` : ""}<a class="sm-btn" href="/explore/?at=${e.id}#timeline">Show on the timeline</a></div>`
       : "",
     e.lane || before || after ? `<div class="sm-pair">${mini("Before", before)}${mini("After", after)}</div>` : "",
     "</div>",
@@ -468,6 +525,14 @@ function entryPage(e) {
           .map(
             ({ entry: x, years }) =>
               `<li><a href="/explore/${x.id}/" style="${hueOf(x.region)}"><span class="sm-dot"></span><span><span class="sm-list__n">${esc(x.name)}</span><span class="sm-list__r">${esc(regionById.get(x.region)?.title ?? "")}</span></span><span class="sm-list__o">${years} ${years === 1 ? "year" : "years"}<br>together</span></a></li>`,
+          )
+          .join("")}</ul></section>`
+      : "",
+    lives.length
+      ? `<section class="sm-panel"><h2>At work in these years</h2><ul class="sm-list">${lives
+          .map(
+            (x) =>
+              `<li><a href="/explore/${x.id}/" style="${hueOf(x.region)}"><span class="sm-dot"></span><span><span class="sm-list__n">${esc(x.name)}</span><span class="sm-list__r">${esc(X.rangeText(x))}</span></span><span class="sm-list__o">${isBuilt(x) ? "Story map" : ""}</span></a></li>`,
           )
           .join("")}</ul></section>`
       : "",
@@ -570,5 +635,5 @@ write(
 );
 
 console.log(
-  `Built hub, ${manifest.stories.length} story pages, ${catalogue.entries.length} entry pages and 404 into dist/`,
+  `Built the front page, Explore, ${manifest.stories.length} story pages, ${catalogue.entries.length} entry pages and 404 into dist/`,
 );

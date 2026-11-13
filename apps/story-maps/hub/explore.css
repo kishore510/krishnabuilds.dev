@@ -1285,3 +1285,80 @@ a.sm-mini:hover {
     transition: none;
   }
 }
+
+/* The front page: three shelves (Nature, Humankind, Science), each with its
+   subjects and their story cards. */
+.sm-front {
+  gap: var(--kb-space-6);
+}
+.sm-shelf {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-space-4);
+  padding-top: var(--kb-space-4);
+  border-top: 3px solid var(--shelf, var(--sm-line));
+}
+.sm-shelf--nature {
+  --shelf: var(--sm-hue-lapis);
+}
+.sm-shelf--humankind {
+  --shelf: var(--sm-hue-saffron);
+}
+.sm-shelf--science {
+  --shelf: var(--sm-hue-jade);
+}
+.sm-shelf__head h2 {
+  margin: 0;
+  font-size: var(--kb-font-size-2xl, 1.75rem);
+  color: var(--shelf);
+}
+.sm-shelf__head p {
+  margin: 2px 0 0;
+  color: var(--sm-muted);
+}
+.sm-subject h3 {
+  margin: 0;
+  font-size: var(--kb-font-size-xl);
+}
+.sm-subject__n {
+  margin-left: 6px;
+  font-family: var(--sm-font-body);
+  font-size: var(--kb-font-size-sm);
+  font-weight: 400;
+  color: var(--sm-muted);
+}
+.sm-subject__blurb {
+  margin: 2px 0 var(--kb-space-2);
+  font-size: var(--kb-font-size-sm);
+  color: var(--sm-muted);
+}
+/* A subject with only a few stories keeps its cards card-sized. */
+.sm-front .sm-story-row {
+  grid-auto-columns: minmax(13.5rem, 17rem);
+  justify-content: start;
+}
+.sm-shelf__next {
+  margin: 0;
+  font-size: var(--kb-font-size-sm);
+  color: var(--sm-muted);
+}
+.sm-explore-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--kb-space-3) var(--kb-space-4);
+  text-decoration: none;
+  color: inherit;
+  background: var(--sm-panel);
+  border: 1px solid var(--sm-line);
+  border-radius: var(--kb-radius-lg);
+  font-size: var(--kb-font-size-sm);
+}
+.sm-explore-link__t {
+  font-family: var(--sm-font-head);
+  font-size: var(--kb-font-size-lg);
+  color: var(--sm-saffron);
+}
+.sm-explore-link__t::after {
+  content: " →";
+}

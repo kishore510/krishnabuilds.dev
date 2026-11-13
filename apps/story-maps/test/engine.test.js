@@ -24,7 +24,9 @@ describe("built stories", () => {
     expect(legs.length).toBe(story.steps.reduce((n, s) => n + s.legs.length, 0));
     const trees = (basemap.forests?.clusters ?? []).reduce((n, c) => n + c.count, 0);
     expect(trees).toBeLessThanOrEqual(100);
-    expect(basemap.waves.count).toBeLessThanOrEqual(100);
+    // A sky basemap has stars where a map of land has waves.
+    const specks = basemap.kind === "sky" ? basemap.stars.reduce((n, f) => n + f.count, 0) : basemap.waves.count;
+    expect(specks).toBeLessThanOrEqual(100);
   });
 });
 
@@ -70,6 +72,21 @@ describe("validate", () => {
     const { story, basemap, art } = fresh();
     story.overview = { at: [80], width: 0 };
     expect(map.validate(story, basemap, art).join("\n")).toContain("overview needs at [lon, lat] and a width");
+  });
+
+  it("keeps the cosmic canvas for sky basemaps, and sky basemaps for it", () => {
+    const sky = structuredClone(loadStoryData(built.find((s) => s.id === "big-bang")));
+    expect(map.validate(sky.story, sky.basemap, sky.art)).toEqual([]);
+    expect(map.buildMap(sky.story, sky.basemap, sky.art).svg).toContain('id="sm-sky"');
+    const { story, basemap, art } = fresh();
+    expect(map.validate(story, sky.basemap, art).join("\n")).toContain("cannot use basemap cosmos");
+    sky.story.basemap = basemap.id;
+    expect(map.validate(sky.story, basemap, art).join("\n")).toContain("canvas cosmic cannot use basemap");
+  });
+
+  it("stretches latitude when the projection asks for it", () => {
+    const P = map.projector({ lon0: 0, lat0: 60, unitsPerDegree: 10, stretch: 1.5 });
+    expect(P([2, 58])).toEqual([20, 30]);
   });
 
   it("catches a card over 60 words", () => {

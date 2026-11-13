@@ -19,16 +19,21 @@
     return e.kind === "dynasty" || e.kind === "civilisation";
   }
 
-  /** The last year an entry covers: events cover one year. */
-  function endOf(e) {
-    return e.kind === "event" ? e.from : e.to;
+  /** Events and discoveries happen in one year. */
+  function isMoment(e) {
+    return e.kind === "event" || e.kind === "discovery";
   }
 
-  /** "c. 322 – c. 185 BCE", "c. 100 BCE – c. 220 CE", "1526 CE", or "Tradition" for undated legends. */
+  /** The last year an entry covers: events and discoveries cover one year. */
+  function endOf(e) {
+    return isMoment(e) ? e.from : e.to;
+  }
+
+  /** "c. 322 – c. 185 BCE", "c. 100 BCE – c. 220 CE", "1526 CE", "Tradition" for undated legends, or deep time's own words. */
   function rangeText(e) {
-    if (!isDated(e)) return e.kind === "legend" ? "Tradition" : "";
+    if (!isDated(e)) return e.kind === "legend" ? "Tradition" : e.when || "";
     var c = e.approx ? "c. " : "";
-    if (e.kind === "event") return c + yearText(e.from);
+    if (isMoment(e)) return c + yearText(e.from);
     if (e.from < 0 && e.to < 0) return c + -e.from + " – " + c + -e.to + " BCE";
     if (e.from > 0) return c + e.from + " – " + c + e.to + " CE";
     return c + -e.from + " BCE – " + c + e.to + " CE";
@@ -36,7 +41,7 @@
 
   /** Length in years, rounded to tens for long spans ("about 140 years"). */
   function lengthText(e) {
-    if (!isDated(e) || e.kind === "event") return "";
+    if (!isDated(e) || isMoment(e)) return "";
     // No year 0, so 1 BCE to 1 CE is one year.
     var n = e.to - e.from - (e.from < 0 && e.to > 0 ? 1 : 0);
     if (n >= 100) n = Math.round(n / 10) * 10;
@@ -105,6 +110,20 @@
         return b.years - a.years || a.entry.from - b.entry.from;
       })
       .slice(0, limit || 8);
+  }
+
+  /** People whose lives overlap this entry's years, longest overlap first: who was at work while this went on. */
+  function lives(e, entries, limit) {
+    if (!isDated(e)) return [];
+    var end = endOf(e);
+    return entries
+      .filter(function (x) {
+        return x.kind === "person" && x.id !== e.id && x.from <= end && x.to >= e.from;
+      })
+      .sort(function (a, b) {
+        return Math.min(b.to, end) - Math.max(b.from, e.from) - (Math.min(a.to, end) - Math.max(a.from, e.from)) || a.from - b.from;
+      })
+      .slice(0, limit || 6);
   }
 
   /** Other entries from the same region, nearest in time first, skipping the given ids. */
@@ -202,6 +221,7 @@
     laneMates: laneMates,
     neighbours: neighbours,
     meanwhile: meanwhile,
+    lives: lives,
     moreFromRegion: moreFromRegion,
     bounds: bounds,
     pack: pack,

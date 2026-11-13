@@ -6,14 +6,18 @@ import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 /**
- * @typedef {{ id: string, title: string, blurb: string }} Section
+ * @typedef {{ id: string, title: string, blurb: string }} Shelf
+ * @typedef {{ id: string, shelf: string, title: string, blurb: string }} Section
  * @typedef {{ id: string, section: string, title: string }} Collection
  * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string, added?: string }} Story
- * @typedef {{ sections: Section[], collections: Collection[], stories: Story[] }} Manifest
+ * @typedef {{ shelves: Shelf[], sections: Section[], collections: Collection[], stories: Story[] }} Manifest
  */
 
 export const APP_DIR = fileURLToPath(new URL("..", import.meta.url));
-export const SECTIONS = ["legends", "chronicles", "deep-time"];
+// The front page's three shelves, in order. Each section (a subject such as
+// Universe, Chronicles or Physics and Astronomy) sits on one of them. A section
+// with no built story has no folder yet and is listed on its shelf as "to come".
+export const SHELVES = ["nature", "humankind", "science"];
 export const STATUSES = ["built", "coming-soon"];
 
 // Story ids become page paths (/<id>/), so keep them to plain slugs.
@@ -42,9 +46,17 @@ const ADDED = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/;
 export function validateManifest(manifest) {
   /** @type {string[]} */
   const problems = [];
-  const sectionIds = manifest.sections.map((s) => s.id);
-  if (sectionIds.join() !== SECTIONS.join()) {
-    problems.push(`sections must be exactly ${SECTIONS.join(", ")} in that order`);
+  if (manifest.shelves.map((s) => s.id).join() !== SHELVES.join()) {
+    problems.push(`shelves must be exactly ${SHELVES.join(", ")} in that order`);
+  }
+  for (const s of [...manifest.shelves, ...manifest.sections]) {
+    if (!s.title?.trim() || !s.blurb?.trim()) problems.push(`${s.id}: needs a title and a blurb`);
+  }
+  const SECTIONS = manifest.sections.map((s) => s.id);
+  if (new Set(SECTIONS).size !== SECTIONS.length) problems.push("section ids must be unique");
+  for (const s of manifest.sections) {
+    if (!SLUG.test(s.id)) problems.push(`section ${s.id}: id must be a lowercase slug`);
+    if (!SHELVES.includes(s.shelf)) problems.push(`section ${s.id}: unknown shelf ${s.shelf}`);
   }
   const collections = new Map(manifest.collections.map((c) => [c.id, c]));
   if (collections.size !== manifest.collections.length) {

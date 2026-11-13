@@ -65,8 +65,9 @@ export function layoutWarnings(story, basemap) {
   const warnings = [];
   const { lon0, lat0, unitsPerDegree: k } = basemap.projection;
   const [W, H] = basemap.size;
+  const ky = k * (basemap.projection.stretch || 1);
   /** @param {[number, number]} at */
-  const P = ([lon, lat]) => [(lon - lon0) * k, (lat0 - lat) * k];
+  const P = ([lon, lat]) => [(lon - lon0) * k, (lat0 - lat) * ky];
   const deg = (/** @type {number} */ units) => `${(units / k).toFixed(2)}°`;
 
   // Places and their labels.
