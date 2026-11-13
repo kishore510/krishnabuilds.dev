@@ -133,6 +133,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Marathas (0.33.0)
 - [ ] The Silk Road (already listed on the hub as coming soon)
 - [x] The Mahajanapadas and the Buddha (0.35.0)
+- [x] The Shunga Dynasty (0.36.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 

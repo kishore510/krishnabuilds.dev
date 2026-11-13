@@ -1,0 +1,922 @@
+{
+  "id": "shunga",
+  "title": "The Shunga Dynasty",
+  "description": "An illustrated map of the Shunga dynasty, from Pushyamitra’s killing of the last Maurya about 185 BCE through Greek invasions, Kalidasa’s horse sacrifice, the stupas of Sanchi and Bharhut and Heliodorus’s pillar, to the Kanvas about 73 BCE.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Shunga kingdom in the Ganges plain and central India, about 185 to 73 BCE",
+  "note": "Based on inscriptions at Ayodhya, Bharhut and Besnagar, the grammarian Patanjali, and texts written down centuries later: the Puranas, Bana, the Divyavadana, the Yuga Purana and Kalidasa’s play; each chapter says which it follows. Shunga dates are estimates from Puranic reign lengths. The Sindhu river of chapter 5 is placed in central India, one of several readings. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders.",
+  "places": {
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [
+        85.14,
+        25.61
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "ayodhya": {
+      "name": "Ayodhya (Saketa)",
+      "at": [
+        82.19,
+        26.79
+      ],
+      "glyph": "sacred-fire",
+      "label": "left"
+    },
+    "vidisha": {
+      "name": "Vidisha",
+      "at": [
+        77.81,
+        23.52
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "sindh": {
+      "name": "Sindh river",
+      "at": [
+        77.91,
+        25.65
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "sagala": {
+      "name": "Sagala",
+      "at": [
+        74.53,
+        32.49
+      ],
+      "glyph": "greek-temple",
+      "label": "left"
+    },
+    "sanchi": {
+      "name": "Sanchi",
+      "at": [
+        77.74,
+        23.48
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "bharhut": {
+      "name": "Bharhut",
+      "at": [
+        80.87,
+        24.45
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [
+        72.83,
+        33.75
+      ],
+      "glyph": "hermitage",
+      "label": "top"
+    },
+    "kolkata": {
+      "name": "Calcutta (Indian Museum)",
+      "at": [
+        88.35,
+        22.56
+      ],
+      "glyph": "gate",
+      "label": "bottom"
+    }
+  },
+  "travellers": {
+    "greeks": {
+      "name": "Greek army",
+      "icon": "hoplite"
+    },
+    "horse": {
+      "name": "The sacrificial horse",
+      "icon": "horse"
+    },
+    "envoy": {
+      "name": "Heliodorus",
+      "icon": "scroll"
+    },
+    "railing": {
+      "name": "Bharhut’s railing",
+      "icon": "ox-cart"
+    }
+  },
+  "phases": {
+    "coup": {
+      "name": "A commander takes the throne",
+      "color": "#e0573a"
+    },
+    "greeks": {
+      "name": "Greeks at the gates",
+      "color": "#2b7fb4"
+    },
+    "stupas": {
+      "name": "Stupas and the persecution story",
+      "color": "#f29a2e"
+    },
+    "end": {
+      "name": "The end of the Shungas",
+      "color": "#a678e0"
+    },
+    "legacy": {
+      "name": "Rediscovery",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "greek": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "horse": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "carry": {
+      "color": "#8a7560",
+      "width": 3,
+      "dash": "7 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 17,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 35,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 71,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 92,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "185 BCE"
+      },
+      {
+        "at": 29.0,
+        "text": "149"
+      },
+      {
+        "at": 56.0,
+        "text": "about 113"
+      },
+      {
+        "at": 86.0,
+        "text": "73 BCE"
+      },
+      {
+        "at": 98.0,
+        "text": "1873 CE"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "pataliputra",
+      "phase": "coup",
+      "title": "The last Maurya",
+      "native": "पाटलिपुत्र",
+      "when": "about 185 BCE",
+      "at": 2.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          83.5,
+          25.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "About 185 BCE, the last Maurya king, Brihadratha, was killed by his own commander-in-chief (senapati), Pushyamitra, while reviewing the army. The story is told by the 7th-century CE writer Bana; the Puranas agree that Pushyamitra took the throne. He ruled from Pataliputra, but over a far smaller kingdom than Ashoka’s: the Ganges plain and central India.",
+      "today": "Today: Patna, Bihar. Remains of the Maurya-era city lie under the modern town, at Kumhrar and Bulandi Bagh."
+    },
+    {
+      "place": "ayodhya",
+      "phase": "coup",
+      "title": "Two horse sacrifices",
+      "native": "अश्वमेध",
+      "when": "about 185 to 149 BCE",
+      "at": 8.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          82.5,
+          26
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "An inscription found at Ayodhya, of the 1st century BCE or CE, names a lord of Kosala, Dhanadeva, sixth in descent from the commander Pushyamitra, ‘who performed two horse sacrifices (ashvamedha)’. The rite proclaimed a great king. Even so, Pushyamitra is still called commander, not king. The grammarian Patanjali writes, ‘here we perform sacrifices for Pushyamitra’.",
+      "today": "Today: Ayodhya, Uttar Pradesh, a pilgrimage city on the Sarayu (Ghaghara) river."
+    },
+    {
+      "place": "vidisha",
+      "phase": "coup",
+      "title": "Agnimitra at Vidisha",
+      "native": "विदिशा",
+      "when": "about 185 to 149 BCE",
+      "at": 14.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79,
+          23.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Pushyamitra’s son Agnimitra governed from Vidisha, in central India. We know him mostly from a play written six centuries later, Kalidasa’s Malavika and Agnimitra (Malavikagnimitram). In it, he goes to war with Yajnasena, king of Vidarbha, and ends by splitting Vidarbha between two cousins. How much of the play is history is uncertain.",
+      "today": "Today: Vidisha, Madhya Pradesh, on the Betwa river, near the stupas of Sanchi."
+    },
+    {
+      "place": "ayodhya",
+      "phase": "greeks",
+      "title": "The Greeks besiege Saketa",
+      "native": "साकेत",
+      "when": "2nd century BCE",
+      "at": 20.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          78.5,
+          29.6
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "sagala",
+          "to": "ayodhya",
+          "traveller": "greeks",
+          "style": "greek",
+          "bend": 0.15
+        }
+      ],
+      "text": "Greek kings from Bactria had crossed the Hindu Kush. Patanjali gives, as an example of recent events, ‘the Greek (Yavana) besieged Saketa’, the city by Ayodhya. A later prophecy, the Yuga Purana, says the Greeks took Mathura and reached Pataliputra, then left, at war among themselves. Whether the invader was Demetrius or Menander is debated.",
+      "today": "Today: Saketa is usually placed at Ayodhya; the old town lies under the modern city."
+    },
+    {
+      "place": "sindh",
+      "phase": "greeks",
+      "title": "The horse on the Sindhu",
+      "native": "सिन्धु",
+      "when": "about 185 to 149 BCE",
+      "at": 26.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.4,
+          24.8
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "vidisha",
+          "to": "sindh",
+          "traveller": "horse",
+          "style": "horse",
+          "bend": 0.2
+        }
+      ],
+      "text": "In Kalidasa’s play, Pushyamitra writes to Agnimitra: the sacrificial horse, guarded by his grandson Vasumitra and a hundred princes, was seized by Greek horsemen on the Sindhu river, and Vasumitra won it back. The Sindhu may be the Indus, or the Sindh or Kali Sindh rivers of central India; historians disagree. The map follows the central-India reading.",
+      "today": "Today: The Sindh flows north through Madhya Pradesh to join the Yamuna; the Indus flows through Pakistan."
+    },
+    {
+      "place": "sagala",
+      "phase": "greeks",
+      "title": "King Milinda",
+      "native": "मिलिन्द",
+      "lang": "pi",
+      "when": "about 165 to 130 BCE, by most estimates",
+      "at": 32.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          73.4,
+          32.8
+        ],
+        "width": 14
+      },
+      "legs": [],
+      "text": "Beyond the Shunga lands, Greek kings ruled the Punjab. The greatest, Menander, had his capital at Sagala. A Buddhist book, the Questions of Milinda (Milindapanha), has him debate the monk Nagasena and end as a lay follower. His coins are found from Kabul to the Ganges plain. Plutarch says cities shared his ashes after he died.",
+      "today": "Today: Sialkot, Punjab, Pakistan, usually identified with Sagala."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "stupas",
+      "title": "The persecution story",
+      "native": "कुक्कुटाराम",
+      "when": "told of about 185 to 149 BCE",
+      "at": 38.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          84,
+          25.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "A Buddhist collection written down centuries later, the Divyavadana, says Pushyamitra wished to be remembered by undoing Ashoka’s 84,000 stupas. Turned away from the Kukkutarama monastery at Pataliputra, it says, he went west to Sakala and offered a hundred gold coins (dinara) for every monk’s head. Many historians doubt it: Buddhist sites thrived under the Shungas.",
+      "today": "Today: Patna, Bihar. Where the Kukkutarama monastery stood is not known for certain."
+    },
+    {
+      "place": "sanchi",
+      "phase": "stupas",
+      "title": "The great stupa in stone",
+      "native": "साँची",
+      "lang": "hi",
+      "when": "2nd century BCE",
+      "at": 44.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          77.74,
+          23.5
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "At Sanchi, near Vidisha, Ashoka’s brick stupa was roughly doubled in size and cased in stone, most archaeologists think in the 2nd century BCE, in Shunga times. A stone railing followed, paid for by hundreds of donors, monks, nuns and lay people, whose names are carved on it. The carved gateways came later, about the 1st century BCE.",
+      "today": "Today: Sanchi, Madhya Pradesh, a UNESCO World Heritage Site since 1989."
+    },
+    {
+      "place": "bharhut",
+      "phase": "stupas",
+      "title": "In the reign of the Shungas",
+      "native": "सुगनं रजे",
+      "lang": "pra",
+      "when": "2nd century BCE",
+      "at": 50.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          80.87,
+          24.45
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "At Bharhut, a gateway pillar records that it was raised ‘in the reign of the Shungas’ (suganam raje) by Dhanabhuti. It is the only inscription naming the dynasty. The stupa’s railing is carved with Jataka tales of the Buddha’s past lives and guardian spirits (yakshas), each with a label, among the oldest labelled stories in Indian art.",
+      "today": "Today: Bharhut, Satna district, Madhya Pradesh. Little remains on site."
+    },
+    {
+      "place": "vidisha",
+      "phase": "stupas",
+      "title": "Heliodorus’s pillar",
+      "native": "Ἡλιόδωρος",
+      "lang": "grc",
+      "when": "late 2nd century BCE",
+      "at": 56.0,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          75,
+          28.5
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "taxila",
+          "to": "vidisha",
+          "traveller": "envoy",
+          "style": "envoy",
+          "bend": 0.15
+        }
+      ],
+      "text": "At Besnagar, by Vidisha, Heliodorus, son of Dion, from Taxila, set up a pillar crowned with Garuda to the god Vasudeva, calling himself a devotee (bhagavata). He came as envoy of the Greek king Antialcidas to King Kasiputra Bhagabhadra, in his fourteenth year. Bhagabhadra is often thought a Shunga king; that is debated.",
+      "today": "Today: The Heliodorus pillar, locally Khamba Baba, stands at Besnagar near Vidisha."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "end",
+      "title": "The Kanvas take over",
+      "native": "काण्व",
+      "when": "about 73 BCE",
+      "at": 86.0,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          84,
+          25.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "The Puranas list ten Shunga kings over 112 years. The last, Devabhuti, was overthrown by his minister Vasudeva, founder of the Kanva line. Bana adds that Devabhuti, fond of women, was killed by a slave girl disguised as his queen. The Kanvas ruled about 45 years, until, the Puranas say, Simuka of the Andhras ended them.",
+      "today": "Today: Patna, Bihar. Where Devabhuti died is not recorded."
+    },
+    {
+      "place": "kolkata",
+      "phase": "legacy",
+      "title": "Bharhut in Calcutta",
+      "when": "1873 CE",
+      "at": 98.0,
+      "source": "History",
+      "camera": {
+        "at": [
+          84.6,
+          24
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "bharhut",
+          "to": "kolkata",
+          "traveller": "railing",
+          "style": "carry",
+          "bend": 0.2
+        }
+      ],
+      "text": "In 1873 Alexander Cunningham, head of the Archaeological Survey of India, found Bharhut’s stupa almost gone, its bricks and stones taken by villagers for building. He moved the surviving railing and gateway to the Indian Museum in Calcutta, where they were set up again. Pieces are also in Allahabad, Satna and museums abroad.",
+      "today": "Today: Kolkata, West Bengal. The Bharhut gallery is in the Indian Museum."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "shunga",
+        "name": "Shunga kingdom",
+        "native": "शुंग",
+        "color": "#d9432a",
+        "active": [
+          [
+            0,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Shunga kingdom",
+          "at": [
+            82.0,
+            24.7
+          ],
+          "moves": [
+            {
+              "from": 10,
+              "at": [
+                81.6,
+                25.9
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  80.9,
+                  26.3
+                ],
+                [
+                  82.6,
+                  27.2
+                ],
+                [
+                  84.2,
+                  27.1
+                ],
+                [
+                  86.5,
+                  26.7
+                ],
+                [
+                  87.4,
+                  25.6
+                ],
+                [
+                  86.8,
+                  24.4
+                ],
+                [
+                  85.0,
+                  24.0
+                ],
+                [
+                  83.5,
+                  24.1
+                ],
+                [
+                  82.2,
+                  24.1
+                ],
+                [
+                  81.0,
+                  23.9
+                ],
+                [
+                  79.5,
+                  22.9
+                ],
+                [
+                  77.4,
+                  22.9
+                ],
+                [
+                  76.9,
+                  24.0
+                ],
+                [
+                  77.8,
+                  25.2
+                ],
+                [
+                  79.5,
+                  25.4
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Pataliputra and Vidisha",
+          "Founded": "About 185 BCE",
+          "Ended": "About 73 BCE",
+          "Kings": "Ten, in the Puranas"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Pushyamitra Shunga"
+          },
+          {
+            "from": 7,
+            "text": "Not named in the sources"
+          },
+          {
+            "from": 9,
+            "text": "Bhagabhadra, if he was a Shunga"
+          },
+          {
+            "from": 10,
+            "text": "Devabhuti, the last"
+          }
+        ],
+        "role": "The kingdom Pushyamitra took from the Mauryas: the Ganges plain and central India.",
+        "ties": []
+      },
+      {
+        "id": "kanva",
+        "name": "Kanva kingdom",
+        "native": "काण्व",
+        "color": "#a678e0",
+        "active": [
+          [
+            10,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Kanvas",
+          "at": [
+            85.14,
+            26.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                10,
+                10
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  85.14,
+                  25.6
+                ],
+                "radius": 1
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Founded": "About 73 BCE",
+          "Kings": "Four, in the Puranas"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Vasudeva Kanva"
+          }
+        ],
+        "role": "The minister’s family that replaced the Shungas; its lands are not known.",
+        "ties": []
+      },
+      {
+        "id": "indo-greek",
+        "name": "Indo-Greek kingdoms",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            3,
+            9
+          ]
+        ],
+        "label": {
+          "text": "Indo-Greek kingdoms",
+          "at": [
+            71.6,
+            34.5
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.2,
+                  35.0
+                ],
+                [
+                  71.5,
+                  35.2
+                ],
+                [
+                  73.5,
+                  34.6
+                ],
+                [
+                  74.6,
+                  33.7
+                ],
+                [
+                  75.6,
+                  32.6
+                ],
+                [
+                  75.6,
+                  31.6
+                ],
+                [
+                  74.0,
+                  31.0
+                ],
+                [
+                  72.5,
+                  32.0
+                ],
+                [
+                  71.0,
+                  32.8
+                ],
+                [
+                  69.5,
+                  32.8
+                ],
+                [
+                  68.2,
+                  33.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Taxila, Sagala and others",
+          "Language": "Greek and Prakrit on their coins"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Demetrius or Menander (debated)"
+          },
+          {
+            "from": 5,
+            "text": "Menander"
+          },
+          {
+            "from": 9,
+            "text": "Antialcidas, at Taxila"
+          }
+        ],
+        "role": "Greek kings from Bactria who ruled the north-west and raided the Ganges plain.",
+        "ties": []
+      },
+      {
+        "id": "vidarbha",
+        "name": "Vidarbha",
+        "color": "#c9a227",
+        "active": [
+          [
+            2,
+            2
+          ]
+        ],
+        "label": {
+          "text": "Vidarbha",
+          "at": [
+            78.4,
+            21.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                2,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.75,
+                  21.2
+                ],
+                [
+                  78.4,
+                  21.5
+                ],
+                [
+                  79.1,
+                  21.3
+                ],
+                [
+                  79.1,
+                  20.7
+                ],
+                [
+                  78.4,
+                  20.5
+                ],
+                [
+                  77.8,
+                  20.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Source": "Kalidasa’s play only"
+        },
+        "rulers": [
+          {
+            "from": 2,
+            "text": "Yajnasena, in the play"
+          }
+        ],
+        "role": "The kingdom Agnimitra fights in Kalidasa’s play.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People",
+    "items": [
+      {
+        "id": "pushyamitra",
+        "name": "Pushyamitra Shunga",
+        "native": "पुष्यमित्र शुंग",
+        "life": "ruled about 185 to 149 BCE",
+        "role": "Commander who founded the dynasty",
+        "steps": [
+          0,
+          1,
+          3,
+          4,
+          6
+        ],
+        "text": "Commander of the last Maurya’s army, Pushyamitra killed his king and took the throne. An inscription credits him with two horse sacrifices, yet still calls him commander (senapati). Buddhist tradition makes him a persecutor; Brahmanical sources a restorer of Vedic rites. Both pictures were drawn later, and historians weigh them with care."
+      },
+      {
+        "id": "agnimitra",
+        "name": "Agnimitra",
+        "native": "अग्निमित्र",
+        "life": "ruled about 149 to 141 BCE",
+        "role": "Pushyamitra’s son, governor of Vidisha",
+        "steps": [
+          2,
+          4
+        ],
+        "text": "Son of Pushyamitra, he governed Vidisha and succeeded his father; the Puranas give him eight years. He is the hero of Kalidasa’s play Malavikagnimitram, which shows him at war with Vidarbha and falling in love with Malavika, a maid of his queen. Coins naming an Agnimitra exist, but may belong to a local ruler."
+      },
+      {
+        "id": "vasumitra",
+        "name": "Vasumitra",
+        "native": "वसुमित्र",
+        "life": "2nd century BCE",
+        "role": "Prince who guarded the horse",
+        "steps": [
+          4
+        ],
+        "text": "Agnimitra’s son, Vasumitra is the young guard of the sacrificial horse in Kalidasa’s play, who beats Greek horsemen on the Sindhu. The Puranas list a Vasumitra among the later Shunga kings. Bana writes that a Shunga named Sumitra, son of Agnimitra, was killed at a theatre; whether he is Vasumitra is unclear."
+      },
+      {
+        "id": "patanjali",
+        "name": "Patanjali",
+        "native": "पतञ्जलि",
+        "life": "2nd century BCE",
+        "role": "Grammarian",
+        "steps": [
+          1,
+          3
+        ],
+        "text": "Author of the Great Commentary (Mahabhashya) on Panini’s Sanskrit grammar. His examples of the recent past, ‘the Greek besieged Saketa’ and ‘here we perform sacrifices for Pushyamitra’, are among the few fixed points of Shunga history. Tradition makes him a priest at Pushyamitra’s horse sacrifice; the text does not say so."
+      },
+      {
+        "id": "menander",
+        "name": "Menander",
+        "native": "Μένανδρος",
+        "lang": "grc",
+        "life": "ruled about 165 to 130 BCE, by most estimates",
+        "role": "Indo-Greek king at Sagala",
+        "steps": [
+          3,
+          5
+        ],
+        "text": "The best-known Greek king of India, remembered in Buddhist tradition as Milinda. His silver and bronze coins, with Greek on one side and Prakrit on the other, are found widely. He may be the Greek who besieged Saketa, though some give that to Demetrius. Dates for his reign vary by decades."
+      },
+      {
+        "id": "heliodorus",
+        "name": "Heliodorus",
+        "native": "Ἡλιόδωρος",
+        "lang": "grc",
+        "life": "late 2nd century BCE",
+        "role": "Greek envoy from Taxila",
+        "steps": [
+          9
+        ],
+        "text": "Known only from his pillar at Besnagar, Heliodorus was a Greek from Taxila who calls himself a devotee of Vasudeva, one of the earliest records of a foreigner taking up an Indian faith. A second inscription on the pillar praises three steps to immortality: self-restraint, giving and watchfulness."
+      },
+      {
+        "id": "bhagabhadra",
+        "name": "Bhagabhadra",
+        "native": "काशीपुत्र भागभद्र",
+        "life": "late 2nd century BCE",
+        "role": "King at Vidisha",
+        "steps": [
+          9
+        ],
+        "text": "Kasiputra Bhagabhadra, ‘son of a Kashi princess’, is named on the Heliodorus pillar as the king Heliodorus came to see, then in his fourteenth year. He is often matched with Bhaga or Bhagavata, a late Shunga king who ruled 32 years in the Puranas. The match is likely but not proven."
+      },
+      {
+        "id": "cunningham",
+        "name": "Alexander Cunningham",
+        "life": "1814 to 1893",
+        "role": "First Director General of the Archaeological Survey of India",
+        "steps": [
+          8,
+          11
+        ],
+        "text": "A British army engineer turned archaeologist, Cunningham surveyed hundreds of ancient sites across northern India. At Bharhut he found the railing and its inscriptions, published them in The Stupa of Bharhut (1879), and took the surviving pieces to Calcutta. He also explored Sanchi and identified many sites named by Chinese pilgrims."
+      }
+    ]
+  }
+}

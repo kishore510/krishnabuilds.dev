@@ -39,6 +39,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Shunga Dynasty (`shunga`), 2026-11-13
 - The Mahajanapadas and the Buddha (`mahajanapadas`), 2026-11-13
 - The Marathas (`marathas`), 2026-11-12
 - The Delhi Sultanate (`delhi-sultanate`), 2026-11-12
