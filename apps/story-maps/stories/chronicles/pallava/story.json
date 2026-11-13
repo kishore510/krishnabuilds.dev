@@ -1,0 +1,1992 @@
+{
+  "id": "pallava",
+  "title": "The Pallavas",
+  "description": "An illustrated map of the Pallavas of Kanchipuram, from their Prakrit copper plates and Samudragupta's pillar, through Mahendravarman's cave temples, the long war with the Chalukyas of Badami and Rajasimha's Shore Temple and Kailasanatha, to the last Pallava king in about 897 and the script that crossed the sea.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "ta",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Pallava kingdom, about 275 to 897",
+  "note": "Based mainly on Pallava and Chalukya inscriptions and copper plates, with Gupta, Kadamba, Chinese and Sri Lankan records; each chapter says which it follows. Royal inscriptions boast, and where both sides claim a victory both claims are given. Early Pallava dates are uncertain. The map is stylised and not to scale; China and Takua Pa lie beyond its eastern edge. The Powers areas are painted loosely and change chapter by chapter.",
+  "places": {
+    "kanchipuram": {
+      "name": "Kanchipuram",
+      "at": [
+        79.7,
+        12.83
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "mamallapuram": {
+      "name": "Mamallapuram",
+      "at": [
+        80.19,
+        12.62
+      ],
+      "glyph": "vimana",
+      "label": "right"
+    },
+    "prayag": {
+      "name": "Prayag",
+      "at": [
+        81.88,
+        25.43
+      ],
+      "glyph": "pillar",
+      "label": "right"
+    },
+    "talagunda": {
+      "name": "Talagunda",
+      "at": [
+        75.17,
+        14.42
+      ],
+      "glyph": "stela",
+      "label": "left"
+    },
+    "uraiyur": {
+      "name": "Uraiyur",
+      "at": [
+        78.68,
+        10.83
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "mandagapattu": {
+      "name": "Mandagapattu",
+      "at": [
+        79.4,
+        12.11
+      ],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "badami": {
+      "name": "Badami",
+      "at": [
+        75.68,
+        15.92
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "amaravati": {
+      "name": "Dhanyakataka",
+      "at": [
+        80.36,
+        16.57
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "anuradhapura": {
+      "name": "Anuradhapura",
+      "at": [
+        80.4,
+        8.35
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "pattadakal": {
+      "name": "Pattadakal",
+      "at": [
+        75.82,
+        15.95
+      ],
+      "glyph": "gopuram",
+      "label": "left"
+    },
+    "chidambaram": {
+      "name": "Chidambaram",
+      "at": [
+        79.69,
+        11.4
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "tellaru": {
+      "name": "Tellaru",
+      "at": [
+        79.6,
+        12.43
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "madurai": {
+      "name": "Madurai",
+      "at": [
+        78.12,
+        9.92
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "tiruppurambiyam": {
+      "name": "Sripurambiyam",
+      "at": [
+        79.36,
+        11
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "thanjavur": {
+      "name": "Thanjavur",
+      "at": [
+        79.13,
+        10.79
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "china": {
+      "name": "Towards China",
+      "at": [
+        97.8,
+        14
+      ],
+      "hidden": true
+    },
+    "southeast": {
+      "name": "Towards Southeast Asia",
+      "at": [
+        98.3,
+        8.9
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "soldier": {
+      "name": "An army",
+      "icon": "soldier"
+    },
+    "war-elephant": {
+      "name": "A war-elephant army",
+      "icon": "war-elephant"
+    },
+    "monk": {
+      "name": "A pilgrim monk",
+      "icon": "monk"
+    },
+    "prince": {
+      "name": "A prince",
+      "icon": "prince"
+    },
+    "merchant-ship": {
+      "name": "A merchant ship",
+      "icon": "merchant-ship"
+    },
+    "scroll": {
+      "name": "Pallava script",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "early": {
+      "name": "The early Pallavas",
+      "color": "#4fc3b0"
+    },
+    "mahendra": {
+      "name": "Mahendra and Mamalla",
+      "color": "#f29a2e"
+    },
+    "rajasimha": {
+      "name": "Rajasimha’s temples",
+      "color": "#a678e0"
+    },
+    "pallavamalla": {
+      "name": "Pallavamalla and his heirs",
+      "color": "#5b8fd0"
+    },
+    "end": {
+      "name": "The end of the Pallavas",
+      "color": "#e0573a"
+    },
+    "legacy": {
+      "name": "Legacy",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "campaign": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "journey": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#1f7a8c",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 20.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 54,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 65,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 85.5,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 92,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 7,
+        "text": "350"
+      },
+      {
+        "at": 17,
+        "text": "575"
+      },
+      {
+        "at": 40,
+        "text": "642"
+      },
+      {
+        "at": 63,
+        "text": "720"
+      },
+      {
+        "at": 80,
+        "text": "850"
+      },
+      {
+        "at": 90,
+        "text": "897"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "kanchipuram",
+      "phase": "early",
+      "title": "Kings of Kanchi",
+      "native": "காஞ்சிபுரம்",
+      "when": "about the 3rd to 4th century",
+      "at": 2,
+      "camera": {
+        "at": [
+          79.7,
+          12.8
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "The first Pallava kings are known from copper plates in Prakrit, among them grants of Shivaskandavarman found at Mayidavolu and Hirahadagalli. He calls himself a great king of the Bharadvaja family, ruling from Kanchipura. Where the family came from is debated: some historians tie them to the Andhra country under the Satavahanas, others to the Tamil land around Kanchi.",
+      "today": "Today: Kanchipuram, Tamil Nadu, India."
+    },
+    {
+      "place": "prayag",
+      "phase": "early",
+      "title": "Vishnugopa of Kanchi",
+      "native": "विष्णुगोप",
+      "lang": "sa",
+      "when": "about 350",
+      "at": 7,
+      "camera": {
+        "at": [
+          80.8,
+          19
+        ],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "prayag",
+          "to": "kanchipuram",
+          "traveller": "soldier",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Samudragupta's pillar inscription at Prayag lists the southern kings he captured and then released, among them Vishnugopa of Kanchi. It is the first time a Pallava king is named outside his own records. How far south the Gupta army really went, and whether it ever reached Kanchi, is debated; the inscription is a court poet's praise, not a campaign diary.",
+      "today": "Today: the pillar stands in Allahabad Fort, Prayagraj, Uttar Pradesh, India."
+    },
+    {
+      "place": "talagunda",
+      "phase": "early",
+      "title": "The student who took up the sword",
+      "native": "ಮಯೂರಶರ್ಮ",
+      "lang": "kn",
+      "when": "about the mid 4th century, by the inscription",
+      "at": 11,
+      "camera": {
+        "at": [
+          77.4,
+          13.6
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "kanchipuram",
+          "to": "talagunda",
+          "traveller": "prince",
+          "style": "journey",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Talagunda pillar inscription, cut in the 5th century, tells how Mayurasharma, a Brahmin, went to Kanchi to study at its college (ghatika). Insulted by a Pallava horseman, he gave up study for the sword, raided the Pallava frontier and won land of his own. The Pallavas, it says, came to terms with him. He founded the Kadamba kingdom.",
+      "today": "Today: Talagunda, Shivamogga district, Karnataka, India."
+    },
+    {
+      "place": "uraiyur",
+      "phase": "early",
+      "title": "Simhavishnu and the Kaveri",
+      "native": "சிம்மவிஷ்ணு",
+      "when": "about 575",
+      "at": 17,
+      "camera": {
+        "at": [
+          79.2,
+          11.8
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "kanchipuram",
+          "to": "uraiyur",
+          "traveller": "soldier",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "After a long gap in the records, often called the Kalabhra interval, Simhavishnu revived Pallava power in the later 6th century. Later Pallava copper plates say he seized the Chola country, adorned by the Kaveri. From his time the Pallavas and the Pandyas of Madurai were the great powers of the Tamil south.",
+      "today": "Today: Uraiyur, a part of Tiruchirappalli, Tamil Nadu, India."
+    },
+    {
+      "place": "mandagapattu",
+      "phase": "mahendra",
+      "title": "Without brick or timber",
+      "native": "மண்டகப்பட்டு",
+      "when": "early 7th century",
+      "at": 24,
+      "camera": {
+        "at": [
+          79.4,
+          12.1
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Simhavishnu's son Mahendravarman I had a shrine cut into a granite outcrop at Mandagapattu. His Sanskrit inscription there says that King Vichitrachitta, one of his titles, made this temple for Brahma, Shiva and Vishnu without brick, timber, metal or mortar. It is the first known rock-cut temple in the Tamil country, and the start of building in stone there.",
+      "today": "Today: Mandagapattu, Viluppuram district, Tamil Nadu, India."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "mahendra",
+      "title": "A king's comedy",
+      "native": "मत्तविलासप्रहसन",
+      "lang": "sa",
+      "when": "early 7th century",
+      "at": 28,
+      "camera": {
+        "at": [
+          79.7,
+          12.8
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Mahendravarman wrote a Sanskrit farce, A Drunkard's Revel (Mattavilasa Prahasana): a drunken Shaiva ascetic, his lover and a Buddhist monk quarrel over a lost skull bowl in the streets of Kanchi. Tradition, in the 12th century Periya Puranam, says the king was first a Jain and was won to Shiva by the poet-saint Appar, whom he had persecuted.",
+      "today": "Today: the play is still performed in the Kutiyattam theatre of Kerala."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "mahendra",
+      "title": "Behind the walls of Kanchi",
+      "native": "புள்ளலூர்",
+      "when": "about 618 to 619",
+      "at": 32,
+      "camera": {
+        "at": [
+          77.7,
+          14.4
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "badami",
+          "to": "kanchipuram",
+          "traveller": "war-elephant",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Pulakeshin II of the Chalukyas of Badami marched south. His Aihole inscription of 634 says the Pallava lord, who had opposed his rise, hid behind the walls of Kanchipura. Pallava copper plates say Mahendravarman destroyed his chief enemies at Pullalur, near Kanchi. Each side claims the victory. A war between the two houses had begun that lasted over a century.",
+      "today": "Today: Pullalur, Kanchipuram district, Tamil Nadu, India."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "mahendra",
+      "title": "Xuanzang in Kanchi",
+      "native": "玄奘",
+      "lang": "zh",
+      "when": "about 640",
+      "at": 36,
+      "camera": {
+        "at": [
+          80,
+          14.7
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "amaravati",
+          "to": "kanchipuram",
+          "traveller": "monk",
+          "style": "journey",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Chinese pilgrim Xuanzang came south from Dhanyakataka (Amaravati) to Kanchipura, capital of the land he calls Dravida. He counts some hundred Buddhist monasteries with over ten thousand monks, and about eighty temples of other faiths, many of them Jain. He says Kanchi was the birthplace of the Buddhist scholar Dharmapala, and found its people brave, honest and learned.",
+      "today": "Today: Amaravati and Kanchipuram, India."
+    },
+    {
+      "place": "badami",
+      "phase": "mahendra",
+      "title": "The taker of Vatapi",
+      "native": "வாதாபி கொண்டான்",
+      "when": "642",
+      "at": 40,
+      "camera": {
+        "at": [
+          77.7,
+          14.4
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "kanchipuram",
+          "to": "badami",
+          "traveller": "war-elephant",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Mahendravarman's son Narasimhavarman I drove back the Chalukyas, winning, Pallava plates say, at Manimangalam. In 642 his army took Vatapi itself, the Chalukya capital. An inscription of his cut on a rock at Badami records it, and he took the title Vatapikonda, taker of Vatapi. Pulakeshin II is not heard of again; most historians think he died in the war.",
+      "today": "Today: Badami, Bagalkot district, Karnataka, India."
+    },
+    {
+      "place": "anuradhapura",
+      "phase": "mahendra",
+      "title": "A prince for Lanka",
+      "native": "මානවම්ම",
+      "lang": "si",
+      "when": "mid to late 7th century; dates debated",
+      "at": 44,
+      "camera": {
+        "at": [
+          80.3,
+          10.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "mamallapuram",
+          "to": "anuradhapura",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Sri Lankan chronicle, the Culavamsa, says a Lankan prince, Manavamma, lived in exile at Narasimha's court and fought for him against the Chalukyas. In return the king sent a fleet to win him the throne of Anuradhapura. The first expedition failed; a second succeeded. When this happened, and which Pallava king sent the second fleet, is debated.",
+      "today": "Today: Anuradhapura, North Central Province, Sri Lanka."
+    },
+    {
+      "place": "mamallapuram",
+      "phase": "mahendra",
+      "title": "The city of Mamalla",
+      "native": "மாமல்லபுரம்",
+      "when": "7th century",
+      "at": 48,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          80.2,
+          12.6
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Narasimhavarman I bore the title Mamalla, great wrestler, and the port of Mamallapuram is named after him. Its five monolithic temples, the rathas, each carved from a single rock, and its great relief, read as Arjuna's Penance or as the Descent of the Ganges, are usually dated to his reign or soon after. Some historians give parts to later kings.",
+      "today": "Today: Mahabalipuram, Chengalpattu district, Tamil Nadu, India."
+    },
+    {
+      "place": "uraiyur",
+      "phase": "mahendra",
+      "title": "The Chalukyas return",
+      "native": "பெருவளநல்லூர்",
+      "when": "about 670 to 674",
+      "at": 52,
+      "camera": {
+        "at": [
+          77.2,
+          13.4
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "badami",
+          "to": "uraiyur",
+          "traveller": "war-elephant",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Pulakeshin's son Vikramaditya I won back Vatapi and carried the war south. His Gadval plates of 674 were issued from his camp at Uraiyur, deep in the Chola country. The Pallava Parameshvaravarman I answered; his Kuram plates claim a great victory over the Chalukya at Peruvalanallur. As before, both sides claim the war.",
+      "today": "Today: Uraiyur, Tiruchirappalli, Tamil Nadu, India."
+    },
+    {
+      "place": "mamallapuram",
+      "phase": "rajasimha",
+      "title": "The Shore Temple",
+      "native": "கடற்கரைக் கோயில்",
+      "when": "about 700 to 728",
+      "at": 56,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          80.2,
+          12.6
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Narasimhavarman II, called Rajasimha, ruled in a time of peace and built in cut stone rather than carving into rock. His Shore Temple at Mamallapuram, two towered shrines to Shiva with a small shrine to the reclining Vishnu between them, stands at the edge of the sea. It is one of the earliest structural stone temples in southern India.",
+      "today": "Today: the Shore Temple, Mahabalipuram, Tamil Nadu, India."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "rajasimha",
+      "title": "The Kailasanatha",
+      "native": "கைலாசநாதர் கோயில்",
+      "when": "about 700 to 728",
+      "at": 60,
+      "camera": {
+        "at": [
+          79.7,
+          12.8
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In Kanchi, Rajasimha built a temple to Shiva he called the Rajasimheshvara, now the Kailasanatha, ringed by small shrines and carved in sandstone. Inscriptions on it name his titles and his queen Rangapataka. A later Sanskrit work, the Avantisundari, places the poet Dandin, author of a famous book on poetics, at the Pallava court in these years.",
+      "today": "Today: the Kailasanatha temple, Kanchipuram, Tamil Nadu, India."
+    },
+    {
+      "place": "mamallapuram",
+      "phase": "rajasimha",
+      "title": "An envoy to the Tang",
+      "native": "唐",
+      "lang": "zh",
+      "when": "720",
+      "at": 63,
+      "camera": {
+        "at": [
+          88.5,
+          13
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "mamallapuram",
+          "to": "china",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "Chinese court records say that in 720 a king of southern India, named in Chinese as Shilinaluosengqie, usually read as Narasimha, sent envoys to the Tang emperor. He offered elephants and horses against the Arabs and the Tibetans, and asked a name for a temple he had built for China. The emperor named it and sent him a title.",
+      "today": "Today: Mahabalipuram, India; Xi'an, the Tang capital, China."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "pallavamalla",
+      "title": "A boy chosen king",
+      "native": "வைகுந்தப் பெருமாள் கோயில்",
+      "when": "731",
+      "at": 67,
+      "camera": {
+        "at": [
+          79.7,
+          12.8
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "When Parameshvaravarman II died in 731 with no grown heir, a boy of twelve from another branch of the family was made king as Nandivarman II, Pallavamalla. Labelled relief panels in Kanchi's Vaikuntha Perumal temple show the choice, made with the ministers and the assembly. Some read them as saying his branch lived in Southeast Asia; this is debated.",
+      "today": "Today: the Vaikuntha Perumal temple, Kanchipuram, Tamil Nadu, India."
+    },
+    {
+      "place": "pattadakal",
+      "phase": "pallavamalla",
+      "title": "A temple after Kanchi",
+      "native": "ಪಟ್ಟದಕಲ್ಲು",
+      "lang": "kn",
+      "when": "about 740 to 745",
+      "at": 71,
+      "camera": {
+        "at": [
+          77.8,
+          14.4
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "kanchipuram",
+          "to": "pattadakal",
+          "traveller": "soldier",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Chalukya Vikramaditya II took Kanchi in about 740. He did not plunder it: his Kannada inscription in the Kailasanatha says he gave its treasures back to the temple. Back home, his queen Lokamahadevi built the Virupaksha temple at Pattadakal, whose plan closely follows the Kailasanatha. In 753 the Chalukyas themselves fell to the Rashtrakutas.",
+      "today": "Today: Pattadakal, a World Heritage Site in Bagalkot district, Karnataka, India."
+    },
+    {
+      "place": "chidambaram",
+      "phase": "pallavamalla",
+      "title": "Songs to Shiva and Vishnu",
+      "native": "தேவாரம்",
+      "when": "7th to 9th centuries, by tradition",
+      "at": 75,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          79.7,
+          11.4
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In the Pallava centuries Tamil poet-saints travelled from shrine to shrine singing to Shiva, among them Appar and Sambandar, and to Vishnu, among them Tirumangai Alvar, who praised Pallavamalla's temple at Kanchi. Their songs, gathered later as the Tevaram and the Divya Prabandham, are still sung. Tradition gives their lives; their exact dates are debated.",
+      "today": "Today: the Nataraja temple, Chidambaram, Tamil Nadu, India."
+    },
+    {
+      "place": "tellaru",
+      "phase": "pallavamalla",
+      "title": "Nandi of Tellaru",
+      "native": "தெள்ளாறு",
+      "when": "about 850",
+      "at": 80,
+      "camera": {
+        "at": [
+          79,
+          11.2
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "madurai",
+          "to": "tellaru",
+          "traveller": "soldier",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Nandivarman III beat a league of enemies, led by the Pandyas, at Tellaru and took the name Tellarerinda Nandi, Nandi who won at Tellaru. A Tamil poem in his praise, the Nandikkalambakam, survives. Tradition adds that a jealous brother wrote it as a curse, and that the king died on hearing it to the end. Inscriptions say nothing of this.",
+      "today": "Today: Tellar, Tiruvannamalai district, Tamil Nadu, India."
+    },
+    {
+      "place": "mamallapuram",
+      "phase": "pallavamalla",
+      "title": "A tank in Siam",
+      "native": "அவனிநாரணம்",
+      "when": "9th century",
+      "at": 84,
+      "camera": {
+        "at": [
+          89,
+          10.8
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "mamallapuram",
+          "to": "southeast",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "A Tamil inscription found at Takua Pa, on the west coast of Thailand, records a tank named Avani-naranam, a title of Nandivarman III, cared for by a merchant guild (Manigramam) and soldiers. It shows Tamil merchants settled across the Bay of Bengal in the late Pallava age. The sea route ran on to the ports of Southeast Asia and China.",
+      "today": "Today: Takua Pa, Phang Nga province, Thailand."
+    },
+    {
+      "place": "tiruppurambiyam",
+      "phase": "end",
+      "title": "The battle of Sripurambiyam",
+      "native": "திருப்புறம்பியம்",
+      "when": "about 885",
+      "at": 87,
+      "camera": {
+        "at": [
+          78.7,
+          10.5
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "madurai",
+          "to": "tiruppurambiyam",
+          "traveller": "soldier",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Near Kumbakonam the Pallava Aparajita met the Pandya king Varaguna II. With him fought the Ganga king Prithvipati I, who was killed in the battle, and, it is thought, the Chola Aditya. Aparajita won and the Pandyas never recovered. But the victory left the Cholas, once Pallava vassals at Thanjavur, the strongest of the allies.",
+      "today": "Today: Tiruppurambiyam, Thanjavur district, Tamil Nadu, India."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "end",
+      "title": "The last Pallava",
+      "native": "அபராஜிதன்",
+      "when": "about 897",
+      "at": 90,
+      "camera": {
+        "at": [
+          79.4,
+          11.8
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "thanjavur",
+          "to": "kanchipuram",
+          "traveller": "war-elephant",
+          "style": "campaign",
+          "bend": 0.1
+        }
+      ],
+      "text": "Aditya I turned on his overlord. Chola copper plates say he defeated Aparajita, who was mounted on a tall elephant, and killed him. With that the Pallava kingdom of Kanchi came to an end and Tondaimandalam, the land around Kanchi, passed to the Cholas. Their story goes on in The Chola Empire; smaller Pallava families lingered as chiefs.",
+      "today": "Today: Kanchipuram, Tamil Nadu, India."
+    },
+    {
+      "place": "mamallapuram",
+      "phase": "legacy",
+      "title": "Letters across the sea",
+      "native": "கிரந்தம்",
+      "when": "from the 5th century",
+      "at": 94,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          89,
+          10.8
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "mamallapuram",
+          "to": "southeast",
+          "traveller": "scroll",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "The script of Pallava inscriptions travelled with traders and priests. The earliest Sanskrit inscriptions of Southeast Asia, in Java, Borneo, Cambodia and Vietnam, are written in a script close to it, often called Pallava script. From it grew the scripts of Khmer, Javanese, Thai and others. In Tamil Nadu it grew into the Grantha script.",
+      "today": "Today: the Khmer, Thai, Lao, Burmese and Balinese scripts are among its descendants."
+    },
+    {
+      "place": "mamallapuram",
+      "phase": "legacy",
+      "title": "What the sea gave back",
+      "native": "சாளுவன்குப்பம்",
+      "when": "1984 and 2004 onwards",
+      "at": 98,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          80.2,
+          12.6
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "The Group of Monuments at Mahabalipuram became a World Heritage Site in 1984. The tsunami of December 2004 stripped sand from the shore and uncovered carved rocks and older walls. Excavations at nearby Saluvankuppam then found a brick temple to Murugan, dated by its excavators to the Sangam age, under a granite temple of Pallava times.",
+      "today": "Today: Mahabalipuram and Saluvankuppam, Tamil Nadu, India."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "pallava",
+        "name": "Pallavas",
+        "native": "பல்லவர்",
+        "color": "#c2477a",
+        "active": [
+          [
+            0,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Pallavas",
+          "at": [
+            79.3,
+            14
+          ],
+          "moves": [
+            {
+              "from": 20,
+              "at": [
+                78.7,
+                14.1
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.8,
+                  12.2
+                ],
+                [
+                  79.6,
+                  12.1
+                ],
+                [
+                  80.2,
+                  12.4
+                ],
+                [
+                  80.3,
+                  13.5
+                ],
+                [
+                  80.15,
+                  14.4
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  80.9,
+                  15.8
+                ],
+                [
+                  80.3,
+                  15.8
+                ],
+                [
+                  79.3,
+                  15.3
+                ],
+                [
+                  78.9,
+                  14.2
+                ],
+                [
+                  78.7,
+                  13.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.5,
+                  10.9
+                ],
+                [
+                  79.1,
+                  10.4
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.3,
+                  13
+                ],
+                [
+                  80.15,
+                  14.4
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  80.9,
+                  15.8
+                ],
+                [
+                  80.3,
+                  15.8
+                ],
+                [
+                  79.4,
+                  15.6
+                ],
+                [
+                  78.8,
+                  14.5
+                ],
+                [
+                  78.5,
+                  13
+                ],
+                [
+                  78.4,
+                  11.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                8
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  75.68,
+                  15.92
+                ],
+                "radius": 0.4
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                16,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  11.4
+                ],
+                [
+                  79.5,
+                  11.45
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.3,
+                  13
+                ],
+                [
+                  80.15,
+                  14.4
+                ],
+                [
+                  79.4,
+                  14.6
+                ],
+                [
+                  78.5,
+                  13.8
+                ],
+                [
+                  78.3,
+                  12.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                20,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  79,
+                  12.2
+                ],
+                [
+                  79.6,
+                  12.1
+                ],
+                [
+                  80.2,
+                  12.4
+                ],
+                [
+                  80.25,
+                  13.4
+                ],
+                [
+                  80.1,
+                  14
+                ],
+                [
+                  79.3,
+                  13.9
+                ],
+                [
+                  78.8,
+                  13.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Kanchipuram",
+          "Port": "Mamallapuram",
+          "Today": "Northern Tamil Nadu and southern Andhra Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Shivaskandavarman"
+          },
+          {
+            "from": 1,
+            "text": "Vishnugopa"
+          },
+          {
+            "from": 3,
+            "text": "Simhavishnu"
+          },
+          {
+            "from": 4,
+            "text": "Mahendravarman I"
+          },
+          {
+            "from": 7,
+            "text": "Narasimhavarman I"
+          },
+          {
+            "from": 11,
+            "text": "Parameshvaravarman I"
+          },
+          {
+            "from": 12,
+            "text": "Narasimhavarman II Rajasimha"
+          },
+          {
+            "from": 15,
+            "text": "Nandivarman II"
+          },
+          {
+            "from": 18,
+            "text": "Nandivarman III"
+          },
+          {
+            "from": 20,
+            "text": "Aparajita"
+          }
+        ],
+        "role": "The kings of Kanchi, masters of Tondaimandalam and for a time of the whole Tamil north.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "War with the Chalukyas of Badami"
+          },
+          {
+            "from": 8,
+            "text": "Takes Vatapi"
+          },
+          {
+            "from": 16,
+            "text": "Loses Kanchi to Vikramaditya II for a time"
+          },
+          {
+            "from": 20,
+            "text": "Wins at Sripurambiyam with Ganga and Chola allies"
+          },
+          {
+            "from": 21,
+            "text": "Overthrown by the Cholas"
+          }
+        ]
+      },
+      {
+        "id": "gupta",
+        "name": "Guptas",
+        "native": "गुप्त",
+        "lang": "sa",
+        "color": "#8c6bb1",
+        "active": [
+          [
+            1,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Guptas",
+          "at": [
+            82.5,
+            26.6
+          ]
+        },
+        "area": [
+          [
+            77.5,
+            27.9
+          ],
+          [
+            80,
+            28
+          ],
+          [
+            83,
+            27.2
+          ],
+          [
+            86,
+            26.6
+          ],
+          [
+            88.5,
+            26.2
+          ],
+          [
+            89,
+            24.5
+          ],
+          [
+            87.5,
+            23.5
+          ],
+          [
+            85,
+            24.5
+          ],
+          [
+            82.5,
+            24.8
+          ],
+          [
+            80,
+            25.2
+          ],
+          [
+            78,
+            26
+          ]
+        ],
+        "facts": {
+          "Capital": "Pataliputra",
+          "Today": "Bihar and Uttar Pradesh"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Samudragupta"
+          }
+        ],
+        "ties": [
+          {
+            "from": 1,
+            "text": "Claims to capture and release Vishnugopa"
+          }
+        ],
+        "role": "The northern empire whose pillar names Vishnugopa of Kanchi."
+      },
+      {
+        "id": "kadamba",
+        "name": "Kadambas",
+        "native": "ಕದಂಬ",
+        "lang": "kn",
+        "color": "#3a9fb8",
+        "active": [
+          [
+            2,
+            2
+          ]
+        ],
+        "label": {
+          "text": "Kadambas",
+          "at": [
+            75.1,
+            14.9
+          ]
+        },
+        "area": [
+          [
+            74.4,
+            14.9
+          ],
+          [
+            75.1,
+            15.2
+          ],
+          [
+            75.8,
+            14.9
+          ],
+          [
+            75.9,
+            14.1
+          ],
+          [
+            75.2,
+            13.7
+          ],
+          [
+            74.6,
+            13.9
+          ]
+        ],
+        "facts": {
+          "Capital": "Banavasi",
+          "Today": "Northwest Karnataka"
+        },
+        "rulers": [
+          {
+            "from": 2,
+            "text": "Mayurasharma"
+          }
+        ],
+        "ties": [
+          {
+            "from": 2,
+            "text": "Wins land on the Pallava frontier"
+          }
+        ],
+        "role": "A kingdom founded by a Brahmin student who quarrelled with the Pallavas."
+      },
+      {
+        "id": "chalukya",
+        "name": "Chalukyas of Badami",
+        "native": "ಚಾಳುಕ್ಯ",
+        "lang": "kn",
+        "color": "#8aa43a",
+        "active": [
+          [
+            6,
+            16
+          ]
+        ],
+        "label": {
+          "text": "Chalukyas",
+          "at": [
+            76.5,
+            18.5
+          ],
+          "moves": [
+            {
+              "from": 8,
+              "at": [
+                75.7,
+                16.9
+              ]
+            },
+            {
+              "from": 9,
+              "at": [
+                76.5,
+                18.5
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                7
+              ],
+              [
+                9,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.9,
+                  21.6
+                ],
+                [
+                  74.5,
+                  21.8
+                ],
+                [
+                  77,
+                  21.5
+                ],
+                [
+                  79.5,
+                  21
+                ],
+                [
+                  81,
+                  19
+                ],
+                [
+                  81.5,
+                  17
+                ],
+                [
+                  81.3,
+                  16.5
+                ],
+                [
+                  80.6,
+                  16.2
+                ],
+                [
+                  79.5,
+                  16
+                ],
+                [
+                  78,
+                  15.4
+                ],
+                [
+                  76.5,
+                  15.1
+                ],
+                [
+                  75,
+                  14.8
+                ],
+                [
+                  74.2,
+                  15
+                ],
+                [
+                  73.6,
+                  16.5
+                ],
+                [
+                  73.1,
+                  18
+                ],
+                [
+                  72.8,
+                  19.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.2,
+                  15.5
+                ],
+                [
+                  76.1,
+                  15.5
+                ],
+                [
+                  76.3,
+                  16.2
+                ],
+                [
+                  75.5,
+                  16.5
+                ],
+                [
+                  74.9,
+                  16.1
+                ]
+              ]
+            ]
+          }
+        ],
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Pulakeshin II"
+          },
+          {
+            "from": 11,
+            "text": "Vikramaditya I"
+          },
+          {
+            "from": 16,
+            "text": "Vikramaditya II"
+          }
+        ],
+        "facts": {
+          "Capital": "Vatapi (Badami)",
+          "Today": "Northern Karnataka and Maharashtra"
+        },
+        "ties": [
+          {
+            "from": 6,
+            "text": "Pulakeshin II marches on Kanchi"
+          },
+          {
+            "from": 8,
+            "text": "Loses Vatapi to the Pallavas"
+          },
+          {
+            "from": 11,
+            "text": "Camps at Uraiyur"
+          },
+          {
+            "from": 16,
+            "text": "Vikramaditya II takes Kanchi"
+          }
+        ],
+        "role": "The Pallavas’ great rival in the Deccan for over a century."
+      },
+      {
+        "id": "rashtrakuta",
+        "name": "Rashtrakutas",
+        "native": "ರಾಷ್ಟ್ರಕೂಟ",
+        "lang": "kn",
+        "color": "#4f6fd0",
+        "active": [
+          [
+            17,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Rashtrakutas",
+          "at": [
+            76.5,
+            18.5
+          ]
+        },
+        "area": [
+          [
+            72.9,
+            21.6
+          ],
+          [
+            74.5,
+            21.8
+          ],
+          [
+            77,
+            21.5
+          ],
+          [
+            79.5,
+            21
+          ],
+          [
+            81,
+            19
+          ],
+          [
+            81.5,
+            17
+          ],
+          [
+            81.3,
+            16.5
+          ],
+          [
+            80.6,
+            16.2
+          ],
+          [
+            79.5,
+            16
+          ],
+          [
+            78,
+            15.4
+          ],
+          [
+            76.5,
+            15.1
+          ],
+          [
+            75,
+            14.8
+          ],
+          [
+            74.2,
+            15
+          ],
+          [
+            73.6,
+            16.5
+          ],
+          [
+            73.1,
+            18
+          ],
+          [
+            72.8,
+            19.7
+          ]
+        ],
+        "facts": {
+          "Capital": "Manyakheta",
+          "Today": "Karnataka and Maharashtra"
+        },
+        "rulers": [
+          {
+            "from": 17,
+            "text": "Dantidurga, then his heirs"
+          }
+        ],
+        "ties": [
+          {
+            "from": 17,
+            "text": "Overthrow the Chalukyas in 753"
+          }
+        ],
+        "role": "Successors of the Chalukyas in the Deccan from 753."
+      },
+      {
+        "id": "pandya",
+        "name": "Pandyas",
+        "native": "பாண்டியர்",
+        "color": "#2f8f6b",
+        "active": [
+          [
+            3,
+            20
+          ]
+        ],
+        "label": {
+          "text": "Pandyas",
+          "at": [
+            78,
+            9.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.3,
+                  9
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  78.9,
+                  10.4
+                ],
+                [
+                  78.2,
+                  10.6
+                ],
+                [
+                  77.7,
+                  10.3
+                ],
+                [
+                  77.25,
+                  9.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                20,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  77.6,
+                  9
+                ],
+                [
+                  77.55,
+                  8.2
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79,
+                  9.3
+                ],
+                [
+                  78.6,
+                  9.9
+                ],
+                [
+                  77.9,
+                  10
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Madurai",
+          "Emblem": "The fish",
+          "Today": "Southern Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Kadungon and his heirs"
+          },
+          {
+            "from": 18,
+            "text": "Srimara Srivallabha"
+          },
+          {
+            "from": 20,
+            "text": "Varaguna II"
+          }
+        ],
+        "ties": [
+          {
+            "from": 18,
+            "text": "Beaten at Tellaru"
+          },
+          {
+            "from": 20,
+            "text": "Beaten at Sripurambiyam"
+          }
+        ],
+        "role": "The kings of Madurai, the Pallavas’ rivals in the far south."
+      },
+      {
+        "id": "chola",
+        "name": "Cholas",
+        "native": "சோழர்",
+        "color": "#e0892e",
+        "active": [
+          [
+            20,
+            21
+          ]
+        ],
+        "label": {
+          "text": "Cholas",
+          "at": [
+            79.2,
+            10.9
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                20,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  10.4
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  79.5,
+                  11.6
+                ],
+                [
+                  78.8,
+                  11.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                21,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  10.4
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13
+                ],
+                [
+                  79.3,
+                  13
+                ],
+                [
+                  78.5,
+                  12.2
+                ],
+                [
+                  78.2,
+                  11.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Thanjavur",
+          "Today": "Central Tamil Nadu"
+        },
+        "rulers": [
+          {
+            "from": 20,
+            "text": "Aditya I"
+          }
+        ],
+        "ties": [
+          {
+            "from": 20,
+            "text": "Allies of Aparajita at Sripurambiyam"
+          },
+          {
+            "from": 21,
+            "text": "Take Tondaimandalam"
+          }
+        ],
+        "role": "Once Pallava vassals at Thanjavur, they take Kanchi about 897."
+      }
+    ]
+  },
+  "people": {
+    "heading": "People",
+    "items": [
+      {
+        "id": "mahendravarman",
+        "name": "Mahendravarman I",
+        "native": "மகேந்திரவர்மன்",
+        "life": "reigned about 600 to 630",
+        "role": "Pallava king, builder and playwright",
+        "steps": [
+          4,
+          5,
+          6
+        ],
+        "text": "Son of Simhavishnu, he began building in stone in the Tamil country with cave temples such as Mandagapattu, and wrote the Sanskrit farce A Drunkard's Revel. His inscriptions give him many playful titles, such as Vichitrachitta, curious-minded. He fought Pulakeshin II near Kanchi. Tradition says the poet-saint Appar turned him from the Jain faith to Shiva."
+      },
+      {
+        "id": "pulakeshin",
+        "name": "Pulakeshin II",
+        "native": "ಪುಲಕೇಶಿ",
+        "lang": "kn",
+        "life": "reigned about 610 to 642",
+        "role": "Chalukya king of Badami",
+        "steps": [
+          6,
+          8
+        ],
+        "text": "The greatest of the Chalukyas of Badami. His court poet Ravikirti's Aihole inscription of 634 says he defeated Harsha of Kanauj and drove the Pallava king behind the walls of Kanchi. Xuanzang described his kingdom and its soldiers. The Pallavas took his capital, Vatapi, in 642, and he is not heard of after it."
+      },
+      {
+        "id": "narasimhavarman",
+        "name": "Narasimhavarman I",
+        "native": "நரசிம்மவர்மன்",
+        "life": "reigned about 630 to 668",
+        "role": "Pallava king, Mamalla",
+        "steps": [
+          8,
+          9,
+          10
+        ],
+        "text": "Son of Mahendravarman, called Mamalla, great wrestler. He drove back the Chalukyas and in 642 took their capital Vatapi, earning the title Vatapikonda. The Culavamsa says he sent a fleet to Sri Lanka for the exiled prince Manavamma. The port of Mamallapuram, with many of its monuments, is named after him."
+      },
+      {
+        "id": "xuanzang",
+        "name": "Xuanzang",
+        "native": "玄奘",
+        "lang": "zh",
+        "life": "about 602 to 664",
+        "role": "Chinese Buddhist pilgrim",
+        "steps": [
+          7
+        ],
+        "text": "A monk who travelled from China to India to collect Buddhist texts, from about 629 to 645. His Record of the Western Regions describes the kingdoms he passed through, including Kanchipura, its monasteries and its people. He brought hundreds of texts back to Chang'an and spent the rest of his life translating them into Chinese."
+      },
+      {
+        "id": "rajasimha",
+        "name": "Narasimhavarman II, Rajasimha",
+        "native": "ராஜசிம்மன்",
+        "life": "reigned about 700 to 728",
+        "role": "Pallava king and temple builder",
+        "steps": [
+          12,
+          13,
+          14
+        ],
+        "text": "His reign was largely peaceful, and he built in cut stone: the Shore Temple at Mamallapuram and the Kailasanatha at Kanchi, which he called the Rajasimheshvara. His queen Rangapataka is named in its inscriptions. He is usually identified with the king of southern India who sent envoys to the Tang emperor in 720."
+      },
+      {
+        "id": "nandivarman",
+        "name": "Nandivarman II, Pallavamalla",
+        "native": "நந்திவர்மன்",
+        "life": "reigned about 731 to 796",
+        "role": "Pallava king, chosen as a boy",
+        "steps": [
+          15,
+          16,
+          17
+        ],
+        "text": "Chosen king at twelve from another branch of the family, as the panels of the Vaikuntha Perumal temple show. His long reign saw the Chalukya Vikramaditya II take Kanchi, the fall of the Chalukyas to the Rashtrakutas, and wars with the Pandyas. The Vishnu saint Tirumangai Alvar sang of the temple he built."
+      },
+      {
+        "id": "aparajita",
+        "name": "Aparajita",
+        "native": "அபராஜிதன்",
+        "life": "reigned about 885 to 897",
+        "role": "the last Pallava king of Kanchi",
+        "steps": [
+          20,
+          21
+        ],
+        "text": "With the Ganga king Prithvipati I and probably the Chola Aditya I, he defeated the Pandya Varaguna II at Sripurambiyam in about 885. About twelve years later Aditya turned against him. Chola copper plates say Aditya killed him on his elephant, and Tondaimandalam passed to the Cholas."
+      }
+    ]
+  }
+}

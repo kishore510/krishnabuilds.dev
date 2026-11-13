@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.39.0
+
+- New story map in Chronicles: The Pallavas. From the first Prakrit copper plates of Kanchi, Samudragupta’s pillar at Prayag and the Kadamba founder who left Kanchi’s college for the sword, through Simhavishnu’s revival, Mahendravarman’s cave temples and farce, Xuanzang in Kanchi, the long war with the Chalukyas of Badami and Narasimhavarman’s taking of Vatapi, to Rajasimha’s Shore Temple and Kailasanatha, the envoy to the Tang, Nandivarman II, the poet-saints, the battle of Sripurambiyam and the last Pallava king about 897, and the script that crossed the sea. 24 chapters, a Powers layer (the Pallavas, Guptas, Kadambas, Chalukyas of Badami, Rashtrakutas, Pandyas and Cholas) and 7 people cards.
+- Catalogue: the Pallava dynasty entry now opens the story.
+
 ## 0.38.0
 
 - New story map in Chronicles: The Kushan Empire. From the Yuezhi nomads reaching Bactria about 130 BCE, Kujula Kadphises uniting the five chiefdoms and taking Gandhara, and Wima Kadphises’s gold coins, through Kanishka’s Rabatak inscription, Bala’s Bodhisattva at Sarnath, the great stupa at Purushapura and the fourth council (tradition), to Gandhara and Mathura art, the Begram treasure, Vasudeva, the Sasanian conquest of Bactria and the Allahabad pillar. 13 chapters, a Powers layer (the Yuezhi, the Kushans, the Indo-Parthians, the Western Kshatrapas, the Satavahanas, the Sasanians and the Guptas) and 6 people cards.
