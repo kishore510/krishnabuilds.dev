@@ -79,7 +79,7 @@
         text: "Illustrated maps that tell a story chapter by chapter, on three shelves: Nature, Humankind and Science. Here is a quick look around.",
       },
       {
-        targets: [document.querySelector(".sm-shelf")],
+        targets: [document.querySelector(".sm-doors")],
         title: "Three shelves",
         text: "Nature is what happened, Humankind is what people did, and Science is how we found out. Each shelf holds subjects, and each subject its story maps.",
       },
