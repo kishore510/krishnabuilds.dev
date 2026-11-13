@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.35.0
+
+- New story map in Chronicles: The Mahajanapadas and the Buddha. From the sixteen great kingdoms of the Ganga plain, Gandhara under Persia and the first coins, through Udayana and Vasavadatta, the republics and Mahavira, to the Buddha’s life from Lumbini to Kushinagar, the first council, Magadha swallowing its rivals and Bodh Gaya today. 23 chapters, a Powers layer (Magadha growing, Kosala, Vatsa, Avanti, the Vajjis and Gandhara) and 5 people cards.
+- Catalogue: the Mahajanapadas entry now opens the story.
+
 ## 0.34.0
 
 - Maps are far less crowded. A chapter now draws in full, with its picture and name, only its own place and the places its routes start and end at. Places from earlier chapters shrink to small dots and later places wait their turn, so a busy region such as the forts around Pune in The Marathas no longer shows every name at once. A dot can still be tapped for its chapters, “Whole map” also shows the places still to come as dots, and on a computer pointing at a dot shows its name.
