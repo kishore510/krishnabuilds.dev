@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Odyssey (`odyssey`), 2026-11-14
 - The Iliad (`iliad`), 2026-11-14
 - Hyder Ali and Tipu Sultan (`mysore`), 2026-11-14
 - The Spanish Empire (`spanish-empire`), 2026-11-13

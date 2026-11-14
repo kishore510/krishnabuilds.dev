@@ -226,9 +226,18 @@ function storyLinks(entry) {
   const mine = catalogue.entries.filter((e) => e.story === entry.id);
   /** @type {Map<string, Entry>} */
   const related = new Map(mine.map((e) => [e.id, e]));
-  for (const e of mine) {
+  // Stories about the entries that come straight after (then before) this one's are offered first.
+  /** @type {string[]} */
+  const neighbourStories = [];
+  // The story's own entry (the one without a chapter) comes first.
+  const own = [...mine].sort((a, b) => (a.chapter === undefined ? 0 : 1) - (b.chapter === undefined ? 0 : 1));
+  for (const e of own) {
     const { before, after } = X.neighbours(e, catalogue.entries);
-    for (const x of [after, before]) if (x) related.set(x.id, x);
+    for (const x of [after, before]) {
+      if (!x) continue;
+      related.set(x.id, x);
+      if (x.story && x.story !== entry.id && !neighbourStories.includes(x.story)) neighbourStories.push(x.story);
+    }
   }
   for (const e of mine) {
     for (const m of X.meanwhile(e, catalogue.entries, 2)) related.set(m.entry.id, m.entry);
@@ -247,7 +256,15 @@ function storyLinks(entry) {
     }
     return years;
   };
-  const next = inOrder.map((s, i) => ({ s, i, years: shared(s) })).sort((a, b) => b.years - a.years || a.i - b.i).map((x) => x.s);
+  /** @param {Story} s */
+  const rank = (s) => {
+    const n = neighbourStories.indexOf(s.id);
+    return n < 0 ? neighbourStories.length : n;
+  };
+  const next = inOrder
+    .map((s, i) => ({ s, i, years: shared(s) }))
+    .sort((a, b) => rank(a.s) - rank(b.s) || b.years - a.years || a.i - b.i)
+    .map((x) => x.s);
   return {
     stories: inOrder.map((s) => ({ title: s.title, href: `/${s.id}/` })),
     next: next.slice(0, 2).map((s) => ({ title: s.title, href: `/${s.id}/`, era: s.era })),

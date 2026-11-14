@@ -1,0 +1,992 @@
+{
+  "id": "odyssey",
+  "title": "The Odyssey",
+  "description": "An illustrated map of Homer’s Odyssey, from Troy and the raid on the Cicones, through the Cyclops, Circe, the dead, the Sirens, Scylla and Charybdis and seven years with Calypso, to Telemachus’s search, Odysseus’s return to Ithaca in disguise, the contest of the bow and the palace dug at Pylos.",
+  "canvas": "geo",
+  "basemap": "europe",
+  "source": "Tradition",
+  "nativeLang": "grc",
+  "routes": "chapter",
+  "overview": {
+    "at": [
+      18,
+      38.6
+    ],
+    "width": 20
+  },
+  "mapLabel": "Illustrated map of the Odyssey and the wanderings of Odysseus in Greek tradition",
+  "note": "Based on Homer’s Odyssey, and on the palace excavated at Pylos; each chapter says which. Homer’s geography is partly imaginary, and the places of the wanderings follow ancient and modern identifications that are often disputed: the Lotus-eaters, the Laestrygonians, Aeaea, Ogygia and Scheria have each been placed in several seas. Homer’s Ithaca may not be the modern island. Native names are given in Latin letters. The map is stylised and not to scale. Thrinacia is drawn about 35 km west of Milazzo so its pin stays clear of the Strait of Messina, and Sparta about 15 km east of the modern town so it stays clear of Pylos; the Lotus-eaters’ coast lies off the map’s southern edge.",
+  "places": {
+    "chios": {
+      "name": "Chios",
+      "at": [
+        26.14,
+        38.37
+      ],
+      "glyph": "lyre",
+      "label": "right"
+    },
+    "troy": {
+      "name": "Troy",
+      "at": [
+        26.24,
+        39.96
+      ],
+      "glyph": "gate",
+      "label": "right"
+    },
+    "ismarus": {
+      "name": "Ismarus",
+      "at": [
+        25.52,
+        40.88
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "malea": {
+      "name": "Cape Malea",
+      "at": [
+        23.2,
+        36.44
+      ],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "lotus": {
+      "name": "Land of the Lotus-eaters",
+      "at": [
+        10.9,
+        33.8
+      ],
+      "hidden": true
+    },
+    "cyclops": {
+      "name": "Land of the Cyclopes",
+      "at": [
+        15.16,
+        37.56
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "aeolia": {
+      "name": "Aeolia",
+      "at": [
+        14.95,
+        38.47
+      ],
+      "glyph": "swell",
+      "label": "left"
+    },
+    "telepylus": {
+      "name": "Telepylus",
+      "at": [
+        9.16,
+        41.39
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "aeaea": {
+      "name": "Aeaea",
+      "at": [
+        13.05,
+        41.23
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "underworld": {
+      "name": "Gate of the dead",
+      "at": [
+        14.07,
+        40.84
+      ],
+      "glyph": "sacred-fire",
+      "label": "right"
+    },
+    "sirens": {
+      "name": "Sirens’ isles",
+      "at": [
+        14.43,
+        40.58
+      ],
+      "glyph": "lyre",
+      "label": "right"
+    },
+    "strait": {
+      "name": "Scylla and Charybdis",
+      "at": [
+        15.63,
+        38.25
+      ],
+      "glyph": "burst",
+      "label": "right"
+    },
+    "thrinacia": {
+      "name": "Thrinacia",
+      "at": [
+        14.85,
+        38.05
+      ],
+      "glyph": "deer",
+      "label": "left"
+    },
+    "ogygia": {
+      "name": "Ogygia",
+      "at": [
+        14.28,
+        36.06
+      ],
+      "glyph": "forest",
+      "label": "right"
+    },
+    "ithaca": {
+      "name": "Ithaca",
+      "at": [
+        20.71,
+        38.37
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "pylos": {
+      "name": "Pylos",
+      "at": [
+        21.7,
+        37.03
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "sparta": {
+      "name": "Sparta",
+      "at": [
+        22.6,
+        37.07
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "scheria": {
+      "name": "Scheria",
+      "at": [
+        19.92,
+        39.62
+      ],
+      "glyph": "boat",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "ships": {
+      "name": "Odysseus’s ships",
+      "icon": "trireme"
+    },
+    "raft": {
+      "name": "Odysseus alone",
+      "icon": "canoe"
+    },
+    "phaeacian": {
+      "name": "The Phaeacian ship",
+      "icon": "merchant-ship"
+    },
+    "telemachus-ship": {
+      "name": "Telemachus",
+      "icon": "trireme"
+    },
+    "telemachus": {
+      "name": "Telemachus",
+      "icon": "chariot"
+    },
+    "blegen": {
+      "name": "Carl Blegen",
+      "icon": "scientist"
+    }
+  },
+  "phases": {
+    "poem": {
+      "name": "The poem",
+      "color": "#a678e0"
+    },
+    "homeward": {
+      "name": "Homeward from Troy",
+      "color": "#d9822b"
+    },
+    "circe": {
+      "name": "Circe and the dead",
+      "color": "#8fcf8a"
+    },
+    "lost": {
+      "name": "The ships lost",
+      "color": "#b3261e"
+    },
+    "telemachy": {
+      "name": "Telemachus",
+      "color": "#5b8fd9"
+    },
+    "return": {
+      "name": "Return to Ithaca",
+      "color": "#f2c14e"
+    },
+    "finding": {
+      "name": "Finding Homer’s world",
+      "color": "#4fc3b0"
+    }
+  },
+  "routeStyles": {
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "journey": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "drift": {
+      "color": "#6aa6cf",
+      "width": 2.4,
+      "dash": "4 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 4.0,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 28.0,
+        "color": "rgba(217,130,43,.35)"
+      },
+      {
+        "until": 40.0,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 52.0,
+        "color": "rgba(179,38,30,.35)"
+      },
+      {
+        "until": 64.0,
+        "color": "rgba(91,143,217,.35)"
+      },
+      {
+        "until": 92.0,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(79,195,176,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 8,
+        "text": "Fall of Troy"
+      },
+      {
+        "at": 56,
+        "text": "Year 10"
+      },
+      {
+        "at": 95,
+        "text": "1939"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "chios",
+      "phase": "poem",
+      "title": "The poem of the return",
+      "native": "Odysseia",
+      "when": "about 725 to 650 BCE, scholars estimate",
+      "at": 2,
+      "camera": {
+        "at": [
+          26.14,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Greek tradition credits the Odyssey, like the Iliad, to Homer, and a guild of singers on Chios called themselves his descendants (Homeridae). Most scholars think it was composed a little after the Iliad, about 725 to 650 BCE. Its 24 books tell how Odysseus, king of Ithaca, takes ten years to sail home from Troy, and what he finds there.",
+      "today": "Chios, Greece. A rock above Vrontados, north of the town, is still called the Stone of Homer (Daskalopetra)."
+    },
+    {
+      "place": "troy",
+      "phase": "homeward",
+      "title": "Leaving Troy",
+      "native": "Ilios",
+      "when": "after the fall of Troy",
+      "at": 6,
+      "camera": {
+        "at": [
+          26.24,
+          39.96
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Troy has fallen, by Odysseus’s trick of the wooden horse. The Greeks share out its treasure and captives and sail for home, but the gods are angry at the sack. Odysseus leaves with twelve ships. The poem itself opens near the end of his wanderings, and he tells their beginning later, at a king’s feast, in books 9 to 12.",
+      "today": "Hisarlık, Çanakkale, Turkey. The ruins of Troy are a World Heritage Site."
+    },
+    {
+      "place": "ismarus",
+      "phase": "homeward",
+      "title": "Raiding the Cicones",
+      "native": "Ismaros",
+      "when": "after the fall of Troy",
+      "at": 10,
+      "camera": {
+        "at": [
+          25.9,
+          40.4
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "troy",
+          "to": "ismarus",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Odysseus’s first landfall is Ismarus in Thrace, a town of the Cicones, allies of Troy. His men sack it and take its women and wine, but refuse to leave when he urges them. The Cicones gather help from inland and attack at dawn, and six men from each ship are killed before the rest escape.",
+      "today": "Maroneia, Rhodope, northern Greece, which ancient writers linked to Ismarus. It still makes wine."
+    },
+    {
+      "place": "malea",
+      "phase": "homeward",
+      "title": "Blown past Malea",
+      "native": "Maleia",
+      "when": "after the fall of Troy",
+      "at": 14,
+      "camera": {
+        "at": [
+          17,
+          37
+        ],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "ismarus",
+          "to": "malea",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        },
+        {
+          "from": "malea",
+          "to": "lotus",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Rounding Cape Malea, almost home, the fleet is driven off course by a north wind for nine days. It reaches the Lotus-eaters, whose sweet fruit makes men forget their homes. Odysseus drags the men who ate it back to the ships in tears. Herodotus placed the Lotus-eaters on the Libyan coast; many later writers chose Djerba, Tunisia.",
+      "today": "Cape Maleas, Laconia, Greece, still a dangerous cape for sailors. Djerba lies off the map’s southern edge."
+    },
+    {
+      "place": "cyclops",
+      "phase": "homeward",
+      "title": "The Cyclops",
+      "native": "Kyklops",
+      "when": "on the voyage",
+      "at": 18,
+      "camera": {
+        "at": [
+          13,
+          36.4
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "lotus",
+          "to": "cyclops",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "In a cave Odysseus and twelve men are trapped by Polyphemus, a one-eyed giant (Cyclops) and son of Poseidon, who eats six of them. Odysseus makes him drunk, says his name is Nobody, and blinds him with a burning stake. As he sails away he shouts his real name, and Polyphemus prays to Poseidon for revenge.",
+      "today": "Aci Trezza, Sicily. Local tradition says the rocks offshore, the Cyclopean Isles, are those the blinded giant threw."
+    },
+    {
+      "place": "aeolia",
+      "phase": "homeward",
+      "title": "The bag of winds",
+      "native": "Aiolie",
+      "when": "on the voyage",
+      "at": 22,
+      "camera": {
+        "at": [
+          15.05,
+          38.0
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "cyclops",
+          "to": "aeolia",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Aeolus, keeper of the winds, lives on a floating island ringed with a bronze wall. He gives Odysseus the storm winds tied in an ox-hide bag. With a gentle west wind they come within sight of Ithaca, but while Odysseus sleeps his crew open the bag, thinking it holds gold, and the winds blow them back.",
+      "today": "the Aeolian Islands, north of Sicily, Italy, named for Aeolus by ancient writers. Lipari is the largest."
+    },
+    {
+      "place": "telepylus",
+      "phase": "homeward",
+      "title": "The Laestrygonians",
+      "native": "Telepylos",
+      "when": "on the voyage",
+      "at": 26,
+      "camera": {
+        "at": [
+          12,
+          40
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "aeolia",
+          "to": "telepylus",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "The fleet enters a harbour ringed by cliffs with a narrow mouth. Its people, the Laestrygonians, are giants who eat men. They smash the ships with rocks from the cliffs and spear the crews like fish. Only Odysseus’s ship, moored outside, escapes. Roman writers placed them at Formiae, south of Rome; many modern readers suggest Bonifacio, in Corsica.",
+      "today": "Bonifacio, Corsica, France, whose harbour lies in a narrow inlet below limestone cliffs."
+    },
+    {
+      "place": "aeaea",
+      "phase": "circe",
+      "title": "Circe’s island",
+      "native": "Aiaie",
+      "when": "a year on Aeaea",
+      "at": 30,
+      "camera": {
+        "at": [
+          11,
+          40.3
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "telepylus",
+          "to": "aeaea",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "On Aeaea the goddess Circe turns half the crew into pigs. The god Hermes gives Odysseus a herb (moly) that protects him from her drugs, and he forces her to free them. They stay a year as her guests before his men urge him homeward. Circe tells him he must first visit the dead.",
+      "today": "Monte Circeo, a headland in Lazio, Italy, named for Circe. Ancient writers showed a cup said to be Odysseus’s there."
+    },
+    {
+      "place": "underworld",
+      "phase": "circe",
+      "title": "Among the dead",
+      "native": "Nekyia",
+      "when": "on the voyage",
+      "at": 34,
+      "camera": {
+        "at": [
+          13.6,
+          41.0
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "aeaea",
+          "to": "underworld",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "At the edge of the world Odysseus pours blood into a pit, and the spirits of the dead come to drink. The prophet Tiresias warns him not to touch the cattle of the Sun. He meets his mother, who died grieving for him, and Achilles, who would rather be a living farmhand than king of the dead.",
+      "today": "Lake Avernus, a crater lake near Pozzuoli, Italy, which Roman tradition called the gate of the underworld. Homer places it by the Ocean’s stream."
+    },
+    {
+      "place": "sirens",
+      "phase": "circe",
+      "title": "The Sirens",
+      "native": "Seirenes",
+      "when": "on the voyage",
+      "at": 38,
+      "camera": {
+        "at": [
+          13.75,
+          40.9
+        ],
+        "width": 6.5
+      },
+      "legs": [
+        {
+          "from": "aeaea",
+          "to": "sirens",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Back on Aeaea, Circe warns him of the dangers ahead. The Sirens sing so sweetly that sailors steer to their deaths. Odysseus plugs his crew’s ears with beeswax and has them tie him to the mast, so he alone can hear the song. He begs to be released, but they row on.",
+      "today": "Li Galli, three islets off Positano, Italy, were known in Roman times as the Sirenusae, the Sirens’ islands."
+    },
+    {
+      "place": "strait",
+      "phase": "lost",
+      "title": "Scylla and Charybdis",
+      "native": "Skylle",
+      "when": "on the voyage",
+      "at": 42,
+      "camera": {
+        "at": [
+          15.0,
+          39.4
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "sirens",
+          "to": "strait",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "The ship must pass between Charybdis, a whirlpool that swallows the sea three times a day, and Scylla, a six-headed monster in a cliff cave. Circe advises him to keep close to Scylla and lose six men rather than all. Scylla snatches six of his crew from the deck as they pass.",
+      "today": "the Strait of Messina, Italy, long identified with the passage. Its strong currents and eddies still trouble small boats; the town of Scilla stands on the Calabrian side."
+    },
+    {
+      "place": "thrinacia",
+      "phase": "lost",
+      "title": "The cattle of the Sun",
+      "native": "Thrinakie",
+      "when": "on the voyage",
+      "at": 46,
+      "camera": {
+        "at": [
+          15.55,
+          38.15
+        ],
+        "width": 6.5
+      },
+      "legs": [
+        {
+          "from": "strait",
+          "to": "thrinacia",
+          "traveller": "ships",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Contrary winds keep them for a month on Thrinacia, where the Sun god (Helios) grazes his cattle. Starving, the crew kill some while Odysseus sleeps. When they sail, Zeus strikes the ship with a thunderbolt and every man drowns. Odysseus alone survives, clinging to the keel, and is carried back past Charybdis.",
+      "today": "Ancient writers took Thrinacia to be Sicily, and some put the Sun’s herds near Milazzo (Mylae). Its pin is drawn a little apart from the strait."
+    },
+    {
+      "place": "ogygia",
+      "phase": "lost",
+      "title": "Seven years with Calypso",
+      "native": "Ogygie",
+      "when": "seven years",
+      "at": 50,
+      "camera": {
+        "at": [
+          14.6,
+          37.1
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "thrinacia",
+          "to": "ogygia",
+          "traveller": "raft",
+          "style": "drift",
+          "bend": 0.2
+        }
+      ],
+      "text": "After nine days adrift he reaches Ogygia, the island of the goddess Calypso. She keeps him for seven years and offers to make him immortal, but he weeps on the shore for home and for Penelope. At last the gods send Hermes, and she helps him build a raft. Ancient and modern writers place Ogygia in many seas.",
+      "today": "Gozo, Malta, where a cave above Ramla Bay is shown as Calypso’s. It is one claim among several."
+    },
+    {
+      "place": "ithaca",
+      "phase": "telemachy",
+      "title": "Suitors in the hall",
+      "native": "Ithake",
+      "when": "the tenth year after Troy",
+      "at": 54,
+      "camera": {
+        "at": [
+          20.71,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Here the poem begins. On Ithaca, more than a hundred young nobles court Penelope, believing Odysseus dead, and feast on his herds. She has put them off for three years by weaving a shroud by day and unpicking it by night. The goddess Athena, disguised as a guest, urges their son Telemachus to seek news of his father.",
+      "today": "Ithaca (Ithaki), Ionian Islands, Greece. Vathy, its main town, lies on a deep sheltered bay."
+    },
+    {
+      "place": "pylos",
+      "phase": "telemachy",
+      "title": "Nestor at Pylos",
+      "native": "Pylos",
+      "when": "the tenth year",
+      "at": 58,
+      "camera": {
+        "at": [
+          21.2,
+          37.7
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "ithaca",
+          "to": "pylos",
+          "traveller": "telemachus-ship",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Telemachus sails to sandy Pylos with Athena, disguised as his father’s old friend Mentor. They find old King Nestor sacrificing bulls to Poseidon on the shore. Nestor tells how the Greeks scattered after Troy and how Agamemnon was murdered on his return, but he has no news of Odysseus. He lends Telemachus a chariot and his son.",
+      "today": "the Palace of Nestor, a Bronze Age palace near Chora, Messenia, Greece, now under a protective roof."
+    },
+    {
+      "place": "sparta",
+      "phase": "telemachy",
+      "title": "Menelaus and Helen",
+      "native": "Lakedaimon",
+      "when": "the tenth year",
+      "at": 62,
+      "camera": {
+        "at": [
+          22.1,
+          37.05
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "pylos",
+          "to": "sparta",
+          "traveller": "telemachus",
+          "style": "journey",
+          "bend": 0.2
+        }
+      ],
+      "text": "In Sparta, Telemachus finds Menelaus and Helen home again, living in splendour after years of wandering in Egypt. Helen recognises Odysseus’s son at once. Menelaus tells how he caught Proteus, the shape-changing old man of the sea, who told him that Odysseus was alive but held on Calypso’s island. Meanwhile the suitors plot to ambush Telemachus.",
+      "today": "Sparti, Laconia, Greece. The Menelaion, a later shrine to Menelaus and Helen, stands on a hill nearby."
+    },
+    {
+      "place": "scheria",
+      "phase": "return",
+      "title": "Nausicaa and the Phaeacians",
+      "native": "Skherie",
+      "when": "the tenth year",
+      "at": 66,
+      "camera": {
+        "at": [
+          17,
+          37.8
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "ogygia",
+          "to": "scheria",
+          "traveller": "raft",
+          "style": "drift",
+          "bend": 0.2
+        }
+      ],
+      "text": "Poseidon sees the raft and wrecks it in a storm, and Odysseus swims to Scheria, land of the seafaring Phaeacians. Princess Nausicaa finds him on the shore. At her father King Alcinous’s feast a singer tells of Troy, Odysseus weeps, and at last he tells his story. The Phaeacians promise to carry him home.",
+      "today": "Corfu (Kerkyra), Greece, which Thucydides and other ancient writers identified with Scheria."
+    },
+    {
+      "place": "ithaca",
+      "phase": "return",
+      "title": "Home in disguise",
+      "native": "Ithake",
+      "when": "the tenth year",
+      "at": 70,
+      "camera": {
+        "at": [
+          20.3,
+          39.0
+        ],
+        "width": 6.5
+      },
+      "legs": [
+        {
+          "from": "scheria",
+          "to": "ithaca",
+          "traveller": "phaeacian",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "The Phaeacians set him down asleep on Ithaca, and Poseidon turns their ship to stone on its way home. Athena disguises Odysseus as an old beggar. He goes first to his loyal swineherd Eumaeus, who does not know him but makes him welcome, and they talk through the night. His wanderings have lasted ten years.",
+      "today": "the bay of Dexa near Vathy, Ithaca, is often named as Phorcys, the harbour where he landed."
+    },
+    {
+      "place": "ithaca",
+      "phase": "return",
+      "title": "Father and son",
+      "native": "Ithake",
+      "when": "the tenth year",
+      "at": 74,
+      "camera": {
+        "at": [
+          21.6,
+          37.7
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "sparta",
+          "to": "ithaca",
+          "traveller": "telemachus-ship",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "Warned by Athena, Telemachus slips past the suitors’ ambush and comes to Eumaeus’s hut. Odysseus reveals himself to his son, and they plan revenge. In the town his old dog Argos, lying neglected on a dung heap, knows his master at once, wags his tail and dies. The suitors mock and strike the beggar in his own hall.",
+      "today": "Ithaca, Greece. A spring in the south of the island is shown as Arethusa, by Eumaeus’s pig farm in the poem."
+    },
+    {
+      "place": "ithaca",
+      "phase": "return",
+      "title": "The bow of Odysseus",
+      "native": "Toxon",
+      "when": "the tenth year",
+      "at": 78,
+      "camera": {
+        "at": [
+          20.71,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "His old nurse Eurycleia knows him by a scar on his leg, but he silences her. Penelope announces a contest: she will marry the man who can string Odysseus’s great bow and shoot through twelve axe heads. None of the suitors can bend it. The beggar asks to try, strings it easily and makes the shot.",
+      "today": "Ithaca, Greece. The contest is still often painted and staged; the bow and axes are known only from the poem."
+    },
+    {
+      "place": "ithaca",
+      "phase": "return",
+      "title": "The suitors fall",
+      "native": "Mnesteres",
+      "when": "the tenth year",
+      "at": 82,
+      "camera": {
+        "at": [
+          20.71,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Odysseus turns the bow on the suitors, first killing their leader Antinous. With Telemachus, Eumaeus and the cowherd Philoetius, and with Athena’s help, he kills them all in the hall. The servant women who slept with the suitors are hanged. It is the poem’s most violent scene, and readers have long been troubled by it.",
+      "today": "Ithaca, Greece. No palace of Odysseus has been found; the poem is the only source for the hall and the fight."
+    },
+    {
+      "place": "ithaca",
+      "phase": "return",
+      "title": "The marriage bed",
+      "native": "Penelopeia",
+      "when": "the tenth year",
+      "at": 86,
+      "camera": {
+        "at": [
+          20.71,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Penelope still doubts the stranger. She tests him by asking a servant to move their bed. Odysseus angrily replies that it cannot be moved: he built it himself around the trunk of a living olive tree. Only the two of them know this secret, and she runs to embrace him. Athena holds back the dawn for them.",
+      "today": "Ithaca, Greece. The olive tree in the bed has become a symbol of a marriage that lasts."
+    },
+    {
+      "place": "ithaca",
+      "phase": "return",
+      "title": "Peace on Ithaca",
+      "native": "Laertes",
+      "when": "the tenth year",
+      "at": 90,
+      "camera": {
+        "at": [
+          20.71,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Odysseus visits his old father Laertes, working in his orchard, and proves who he is by naming the trees Laertes gave him as a boy. The suitors’ families come for revenge, and fighting begins, but Athena stops it and makes peace. The poem ends there. Tiresias had foretold one more journey, inland, carrying an oar.",
+      "today": "Ithaca, Greece. Museums at Vathy and Stavros show finds from the island’s ancient sites."
+    },
+    {
+      "place": "pylos",
+      "phase": "finding",
+      "title": "The palace at Pylos",
+      "when": "1939",
+      "at": 94,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          21.2,
+          37.7
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "ithaca",
+          "to": "pylos",
+          "traveller": "blegen",
+          "style": "journey",
+          "bend": 0.2
+        }
+      ],
+      "text": "In 1939 the American archaeologist Carl Blegen began digging a hill at Ano Englianos and on the first day found clay tablets in the Linear B script. Burned in the fire that destroyed the palace around 1200 BCE, they preserved its records. Decipherment in 1952 showed they were Greek. Many scholars accept this as the Pylos of the poems.",
+      "today": "the Palace of Nestor, Messenia, Greece, open to visitors since 2016 under a new roof. The tablets are in the National Archaeological Museum, Athens."
+    },
+    {
+      "place": "ithaca",
+      "phase": "finding",
+      "title": "Where was Ithaca?",
+      "native": "Ithake",
+      "when": "1930s to today",
+      "at": 98,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          20.71,
+          38.37
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Homer calls Ithaca the farthest island toward the west, which fits modern Ithaca poorly. British digs in the 1930s found offerings to Odysseus in a cave at Polis Bay, and Bronze Age remains lie at Agios Athanasios in the north. Some scholars place Homer’s Ithaca on Lefkada or on Kefalonia’s Paliki peninsula. The question is unsettled.",
+      "today": "Ithaca, Greece. Digs at Agios Athanasios, the “School of Homer”, continue."
+    }
+  ],
+  "people": {
+    "heading": "People of the Odyssey",
+    "items": [
+      {
+        "id": "odysseus",
+        "name": "Odysseus",
+        "native": "Odysseus",
+        "life": "legendary",
+        "role": "King of Ithaca",
+        "steps": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22
+        ],
+        "text": "Son of Laertes, husband of Penelope and father of Telemachus, Odysseus is the man of many turns (polytropos) of the poem’s first line: a speaker, planner and liar as much as a fighter. Athena loves him for his cunning; Poseidon hates him for blinding his son. The Romans called him Ulixes, which became Ulysses in English."
+      },
+      {
+        "id": "penelope",
+        "name": "Penelope",
+        "native": "Penelopeia",
+        "life": "legendary",
+        "role": "Queen of Ithaca",
+        "steps": [
+          13,
+          19,
+          21
+        ],
+        "text": "Daughter of Icarius and cousin of Helen, Penelope waits twenty years for Odysseus: ten of war and ten of wandering. She is as clever as he is. She delays the suitors with her weaving, sets the contest of the bow and tests the stranger with the secret of their bed. Later writers made her the model of a faithful wife."
+      },
+      {
+        "id": "telemachus",
+        "name": "Telemachus",
+        "native": "Telemakhos",
+        "life": "legendary",
+        "role": "Son of Odysseus",
+        "steps": [
+          13,
+          14,
+          15,
+          18,
+          20
+        ],
+        "text": "Only a baby when his father sailed for Troy, Telemachus is about twenty when the poem opens and cannot stop the suitors. His journey to Pylos and Sparta, in the first four books, shows him growing up. He fights beside his father in the hall. In the poem he is an only son, as Odysseus and Laertes were."
+      },
+      {
+        "id": "athena",
+        "name": "Athena",
+        "native": "Athene",
+        "life": "goddess",
+        "role": "Goddess of wisdom and war",
+        "steps": [
+          13,
+          14,
+          17,
+          18,
+          20,
+          21,
+          22
+        ],
+        "text": "Daughter of Zeus, Athena guides Odysseus and Telemachus through the poem, often disguised: as Mentor, as a shepherd boy, as a swallow on a roof beam. She pleads for Odysseus before the gods while Poseidon is away, and in the end she makes peace on Ithaca. She was worshipped across Greece, above all in Athens."
+      },
+      {
+        "id": "poseidon",
+        "name": "Poseidon",
+        "native": "Poseidaon",
+        "life": "god",
+        "role": "God of the sea",
+        "steps": [
+          4,
+          16,
+          17
+        ],
+        "text": "Brother of Zeus and lord of the sea and earthquakes, Poseidon is the father of the Cyclops Polyphemus. For blinding his son he keeps Odysseus from home for years, wrecks his raft off Scheria and turns the Phaeacians’ ship to stone. He never kills Odysseus, which fate forbids, only delays him."
+      }
+    ]
+  }
+}
