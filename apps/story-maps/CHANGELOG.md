@@ -3,6 +3,7 @@
 ## 0.49.0
 
 - Likes: readers can like a story, from a heart in the top bar or a button on the end card, and take the like back. The count shows next to the heart and on the story's front-page card. One like per device, remembered on the device; no accounts.
+- Explore, Browse: a new "Most liked" sort beside Oldest first and A to Z, and a ♥ count on story-map cards.
 - A small Worker (`src/worker.js`) now serves the site and the likes API, backed by one KV key and a per-IP rate limit.
 
 ## 0.48.0
