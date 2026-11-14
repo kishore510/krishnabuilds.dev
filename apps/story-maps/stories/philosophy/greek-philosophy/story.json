@@ -1,0 +1,603 @@
+{
+  "id": "greek-philosophy",
+  "title": "Greek Philosophy",
+  "description": "How Greek thinkers looked for natural causes and argued about change, atoms, the good life and how we can know anything, from Thales in Miletus to the schools of Athens, Rome and the last philosophers of Athens, and how Arabic and Latin readers carried Aristotle on, in 14 chapters.",
+  "canvas": "geo",
+  "basemap": "europe",
+  "source": "History",
+  "nativeLang": "grc",
+  "routes": "chapter",
+  "mapLabel": "Where Greek philosophy was argued",
+  "note": "Most early Greek philosophers' books are lost; we know them from fragments quoted by later writers, and many dates are estimates. Socrates, Plato and Aristotle each have a story of their own in Lives. Native names are in Latin letters. The map is stylised and not to scale; Kition, Alexandria and the lands to the east lie off its edge.",
+  "places": {
+    "miletus": {
+      "name": "Miletus",
+      "at": [
+        27.28,
+        37.53
+      ],
+      "glyph": "greek-temple",
+      "label": "bottom"
+    },
+    "samos": {
+      "name": "Samos",
+      "at": [
+        26.94,
+        37.69
+      ],
+      "glyph": "anchor",
+      "label": "top"
+    },
+    "croton": {
+      "name": "Croton",
+      "at": [
+        17.13,
+        39.08
+      ],
+      "glyph": "greek-temple",
+      "label": "right"
+    },
+    "ephesus": {
+      "name": "Ephesus",
+      "at": [
+        27.34,
+        37.94
+      ],
+      "glyph": "greek-temple",
+      "label": "top"
+    },
+    "elea": {
+      "name": "Elea",
+      "at": [
+        15.15,
+        40.16
+      ],
+      "glyph": "greek-temple",
+      "label": "left"
+    },
+    "abdera": {
+      "name": "Abdera",
+      "at": [
+        24.98,
+        40.94
+      ],
+      "glyph": "village",
+      "label": "top"
+    },
+    "athens": {
+      "name": "Athens",
+      "at": [
+        23.72,
+        37.975
+      ],
+      "glyph": "greek-temple",
+      "label": "bottom"
+    },
+    "lesbos": {
+      "name": "Lesbos",
+      "at": [
+        26.2,
+        39.15
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "elis": {
+      "name": "Elis",
+      "at": [
+        21.39,
+        37.89
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "rome": {
+      "name": "Rome",
+      "at": [
+        12.48,
+        41.89
+      ],
+      "glyph": "dome",
+      "label": "top"
+    },
+    "cordoba": {
+      "name": "Córdoba",
+      "at": [
+        -4.78,
+        37.88
+      ],
+      "glyph": "dome",
+      "label": "bottom"
+    },
+    "paris": {
+      "name": "Paris",
+      "at": [
+        2.35,
+        48.85
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "kition": {
+      "name": "Kition",
+      "at": [
+        31.6,
+        35.3
+      ],
+      "hidden": true
+    },
+    "alexandria": {
+      "name": "Alexandria",
+      "at": [
+        29,
+        35.1
+      ],
+      "hidden": true
+    },
+    "east": {
+      "name": "The East",
+      "at": [
+        31.8,
+        37.6
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "merchant-ship": {
+      "name": "By sea",
+      "icon": "merchant-ship"
+    },
+    "scroll": {
+      "name": "Ideas and books",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "ionia": {
+      "name": "The first questions",
+      "color": "#e0a43a"
+    },
+    "athens": {
+      "name": "Athens",
+      "color": "#2b7fb4"
+    },
+    "hellenistic": {
+      "name": "After Alexander",
+      "color": "#4fc3b0"
+    },
+    "rome": {
+      "name": "Rome and the last schools",
+      "color": "#e0573a"
+    },
+    "afterlife": {
+      "name": "The long afterlife",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "book": {
+      "color": "#a678e0",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 34,
+        "color": "rgba(224,164,58,.35)"
+      },
+      {
+        "until": 54.5,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 66.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 93,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "c. 585 BCE"
+      },
+      {
+        "at": 38,
+        "text": "399 BCE"
+      },
+      {
+        "at": 62,
+        "text": "300 BCE"
+      },
+      {
+        "at": 79,
+        "text": "244 CE"
+      },
+      {
+        "at": 98,
+        "text": "12th c."
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "miletus",
+      "phase": "ionia",
+      "title": "What is everything made of?",
+      "native": "Miletos",
+      "when": "c. 585–525 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          26.6,
+          38
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In Miletus, a rich Greek port on the coast of what is now Turkey, Thales asked what everything is made of, and answered water. Herodotus says he foretold an eclipse, usually dated to 585 BCE. Anaximander, also of Miletus, answered 'the boundless' (apeiron), and Anaximenes air. They looked for natural causes, not gods, and argued with each other.",
+      "today": "Today: the ruins of Miletus, near Balat in Turkey, now far inland as the river silted up."
+    },
+    {
+      "place": "croton",
+      "phase": "ionia",
+      "title": "Pythagoras and number",
+      "native": "Pythagoras",
+      "when": "c. 530 BCE",
+      "at": 9,
+      "camera": {
+        "at": [
+          22,
+          38.6
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "samos",
+          "to": "croton",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Pythagoras left Samos, ruled by the tyrant Polycrates, and settled at Croton in southern Italy around 530 BCE. His followers lived by strict rules and taught that the soul is reborn in other bodies and that the world is ordered by number. He wrote nothing, and most stories about him, including the famous theorem, come from much later writers.",
+      "today": "Today: Crotone, Calabria, Italy."
+    },
+    {
+      "place": "ephesus",
+      "phase": "ionia",
+      "title": "Everything flows",
+      "native": "Herakleitos",
+      "when": "c. 500 BCE",
+      "at": 16,
+      "camera": {
+        "at": [
+          26.6,
+          38
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Heraclitus of Ephesus, writing around 500 BCE in riddling sayings, taught that the world is an ever-living fire and that everything lives by strife and change, held together by an ordering principle (logos). Plato summed him up as saying you cannot step twice into the same river. Only fragments of his book survive, quoted by later writers.",
+      "today": "Today: the ruins of Ephesus, near Selçuk, Turkey, a World Heritage Site."
+    },
+    {
+      "place": "elea",
+      "phase": "ionia",
+      "title": "Nothing changes",
+      "native": "Parmenides",
+      "when": "c. 475 BCE",
+      "at": 23,
+      "camera": {
+        "at": [
+          15.5,
+          40
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "At Elea, south of Naples, Parmenides wrote a poem in which a goddess teaches that what is cannot come to be or pass away, so change and empty space are illusions of the senses. His follower Zeno of Elea defended him with paradoxes: swift Achilles can never catch a tortoise, since he must first reach where it was.",
+      "today": "Today: the ruins of Velia, Campania, Italy."
+    },
+    {
+      "place": "abdera",
+      "phase": "ionia",
+      "title": "Atoms and the void",
+      "native": "atomos",
+      "when": "c. 430–400 BCE",
+      "at": 30,
+      "camera": {
+        "at": [
+          25,
+          40.4
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "At Abdera, on the coast of Thrace, Democritus developed his teacher Leucippus's answer to Parmenides: the world is made of tiny uncuttable bodies (atoma) moving in empty space, which combine to make everything we see. Sweet and bitter, hot and cold exist only by convention, he said; in reality there are atoms and void. Only fragments survive.",
+      "today": "Today: Avdira, Thrace, Greece."
+    },
+    {
+      "place": "athens",
+      "phase": "athens",
+      "title": "Sophists and Socrates",
+      "native": "Athenai",
+      "when": "c. 450–399 BCE",
+      "at": 38,
+      "camera": {
+        "at": [
+          24.3,
+          39.4
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "abdera",
+          "to": "athens",
+          "traveller": "scroll",
+          "style": "book",
+          "bend": 0.15
+        }
+      ],
+      "text": "Rich, democratic Athens drew paid teachers of argument, the sophists. Protagoras of Abdera said that a human being is the measure of all things. Socrates, an Athenian, asked people what courage or justice is and showed they did not know. He wrote nothing, and in 399 BCE Athens put him to death. His followers made his questioning philosophy's method.",
+      "today": "Today: Athens. The ancient agora, where Socrates talked, can be visited below the Acropolis."
+    },
+    {
+      "place": "athens",
+      "phase": "athens",
+      "title": "Plato's Academy",
+      "native": "Akademeia",
+      "when": "c. 387 BCE",
+      "at": 45,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Around 387 BCE Plato, Socrates' follower, began teaching in a grove outside Athens sacred to the hero Academus, and his school took its name, the Academy. In dialogues starring Socrates he argued that the things we see are copies of perfect, unchanging Forms, known by reason, not the senses. The Academy lasted, in some form, nearly three centuries.",
+      "today": "Today: the Academy's site is a park in north-west Athens."
+    },
+    {
+      "place": "lesbos",
+      "phase": "athens",
+      "title": "Aristotle looks at the world",
+      "native": "Aristoteles",
+      "when": "c. 345–322 BCE",
+      "at": 52,
+      "camera": {
+        "at": [
+          25,
+          38.5
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "lesbos",
+          "to": "athens",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Aristotle studied twenty years in Plato's Academy but came to disagree: forms exist only in things, and knowledge starts from the senses. On Lesbos, around 345 BCE, he studied the creatures of the island's lagoon, the beginnings of biology. In 335 BCE he opened his own school at the Lyceum in Athens and wrote the first formal logic.",
+      "today": "Today: the lagoon of Kalloni, Lesbos. The Lyceum's remains were found in Athens in 1996."
+    },
+    {
+      "place": "elis",
+      "phase": "hellenistic",
+      "title": "Pyrrho doubts everything",
+      "native": "Pyrrhon",
+      "when": "c. 320–270 BCE",
+      "at": 57,
+      "camera": {
+        "at": [
+          26.6,
+          37.8
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "east",
+          "to": "elis",
+          "traveller": "scroll",
+          "style": "book",
+          "bend": 0.15
+        }
+      ],
+      "text": "Pyrrho of Elis went east with Alexander's army and, ancient writers say, met the naked philosophers of India. Back in Elis he taught that we cannot know how things really are, so we should suspend judgement, and find peace of mind (ataraxia) in that. He wrote nothing; his scepticism was revived later and set down by Sextus Empiricus.",
+      "today": "Today: the ruins of ancient Elis, western Peloponnese, Greece."
+    },
+    {
+      "place": "athens",
+      "phase": "hellenistic",
+      "title": "The Garden and the Porch",
+      "native": "Stoa Poikile",
+      "when": "c. 306–300 BCE",
+      "at": 62,
+      "camera": {
+        "at": [
+          27.6,
+          36.6
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "kition",
+          "to": "athens",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Two new schools opened in Athens around 300 BCE. Epicurus taught in his Garden that pleasure, meaning freedom from pain and fear, is the aim of life, and that death is nothing to us, since we are atoms that scatter. Zeno of Kition, from Cyprus, taught in the Painted Porch (Stoa Poikile): live by reason, in agreement with nature.",
+      "today": "Today: the foundations of the Painted Porch have been dug up in the Athenian agora."
+    },
+    {
+      "place": "rome",
+      "phase": "rome",
+      "title": "Philosophy in Rome",
+      "native": "Roma",
+      "when": "1st century BCE – 2nd century CE",
+      "at": 71,
+      "camera": {
+        "at": [
+          12.5,
+          41.5
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Greek philosophy won over Rome. Lucretius put Epicurus' atoms into a long Latin poem, On the Nature of Things. Stoicism suited Rome's rulers: Seneca advised the emperor Nero; Epictetus, once a slave in Rome, taught that we control only our own judgements; and the emperor Marcus Aurelius wrote his Meditations to himself while on campaign.",
+      "today": "Today: Rome. Marcus Aurelius' bronze statue stands in the Capitoline Museums.",
+      "lang": "la"
+    },
+    {
+      "place": "rome",
+      "phase": "rome",
+      "title": "Plotinus and the One",
+      "native": "Plotinos",
+      "when": "244–270 CE",
+      "at": 79,
+      "camera": {
+        "at": [
+          20.7,
+          38.5
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "alexandria",
+          "to": "rome",
+          "traveller": "merchant-ship",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Plotinus studied in Alexandria under Ammonius Saccas, then in 244 CE settled in Rome. He taught that everything flows from a single source, the One, through mind and soul down to matter, and that the soul can climb back towards it. His pupil Porphyry edited his lectures as the Enneads. Later scholars named this Neoplatonism.",
+      "today": "Today: Rome. Plotinus' teaching shaped Christian, Jewish and Muslim thinkers."
+    },
+    {
+      "place": "athens",
+      "phase": "rome",
+      "title": "The last philosophers of Athens",
+      "native": "Damaskios",
+      "when": "529–532 CE",
+      "at": 88,
+      "camera": {
+        "at": [
+          27.8,
+          37.8
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "east",
+          "traveller": "scroll",
+          "style": "book",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 529 the Christian emperor Justinian banned pagans from teaching, and the Neoplatonist school in Athens closed; historians debate how sudden the end was. The historian Agathias says its head Damascius and six others went to the Persian king Khosrow I, were disappointed, and came home under a treaty protecting them. Their books went on being read.",
+      "today": "Today: Athens. Houses where these philosophers may have taught have been excavated south of the Acropolis."
+    },
+    {
+      "place": "cordoba",
+      "phase": "afterlife",
+      "title": "Aristotle in Arabic and Latin",
+      "native": "ابن رشد",
+      "when": "9th–13th century CE",
+      "at": 98,
+      "camera": {
+        "at": [
+          4,
+          43.5
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "east",
+          "to": "cordoba",
+          "traveller": "scroll",
+          "style": "book",
+          "bend": 0.1
+        },
+        {
+          "from": "cordoba",
+          "to": "paris",
+          "traveller": "scroll",
+          "style": "book",
+          "bend": 0.15
+        }
+      ],
+      "text": "Arabic translations made in Baghdad from the 9th century kept Aristotle at the centre of learning. In Córdoba, Ibn Rushd (Averroes) wrote commentaries on nearly all his works. Latin translations, many made at Toledo, carried Aristotle and these commentaries to Paris, where Thomas Aquinas set out to reconcile Aristotle's philosophy with Christian faith.",
+      "today": "Today: Córdoba, Spain. A statue of Ibn Rushd stands by the old city walls.",
+      "lang": "ar"
+    }
+  ],
+  "people": {
+    "heading": "People in this story",
+    "items": [
+      {
+        "id": "diogenes",
+        "name": "Diogenes of Sinope",
+        "native": "Diogenes",
+        "life": "c. 412–323 BCE",
+        "role": "The first Cynic",
+        "steps": [
+          9
+        ],
+        "text": "Diogenes came from Sinope, on the Black Sea, to Athens in exile and lived like a dog, he said, without shame or possessions; his followers were called Cynics, from the Greek for dog. Stories say he slept in a large storage jar and, when Alexander offered him anything, asked him to stand out of his light. Most are later anecdotes."
+      },
+      {
+        "id": "hipparchia",
+        "name": "Hipparchia of Maroneia",
+        "native": "Hipparchia",
+        "life": "Born c. 350 BCE",
+        "role": "Cynic philosopher",
+        "steps": [
+          9
+        ],
+        "text": "Hipparchia of Maroneia, in Thrace, married the Cynic Crates against her family's wishes and shared his life of poverty in Athens, wearing the same rough cloak. Diogenes Laertius, writing centuries later, tells of her besting a philosopher in argument at a banquet. She is the only woman to whom he gives a life of her own."
+      },
+      {
+        "id": "hypatia",
+        "name": "Hypatia",
+        "native": "Hypatia",
+        "life": "Died 415 CE",
+        "role": "Mathematician and Neoplatonist",
+        "steps": [
+          11
+        ],
+        "text": "A mathematician and astronomer in Alexandria and a teacher of Neoplatonist philosophy, daughter of the mathematician Theon. Christians and pagans came to her lectures, and she advised the city's governor. In 415, during a quarrel between the governor and the bishop Cyril, a Christian mob murdered her. No work certainly hers survives."
+      }
+    ]
+  }
+}

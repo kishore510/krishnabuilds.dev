@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Greek Philosophy (`greek-philosophy`), 2026-11-14
 - Indian Philosophy (`indian-philosophy`), 2026-11-14
 - The Eastern Gangas (`eastern-ganga`), 2026-11-14
 - Charles Darwin (`darwin`), 2026-11-14
