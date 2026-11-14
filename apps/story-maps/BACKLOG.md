@@ -21,7 +21,6 @@ Suggested after those. These fit a map that already exists, so each is one sessi
 - The first caliphates: Rashidun, Umayyad, Abbasid (`near-east`)
 - Teotihuacan and the Toltecs (`mesoamerica`)
 - The Mongol Empire (`world`)
-- The Portuguese and Spanish voyages: Columbus and Vasco da Gama (`world`)
 
 These need a new map first, which is its own piece of work and its own PR:
 
@@ -35,6 +34,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Portuguese Empire (`portuguese-empire`), 2026-11-14
 - Life on Earth (`life-on-earth`), 2026-11-14
 - The Making of Earth (`making-of-earth`), 2026-11-14
 - Greek Philosophy (`greek-philosophy`), 2026-11-14

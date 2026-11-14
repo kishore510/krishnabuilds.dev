@@ -1,0 +1,3092 @@
+{
+  "id": "portuguese-empire",
+  "title": "The Portuguese Empire",
+  "description": "An illustrated world map of how Portugal built the first global sea empire, from the capture of Ceuta in 1415, down Africa’s coast and round the Cape to India, through Goa, Malacca, Macau, Brazil and the Atlantic slave trade, to the Carnation Revolution and the handover of Macau in 1999.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "pt",
+  "routes": "chapter",
+  "mapLabel": "Illustrated world map of the Portuguese Empire and its rivals from 1415 to 1999",
+  "note": "Based on standard histories of the period. The map is stylised and not to scale: it uses a simple flat projection, so lands far from the equator look larger than they are. The empires under Powers are painted loosely on today’s coastlines, with small holdings shown as dots; Portugal’s empire in Asia was mostly forts and ports, not territory, and many African frontiers were claimed rather than ruled. A few close places (Lisbon, Ceuta and Alcácer Quibir; Luanda and Mbanza Kongo; Goa and Diu; Salvador and Porto Seguro; Rio de Janeiro, São Paulo and Ouro Preto) have dots that touch. Place names are those of the time. Numbers of people carried in the slave trade are modern estimates. Coastlines: Natural Earth.",
+  "places": {
+    "lisbon": {
+      "name": "Lisbon",
+      "at": [
+        -9.14,
+        38.72
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "ceuta": {
+      "name": "Ceuta",
+      "at": [
+        -5.31,
+        35.89
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "madeira": {
+      "name": "Madeira",
+      "at": [
+        -16.91,
+        32.65
+      ],
+      "glyph": "anchor",
+      "label": "left"
+    },
+    "arguim": {
+      "name": "Arguim",
+      "at": [
+        -16.43,
+        20.59
+      ],
+      "glyph": "trading-post",
+      "label": "left"
+    },
+    "elmina": {
+      "name": "Elmina",
+      "at": [
+        -1.35,
+        5.08
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "mbanza-kongo": {
+      "name": "Mbanza Kongo",
+      "at": [
+        14.24,
+        -6.27
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "cape": {
+      "name": "Cape of Good Hope",
+      "at": [
+        18.47,
+        -34.36
+      ],
+      "glyph": "lighthouse",
+      "label": "left"
+    },
+    "malindi": {
+      "name": "Malindi",
+      "at": [
+        40.12,
+        -3.22
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "calicut": {
+      "name": "Calicut",
+      "at": [
+        75.78,
+        11.25
+      ],
+      "glyph": "trading-post",
+      "label": "right"
+    },
+    "porto-seguro": {
+      "name": "Porto Seguro",
+      "at": [
+        -39.06,
+        -16.45
+      ],
+      "glyph": "flag",
+      "label": "right"
+    },
+    "diu": {
+      "name": "Diu",
+      "at": [
+        70.99,
+        20.71
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "goa": {
+      "name": "Goa",
+      "at": [
+        73.91,
+        15.5
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "malacca": {
+      "name": "Malacca",
+      "at": [
+        102.25,
+        2.19
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "hormuz": {
+      "name": "Hormuz",
+      "at": [
+        56.46,
+        27.06
+      ],
+      "glyph": "fort",
+      "label": "top"
+    },
+    "macau": {
+      "name": "Macau",
+      "at": [
+        113.54,
+        22.19
+      ],
+      "glyph": "trading-post",
+      "label": "bottom"
+    },
+    "nagasaki": {
+      "name": "Nagasaki",
+      "at": [
+        129.87,
+        32.75
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "luanda": {
+      "name": "Luanda",
+      "at": [
+        13.23,
+        -8.84
+      ],
+      "glyph": "chain",
+      "label": "left"
+    },
+    "salvador": {
+      "name": "Salvador",
+      "at": [
+        -38.5,
+        -12.97
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "alcacer-quibir": {
+      "name": "Alcácer Quibir",
+      "at": [
+        -5.9,
+        35.0
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "recife": {
+      "name": "Recife",
+      "at": [
+        -34.88,
+        -8.05
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "ouro-preto": {
+      "name": "Vila Rica",
+      "at": [
+        -43.5,
+        -20.39
+      ],
+      "glyph": "mine",
+      "label": "left"
+    },
+    "rio": {
+      "name": "Rio de Janeiro",
+      "at": [
+        -43.2,
+        -22.91
+      ],
+      "glyph": "crown",
+      "label": "right"
+    },
+    "sao-paulo": {
+      "name": "São Paulo",
+      "at": [
+        -46.61,
+        -23.59
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "cape-wp": {
+      "name": "Off the Cape",
+      "at": [
+        19.0,
+        -37.5
+      ],
+      "glyph": "anchor",
+      "label": "left",
+      "hidden": true
+    },
+    "lourenco-marques": {
+      "name": "Lourenço Marques",
+      "at": [
+        32.57,
+        -25.97
+      ],
+      "glyph": "treaty",
+      "label": "right"
+    },
+    "verde-wp": {
+      "name": "Off Cape Verde",
+      "at": [
+        -25,
+        13
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "caravel": {
+      "name": "A Portuguese caravel",
+      "icon": "merchant-ship"
+    },
+    "fleet": {
+      "name": "A Portuguese fleet",
+      "icon": "merchant-ship"
+    },
+    "black-ship": {
+      "name": "The great ship from Macau",
+      "icon": "merchant-ship"
+    },
+    "slave-ship": {
+      "name": "A slave ship",
+      "icon": "merchant-ship"
+    },
+    "court": {
+      "name": "The royal court",
+      "icon": "merchant-ship"
+    }
+  },
+  "phases": {
+    "africa": {
+      "name": "Down the African coast",
+      "color": "#4fc3b0"
+    },
+    "india": {
+      "name": "The sea road to the Indies",
+      "color": "#e0573a"
+    },
+    "asia": {
+      "name": "Trade across Asia",
+      "color": "#f2c14e"
+    },
+    "atlantic": {
+      "name": "Brazil, slavery and rivals",
+      "color": "#a678e0"
+    },
+    "end": {
+      "name": "The long retreat",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "sail": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "8 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 21.75,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 43.75,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 51.25,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 76.5,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "1415"
+      },
+      {
+        "at": 26.0,
+        "text": "1500"
+      },
+      {
+        "at": 57.5,
+        "text": "1600"
+      },
+      {
+        "at": 65.5,
+        "text": "1700"
+      },
+      {
+        "at": 73.5,
+        "text": "1800"
+      },
+      {
+        "at": 84.5,
+        "text": "1900"
+      },
+      {
+        "at": 99.0,
+        "text": "1999"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "ceuta",
+      "phase": "africa",
+      "title": "The capture of Ceuta",
+      "native": "A conquista de Ceuta",
+      "when": "21 August 1415",
+      "at": 2.0,
+      "camera": {
+        "at": [
+          -7,
+          37.5
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "On 21 August 1415 King João I of Portugal storms Ceuta, a rich Marinid trading port facing Gibraltar, with a fleet carrying his sons, among them Prince Henry. Crusade, glory and a share of the Saharan gold trade all drive the attack. Holding Ceuta proves costly, but it is Portugal’s first base overseas and the start of its empire.",
+      "today": "Today: Ceuta, a Spanish city on the north coast of Africa; it stayed with Spain after 1640."
+    },
+    {
+      "place": "madeira",
+      "phase": "africa",
+      "title": "Madeira and the Azores",
+      "native": "Madeira e Açores",
+      "when": "1419 to the 1430s",
+      "at": 5.5,
+      "camera": {
+        "at": [
+          -15,
+          36
+        ],
+        "width": 40
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "madeira",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.1
+        }
+      ],
+      "text": "Sailors in Prince Henry’s service reach Porto Santo in 1419 and Madeira in 1420, and settlers follow. The islands are uninhabited. By the 1450s Madeira grows sugar, worked increasingly by enslaved people, a pattern later carried to Brazil. Far out in the Atlantic, the Azores are reached by 1427 and settled from the 1430s.",
+      "today": "Today: Madeira and the Azores, autonomous regions of Portugal."
+    },
+    {
+      "place": "arguim",
+      "phase": "africa",
+      "title": "Past Cape Bojador",
+      "native": "Cabo Bojador",
+      "when": "1434 to 1448",
+      "at": 9.0,
+      "camera": {
+        "at": [
+          -12,
+          29
+        ],
+        "width": 44
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "arguim",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": -0.15
+        }
+      ],
+      "text": "In 1434 Gil Eanes sails past Cape Bojador, a headland sailors feared to round. Ships push on down the Saharan coast, and in 1444 captives taken there are sold at Lagos in the Algarve, the start of Portugal’s trade in enslaved Africans. About 1448 a fort is built on Arguim island to trade for gold and captives.",
+      "today": "Today: Arguim island, in the Banc d’Arguin National Park, Mauritania."
+    },
+    {
+      "place": "elmina",
+      "phase": "africa",
+      "title": "The castle at Elmina",
+      "native": "São Jorge da Mina",
+      "when": "1482",
+      "at": 13.0,
+      "camera": {
+        "at": [
+          -5,
+          22
+        ],
+        "width": 50
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "verde-wp",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.1
+        },
+        {
+          "from": "verde-wp",
+          "to": "elmina",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.15
+        }
+      ],
+      "text": "Under King João II, Diogo de Azambuja builds São Jorge da Mina in 1482 on the Gold Coast, with stone shipped ready-cut from Portugal and the agreement of a local ruler, named Caramansa in Portuguese accounts. Gold flows to Lisbon for decades. Portugal also settles Cape Verde and São Tomé, island colonies that grow sugar with enslaved labour.",
+      "today": "Today: Elmina Castle, Ghana, a World Heritage Site; the Dutch took it in 1637."
+    },
+    {
+      "place": "mbanza-kongo",
+      "phase": "africa",
+      "title": "The Kingdom of Kongo",
+      "native": "Kongo dia Ntotila",
+      "lang": "kg",
+      "when": "1483 to 1526",
+      "at": 16.0,
+      "camera": {
+        "at": [
+          3,
+          14
+        ],
+        "width": 72
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "verde-wp",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.1
+        },
+        {
+          "from": "verde-wp",
+          "to": "mbanza-kongo",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.15
+        }
+      ],
+      "text": "Diogo Cão reaches the mouth of the Congo river about 1483. The Kingdom of Kongo welcomes the Portuguese, and in 1491 its king, Nzinga a Nkuwu, is baptised as João I. His son Afonso I makes Kongo Christian and trades with Lisbon, but by 1526 he writes to Portugal’s king protesting that slave traders are seizing his own people.",
+      "today": "Today: Mbanza Kongo, the old capital, in northern Angola; a World Heritage Site."
+    },
+    {
+      "place": "cape",
+      "phase": "africa",
+      "title": "Round the Cape of Good Hope",
+      "native": "Cabo da Boa Esperança",
+      "when": "1487 to 1488",
+      "at": 19.5,
+      "camera": {
+        "at": [
+          4,
+          2
+        ],
+        "width": 110
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "verde-wp",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.1
+        },
+        {
+          "from": "verde-wp",
+          "to": "cape",
+          "traveller": "caravel",
+          "style": "sail",
+          "bend": 0.15
+        }
+      ],
+      "text": "Bartolomeu Dias sails south in 1487 and, swept far out by storms, rounds the southern end of Africa without seeing it. In February 1488 he lands at Mossel Bay, beyond the Cape, before his weary crew forces him home. Tradition says he named it the Cape of Storms and João II renamed it the Cape of Good Hope.",
+      "today": "Today: the Cape of Good Hope, in Table Mountain National Park, South Africa."
+    },
+    {
+      "place": "calicut",
+      "phase": "india",
+      "title": "Vasco da Gama reaches India",
+      "native": "Calecute",
+      "when": "May 1498",
+      "at": 24.0,
+      "camera": {
+        "at": [
+          30,
+          2
+        ],
+        "width": 130
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "verde-wp",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": 0.1
+        },
+        {
+          "from": "verde-wp",
+          "to": "cape-wp",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": 0.2
+        },
+        {
+          "from": "cape-wp",
+          "to": "malindi",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": 0.3
+        },
+        {
+          "from": "malindi",
+          "to": "calicut",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": -0.1
+        }
+      ],
+      "text": "Vasco da Gama leaves Lisbon in July 1497 with four ships, rounds the Cape and at Malindi takes on a pilot who guides him across the Arabian Sea. On 20 May 1498 he arrives near Calicut, a great spice port ruled by the Zamorin (Samoothiri). Trade goes badly, but the sea route to India is open.",
+      "today": "Today: Kozhikode, Kerala, India; da Gama landed at Kappad, just to the north."
+    },
+    {
+      "place": "porto-seguro",
+      "phase": "india",
+      "title": "Cabral reaches Brazil",
+      "native": "Terra de Vera Cruz",
+      "when": "22 April 1500",
+      "at": 27.5,
+      "camera": {
+        "at": [
+          -20,
+          10
+        ],
+        "width": 90
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "porto-seguro",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": 0.25
+        }
+      ],
+      "text": "Sailing for India in 1500, Pedro Álvares Cabral swings far west and on 22 April sights land, which he claims for Portugal. Whether by chance or design is disputed. It lies on Portugal’s side of the line agreed with Spain at Tordesillas in 1494. Tupi peoples live there; the red dyewood brazilwood (pau-brasil) later gives the land its name.",
+      "today": "Today: near Porto Seguro, Bahia, Brazil."
+    },
+    {
+      "place": "diu",
+      "phase": "india",
+      "title": "The Battle of Diu",
+      "native": "Batalha de Diu",
+      "when": "3 February 1509",
+      "at": 31.0,
+      "camera": {
+        "at": [
+          69,
+          18
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "Egypt’s Mamluk sultan sends a fleet to the Indian Ocean, and with Gujarat’s ships it beats the Portuguese at Chaul in 1508, killing the viceroy’s son. On 3 February 1509 the viceroy, Francisco de Almeida, destroys the combined fleet off Diu. Portugal now dominates the Arabian Sea and makes Asian ships buy its passes (cartazes).",
+      "today": "Today: Diu, in the Indian union territory of Dadra and Nagar Haveli and Daman and Diu."
+    },
+    {
+      "place": "goa",
+      "phase": "india",
+      "title": "Albuquerque takes Goa",
+      "native": "Goa",
+      "when": "25 November 1510",
+      "at": 34.5,
+      "camera": {
+        "at": [
+          74,
+          16
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "Afonso de Albuquerque seizes Goa from the Bijapur Sultanate in March 1510, loses it, and retakes it on 25 November. The island port becomes the capital of Portugal’s Asian empire, the State of India (Estado da Índia), in 1530, ruled by viceroys. Churches, a cathedral and, from 1560, an Inquisition follow; Francis Xavier is buried there.",
+      "today": "Today: Goa, a state of India; the churches of Old Goa are a World Heritage Site."
+    },
+    {
+      "place": "malacca",
+      "phase": "india",
+      "title": "The fall of Malacca",
+      "native": "Malaca",
+      "when": "August 1511",
+      "at": 38.0,
+      "camera": {
+        "at": [
+          88,
+          10
+        ],
+        "width": 64
+      },
+      "legs": [
+        {
+          "from": "goa",
+          "to": "malacca",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": 0.1
+        }
+      ],
+      "text": "Albuquerque sails east and takes Malacca from Sultan Mahmud Shah in August 1511. The city commands the strait where trade from India, China and the Spice Islands meets. From there Portuguese ships reach the Moluccas, home of cloves and nutmeg, by 1512. The sultan’s heirs found Johor and fight on.",
+      "today": "Today: Melaka, Malaysia; a gate of the Portuguese fort, A Famosa, survives."
+    },
+    {
+      "place": "hormuz",
+      "phase": "india",
+      "title": "Hormuz and the chain of forts",
+      "native": "Ormuz",
+      "when": "1515",
+      "at": 41.5,
+      "camera": {
+        "at": [
+          66,
+          20
+        ],
+        "width": 46
+      },
+      "legs": [
+        {
+          "from": "goa",
+          "to": "hormuz",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": -0.1
+        }
+      ],
+      "text": "Albuquerque attacks Hormuz in 1507 and takes control of the island kingdom in 1515, guarding the mouth of the Persian Gulf. He dies at sea off Goa that December. Portugal’s empire in Asia is a chain of forts and ports from Sofala and Mozambique to Colombo, not a land empire. Persian and English forces take Hormuz in 1622.",
+      "today": "Today: Hormuz Island, Iran; ruins of the Portuguese fort remain."
+    },
+    {
+      "place": "macau",
+      "phase": "asia",
+      "title": "A foothold in China",
+      "native": "Macau",
+      "when": "about 1557",
+      "at": 46.0,
+      "camera": {
+        "at": [
+          108,
+          12
+        ],
+        "width": 46
+      },
+      "legs": [
+        {
+          "from": "malacca",
+          "to": "macau",
+          "traveller": "fleet",
+          "style": "sail",
+          "bend": -0.1
+        }
+      ],
+      "text": "After clashes with Ming coastal forces, Portuguese traders are allowed to settle on the Macau peninsula about 1557, paying rent to Chinese officials. Macau is never formally ceded. It thrives by carrying Chinese silk and porcelain to Japan and India and bringing back Japanese silver, and it becomes a base for Jesuit missions in Asia.",
+      "today": "Today: Macau, a Special Administrative Region of China."
+    },
+    {
+      "place": "nagasaki",
+      "phase": "asia",
+      "title": "The black ships at Nagasaki",
+      "native": "長崎",
+      "lang": "ja",
+      "when": "1571",
+      "at": 49.5,
+      "camera": {
+        "at": [
+          121,
+          28
+        ],
+        "width": 38
+      },
+      "legs": [
+        {
+          "from": "macau",
+          "to": "nagasaki",
+          "traveller": "black-ship",
+          "style": "sail",
+          "bend": -0.1
+        }
+      ],
+      "text": "Portuguese traders land on Tanegashima in 1543, bringing European guns, and Francis Xavier arrives in 1549. In 1571 the Christian lord Ōmura Sumitada opens Nagasaki to the yearly great ship from Macau, which the Japanese call the black ship (kurofune). Japan’s new rulers turn on Christianity, and the Tokugawa expel the Portuguese in 1639.",
+      "today": "Today: Nagasaki, Japan."
+    },
+    {
+      "place": "luanda",
+      "phase": "atlantic",
+      "title": "Luanda and the slave trade",
+      "native": "São Paulo de Luanda",
+      "when": "1576 to the 1850s",
+      "at": 53.0,
+      "camera": {
+        "at": [
+          -12,
+          -6
+        ],
+        "width": 72
+      },
+      "legs": [
+        {
+          "from": "luanda",
+          "to": "salvador",
+          "traveller": "slave-ship",
+          "style": "sail",
+          "bend": 0.1
+        }
+      ],
+      "text": "Paulo Dias de Novais founds Luanda in 1576, and Angola becomes the largest source of the Atlantic slave trade. Ships under Portuguese and Brazilian flags carry about 5.8 million Africans across the ocean, nearly half of all, by modern estimates. Most go to Brazil, to sugar plantations around Salvador, its capital from 1549. Many die on the way.",
+      "today": "Today: Luanda, capital of Angola; Salvador, Bahia, Brazil."
+    },
+    {
+      "place": "alcacer-quibir",
+      "phase": "atlantic",
+      "title": "Alcácer Quibir and the Iberian Union",
+      "native": "Alcácer Quibir",
+      "when": "1578 to 1580",
+      "at": 56.5,
+      "camera": {
+        "at": [
+          -8,
+          37
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "King Sebastian invades Morocco and on 4 August 1578 is lost with much of Portugal’s nobility at Alcácer Quibir (Ksar el-Kebir), the Battle of the Three Kings. He leaves no heir. In 1580 Philip II of Spain claims the throne and his army takes Lisbon. Portugal keeps its own laws and empire, but now shares Spain’s enemies.",
+      "today": "Today: Ksar el-Kebir, Morocco."
+    },
+    {
+      "place": "recife",
+      "phase": "atlantic",
+      "title": "The Dutch in Brazil",
+      "native": "Recife",
+      "when": "1630 to 1654",
+      "at": 61.0,
+      "camera": {
+        "at": [
+          -37,
+          -10
+        ],
+        "width": 38
+      },
+      "legs": [],
+      "text": "Spain’s enemies become Portugal’s. The Dutch West India Company seizes Recife and Brazil’s sugar coast in 1630, and the Dutch take Elmina, Malacca and Ceylon. Portugal rebels against Spain in 1640 and crowns João IV of Braganza. Settlers, Indigenous and Black fighters drive the Dutch from Brazil by 1654, but much of Asia is lost for good.",
+      "today": "Today: Recife, Pernambuco, Brazil."
+    },
+    {
+      "place": "ouro-preto",
+      "phase": "atlantic",
+      "title": "Gold in Minas Gerais",
+      "native": "Vila Rica",
+      "when": "1690s to 1760s",
+      "at": 66.5,
+      "camera": {
+        "at": [
+          -42,
+          -16
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "Explorers from São Paulo (bandeirantes) find gold in Minas Gerais in the 1690s, and diamonds follow in the 1720s. Brazil’s gold rush draws settlers from Portugal and hundreds of thousands of enslaved Africans to the mines. Vila Rica, now Ouro Preto, grows rich with baroque churches. Much of the gold passes through Lisbon to pay for British goods.",
+      "today": "Today: Ouro Preto, Minas Gerais, Brazil; a World Heritage Site."
+    },
+    {
+      "place": "rio",
+      "phase": "atlantic",
+      "title": "The court moves to Rio",
+      "native": "Rio de Janeiro",
+      "when": "1807 to 1808",
+      "at": 74.5,
+      "camera": {
+        "at": [
+          -22,
+          8
+        ],
+        "width": 100
+      },
+      "legs": [
+        {
+          "from": "lisbon",
+          "to": "rio",
+          "traveller": "court",
+          "style": "sail",
+          "bend": 0.2
+        }
+      ],
+      "text": "As Napoleon’s army nears Lisbon in November 1807, the Prince Regent João and the court sail for Brazil under British escort. They reach Rio de Janeiro in March 1808, the only time a European monarchy rules from a colony. Brazil’s ports open to foreign trade, and in 1815 it becomes a kingdom equal to Portugal.",
+      "today": "Today: Rio de Janeiro, Brazil."
+    },
+    {
+      "place": "sao-paulo",
+      "phase": "end",
+      "title": "Independence or death",
+      "native": "Independência ou morte",
+      "when": "7 September 1822",
+      "at": 78.5,
+      "camera": {
+        "at": [
+          -45,
+          -20
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "João VI returns to Lisbon in 1821, leaving his son Pedro in Brazil. When Portugal’s parliament tries to cut Brazil back to a colony, Pedro declares independence by the Ipiranga stream near São Paulo on 7 September 1822 and becomes emperor. Portugal recognises it in 1825. Slavery in Brazil lasts until 1888.",
+      "today": "Today: the Ipiranga monument and museum, São Paulo, Brazil."
+    },
+    {
+      "place": "lourenco-marques",
+      "phase": "end",
+      "title": "The Pink Map",
+      "native": "Mapa cor-de-rosa",
+      "when": "1886 to 1890",
+      "at": 82.0,
+      "camera": {
+        "at": [
+          24,
+          -14
+        ],
+        "width": 66
+      },
+      "legs": [],
+      "text": "In the scramble for Africa, Portugal claims a belt of land joining Angola and Mozambique, drawn in pink on a map of 1886. Britain wants the same lands, and its ultimatum of January 1890 forces Portugal to back down. Portugal pushes inland instead, ruling Angola and Mozambique with forced labour. Lourenço Marques becomes Mozambique’s capital in 1898.",
+      "today": "Today: Maputo, capital of Mozambique, once Lourenço Marques."
+    },
+    {
+      "place": "goa",
+      "phase": "end",
+      "title": "India takes Goa",
+      "when": "18 to 19 December 1961",
+      "at": 87.0,
+      "camera": {
+        "at": [
+          74,
+          16
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "India, independent since 1947, asks Portugal to hand over Goa, Daman and Diu. António Salazar’s dictatorship refuses, insisting they are provinces of Portugal, not colonies. In 1961, the year war breaks out in Angola, Indian forces take all three on 18 and 19 December, in under two days. Portugal recognises Indian rule only in 1974.",
+      "today": "Today: Goa, a state of India."
+    },
+    {
+      "place": "lisbon",
+      "phase": "end",
+      "title": "The Carnation Revolution",
+      "native": "Revolução dos Cravos",
+      "when": "25 April 1974",
+      "at": 92.5,
+      "camera": {
+        "at": [
+          -9,
+          38
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "Portugal fights independence movements in Angola, Guinea-Bissau and Mozambique from 1961, at heavy cost. On 25 April 1974 army officers overthrow the dictatorship in Lisbon almost without bloodshed, and crowds put carnations in their rifles. Within two years the African colonies are independent. Hundreds of thousands of settlers return to Portugal; Indonesia invades East Timor in 1975.",
+      "today": "Today: Lisbon, Portugal; 25 April is a national holiday, Freedom Day."
+    },
+    {
+      "place": "macau",
+      "phase": "end",
+      "title": "Handing back Macau",
+      "native": "Transferência de Macau",
+      "when": "20 December 1999",
+      "at": 99.0,
+      "camera": {
+        "at": [
+          113.5,
+          22
+        ],
+        "width": 36
+      },
+      "legs": [],
+      "text": "Portugal offers to return Macau in the 1970s, and a 1987 agreement with China sets the date. At midnight on 20 December 1999 Macau becomes a Special Administrative Region of China, ending nearly six centuries of empire that began at Ceuta. East Timor, freed from Indonesian rule, becomes independent in 2002. Portuguese is spoken today on four continents.",
+      "today": "Today: Macau, China; Portuguese remains an official language there."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "portuguese",
+        "name": "Portuguese Empire",
+        "native": "Império Português",
+        "color": "#3f9b5a",
+        "active": [
+          [
+            0,
+            23
+          ]
+        ],
+        "label": {
+          "text": "Portugal",
+          "at": [
+            -13,
+            38.5
+          ],
+          "moves": [
+            {
+              "from": 14,
+              "at": [
+                -48,
+                -5
+              ]
+            },
+            {
+              "from": 19,
+              "at": [
+                -13,
+                38.5
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                23
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -8.9,
+                  37.0
+                ],
+                [
+                  -9.5,
+                  38.7
+                ],
+                [
+                  -8.8,
+                  40.2
+                ],
+                [
+                  -8.9,
+                  41.9
+                ],
+                [
+                  -8.2,
+                  42.1
+                ],
+                [
+                  -6.8,
+                  41.9
+                ],
+                [
+                  -6.9,
+                  41.0
+                ],
+                [
+                  -7.0,
+                  39.7
+                ],
+                [
+                  -7.3,
+                  38.2
+                ],
+                [
+                  -7.4,
+                  37.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                15
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -5.31,
+                  35.89
+                ],
+                "radius": 0.4
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                1,
+                23
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -16.9,
+                  32.7
+                ],
+                "radius": 0.6
+              },
+              {
+                "at": [
+                  -27.2,
+                  38.7
+                ],
+                "radius": 1.0
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                16
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -16.43,
+                  20.59
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                22
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -23.7,
+                  15.1
+                ],
+                "radius": 0.8
+              },
+              {
+                "at": [
+                  6.7,
+                  0.3
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                15
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  -1.35,
+                  5.08
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                19
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  34.8,
+                  -20.2
+                ],
+                "radius": 0.6
+              },
+              {
+                "at": [
+                  40.7,
+                  -15.0
+                ],
+                "radius": 0.6
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                16
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  76.25,
+                  9.95
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                20
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  73.9,
+                  15.5
+                ],
+                "radius": 0.6
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                15
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  102.25,
+                  2.2
+                ],
+                "radius": 0.6
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                15
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  56.46,
+                  27.06
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                16
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  79.85,
+                  6.93
+                ],
+                "radius": 0.7
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                20
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  70.99,
+                  20.71
+                ],
+                "radius": 0.5
+              },
+              {
+                "at": [
+                  72.83,
+                  20.4
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                23
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  113.55,
+                  22.15
+                ],
+                "radius": 0.5
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  124.1,
+                  -9.4
+                ],
+                [
+                  124.45,
+                  -9.15
+                ],
+                [
+                  125.1,
+                  -8.95
+                ],
+                [
+                  126.0,
+                  -8.85
+                ],
+                [
+                  127.3,
+                  -8.4
+                ],
+                [
+                  126.9,
+                  -8.7
+                ],
+                [
+                  126.0,
+                  -9.3
+                ],
+                [
+                  125.2,
+                  -9.55
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -35.0,
+                  -7.5
+                ],
+                [
+                  -35.2,
+                  -9.0
+                ],
+                [
+                  -36.5,
+                  -10.5
+                ],
+                [
+                  -37.5,
+                  -11.5
+                ],
+                [
+                  -38.5,
+                  -13.0
+                ],
+                [
+                  -39.1,
+                  -15.0
+                ],
+                [
+                  -39.2,
+                  -17.5
+                ],
+                [
+                  -39.7,
+                  -19.5
+                ],
+                [
+                  -40.9,
+                  -21.5
+                ],
+                [
+                  -41.9,
+                  -22.9
+                ],
+                [
+                  -43.2,
+                  -23.0
+                ],
+                [
+                  -44.6,
+                  -23.4
+                ],
+                [
+                  -46.4,
+                  -24.0
+                ],
+                [
+                  -47.9,
+                  -25.0
+                ],
+                [
+                  -46.5,
+                  -22.6
+                ],
+                [
+                  -44.5,
+                  -21.0
+                ],
+                [
+                  -41.5,
+                  -19.0
+                ],
+                [
+                  -40.0,
+                  -14.5
+                ],
+                [
+                  -38.5,
+                  -11.5
+                ],
+                [
+                  -37.0,
+                  -8.5
+                ],
+                [
+                  -36.0,
+                  -7.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                14,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -50.5,
+                  0.0
+                ],
+                [
+                  -48.5,
+                  -1.0
+                ],
+                [
+                  -44.5,
+                  -2.5
+                ],
+                [
+                  -41.5,
+                  -2.9
+                ],
+                [
+                  -39.0,
+                  -3.7
+                ],
+                [
+                  -37.0,
+                  -4.8
+                ],
+                [
+                  -35.2,
+                  -5.3
+                ],
+                [
+                  -35.0,
+                  -7.5
+                ],
+                [
+                  -35.2,
+                  -9.0
+                ],
+                [
+                  -36.5,
+                  -10.5
+                ],
+                [
+                  -37.5,
+                  -11.5
+                ],
+                [
+                  -38.5,
+                  -13.0
+                ],
+                [
+                  -39.1,
+                  -15.0
+                ],
+                [
+                  -39.2,
+                  -17.5
+                ],
+                [
+                  -39.7,
+                  -19.5
+                ],
+                [
+                  -40.9,
+                  -21.5
+                ],
+                [
+                  -41.9,
+                  -22.9
+                ],
+                [
+                  -43.2,
+                  -23.0
+                ],
+                [
+                  -44.6,
+                  -23.4
+                ],
+                [
+                  -46.4,
+                  -24.0
+                ],
+                [
+                  -47.9,
+                  -25.0
+                ],
+                [
+                  -50.5,
+                  -22.5
+                ],
+                [
+                  -50.0,
+                  -17.0
+                ],
+                [
+                  -49.0,
+                  -12.0
+                ],
+                [
+                  -47.0,
+                  -7.0
+                ],
+                [
+                  -50.0,
+                  -4.5
+                ],
+                [
+                  -54.0,
+                  -3.0
+                ],
+                [
+                  -55.5,
+                  -1.5
+                ],
+                [
+                  -52.0,
+                  0.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                17,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -51.7,
+                  4.2
+                ],
+                [
+                  -50.0,
+                  1.7
+                ],
+                [
+                  -50.0,
+                  -0.2
+                ],
+                [
+                  -48.0,
+                  -0.7
+                ],
+                [
+                  -44.5,
+                  -2.4
+                ],
+                [
+                  -40.0,
+                  -2.8
+                ],
+                [
+                  -37.0,
+                  -4.7
+                ],
+                [
+                  -35.2,
+                  -5.3
+                ],
+                [
+                  -34.8,
+                  -7.0
+                ],
+                [
+                  -35.2,
+                  -9.0
+                ],
+                [
+                  -37.2,
+                  -11.2
+                ],
+                [
+                  -38.8,
+                  -13.5
+                ],
+                [
+                  -39.1,
+                  -15.5
+                ],
+                [
+                  -39.7,
+                  -19.0
+                ],
+                [
+                  -40.9,
+                  -21.8
+                ],
+                [
+                  -42.0,
+                  -22.9
+                ],
+                [
+                  -44.0,
+                  -23.3
+                ],
+                [
+                  -46.5,
+                  -24.0
+                ],
+                [
+                  -48.0,
+                  -25.5
+                ],
+                [
+                  -48.7,
+                  -27.5
+                ],
+                [
+                  -49.9,
+                  -29.5
+                ],
+                [
+                  -51.5,
+                  -31.5
+                ],
+                [
+                  -53.4,
+                  -33.7
+                ],
+                [
+                  -53.1,
+                  -32.7
+                ],
+                [
+                  -55.5,
+                  -30.5
+                ],
+                [
+                  -57.6,
+                  -30.2
+                ],
+                [
+                  -56.0,
+                  -28.0
+                ],
+                [
+                  -54.5,
+                  -26.0
+                ],
+                [
+                  -54.5,
+                  -24.0
+                ],
+                [
+                  -55.5,
+                  -20.0
+                ],
+                [
+                  -57.5,
+                  -16.0
+                ],
+                [
+                  -58.5,
+                  -12.0
+                ],
+                [
+                  -56.5,
+                  -8.0
+                ],
+                [
+                  -56.0,
+                  -4.0
+                ],
+                [
+                  -55.5,
+                  -1.0
+                ],
+                [
+                  -54.0,
+                  2.2
+                ],
+                [
+                  -52.5,
+                  2.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                14,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  13.1,
+                  -8.4
+                ],
+                [
+                  14.2,
+                  -8.6
+                ],
+                [
+                  14.4,
+                  -9.6
+                ],
+                [
+                  13.3,
+                  -9.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                20,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  12.3,
+                  -6.1
+                ],
+                [
+                  13.1,
+                  -5.9
+                ],
+                [
+                  16.5,
+                  -5.9
+                ],
+                [
+                  17.0,
+                  -7.2
+                ],
+                [
+                  18.5,
+                  -7.9
+                ],
+                [
+                  19.5,
+                  -7.0
+                ],
+                [
+                  20.5,
+                  -7.3
+                ],
+                [
+                  21.8,
+                  -7.3
+                ],
+                [
+                  21.8,
+                  -9.5
+                ],
+                [
+                  22.5,
+                  -11.0
+                ],
+                [
+                  24.0,
+                  -11.2
+                ],
+                [
+                  23.9,
+                  -12.5
+                ],
+                [
+                  22.0,
+                  -13.0
+                ],
+                [
+                  22.0,
+                  -16.2
+                ],
+                [
+                  23.5,
+                  -17.5
+                ],
+                [
+                  21.0,
+                  -17.9
+                ],
+                [
+                  18.5,
+                  -17.4
+                ],
+                [
+                  14.0,
+                  -17.4
+                ],
+                [
+                  11.8,
+                  -17.3
+                ],
+                [
+                  11.8,
+                  -15.0
+                ],
+                [
+                  12.4,
+                  -13.5
+                ],
+                [
+                  13.7,
+                  -12.0
+                ],
+                [
+                  13.2,
+                  -10.0
+                ],
+                [
+                  13.0,
+                  -8.8
+                ]
+              ],
+              [
+                [
+                  12.2,
+                  -5.0
+                ],
+                [
+                  12.9,
+                  -4.4
+                ],
+                [
+                  13.1,
+                  -5.0
+                ],
+                [
+                  12.4,
+                  -5.9
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                20,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  32.9,
+                  -26.85
+                ],
+                [
+                  32.9,
+                  -25.9
+                ],
+                [
+                  33.9,
+                  -24.5
+                ],
+                [
+                  35.5,
+                  -24.1
+                ],
+                [
+                  35.4,
+                  -22.2
+                ],
+                [
+                  34.8,
+                  -20.2
+                ],
+                [
+                  34.9,
+                  -19.8
+                ],
+                [
+                  36.5,
+                  -18.8
+                ],
+                [
+                  37.0,
+                  -17.9
+                ],
+                [
+                  38.5,
+                  -17.0
+                ],
+                [
+                  40.0,
+                  -16.4
+                ],
+                [
+                  40.7,
+                  -15.0
+                ],
+                [
+                  40.5,
+                  -14.0
+                ],
+                [
+                  40.6,
+                  -12.2
+                ],
+                [
+                  40.5,
+                  -10.5
+                ],
+                [
+                  39.5,
+                  -10.9
+                ],
+                [
+                  38.5,
+                  -11.2
+                ],
+                [
+                  37.5,
+                  -11.7
+                ],
+                [
+                  35.3,
+                  -11.5
+                ],
+                [
+                  34.6,
+                  -11.6
+                ],
+                [
+                  34.6,
+                  -13.5
+                ],
+                [
+                  35.8,
+                  -14.8
+                ],
+                [
+                  35.2,
+                  -16.2
+                ],
+                [
+                  35.0,
+                  -17.0
+                ],
+                [
+                  34.4,
+                  -16.2
+                ],
+                [
+                  33.5,
+                  -14.5
+                ],
+                [
+                  33.2,
+                  -14.0
+                ],
+                [
+                  32.0,
+                  -14.2
+                ],
+                [
+                  30.4,
+                  -15.6
+                ],
+                [
+                  32.0,
+                  -16.9
+                ],
+                [
+                  33.0,
+                  -16.9
+                ],
+                [
+                  32.7,
+                  -18.5
+                ],
+                [
+                  33.0,
+                  -19.5
+                ],
+                [
+                  32.5,
+                  -20.0
+                ],
+                [
+                  32.4,
+                  -21.3
+                ],
+                [
+                  31.3,
+                  -22.4
+                ],
+                [
+                  32.1,
+                  -24.5
+                ],
+                [
+                  32.0,
+                  -26.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                14,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -16.7,
+                  12.7
+                ],
+                [
+                  -15.0,
+                  12.7
+                ],
+                [
+                  -13.7,
+                  12.7
+                ],
+                [
+                  -13.7,
+                  11.8
+                ],
+                [
+                  -14.5,
+                  11.3
+                ],
+                [
+                  -15.0,
+                  10.8
+                ],
+                [
+                  -16.2,
+                  11.2
+                ],
+                [
+                  -16.7,
+                  12.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "Lisbon",
+          "Began": "1415, with the capture of Ceuta",
+          "Ended": "1999, when Macau was handed to China",
+          "Today": "Portugal; Brazil, Angola, Mozambique and others"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "John I, of the House of Aviz"
+          },
+          {
+            "from": 1,
+            "text": "John I, then Duarte from 1433"
+          },
+          {
+            "from": 2,
+            "text": "Duarte, then Afonso V from 1438"
+          },
+          {
+            "from": 3,
+            "text": "John II"
+          },
+          {
+            "from": 6,
+            "text": "Manuel I"
+          },
+          {
+            "from": 12,
+            "text": "John III, then Sebastian from 1557"
+          },
+          {
+            "from": 13,
+            "text": "Sebastian"
+          },
+          {
+            "from": 15,
+            "text": "Sebastian, then Cardinal Henry, then Philip I of Portugal (Philip II of Spain) from 1580"
+          },
+          {
+            "from": 16,
+            "text": "Philip III of Portugal (Philip IV of Spain), then John IV of Braganza from 1640"
+          },
+          {
+            "from": 17,
+            "text": "Peter II, John V and Joseph I"
+          },
+          {
+            "from": 18,
+            "text": "Maria I, with her son John as prince regent"
+          },
+          {
+            "from": 19,
+            "text": "John VI"
+          },
+          {
+            "from": 20,
+            "text": "Luís I, then Carlos I from 1889"
+          },
+          {
+            "from": 21,
+            "text": "The Estado Novo dictatorship: António Salazar as prime minister"
+          },
+          {
+            "from": 22,
+            "text": "A military junta, then President Costa Gomes"
+          },
+          {
+            "from": 23,
+            "text": "A republic: President Jorge Sampaio"
+          }
+        ],
+        "role": "A chain of forts, ports and plantations on four continents, the first European sea empire and the last to end. From 1580 to 1640 its king also rules Spain.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Divides the new lands with Spain at Tordesillas (1494)"
+          },
+          {
+            "from": 15,
+            "text": "Shares Spain’s king, 1580 to 1640"
+          },
+          {
+            "from": 16,
+            "text": "Rebels against Spain and crowns its own king (1640); loses Elmina, Malacca and Ceylon to the Dutch"
+          },
+          {
+            "from": 19,
+            "text": "Brazil becomes independent (1822)"
+          },
+          {
+            "from": 20,
+            "text": "Gives up the Pink Map after Britain’s ultimatum (1890)"
+          },
+          {
+            "from": 21,
+            "text": "India takes Goa, Daman and Diu (1961)"
+          },
+          {
+            "from": 22,
+            "text": "Angola, Mozambique and other colonies become independent (1975)"
+          },
+          {
+            "from": 23,
+            "text": "Hands Macau to China (1999)"
+          }
+        ]
+      },
+      {
+        "id": "kongo",
+        "name": "Kingdom of Kongo",
+        "native": "Kongo dia Ntotila",
+        "lang": "kg",
+        "color": "#a64ca6",
+        "active": [
+          [
+            4,
+            16
+          ]
+        ],
+        "label": {
+          "text": "Kongo",
+          "at": [
+            22,
+            -11
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                4,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  12.3,
+                  -6.0
+                ],
+                [
+                  12.6,
+                  -6.9
+                ],
+                [
+                  12.9,
+                  -7.9
+                ],
+                [
+                  13.1,
+                  -8.5
+                ],
+                [
+                  14.5,
+                  -8.6
+                ],
+                [
+                  16.5,
+                  -8.4
+                ],
+                [
+                  17.2,
+                  -7.0
+                ],
+                [
+                  17.0,
+                  -5.5
+                ],
+                [
+                  15.5,
+                  -4.8
+                ],
+                [
+                  14.0,
+                  -4.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "Mbanza Kongo, the capital",
+          "Reach": "The lower Congo river and north-western Angola",
+          "Today": "Northern Angola and the western Democratic Republic of the Congo"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Nzinga a Nkuwu (baptised João I), then Afonso I from 1509"
+          }
+        ],
+        "role": "A Central African kingdom, Portugal’s ally and trading partner, later a victim of the slave trade.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Welcomes the Portuguese and takes their faith (1491)"
+          }
+        ]
+      },
+      {
+        "id": "vijayanagara",
+        "name": "Vijayanagara Empire",
+        "native": "ವಿಜಯನಗರ ಸಾಮ್ರಾಜ್ಯ",
+        "lang": "kn",
+        "color": "#c4452d",
+        "active": [
+          [
+            6,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Vijayanagara",
+          "at": [
+            79,
+            11.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  80.8,
+                  15.7
+                ],
+                [
+                  80.3,
+                  15.4
+                ],
+                [
+                  80.1,
+                  13.5
+                ],
+                [
+                  80.2,
+                  12.5
+                ],
+                [
+                  79.8,
+                  11.8
+                ],
+                [
+                  79.8,
+                  10.3
+                ],
+                [
+                  79.3,
+                  10.3
+                ],
+                [
+                  78.0,
+                  8.8
+                ],
+                [
+                  77.55,
+                  8.1
+                ],
+                [
+                  77.2,
+                  8.8
+                ],
+                [
+                  77.0,
+                  10.5
+                ],
+                [
+                  76.2,
+                  12.0
+                ],
+                [
+                  75.6,
+                  13.0
+                ],
+                [
+                  75.0,
+                  14.5
+                ],
+                [
+                  74.7,
+                  15.5
+                ],
+                [
+                  75.2,
+                  16.2
+                ],
+                [
+                  76.5,
+                  16.2
+                ],
+                [
+                  77.8,
+                  16.4
+                ],
+                [
+                  79.0,
+                  16.2
+                ],
+                [
+                  80.2,
+                  16.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "Vijayanagara (Hampi)",
+          "Reach": "India south of the Krishna and Tungabhadra rivers",
+          "Today": "Karnataka, Andhra Pradesh, Tamil Nadu and Kerala"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Immadi Narasimha, with the regent Narasa Nayaka"
+          },
+          {
+            "from": 8,
+            "text": "Krishnadevaraya"
+          },
+          {
+            "from": 12,
+            "text": "Sadashiva Raya, with Rama Raya holding power"
+          }
+        ],
+        "role": "Southern India’s great power, which buys Portuguese horses through Goa. Defeated at Talikota in 1565.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Buys Arabian horses through the Portuguese at Goa"
+          }
+        ]
+      },
+      {
+        "id": "spanish",
+        "name": "Spanish Empire",
+        "native": "Monarquía Hispánica",
+        "lang": "es",
+        "color": "#e2a12a",
+        "active": [
+          [
+            15,
+            16
+          ]
+        ],
+        "label": {
+          "text": "Spain",
+          "at": [
+            -3.5,
+            42.3
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                15,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -9.4,
+                  43.0
+                ],
+                [
+                  -8.0,
+                  43.7
+                ],
+                [
+                  -1.9,
+                  43.4
+                ],
+                [
+                  3.0,
+                  41.9
+                ],
+                [
+                  0.8,
+                  41.0
+                ],
+                [
+                  -0.7,
+                  37.6
+                ],
+                [
+                  -5.4,
+                  35.9
+                ],
+                [
+                  -7.5,
+                  37.4
+                ],
+                [
+                  -6.6,
+                  41.8
+                ],
+                [
+                  -9.0,
+                  41.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "Madrid, from 1561",
+          "Began": "1492, with Columbus",
+          "Today": "Spain; most of Latin America; the Philippines"
+        },
+        "rulers": [
+          {
+            "from": 15,
+            "text": "Philip II, then Philip III and Philip IV"
+          }
+        ],
+        "role": "Shares its king with Portugal from 1580 to 1640.",
+        "ties": [
+          {
+            "from": 15,
+            "text": "Takes the Portuguese crown (1580)"
+          },
+          {
+            "from": 16,
+            "text": "Loses Portugal in a rebellion (1640)"
+          }
+        ]
+      },
+      {
+        "id": "dutch",
+        "name": "Dutch Republic",
+        "native": "Republiek der Zeven Verenigde Nederlanden",
+        "lang": "nl",
+        "color": "#ff8a1f",
+        "active": [
+          [
+            16,
+            16
+          ]
+        ],
+        "label": {
+          "text": "Dutch",
+          "at": [
+            2.2,
+            54.3
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                16,
+                16
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  3.4,
+                  51.35
+                ],
+                [
+                  4.0,
+                  51.75
+                ],
+                [
+                  4.5,
+                  52.4
+                ],
+                [
+                  4.8,
+                  53.0
+                ],
+                [
+                  6.0,
+                  53.4
+                ],
+                [
+                  7.1,
+                  53.3
+                ],
+                [
+                  7.0,
+                  52.5
+                ],
+                [
+                  6.7,
+                  52.1
+                ],
+                [
+                  6.0,
+                  51.8
+                ],
+                [
+                  6.2,
+                  51.0
+                ],
+                [
+                  5.7,
+                  50.8
+                ],
+                [
+                  5.0,
+                  51.5
+                ],
+                [
+                  4.2,
+                  51.4
+                ]
+              ],
+              [
+                [
+                  -36.4,
+                  -10.5
+                ],
+                [
+                  -35.2,
+                  -9.0
+                ],
+                [
+                  -34.9,
+                  -7.5
+                ],
+                [
+                  -35.2,
+                  -5.5
+                ],
+                [
+                  -37.0,
+                  -4.8
+                ],
+                [
+                  -39.0,
+                  -3.7
+                ],
+                [
+                  -40.5,
+                  -5.5
+                ],
+                [
+                  -39.5,
+                  -8.0
+                ],
+                [
+                  -38.0,
+                  -9.5
+                ],
+                [
+                  -37.0,
+                  -10.2
+                ]
+              ],
+              {
+                "at": [
+                  13.23,
+                  -8.84
+                ],
+                "radius": 0.7
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "The Hague; Amsterdam for trade",
+          "Dutch Brazil": "1630 to 1654",
+          "Today": "The Netherlands"
+        },
+        "rulers": [
+          {
+            "from": 16,
+            "text": "A republic: Frederick Henry of Orange, stadtholder, then William II from 1647"
+          }
+        ],
+        "role": "Portugal’s great rival at sea, which takes its posts in Brazil, Africa and Asia.",
+        "ties": [
+          {
+            "from": 16,
+            "text": "Takes Recife in 1630 and Luanda in 1641"
+          }
+        ]
+      },
+      {
+        "id": "brazil",
+        "name": "Empire of Brazil, then Republic of Brazil",
+        "native": "Brasil",
+        "color": "#d4c01f",
+        "active": [
+          [
+            19,
+            23
+          ]
+        ],
+        "label": {
+          "text": "Brazil",
+          "at": [
+            -52,
+            -10
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                19,
+                23
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -51.7,
+                  4.2
+                ],
+                [
+                  -50.0,
+                  1.7
+                ],
+                [
+                  -50.0,
+                  -0.2
+                ],
+                [
+                  -48.0,
+                  -0.7
+                ],
+                [
+                  -44.5,
+                  -2.4
+                ],
+                [
+                  -40.0,
+                  -2.8
+                ],
+                [
+                  -37.0,
+                  -4.7
+                ],
+                [
+                  -35.2,
+                  -5.3
+                ],
+                [
+                  -34.8,
+                  -7.0
+                ],
+                [
+                  -35.2,
+                  -9.0
+                ],
+                [
+                  -37.2,
+                  -11.2
+                ],
+                [
+                  -38.8,
+                  -13.5
+                ],
+                [
+                  -39.1,
+                  -15.5
+                ],
+                [
+                  -39.7,
+                  -19.0
+                ],
+                [
+                  -40.9,
+                  -21.8
+                ],
+                [
+                  -42.0,
+                  -22.9
+                ],
+                [
+                  -44.0,
+                  -23.3
+                ],
+                [
+                  -46.5,
+                  -24.0
+                ],
+                [
+                  -48.0,
+                  -25.5
+                ],
+                [
+                  -48.7,
+                  -27.5
+                ],
+                [
+                  -49.9,
+                  -29.5
+                ],
+                [
+                  -51.5,
+                  -31.5
+                ],
+                [
+                  -53.4,
+                  -33.7
+                ],
+                [
+                  -53.1,
+                  -32.7
+                ],
+                [
+                  -55.5,
+                  -30.5
+                ],
+                [
+                  -57.6,
+                  -30.2
+                ],
+                [
+                  -55.9,
+                  -28.0
+                ],
+                [
+                  -54.5,
+                  -25.6
+                ],
+                [
+                  -54.6,
+                  -23.8
+                ],
+                [
+                  -55.8,
+                  -22.3
+                ],
+                [
+                  -57.8,
+                  -22.1
+                ],
+                [
+                  -58.2,
+                  -19.8
+                ],
+                [
+                  -57.8,
+                  -17.6
+                ],
+                [
+                  -58.4,
+                  -16.3
+                ],
+                [
+                  -60.2,
+                  -16.3
+                ],
+                [
+                  -60.3,
+                  -13.6
+                ],
+                [
+                  -62.8,
+                  -12.0
+                ],
+                [
+                  -65.3,
+                  -9.8
+                ],
+                [
+                  -67.0,
+                  -10.4
+                ],
+                [
+                  -68.8,
+                  -11.0
+                ],
+                [
+                  -70.6,
+                  -11.0
+                ],
+                [
+                  -72.9,
+                  -9.5
+                ],
+                [
+                  -73.2,
+                  -7.3
+                ],
+                [
+                  -72.4,
+                  -5.0
+                ],
+                [
+                  -70.0,
+                  -4.2
+                ],
+                [
+                  -69.9,
+                  -2.0
+                ],
+                [
+                  -69.5,
+                  -0.5
+                ],
+                [
+                  -70.0,
+                  0.5
+                ],
+                [
+                  -69.4,
+                  1.1
+                ],
+                [
+                  -67.6,
+                  2.0
+                ],
+                [
+                  -66.9,
+                  1.2
+                ],
+                [
+                  -65.5,
+                  1.5
+                ],
+                [
+                  -64.0,
+                  1.8
+                ],
+                [
+                  -63.5,
+                  3.9
+                ],
+                [
+                  -62.2,
+                  4.2
+                ],
+                [
+                  -60.7,
+                  5.2
+                ],
+                [
+                  -60.0,
+                  4.5
+                ],
+                [
+                  -59.8,
+                  2.8
+                ],
+                [
+                  -58.5,
+                  1.4
+                ],
+                [
+                  -56.5,
+                  2.0
+                ],
+                [
+                  -54.0,
+                  2.3
+                ],
+                [
+                  -52.5,
+                  3.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Centre": "Rio de Janeiro; Brasília from 1960",
+          "Independent": "1822",
+          "Today": "Brazil"
+        },
+        "rulers": [
+          {
+            "from": 19,
+            "text": "Pedro I, then Pedro II from 1831"
+          },
+          {
+            "from": 20,
+            "text": "Pedro II, then a republic from 1889"
+          },
+          {
+            "from": 21,
+            "text": "A republic"
+          }
+        ],
+        "role": "Independent from 1822.",
+        "ties": [
+          {
+            "from": 19,
+            "text": "Portugal recognises its independence (1825)"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "henry",
+        "name": "Henry the Navigator",
+        "native": "Infante Dom Henrique",
+        "life": "1394 to 1460",
+        "role": "Prince of Portugal, patron of voyages",
+        "steps": [
+          0,
+          1,
+          2
+        ],
+        "text": "A younger son of João I, Henry fights at Ceuta and governs the Order of Christ, whose wealth pays for voyages down Africa’s coast and to the Atlantic islands. He never sails on them himself. The name ‘the Navigator’ was given by later English writers, and the famous school at Sagres is probably a legend."
+      },
+      {
+        "id": "joao-ii",
+        "name": "João II",
+        "native": "D. João II",
+        "life": "1455 to 1495",
+        "role": "King of Portugal from 1481",
+        "steps": [
+          3,
+          4,
+          5
+        ],
+        "text": "João II drives the African voyages as a royal project. He builds Elmina, sends Diogo Cão and Bartolomeu Dias south, and gathers news of India by land. He turns down Columbus’s plan, then negotiates the Treaty of Tordesillas with Spain in 1494. He dies before the fleet he planned for India sails."
+      },
+      {
+        "id": "afonso-kongo",
+        "name": "Afonso I of Kongo",
+        "native": "Mvemba a Nzinga",
+        "lang": "kg",
+        "life": "about 1456 to 1542 or 1543",
+        "role": "King of Kongo from 1509",
+        "steps": [
+          4
+        ],
+        "text": "Son of Nzinga a Nkuwu, Afonso wins the throne in 1509 and makes Christianity Kongo’s royal faith, sending his son Henrique to Europe, where he becomes a bishop. He trades with Portugal but, in letters of 1526 to King João III, protests that Portuguese traders are enslaving his free subjects and asks to control the trade."
+      },
+      {
+        "id": "da-gama",
+        "name": "Vasco da Gama",
+        "native": "Vasco da Gama",
+        "life": "1460s to 1524",
+        "role": "Navigator, later Viceroy of India",
+        "steps": [
+          6
+        ],
+        "text": "A minor nobleman, da Gama leads the first voyage from Europe to India by sea, returning in 1499 with about a third of his men. He sails again in 1502 with a large, violent fleet that bombards Calicut and attacks pilgrim ships. Named Viceroy of India in 1524, he dies at Cochin that December."
+      },
+      {
+        "id": "albuquerque",
+        "name": "Afonso de Albuquerque",
+        "native": "Afonso de Albuquerque",
+        "life": "about 1453 to 1515",
+        "role": "Governor of Portuguese India, 1509 to 1515",
+        "steps": [
+          9,
+          10,
+          11
+        ],
+        "text": "Albuquerque plans an empire of fortified ports controlling the Indian Ocean’s trade, and takes Goa, Malacca and Hormuz one by one. He encourages his men to marry local women in Goa. Ruthless in war, he learns he has been replaced shortly before dying at sea off Goa in December 1515."
+      },
+      {
+        "id": "xavier",
+        "name": "Francis Xavier",
+        "native": "Francisco Xavier",
+        "life": "1506 to 1552",
+        "role": "Jesuit missionary",
+        "steps": [
+          9,
+          13
+        ],
+        "text": "A Basque priest and a founder of the Jesuits, Xavier sails to Goa in 1542 at the Portuguese king’s request. He preaches on the Fishery Coast of south India, in Malacca, the Moluccas and from 1549 in Japan. He dies on an island off China in 1552, and his body lies in the Basilica of Bom Jesus in Goa."
+      },
+      {
+        "id": "njinga",
+        "name": "Njinga",
+        "native": "Njinga Mbande",
+        "lang": "kmb",
+        "life": "about 1583 to 1663",
+        "role": "Queen of Ndongo and Matamba",
+        "steps": [
+          14,
+          16
+        ],
+        "text": "Njinga first comes to Luanda in 1622 as her brother’s envoy, and is baptised there. As queen she fights the Portuguese for decades, allies with the Dutch when they take Luanda in 1641, and builds a strong kingdom in Matamba. She makes peace with Portugal in 1656 and is remembered in Angola as a heroine of resistance."
+      },
+      {
+        "id": "sebastian",
+        "name": "Sebastian",
+        "native": "D. Sebastião",
+        "life": "1554 to 1578",
+        "role": "King of Portugal from 1557",
+        "steps": [
+          15
+        ],
+        "text": "Sebastian becomes king at three and grows up devout and set on a crusade in Morocco. He leads an army there against advice and vanishes in the defeat at Alcácer Quibir. Because his body is never clearly identified, many Portuguese long believe he will return to save the kingdom, a hope called Sebastianism."
+      },
+      {
+        "id": "pedro",
+        "name": "Pedro I of Brazil",
+        "native": "D. Pedro I",
+        "life": "1798 to 1834",
+        "role": "First Emperor of Brazil, 1822 to 1831",
+        "steps": [
+          18,
+          19
+        ],
+        "text": "Pedro sails to Brazil as a boy with the court in 1807. Left as regent in 1821, he declares independence the next year and rules as emperor until he abdicates in 1831. He returns to Portugal, wins a civil war for his daughter Maria II against his brother Miguel, and dies in 1834 as Pedro IV of Portugal."
+      },
+      {
+        "id": "salazar",
+        "name": "António de Oliveira Salazar",
+        "native": "António de Oliveira Salazar",
+        "life": "1889 to 1970",
+        "role": "Prime Minister of Portugal, 1932 to 1968",
+        "steps": [
+          21,
+          22
+        ],
+        "text": "An economics professor, Salazar builds the authoritarian Estado Novo, with censorship and a secret police. He insists the colonies are inseparable provinces of one nation, refuses to negotiate over Goa and sends the army to fight in Africa from 1961. A stroke ends his rule in 1968; his regime falls in the revolution of 1974."
+      }
+    ]
+  }
+}

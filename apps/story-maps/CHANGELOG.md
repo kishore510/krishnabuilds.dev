@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.75.0
+
+- New story map in Chronicles: The Portuguese Empire. From the capture of Ceuta in 1415, down Africa’s coast and round the Cape to India, through Goa, Malacca, Macau, Brazil and the Atlantic slave trade, to the Carnation Revolution and the handover of Macau in 1999. 24 chapters on the world map, a Powers layer and 10 people cards.
+- Catalogue: the Portuguese Empire entry opens the story, with a chapter entry for Vasco da Gama reaching India.
+
 ## 0.74.0
 
 - New story map in Life: Life on Earth. From the first microbes and the oxygen they made, through complex cells, the Ediacaran creatures, the Cambrian explosion, the move onto land, the coal forests, the Great Dying, the first dinosaurs, feathers and flowers, the rise of mammals and whales, our upright ancestors and our own species, to how it was found. 17 chapters on the earth-deep map and 3 people cards.
