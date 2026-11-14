@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.65.0
+
+- New story map in Physics and Astronomy: The Sun at the Centre. From Aristarchus’s Sun-centred idea and Ptolemy’s Earth-centred sky, through Aryabhata’s spinning Earth and the Maragha astronomers who mended Ptolemy, to Copernicus in 1543, Kepler’s ellipses, Galileo’s telescope and Newton’s gravity. 8 chapters on the world map and 5 people cards.
+- Catalogue: The Sun at the centre opens the story, with person entries for Aryabhata, Copernicus, Kepler, Galileo and Newton.
+
 ## 0.64.0
 
 - New story map in Mathematics, the subject's first: The Journey of Zero. From the Babylonian placeholder and the Maya's own zero, through the Bakhshali dot on birch bark and Brahmagupta's rules for zero as a number in 628 CE, to the Indian numerals reaching Baghdad, Leonardo of Pisa learning them at Bugia and the Liber Abaci of 1202. 7 chapters on the world map and 3 people cards.

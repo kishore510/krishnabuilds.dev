@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Sun at the Centre (`sun-at-centre`), 2026-11-14
 - The Journey of Zero (`zero`), 2026-11-14
 - The Hunt for the Elements (`elements`), 2026-11-14
 - Yellapragada Subbarow (`subbarow`), 2026-11-14

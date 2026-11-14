@@ -1,0 +1,379 @@
+{
+  "id": "sun-at-centre",
+  "title": "The Sun at the Centre",
+  "description": "How the Sun moved to the centre: from Aristarchus and Ptolemy, through Aryabhata and Maragha, to Copernicus, Kepler, Galileo and Newton.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "The Sun at the centre",
+  "note": "Dotted lines are a book or an idea travelling, not a person. The European places are close on this world map, so only their own chapter shows each in full.",
+  "places": {
+    "samos": {
+      "name": "Samos",
+      "at": [
+        26.98,
+        37.75
+      ],
+      "glyph": "greek-temple",
+      "label": "top"
+    },
+    "alexandria": {
+      "name": "Alexandria",
+      "at": [
+        29.92,
+        31.2
+      ],
+      "glyph": "lighthouse",
+      "label": "bottom"
+    },
+    "kusumapura": {
+      "name": "Kusumapura",
+      "at": [
+        85.14,
+        25.61
+      ],
+      "glyph": "earth-moon",
+      "label": "bottom"
+    },
+    "maragha": {
+      "name": "Maragha",
+      "at": [
+        46.24,
+        37.39
+      ],
+      "glyph": "dome",
+      "label": "right"
+    },
+    "frombork": {
+      "name": "Frombork",
+      "at": [
+        19.68,
+        54.36
+      ],
+      "glyph": "sun",
+      "label": "left"
+    },
+    "prague": {
+      "name": "Prague",
+      "at": [
+        14.42,
+        50.09
+      ],
+      "glyph": "star",
+      "label": "left"
+    },
+    "padua": {
+      "name": "Padua",
+      "at": [
+        11.88,
+        45.41
+      ],
+      "glyph": "telescope",
+      "label": "bottom"
+    },
+    "cambridge": {
+      "name": "Cambridge",
+      "at": [
+        0.12,
+        52.21
+      ],
+      "glyph": "speed-up",
+      "label": "top"
+    }
+  },
+  "travellers": {
+    "book": {
+      "name": "A book or idea",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "ancient": {
+      "name": "An Earth-centred sky",
+      "color": "#e0b04a"
+    },
+    "questions": {
+      "name": "Questions from the East",
+      "color": "#4fc3b0"
+    },
+    "revolution": {
+      "name": "The Sun moves to the centre",
+      "color": "#e0573a"
+    },
+    "law": {
+      "name": "The law behind it",
+      "color": "#2b7fb4"
+    }
+  },
+  "routeStyles": {
+    "ideas": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "2 6",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 28,
+        "color": "rgba(224,176,74,.35)"
+      },
+      {
+        "until": 55,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 88,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(43,127,180,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 4,
+        "text": "c. 270 BCE"
+      },
+      {
+        "at": 32,
+        "text": "499"
+      },
+      {
+        "at": 50,
+        "text": "1259"
+      },
+      {
+        "at": 64,
+        "text": "1543"
+      },
+      {
+        "at": 96,
+        "text": "1687"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "samos",
+      "phase": "ancient",
+      "title": "A Sun-centred idea",
+      "when": "c. 270 BCE",
+      "camera": {
+        "at": [
+          30,
+          35
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Aristarchus of Samos used clever geometry to show that the Sun is far bigger than the Earth. He then proposed that the Earth goes round the Sun, spinning daily, and that the stars are immensely far away. His book on it is lost; we know the idea only because Archimedes mentioned it. Almost nobody agreed: a moving Earth seemed absurd.",
+      "today": "Today: a Greek island off the coast of Turkey.",
+      "at": 4
+    },
+    {
+      "place": "alexandria",
+      "phase": "ancient",
+      "title": "The Earth stands still",
+      "when": "c. 150 CE",
+      "camera": {
+        "at": [
+          30,
+          35
+        ],
+        "width": 40
+      },
+      "legs": [
+        {
+          "from": "samos",
+          "to": "alexandria",
+          "traveller": "book",
+          "style": "ideas",
+          "bend": 0.15
+        }
+      ],
+      "text": "In Alexandria, Claudius Ptolemy built the most successful model of the ancient sky. The Earth sat still at the centre; each planet rode a small circle, an epicycle, carried round on a larger one. It was complicated, but it predicted where the planets would be. His book, known by its Arabic name, the Almagest, ruled astronomy for 1,400 years.",
+      "today": "Today: Egypt’s second city. Its great library is long gone.",
+      "at": 18
+    },
+    {
+      "place": "kusumapura",
+      "phase": "questions",
+      "title": "The Earth spins",
+      "native": "आर्यभटीय",
+      "when": "499 CE",
+      "camera": {
+        "at": [
+          80,
+          27
+        ],
+        "width": 45
+      },
+      "legs": [],
+      "text": "At Kusumapura, today’s Patna, the young Aryabhata finished the Aryabhatiya, a short verse book on mathematics and astronomy. He said the Earth turns on its axis: the stars only seem to move, as the riverbank seems to slide backwards to someone in a boat. He explained eclipses by shadows. But he still kept the Earth at the centre.",
+      "today": "Today: Patna, Bihar. India’s first satellite, in 1975, was named Aryabhata.",
+      "at": 32
+    },
+    {
+      "place": "maragha",
+      "phase": "questions",
+      "title": "Mending Ptolemy",
+      "when": "1259 to 1274",
+      "camera": {
+        "at": [
+          38,
+          34
+        ],
+        "width": 42
+      },
+      "legs": [
+        {
+          "from": "alexandria",
+          "to": "maragha",
+          "traveller": "book",
+          "style": "ideas",
+          "bend": -0.12
+        }
+      ],
+      "text": "Astronomers writing in Arabic and Persian measured the sky afresh and found faults in Ptolemy. At an observatory built for him at Maragha by the Mongol ruler Hulagu, Nasir al-Din al-Tusi invented a pair of rolling circles, the Tusi couple, to mend one of them. Copernicus later used the same device; how he learned of it is still debated.",
+      "today": "Today: Maragheh, north-west Iran. The observatory’s foundations survive on a hill.",
+      "at": 50
+    },
+    {
+      "place": "frombork",
+      "phase": "revolution",
+      "title": "The Sun at the centre",
+      "when": "1543",
+      "camera": {
+        "at": [
+          10,
+          50
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Nicolaus Copernicus, a canon at Frombork on the Baltic, spent decades on a model with the Sun near the centre and the Earth one of six planets, spinning daily and circling yearly. It explained why planets sometimes seem to go backwards. On the Revolutions was printed in 1543, the year he died; an unsigned preface called it a mere tool.",
+      "today": "Today: a small town in northern Poland. Copernicus is buried in its cathedral.",
+      "at": 64
+    },
+    {
+      "place": "prague",
+      "phase": "revolution",
+      "title": "Orbits are ellipses",
+      "when": "1600 to 1609",
+      "camera": {
+        "at": [
+          10,
+          50
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1600 Johannes Kepler joined Tycho Brahe, the emperor’s astronomer in Prague, whose naked-eye measurements were the most precise ever made. After Tycho died in 1601, Kepler wrestled with the orbit of Mars for years. In 1609 he published his answer: planets move in ellipses with the Sun at one focus, faster when nearer it. Circles were gone.",
+      "today": "Today: the Czech capital. Tycho is buried in its Týn Church.",
+      "at": 76
+    },
+    {
+      "place": "padua",
+      "phase": "revolution",
+      "title": "A telescope on the sky",
+      "when": "1610",
+      "camera": {
+        "at": [
+          10,
+          50
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In Padua, Galileo Galilei built a telescope and turned it on the sky. In January 1610 he saw four moons circling Jupiter: not everything went round the Earth. Later that year he saw Venus show phases like the Moon’s, which Ptolemy’s model could not explain. In 1633 the Church in Rome tried him for teaching that the Earth moves.",
+      "today": "Today: a university city in north-east Italy. In 1992 the Pope said the Church had erred.",
+      "at": 84
+    },
+    {
+      "place": "cambridge",
+      "phase": "law",
+      "title": "Why the planets move",
+      "when": "1687",
+      "camera": {
+        "at": [
+          6,
+          49
+        ],
+        "width": 40
+      },
+      "legs": [
+        {
+          "from": "padua",
+          "to": "cambridge",
+          "traveller": "book",
+          "style": "ideas",
+          "bend": 0.12
+        }
+      ],
+      "text": "At Cambridge, Isaac Newton showed that gravity, the force that makes things fall, also holds the Moon and planets in their orbits. His Principia, published in 1687, derived Kepler’s ellipses from it. Strictly, Sun and planets circle a shared centre close to the Sun. Direct proof that the Earth moves came in 1729 and 1838.",
+      "today": "Today: Newton’s rooms were at Trinity College. Bradley in 1729 and Bessel in 1838 gave the proofs.",
+      "at": 96
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "aryabhata",
+        "name": "Aryabhata",
+        "native": "आर्यभट",
+        "life": "476 to c. 550 CE",
+        "role": "Mathematician and astronomer",
+        "steps": [
+          2
+        ],
+        "text": "Aryabhata says he wrote the Aryabhatiya at 23, in 499 CE, which dates his birth to 476. Its 121 verses cover arithmetic, algebra, trigonometry and astronomy; he gave pi as about 3.1416 and a table of sines. Where he was born is unknown; Kusumapura is where he says his learning was honoured. Commentaries kept his work alive across India."
+      },
+      {
+        "id": "copernicus",
+        "name": "Nicolaus Copernicus",
+        "life": "1473 to 1543",
+        "role": "Astronomer and church canon",
+        "steps": [
+          4
+        ],
+        "text": "Born in Toruń, Copernicus studied in Kraków and in Italy, at Bologna, Padua and Ferrara, then served all his life as a canon of Warmia’s cathedral, working also as a doctor and on money. He shared his Sun-centred idea in a short handwritten sketch around 1514. His pupil Georg Joachim Rheticus persuaded him to print the full work."
+      },
+      {
+        "id": "kepler",
+        "name": "Johannes Kepler",
+        "life": "1571 to 1630",
+        "role": "Mathematician and astronomer",
+        "steps": [
+          5
+        ],
+        "text": "A Lutheran from Württemberg, Kepler taught in Graz until religious persecution drove him to Prague, where he succeeded Tycho as imperial mathematician. Besides his three laws of planetary motion, the third published in 1619, he explained how lenses and the eye form images and drew up the Rudolphine Tables. He also defended his mother against a charge of witchcraft."
+      },
+      {
+        "id": "galileo",
+        "name": "Galileo Galilei",
+        "life": "1564 to 1642",
+        "role": "Physicist and astronomer",
+        "steps": [
+          6
+        ],
+        "text": "Born in Pisa, Galileo studied falling bodies and pendulums and argued that experiment and mathematics, not authority, should decide. His Dialogue of 1632 set the two world systems side by side and mocked the Earth-centred one. Convicted of ‘vehement suspicion of heresy’, he spent his last nine years under house arrest near Florence, still writing on motion."
+      },
+      {
+        "id": "newton",
+        "name": "Isaac Newton",
+        "life": "1643 to 1727",
+        "role": "Mathematician and physicist",
+        "steps": [
+          7
+        ],
+        "text": "Newton was born in Lincolnshire on Christmas Day 1642 by the calendar England then used, 4 January 1643 by ours. He also worked out calculus, split white light into colours and built a reflecting telescope. Later he ran the Royal Mint and presided over the Royal Society. Edmond Halley urged him to write the Principia and paid to print it."
+      }
+    ]
+  }
+}
