@@ -130,7 +130,7 @@ Each story has a public like count and read count. `src/worker.js` keeps each as
 
 - **Reads:** every opening of a story page counts, repeat visits included (`hub/stats.js`). Readers don't have to finish.
 - **Likes:** only from the end card, so a like comes from someone who reached the end. The top bar shows the like count (hidden while 0) but can't be tapped. There are no accounts: `hub/stats.js` remembers on the device which stories it liked (`sm-likes`), so clearing storage lets someone like again. That is accepted for a friendly counter.
-- **Where they show:** the end card ("Opened N times"), the top bar (likes), the front-page cards ("340 reads · ♥ 12", from `hub/front.js`) and Browse (`hub/hub.js`): a pill on a story's own entry (not its chapters) and "Most read" and "Most liked" sorts, which rank entries by their story's count, the story's entry before its chapters, then the rest oldest first. A count of 0 is never shown.
+- **Where they show:** the end card ("Opened N times"), the top bar (likes), the front-page cards ("340 reads · ♥ 12", from `hub/front.js`) and Browse (`hub/hub.js`): a pill on a story's own entry (or, for a story with no entry of its own such as Mesopotamia, its first chapter entry) and "Most read" and "Most liked" sorts, which rank entries by their story's count, the story's entry before its chapters, then the rest oldest first. A count of 0 is never shown.
 - If the API can't be reached, as in the `python3 -m http.server` preview, none of this is shown. To try it locally, `pnpm exec wrangler dev` after a build serves the site and the API with a local KV.
 
 ## Versioning

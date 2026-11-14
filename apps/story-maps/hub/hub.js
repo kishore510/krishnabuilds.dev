@@ -362,6 +362,15 @@
   var countOf = function (kind, storyId) {
     return (STATS && storyId && STATS[kind] && Number(STATS[kind][storyId])) || 0;
   };
+  // The tile that carries a story's counts: the entry the story is about, or,
+  // for a story with no entry of its own (Mesopotamia), its first chapter's.
+  var COUNTED = {};
+  E.forEach(function (e) {
+    if (!built(e)) return;
+    var cur = COUNTED[e.story];
+    if (!cur || (cur.chapter || 0) > (e.chapter || 0)) COUNTED[e.story] = e;
+  });
+
   var heart = function (storyId) {
     var reads = countOf("reads", storyId);
     var likes = countOf("likes", storyId);
@@ -399,8 +408,8 @@
     var map = !built(e) ? "" : e.chapter ? "Part of " + esc(STORIES[e.story].title) : "Story map";
     var tags = (map ? '<span class="sm-pill sm-pill--map">' + map + "</span>" : "") +
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
-      // A story's reads and likes show on the entry it is about, not on its chapters.
-      (built(e) && !e.chapter ? heart(e.story) : "") +
+      // A story's reads and likes show once: on the entry it is about (see COUNTED).
+      (built(e) && COUNTED[e.story] === e ? heart(e.story) : "") +
       (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + esc(r.short) + " · " + KIND[e.kind] + "</span>" +
