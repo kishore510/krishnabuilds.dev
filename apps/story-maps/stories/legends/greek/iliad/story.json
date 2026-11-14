@@ -1,0 +1,894 @@
+{
+ "id": "iliad",
+ "title": "The Iliad",
+ "description": "An illustrated map of Homer’s Iliad, from the judgement of Paris and Helen’s flight from Sparta, through the fleet at Aulis and the quarrel of Achilles and Agamemnon, to the deaths of Patroclus and Hector, Priam’s ransom, the fall of Troy and the digging of Hisarlık and Mycenae.",
+ "canvas": "geo",
+ "basemap": "near-east",
+ "source": "Tradition",
+ "nativeLang": "grc",
+ "routes": "chapter",
+ "overview": {
+  "at": [
+   24,
+   38.6
+  ],
+  "width": 9
+ },
+ "mapLabel": "Illustrated map of the Iliad and the Trojan War of Greek tradition",
+ "note": "Based on Homer’s Iliad, with the events before and after it taken from later Greek tradition (the lost Epic Cycle, the Odyssey and later writers), and on the excavations at Hisarlık and Mycenae; each chapter says which. Whether a Trojan War happened, and when, is not known. Places follow tradition and modern identifications; Phthia, Thebe under Placus and Chryse are uncertain. Native names are given in Latin letters. The map is stylised and not to scale. The Achaean camp is drawn a little apart from Troy so their pins don’t overlap; the coast is drawn as it is today, though the bay at Troy has since silted up.",
+ "places": {
+  "smyrna": {
+   "name": "Smyrna",
+   "at": [
+    27.15,
+    38.46
+   ],
+   "glyph": "lyre",
+   "label": "right"
+  },
+  "ida": {
+   "name": "Mount Ida",
+   "at": [
+    26.85,
+    39.7
+   ],
+   "glyph": "mountain",
+   "label": "right"
+  },
+  "troy": {
+   "name": "Troy",
+   "at": [
+    26.24,
+    39.96
+   ],
+   "glyph": "fort",
+   "label": "right"
+  },
+  "sparta": {
+   "name": "Sparta",
+   "at": [
+    22.43,
+    37.07
+   ],
+   "glyph": "palace",
+   "label": "left"
+  },
+  "mycenae": {
+   "name": "Mycenae",
+   "at": [
+    22.76,
+    37.73
+   ],
+   "glyph": "gate",
+   "label": "right"
+  },
+  "aulis": {
+   "name": "Aulis",
+   "at": [
+    23.6,
+    38.43
+   ],
+   "glyph": "anchor",
+   "label": "right"
+  },
+  "phthia": {
+   "name": "Phthia",
+   "at": [
+    22.38,
+    39.3
+   ],
+   "glyph": "crown",
+   "label": "left"
+  },
+  "ithaca": {
+   "name": "Ithaca",
+   "at": [
+    20.7,
+    38.37
+   ],
+   "glyph": "village",
+   "label": "left"
+  },
+  "ships": {
+   "name": "The Achaean ships",
+   "at": [
+    26.17,
+    40.03
+   ],
+   "glyph": "boat",
+   "label": "left"
+  },
+  "thebe": {
+   "name": "Thebe",
+   "at": [
+    27.02,
+    39.6
+   ],
+   "glyph": "house-fire",
+   "label": "right"
+  },
+  "chryse": {
+   "name": "Chryse",
+   "at": [
+    26.13,
+    39.53
+   ],
+   "glyph": "shrine",
+   "label": "left"
+  },
+  "olympus": {
+   "name": "Mount Olympus",
+   "at": [
+    22.35,
+    40.09
+   ],
+   "glyph": "mountain",
+   "label": "right"
+  },
+  "scamander": {
+   "name": "River Scamander",
+   "at": [
+    26.2,
+    39.9
+   ],
+   "glyph": "crossed-swords",
+   "label": "left"
+  }
+ },
+ "travellers": {
+  "paris-ship": {
+   "name": "Paris’s ship",
+   "icon": "trireme"
+  },
+  "menelaus": {
+   "name": "Menelaus",
+   "icon": "chariot"
+  },
+  "achaeans": {
+   "name": "The Achaean fleet",
+   "icon": "trireme"
+  },
+  "myrmidons": {
+   "name": "Achilles and the Myrmidons",
+   "icon": "hoplite"
+  },
+  "odysseus": {
+   "name": "Odysseus’s ships",
+   "icon": "trireme"
+  },
+  "chryses": {
+   "name": "Chryses the priest",
+   "icon": "marcher"
+  },
+  "schliemann": {
+   "name": "Heinrich Schliemann",
+   "icon": "scientist"
+  }
+ },
+ "phases": {
+  "poem": {
+   "name": "The poem",
+   "color": "#a678e0"
+  },
+  "before": {
+   "name": "Before the Iliad",
+   "color": "#f2c14e"
+  },
+  "gathering": {
+   "name": "The war begins",
+   "color": "#d9822b"
+  },
+  "wrath": {
+   "name": "The anger of Achilles",
+   "color": "#e0573a"
+  },
+  "battle": {
+   "name": "Battle at the ships",
+   "color": "#b3261e"
+  },
+  "return": {
+   "name": "Achilles returns",
+   "color": "#5b8fd9"
+  },
+  "after": {
+   "name": "After the Iliad",
+   "color": "#8fcf8a"
+  },
+  "finding": {
+   "name": "Finding Troy",
+   "color": "#4fc3b0"
+  }
+ },
+ "routeStyles": {
+  "march": {
+   "color": "#b3261e",
+   "width": 3.2,
+   "dash": "9 5",
+   "cap": "butt"
+  },
+  "sea": {
+   "color": "#2b7fb4",
+   "width": 3,
+   "dash": "9 5",
+   "cap": "butt"
+  },
+  "journey": {
+   "color": "#7a3b12",
+   "width": 2.8,
+   "dash": "6 5",
+   "cap": "butt"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 4.0,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 16.0,
+    "color": "rgba(242,193,78,.35)"
+   },
+   {
+    "until": 28.0,
+    "color": "rgba(217,130,43,.35)"
+   },
+   {
+    "until": 52.0,
+    "color": "rgba(224,87,58,.35)"
+   },
+   {
+    "until": 64.0,
+    "color": "rgba(179,38,30,.35)"
+   },
+   {
+    "until": 88.0,
+    "color": "rgba(91,143,217,.35)"
+   },
+   {
+    "until": 92.0,
+    "color": "rgba(143,207,138,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(79,195,176,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 6,
+    "text": "Before the war"
+   },
+   {
+    "at": 30,
+    "text": "Year 10"
+   },
+   {
+    "at": 94,
+    "text": "1870s"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "smyrna",
+   "phase": "poem",
+   "title": "The singer of Troy",
+   "native": "Homeros",
+   "when": "about 750 to 650 BCE, scholars estimate",
+   "at": 2.0,
+   "camera": {
+    "at": [
+     27.15,
+     38.46
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Greek tradition names the poet of the Iliad Homer (Homeros) and says he was blind. Several cities claimed him, Smyrna and Chios among them. Scholars date the poem to about 750 to 650 BCE, shaped by generations of singers before it was written down. Its 24 books tell a few weeks in the tenth year of the Trojan War.",
+   "today": "Today: İzmir, Turkey, which grew over ancient Smyrna. The island of Chios lies to the west."
+  },
+  {
+   "place": "ida",
+   "phase": "before",
+   "title": "The judgement of Paris",
+   "native": "Ide",
+   "when": "before the war",
+   "at": 6.0,
+   "camera": {
+    "at": [
+     26.85,
+     39.7
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Tradition tells that the goddesses Hera, Athena and Aphrodite asked Paris, a son of King Priam of Troy, to judge which was the most beautiful. He chose Aphrodite, who promised him the most beautiful woman alive. The Iliad only touches on this choice, in its last book; the full tale comes from a lost poem, the Cypria.",
+   "today": "Today: Kaz Dağı, the mountain range south-east of Troy, Turkey; a national park."
+  },
+  {
+   "place": "sparta",
+   "phase": "before",
+   "title": "Helen leaves Sparta",
+   "native": "Sparte",
+   "when": "before the war",
+   "at": 10.0,
+   "camera": {
+    "at": [
+     24.34,
+     38.52
+    ],
+    "width": 9.1
+   },
+   "legs": [
+    {
+     "from": "troy",
+     "to": "sparta",
+     "traveller": "paris-ship",
+     "style": "sea",
+     "bend": 0.25
+    }
+   ],
+   "text": "Paris sails to Sparta, where King Menelaus welcomes him as a guest. He leaves with Menelaus’s wife Helen and treasure from the palace. Whether Helen went willingly or was taken, the old poets disagree; in the Iliad she blames herself. By breaking the bond between guest and host, Paris offends Zeus, protector of guests.",
+   "today": "Today: Sparti, Laconia, Greece. Remains of Bronze Age buildings have been found nearby, at the Menelaion and Agios Vasileios."
+  },
+  {
+   "place": "mycenae",
+   "phase": "before",
+   "title": "The oath of the kings",
+   "native": "Mykenai",
+   "when": "before the war",
+   "at": 14.0,
+   "camera": {
+    "at": [
+     22.59,
+     37.4
+    ],
+    "width": 3.2
+   },
+   "legs": [
+    {
+     "from": "sparta",
+     "to": "mycenae",
+     "traveller": "menelaus",
+     "style": "march",
+     "bend": 0.15
+    }
+   ],
+   "text": "Menelaus turns to his brother Agamemnon, king of Mycenae and the most powerful ruler in Greece. Later tradition says Helen’s suitors had sworn to defend whoever married her, so the kings of Greece are bound to go to war. The Iliad calls them Achaeans, Danaans or Argives, and their enemies Trojans.",
+   "today": "Today: the citadel of Mycenae near Mykines, Argolis, Greece, with its Lion Gate; a World Heritage Site."
+  },
+  {
+   "place": "aulis",
+   "phase": "gathering",
+   "title": "The fleet at Aulis",
+   "native": "Aulis",
+   "when": "the start of the war, by tradition",
+   "at": 18.0,
+   "camera": {
+    "at": [
+     22.15,
+     38.52
+    ],
+    "width": 7.0
+   },
+   "legs": [
+    {
+     "from": "mycenae",
+     "to": "aulis",
+     "traveller": "achaeans",
+     "style": "march",
+     "bend": -0.15
+    },
+    {
+     "from": "phthia",
+     "to": "aulis",
+     "traveller": "myrmidons",
+     "style": "march",
+     "bend": 0.15
+    },
+    {
+     "from": "ithaca",
+     "to": "aulis",
+     "traveller": "odysseus",
+     "style": "sea",
+     "bend": -0.3
+    }
+   ],
+   "text": "The Achaean ships gather at Aulis, a harbour facing the island of Euboea. The Iliad’s Catalogue of Ships lists 29 contingents and 1,186 ships, among them Achilles’s Myrmidons from Phthia and Odysseus from Ithaca. Later tradition adds that Agamemnon sacrificed his daughter Iphigenia here for a fair wind; the Iliad never mentions the sacrifice.",
+   "today": "Today: near Avlida, Boeotia, Greece, where a temple of Artemis has been excavated."
+  },
+  {
+   "place": "ships",
+   "phase": "gathering",
+   "title": "Landing at Troy",
+   "native": "Troie",
+   "when": "the first year of the war, by tradition",
+   "at": 22.0,
+   "camera": {
+    "at": [
+     24.89,
+     39.23
+    ],
+    "width": 6.2
+   },
+   "legs": [
+    {
+     "from": "aulis",
+     "to": "ships",
+     "traveller": "achaeans",
+     "style": "sea",
+     "bend": -0.2
+    }
+   ],
+   "text": "The fleet lands on the shore near Troy, and the Achaeans draw their ships up on the beach and camp beside them. The Iliad says Protesilaus was the first to leap ashore and the first to die. Troy, also called Ilios, is too strong to storm, and the war drags on for nine years.",
+   "today": "Today: the coast west of the Troy ruins, Çanakkale province, Turkey. Silt from the rivers has since filled the bay."
+  },
+  {
+   "place": "thebe",
+   "phase": "gathering",
+   "title": "Achilles raids the towns",
+   "native": "Thebe Hypoplakie",
+   "when": "the years of the siege",
+   "at": 26.0,
+   "camera": {
+    "at": [
+     26.59,
+     39.81
+    ],
+    "width": 3.2
+   },
+   "legs": [
+    {
+     "from": "ships",
+     "to": "thebe",
+     "traveller": "myrmidons",
+     "style": "march",
+     "bend": 0.2
+    }
+   ],
+   "text": "While Troy holds out, Achilles raids its neighbours. The Iliad says he sacked twelve towns from his ships and eleven by land. At Thebe under Mount Placus he killed King Eetion, father of Hector’s wife Andromache, and took Chryseis. At Lyrnessus he took Briseis. Captives and spoils are shared out, and they will start the quarrel.",
+   "today": "Today: the site is uncertain; it is usually placed near Edremit, Balıkesir province, Turkey."
+  },
+  {
+   "place": "chryse",
+   "phase": "wrath",
+   "title": "The priest of Apollo",
+   "native": "Menin aeide thea",
+   "when": "the tenth year of the war",
+   "at": 30.0,
+   "camera": {
+    "at": [
+     26.15,
+     39.78
+    ],
+    "width": 3.2
+   },
+   "legs": [
+    {
+     "from": "chryse",
+     "to": "ships",
+     "traveller": "chryses",
+     "style": "march",
+     "bend": 0.15
+    }
+   ],
+   "text": "The Iliad begins: “Sing, goddess, the anger of Achilles.” Chryses, priest of Apollo at Chryse, brings a ransom for his daughter Chryseis. Agamemnon sends him away with threats. Chryses prays, and Apollo shoots arrows of plague into the Achaean camp for nine days. The poem covers only about fifty days of the tenth year.",
+   "today": "Today: Chryse is usually placed near Gülpınar, Çanakkale province, Turkey, where a later temple of Apollo Smintheus stands."
+  },
+  {
+   "place": "ships",
+   "phase": "wrath",
+   "title": "The quarrel",
+   "native": "Menis",
+   "when": "the tenth year",
+   "at": 34.0,
+   "camera": {
+    "at": [
+     26.17,
+     40.03
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "The prophet Calchas names the cause, and Agamemnon gives Chryseis back, but takes Achilles’s captive Briseis in her place. Achilles nearly draws his sword on him; Athena holds him back. He withdraws to his huts with his friend Patroclus and the Myrmidons, and refuses to fight. Odysseus sails Chryseis home to her father.",
+   "today": "Today: the plain between the Troy ruins and the sea, Çanakkale province, Turkey."
+  },
+  {
+   "place": "olympus",
+   "phase": "wrath",
+   "title": "Thetis on Olympus",
+   "native": "Olympos",
+   "when": "the tenth year",
+   "at": 38.0,
+   "camera": {
+    "at": [
+     22.35,
+     40.09
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Achilles’s mother, the sea goddess Thetis, climbs Olympus and begs Zeus to let the Trojans win until the Achaeans honour her son. Zeus nods his agreement, and Olympus shakes. His wife Hera, who favours the Achaeans, quarrels with him. Throughout the poem the gods take sides, and sometimes fight on the battlefield themselves.",
+   "today": "Today: Mount Olympus, the highest mountain in Greece, between Thessaly and Macedonia; a national park."
+  },
+  {
+   "place": "troy",
+   "phase": "wrath",
+   "title": "Helen on the wall",
+   "native": "Ilios",
+   "when": "the tenth year",
+   "at": 42.0,
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Paris and Menelaus agree to fight a duel for Helen, and both armies swear a truce. From the walls of Troy, Helen names the Achaean leaders for King Priam. Menelaus is winning when Aphrodite carries Paris away in a mist. Then the Trojan archer Pandarus wounds Menelaus with an arrow, and the truce is broken.",
+   "today": "Today: the ruins at Hisarlık, near Tevfikiye, Çanakkale province, Turkey; a World Heritage Site."
+  },
+  {
+   "place": "troy",
+   "phase": "wrath",
+   "title": "Hector and Andromache",
+   "native": "Skaiai pylai",
+   "when": "the tenth year",
+   "at": 46.0,
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Hector, Priam’s eldest son and Troy’s greatest fighter, meets his wife Andromache at the Scaean Gate. She begs him to stay behind the walls. Their baby son Astyanax cries at the plume of his father’s helmet, and Hector laughs and takes it off. He tells Andromache he knows that one day Troy will fall.",
+   "today": "Today: excavators have found several gates in the walls at Hisarlık; which one, if any, the poet imagined is not known."
+  },
+  {
+   "place": "ships",
+   "phase": "wrath",
+   "title": "The embassy to Achilles",
+   "native": "Presbeia",
+   "when": "the tenth year",
+   "at": 50.0,
+   "camera": {
+    "at": [
+     26.17,
+     40.03
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "With the Trojans camped on the plain, Agamemnon offers to return Briseis with rich gifts. Odysseus, Ajax and Achilles’s old tutor Phoenix take the offer to his hut. Achilles refuses. He says he could sail home and live long, or stay and die young with lasting fame (kleos). For now, he will not fight.",
+   "today": "Today: the shore near Kumkale, at the mouth of the Dardanelles, Turkey."
+  },
+  {
+   "place": "ida",
+   "phase": "battle",
+   "title": "Zeus on Mount Ida",
+   "native": "Gargaron",
+   "when": "the tenth year",
+   "at": 54.0,
+   "camera": {
+    "at": [
+     26.85,
+     39.7
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Zeus watches the battle from Gargarus, a peak of Ida, and the Trojans push the Achaeans back behind the wall they built round their ships. Hector smashes a gate with a boulder. Hera, to help the Achaeans, borrows Aphrodite’s charm and lulls Zeus to sleep on Ida, and for a while the tide turns.",
+   "today": "Today: Gargarus is usually identified with Karataş, the highest summit of Kaz Dağı, Turkey."
+  },
+  {
+   "place": "ships",
+   "phase": "battle",
+   "title": "Fire at the ships",
+   "when": "the tenth year",
+   "at": 58.0,
+   "camera": {
+    "at": [
+     26.17,
+     40.03
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Zeus wakes, and the Trojans surge forward again. Hector seizes the ship of Protesilaus and calls for fire, while Ajax defends it with a long pike until he has to give way. Patroclus begs Achilles to let him lead the Myrmidons, wearing Achilles’s armour. Achilles agrees, but tells him only to save the ships.",
+   "today": "Today: the old shoreline lies under farmland; the bay of Homer’s time has silted up."
+  },
+  {
+   "place": "troy",
+   "phase": "battle",
+   "title": "The death of Patroclus",
+   "native": "Patroklos",
+   "when": "the tenth year",
+   "at": 62.0,
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Patroclus drives the Trojans back from the ships and kills Sarpedon, a son of Zeus. Then he chases them to the walls of Troy, against Achilles’s orders. Apollo strikes him and knocks off his helmet, Euphorbus spears him, and Hector kills him. Hector strips off Achilles’s armour, and the armies fight over the body.",
+   "today": "Today: at Hisarlık, Turkey, the sloping stone walls of the layer called Troy VI still stand several metres high."
+  },
+  {
+   "place": "olympus",
+   "phase": "return",
+   "title": "The shield of Achilles",
+   "native": "Aspis",
+   "when": "the tenth year",
+   "at": 66.0,
+   "camera": {
+    "at": [
+     22.35,
+     40.09
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Achilles grieves wildly for Patroclus and resolves to kill Hector, though Thetis warns that his own death will soon follow. She asks the smith god Hephaestus for new armour, and he forges it in his house on Olympus. On the shield he pictures earth, sky and sea, a city at peace and a city at war.",
+   "today": "Today: Mount Olympus, Greece. The shield takes about 130 lines of the poem, one of the earliest long descriptions of a work of art."
+  },
+  {
+   "place": "scamander",
+   "phase": "return",
+   "title": "Achilles and the river",
+   "native": "Skamandros",
+   "when": "the tenth year",
+   "at": 70.0,
+   "camera": {
+    "at": [
+     26.2,
+     39.9
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Achilles makes peace with Agamemnon, returns to battle and kills so many Trojans that he chokes the river Scamander, which the gods call Xanthus, with bodies. The river god rises in a flood to drown him. Hephaestus drives the water back with fire. Meanwhile the gods themselves fight one another on the plain.",
+   "today": "Today: the Karamenderes river, which still flows past the ruins of Troy to the Dardanelles."
+  },
+  {
+   "place": "troy",
+   "phase": "return",
+   "title": "The death of Hector",
+   "native": "Hektor",
+   "when": "the tenth year",
+   "at": 74.0,
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "The Trojans flee inside the walls, but Hector waits alone at the Scaean Gate. When Achilles comes, he runs, and is chased three times round the walls. Athena tricks him into standing, and Achilles kills him. Achilles ties the body behind his chariot and drags it in the dust, as Priam and Hecuba watch from the walls.",
+   "today": "Today: archaeologists have found a lower town outside the citadel at Hisarlık, so Bronze Age Troy was larger than once thought."
+  },
+  {
+   "place": "ships",
+   "phase": "return",
+   "title": "Games for Patroclus",
+   "native": "Athla",
+   "when": "the tenth year",
+   "at": 78.0,
+   "camera": {
+    "at": [
+     26.17,
+     40.03
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Achilles burns Patroclus on a great pyre, with twelve Trojan captives killed beside it. Then he holds funeral games: a chariot race, boxing, wrestling, a foot race, archery and spear throwing, with prizes from his own treasure. Old Nestor gives his son advice on the race. At dawn Achilles still drags Hector’s body round Patroclus’s tomb.",
+   "today": "Today: later tradition pointed to mounds near the mouth of the Dardanelles as the tombs of Achilles and Patroclus."
+  },
+  {
+   "place": "ships",
+   "phase": "return",
+   "title": "Priam and Achilles",
+   "native": "Priamos",
+   "when": "the tenth year",
+   "at": 82.0,
+   "camera": {
+    "at": [
+     26.17,
+     40.03
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "The gods are angered by the treatment of Hector’s body. Guided by the god Hermes, old Priam drives by night into the Achaean camp with a wagon of ransom. He kisses the hands that killed his son. Achilles, thinking of his own father, weeps with him, gives back the body, and grants a truce for the funeral.",
+   "today": "Today: the plain is part of the Troy Historical National Park, Turkey."
+  },
+  {
+   "place": "troy",
+   "phase": "return",
+   "title": "The funeral of Hector",
+   "when": "the tenth year",
+   "at": 86.0,
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Priam brings Hector home, and Andromache, his mother Hecuba and Helen lead the laments. For nine days the Trojans gather wood; on the tenth they burn Hector’s body and bury his bones in a golden chest under a mound. The Iliad ends there: “So they buried Hector, tamer of horses.” Troy still stands.",
+   "today": "Today: the Troy Museum, opened in 2018 near the site, shows finds from the excavations."
+  },
+  {
+   "place": "troy",
+   "phase": "after",
+   "title": "The fall of Troy",
+   "native": "Hippos",
+   "when": "the tenth year, by tradition",
+   "at": 90.0,
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Later poems tell the rest. Paris kills Achilles with an arrow guided by Apollo. Odysseus devises a wooden horse, and Greeks hidden inside open the gates; Troy is sacked and burned. These events come from the Odyssey, the lost poems of the Epic Cycle and Virgil’s Aeneid, not the Iliad. The ancient scholar Eratosthenes dated the fall to 1184 BCE.",
+   "today": "Today: Hisarlık shows a burned layer, Troy VIIa, destroyed around 1190 to 1180 BCE; whether this was the war of legend is disputed."
+  },
+  {
+   "place": "troy",
+   "phase": "finding",
+   "title": "Digging for Troy",
+   "native": "Wilusa",
+   "when": "1863 to today",
+   "at": 94.0,
+   "source": "Archaeology",
+   "camera": {
+    "at": [
+     26.24,
+     39.96
+    ],
+    "width": 3.2
+   },
+   "legs": [],
+   "text": "Frank Calvert, who owned part of the hill at Hisarlık, dug there from 1863 and persuaded Heinrich Schliemann that it was Troy. Schliemann dug from 1870, cutting through the layers and missing the ones he wanted. Later digs found nine cities, one above another. Hittite texts name a kingdom of Wilusa that many scholars link to Ilios.",
+   "today": "Today: excavations continue at Hisarlık, Turkey; Troy became a World Heritage Site in 1998."
+  },
+  {
+   "place": "mycenae",
+   "phase": "finding",
+   "title": "The mask of Agamemnon",
+   "when": "1876",
+   "at": 98.0,
+   "source": "Archaeology",
+   "camera": {
+    "at": [
+     24.5,
+     38.84
+    ],
+    "width": 8.4
+   },
+   "legs": [
+    {
+     "from": "troy",
+     "to": "mycenae",
+     "traveller": "schliemann",
+     "style": "journey",
+     "bend": 0.2
+    }
+   ],
+   "text": "In 1876 Schliemann dug inside the walls of Mycenae and found shaft graves full of gold. Over one face lay a gold mask, and he is said to have claimed he had gazed on the face of Agamemnon. The graves date to about 1600 BCE, centuries before any Trojan War. Whether Agamemnon lived at all is not known.",
+   "today": "Today: the mask is in the National Archaeological Museum, Athens. Some have questioned whether it is genuine; most scholars accept it."
+  }
+ ],
+ "people": {
+  "heading": "People of the Iliad",
+  "items": [
+   {
+    "id": "achilles",
+    "name": "Achilles",
+    "native": "Akhilleus",
+    "life": "legendary",
+    "role": "Leader of the Myrmidons",
+    "steps": [
+     4,
+     6,
+     8,
+     9,
+     12,
+     14,
+     16,
+     17,
+     18,
+     19,
+     20,
+     22
+    ],
+    "text": "Son of King Peleus of Phthia and the sea goddess Thetis, Achilles is the greatest fighter at Troy. Offered a short life with lasting fame or a long, quiet one, he chooses fame. His anger (menis) is the first word of the Iliad. Later tradition adds that only his heel could be wounded; the Iliad never says so."
+   },
+   {
+    "id": "hector",
+    "name": "Hector",
+    "native": "Hektor",
+    "life": "legendary",
+    "role": "Prince of Troy and its chief defender",
+    "steps": [
+     11,
+     13,
+     14,
+     15,
+     18,
+     21
+    ],
+    "text": "Eldest son of Priam and Hecuba, Hector leads the Trojans and their allies. He fights for his city knowing it will fall, and the poem gives him some of its most human scenes, with his wife Andromache and his baby son. His death at the hands of Achilles, and his ransom and funeral, end the Iliad."
+   },
+   {
+    "id": "agamemnon",
+    "name": "Agamemnon",
+    "native": "Agamemnon",
+    "life": "legendary",
+    "role": "King of Mycenae, leader of the Achaeans",
+    "steps": [
+     3,
+     4,
+     7,
+     8,
+     12
+    ],
+    "text": "Brother of Menelaus and commander of the whole Achaean army, Agamemnon rules Mycenae, rich in gold. His pride in taking Briseis sets off the quarrel at the heart of the Iliad. In later tradition he comes home after the war and is murdered by his wife Clytemnestra, as Aeschylus’s plays tell."
+   },
+   {
+    "id": "helen",
+    "name": "Helen",
+    "native": "Helene",
+    "life": "legendary",
+    "role": "Queen of Sparta, then wife of Paris",
+    "steps": [
+     2,
+     3,
+     10,
+     21
+    ],
+    "text": "Daughter of Zeus and Leda in tradition, and wife of Menelaus, Helen goes to Troy with Paris and becomes the cause of the war. The Iliad shows her full of regret, calling herself shameless. Later poets argued about her guilt, and one version says only a phantom went to Troy while she waited in Egypt."
+   },
+   {
+    "id": "priam",
+    "name": "Priam",
+    "native": "Priamos",
+    "life": "legendary",
+    "role": "King of Troy",
+    "steps": [
+     1,
+     10,
+     18,
+     20,
+     21
+    ],
+    "text": "Priam is the old king of Troy, father of Hector, Paris and, the Iliad says, fifty sons. He treats Helen kindly and blames the gods, not her, for the war. His night journey to Achilles to ransom Hector’s body is one of the most famous scenes in the poem. Later tradition says he was killed when Troy fell."
+   },
+   {
+    "id": "odysseus",
+    "name": "Odysseus",
+    "native": "Odysseus",
+    "life": "legendary",
+    "role": "King of Ithaca",
+    "steps": [
+     4,
+     8,
+     12,
+     22
+    ],
+    "text": "Odysseus, from the small island of Ithaca, is the cleverest of the Achaeans: a speaker, a scout and a schemer. In the Iliad he carries Chryseis home, leads the embassy to Achilles and goes on a night raid. Later tradition credits him with the wooden horse, and the Odyssey tells his ten-year journey home."
+   }
+  ]
+ }
+}

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.49.0
+
+- New story map in Legends, in a new collection, Greek epics: The Iliad. From Homer and the judgement of Paris, through Helen’s flight from Sparta, the fleet at Aulis and the quarrel of Achilles and Agamemnon, to the deaths of Patroclus and Hector, Priam’s ransom, the fall of Troy and the digs at Hisarlık and Mycenae. 25 chapters on the near-east map and 6 people cards.
+- Catalogue: The Iliad opens the story; Mycenaean Greece opens it at chapter 25.
+- Art library: a new lyre glyph.
+
 ## 0.48.0
 
 - New story map in Chronicles: Hyder Ali and Tipu Sultan. From a soldier’s son at Budikote, the siege of Devanahalli and the arsenal at Dindigul, through Hyder’s seizure of power, the treasure of Bednur, the Zamorin’s fire and the ride to Madras, Obavva’s pestle (tradition), Pollilur and Porto Novo, Hyder’s death and the Treaty of Mangalore, to Tipu’s court and envoys to Versailles, the harsher record in Kodagu and on the Kanara coast, the letters to Sringeri, the fall of Bangalore, the hostage princes, Citizen Tipu, the rockets in a well, the storming of Srirangapatna in 1799, the Wodeyars restored and Tipu’s Tiger. 23 chapters, a Powers layer (Mysore, the Company, the Marathas, Hyderabad, the Nawab of Arcot, Travancore and the kingdoms Hyder took) and 8 people cards.
