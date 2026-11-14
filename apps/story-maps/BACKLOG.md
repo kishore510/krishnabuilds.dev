@@ -6,9 +6,9 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy, Biology and Medicine, and Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
+One story in each subject still to come would fill the front page's shelves: Biology and Medicine, and Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
 
-Biology and Medicine fits the `world` map, so it can go in between at any time: Smallpox, from variolation to eradication, then The Gene (genetics, with a labelled aside on what Jurassic Park got right and wrong).
+Biology and Medicine fits the `world` map: Smallpox, from variolation to eradication, then The Gene (genetics, with a labelled aside on what Jurassic Park got right and wrong).
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
@@ -37,6 +37,8 @@ Newest first.
 
 - Life on Earth (`life-on-earth`), 2026-11-14
 - The Making of Earth (`making-of-earth`), 2026-11-14
+- Greek Philosophy (`greek-philosophy`), 2026-11-14
+- Indian Philosophy (`indian-philosophy`), 2026-11-14
 - The Eastern Gangas (`eastern-ganga`), 2026-11-14
 - Charles Darwin (`darwin`), 2026-11-14
 - Mahatma Gandhi (`gandhi`), 2026-11-14

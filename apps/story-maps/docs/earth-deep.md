@@ -1,6 +1,6 @@
 # The `earth-deep` canvas: design note
 
-Status: engine built (0.70.0). First used by **The Making of Earth** (Earth), then **Life on Earth** (Life). The Big Bang ends as the Earth forms; The Making of Earth starts there.
+Status: engine built (0.72.0). First used by **The Making of Earth** (Earth), then **Life on Earth** (Life). The Big Bang ends as the Earth forms; The Making of Earth starts there.
 
 ## The problem
 
