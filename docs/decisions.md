@@ -398,3 +398,9 @@ Story Maps stops being static-only: a small Worker (`apps/story-maps/src/worker.
 ## 2026-11-14 — Story Maps counts reads; likes only from the end card
 
 Every opening of a story page now counts as a read, repeat visits included, so readers don't have to finish. Reads are public beside likes: on the end card, front-page cards and Browse, which gains a "Most read" sort. Likes move to the end card only, so a like comes from someone who reached the end; the top bar shows the count but can't be tapped. Reads get their own KV namespace (story-maps-count, binding `READ_COUNTS`) and likes stay in theirs (`LIKE_COUNTS`), so the two never overwrite each other and can be reset separately. The rate limit is renamed `WRITE_LIMITER`, since it now covers every write. `GET /api/stats` replaces `GET /api/likes` and returns both. A read is a write, so the Free plan's daily KV write limit (shared with Arcade's play counts) now grows with traffic; at today's traffic it is far off, and a read that fails is simply not counted.
+
+## 2026-11-14 — Story Maps: Explore opens on Timeline; ticks mean read
+
+Explore's tabs are Timeline, Browse, Atlas, and it opens on Timeline. Most readers are on phones, where the atlas's world map is small; the timeline reads well at that size and is the heart of Explore. Atlas stays one tap away, and links to `#atlas` still open it.
+
+A ✓ anywhere (Browse tiles, timeline blocks, front-page cards) now means you have read a story map, not that you opened an entry's page: a story's own tile when you reach its last chapter, a chapter tile when you reach that chapter. Entries without a story map get no tick, so a story map added later never looks already read. The counter beside the tabs counts story maps read. Story pages remember the furthest chapter reached so ticks survive going back.

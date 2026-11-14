@@ -898,10 +898,11 @@
 
   // ---------- Views ----------
 
-  var VIEWS = ["atlas", "timeline", "browse"];
+  // Timeline first and the default: it reads well on a phone, where the atlas is small.
+  var VIEWS = ["timeline", "browse", "atlas"];
   var current = "";
   function route() {
-    var view = VIEWS.indexOf(location.hash.slice(1)) >= 0 ? location.hash.slice(1) : "atlas";
+    var view = VIEWS.indexOf(location.hash.slice(1)) >= 0 ? location.hash.slice(1) : "timeline";
     if (view === current) return;
     if (current === "timeline") state.anchor = yearAtGuide();
     if (current === "atlas") atlasStop();

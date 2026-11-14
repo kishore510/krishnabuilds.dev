@@ -72,6 +72,7 @@
 
   function hubSteps() {
     var atlas = $("sm-v-atlas");
+    var timeline = $("sm-v-timeline");
     var row = document.querySelector(".sm-story-row");
     return [
       {
@@ -91,12 +92,17 @@
       {
         targets: [document.querySelector(".sm-explore-link")],
         title: "Explore through time",
-        text: "The atlas and the timeline show who ruled where and when, and Browse lists and searches everything by name.",
+        text: "The timeline and the atlas show who ruled when and where, and Browse lists and searches everything by name.",
       },
       {
         targets: [document.querySelector(".sm-tabs")],
         title: "Three ways to explore",
-        text: "Atlas shows the world in a year you choose. Timeline shows who ruled at the same time. Browse lists and searches everything by name.",
+        text: "Timeline shows who ruled at the same time. Browse lists and searches everything by name. Atlas shows the world in a year you choose.",
+      },
+      {
+        targets: [timeline && !timeline.hidden ? document.querySelector(".sm-tl") : null],
+        title: "Move through time",
+        text: "Scroll to move through the years; the line shows who ruled at the same moment. Pick regions above, and tap a block to read about it and open its story.",
       },
       {
         targets: [atlas && !atlas.hidden ? document.querySelector(".sm-at") : null],
