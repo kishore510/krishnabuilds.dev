@@ -165,6 +165,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Greek Philosophy, a Philosophy story on the europe map (0.71.0)
 - [x] The Making of Earth, the first Earth story, on the earth-deep map (0.73.0)
 - [x] Life on Earth, the first Life story, on the earth-deep map (0.74.0)
+- [x] The Portuguese Empire, a Chronicles story on the world map (0.75.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 
