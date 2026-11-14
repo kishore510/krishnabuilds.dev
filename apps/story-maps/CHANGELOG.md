@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.55.0
+
+- Browse, Most read and Most liked: each story is ranked once, by the tile that carries its counts, so a story with many chapter tiles (Mesopotamia has 8) no longer fills the top and pushes the next story down. Under a filter, a story's counts move to its first tile still on show.
+
 ## 0.54.0
 
 - Browse and the timeline: the ✓ now means you have read the story map, not that you opened the entry's page. A story's own tile shows "Chapter 3 of 16" while you read and "✓ You’ve read" at the end; a chapter tile (Sumer in Mesopotamia) shows it once you reach that chapter. Tiles without a story map get no tick, so a story map added later never looks already read.
