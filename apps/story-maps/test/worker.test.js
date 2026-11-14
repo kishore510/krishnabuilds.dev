@@ -8,19 +8,22 @@ const manifest = JSON.parse(readFileSync(new URL("../manifest.json", import.meta
 const built = manifest.stories.find((/** @type {{ status: string }} */ s) => s.status === "built").id;
 const soon = manifest.stories.find((/** @type {{ status: string }} */ s) => s.status === "coming-soon")?.id;
 
-/** @type {Map<string, string>} */
+/** Each namespace is its own map, so a test can see which one a count went to. @type {Record<string, Map<string, string>>} */
 let kv;
+/** @param {string} ns */
+const fakeKv = (ns) => ({
+  get: async (/** @type {string} */ k) => kv[ns].get(k) ?? null,
+  put: async (/** @type {string} */ k, /** @type {string} */ v) => {
+    writes++;
+    kv[ns].set(k, v);
+  },
+});
 let allow = true;
 let writes = 0;
 const env = {
   ASSETS: { fetch: async () => new Response("asset") },
-  STORY_COUNTS: {
-    get: async (/** @type {string} */ k) => kv.get(k) ?? null,
-    put: async (/** @type {string} */ k, /** @type {string} */ v) => {
-      writes++;
-      kv.set(k, v);
-    },
-  },
+  LIKE_COUNTS: fakeKv("likes"),
+  READ_COUNTS: fakeKv("reads"),
   WRITE_LIMITER: { limit: async () => ({ success: allow }) },
 };
 
@@ -28,7 +31,7 @@ const env = {
 const call = (path, method = "GET") => worker.fetch(new Request(`https://story-maps.test${path}`, { method }), env);
 
 beforeEach(() => {
-  kv = new Map();
+  kv = { likes: new Map(), reads: new Map() };
   allow = true;
   writes = 0;
 });
@@ -53,6 +56,8 @@ describe("counts API", () => {
     await call(`/api/like/${built}`, "POST");
     expect(await (await call("/api/stats")).json()).toEqual({ likes: { [built]: 1 }, reads: { [built]: 2 } });
     expect((await call(`/api/read/${built}`, "DELETE")).status).toBe(405);
+    expect([...kv.likes.keys()]).toEqual(["likes"]);
+    expect([...kv.reads.keys()]).toEqual(["reads"]);
   });
 
   it("only counts built stories, and leaves KV alone otherwise", async () => {

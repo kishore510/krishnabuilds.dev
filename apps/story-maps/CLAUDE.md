@@ -126,7 +126,7 @@ Phones first. In the map:
 
 ## Likes and reads
 
-Each story has a public like count and read count. `src/worker.js` keeps them in the `STORY_COUNTS` KV namespace, one JSON blob per key (`likes` and `reads`), the same pattern as Arcade's play counter: `GET /api/stats` returns `{ likes: { "<id>": n }, reads: { "<id>": n } }` (cached 30 seconds), `POST` / `DELETE /api/like/<id>` add or take back one like, and `POST /api/read/<id>` counts one opening. Only built stories in `manifest.json` are accepted, so a new story needs no Worker change. Writes are limited to 20 a minute per IP (`WRITE_LIMITER`).
+Each story has a public like count and read count. `src/worker.js` keeps each as one JSON blob in its own KV namespace (likes in `LIKE_COUNTS`, story-maps-likes; reads in `READ_COUNTS`, story-maps-count), the same pattern as Arcade's play counter: `GET /api/stats` returns `{ likes: { "<id>": n }, reads: { "<id>": n } }` (cached 30 seconds), `POST` / `DELETE /api/like/<id>` add or take back one like, and `POST /api/read/<id>` counts one opening. Only built stories in `manifest.json` are accepted, so a new story needs no Worker change. Writes are limited to 20 a minute per IP (`WRITE_LIMITER`).
 
 - **Reads:** every opening of a story page counts, repeat visits included (`hub/stats.js`). Readers don't have to finish.
 - **Likes:** only from the end card, so a like comes from someone who reached the end. The top bar shows the like count (hidden while 0) but can't be tapped. There are no accounts: `hub/stats.js` remembers on the device which stories it liked (`sm-likes`), so clearing storage lets someone like again. That is accepted for a friendly counter.

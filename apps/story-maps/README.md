@@ -10,7 +10,7 @@ The front page has three shelves, Nature, Humankind and Science, each holding su
 - **Lives**: people followed from place to place, on the Humankind shelf.
 - **Physics and Astronomy**: the first subject on the Science shelf; discoveries and ideas, not biographies.
 
-Every story is listed in `manifest.json` and has a folder under `stories/`. The hub's Timeline and Browse, and an entry page for every civilisation, dynasty, event, legend and route, come from `catalogue.json`. A small Node build (`scripts/build.mjs`) turns them into one self-contained HTML page per story and entry, plus the front page and Explore (`/explore/`). No framework. Deployed as a Cloudflare Worker serving static assets plus a tiny counts API for likes and reads (`src/worker.js`, one KV namespace), from `.github/workflows/deploy-story-maps.yml` on pushes to `main`.
+Every story is listed in `manifest.json` and has a folder under `stories/`. The hub's Timeline and Browse, and an entry page for every civilisation, dynasty, event, legend and route, come from `catalogue.json`. A small Node build (`scripts/build.mjs`) turns them into one self-contained HTML page per story and entry, plus the front page and Explore (`/explore/`). No framework. Deployed as a Cloudflare Worker serving static assets plus a tiny counts API for likes and reads (`src/worker.js`, one KV namespace each), from `.github/workflows/deploy-story-maps.yml` on pushes to `main`.
 
 ```sh
 pnpm turbo run build lint typecheck test --filter=@krishnabuilds/story-maps

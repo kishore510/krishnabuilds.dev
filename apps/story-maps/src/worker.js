@@ -1,7 +1,8 @@
 // Story Maps worker: serves the built site (dist/, via the ASSETS binding) and
 // a tiny counts API for likes and reads, the same pattern as Arcade's play
-// counter. Each count is one JSON blob under its own KV key ("likes" and
-// "reads"), so a like and a read never overwrite each other. Fine for hobby
+// counter. Likes and reads are each one JSON blob in their own KV namespace
+// (LIKE_COUNTS under "likes", READ_COUNTS under "reads"), so a like and a read
+// never overwrite each other. Fine for hobby
 // traffic: the read-modify-write is not atomic, so two writes to the same key
 // at the same instant can lose one.
 //
@@ -22,16 +23,21 @@ import manifest from "../manifest.json";
 
 const ROUTE = /^\/api\/(like|read)\/([a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?)$/;
 const BUILT = new Set(manifest.stories.filter((s) => s.status === "built").map((s) => s.id));
-/** @type {Record<string, string>} */
+/** @type {Record<string, "likes" | "reads">} */
 const KEYS = { like: "likes", read: "reads" };
 
 /**
  * @typedef {{
  *   ASSETS: { fetch(request: Request | URL | string, init?: RequestInit): Promise<Response> },
- *   STORY_COUNTS: { get(key: string): Promise<string | null>, put(key: string, value: string): Promise<void> },
+ *   LIKE_COUNTS: KV,
+ *   READ_COUNTS: KV,
  *   WRITE_LIMITER: { limit(options: { key: string }): Promise<{ success: boolean }> },
  * }} Env
+ * @typedef {{ get(key: string): Promise<string | null>, put(key: string, value: string): Promise<void> }} KV
  */
+
+/** The namespace each key lives in. @param {Env} env @param {"likes" | "reads"} key */
+const store = (env, key) => (key === "likes" ? env.LIKE_COUNTS : env.READ_COUNTS);
 
 /** @param {unknown} body @param {ResponseInit} [init] */
 function json(body, init = {}) {
@@ -41,9 +47,9 @@ function json(body, init = {}) {
   });
 }
 
-/** @param {Env} env @param {string} key @returns {Promise<Record<string, number>>} */
+/** @param {Env} env @param {"likes" | "reads"} key @returns {Promise<Record<string, number>>} */
 async function readCounts(env, key) {
-  const raw = await env.STORY_COUNTS.get(key);
+  const raw = await store(env, key).get(key);
   return raw ? JSON.parse(raw) : {};
 }
 
@@ -54,7 +60,7 @@ async function isRateLimited(request, env) {
   return !success;
 }
 
-/** @param {string} key @param {string} id @param {1 | -1} change @param {Request} request @param {Env} env */
+/** @param {"likes" | "reads"} key @param {string} id @param {1 | -1} change @param {Request} request @param {Env} env */
 async function change(key, id, change, request, env) {
   if (!BUILT.has(id)) return new Response("Not found", { status: 404 });
   if (await isRateLimited(request, env)) {
@@ -64,7 +70,7 @@ async function change(key, id, change, request, env) {
   const count = Math.max(0, (Object.hasOwn(counts, id) ? counts[id] : 0) + change);
   if (count) counts[id] = count;
   else delete counts[id];
-  await env.STORY_COUNTS.put(key, JSON.stringify(counts));
+  await store(env, key).put(key, JSON.stringify(counts));
   return json({ id, count });
 }
 

@@ -4,7 +4,7 @@
 
 - Reads: every opening of a story counts as a read, repeat visits included. The count shows on the end card ("Opened N times"), on front-page cards ("340 reads · ♥ 12") and in Browse, which gets a "Most read" sort.
 - Likes come only from the end card now, so they come from readers who reached the end. The heart in the top bar shows the count but can't be tapped.
-- The API is now `GET /api/stats` (likes and reads together) plus `POST /api/read/<id>`; `/api/likes` is gone. Same KV namespace, with reads under their own key.
+- The API is now `GET /api/stats` (likes and reads together) plus `POST /api/read/<id>`; `/api/likes` is gone. Reads have their own KV namespace (story-maps-count); likes stay where they were.
 
 ## 0.50.0
 
