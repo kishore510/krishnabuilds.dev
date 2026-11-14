@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.63.0
+
+- New story map in Chemistry: The Hunt for the Elements. From Brand’s glowing phosphorus in 1669, Ytterby’s four elements, Lavoisier’s list and Davy’s electric battery, through Bunsen and Kirchhoff’s spectra and helium in the Sun, to Mendeleev’s table and the gaps it predicted, the noble gases and Moseley’s atomic numbers, then technetium, the transuranium elements and the superheavy elements of Darmstadt, Dubna and Wako. 17 chapters on the world map and 5 people cards.
+- Catalogue: The hunt for the elements opens the story, with chapter entries for the periodic table, the noble gases and technetium (all discoveries).
+
 ## 0.62.0
 
 - New story map in Lives: Yellapragada Subbarow. From the Godavari delta and Madras, through the voyage to Harvard, the Fiske–Subbarow phosphorus test and the finding of ATP, to Lederle Laboratories, where his teams made folic acid and developed aminopterin and methotrexate, a drug for elephantiasis and Aureomycin, the first tetracycline. 14 chapters on the world map and 3 people cards.
