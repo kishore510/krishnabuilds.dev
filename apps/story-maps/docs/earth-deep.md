@@ -49,22 +49,29 @@ Page weight: pages are self-contained, so the basemap is inlined into each story
 
 Reconstructions get less certain the further back they go. Before about 750 million years ago, published maps disagree widely, and before about 3 billion years ago there are no continents to draw with confidence. The map shows that rather than hiding it:
 
-- Recent eras (0 to about 540 million years) are drawn from a published reconstruction.
+- Recent eras (0 to 535 million years) are drawn from a published reconstruction (PaleoMAP, below).
 - Older eras (Rodinia, Snowball Earth) are drawn loosely and labelled as one reconstruction among several. The card says so, as the Science content rule requires.
 - The earliest eras show no continents: a molten or ocean world with a few islands.
 
 ## Where the coastlines come from
 
-**Not settled. This needs the owner's decision before any data is committed.** The repo is "all rights reserved", so a share-alike licence (CC BY-SA) can't be mixed in. CC BY with attribution in the README is fine, as Natural Earth is now.
+The repo is "all rights reserved", so a share-alike licence (CC BY-SA) can't be mixed in. CC BY with attribution in the README is fine, as Natural Earth is now.
 
-| Source | Covers | Licence (as reported, not yet confirmed) | Fit |
-| --- | --- | --- | --- |
-| PALEOMAP PaleoCoastlines, Scotese (Zenodo 10.5281/zenodo.4297693) | 0 to about 750 million years | Zenodo record says CC BY 4.0, but Scotese's own 2010 licence page limits use to personal, teaching and research | Best fit if CC BY 4.0 is confirmed |
-| Müller et al. 2019 plate model (EarthByte) | 0 to about 230 million years | CC BY-SA 4.0 | Ruled out: share-alike |
-| Ron Blakey's maps (as seen on Wikipedia) | many eras | Copyrighted, sold commercially | Ruled out |
-| Hand-placed Natural Earth continents | any era | Public domain, own work | Fallback: today's continents, simplified and moved by hand to rough past positions. Recognisable for Pangaea, crude for older eras |
+**Chosen for 0 to 535 million years: PaleoMAP PaleoCoastlines v7.1** (Kocsis and Scotese, 2020; Zenodo, doi:10.5281/zenodo.4297693). Checked 2026-11-14: the Zenodo record and the archive's own `Readme.md` both state **CC BY 4.0**. That newer, dataset-specific licence replaces the restrictive 2010 page on Scotese's personal site. The related PALEOMAP PaleoAtlas (doi:10.5281/zenodo.10596610) is also CC BY 4.0.
 
-The licence wording could not be checked from this session: zenodo.org and gplates.org are outside its network allowlist. To confirm it, either the owner reads the two Zenodo records, or a later session's environment allows `zenodo.org`, which is also needed to download the data.
+- Contents: coastline (`CS`) and continental-margin (`CM`) shapefiles in present-day longitude and latitude for 81 ages, every 5 to 15 million years from 0 to 535 million years ago (for example 0, 20, 50, 65, 90, 150, 200, 250, 300, 400, 535).
+- Size: about 40 KB of raw shapefile per age before simplifying.
+- Attribution for `README.md`: "Paleocoastlines simplified from PaleoMAP PaleoCoastlines v7.1 by A. T. Kocsis and C. R. Scotese (2020), CC BY 4.0, doi:10.5281/zenodo.4297693. See Kocsis and Scotese, Earth-Science Reviews 2021, doi:10.1016/j.earscirev.2020.103463."
+- The archive (89 MB) is not committed. Only the simplified shapes go in the basemap.
+
+**Before 535 million years** (Rodinia, Snowball Earth and older), the dataset has nothing. Those eras are drawn by hand and loosely, each labelled as one reconstruction among several, or shown with no continents at all.
+
+Ruled out:
+
+| Source | Why |
+| --- | --- |
+| Müller et al. 2019 plate model (EarthByte) | CC BY-SA 4.0: share-alike |
+| Ron Blakey's maps (as seen on Wikipedia) | Copyrighted, sold commercially |
 
 ## Build plan (each its own PR)
 
@@ -75,6 +82,5 @@ The licence wording could not be checked from this session: zenodo.org and gplat
 
 ## Open questions
 
-- The coastline source: see above.
 - Whether ice is its own layer (white shapes over land and sea) or just part of an era's land colours. A separate layer is suggested, because Snowball Earth and the ice ages need it and it is cheap.
 - The Earth story's chapter list, to settle in step 3. A first idea: formation (4.54 billion years ago) and the Moon-forming impact; first oceans; first continents; the Great Oxidation; Rodinia; Snowball Earth; Pangaea; Pangaea breaking up; India meets Asia and the Himalayas rise; the last ice age; today.

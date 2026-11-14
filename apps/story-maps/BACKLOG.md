@@ -10,7 +10,7 @@ One story in each subject still to come would fill the front page's shelves: Ear
 
 Nature first, in this order (design in `docs/earth-deep.md`):
 
-1. The `earth-deep` canvas: engine, then the basemap (its coastline source needs the owner's decision first)
+1. The `earth-deep` canvas: engine, then the basemap (PaleoMAP PaleoCoastlines, CC BY 4.0)
 2. The Making of Earth (Earth, `earth-deep`)
 3. Life on Earth (Life, `earth-deep`)
 
