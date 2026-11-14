@@ -1,0 +1,618 @@
+{
+  "id": "elements",
+  "title": "The Hunt for the Elements",
+  "description": "An illustrated map of how the elements were found and the periodic table filled in, from Brand’s glowing phosphorus in 1669 through Lavoisier’s list, Davy’s electric battery, Mendeleev’s table and the three elements that proved its gaps, to the superheavy elements made one atom at a time in Berkeley, Darmstadt, Dubna and Wako.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "de",
+  "routes": "chapter",
+  "mapLabel": "Illustrated world map following the discovery of the chemical elements from laboratory to laboratory, 1669 to today",
+  "note": "Based on the discoverers’ own papers and Nobel lectures and on standard histories of chemistry. Dotted lines show a sample travelling between laboratories, not a person. The map draws today’s coasts, not the borders of the time, and is stylised and not to scale.",
+  "places": {
+    "hamburg": {
+      "name": "Hamburg",
+      "at": [
+        9.99,
+        53.55
+      ],
+      "glyph": "flask",
+      "label": "left"
+    },
+    "ytterby": {
+      "name": "Ytterby",
+      "at": [
+        18.35,
+        59.43
+      ],
+      "glyph": "mine",
+      "label": "right"
+    },
+    "paris": {
+      "name": "Paris",
+      "at": [
+        2.35,
+        48.86
+      ],
+      "glyph": "dome",
+      "label": "left"
+    },
+    "london": {
+      "name": "London",
+      "at": [
+        -0.14,
+        51.51
+      ],
+      "glyph": "burst",
+      "label": "left"
+    },
+    "heidelberg": {
+      "name": "Heidelberg",
+      "at": [
+        8.67,
+        49.4
+      ],
+      "glyph": "light-waves",
+      "label": "left"
+    },
+    "guntur": {
+      "name": "Guntur",
+      "at": [
+        80.44,
+        16.31
+      ],
+      "glyph": "sun",
+      "label": "right"
+    },
+    "stpetersburg": {
+      "name": "St Petersburg",
+      "at": [
+        30.31,
+        59.94
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "uppsala": {
+      "name": "Uppsala",
+      "at": [
+        17.64,
+        59.86
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "freiberg": {
+      "name": "Freiberg",
+      "at": [
+        13.34,
+        50.92
+      ],
+      "glyph": "mine",
+      "label": "right"
+    },
+    "manchester": {
+      "name": "Manchester",
+      "at": [
+        -2.23,
+        53.47
+      ],
+      "glyph": "atom",
+      "label": "left"
+    },
+    "palermo": {
+      "name": "Palermo",
+      "at": [
+        13.36,
+        38.12
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "berkeley": {
+      "name": "Berkeley",
+      "at": [
+        -122.25,
+        37.87
+      ],
+      "glyph": "atom",
+      "label": "right"
+    },
+    "darmstadt": {
+      "name": "Darmstadt",
+      "at": [
+        8.68,
+        49.93
+      ],
+      "glyph": "particles",
+      "label": "left"
+    },
+    "oakridge": {
+      "name": "Oak Ridge",
+      "at": [
+        -84.27,
+        35.93
+      ],
+      "glyph": "flask",
+      "label": "bottom"
+    },
+    "dubna": {
+      "name": "Dubna",
+      "at": [
+        37.17,
+        56.74
+      ],
+      "glyph": "particles",
+      "label": "right"
+    },
+    "wako": {
+      "name": "Wako",
+      "at": [
+        139.61,
+        35.78
+      ],
+      "glyph": "atom",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "sample": {
+      "name": "A sample sent between laboratories",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "isolate": {
+      "name": "Isolating the elements",
+      "color": "#4fc3b0"
+    },
+    "light": {
+      "name": "Reading the light",
+      "color": "#e0573a"
+    },
+    "table": {
+      "name": "The table and its gaps",
+      "color": "#f2c14e"
+    },
+    "making": {
+      "name": "Making new elements",
+      "color": "#2b7fb4"
+    }
+  },
+  "routeStyles": {
+    "sample": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "2 6",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 23,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 35,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 71,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(43,127,180,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1669"
+      },
+      {
+        "at": 14,
+        "text": "1789"
+      },
+      {
+        "at": 38,
+        "text": "1869"
+      },
+      {
+        "at": 68,
+        "text": "1913"
+      },
+      {
+        "at": 80,
+        "text": "1940"
+      },
+      {
+        "at": 98,
+        "text": "2016"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "hamburg",
+      "phase": "isolate",
+      "title": "Fire from urine",
+      "native": "kaltes Feuer",
+      "when": "1669",
+      "camera": {
+        "at": [
+          10,
+          53.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1669 Hennig Brand, a merchant and alchemist in Hamburg, boiled down great quantities of urine, hoping to find a way to make gold. Instead he got a white, waxy substance that glowed in the dark and caught fire. He called it cold fire; it became known as phosphorus, Greek for ‘light-bearer’, the first element whose discoverer we know.",
+      "today": "Today: Hamburg, Germany. Phosphorus is in every cell’s DNA, and most mined phosphate becomes fertiliser.",
+      "at": 2
+    },
+    {
+      "place": "ytterby",
+      "phase": "isolate",
+      "title": "Four elements from one village",
+      "native": "Ytterby gruva",
+      "when": "1787 to 1878",
+      "lang": "sv",
+      "camera": {
+        "at": [
+          18.35,
+          59.43
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1787 Carl Axel Arrhenius, an army officer, found a heavy black stone in the quarry at Ytterby. In 1794 Johan Gadolin, at Turku, found in it a new earth, yttria. For a century chemists split it and its neighbours into new elements; four are named after the village: yttrium, terbium, erbium and ytterbium.",
+      "today": "Today: Vaxholm, Sweden. A plaque marks the old quarry; its elements now work in lasers, fibre-optic cables and screens.",
+      "at": 8
+    },
+    {
+      "place": "paris",
+      "phase": "isolate",
+      "title": "Lavoisier’s list",
+      "native": "Traité élémentaire de chimie",
+      "when": "1789",
+      "lang": "fr",
+      "camera": {
+        "at": [
+          2.35,
+          48.86
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1789 Antoine Lavoisier published a list of 33 ‘simple substances’: what could not yet be broken down. It held oxygen and hydrogen, which he had named, but also light and heat, and earths later shown to be compounds. His wife Marie-Anne Paulze worked beside him and drew his apparatus. In 1794 he was guillotined as a former tax collector.",
+      "today": "Today: Paris, France. Of Lavoisier’s 33 substances, 23 are on today’s periodic table.",
+      "at": 14
+    },
+    {
+      "place": "london",
+      "phase": "isolate",
+      "title": "Splitting with electricity",
+      "when": "1807 to 1808",
+      "camera": {
+        "at": [
+          -0.14,
+          51.51
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Alessandro Volta announced his electric battery in 1800. In 1807 Humphry Davy, at the Royal Institution in London, passed current from a large battery through molten potash, and bright globules of a new metal burst into flame: potassium. Days later he made sodium, and in 1808 calcium, barium, strontium and magnesium. His cousin said he danced about the room.",
+      "today": "Today: London, UK. The Royal Institution on Albemarle Street still gives public science lectures.",
+      "at": 20
+    },
+    {
+      "place": "heidelberg",
+      "phase": "light",
+      "title": "Every element’s own colours",
+      "native": "Spektralanalyse",
+      "when": "1859 to 1861",
+      "camera": {
+        "at": [
+          8.67,
+          49.4
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At Heidelberg the chemist Robert Bunsen and the physicist Gustav Kirchhoff showed that each element heated in a flame gives off its own pattern of bright coloured lines, seen through a prism. In 1860 they found two blue lines in spa water from Dürkheim: caesium, Latin for sky-blue. In 1861 deep red lines gave rubidium. Light could now find elements.",
+      "today": "Today: Heidelberg, Germany. Astronomers still read what stars are made of from their lines.",
+      "at": 26
+    },
+    {
+      "place": "guntur",
+      "phase": "light",
+      "title": "An element in the Sun",
+      "when": "1868",
+      "camera": {
+        "at": [
+          80.44,
+          16.31
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "On 18 August 1868 the French astronomer Jules Janssen watched a total eclipse at Guntur and saw a bright yellow line in the Sun’s glowing edge. In England Norman Lockyer saw it too, and found it matched no known element. With the chemist Edward Frankland he named it helium, from Greek helios, the Sun. Many doubted it for decades.",
+      "today": "Today: Guntur, Andhra Pradesh, India. Helium cools the magnets of hospital MRI scanners.",
+      "at": 32
+    },
+    {
+      "place": "stpetersburg",
+      "phase": "table",
+      "title": "Mendeleev’s table",
+      "native": "Периодическая система элементов",
+      "when": "1869",
+      "lang": "ru",
+      "camera": {
+        "at": [
+          30.31,
+          59.94
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1869 Dmitri Mendeleev, at St Petersburg, arranged the 63 known elements by atomic weight, with similar elements in the same column. Where none fitted he left gaps, and predicted three missing elements and their properties. Lothar Meyer in Germany drew a similar table independently. The story that the table came to Mendeleev in a dream is told secondhand.",
+      "today": "Today: St Petersburg, Russia. The United Nations named 2019, the table’s 150th year, the Year of the Periodic Table.",
+      "at": 38
+    },
+    {
+      "place": "paris",
+      "phase": "table",
+      "title": "The first gap filled",
+      "when": "1875",
+      "camera": {
+        "at": [
+          2.35,
+          48.86
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1875 Paul-Émile Lecoq de Boisbaudran saw two new violet lines in the spectrum of a zinc ore from the Pyrenees, and isolated a soft new metal. He reported it to the Academy of Sciences in Paris as gallium, from Gallia, Latin for France. Mendeleev wrote that its density must be 5.9, not 4.7. A purer sample measured 5.9.",
+      "today": "Today: Paris, France. Gallium is in the chips of blue and white LEDs.",
+      "at": 44
+    },
+    {
+      "place": "uppsala",
+      "phase": "table",
+      "title": "Scandium",
+      "when": "1879",
+      "camera": {
+        "at": [
+          17.64,
+          59.86
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1879 Lars Fredrik Nilson, at Uppsala, was purifying ytterbium from Scandinavian minerals, including gadolinite from Ytterby, when he found a new element. He named it scandium, after Scandinavia. His colleague Per Teodor Cleve saw that it matched the ‘eka-boron’ Mendeleev had predicted. The same year Cleve found two more elements in the same ores, holmium and thulium.",
+      "today": "Today: Uppsala, Sweden. Scandium strengthens aluminium alloys for aircraft parts and bicycle frames.",
+      "at": 50
+    },
+    {
+      "place": "freiberg",
+      "phase": "table",
+      "title": "Germanium proves the table",
+      "native": "Bergakademie Freiberg",
+      "when": "1886",
+      "camera": {
+        "at": [
+          13.34,
+          50.92
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1886 Clemens Winkler, at the Freiberg Mining Academy, analysed a silver ore from a local mine and found that about 7 per cent was missing from his total. He tracked it down: a new element, germanium. Mendeleev had predicted ‘eka-silicon’ with an atomic weight of 72 and density 5.5; germanium measured about 72.6 and 5.35. Doubters were won over.",
+      "today": "Today: Freiberg, Germany. The first transistor, in 1947, was made of germanium.",
+      "at": 56
+    },
+    {
+      "place": "london",
+      "phase": "table",
+      "title": "A whole new column",
+      "when": "1894 to 1898",
+      "camera": {
+        "at": [
+          -0.14,
+          51.51
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Lord Rayleigh found nitrogen from air slightly heavier than nitrogen from chemicals. With William Ramsay at University College London he traced the difference in 1894 to argon, a gas that reacted with nothing and fitted no column. Ramsay found helium on Earth in 1895, and with Morris Travers in 1898 neon, krypton and xenon, a new column.",
+      "today": "Today: London, UK. Neon lights signs, argon shields welding, and xenon drives some spacecraft engines.",
+      "at": 62
+    },
+    {
+      "place": "manchester",
+      "phase": "table",
+      "title": "Counting by number",
+      "when": "1913",
+      "camera": {
+        "at": [
+          -2.23,
+          53.47
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1913 Henry Moseley, 26, at Manchester, measured the X-rays given off by elements struck by electrons. They rose in even steps, revealing each element’s atomic number, the charge of its nucleus. The table could now be ordered by number, not weight, and it showed four gaps between aluminium and gold. Moseley was killed at Gallipoli in 1915.",
+      "today": "Today: Manchester, UK. Hafnium and rhenium filled two of the gaps by 1925; the other two had to be made.",
+      "at": 68
+    },
+    {
+      "place": "palermo",
+      "phase": "making",
+      "title": "The first made element",
+      "when": "1937",
+      "camera": {
+        "at": [
+          -50,
+          40
+        ],
+        "width": 200
+      },
+      "legs": [
+        {
+          "from": "berkeley",
+          "to": "palermo",
+          "traveller": "sample",
+          "style": "sample",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 1937 Emilio Segrè, in Palermo, received a strip of molybdenum from Ernest Lawrence’s cyclotron at Berkeley, where it had been struck by fast particles for months. With the mineralogist Carlo Perrier he found in it element 43, one of Moseley’s gaps, and the first element made by people. It was named technetium, from Greek for ‘artificial’.",
+      "today": "Today: Palermo, Italy. A form of technetium is used in tens of millions of medical scans a year.",
+      "at": 74
+    },
+    {
+      "place": "berkeley",
+      "phase": "making",
+      "title": "Beyond uranium",
+      "when": "1940 to 1955",
+      "camera": {
+        "at": [
+          -122.25,
+          37.87
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1940 Edwin McMillan and Philip Abelson at Berkeley made element 93, neptunium, the first heavier than uranium. Glenn Seaborg’s team made plutonium in 1941, then americium, curium, berkelium and californium, and Seaborg moved a whole row to the foot of the table. In 1955 Albert Ghiorso’s team made 17 atoms of element 101, named mendelevium.",
+      "today": "Today: Berkeley, California, USA. Element 106 was named seaborgium in 1997, in Seaborg’s lifetime.",
+      "at": 80
+    },
+    {
+      "place": "darmstadt",
+      "phase": "making",
+      "title": "One atom at a time",
+      "when": "1981 to 1996",
+      "camera": {
+        "at": [
+          8.68,
+          49.93
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "From 1981 Peter Armbruster and Gottfried Münzenberg’s team at GSI, Darmstadt, fired beams of chromium, iron, nickel and zinc at lead and bismuth, and made elements 107 to 112, a few atoms each lasting a fraction of a second. One is meitnerium, for Lise Meitner. In 1997 a long dispute between Berkeley and Dubna over 104 to 106 was settled.",
+      "today": "Today: Darmstadt, Germany. GSI is building a larger accelerator, FAIR, beside the old one.",
+      "at": 86
+    },
+    {
+      "place": "dubna",
+      "phase": "making",
+      "title": "The heaviest yet",
+      "native": "Лаборатория ядерных реакций имени Флёрова",
+      "when": "1999 to 2010",
+      "lang": "ru",
+      "camera": {
+        "at": [
+          -22,
+          44
+        ],
+        "width": 190
+      },
+      "legs": [
+        {
+          "from": "oakridge",
+          "to": "dubna",
+          "traveller": "sample",
+          "style": "sample",
+          "bend": 0.15
+        }
+      ],
+      "text": "From 1999 Yuri Oganessian’s team at Dubna, working with Livermore in California, fired calcium at targets of rarer heavy elements and made elements 114 to 118. For 117 they needed berkelium, made in a reactor at Oak Ridge, Tennessee, and flown to Russia in 2009. The names honour Flerov, Moscow, Livermore, Tennessee and Oganessian himself.",
+      "today": "Today: Dubna, Russia. Its new ‘superheavy element factory’ is hunting for elements 119 and 120.",
+      "at": 92
+    },
+    {
+      "place": "wako",
+      "phase": "making",
+      "title": "The seventh row complete",
+      "native": "ニホニウム",
+      "when": "2004 to 2016",
+      "lang": "ja",
+      "camera": {
+        "at": [
+          139.61,
+          35.78
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At RIKEN near Tokyo, Kosuke Morita’s team fired zinc at bismuth for nine years and saw just three atoms of element 113, in 2004, 2005 and 2012. In 2015 the chemists’ union credited them, and in 2016 it was named nihonium, from Nihon, Japan: the first element found in Asia. With it, the table’s seventh row was full.",
+      "today": "Today: Wako, Saitama, Japan. Labs in Japan, Russia, the US, Germany and China are trying to make element 119.",
+      "at": 98
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "lavoisier",
+        "name": "Antoine Lavoisier",
+        "life": "1743–1794",
+        "role": "Chemist",
+        "steps": [
+          2
+        ],
+        "text": "French chemist and a tax collector, which cost him his life in the Revolution. By weighing everything before and after a reaction he showed that mass is conserved, and he explained burning as combining with oxygen, ending the theory of phlogiston. With colleagues he devised the system of chemical names still used today, such as ‘sulphate’ and ‘oxide’."
+      },
+      {
+        "id": "davy",
+        "name": "Humphry Davy",
+        "life": "1778–1829",
+        "role": "Chemist",
+        "steps": [
+          3
+        ],
+        "text": "Born in Penzance, Cornwall, he was apprenticed to a surgeon and taught himself chemistry. At the Royal Institution his lectures drew crowds. He isolated more elements than anyone of his time, proved chlorine an element and invented a safety lamp for coal miners. He took on a young bookbinder, Michael Faraday, as his assistant."
+      },
+      {
+        "id": "mendeleev",
+        "name": "Dmitri Mendeleev",
+        "native": "Дмитрий Менделеев",
+        "lang": "ru",
+        "life": "1834–1907",
+        "role": "Chemist",
+        "steps": [
+          6,
+          7,
+          8,
+          9,
+          13
+        ],
+        "text": "Born in Tobolsk, Siberia, the youngest of many children; his widowed mother took him across Russia to study. Besides the periodic table he worked on how liquids and gases behave, on the petroleum industry and on Russia’s standards of weights and measures. Element 101, mendelevium, is named for him."
+      },
+      {
+        "id": "moseley",
+        "name": "Henry Moseley",
+        "life": "1887–1915",
+        "role": "Physicist",
+        "steps": [
+          11
+        ],
+        "text": "English physicist who trained under Ernest Rutherford at Manchester. His X-ray measurements gave each element its atomic number. When war came in 1914 he joined the army as a signals officer, and he was shot at Gallipoli in August 1915, aged 27. Many think he would have won a Nobel Prize."
+      },
+      {
+        "id": "seaborg",
+        "name": "Glenn Seaborg",
+        "life": "1912–1999",
+        "role": "Chemist",
+        "steps": [
+          13,
+          14
+        ],
+        "text": "American chemist. He shared in finding ten elements, from plutonium to element 106, and his idea of the actinides gave the table its present shape. He shared the 1951 Nobel Prize in Chemistry with Edwin McMillan, later chaired the US Atomic Energy Commission, and is one of only two people to have an element named after them in life."
+      }
+    ]
+  }
+}
