@@ -348,8 +348,8 @@ const shelves = manifest.shelves
       ...open.map(({ section, stories }) => {
         const newestFirst = [...stories].sort((x, y) => String(y.added).localeCompare(String(x.added)));
         return (
-          `<div class="sm-subject"><h3>${esc(section.title)} <span class="sm-subject__n">${stories.length} ${stories.length === 1 ? "story map" : "story maps"}</span></h3>` +
-          `<p class="sm-subject__blurb">${esc(section.blurb)}</p>` +
+          `<div class="sm-subject" id="${section.id}"><h3><a href="/${section.id}/">${esc(section.title)}</a> <span class="sm-subject__n">${stories.length} ${stories.length === 1 ? "story map" : "story maps"}</span></h3>` +
+          `<p class="sm-subject__blurb">${esc(section.blurb)} <a class="sm-subject__all" href="/${section.id}/">See all and share ›</a></p>` +
           // The arrows are for a mouse, which cannot swipe; hub/front.js shows them only on a row that overflows.
           `<div class="sm-row"><button type="button" class="sm-row__go" data-go="-1" aria-label="Earlier ${esc(section.title)} story maps" hidden>‹</button>` +
           `<ul class="sm-story-row">${newestFirst.map(storyCard).join("")}</ul>` +
@@ -391,6 +391,45 @@ write(
     ].join("\n"),
   }),
 );
+
+// One page per subject, at /<subject>/, so a subject can be shared on its own: every story map in it, newest first,
+// grouped by collection where it has them. A subject with none yet still gets a page that says so.
+for (const section of manifest.sections) {
+  const shelf = manifest.shelves.find((x) => x.id === section.shelf);
+  const stories = builtStories.filter((x) => x.section === section.id).sort((x, y) => String(y.added).localeCompare(String(x.added)));
+  const groups = manifest.collections.filter((c) => c.section === section.id).map((c) => ({ title: c.title, stories: stories.filter((s) => s.collection === c.id) }));
+  const loose = stories.filter((s) => !groups.some((g) => g.stories.includes(s)));
+  const grid = (/** @type {Story[]} */ list) => `<ul class="sm-story-row sm-story-grid">${list.map(storyCard).join("")}</ul>`;
+  const others = manifest.sections.filter((x) => x.id !== section.id && builtStories.some((s) => s.section === x.id));
+  const count = `${stories.length} ${stories.length === 1 ? "story map" : "story maps"}`;
+  write(
+    `${section.id}/index.html`,
+    render({
+      title: `${section.title} · Story Maps · krishnabuilds`,
+      description: `${section.blurb} ${stories.length ? `${count} on illustrated maps, chapter by chapter.` : "Story maps to come."}`,
+      path: `/${section.id}/`,
+      explore: true,
+      body: [
+        BACK,
+        `<main class="sm-page sm-hub sm-front sm-subject-page sm-shelf--${shelf?.id}">`,
+        WORLD_DEFS,
+        `<section class="sm-hero"><p class="sm-subject-page__shelf"><a href="/#${shelf?.id}">${esc(shelf?.title ?? "")}</a></p><h1>${esc(section.title)}</h1><p>${esc(section.blurb)}</p>` +
+          `<p class="sm-subject-page__bar"><span class="sm-subject__n">${count}</span><button type="button" class="sm-btn" data-share>Share this page</button></p></section>`,
+        stories.length
+          ? [
+              ...groups.filter((g) => g.stories.length).map((g) => `<section class="sm-subject"><h2>${esc(g.title)}</h2>${grid(g.stories)}</section>`),
+              loose.length ? `<section class="sm-subject">${groups.length ? "<h2>More</h2>" : ""}${grid(loose)}</section>` : "",
+            ].join("\n")
+          : '<p class="sm-muted">No story maps here yet. They are being drawn.</p>',
+        others.length ? `<nav class="sm-subject-page__more" aria-label="Other subjects"><h2>Other subjects</h2><p>${others.map((x) => `<a href="/${x.id}/">${esc(x.title)}</a>`).join(" · ")}</p></nav>` : "",
+        FOOT,
+        "</main>",
+        `<script>\n${frontJs}</script>`,
+        THEME_SCRIPT,
+      ].join("\n"),
+    }),
+  );
+}
 
 const hubData = {
   regions: catalogue.regions,

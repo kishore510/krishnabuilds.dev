@@ -54,6 +54,27 @@
     update();
   });
 
+  // A subject page's Share button: the phone's share sheet where there is one, else copy the address.
+  Array.prototype.forEach.call(document.querySelectorAll("[data-share]"), function (b) {
+    var label = b.textContent;
+    b.addEventListener("click", function () {
+      var url = location.origin + location.pathname;
+      if (navigator.share) {
+        navigator.share({ title: document.title, url: url }).catch(function () {
+          /* closed without sharing */
+        });
+        return;
+      }
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(url).then(function () {
+        b.textContent = "Link copied";
+        setTimeout(function () { b.textContent = label; }, 2000);
+      }, function () {
+        /* clipboard blocked */
+      });
+    });
+  });
+
   // "340 reads · ♥ 12", leaving out a count that is 0.
   function statsText(stats, id) {
     var reads = Number(stats.reads && stats.reads[id]) || 0;

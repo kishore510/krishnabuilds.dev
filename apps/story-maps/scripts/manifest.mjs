@@ -22,6 +22,8 @@ export const STATUSES = ["built", "coming-soon"];
 
 // Story ids become page paths (/<id>/), so keep them to plain slugs.
 const SLUG = /^[a-z][a-z0-9-]{0,39}$/;
+/** Top-level paths the site uses itself, so no story or subject may take them. */
+export const RESERVED = ["explore", "fonts", "api"];
 
 /** @returns {Manifest} */
 export function loadManifest() {
@@ -57,6 +59,13 @@ export function validateManifest(manifest) {
   for (const s of manifest.sections) {
     if (!SLUG.test(s.id)) problems.push(`section ${s.id}: id must be a lowercase slug`);
     if (!SHELVES.includes(s.shelf)) problems.push(`section ${s.id}: unknown shelf ${s.shelf}`);
+  }
+  // Stories and subjects both live at /<id>/, beside the site's own folders.
+  for (const id of [...SECTIONS, ...manifest.stories.map((s) => s.id)]) {
+    if (RESERVED.includes(id)) problems.push(`${id}: id is a reserved path (${RESERVED.join(", ")})`);
+  }
+  for (const story of manifest.stories) {
+    if (SECTIONS.includes(story.id)) problems.push(`story ${story.id}: id clashes with the subject page /${story.id}/`);
   }
   const collections = new Map(manifest.collections.map((c) => [c.id, c]));
   if (collections.size !== manifest.collections.length) {

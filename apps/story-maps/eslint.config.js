@@ -10,6 +10,7 @@ const browser = {
   localStorage: "readonly",
   KeyboardEvent: "readonly",
   location: "readonly",
+  navigator: "readonly",
   performance: "readonly",
   requestAnimationFrame: "readonly",
   ResizeObserver: "readonly",

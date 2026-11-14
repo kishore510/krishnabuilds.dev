@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.60.0
+
+- Subject pages: every subject has its own page at `/<subject>/` (for example `/lives/`, `/legends/`, `/chemistry/`), listing all its story maps newest first, grouped by collection where it has them, with a Share button (the phone's share sheet, or copy the link). A subject with no story maps yet still has a page that says so.
+- Front page: each subject's heading links to its page, with a "See all and share" link, and each subject has an anchor (`/#lives`).
+- The build refuses a story id that clashes with a subject page or with the site's own paths (`explore`, `fonts`, `api`).
+
 ## 0.59.0
 
 - New story map in Chemistry, the subject's first: Building Molecules. From Wöhler's urea in 1828 and Kolbe's vinegar, through Perkin's mauve, Kekulé's benzene ring, Fischer's sugars, synthetic indigo and the Champaran planters, and aspirin, to Woodward's vitamin B12, Corey's retrosynthesis, the Taxol race, click chemistry and the medicines made in Hyderabad today. 14 chapters on the world map and 5 people cards.
