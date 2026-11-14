@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.69.0
+
+- New story map in Chronicles: The Eastern Gangas. From Kalinganagara and the Chola bride who gave Chodaganga his name, through the conquest of Utkala, the Jagannath temple at Puri, Anangabhima III as Jagannath’s deputy, the war with Bengal and the Sun Temple at Konark, to Firuz Shah’s raid of 1360 and the Gajapati takeover of 1434–1435. 10 chapters on the south-asia map, a Powers layer that changes chapter by chapter and 3 people cards.
+- Catalogue: the Eastern Ganga dynasty now opens the story.
+
 ## 0.68.0
 
 - New story map in Lives: Charles Darwin. From Shrewsbury, Edinburgh and Cambridge, round the world on HMS Beagle (Brazil, Patagonia, the Andes, the Galápagos, Australia, the Cape) to London, Down House, Wallace's letter from Ternate, the Origin of Species, the Oxford debate and Westminster Abbey. 24 chapters on the world map and 8 people cards.
