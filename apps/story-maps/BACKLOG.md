@@ -14,7 +14,6 @@ Suggested after those. These fit a map that already exists, so each is one sessi
 - The Deccan Sultanates (`south-asia`)
 - The Chalukyas and Rashtrakutas (`south-asia`)
 - The Palas (`south-asia`)
-- Mysore under Haidar Ali and Tipu Sultan (`south-asia`)
 - The Hittites (`near-east`)
 - The Parthians and Sasanians (`near-east`)
 - The first caliphates: Rashidun, Umayyad, Abbasid (`near-east`)
@@ -34,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Hyder Ali and Tipu Sultan (`mysore`), 2026-11-14
 - The Spanish Empire (`spanish-empire`), 2026-11-13
 - Radioactivity (`radioactivity`), 2026-11-13
 - The Big Bang (`big-bang`), 2026-11-13
