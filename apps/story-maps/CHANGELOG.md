@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.58.0
+
+- New story map in Lives: Aristotle. From his birth in Stagira, twenty years at Plato’s Academy, the court of Hermias, the lagoon of Lesbos and the court of Macedon, to the Lyceum, his will at Chalcis, and the long journey of his books through Scepsis, Alexandria and Baghdad to the Lyceum dug up in 1996. 18 chapters on the near-east map and 6 people cards.
+- Catalogue: Aristotle (a person) opens the story.
+
 ## 0.57.0
 
 - New story map in Lives: Socrates. From his birth in Alopeke, the sieges and retreats of the Peloponnesian War, the Clouds, the oracle at Delphi and his questions in the agora, to the Thirty, the charge, the defence, the ship to Delos and the hemlock, and the Socratic schools, Plato’s Academy and the three Socrateses we read. 19 chapters on the near-east map and 6 people cards.
