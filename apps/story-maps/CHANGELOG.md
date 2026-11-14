@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.56.0
+
+- New story map in Chronicles: Minoan Crete. From the first farmers at Knossos and the gold of Mochlos, through the first palaces, the Phaistos Disc, Gournia, Zakros, the men of Keftiu in Egypt, Minoan ways overseas and the painted town of Thera, to the eruption, the Mycenaean takeover of Knossos, the Linear B tablets, Karfi, and the Greek tradition of Zeus's cave and the Minotaur, and how Evans and others dug it up. 20 chapters on the near-east map, a **Powers** layer (Egypt and Mycenaean Greece) and 7 people cards.
+- Catalogue: the Minoan Crete entry now opens the story.
 ## 0.55.0
 
 - Browse, Most read and Most liked: each story is ranked once, by the tile that carries its counts, so a story with many chapter tiles (Mesopotamia has 8) no longer fills the top and pushes the next story down. Under a filter, a story's counts move to its first tile still on show.
