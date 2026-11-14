@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.48.0
+
+- New story map in Chronicles: Hyder Ali and Tipu Sultan. From a soldier’s son at Budikote, the siege of Devanahalli and the arsenal at Dindigul, through Hyder’s seizure of power, the treasure of Bednur, the Zamorin’s fire and the ride to Madras, Obavva’s pestle (tradition), Pollilur and Porto Novo, Hyder’s death and the Treaty of Mangalore, to Tipu’s court and envoys to Versailles, the harsher record in Kodagu and on the Kanara coast, the letters to Sringeri, the fall of Bangalore, the hostage princes, Citizen Tipu, the rockets in a well, the storming of Srirangapatna in 1799, the Wodeyars restored and Tipu’s Tiger. 23 chapters, a Powers layer (Mysore, the Company, the Marathas, Hyderabad, the Nawab of Arcot, Travancore and the kingdoms Hyder took) and 8 people cards.
+- Catalogue: the Mysore under Hyder Ali and Tipu Sultan entry now opens the story.
+
 ## 0.47.0
 
 - New story map in Chronicles: The Spanish Empire. From the fall of Granada and Columbus’s landfall in 1492, through Tordesillas, the first colony, the fall of Tenochtitlan, Magellan’s voyage and the taking of the Inca empire, to silver, the treasure fleets and the Manila galleons, the Habsburg wars, Bourbon Spain, independence in the Americas and the last colony in Africa in 1976. 24 chapters on the world map, a Powers layer (the Spanish and Portuguese empires, the Aztec and Inca empires, and the Dutch Republic) and 13 people cards.
