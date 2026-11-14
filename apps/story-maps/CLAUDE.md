@@ -28,7 +28,7 @@ Adding a story: use the `new-story-map` skill (`.claude/skills/new-story-map/SKI
 manifest.json      shelves, sections (subjects), collections and every story
 catalogue.json     regions, timeline lanes and entries (civilisations, dynasties, events, legends, routes) for the hub and /explore/<id>/
 stories/           one folder per story: stories/<section>/[<collection>/]<id>/; a built story has story.json there
-basemaps/          shared maps: south-asia.json, world.json, near-east.json, mesoamerica.json, europe.json (coastlines, rivers, ranges, forests, labels) and cosmos.json (a sky map)
+basemaps/          shared maps: south-asia.json, world.json, near-east.json, mesoamerica.json, europe.json (coastlines, rivers, ranges, forests, labels), cosmos.json (a sky map) and earth-deep.json (eras of the globe in deep time; rebuilt from PaleoMAP by scripts/paleo/, not part of the build)
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
 hub/page.html      the shell every page is rendered into
 hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
