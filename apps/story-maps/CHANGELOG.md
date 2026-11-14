@@ -3,7 +3,8 @@
 ## 0.52.0
 
 - New story map in Legends, Greek epics: The Odyssey. From Troy, the Cicones and the Lotus-eaters, through the Cyclops, Aeolus, the Laestrygonians, Circe, the dead, the Sirens, Scylla and Charybdis, the cattle of the Sun and Calypso, to Telemachus’s journey, the Phaeacians, Odysseus’s return in disguise, the bow and the suitors, and the digs at Pylos and Ithaca. 25 chapters on the europe map and 5 people cards.
-- Catalogue: The Odyssey opens the story.
+- Catalogue: The Odyssey opens the story, and the Iliad names it as what comes next, so each entry page links to the other and the Iliad’s end card offers the Odyssey first.
+- End cards: a story now offers first the stories about the entries that come straight after its own (then before), as named in the catalogue or next in its timeline lane, before stories that share its years.
 
 ## 0.51.0
 
