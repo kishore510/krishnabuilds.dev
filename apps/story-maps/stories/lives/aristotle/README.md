@@ -1,0 +1,9 @@
+# Aristotle
+
+Status: built. In Lives. The life of Aristotle, 384 to 322 BCE, in 18 chapters: born in Stagira, twenty years at Plato's Academy, "dear Plato, dearer truth", the court of Hermias at Assos, the lagoon at Pyrrha on Lesbos, tutor to Alexander at Mieza, the Delphi list, the Lyceum, logic and a round Earth, happiness and the city, 158 constitutions, flight to Chalcis, his will, the books in the cellar at Scepsis, the commentators of Alexandria, the First Teacher in Baghdad, the master of those who know and the Lyceum found in 1996. 6 people cards.
+
+- `story.json`: the story data. It uses the `near-east` basemap, shared with Greece and Persia and with Socrates. Routes show only for the current chapter. The Lesbos pin stands at Mytilene.
+- No new art: it uses the `village`, `greek-temple`, `palace`, `boat`, `hermitage`, `shrine`, `memorial`, `codex`, `lighthouse` and `dome` glyphs and the `marcher`, `trireme` and `scroll` traveller icons.
+- Source: every card is **History**, except chapters 7 and 18, which are **Archaeology**.
+- Native names are in Ancient Greek (`grc`), written in Latin letters; chapter 16 and the Ibn Rushd card are Arabic (`ar`), also in Latin letters.
+- Sources and what is disputed: Aristotle’s own surviving works (mostly lecture notes; his published dialogues are lost), the Life by Diogenes Laertius with the text of his will, Plutarch’s Alexander, Strabo’s Geography for the fate of his books, the Delphi inscription honouring him and Callisthenes, and the Lyceum excavation. Later ancient lives add the stories that Plato called him “the reader” and “the mind” and that he fled so Athens would not sin twice against philosophy; these are flagged as possibly invented. Whether Pythias was Hermias’ niece or adopted daughter, how much he shaped Alexander, and Strabo’s story that his books were lost for two centuries are disputed.

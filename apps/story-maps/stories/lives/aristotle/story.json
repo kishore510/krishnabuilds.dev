@@ -1,0 +1,694 @@
+{
+  "id": "aristotle",
+  "title": "Aristotle",
+  "description": "The life of Aristotle, 384 to 322 BCE, from Stagira to Plato’s Academy, the lagoon of Lesbos, the court of Macedon and his own school at the Lyceum, and the long journey of his books, in 18 chapters.",
+  "canvas": "geo",
+  "basemap": "near-east",
+  "source": "History",
+  "nativeLang": "grc",
+  "routes": "chapter",
+  "mapLabel": "The world of Aristotle",
+  "note": "Based on Aristotle’s own surviving works, on the life by Diogenes Laertius (written some 500 years later, with his will), on Plutarch and Strabo, and on inscriptions and excavations; each card says which it follows. Later lives add stories that may be invented, and these are flagged. Native names are given in Latin letters. The map is stylised and not to scale. The Lesbos pin stands at Mytilene.",
+  "places": {
+    "stagira": {
+      "name": "Stagira",
+      "at": [
+        23.79,
+        40.53
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "athens": {
+      "name": "Athens",
+      "at": [
+        23.72,
+        37.975
+      ],
+      "glyph": "greek-temple",
+      "label": "right"
+    },
+    "assos": {
+      "name": "Assos",
+      "at": [
+        26.34,
+        39.49
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "lesbos": {
+      "name": "Lesbos",
+      "at": [
+        26.55,
+        39.1
+      ],
+      "glyph": "boat",
+      "label": "bottom"
+    },
+    "mieza": {
+      "name": "Mieza",
+      "at": [
+        22.12,
+        40.63
+      ],
+      "glyph": "hermitage",
+      "label": "top"
+    },
+    "delphi": {
+      "name": "Delphi",
+      "at": [
+        22.5,
+        38.48
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "chalcis": {
+      "name": "Chalcis",
+      "at": [
+        23.6,
+        38.46
+      ],
+      "glyph": "memorial",
+      "label": "top"
+    },
+    "scepsis": {
+      "name": "Scepsis",
+      "at": [
+        26.68,
+        39.82
+      ],
+      "glyph": "codex",
+      "label": "top"
+    },
+    "alexandria": {
+      "name": "Alexandria",
+      "at": [
+        29.92,
+        31.2
+      ],
+      "glyph": "lighthouse",
+      "label": "right"
+    },
+    "baghdad": {
+      "name": "Baghdad",
+      "at": [
+        44.37,
+        33.31
+      ],
+      "glyph": "dome",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "marcher": {
+      "name": "Aristotle",
+      "icon": "marcher"
+    },
+    "trireme": {
+      "name": "By sea",
+      "icon": "trireme"
+    },
+    "scroll": {
+      "name": "His books",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "youth": {
+      "name": "Stagira",
+      "color": "#f2c14e"
+    },
+    "academy": {
+      "name": "Plato’s Academy",
+      "color": "#e0573a"
+    },
+    "travels": {
+      "name": "Years away",
+      "color": "#4fc3b0"
+    },
+    "lyceum": {
+      "name": "The Lyceum",
+      "color": "#5b8fd9"
+    },
+    "last": {
+      "name": "The last year",
+      "color": "#a678e0"
+    },
+    "books": {
+      "name": "The books travel",
+      "color": "#c9a24a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "books": {
+      "color": "#8a6a1c",
+      "width": 2.8,
+      "dash": "2 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 6,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 21,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 43,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 59,
+        "color": "rgba(91,143,217,.35)"
+      },
+      {
+        "until": 70,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(201,162,74,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "384"
+      },
+      {
+        "at": 24,
+        "text": "347"
+      },
+      {
+        "at": 44,
+        "text": "335"
+      },
+      {
+        "at": 66,
+        "text": "322"
+      },
+      {
+        "at": 77,
+        "text": "86"
+      },
+      {
+        "at": 88,
+        "text": "9th c."
+      },
+      {
+        "at": 97,
+        "text": "1996"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "stagira",
+      "phase": "youth",
+      "title": "Born in Stagira",
+      "native": "Stageira",
+      "when": "384 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          23.79,
+          40.53
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Aristotle (Aristoteles) is born in 384 BCE in Stagira, a small Greek town on the coast of Chalcidice. His father Nicomachus is physician to King Amyntas III of Macedon, which may explain his lifelong interest in living things. Both parents die while he is young, and a guardian, Proxenus of Atarneus, brings him up.",
+      "today": "Today: the ruins of ancient Stageira lie on a headland near Olympiada, Chalkidiki, Greece."
+    },
+    {
+      "place": "athens",
+      "phase": "academy",
+      "title": "Twenty years at the Academy",
+      "native": "Akademeia",
+      "when": "367 to 347 BCE",
+      "at": 8,
+      "camera": {
+        "at": [
+          23.75,
+          39.2
+        ],
+        "width": 5.5
+      },
+      "legs": [
+        {
+          "from": "stagira",
+          "to": "athens",
+          "traveller": "marcher",
+          "style": "march",
+          "bend": 0.12
+        }
+      ],
+      "text": "At seventeen Aristotle goes to Athens and joins Plato’s school, the Academy, staying twenty years. He studies, then teaches, including rhetoric. Late ancient lives say Plato called him “the reader” and “the mind” of the school; those stories may be invented. His polished early dialogues, which Cicero praised as “a golden river”, are now lost.",
+      "today": "Today: the excavated site of Plato’s Academy is a park in the Akadimia Platonos district of Athens."
+    },
+    {
+      "place": "athens",
+      "phase": "academy",
+      "title": "Dear Plato, dearer truth",
+      "when": "c. 360s to 350s BCE",
+      "at": 16,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Aristotle rejects Plato’s central idea, that true reality lies in perfect Forms apart from the things we see. For him, the form of a thing is in the thing itself. In his Ethics he writes that friends must still put truth first, the root of the later saying “Plato is dear, but truth is dearer.”",
+      "today": "Today: that saying is usually quoted in Latin, “Amicus Plato, sed magis amica veritas”, which is not his wording."
+    },
+    {
+      "place": "assos",
+      "phase": "travels",
+      "title": "At the court of Hermias",
+      "native": "Assos",
+      "when": "347 BCE",
+      "at": 24,
+      "camera": {
+        "at": [
+          25.0,
+          38.7
+        ],
+        "width": 4.5
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "assos",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Plato dies, his nephew Speusippus takes over the Academy, and Aristotle leaves Athens. He goes to Hermias, ruler of Atarneus and Assos across the Aegean, a friend of Plato’s Academy. There Aristotle marries Pythias, Hermias’ niece or adopted daughter; the sources differ. About three years later Hermias is betrayed to the Persians and killed.",
+      "today": "Today: Behramkale, Turkey; the temple of Athena at Assos looks across the strait to Lesbos."
+    },
+    {
+      "place": "lesbos",
+      "phase": "travels",
+      "title": "The lagoon at Pyrrha",
+      "native": "Lesbos",
+      "when": "c. 345 to 343 BCE",
+      "at": 30,
+      "camera": {
+        "at": [
+          26.45,
+          39.3
+        ],
+        "width": 2.6
+      },
+      "legs": [
+        {
+          "from": "assos",
+          "to": "lesbos",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "On Lesbos, with Theophrastus of Eresos, Aristotle studies animals, many from the lagoon at Pyrrha. His History of Animals describes some 500 kinds. Some of his observations were doubted for two thousand years, then confirmed in the 1800s: the octopus’s mating arm, and the placenta of the smooth dogfish shark. He is often called the first biologist.",
+      "today": "Today: the lagoon is the Gulf of Kalloni, in the middle of Lesbos, still famous for its sardines."
+    },
+    {
+      "place": "mieza",
+      "phase": "travels",
+      "title": "Tutor to Alexander",
+      "when": "343 to 340 BCE",
+      "at": 36,
+      "camera": {
+        "at": [
+          24.4,
+          39.9
+        ],
+        "width": 6.5
+      },
+      "legs": [
+        {
+          "from": "lesbos",
+          "to": "mieza",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "King Philip II invites Aristotle to teach his thirteen-year-old son Alexander. Plutarch says lessons were held at the sanctuary of the Nymphs at Mieza, and that Alexander kept a copy of the Iliad corrected by Aristotle under his pillow on campaign. How much the teacher shaped the conqueror is not known.",
+      "today": "Today: the “School of Aristotle” near Naousa, Greece, is the sanctuary of the Nymphs, with its caves and porticoes."
+    },
+    {
+      "place": "delphi",
+      "phase": "travels",
+      "title": "A list for Delphi",
+      "native": "Delphoi",
+      "source": "Archaeology",
+      "when": "c. 335 BCE",
+      "at": 41,
+      "camera": {
+        "at": [
+          22.5,
+          38.48
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Aristotle and his great-nephew Callisthenes compile a list of every victor in the Pythian Games at Delphi, going back about two hundred years. A stone found at Delphi in 1895 records that the sanctuary praised and crowned them for it. It is one of the few inscriptions that name Aristotle in his lifetime.",
+      "today": "Today: the inscription is in the Delphi Archaeological Museum."
+    },
+    {
+      "place": "athens",
+      "phase": "lyceum",
+      "title": "A school at the Lyceum",
+      "native": "Lykeion",
+      "when": "335 BCE",
+      "at": 46,
+      "camera": {
+        "at": [
+          23.0,
+          39.3
+        ],
+        "width": 5.5
+      },
+      "legs": [
+        {
+          "from": "mieza",
+          "to": "athens",
+          "traveller": "marcher",
+          "style": "march",
+          "bend": 0.12
+        }
+      ],
+      "text": "With Alexander now king, Aristotle returns to Athens and teaches at the Lyceum, a gymnasium outside the walls. As a foreigner he cannot own land, so he rents. His followers are called Peripatetics, after the covered walk (peripatos) there; later writers said it was because he lectured while walking. He gathers a great library.",
+      "today": "Today: the Lyceum’s remains can be visited on Rigillis Street, central Athens."
+    },
+    {
+      "place": "athens",
+      "phase": "lyceum",
+      "title": "Logic and a round Earth",
+      "when": "c. 335 to 323 BCE",
+      "at": 50,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Aristotle writes the first system of formal logic, built on the syllogism; the textbook example: if all men are mortal and Socrates is a man, Socrates is mortal. In On the Heavens he argues that the Earth is a sphere, because its shadow on the Moon is always curved. He also teaches that heavier things fall faster; that was wrong.",
+      "today": "Today: his logic was the core of the subject until the 1800s."
+    },
+    {
+      "place": "athens",
+      "phase": "lyceum",
+      "title": "Happiness and the city",
+      "when": "c. 335 to 323 BCE",
+      "at": 54,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In his Nicomachean Ethics, Aristotle says the good life is flourishing (eudaimonia), built by habits of virtue, each a mean between too much and too little. In his Politics, humans are by nature political animals (politikon zoon), made to live in cities. The same book defends slavery as natural and men ruling women.",
+      "today": "Today: “virtue ethics”, built on his ideas, is one of the main schools of moral philosophy."
+    },
+    {
+      "place": "athens",
+      "phase": "lyceum",
+      "title": "158 constitutions",
+      "native": "Athenaion Politeia",
+      "when": "c. 330s to 320s BCE",
+      "at": 58,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Aristotle and his students collect the constitutions of 158 Greek states, to study how cities are really governed. All were thought lost until a papyrus bought in Egypt and published by the British Museum in 1891 turned out to hold most of one: The Constitution of the Athenians, the best ancient account of Athens’ democracy.",
+      "today": "Today: the papyrus is in the British Library, London."
+    },
+    {
+      "place": "chalcis",
+      "phase": "last",
+      "title": "Flight to Chalcis",
+      "native": "Chalkis",
+      "when": "323 BCE",
+      "at": 63,
+      "camera": {
+        "at": [
+          23.7,
+          38.2
+        ],
+        "width": 3
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "chalcis",
+          "traveller": "marcher",
+          "style": "march",
+          "bend": 0.2
+        }
+      ],
+      "text": "Alexander dies in Babylon, and Athens turns against anyone tied to Macedon. A priest charges Aristotle with impiety, citing his hymn to Hermias. He leaves for Chalcis, his mother’s home town. Later writers say he left so that Athens would not sin twice against philosophy, recalling Socrates; those words may be invented.",
+      "today": "Today: Chalkida, on Euboea, Greece, linked to the mainland by a bridge over the Euripus strait."
+    },
+    {
+      "place": "chalcis",
+      "phase": "last",
+      "title": "Aristotle’s will",
+      "when": "322 BCE",
+      "at": 68,
+      "camera": {
+        "at": [
+          23.6,
+          38.46
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Aristotle dies at Chalcis in 322 BCE, aged about 62, of an illness. Diogenes Laertius copies out his will. It names the Macedonian general Antipater as executor, provides for his partner Herpyllis and his children Pythias and Nicomachus, frees several slaves, and asks that his wife Pythias’ bones be laid beside his own.",
+      "today": "Today: his grave is not known; a 2016 claim to have found it at Stagira is unproven."
+    },
+    {
+      "place": "scepsis",
+      "phase": "books",
+      "title": "The books in the cellar",
+      "native": "Skepsis",
+      "when": "c. 287 to 86 BCE",
+      "at": 74,
+      "camera": {
+        "at": [
+          25.2,
+          38.9
+        ],
+        "width": 5.5
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "scepsis",
+          "traveller": "scroll",
+          "style": "books",
+          "bend": 0.2
+        }
+      ],
+      "text": "Strabo tells a strange story. Theophrastus left Aristotle’s books to Neleus of Scepsis, whose heirs hid them in a cellar from book-hunting kings. Around 100 BCE a collector bought them, damp and worm-eaten, and in 86 BCE the Roman general Sulla took them to Rome. Scholars doubt that the works were really unknown meanwhile.",
+      "today": "Today: what we read is mostly his lecture notes, edited in Rome by Andronicus of Rhodes in the 1st century BCE."
+    },
+    {
+      "place": "alexandria",
+      "phase": "books",
+      "title": "Commentators and a critic",
+      "when": "c. 200 to 600 CE",
+      "at": 80,
+      "camera": {
+        "at": [
+          26.8,
+          34.6
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "alexandria",
+          "traveller": "scroll",
+          "style": "books",
+          "bend": 0.15
+        }
+      ],
+      "text": "For centuries teachers explain Aristotle line by line. In Alexandria in the 500s CE, John Philoponus, a Christian commentator, argues against him: a heavy and a light weight dropped together land at almost the same time, and the world had a beginning. His challenge was read again in the 1500s and 1600s.",
+      "today": "Today: Alexandria, Egypt; its modern library, the Bibliotheca Alexandrina, opened in 2002."
+    },
+    {
+      "place": "baghdad",
+      "phase": "books",
+      "title": "The First Teacher",
+      "native": "al-Mu’allim al-Awwal",
+      "lang": "ar",
+      "when": "9th and 10th centuries CE",
+      "at": 86,
+      "camera": {
+        "at": [
+          38.4,
+          32.6
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "alexandria",
+          "to": "baghdad",
+          "traveller": "scroll",
+          "style": "books",
+          "bend": 0.12
+        }
+      ],
+      "text": "Under the Abbasid caliphs, scholars in Baghdad translate Aristotle into Arabic, often through Syriac; Hunayn ibn Ishaq and his son Ishaq are the best known. Al-Farabi calls Aristotle the First Teacher (al-Mu’allim al-Awwal), and is himself called the Second. Ibn Sina and later Ibn Rushd in Córdoba build on his work.",
+      "today": "Today: many Arabic translations of Aristotle survive in manuscripts in libraries from Istanbul to Leiden."
+    },
+    {
+      "place": "athens",
+      "phase": "books",
+      "title": "The master of those who know",
+      "when": "12th century CE to today",
+      "at": 92,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Translated into Latin from Arabic and Greek, Aristotle becomes the backbone of Europe’s universities, and Thomas Aquinas joins his ideas to Christian faith. Dante calls him “the master of those who know”. Galileo and Newton overturn his physics; Darwin, reading his biology in 1882, writes that Linnaeus and Cuvier were “mere school-boys to old Aristotle”.",
+      "today": "Today: his works fill over 2,000 pages in the standard modern English edition."
+    },
+    {
+      "place": "athens",
+      "phase": "books",
+      "title": "The Lyceum found",
+      "source": "Archaeology",
+      "when": "1996 CE",
+      "at": 97,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In 1996, digging for a new museum in central Athens, archaeologists uncover part of a large gymnasium with a wrestling ground (palaestra) and baths. It is identified as the Lyceum, where Aristotle taught. The museum was built elsewhere, and after years of work the site opened to visitors in 2014.",
+      "today": "Today: the Lyceum of Aristotle archaeological site, Rigillis Street, Athens."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "plato",
+        "name": "Plato",
+        "native": "Platon",
+        "life": "c. 428 to 348 BCE",
+        "role": "Aristotle’s teacher",
+        "steps": [
+          1,
+          2
+        ],
+        "text": "The Athenian philosopher, follower of Socrates, who founded the Academy around 387 BCE. Aristotle studied and taught there for twenty years, until Plato died. He argued that the things we see are copies of perfect, unchanging Forms; Aristotle’s rejection of that idea runs through his whole work."
+      },
+      {
+        "id": "hermias",
+        "name": "Hermias",
+        "native": "Hermeias",
+        "life": "died c. 341 BCE",
+        "role": "Ruler of Atarneus and Assos",
+        "steps": [
+          3,
+          11
+        ],
+        "text": "A friend of Plato’s Academy who ruled Atarneus and Assos in north-west Anatolia. He took in Aristotle after Plato’s death. Betrayed to the Persians, he was tortured and killed. Aristotle wrote a hymn to his virtue, which survives, and an epigram for his statue at Delphi."
+      },
+      {
+        "id": "theophrastus",
+        "name": "Theophrastus",
+        "native": "Theophrastos",
+        "life": "c. 371 to c. 287 BCE",
+        "role": "Aristotle’s colleague and successor",
+        "steps": [
+          4,
+          7,
+          13
+        ],
+        "text": "Born at Eresos on Lesbos, he worked with Aristotle on Lesbos and at the Lyceum, and led the school for some thirty-five years after him. His Enquiry into Plants makes him the founder of botany, and his Characters sketches thirty types of tiresome people. He inherited Aristotle’s books."
+      },
+      {
+        "id": "alexander",
+        "name": "Alexander",
+        "native": "Alexandros",
+        "life": "356 to 323 BCE",
+        "role": "King of Macedon; Aristotle’s pupil",
+        "steps": [
+          5,
+          7,
+          11
+        ],
+        "text": "Son of Philip II, taught by Aristotle at Mieza from the age of thirteen. As king he conquered the Persian Empire as far as the Indus. Plutarch says he kept Aristotle’s Iliad under his pillow. Aristotle’s great-nephew Callisthenes, his historian, died in his custody after a quarrel."
+      },
+      {
+        "id": "pythias-herpyllis",
+        "name": "Pythias and Herpyllis",
+        "life": "dates not known",
+        "role": "Aristotle’s wife and his later partner",
+        "steps": [
+          3,
+          12
+        ],
+        "text": "Pythias, niece or adopted daughter of Hermias, married Aristotle at Assos; their daughter was also named Pythias. After her death, Aristotle lived with Herpyllis, from Stagira, mother of his son Nicomachus. His will asks that Pythias’ bones lie with his, and that Herpyllis be well provided for."
+      },
+      {
+        "id": "ibn-rushd",
+        "name": "Ibn Rushd",
+        "native": "Ibn Rushd",
+        "lang": "ar",
+        "life": "1126 to 1198 CE",
+        "role": "Philosopher and judge in Córdoba",
+        "steps": [
+          15,
+          16
+        ],
+        "text": "Known in Latin as Averroes, he was a judge and physician in al-Andalus who wrote commentaries on nearly all of Aristotle’s works. Translated into Latin and Hebrew, they made him simply “the Commentator” in Europe’s universities. He argued that philosophy and religious faith do not contradict each other."
+      }
+    ]
+  }
+}

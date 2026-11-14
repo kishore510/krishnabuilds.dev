@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Aristotle (`aristotle`), 2026-11-14
 - Socrates (`socrates`), 2026-11-14
 - Minoan Crete (`minoan`), 2026-11-14
 - The Odyssey (`odyssey`), 2026-11-14

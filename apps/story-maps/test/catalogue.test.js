@@ -43,7 +43,7 @@ describe("catalogue.json", () => {
     expect(X.rangeText(byId("radioactivity"))).toBe("1896 CE");
     expect(X.rangeText(byId("big-bang"))).toBe("13.8 billion years ago");
     expect(X.lives(byId("british-empire"), catalogue.entries).map((e) => e.id)).toContain("marie-curie");
-    expect(X.lives(byId("maurya"), catalogue.entries)).toEqual([]);
+    expect(X.lives(byId("indus"), catalogue.entries)).toEqual([]);
   });
 
   it("catches bad years, lanes, kinds and links", () => {
