@@ -1,6 +1,6 @@
 # The `earth-deep` canvas: design note
 
-Status: proposed, not built. First used by **The Making of Earth** (Earth), then **Life on Earth** (Life). The Big Bang ends as the Earth forms; The Making of Earth starts there.
+Status: engine built (0.70.0). First used by **The Making of Earth** (Earth), then **Life on Earth** (Life). The Big Bang ends as the Earth forms; The Making of Earth starts there.
 
 ## The problem
 
@@ -29,10 +29,10 @@ Not doing (over-engineering for a story page):
   "size": [1800, 900],
   "sea": { … }, "land": { … },          // default colours, as in world.json
   "eras": [
-    { "id": "hadean", "name": "Molten Earth", "sea": { … }, "land": { "shapes": [] } },   // colour overrides, no continents
+    { "id": "hadean", "name": "Molten Earth", "wash": { "color": "#c2410c", "opacity": 0.8 } },   // no continents
     { "id": "pangaea", "name": "Pangaea, 250 million years ago",
-      "land": { "shapes": [ … ] }, "ice": [ … ], "labels": [ … ] },
-    { "id": "today", "name": "Today", "land": { "shapes": [ … ] } }
+      "shapes": [ … ], "ice": [ … ], "labels": [ … ] },
+    { "id": "today", "name": "Today", "shapes": [ … ] }
   ]
 }
 ```
@@ -59,7 +59,7 @@ The repo is "all rights reserved", so a share-alike licence (CC BY-SA) can't be 
 
 **Chosen for 0 to 535 million years: PaleoMAP PaleoCoastlines v7.1** (Kocsis and Scotese, 2020; Zenodo, doi:10.5281/zenodo.4297693). Checked 2026-11-14: the Zenodo record and the archive's own `Readme.md` both state **CC BY 4.0**. That newer, dataset-specific licence replaces the restrictive 2010 page on Scotese's personal site. The related PALEOMAP PaleoAtlas (doi:10.5281/zenodo.10596610) is also CC BY 4.0.
 
-- Contents: coastline (`CS`) and continental-margin (`CM`) shapefiles in present-day longitude and latitude for 81 ages, every 5 to 15 million years from 0 to 535 million years ago (for example 0, 20, 50, 65, 90, 150, 200, 250, 300, 400, 535).
+- Contents: coastline (`CS`) and continental-margin (`CM`) shapefiles for 81 ages, each in the longitude and latitude of its own time (the 250-million-year file draws Pangaea),, every 5 to 15 million years from 0 to 535 million years ago (for example 0, 20, 50, 65, 90, 150, 200, 250, 300, 400, 535).
 - Size: about 40 KB of raw shapefile per age before simplifying.
 - Attribution for `README.md`: "Paleocoastlines simplified from PaleoMAP PaleoCoastlines v7.1 by A. T. Kocsis and C. R. Scotese (2020), CC BY 4.0, doi:10.5281/zenodo.4297693. See Kocsis and Scotese, Earth-Science Reviews 2021, doi:10.1016/j.earscirev.2020.103463."
 - The archive (89 MB) is not committed. Only the simplified shapes go in the basemap.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.70.0
+
+- Engine: the earth-deep canvas. A deep basemap holds eras, snapshots of the globe in deep time, each with its own land, ice, labels and an optional wash over the map. Each chapter names its era and the map fades from one to the next. A place is drawn only in its own era's chapters, and a deep-time story's card draws its own ancient globe. No story uses it yet.
+
 ## 0.69.0
 
 - New story map in Chronicles: The Eastern Gangas. From Kalinganagara and the Chola bride who gave Chodaganga his name, through the conquest of Utkala, the Jagannath temple at Puri, Anangabhima III as Jagannath’s deputy, the war with Bengal and the Sun Temple at Konark, to Firuz Shah’s raid of 1360 and the Gajapati takeover of 1434–1435. 10 chapters on the south-asia map, a Powers layer that changes chapter by chapter and 3 people cards.

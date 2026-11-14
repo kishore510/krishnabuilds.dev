@@ -46,7 +46,7 @@ src/theme.css      painted theme (saffron, lapis, gold), light and dark
 src/prepaint.js    kb-theme pre-paint script; test/prepaint.test.js fails if it drifts from packages/ui/src/theme.ts
 public/            favicon and apple-touch icon, copied as-is
 licences/          OFL texts for the fonts
-docs/              design notes for engine features not yet built (earth-deep.md)
+docs/              design notes for engine features (earth-deep.md)
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
 scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above
@@ -74,7 +74,7 @@ scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are t
 
 The front page has three shelves, fixed in `scripts/manifest.mjs`: **Nature** (what happened), **Humankind** (what people did) and **Science** (how we found out). Each section in `manifest.json` is a subject and names its `shelf`. A subject with a built story is shown on its shelf with its story cards, newest first; one with none is named in a line as “to come” and needs no folder. See `docs/decisions.md` (2026-11-13).
 
-- Nature: **Universe** (the sky; cosmic canvas), **Earth** and **Life** (to come; they need `earth-deep`).
+- Nature: **Universe** (the sky; cosmic canvas), **Earth** and **Life** (the earth-deep canvas).
 - Humankind: **Chronicles** (civilisations, empires and routes, from archaeology and the historical record; no collections), **Legends** (epics and sacred stories, placed where tradition puts them; grouped into collections, `indian` and `greek` so far), **Lives** (one person followed from place to place), **Philosophy** (schools of thought; to come).
 - Science: **Physics and Astronomy**, and to come **Mathematics**, **Chemistry**, **Biology and Medicine**, **Invention**. A Science story follows a discovery or an idea from one person and place to the next. How it was found is recorded history, so those cards are tagged History.
 - A person's life goes in Lives, never in a Science subject: Marie Curie is a Life, Radioactivity is Physics and Astronomy.
@@ -97,7 +97,7 @@ The front page has three shelves, fixed in `scripts/manifest.mjs`: **Nature** (w
   - `geo`: a real map projected from longitude and latitude (Legends, Chronicles).
   - `earth-deep`: the Earth through geological time (Deep Time).
   - `cosmic`: the sky and space (Deep Time), or a mythic setting with no real geography.
-- `geo` and `cosmic` are built; `earth-deep` is a new engine feature when the first such story needs it.
+- All three are built. The earth-deep canvas draws a deep basemap (`kind: "deep"`): `sea` and `land` colours, optional `waves`, `labels` and `overview`, and `eras`, each one snapshot of the globe at one time (`id`, `name`, land `shapes`, optional `ice` shapes, era `labels` and a `wash` { `color`, `opacity` } over the whole map for a molten or frozen world). Every step of an earth-deep story names its `era`, and only an earth-deep story may. The player shows the current chapter's era and fades between them; nothing morphs. Places are given where they were in their era, a place is drawn only in chapters of its own era (not even as a dot elsewhere), and an era no step uses is not drawn. Such a story should set `routes: "chapter"`. Design and data source: `docs/earth-deep.md`.
 - The cosmic canvas draws a sky basemap (`kind: "sky"`): `sky` colours, painted `shapes`, glows (`washes`), `stars` (seeded fields in a box) and labels of kind `sky`. Its coordinates are plain units across and up, not longitude and latitude, and the story says what they stand for: in `cosmos`, left to right is time. A cosmic story must use a sky basemap and a geo story must not.
 - A basemap far from the equator sets `projection.stretch` (about 1 / cos of its middle latitude; `europe` uses 1.5) so a degree of latitude is drawn taller and lands keep their shape.
 - The engine stores nothing and makes no requests (the tests check). It puts the chapter in the address (`#12`), announces each chapter with an `sm:chapter` event and takes `StoryMap.offerResume(i)`; `hub/progress.js` does the remembering. The build passes each story `more`: the other built stories (a card that names one links to it), the stories to offer at the end and the catalogue entries around it.

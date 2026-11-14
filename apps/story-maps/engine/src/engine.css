@@ -989,6 +989,29 @@ body.sm-story-page {
   pointer-events: auto;
   cursor: pointer;
 }
+/* The earth-deep canvas shows one era of the globe at a time, fading between them. */
+.sm-era {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.9s,
+    visibility 0s 0.9s;
+}
+.sm-era.current {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.9s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sm-era,
+  .sm-era.current {
+    transition: none;
+  }
+}
+/* A place from another era of the globe is not drawn, even on the whole map. */
+.sm-pin.elsewhen {
+  display: none;
+}
 /* A realm shows only the pieces (and label) for the current step. */
 .sm-realm-piece {
   display: none;
