@@ -357,16 +357,26 @@
 
   // Reads and likes per story, from the Worker (src/worker.js). Null until
   // loaded, and stays null where there is no API (a local preview): then
-  // Browse offers no "Most read" or "Most liked" sort and cards show no counts.
+  // Browse offers no "Most read" or "Most liked" sort and tiles show no counts.
   var STATS = null;
   var countOf = function (kind, storyId) {
     return (STATS && storyId && STATS[kind] && Number(STATS[kind][storyId])) || 0;
   };
+  // The tile that carries a story's counts: the entry the story is about, or,
+  // for a story with no entry of its own (Mesopotamia), its first chapter's.
+  var COUNTED = {};
+  E.forEach(function (e) {
+    if (!built(e)) return;
+    var cur = COUNTED[e.story];
+    if (!cur || (cur.chapter || 0) > (e.chapter || 0)) COUNTED[e.story] = e;
+  });
+
+  // "12 reads · ♥ 3" on every story-map tile, zeros included, once the counts have loaded.
   var heart = function (storyId) {
+    if (!STATS) return "";
     var reads = countOf("reads", storyId);
     var likes = countOf("likes", storyId);
-    var text = [reads ? reads + (reads === 1 ? " read" : " reads") : "", likes ? "♥ " + likes : ""].filter(Boolean).join(" · ");
-    return text ? '<span class="sm-pill sm-pill--stats">' + text + "</span>" : "";
+    return '<span class="sm-pill sm-pill--stats">' + reads + (reads === 1 ? " read" : " reads") + " · ♥ " + likes + "</span>";
   };
   if (globalThis.fetch) {
     fetch("/api/stats")
@@ -399,8 +409,8 @@
     var map = !built(e) ? "" : e.chapter ? "Part of " + esc(STORIES[e.story].title) : "Story map";
     var tags = (map ? '<span class="sm-pill sm-pill--map">' + map + "</span>" : "") +
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
-      // A story's reads and likes show on the entry it is about, not on its chapters.
-      (built(e) && !e.chapter ? heart(e.story) : "") +
+      // A story's reads and likes show once: on the entry it is about (see COUNTED).
+      (built(e) && COUNTED[e.story] === e ? heart(e.story) : "") +
       (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + esc(r.short) + " · " + KIND[e.kind] + "</span>" +

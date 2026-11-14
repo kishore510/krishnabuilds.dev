@@ -51,11 +51,12 @@
     update();
   });
 
-  // "340 reads · ♥ 12", leaving out a count that is 0.
+  // "340 reads · ♥ 12", zeros included; nothing if the counts didn't load.
   function statsText(stats, id) {
-    var reads = Number(stats.reads && stats.reads[id]) || 0;
-    var likes = Number(stats.likes && stats.likes[id]) || 0;
-    return [reads ? reads + (reads === 1 ? " read" : " reads") : "", likes ? "♥ " + likes : ""].filter(Boolean).join(" · ");
+    if (!stats.reads || !stats.likes) return "";
+    var reads = Number(stats.reads[id]) || 0;
+    var likes = Number(stats.likes[id]) || 0;
+    return reads + (reads === 1 ? " read" : " reads") + " · ♥ " + likes;
   }
   if (globalThis.fetch) {
     fetch("/api/stats")
