@@ -16,10 +16,13 @@
     Array.prototype.forEach.call(row.children, function (li) {
       var a = li.firstElementChild;
       var p = progress[a.dataset.story];
-      if (!p || !(p.i > 0) || !(p.n > 1)) return;
-      var done = p.i >= p.n - 1;
-      a.querySelector("[data-meta]").textContent = done ? "Read · " + p.n + " chapters" : "Continue · chapter " + (p.i + 1) + " of " + p.n;
-      a.style.setProperty("--read", Math.round(((p.i + 1) / p.n) * 100) + "%");
+      if (!p || !(p.n > 1)) return;
+      // Same rules and words as Browse (hub/hub.js storyMark): finished once the
+      // furthest chapter reached (m) is the last, even after going back.
+      var done = Math.max(Number(p.m) || 0, Number(p.i) || 0) >= p.n - 1;
+      if (!done && !(p.i > 0)) return;
+      a.querySelector("[data-meta]").textContent = done ? "✓ You’ve read · " + p.n + " chapters" : "Continue · chapter " + (p.i + 1) + " of " + p.n;
+      a.style.setProperty("--read", done ? "100%" : Math.round(((p.i + 1) / p.n) * 100) + "%");
       a.classList.add("sm-started");
       if (!done) {
         a.href = a.getAttribute("href") + "#" + (p.i + 1);

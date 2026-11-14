@@ -32,7 +32,7 @@ basemaps/          shared maps: south-asia.json, world.json, near-east.json, mes
 art/glyphs.json    shared hand-drawn SVG: place glyphs, traveller icons, compass, lamp
 hub/page.html      the shell every page is rendered into
 hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timeline packing), run by the build and the hub
-hub/hub.js         the Explore page in the browser: Atlas, Timeline and Browse. A tile or timeline block is ticked only for reading a story map (the story finished, or a chapter entry's chapter reached), never for opening an entry's page, so a story map added later never looks read
+hub/hub.js         the Explore page in the browser: Atlas, Timeline and Browse. A tile or timeline block is ticked only for reading a story map (the story finished, or a chapter entry's chapter reached), never for opening an entry's page, so a story map added later never looks read. The counter beside the tabs counts story maps read by the same rule
 hub/front.js       the front page in the browser: story cards pick up where the reader left off
 hub/progress.js    story pages only: remembers the last chapter read and the furthest reached (`sm-progress`; the engine itself stores nothing)
 hub/stats.js       story pages only: counts a read on every opening, the like button on the end card and the like count in the top bar; remembers this device's likes (`sm-likes`)
