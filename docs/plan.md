@@ -148,6 +148,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Iliad (0.49.0)
 - [x] The Odyssey (0.52.0)
 - [x] Minoan Crete (0.56.0)
+- [x] Socrates, a Life on the near-east map (0.57.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.57.0
+
+- New story map in Lives: Socrates. From his birth in Alopeke, the sieges and retreats of the Peloponnesian War, the Clouds, the oracle at Delphi and his questions in the agora, to the Thirty, the charge, the defence, the ship to Delos and the hemlock, and the Socratic schools, Plato’s Academy and the three Socrateses we read. 19 chapters on the near-east map and 6 people cards.
+- Catalogue: Socrates (a person) opens the story.
+
 ## 0.56.0
 
 - New story map in Chronicles: Minoan Crete. From the first farmers at Knossos and the gold of Mochlos, through the first palaces, the Phaistos Disc, Gournia, Zakros, the men of Keftiu in Egypt, Minoan ways overseas and the painted town of Thera, to the eruption, the Mycenaean takeover of Knossos, the Linear B tablets, Karfi, and the Greek tradition of Zeus's cave and the Minotaur, and how Evans and others dug it up. 20 chapters on the near-east map, a **Powers** layer (Egypt and Mycenaean Greece) and 7 people cards.
