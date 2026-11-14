@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.61.0
+
+- New story map in Lives: Plato. From his birth in Athens, the Thirty and the death of Socrates, the Academy, the dialogues, the Republic and the cave, three journeys to Syracuse, Atlantis and the Laws, to Plotinus in Rome, the last Platonists of Athens, Plethon at Mistra, Ficino in Florence, Raphael’s School of Athens and the Academy dug up in 1929. 22 chapters on the europe map and 6 people cards.
+- Catalogue: Plato (a person) opens the story.
+
 ## 0.60.0
 
 - Subject pages: every subject has its own page at `/<subject>/` (for example `/lives/`, `/legends/`, `/chemistry/`), listing all its story maps newest first, grouped by collection where it has them, with a Share button (the phone's share sheet, or copy the link). A subject with no story maps yet still has a page that says so.

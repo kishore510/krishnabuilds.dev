@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Plato (`plato`), 2026-11-14
 - Building Molecules (`building-molecules`), 2026-11-14
 - Aristotle (`aristotle`), 2026-11-14
 - Socrates (`socrates`), 2026-11-14

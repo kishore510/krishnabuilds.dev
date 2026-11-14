@@ -1,0 +1,812 @@
+{
+  "id": "plato",
+  "title": "Plato",
+  "description": "The life of Plato, c. 428 to 348 BCE, from Socrates’ Athens to the court of Syracuse and his own school at the Academy, and the long afterlife of his dialogues from Rome to Renaissance Florence, in 22 chapters.",
+  "canvas": "geo",
+  "basemap": "europe",
+  "source": "History",
+  "nativeLang": "grc",
+  "routes": "chapter",
+  "overview": {
+    "at": [
+      9.5,
+      39.5
+    ],
+    "width": 32
+  },
+  "mapLabel": "The world of Plato",
+  "note": "Based on Plato’s own dialogues and on the Seventh Letter, whose authorship is disputed, on the life by Diogenes Laertius (written some 550 years later), on Plutarch’s Dion and on later writers; each card says which it follows, and later stories are flagged. Megara is drawn a little west of its true spot so its pin does not touch Athens. Native names are in Ancient Greek.",
+  "places": {
+    "athens": {
+      "name": "Athens",
+      "native": "Athenai",
+      "at": [
+        23.727,
+        37.971
+      ],
+      "glyph": "greek-temple",
+      "label": "right"
+    },
+    "megara": {
+      "name": "Megara",
+      "native": "Megara",
+      "at": [
+        22.95,
+        38.02
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "taras": {
+      "name": "Taras",
+      "native": "Taras",
+      "at": [
+        17.23,
+        40.47
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "syracuse": {
+      "name": "Syracuse",
+      "native": "Syrakousai",
+      "at": [
+        15.29,
+        37.06
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "aegina": {
+      "name": "Aegina",
+      "native": "Aigina",
+      "at": [
+        23.43,
+        37.75
+      ],
+      "glyph": "shrine",
+      "label": "bottom"
+    },
+    "pillars": {
+      "name": "Pillars of Heracles",
+      "native": "Stelai Herakleous",
+      "at": [
+        -5.35,
+        36.13
+      ],
+      "glyph": "pillar",
+      "label": "top"
+    },
+    "rome": {
+      "name": "Rome",
+      "native": "Roma",
+      "at": [
+        12.48,
+        41.9
+      ],
+      "glyph": "dome",
+      "label": "left",
+      "lang": "la"
+    },
+    "mistra": {
+      "name": "Mistra",
+      "native": "Mystras",
+      "at": [
+        22.37,
+        37.07
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "florence": {
+      "name": "Florence",
+      "native": "Firenze",
+      "at": [
+        11.256,
+        43.77
+      ],
+      "glyph": "dome",
+      "label": "top",
+      "lang": "it"
+    }
+  },
+  "travellers": {
+    "marcher": {
+      "name": "Plato",
+      "icon": "marcher"
+    },
+    "trireme": {
+      "name": "By sea",
+      "icon": "trireme"
+    },
+    "scroll": {
+      "name": "His books",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "youth": {
+      "name": "Athens",
+      "color": "#f2c14e"
+    },
+    "socrates": {
+      "name": "With Socrates",
+      "color": "#e0573a"
+    },
+    "travels": {
+      "name": "Years away",
+      "color": "#4fc3b0"
+    },
+    "academy": {
+      "name": "The Academy",
+      "color": "#5b8fd9"
+    },
+    "sicily": {
+      "name": "Sicily",
+      "color": "#d9708a"
+    },
+    "last": {
+      "name": "The last years",
+      "color": "#a678e0"
+    },
+    "legacy": {
+      "name": "After Plato",
+      "color": "#c9a24a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "books": {
+      "color": "#8a6a1c",
+      "width": 2.8,
+      "dash": "2 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 9,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 13,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 22,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 30,
+        "color": "rgba(217,112,138,.35)"
+      },
+      {
+        "until": 46,
+        "color": "rgba(91,143,217,.35)"
+      },
+      {
+        "until": 56,
+        "color": "rgba(217,112,138,.35)"
+      },
+      {
+        "until": 60,
+        "color": "rgba(91,143,217,.35)"
+      },
+      {
+        "until": 64,
+        "color": "rgba(217,112,138,.35)"
+      },
+      {
+        "until": 70,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(201,162,74,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "428"
+      },
+      {
+        "at": 13,
+        "text": "399"
+      },
+      {
+        "at": 22,
+        "text": "388"
+      },
+      {
+        "at": 49,
+        "text": "367"
+      },
+      {
+        "at": 67,
+        "text": "348"
+      },
+      {
+        "at": 79,
+        "text": "529"
+      },
+      {
+        "at": 90,
+        "text": "1438"
+      },
+      {
+        "at": 99,
+        "text": "1929"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "athens",
+      "phase": "youth",
+      "title": "Born in Athens",
+      "native": "Platon",
+      "when": "c. 428 to 427 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato (Platon) is born in Athens around 428 or 427 BCE, to Ariston and Perictione, an old and wealthy family; some scholars argue for a few years later. His mother’s family traced itself to the lawgiver Solon. His brothers Glaucon and Adeimantus speak in his Republic. A later writer says his real name was Aristocles.",
+      "today": "Today: Athens is the capital of Greece; the Acropolis rises above the old city."
+    },
+    {
+      "place": "athens",
+      "phase": "youth",
+      "title": "Kinsmen among the Thirty",
+      "native": "Hoi Triakonta",
+      "when": "404 to 403 BCE",
+      "at": 7,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "After Athens loses the war with Sparta in 404 BCE, thirty men seize power. Among them are Critias, his mother’s cousin, and Charmides, her brother. The Seventh Letter, said to be Plato’s and disputed, tells how they invited him to join them and how their violence, and then the democracy’s, turned him from a life in politics.",
+      "today": "Today: the agora below the Acropolis, where Athens did its public business, is an excavated park."
+    },
+    {
+      "place": "athens",
+      "phase": "socrates",
+      "title": "Following Socrates",
+      "native": "Sokrates",
+      "when": "until 399 BCE",
+      "at": 11,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "As a young man Plato follows Socrates, who questions everyone about how to live. In Plato’s Apology he is at the trial in 399 BCE and offers money towards a fine; in the Phaedo he is ill on the day of the hemlock. A later story says he burned his own tragedies after first hearing Socrates.",
+      "today": "Today: a small cave on Philopappos Hill is called the Prison of Socrates, by tradition only."
+    },
+    {
+      "place": "megara",
+      "phase": "travels",
+      "title": "Refuge in Megara",
+      "native": "Megara",
+      "when": "399 BCE",
+      "at": 15,
+      "camera": {
+        "at": [
+          23.3,
+          38.2
+        ],
+        "width": 5
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "megara",
+          "traveller": "marcher",
+          "style": "march",
+          "bend": 0.2
+        }
+      ],
+      "text": "After the execution, says Diogenes Laertius, citing Hermodorus, Plato and other followers of Socrates withdraw to Megara, to Euclides, a fellow Socratic who taught there. Plato is about twenty-eight. Euclides of Megara is not the mathematician Euclid. How long Plato stays, and where he goes next, the sources do not agree.",
+      "today": "Today: Megara is a town in West Attica, about 40 km west of Athens."
+    },
+    {
+      "place": "taras",
+      "phase": "travels",
+      "title": "Archytas and the Pythagoreans",
+      "native": "Taras",
+      "when": "c. 388 BCE",
+      "at": 20,
+      "camera": {
+        "at": [
+          20.5,
+          39.2
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "taras",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Around 388 BCE, aged about forty, Plato sails to the Greek cities of southern Italy, where followers of Pythagoras study number and harmony. At Taras he befriends Archytas, mathematician and general. Later writers add visits to Theodorus the mathematician at Cyrene and to priests in Egypt; these are less certain.",
+      "today": "Today: Taras is Taranto, a port city in Apulia, Italy; its museum holds Greek finds."
+    },
+    {
+      "place": "syracuse",
+      "phase": "sicily",
+      "title": "At the court of Dionysius",
+      "native": "Syrakousai",
+      "when": "c. 388 to 387 BCE",
+      "at": 24,
+      "camera": {
+        "at": [
+          16.2,
+          38.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "taras",
+          "to": "syracuse",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Plato crosses to Syracuse, the richest Greek city in Sicily, ruled by the tyrant Dionysius I. The Seventh Letter says he disliked its life of feasting. There he meets Dion, the tyrant’s young brother-in-law, who becomes his devoted pupil. The friendship will draw Plato back to Sicily twice.",
+      "today": "Today: Syracuse is a city in south-east Sicily; its old centre, Ortygia, is a UNESCO site."
+    },
+    {
+      "place": "aegina",
+      "phase": "sicily",
+      "title": "Sold at Aegina",
+      "native": "Aigina",
+      "source": "Tradition",
+      "when": "c. 387 BCE",
+      "at": 28,
+      "camera": {
+        "at": [
+          19.5,
+          37.6
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "syracuse",
+          "to": "aegina",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "A later tradition, told by Diogenes Laertius, says the angry Dionysius handed Plato to a Spartan envoy, Pollis, who sold him in the slave market of Aegina. Anniceris of Cyrene recognised him and paid his ransom. Plato’s own writings say nothing of this, and many historians doubt it.",
+      "today": "Today: Aegina is an island in the Saronic Gulf, an hour by ferry from Piraeus."
+    },
+    {
+      "place": "athens",
+      "phase": "academy",
+      "title": "The Academy",
+      "native": "Akademeia",
+      "when": "c. 387 BCE",
+      "at": 32,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Back in Athens, Plato begins teaching in the Academy, a grove sacred to the hero Academus outside the city walls, and has a garden nearby. Students come from across Greece; Diogenes names two women, Axiothea and Lastheneia. The motto “let no one ignorant of geometry enter” is recorded only many centuries later.",
+      "today": "Today: the site of the Academy is a park in the Akadimia Platonos district of Athens."
+    },
+    {
+      "place": "athens",
+      "phase": "academy",
+      "title": "Dialogues",
+      "native": "Dialogoi",
+      "when": "c. 390s to 340s BCE",
+      "at": 36,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato writes dialogues, not treatises: conversations, mostly led by Socrates, about courage, love, knowledge and the soul. All the works known to ancient readers seem to survive, though some were probably written by others. In the later dialogues Socrates fades. Which order they were written in is disputed.",
+      "today": "Today: the oldest surviving manuscript of Plato, copied in 895 CE, is in the Bodleian Library, Oxford."
+    },
+    {
+      "place": "athens",
+      "phase": "academy",
+      "title": "The Republic and the cave",
+      "native": "Politeia",
+      "when": "c. 375 BCE",
+      "at": 40,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In the Republic, Socrates asks what justice is and builds an ideal city ruled by philosopher-kings. The things we see, he argues, are shadows of perfect, unchanging Forms. In the image of the cave, prisoners take shadows on a wall for reality until one is freed and climbs into the sunlight. Its date is approximate.",
+      "today": "Today: the Republic is one of the most read works of philosophy, taught in schools worldwide."
+    },
+    {
+      "place": "athens",
+      "phase": "academy",
+      "title": "Geometry and the heavens",
+      "native": "Geometria",
+      "when": "c. 380s to 350s BCE",
+      "at": 44,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "The Academy draws mathematicians. Theaetetus works on irrational lengths and the regular solids; Eudoxus devises a theory of proportion and a model of the planets on nested spheres. In the Timaeus, Plato builds the four elements from four regular solids, since called the Platonic solids. A late writer says he challenged astronomers to explain the planets’ wanderings.",
+      "today": "Today: Euclid’s Elements, written about 300 BCE, preserves much of this work."
+    },
+    {
+      "place": "syracuse",
+      "phase": "sicily",
+      "title": "A tutor for a tyrant",
+      "native": "Dionysios",
+      "when": "367 to 365 BCE",
+      "at": 49,
+      "camera": {
+        "at": [
+          19.5,
+          38
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "syracuse",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.12
+        }
+      ],
+      "text": "Dionysius I dies in 367 BCE, and Dion invites Plato to make the young Dionysius II a philosopher-king. Within months Dion is accused of plotting and exiled. Plato is kept at the court, in the fortress on Ortygia, and leaves when war breaks out. This follows the Seventh Letter and Plutarch’s Dion.",
+      "today": "Today: the Temple of Apollo, the oldest Doric temple in Sicily, still stands on Ortygia."
+    },
+    {
+      "place": "syracuse",
+      "phase": "sicily",
+      "title": "Rescued by Archytas",
+      "native": "Archytas",
+      "when": "361 to 360 BCE",
+      "at": 54,
+      "camera": {
+        "at": [
+          19.5,
+          38
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "syracuse",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": -0.15
+        }
+      ],
+      "text": "In 361 BCE Dionysius II presses Plato to return, promising to recall Dion. Instead he seizes Dion’s property, and Plato finds himself in danger. The Seventh Letter says Archytas and the Tarentines sent a ship of thirty oars to bring him away. On the way home Plato meets the exiled Dion at the Olympic Games.",
+      "today": "Today: Syracuse’s Greek theatre, cut into the hillside, still stages plays each summer."
+    },
+    {
+      "place": "pillars",
+      "phase": "academy",
+      "title": "The tale of Atlantis",
+      "native": "Atlantis",
+      "when": "c. 360 BCE",
+      "at": 58,
+      "camera": {
+        "at": [
+          -3,
+          37
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In the Timaeus and Critias, Plato has Critias tell a story he says came from Egyptian priests through Solon: Atlantis, an island empire beyond the Pillars of Heracles, conquered by early Athens and swallowed by the sea in a day and a night. No evidence of it has been found; most scholars take it as Plato’s invention.",
+      "today": "Today: the Pillars of Heracles are the Strait of Gibraltar, between Spain and Morocco."
+    },
+    {
+      "place": "syracuse",
+      "phase": "sicily",
+      "title": "Dion’s war",
+      "native": "Dion",
+      "when": "357 to 354 BCE",
+      "at": 62,
+      "camera": {
+        "at": [
+          15.3,
+          37.6
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "In 357 BCE Dion sails for Sicily with a small force of soldiers and takes Syracuse while Dionysius II is away. He rules uneasily and in 354 BCE is murdered by Callippus, an Athenian he had trusted. Plato stays in Athens; the Seventh Letter, written to Dion’s friends, is his defence and his grief.",
+      "today": "Today: the ancient quarries of Syracuse, the latomie, lie in its archaeological park."
+    },
+    {
+      "place": "athens",
+      "phase": "last",
+      "title": "The Laws and the end",
+      "native": "Nomoi",
+      "when": "348 to 347 BCE",
+      "at": 67,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato’s last and longest work, the Laws, plans a second-best city ruled by law. Diogenes says it was left on wax tablets and copied out by Philip of Opus. Plato dies in 348 or 347 BCE, aged about eighty, and is buried at the Academy. His nephew Speusippus leads the school; Aristotle leaves Athens.",
+      "today": "Today: Plato’s grave has not been found."
+    },
+    {
+      "place": "rome",
+      "phase": "legacy",
+      "title": "Plotinus in Rome",
+      "native": "Plotinos",
+      "when": "244 to 270 CE",
+      "at": 73,
+      "camera": {
+        "at": [
+          18,
+          40
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "rome",
+          "traveller": "scroll",
+          "style": "books",
+          "bend": 0.15
+        }
+      ],
+      "text": "Plotinus, from Roman Egypt, studies in Alexandria and from 244 CE teaches in Rome. He reads Plato as teaching one source of everything, the One, from which mind and soul flow. His pupil Porphyry arranges his writings into the Enneads. Modern scholars call this Neoplatonism; Plotinus called himself simply a Platonist.",
+      "today": "Today: Neoplatonism shaped Christian, Jewish and Islamic thought through the Middle Ages."
+    },
+    {
+      "place": "athens",
+      "phase": "legacy",
+      "title": "The last Platonists of Athens",
+      "native": "Diadochoi",
+      "when": "529 CE",
+      "at": 79,
+      "camera": {
+        "at": [
+          23.7,
+          38.3
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato’s own school does not survive the Roman wars, but Platonists teach in Athens again from about 400 CE. In 529 CE, the chronicler Malalas says, Emperor Justinian forbids the teaching of philosophy at Athens. Damascius and six colleagues leave for the Persian court and later return. Whether the edict closed the school outright is debated.",
+      "today": "Today: a large house on the south slope of the Acropolis may have been the school’s."
+    },
+    {
+      "place": "mistra",
+      "phase": "legacy",
+      "title": "Plethon at Mistra",
+      "native": "Mystras",
+      "when": "c. 1400 to 1452 CE",
+      "at": 85,
+      "camera": {
+        "at": [
+          22.4,
+          37.5
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "In the hill town of Mistra, capital of the Byzantine Morea, the scholar George Gemistos, who calls himself Plethon, teaches Plato above Aristotle. He even plans a reformed state on Platonic lines. In 1438 he sails to Italy for the Council of Florence, called to unite the Greek and Latin churches.",
+      "today": "Today: Mistra, near Sparti in the Peloponnese, is a UNESCO World Heritage Site."
+    },
+    {
+      "place": "florence",
+      "phase": "legacy",
+      "title": "Plato in Latin",
+      "native": "Firenze",
+      "lang": "it",
+      "when": "1438 to 1484 CE",
+      "at": 90,
+      "camera": {
+        "at": [
+          16.8,
+          40.2
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "mistra",
+          "to": "florence",
+          "traveller": "scroll",
+          "style": "books",
+          "bend": 0.15
+        }
+      ],
+      "text": "In Florence Plethon lectures on Plato. Marsilio Ficino later wrote that this inspired Cosimo de’ Medici to found an academy. Cosimo gives Ficino Greek manuscripts and a villa at Careggi, and Ficino translates every dialogue into Latin, printed in 1484. Historians debate how formal Ficino’s “Platonic Academy” really was.",
+      "today": "Today: the Medici villa at Careggi still stands on the northern edge of Florence."
+    },
+    {
+      "place": "rome",
+      "phase": "legacy",
+      "title": "The School of Athens",
+      "native": "Scuola di Atene",
+      "lang": "it",
+      "when": "1509 to 1511 CE",
+      "at": 95,
+      "camera": {
+        "at": [
+          12,
+          42.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "florence",
+          "to": "rome",
+          "traveller": "scroll",
+          "style": "books",
+          "bend": 0.15
+        }
+      ],
+      "text": "In the Vatican, Raphael paints the School of Athens. At its centre walk Plato, pointing up and holding his Timaeus, and Aristotle, holding his Ethics, his hand held level towards the earth. Plato’s face is often said to be Leonardo da Vinci’s, a likely but unproven guess. The fresco makes them philosophy’s two great figures.",
+      "today": "Today: the fresco is in the Stanza della Segnatura, Vatican Museums, Rome."
+    },
+    {
+      "place": "athens",
+      "phase": "legacy",
+      "title": "The Academy found",
+      "native": "Hekademeia",
+      "source": "Archaeology",
+      "when": "1929 CE to today",
+      "at": 99,
+      "camera": {
+        "at": [
+          23.6,
+          38.4
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Digging at the Academy begins in 1929, paid for by Panagiotis Aristophron. Later excavations uncover parts of a gymnasium and a boundary stone marking the Academy. Plato’s house and garden have not been identified. The same year, Alfred North Whitehead writes that European philosophy is best described as a series of footnotes to Plato.",
+      "today": "Today: the Academy’s excavated remains lie open in a public park in north-west Athens."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "socrates",
+        "name": "Socrates",
+        "native": "Sokrates",
+        "life": "c. 469 to 399 BCE",
+        "role": "Plato’s teacher",
+        "steps": [
+          1,
+          2,
+          8,
+          9
+        ],
+        "text": "The Athenian who questioned everyone about courage, justice and how to live, and wrote nothing. Plato followed him as a young man and made him the main speaker of nearly all his dialogues. Athens tried him for impiety in 399 BCE and put him to death with hemlock."
+      },
+      {
+        "id": "dion",
+        "name": "Dion",
+        "native": "Dion",
+        "life": "c. 408 to 354 BCE",
+        "role": "Plato’s friend in Syracuse",
+        "steps": [
+          5,
+          11,
+          12,
+          14
+        ],
+        "text": "Brother-in-law of Dionysius I of Syracuse, he met Plato in about 388 BCE and became his devoted follower. He twice brought Plato to Sicily, was exiled by Dionysius II, then returned with an army in 357 BCE and took the city. He was murdered three years later."
+      },
+      {
+        "id": "archytas",
+        "name": "Archytas",
+        "native": "Archytas",
+        "life": "c. 430s to 350s BCE",
+        "role": "Mathematician and general of Taras",
+        "steps": [
+          4,
+          12
+        ],
+        "text": "A Pythagorean who led Taras in war and worked on harmony, mechanics and geometry; he solved the old problem of doubling the cube. Plato met him in southern Italy. The Seventh Letter says that in 360 BCE Archytas sent a ship to rescue Plato from Syracuse."
+      },
+      {
+        "id": "dionysius",
+        "name": "Dionysius II",
+        "native": "Dionysios",
+        "life": "c. 397 to after 343 BCE",
+        "role": "Tyrant of Syracuse",
+        "steps": [
+          11,
+          12,
+          14
+        ],
+        "text": "Son of Dionysius I, he ruled Syracuse from 367 BCE. Dion and Plato hoped to make him a philosopher-king, but he exiled Dion and kept Plato close, half guest and half prisoner. Driven out by Dion, he later regained the city, then lost it again and ended his life at Corinth."
+      },
+      {
+        "id": "aristotle",
+        "name": "Aristotle",
+        "native": "Aristoteles",
+        "life": "384 to 322 BCE",
+        "role": "Plato’s student",
+        "steps": [
+          10,
+          15,
+          20
+        ],
+        "text": "A doctor’s son from Stagira, he came to the Academy at seventeen and stayed twenty years, until Plato died. He rejected Plato’s Forms and founded his own school, the Lyceum. He said it was right to honour truth above friends, even friends who were philosophers."
+      },
+      {
+        "id": "ficino",
+        "name": "Marsilio Ficino",
+        "native": "Marsilio Ficino",
+        "life": "1433 to 1499",
+        "role": "Plato’s translator",
+        "steps": [
+          19
+        ],
+        "text": "A Florentine doctor’s son and priest whom Cosimo de’ Medici trained to read Greek. He translated all of Plato’s dialogues, and Plotinus, into Latin, and wrote a Platonic Theology joining Plato with Christian faith. His translations carried Plato to readers across Renaissance Europe.",
+        "lang": "it"
+      }
+    ]
+  }
+}
