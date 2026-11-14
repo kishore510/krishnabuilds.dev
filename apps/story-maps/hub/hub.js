@@ -355,25 +355,27 @@
     return FRESH.some(function (s) { return s.id === storyId; });
   };
 
-  // Likes per story, from the Worker (src/worker.js). Null until loaded, and
-  // stays null where there is no API (a local preview): then Browse offers no
-  // "Most liked" sort and cards show no hearts.
-  var LIKES = null;
-  var likesOf = function (storyId) {
-    return (LIKES && storyId && Number(LIKES[storyId])) || 0;
+  // Reads and likes per story, from the Worker (src/worker.js). Null until
+  // loaded, and stays null where there is no API (a local preview): then
+  // Browse offers no "Most read" or "Most liked" sort and cards show no counts.
+  var STATS = null;
+  var countOf = function (kind, storyId) {
+    return (STATS && storyId && STATS[kind] && Number(STATS[kind][storyId])) || 0;
   };
   var heart = function (storyId) {
-    var n = likesOf(storyId);
-    return n ? '<span class="sm-pill sm-pill--likes" aria-label="' + n + (n === 1 ? " like" : " likes") + '">♥ ' + n + "</span>" : "";
+    var reads = countOf("reads", storyId);
+    var likes = countOf("likes", storyId);
+    var text = [reads ? reads + (reads === 1 ? " read" : " reads") : "", likes ? "♥ " + likes : ""].filter(Boolean).join(" · ");
+    return text ? '<span class="sm-pill sm-pill--stats">' + text + "</span>" : "";
   };
   if (globalThis.fetch) {
-    fetch("/api/likes")
+    fetch("/api/stats")
       .then(function (r) {
         if (!r.ok) throw new Error(String(r.status));
         return r.json();
       })
-      .then(function (all) {
-        LIKES = all || {};
+      .then(function (stats) {
+        STATS = stats || {};
         renderBrowse();
       })
       .catch(function () {
@@ -387,7 +389,7 @@
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + (r ? esc(r.short) + " · " : "") + "Story map</span>" +
       '<span class="sm-entry-card__name">' + esc(s.title) + "</span>" +
       '<span class="sm-entry-card__dates">' + esc(s.era) + "</span>" +
-      (isFresh(s.id) || likesOf(s.id) ? '<span class="sm-entry-card__tags">' + (isFresh(s.id) ? '<span class="sm-pill sm-pill--new">New</span>' : "") + heart(s.id) + "</span>" : "") + "</a></li>";
+      (isFresh(s.id) || heart(s.id) ? '<span class="sm-entry-card__tags">' + (isFresh(s.id) ? '<span class="sm-pill sm-pill--new">New</span>' : "") + heart(s.id) + "</span>" : "") + "</a></li>";
   }
 
   function card(e) {
@@ -397,7 +399,7 @@
     var map = !built(e) ? "" : e.chapter ? "Part of " + esc(STORIES[e.story].title) : "Story map";
     var tags = (map ? '<span class="sm-pill sm-pill--map">' + map + "</span>" : "") +
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
-      // A story's likes show on the entry it is about, not on its chapters.
+      // A story's reads and likes show on the entry it is about, not on its chapters.
       (built(e) && !e.chapter ? heart(e.story) : "") +
       (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
@@ -430,14 +432,16 @@
     var byDate = function (x, y) {
       return (X.isDated(x) ? x.from : 1e9) - (X.isDated(y) ? y.from : 1e9) || x.name.localeCompare(y.name);
     };
-    // Most liked: entries by their story's likes (the story's own entry before its chapters), the rest oldest first.
-    var byLikes = function (x, y) {
-      var lx = built(x) ? likesOf(x.story) : 0;
-      var ly = built(y) ? likesOf(y.story) : 0;
-      return ly - lx || (lx && x.story === y.story ? (x.chapter || 0) - (y.chapter || 0) : 0) || byDate(x, y);
+    // Most read and Most liked: entries by their story's count (the story's own entry before its chapters), the rest oldest first.
+    var byCount = function (kind) {
+      return function (x, y) {
+        var cx = built(x) ? countOf(kind, x.story) : 0;
+        var cy = built(y) ? countOf(kind, y.story) : 0;
+        return cy - cx || (cx && x.story === y.story ? (x.chapter || 0) - (y.chapter || 0) : 0) || byDate(x, y);
+      };
     };
-    var sort = b.sort === "liked" && !LIKES ? "date" : b.sort;
-    list.sort(sort === "az" ? function (x, y) { return x.name.localeCompare(y.name); } : sort === "liked" ? byLikes : byDate);
+    var sort = (b.sort === "liked" || b.sort === "read") && !STATS ? "date" : b.sort;
+    list.sort(sort === "az" ? function (x, y) { return x.name.localeCompare(y.name); } : sort === "liked" ? byCount("likes") : sort === "read" ? byCount("reads") : byDate);
     var plain = b.region === "all" && b.kind === "all" && !b.maps && !q;
     var recent = explored.slice(0, 8).map(function (id) { return BY[id]; });
     var regionOpts = [["all", "All regions"]].concat(REGIONS.map(function (r) { return [r.id, r.title]; }));
@@ -453,7 +457,8 @@
       '<div class="sm-browse-bar"><h2 class="sm-browse-h">' + (plain ? "Everything" : "Results") + ' <span class="sm-browse-n">' + list.length + "</span></h2>" +
       '<label class="sm-sort">Sort <select id="sm-sort"><option value="date"' + (sort === "date" ? " selected" : "") + '>Oldest first</option>' +
       '<option value="az"' + (sort === "az" ? " selected" : "") + ">A to Z</option>" +
-      (LIKES ? '<option value="liked"' + (sort === "liked" ? " selected" : "") + ">Most liked</option>" : "") + "</select></label></div>" +
+      (STATS ? '<option value="read"' + (sort === "read" ? " selected" : "") + ">Most read</option>" +
+        '<option value="liked"' + (sort === "liked" ? " selected" : "") + ">Most liked</option>" : "") + "</select></label></div>" +
       (list.length
         ? '<ul class="sm-entry-grid">' + list.map(card).join("") + "</ul>"
         : '<p class="sm-empty">' + (q ? "Nothing matches “" + esc(b.q.trim()) + "”. Try a civilisation, a dynasty, a region or a century, or clear a filter." : "Nothing here yet for these filters.") + "</p>") +

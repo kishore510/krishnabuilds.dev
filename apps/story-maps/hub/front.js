@@ -1,5 +1,5 @@
 // The front page in the browser: on each story card, pick up where the reader
-// left off and show its likes (from src/worker.js, when it can be reached), and arrows on a row of cards too long to fit, for a mouse that
+// left off and show its reads and likes (from src/worker.js, when it can be reached), and arrows on a row of cards too long to fit, for a mouse that
 // cannot swipe. Everything on the page works without it.
 
 (function () {
@@ -51,18 +51,23 @@
     update();
   });
 
+  // "340 reads · ♥ 12", leaving out a count that is 0.
+  function statsText(stats, id) {
+    var reads = Number(stats.reads && stats.reads[id]) || 0;
+    var likes = Number(stats.likes && stats.likes[id]) || 0;
+    return [reads ? reads + (reads === 1 ? " read" : " reads") : "", likes ? "♥ " + likes : ""].filter(Boolean).join(" · ");
+  }
   if (globalThis.fetch) {
-    fetch("/api/likes")
+    fetch("/api/stats")
       .then(function (r) {
         return r.ok ? r.json() : {};
       })
-      .then(function (counts) {
+      .then(function (stats) {
         Array.prototype.forEach.call(document.querySelectorAll(".sm-story-card"), function (a) {
-          var n = Number(counts[a.dataset.story]) || 0;
-          var el = a.querySelector("[data-likes]");
-          if (!el || !n) return;
-          el.textContent = "♥ " + n;
-          el.setAttribute("aria-label", n + (n === 1 ? " like" : " likes"));
+          var el = a.querySelector("[data-stats]");
+          var text = statsText(stats, a.dataset.story);
+          if (!el || !text) return;
+          el.textContent = text;
           el.hidden = false;
         });
       })
