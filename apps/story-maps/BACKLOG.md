@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Mahatma Gandhi (`gandhi`), 2026-11-14
 - The Byzantine Empire (`byzantine`), 2026-11-14
 - The Sun at the Centre (`sun-at-centre`), 2026-11-14
 - The Journey of Zero (`zero`), 2026-11-14
