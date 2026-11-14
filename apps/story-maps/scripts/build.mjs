@@ -381,7 +381,7 @@ write(
             const n = builtStories.filter((x) => ids.includes(x.section)).length;
             return `<a class="sm-door sm-shelf--${shelf.id}" href="#${shelf.id}"><span class="sm-door__t">${esc(shelf.title)}</span><span class="sm-door__n">${n} ${n === 1 ? "story map" : "story maps"}</span></a>`;
           })
-          .join("")}<a class="sm-door sm-explore-link" href="/explore/"><span class="sm-door__t">Explore through time</span><span class="sm-door__n">Atlas, timeline and search</span></a></nav></section>`,
+          .join("")}<a class="sm-door sm-explore-link" href="/explore/"><span class="sm-door__t">Explore through time</span><span class="sm-door__n">Timeline, search and atlas</span></a></nav></section>`,
       shelves,
       FOOT,
       "</main>",
@@ -422,7 +422,7 @@ write(
       '<main class="sm-page sm-hub">',
       WORLD_DEFS,
       '<section class="sm-hero"><h1>Explore</h1><p>Move through time and watch who ruled where, or look anything up by name.</p></section>',
-      '<div class="sm-hub-bar"><nav class="sm-tabs" aria-label="Views"><a id="sm-tab-atlas" href="#atlas">Atlas</a><a id="sm-tab-timeline" href="#timeline">Timeline</a><a id="sm-tab-browse" href="#browse">Browse</a></nav><p class="sm-count" id="sm-count"></p></div>',
+      '<div class="sm-hub-bar"><nav class="sm-tabs" aria-label="Views"><a id="sm-tab-timeline" href="#timeline">Timeline</a><a id="sm-tab-browse" href="#browse">Browse</a><a id="sm-tab-atlas" href="#atlas">Atlas</a></nav><p class="sm-count" id="sm-count"></p></div>',
       '<section class="sm-v-atlas" id="sm-v-atlas" aria-label="Atlas" hidden>',
       '<div class="sm-at">',
       '<div class="sm-at-stage" id="sm-at-stage">',

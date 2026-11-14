@@ -69,6 +69,33 @@
   var explored = store.get("sm-explored", []).filter(function (id) {
     return BY[id];
   });
+  // How far this device has read each story (hub/progress.js): i is the chapter
+  // to continue from, m the furthest reached (both 0-based), n the chapters.
+  var progress = store.get("sm-progress", {}) || {};
+
+  // A tile's reading mark, only where there is a story map to read; opening an
+  // entry's own page never ticks it, so a story map added later never looks read.
+  // The story's own entry: "Chapter 3 of 16" while reading, "✓ You’ve read" at the end.
+  // A chapter entry (Sumer in Mesopotamia): "✓ You’ve read" once that chapter is reached.
+  // The same rules and words as the front-page cards (hub/front.js).
+  var furthestOf = function (p) {
+    return Math.max(Number(p.m) || 0, Number(p.i) || 0);
+  };
+  function storyMark(storyId) {
+    var p = progress[storyId];
+    if (!p || !(p.n > 1)) return null;
+    if (furthestOf(p) >= p.n - 1) return { done: true, text: "✓ You’ve read" };
+    return p.i > 0 ? { done: false, text: "Chapter " + (p.i + 1) + " of " + p.n } : null;
+  }
+  function readMark(e) {
+    if (!built(e)) return null;
+    if (!e.chapter) return storyMark(e.story);
+    var p = progress[e.story];
+    return p && p.n > 1 && furthestOf(p) >= e.chapter - 1 ? { done: true, text: "✓ You’ve read" } : null;
+  }
+  var markPill = function (mark) {
+    return mark ? '<span class="sm-pill' + (mark.done ? " sm-pill--read" : "") + '">' + mark.text + "</span>" : "";
+  };
 
   var $ = function (id) {
     return document.getElementById(id);
@@ -117,7 +144,10 @@
   }
 
   // Nothing to count on a first visit, so say nothing.
-  if (explored.length) $("sm-count").innerHTML = "<b>" + explored.length + "</b> of " + E.length + " explored";
+  // Story maps this device has read to the end, by the same rule as the ticks (storyMark).
+  var storyIds = Object.keys(STORIES).filter(function (id) { return STORIES[id].built; });
+  var readCount = storyIds.filter(function (id) { return (storyMark(id) || {}).done; }).length;
+  if (readCount) $("sm-count").innerHTML = "<b>" + readCount + "</b> of " + storyIds.length + " story maps read";
 
   // ---------- Timeline ----------
 
@@ -263,7 +293,7 @@
 
   function blockHtml(it, left, w, ov) {
     var e = it.entry;
-    var cls = "sm-blk" + (built(e) ? " sm-built" : "") + (ov ? " sm-ov" : "") + (explored.indexOf(e.id) >= 0 ? " sm-seen" : "");
+    var cls = "sm-blk" + (built(e) ? " sm-built" : "") + (ov ? " sm-ov" : "") + ((readMark(e) || {}).done ? " sm-seen" : "");
     var body;
     if (ov) body = it.h >= 26 && w >= 40 ? '<span class="sm-blk-name">' + esc(e.name) + "</span>" : "";
     else {
@@ -398,7 +428,9 @@
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + (r ? esc(r.short) + " · " : "") + "Story map</span>" +
       '<span class="sm-entry-card__name">' + esc(s.title) + "</span>" +
       '<span class="sm-entry-card__dates">' + esc(s.era) + "</span>" +
-      (isFresh(s.id) || heart(s.id) ? '<span class="sm-entry-card__tags">' + (isFresh(s.id) ? '<span class="sm-pill sm-pill--new">New</span>' : "") + heart(s.id) + "</span>" : "") + "</a></li>";
+      (function (tags) {
+        return tags ? '<span class="sm-entry-card__tags">' + tags + "</span>" : "";
+      })((isFresh(s.id) ? '<span class="sm-pill sm-pill--new">New</span>' : "") + heart(s.id) + markPill(storyMark(s.id))) + "</a></li>";
   }
 
   function card(e) {
@@ -410,7 +442,7 @@
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
       // A story's reads and likes show once: on the entry it is about (see COUNTED).
       (built(e) && COUNTED[e.story] === e ? heart(e.story) : "") +
-      (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
+      markPill(readMark(e));
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + esc(r.short) + " · " + KIND[e.kind] + "</span>" +
       '<span class="sm-entry-card__name">' + esc(e.name) + "</span>" +
@@ -866,10 +898,11 @@
 
   // ---------- Views ----------
 
-  var VIEWS = ["atlas", "timeline", "browse"];
+  // Timeline first and the default: it reads well on a phone, where the atlas is small.
+  var VIEWS = ["timeline", "browse", "atlas"];
   var current = "";
   function route() {
-    var view = VIEWS.indexOf(location.hash.slice(1)) >= 0 ? location.hash.slice(1) : "atlas";
+    var view = VIEWS.indexOf(location.hash.slice(1)) >= 0 ? location.hash.slice(1) : "timeline";
     if (view === current) return;
     if (current === "timeline") state.anchor = yearAtGuide();
     if (current === "atlas") atlasStop();

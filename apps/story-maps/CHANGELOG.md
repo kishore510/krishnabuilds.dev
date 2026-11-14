@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.54.0
+
+- Browse and the timeline: the ✓ now means you have read the story map, not that you opened the entry's page. A story's own tile shows "Chapter 3 of 16" while you read and "✓ You’ve read" at the end; a chapter tile (Sumer in Mesopotamia) shows it once you reach that chapter. Tiles without a story map get no tick, so a story map added later never looks already read.
+- Story pages remember the furthest chapter you have reached, so a tick stays when you go back to an earlier chapter.
+- The same marks everywhere: front-page cards say "✓ You’ve read · 16 chapters" or "Continue · chapter 3 of 16", and Browse's New story maps row now shows them too.
+- Explore opens on Timeline, and the tabs are Timeline, Browse, Atlas: the atlas is small on a phone, where most people read. Links to `#atlas` still open it.
+- Explore's counter now says how many story maps you have read ("3 of 36 story maps read") instead of how many entry pages you opened.
+
 ## 0.53.0
 
 - Browse: a story with no entry of its own (Mesopotamia) now shows its reads and likes on its first chapter entry, so Most read and Most liked show why it is at the top.
