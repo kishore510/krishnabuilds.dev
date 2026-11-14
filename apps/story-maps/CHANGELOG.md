@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.59.0
+
+- New story map in Chemistry, the subject's first: Building Molecules. From Wöhler's urea in 1828 and Kolbe's vinegar, through Perkin's mauve, Kekulé's benzene ring, Fischer's sugars, synthetic indigo and the Champaran planters, and aspirin, to Woodward's vitamin B12, Corey's retrosynthesis, the Taxol race, click chemistry and the medicines made in Hyderabad today. 14 chapters on the world map and 5 people cards.
+- Catalogue: Building molecules opens the story, with chapter entries for mauveine, the benzene ring, aspirin and click chemistry (all discoveries).
+- Art: two new glyphs, `benzene` and `pill`.
+
 ## 0.58.0
 
 - New story map in Lives: Aristotle. From his birth in Stagira, twenty years at Plato’s Academy, the court of Hermias, the lagoon of Lesbos and the court of Macedon, to the Lyceum, his will at Chalcis, and the long journey of his books through Scepsis, Alexandria and Baghdad to the Lyceum dug up in 1996. 18 chapters on the near-east map and 6 people cards.

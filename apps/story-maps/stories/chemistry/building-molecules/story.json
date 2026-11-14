@@ -1,0 +1,590 @@
+{
+  "id": "building-molecules",
+  "title": "Building Molecules",
+  "description": "An illustrated map of how chemists learned to build the molecules of life, from Wöhler’s urea in 1828 through dyes, the benzene ring and aspirin, to Woodward’s art of synthesis, Corey’s retrosynthesis, the race to make the cancer drug Taxol and click chemistry.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "de",
+  "routes": "chapter",
+  "mapLabel": "Illustrated world map following the history of organic synthesis from laboratory to laboratory, 1828 to today",
+  "note": "Based on the chemists’ own papers and Nobel lectures and on standard histories of chemistry. Dotted lines show news of a result or a product travelling, not a person. The map draws today’s coasts, not the borders of the time, and is stylised and not to scale.",
+  "places": {
+    "berlin": {
+      "name": "Berlin",
+      "at": [
+        13.4,
+        52.52
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "marburg": {
+      "name": "Marburg",
+      "at": [
+        8.77,
+        50.81
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "london": {
+      "name": "London",
+      "at": [
+        -0.05,
+        51.51
+      ],
+      "glyph": "flask",
+      "label": "left"
+    },
+    "ghent": {
+      "name": "Ghent",
+      "at": [
+        3.72,
+        51.05
+      ],
+      "glyph": "benzene",
+      "label": "left"
+    },
+    "wurzburg": {
+      "name": "Würzburg",
+      "at": [
+        9.93,
+        49.79
+      ],
+      "glyph": "dome",
+      "label": "right"
+    },
+    "ludwigshafen": {
+      "name": "Ludwigshafen",
+      "at": [
+        8.44,
+        49.48
+      ],
+      "glyph": "trading-post",
+      "label": "left"
+    },
+    "champaran": {
+      "name": "Champaran",
+      "at": [
+        84.9,
+        26.65
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "elberfeld": {
+      "name": "Elberfeld",
+      "at": [
+        7.15,
+        51.26
+      ],
+      "glyph": "pill",
+      "label": "left"
+    },
+    "harvard": {
+      "name": "Harvard",
+      "at": [
+        -71.12,
+        42.37
+      ],
+      "glyph": "pillar",
+      "label": "right"
+    },
+    "zurich": {
+      "name": "Zurich",
+      "at": [
+        8.55,
+        47.38
+      ],
+      "glyph": "flask",
+      "label": "bottom"
+    },
+    "yew-forest": {
+      "name": "Washington State",
+      "at": [
+        -121.9,
+        46.0
+      ],
+      "glyph": "forest",
+      "label": "left"
+    },
+    "rti": {
+      "name": "Research Triangle",
+      "at": [
+        -78.86,
+        35.9
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "tallahassee": {
+      "name": "Tallahassee",
+      "at": [
+        -84.28,
+        30.44
+      ],
+      "glyph": "medal",
+      "label": "bottom"
+    },
+    "la-jolla": {
+      "name": "La Jolla",
+      "at": [
+        -117.24,
+        32.84
+      ],
+      "glyph": "flask",
+      "label": "left"
+    },
+    "copenhagen": {
+      "name": "Copenhagen",
+      "at": [
+        12.57,
+        55.68
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "hyderabad": {
+      "name": "Hyderabad",
+      "at": [
+        78.49,
+        17.39
+      ],
+      "glyph": "pill",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "news": {
+      "name": "News of a result",
+      "icon": "scroll"
+    },
+    "dye": {
+      "name": "Synthetic indigo",
+      "icon": "merchant-ship"
+    }
+  },
+  "phases": {
+    "vital": {
+      "name": "No vital force needed",
+      "color": "#4fc3b0"
+    },
+    "industry": {
+      "name": "Dyes and drugs",
+      "color": "#e0573a"
+    },
+    "art": {
+      "name": "The art of synthesis",
+      "color": "#f2c14e"
+    },
+    "medicine": {
+      "name": "Molecules for medicine",
+      "color": "#2b7fb4"
+    }
+  },
+  "routeStyles": {
+    "news": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "2 6",
+      "cap": "round"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 12.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 46.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 67.5,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(43,127,180,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1828"
+      },
+      {
+        "at": 16,
+        "text": "1856"
+      },
+      {
+        "at": 43,
+        "text": "1897"
+      },
+      {
+        "at": 50,
+        "text": "1944"
+      },
+      {
+        "at": 57,
+        "text": "1972"
+      },
+      {
+        "at": 78,
+        "text": "1994"
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "berlin",
+      "phase": "vital",
+      "title": "Urea without a kidney",
+      "native": "Harnstoff",
+      "when": "1828",
+      "camera": {
+        "at": [
+          13.4,
+          52.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1828 Friedrich Wöhler, teaching at a Berlin trade school, heated ammonium cyanate, a salt, and found it had become urea, a compound known from urine. He told his teacher Berzelius he could make urea without needing kidneys. Many chemists then held that only living things could make such compounds; historians say that belief faded slowly, not in a day.",
+      "today": "Today: Berlin, Germany. Wöhler later taught at Göttingen for 46 years.",
+      "at": 2
+    },
+    {
+      "place": "marburg",
+      "phase": "vital",
+      "title": "Vinegar from the elements",
+      "when": "1843 to 1845",
+      "camera": {
+        "at": [
+          9,
+          51
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Hermann Kolbe, assistant to Robert Bunsen at Marburg, went further. Starting from carbon disulfide, which can be made from carbon and sulfur, he reached acetic acid, the acid of vinegar, in a chain of steps published in 1845. Nothing came from a living thing. He is often credited with first using the word synthesis in its modern sense.",
+      "today": "Today: Philipps University of Marburg, Hesse, Germany.",
+      "at": 9
+    },
+    {
+      "place": "london",
+      "phase": "industry",
+      "title": "A purple accident",
+      "when": "Easter 1856",
+      "camera": {
+        "at": [
+          3,
+          52
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At Easter 1856 William Perkin, an 18-year-old student of August Hofmann, was trying to make quinine, the malaria drug, in his home laboratory in east London. He failed, but treating aniline from coal tar left a black sludge that dyed silk purple. He patented the dye, left college and opened a factory at Greenford. Mauve became the fashionable colour.",
+      "today": "Today: Shadwell, east London, England. His dye works stood at Greenford, west London.",
+      "at": 16
+    },
+    {
+      "place": "ghent",
+      "phase": "industry",
+      "title": "A ring of six",
+      "when": "1865",
+      "camera": {
+        "at": [
+          5,
+          51.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Chemists knew benzene held six carbon and six hydrogen atoms, but not how they fitted. In 1865 August Kekulé, professor at Ghent, proposed a closed ring of six carbons. Molecules could now be drawn, and changes to them planned. He later told of a daydream of a snake seizing its own tail; historians treat that story with caution.",
+      "today": "Today: Ghent University, Belgium.",
+      "at": 23
+    },
+    {
+      "place": "wurzburg",
+      "phase": "industry",
+      "title": "Sugar from the laboratory",
+      "when": "1890",
+      "camera": {
+        "at": [
+          10,
+          50.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Emil Fischer at Würzburg worked out how the sugars are built, down to how their atoms are arranged in space. In 1890 he made glucose and fructose in the laboratory. He went on to the purines, the family of caffeine, and to joining amino acids into chains. He won the Nobel Prize in Chemistry in 1902, the second ever awarded.",
+      "today": "Today: University of Würzburg, Bavaria, Germany.",
+      "at": 30
+    },
+    {
+      "place": "ludwigshafen",
+      "phase": "industry",
+      "title": "Blue from a factory",
+      "when": "1880 to 1917",
+      "camera": {
+        "at": [
+          46,
+          38
+        ],
+        "width": 95
+      },
+      "legs": [
+        {
+          "from": "ludwigshafen",
+          "to": "champaran",
+          "traveller": "dye",
+          "style": "sea",
+          "bend": 0.15
+        }
+      ],
+      "text": "Adolf von Baeyer first made indigo, the blue of denim, in 1880, but a route cheap enough to sell took until 1897, when BASF of Ludwigshafen launched synthetic indigo. It undercut indigo grown in India. As prices fell, European planters in Champaran, Bihar, pressed their tenant farmers harder, a grievance Gandhi took up in 1917.",
+      "today": "Today: Ludwigshafen am Rhein, Germany, still home to BASF. Champaran is in Bihar, India.",
+      "at": 37
+    },
+    {
+      "place": "elberfeld",
+      "phase": "industry",
+      "title": "Aspirin",
+      "native": "Acetylsalicylsäure",
+      "when": "10 August 1897",
+      "camera": {
+        "at": [
+          8,
+          51
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Willow bark had long been taken against pain and fever; its active part is related to salicylic acid, a medicine that hurt the stomach. On 10 August 1897 Felix Hoffmann at Bayer in Elberfeld recorded making pure, stable acetylsalicylic acid. Bayer sold it as Aspirin from 1899. Arthur Eichengrün later claimed he directed the work; historians disagree.",
+      "today": "Today: Wuppertal, Germany. Bayer’s headquarters is now at Leverkusen.",
+      "at": 43
+    },
+    {
+      "place": "harvard",
+      "phase": "art",
+      "title": "Quinine in wartime",
+      "when": "1944",
+      "camera": {
+        "at": [
+          -71.1,
+          42.4
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1944, with the quinine plantations of Java in Japanese hands, Robert Woodward, 27, and William Doering at Harvard made quinotoxine, which German chemists had turned into quinine in 1918. Newspapers hailed it, though it never supplied the war. Doubts about the 1918 step lasted until chemists repeated it successfully in 2007.",
+      "today": "Today: Harvard University, Cambridge, Massachusetts, USA.",
+      "at": 50
+    },
+    {
+      "place": "zurich",
+      "phase": "art",
+      "title": "Vitamin B12",
+      "when": "1960 to 1972",
+      "camera": {
+        "at": [
+          -31,
+          45
+        ],
+        "width": 100
+      },
+      "legs": [
+        {
+          "from": "harvard",
+          "to": "zurich",
+          "traveller": "news",
+          "style": "news",
+          "bend": 0.15
+        }
+      ],
+      "text": "From about 1960 to 1972 Woodward at Harvard and Albert Eschenmoser at ETH Zurich led nearly 100 chemists in making vitamin B12, a molecule of 181 atoms around a cobalt atom. Puzzles along the way led Woodward and Roald Hoffmann to rules for how ring-forming reactions behave. Hoffmann shared the 1981 Nobel Prize for them; Woodward had died in 1979.",
+      "today": "Today: ETH Zurich, Switzerland.",
+      "at": 57
+    },
+    {
+      "place": "harvard",
+      "phase": "art",
+      "title": "Working backwards",
+      "when": "1960s to 1990",
+      "camera": {
+        "at": [
+          -71.1,
+          42.4
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Woodward, given the 1965 Nobel Prize for “the art of organic synthesis”, worked largely by intuition. Elias James Corey, also at Harvard, made it a method: start from the target, break it into simpler pieces, and repeat until you reach chemicals you can buy. He called it retrosynthetic analysis, used it to make prostaglandins and won the 1990 Nobel Prize.",
+      "today": "Today: Harvard University. Chemists everywhere still plan routes this way.",
+      "at": 64
+    },
+    {
+      "place": "rti",
+      "phase": "medicine",
+      "title": "Bark of the yew",
+      "when": "1962 to 1992",
+      "camera": {
+        "at": [
+          -100,
+          41
+        ],
+        "width": 60
+      },
+      "legs": [
+        {
+          "from": "yew-forest",
+          "to": "rti",
+          "traveller": "news",
+          "style": "news",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 1962 botanist Arthur Barclay collected bark of the Pacific yew in Washington State for a US search for cancer drugs. At the Research Triangle Institute in North Carolina, Monroe Wall and the Indian-born chemist Mansukh Wani isolated its active compound, taxol, and in 1971 published its crowded, four-ringed structure. It was approved for ovarian cancer in 1992.",
+      "today": "Today: Research Triangle Park, North Carolina, USA. Paclitaxel treats breast, ovarian and lung cancers.",
+      "at": 71
+    },
+    {
+      "place": "tallahassee",
+      "phase": "medicine",
+      "title": "The Taxol race",
+      "when": "1994",
+      "camera": {
+        "at": [
+          -100.7,
+          37.6
+        ],
+        "width": 50
+      },
+      "legs": [
+        {
+          "from": "la-jolla",
+          "to": "tallahassee",
+          "traveller": "news",
+          "style": "news",
+          "bend": 0.15
+        }
+      ],
+      "text": "Stripping bark killed the slow-growing yew, so supply was a worry. In early 1994 two teams published complete syntheses within weeks of each other: Robert Holton’s at Florida State and K. C. Nicolaou’s at Scripps in La Jolla. Neither suited a factory, but Holton’s earlier semisynthesis, from a compound in yew needles, became a commercial source.",
+      "today": "Today: Florida State University, Tallahassee, USA. Much paclitaxel now comes from yew cells grown in tanks.",
+      "at": 78
+    },
+    {
+      "place": "la-jolla",
+      "phase": "medicine",
+      "title": "Click chemistry",
+      "when": "2001 to 2022",
+      "camera": {
+        "at": [
+          -52,
+          44
+        ],
+        "width": 150
+      },
+      "legs": [
+        {
+          "from": "copenhagen",
+          "to": "la-jolla",
+          "traveller": "news",
+          "style": "news",
+          "bend": 0.2
+        }
+      ],
+      "text": "In 2001 Barry Sharpless at Scripps urged chemists to build with a few reactions that snap pieces together reliably: click chemistry. In 2002 he and Valery Fokin, and separately Morten Meldal in Copenhagen, found the best: copper joining azides and alkynes. Carolyn Bertozzi adapted click reactions to work inside living cells. All three shared the 2022 Nobel Prize.",
+      "today": "Today: Scripps Research, La Jolla, California, USA. It was Sharpless’s second Nobel Prize.",
+      "at": 86
+    },
+    {
+      "place": "hyderabad",
+      "phase": "medicine",
+      "title": "Medicines by the tonne",
+      "when": "Today",
+      "source": "Science",
+      "camera": {
+        "at": [
+          78.5,
+          17.4
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Most medicines today are small molecules made by synthesis, and chemists still plan them by working backwards, as Corey taught. Making them is a large industry. Hyderabad, India, is home to many firms that make medicines’ active ingredients and generic drugs, and India supplies a large share of the world’s generic medicines. Computers now help plan synthetic routes.",
+      "today": "Today: Hyderabad, Telangana, India.",
+      "at": 98
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "wohler",
+        "name": "Friedrich Wöhler",
+        "life": "1800–1882",
+        "role": "Chemist",
+        "steps": [
+          0
+        ],
+        "text": "German chemist, trained under Berzelius in Stockholm. Besides urea he isolated aluminium in 1827 and beryllium, and with his friend Justus von Liebig worked out the benzoyl group, a cluster of atoms that passes unchanged through reactions. He taught at Göttingen from 1836 until his death, training hundreds of chemists."
+      },
+      {
+        "id": "perkin",
+        "name": "William Henry Perkin",
+        "life": "1838–1907",
+        "role": "Chemist and dye maker",
+        "steps": [
+          2
+        ],
+        "text": "Son of a London builder, he entered the Royal College of Chemistry at 15 to study under August Hofmann. After mauve he found a new route to alizarin, the red of madder, and sold his factory in 1874 to return to research. The Perkin reaction bears his name, and the US Perkin Medal honours industrial chemistry."
+      },
+      {
+        "id": "woodward",
+        "name": "Robert Burns Woodward",
+        "life": "1917–1979",
+        "role": "Chemist",
+        "steps": [
+          7,
+          8,
+          9
+        ],
+        "text": "American chemist who entered MIT at 16 and had a doctorate at 20. He helped work out the structure of penicillin and made cholesterol, cortisone, strychnine, chlorophyll and, with Eschenmoser, vitamin B12. His lectures, drawn in coloured chalk, could last for hours. Nobel Prize in Chemistry, 1965."
+      },
+      {
+        "id": "wani",
+        "name": "Mansukh Wani",
+        "life": "1925–2020",
+        "role": "Chemist",
+        "steps": [
+          10
+        ],
+        "text": "Born in Nandurbar, Maharashtra, he studied in Bombay and earned a doctorate in the United States, then joined Monroe Wall at the Research Triangle Institute. Together they found two cancer drugs in plants: taxol, from the Pacific yew, and camptothecin, from a Chinese tree, which led to the medicines topotecan and irinotecan."
+      },
+      {
+        "id": "bertozzi",
+        "name": "Carolyn Bertozzi",
+        "life": "Born 1966",
+        "role": "Chemist",
+        "steps": [
+          12
+        ],
+        "text": "American chemist who named bioorthogonal chemistry: reactions that run inside living things without disturbing them. At Berkeley in 2004 her team made a click reaction that needs no toxic copper, so it works in cells and animals. She moved to Stanford in 2015. Her methods are used to tag sugars on the surface of cancer cells."
+      }
+    ]
+  }
+}
