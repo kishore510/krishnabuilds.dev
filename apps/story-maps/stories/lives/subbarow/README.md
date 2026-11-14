@@ -1,0 +1,9 @@
+# Yellapragada Subbarow
+
+Status: built. In Lives. The life of Yellapragada Subbarow, 1895 to 1948, in 14 chapters: a boy from the Godavari delta, two brothers and the sprue in Madras, khadi and a lesser degree, the voyage to Harvard, the Fiske–Subbarow test for phosphorus, the energy of muscle and ATP, being passed over at Harvard, head of research at Lederle, folic acid, aminopterin and the first remissions, a drug for elephantiasis, Aureomycin from Missouri soil, his death in New York and the medicines coming home to the Godavari. 3 people cards.
+
+- `story.json`: the story data. It uses the `world` basemap. Routes show only for the current chapter. The voyage from Madras to Boston is one long bent leg: the route is not recorded, so it reads as a voyage, not a track. New York is drawn slightly south-east of its true place so it does not hide Pearl River.
+- No new art.
+- Source: every card is **History**.
+- Native names are in Telugu (`te`).
+- Sources and what is disputed: the 1925 and 1929 papers of Fiske and Subbarow, histories of Lederle Laboratories and the tetracyclines, and later biographical articles (Hektoen International, Current Science, Madras Courier and others). Disputed: the year he reached Boston (1922 or 1923); whether he became Lederle‘s director of research in late 1940 or 1942; the date of his death (8 or 9 August 1948); the khadi story behind his LMS rather than MBBS, which one historian doubts because the professor named arrived only in 1924; and credit for ATP, which Karl Lohmann found independently in 1929. Claims that his were the first chemotherapy drug and the first broad-spectrum antibiotic are simplified: nitrogen mustards were also used against cancer in the 1940s, and chloramphenicol was announced in 1947. The cards say “first temporary remissions” and “the first tetracycline” instead.
