@@ -46,6 +46,7 @@ src/theme.css      painted theme (saffron, lapis, gold), light and dark
 src/prepaint.js    kb-theme pre-paint script; test/prepaint.test.js fails if it drifts from packages/ui/src/theme.ts
 public/            favicon and apple-touch icon, copied as-is
 licences/          OFL texts for the fonts
+docs/              design notes for engine features not yet built (earth-deep.md)
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
 scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above

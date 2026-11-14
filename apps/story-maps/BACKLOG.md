@@ -6,7 +6,15 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy, Biology and Medicine, and Invention. Earth and Life need the `earth-deep` canvas first. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
+One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy, Biology and Medicine, and Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
+
+Nature first, in this order (design in `docs/earth-deep.md`):
+
+1. The `earth-deep` canvas: engine, then the basemap (its coastline source needs the owner's decision first)
+2. The Making of Earth (Earth, `earth-deep`)
+3. Life on Earth (Life, `earth-deep`)
+
+Biology and Medicine fits the `world` map, so it can go in between at any time: Smallpox, from variolation to eradication, then The Gene (genetics, with a labelled aside on what Jurassic Park got right and wrong).
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
