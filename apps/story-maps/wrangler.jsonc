@@ -2,11 +2,31 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "krishnabuilds-story-maps",
   "compatibility_date": "2026-11-08",
-  // Static assets only, no Worker script. Unknown paths get dist/404.html
-  // (no single-page-application fallback: every story is its own page).
+  // A small Worker for the likes API (/api/*); everything else is the static
+  // site. Unknown paths get dist/404.html (no single-page-application
+  // fallback: every story is its own page).
+  "main": "src/worker.js",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
   },
+  // Every story's like count, as one JSON blob under the key "likes".
+  // The id names the namespace; it is not a secret.
+  "kv_namespaces": [
+    {
+      "binding": "LIKE_COUNTS",
+      "id": "REPLACE_WITH_LIKE_COUNTS_NAMESPACE_ID"
+    }
+  ],
+  // Basic per-IP limit on POST and DELETE /api/like/<id>. namespace_id is a
+  // free-form number unique within the account (Arcade uses 1001).
+  "ratelimits": [
+    {
+      "name": "LIKE_LIMITER",
+      "namespace_id": "1002",
+      "simple": { "limit": 20, "period": 60 }
+    }
+  ],
   "routes": [{ "pattern": "story-maps.krishnabuilds.dev", "custom_domain": true }]
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.49.0
+
+- Likes: readers can like a story, from a heart in the top bar or a button on the end card, and take the like back. The count shows next to the heart and on the story's front-page card. One like per device, remembered on the device; no accounts.
+- A small Worker (`src/worker.js`) now serves the site and the likes API, backed by one KV key and a per-IP rate limit.
+
 ## 0.48.0
 
 - New story map in Chronicles: Hyder Ali and Tipu Sultan. From a soldier’s son at Budikote, the siege of Devanahalli and the arsenal at Dindigul, through Hyder’s seizure of power, the treasure of Bednur, the Zamorin’s fire and the ride to Madras, Obavva’s pestle (tradition), Pollilur and Porto Novo, Hyder’s death and the Treaty of Mangalore, to Tipu’s court and envoys to Versailles, the harsher record in Kodagu and on the Kanara coast, the letters to Sringeri, the fall of Bangalore, the hostage princes, Citizen Tipu, the rockets in a well, the storming of Srirangapatna in 1799, the Wodeyars restored and Tipu’s Tiger. 23 chapters, a Powers layer (Mysore, the Company, the Marathas, Hyderabad, the Nawab of Arcot, Travancore and the kingdoms Hyder took) and 8 people cards.

@@ -124,6 +124,8 @@ const exploreJs = read(`${APP_DIR}hub/explore.js`);
 const hubJs = read(`${APP_DIR}hub/hub.js`);
 const frontJs = read(`${APP_DIR}hub/front.js`);
 const progressJs = read(`${APP_DIR}hub/progress.js`);
+const likesJs = read(`${APP_DIR}hub/likes.js`);
+const likesCss = read(`${APP_DIR}hub/likes.css`);
 const tourJs = read(`${APP_DIR}hub/tour.js`);
 const tourCss = read(`${APP_DIR}hub/tour.css`);
 const themePickerJs = read(`${APP_DIR}src/theme-picker.js`);
@@ -139,7 +141,7 @@ function render(page) {
     url: `${ORIGIN}${page.path}`,
     robots: page.noindex ? '<meta name="robots" content="noindex">\n' : "",
     prepaint,
-    styles: page.story ? `${styles}\n${engine.css}\n${tourCss}` : page.explore ? `${styles}\n${exploreCss}${page.tour ? `\n${tourCss}` : ""}` : styles,
+    styles: page.story ? `${styles}\n${engine.css}\n${tourCss}\n${likesCss}` : page.explore ? `${styles}\n${exploreCss}${page.tour ? `\n${tourCss}` : ""}` : styles,
     bodyAttrs: page.story ? ' class="sm-story-page"' : "",
     body: page.body,
   };
@@ -196,7 +198,7 @@ function storyPage(entry) {
     },
     "engine/src/player.html",
   );
-  return `${page}\n<script>\n${progressJs}</script>\n<script>\n${tourJs}</script>`;
+  return `${page}\n<script>\n${progressJs}</script>\n<script>\n${likesJs}</script>\n<script>\n${tourJs}</script>`;
 }
 
 // --- hub: timeline and Browse ------------------------------------------------
@@ -312,7 +314,7 @@ function storyCard(s) {
     `<li><a class="sm-story-card" href="/${s.id}/" data-story="${s.id}">${storyThumb(s)}` +
     `<span class="sm-story-card__body"><span class="sm-story-card__kicker">${esc(s.era)}</span>` +
     `<span class="sm-story-card__name">${esc(s.title)}</span>` +
-    `<span class="sm-story-card__meta" data-meta>${n} chapters</span></span></a></li>`
+    `<span class="sm-story-card__meta"><span data-meta>${n} chapters</span><span class="sm-story-card__likes" data-likes hidden></span></span></span></a></li>`
   );
 }
 

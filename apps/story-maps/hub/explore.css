@@ -1420,3 +1420,8 @@ a.sm-mini:hover {
     grid-template-columns: 1fr 1fr;
   }
 }
+/* A story's likes on its card, filled in by hub/front.js. */
+.sm-story-card__likes {
+  margin-left: 0.6em;
+  color: var(--sm-muted);
+}

@@ -1,5 +1,5 @@
 // The front page in the browser: on each story card, pick up where the reader
-// left off, and arrows on a row of cards too long to fit, for a mouse that
+// left off and show its likes (from src/worker.js, when it can be reached), and arrows on a row of cards too long to fit, for a mouse that
 // cannot swipe. Everything on the page works without it.
 
 (function () {
@@ -50,4 +50,24 @@
     window.addEventListener("resize", later);
     update();
   });
+
+  if (globalThis.fetch) {
+    fetch("/api/likes")
+      .then(function (r) {
+        return r.ok ? r.json() : {};
+      })
+      .then(function (counts) {
+        Array.prototype.forEach.call(document.querySelectorAll(".sm-story-card"), function (a) {
+          var n = Number(counts[a.dataset.story]) || 0;
+          var el = a.querySelector("[data-likes]");
+          if (!el || !n) return;
+          el.textContent = "♥ " + n;
+          el.setAttribute("aria-label", n + (n === 1 ? " like" : " likes"));
+          el.hidden = false;
+        });
+      })
+      .catch(function () {
+        /* no API here: the cards stay as they are */
+      });
+  }
 })();
