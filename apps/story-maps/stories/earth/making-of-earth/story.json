@@ -1,0 +1,563 @@
+{
+  "id": "making-of-earth",
+  "title": "The Making of Earth",
+  "description": "An illustrated map of the Earth through deep time, from a molten ball 4.54 billion years ago through the first oceans and continents, Rodinia, Snowball Earth, Pangaea, the asteroid at Chicxulub and India meeting Asia, to the ice ages and today's still-moving plates.",
+  "canvas": "earth-deep",
+  "basemap": "earth-deep",
+  "source": "Science",
+  "nativeLang": "en",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the whole Earth at one moment in deep time, changing from chapter to chapter as the continents move",
+  "note": "Each chapter shows the globe at one moment, so the map changes as the continents move. Coastlines from 535 million years ago to today are simplified from the PaleoMAP reconstruction (Kocsis and Scotese, CC BY 4.0); older eras are drawn by hand and are illustrative. Ancient longitude cannot be measured, so the 535-million-year map is centred on Gondwana. Places are shown where they were at the time, reconstructed with the PaleoMAP plate model.",
+  "places": {
+    "young-earth": {
+      "name": "Molten Earth",
+      "at": [
+        10,
+        -10
+      ],
+      "glyph": "volcano",
+      "label": "right"
+    },
+    "theia": {
+      "name": "Theia strikes",
+      "at": [
+        60,
+        15
+      ],
+      "glyph": "earth-moon",
+      "label": "right"
+    },
+    "first-ocean": {
+      "name": "First oceans",
+      "at": [
+        25,
+        15
+      ],
+      "glyph": "wave",
+      "label": "right"
+    },
+    "acasta": {
+      "name": "Oldest rock",
+      "at": [
+        -110,
+        30
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "oxygen": {
+      "name": "Great Oxidation",
+      "at": [
+        20,
+        -5
+      ],
+      "glyph": "gas-cloud",
+      "label": "right"
+    },
+    "rodinia": {
+      "name": "Rodinia",
+      "at": [
+        20,
+        -12
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "snowball": {
+      "name": "Ice at the equator",
+      "at": [
+        25,
+        -10
+      ],
+      "glyph": "snowflake",
+      "label": "right"
+    },
+    "gondwana": {
+      "name": "Gondwana",
+      "at": [
+        0,
+        -40
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "siberian-traps": {
+      "name": "Siberian Traps",
+      "at": [
+        42.8,
+        55.1
+      ],
+      "glyph": "volcano",
+      "label": "right"
+    },
+    "atlantic": {
+      "name": "A new ocean",
+      "at": [
+        -12.8,
+        22.5
+      ],
+      "glyph": "wave",
+      "label": "right"
+    },
+    "chicxulub": {
+      "name": "Chicxulub",
+      "at": [
+        -70.1,
+        26.3
+      ],
+      "glyph": "burst",
+      "label": "right"
+    },
+    "india-then": {
+      "name": "India, 65 million years ago",
+      "at": [
+        57.1,
+        -23.0
+      ],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "himalaya": {
+      "name": "Himalaya",
+      "at": [
+        78.6,
+        3.6
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "ice-sheet": {
+      "name": "Laurentide ice sheet",
+      "at": [
+        -95,
+        58
+      ],
+      "glyph": "snowflake",
+      "label": "right"
+    },
+    "iceland": {
+      "name": "Iceland",
+      "at": [
+        -21,
+        64.3
+      ],
+      "glyph": "volcano",
+      "label": "right"
+    },
+    "ridge": {
+      "name": "Mid-Atlantic Ridge",
+      "at": [
+        -45,
+        25
+      ],
+      "glyph": "flask",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "india": {
+      "name": "India drifting north",
+      "icon": "light"
+    }
+  },
+  "phases": {
+    "molten": {
+      "name": "A molten world",
+      "color": "#e4572e"
+    },
+    "first-land": {
+      "name": "Oceans and first land",
+      "color": "#4f9fd0"
+    },
+    "supercontinents": {
+      "name": "Supercontinents and ice",
+      "color": "#a678e0"
+    },
+    "modern": {
+      "name": "Toward today's map",
+      "color": "#4fc3b0"
+    },
+    "found": {
+      "name": "How we know",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {
+    "drift": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 9,
+        "color": "rgba(228,87,46,.35)"
+      },
+      {
+        "until": 36,
+        "color": "rgba(79,159,208,.35)"
+      },
+      {
+        "until": 69,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 96,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "4.5 bn"
+      },
+      {
+        "at": 30,
+        "text": "2.4 bn"
+      },
+      {
+        "at": 42,
+        "text": "1 bn"
+      },
+      {
+        "at": 58,
+        "text": "535 m"
+      },
+      {
+        "at": 78,
+        "text": "66 m"
+      },
+      {
+        "at": 94,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "young-earth",
+      "era": "hadean",
+      "phase": "molten",
+      "title": "A ball of molten rock",
+      "when": "4.54 bn years ago",
+      "at": 2,
+      "camera": {
+        "at": [
+          10,
+          -5
+        ],
+        "width": 60
+      },
+      "legs": [],
+      "text": "About 4.54 billion years ago the Earth gathered from dust and rock circling the young Sun. Collisions and the heat of radioactive elements melted it, and a magma ocean covered the surface. Heavy iron sank to the centre to form the core, while lighter rock floated up. Nothing from this time survives on the surface today.",
+      "today": "How we know: the age comes from radioactive lead in meteorites, which formed at the same time as the Earth."
+    },
+    {
+      "place": "theia",
+      "era": "hadean",
+      "phase": "molten",
+      "title": "The Moon from a collision",
+      "when": "about 4.5 bn years ago",
+      "at": 6,
+      "camera": {
+        "at": [
+          55,
+          10
+        ],
+        "width": 70
+      },
+      "legs": [],
+      "text": "The leading explanation for the Moon is a giant impact. A body about the size of Mars, named Theia, struck the young Earth, and the debris thrown into orbit gathered into the Moon. It is still a theory, not a settled fact. The Moon then sat much closer than it does today and has been drifting away ever since.",
+      "today": "How we know: Apollo moon rocks are strikingly similar to Earth's mantle, and mirrors left by astronauts show the Moon moving about 3.8 centimetres farther away each year."
+    },
+    {
+      "place": "first-ocean",
+      "era": "first-ocean",
+      "phase": "first-land",
+      "title": "The first oceans",
+      "when": "by 4.4 bn years ago",
+      "at": 12,
+      "camera": {
+        "at": [
+          25,
+          12
+        ],
+        "width": 55
+      },
+      "legs": [],
+      "text": "As the surface cooled, water vapour from volcanoes condensed and rain fell, filling the first oceans. Some water may also have come from icy asteroids; how much is debated. The oldest known pieces of Earth are tiny zircon crystals, about 4.4 billion years old, found in the Jack Hills of Western Australia. The islands on this map are illustrative.",
+      "today": "How we know: oxygen atoms locked inside those zircons suggest they formed from rock that had touched liquid water."
+    },
+    {
+      "place": "acasta",
+      "era": "archean",
+      "phase": "first-land",
+      "title": "The first continents",
+      "when": "4 to 2.5 bn years ago",
+      "at": 20,
+      "camera": {
+        "at": [
+          -100,
+          25
+        ],
+        "width": 75
+      },
+      "legs": [],
+      "text": "Small pieces of lighter rock gathered into the first continents. The oldest whole rock known, the Acasta Gneiss in northern Canada, is about 4 billion years old. When plate tectonics began, with the crust broken into moving plates, is an open question: estimates range from more than 4 billion to less than 1 billion years ago. These shapes are illustrative.",
+      "today": "How we know: radioactive dating of rocks and crystals. The oldest survive in the ancient cores of continents, in Canada, Greenland and Western Australia."
+    },
+    {
+      "place": "oxygen",
+      "era": "archean",
+      "phase": "first-land",
+      "title": "Oxygen fills the air",
+      "when": "about 2.4 bn years ago",
+      "at": 30,
+      "camera": {
+        "at": [
+          20,
+          -5
+        ],
+        "width": 75
+      },
+      "legs": [],
+      "text": "For two billion years the air held almost no oxygen. Tiny ocean microbes called cyanobacteria made it by photosynthesis, and around 2.4 billion years ago it began to build up: the Great Oxidation Event. Iron dissolved in the sea rusted and settled as striped rock called banded iron formations. High in the air, it also began forming an ozone layer.",
+      "today": "How we know: banded iron formations, such as those of the Hamersley Range in Western Australia, and minerals in old rocks that form only when oxygen is present."
+    },
+    {
+      "place": "rodinia",
+      "era": "rodinia",
+      "phase": "supercontinents",
+      "title": "Rodinia",
+      "when": "about 1.1 bn to 750 m years ago",
+      "at": 42,
+      "camera": {
+        "at": [
+          10,
+          -5
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "Over hundreds of millions of years the drifting continents came together into a supercontinent, Rodinia, surrounded by a single ocean called Mirovia. Most reconstructions put the ancient core of North America near its centre, but they disagree on much else, so this outline is one picture among several. Rodinia began to break apart about 750 million years ago.",
+      "today": "How we know: matching belts of rock and old mountain roots on continents now far apart, and the direction of ancient magnetism frozen in their rocks."
+    },
+    {
+      "place": "snowball",
+      "era": "snowball",
+      "phase": "supercontinents",
+      "title": "Snowball Earth",
+      "when": "about 717 to 635 m years ago",
+      "at": 50,
+      "camera": {
+        "at": [
+          25,
+          -5
+        ],
+        "width": 100
+      },
+      "legs": [],
+      "text": "At least twice, ice seems to have spread from the poles almost to the equator. In this Snowball Earth hypothesis, white ice reflected sunlight and the cold fed itself. Whether the oceans froze over completely or kept some open water is debated. The thaw came as volcanoes kept releasing carbon dioxide, which built up until it warmed the planet.",
+      "today": "How we know: rocks left by glaciers are found where ancient magnetism shows the land lay near the equator, capped by limestone typical of a sudden warm climate."
+    },
+    {
+      "place": "gondwana",
+      "era": "cambrian",
+      "phase": "supercontinents",
+      "title": "Gondwana",
+      "when": "535 m years ago",
+      "at": 58,
+      "camera": {
+        "at": [
+          0,
+          -30
+        ],
+        "width": 120
+      },
+      "legs": [],
+      "text": "After Rodinia broke up, much of the land came together in the south as Gondwana, which held what are now Africa, South America, Antarctica, Australia, India and Arabia. Shallow seas flooded the edges of the continents, and in them animal life became more varied: the Cambrian explosion. From here on, the coastlines on this map come from a published reconstruction.",
+      "today": "How we know: fossils and rocks shared by continents now far apart, and ancient magnetism. The coastlines follow the PaleoMAP reconstruction by Ádám Kocsis and Christopher Scotese."
+    },
+    {
+      "place": "siberian-traps",
+      "era": "pangaea",
+      "phase": "supercontinents",
+      "title": "Pangaea and the Great Dying",
+      "when": "252 m years ago",
+      "at": 66,
+      "camera": {
+        "at": [
+          40,
+          40
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "By about 300 million years ago nearly all land had joined into one supercontinent, Pangaea, ringed by the ocean Panthalassa. About 252 million years ago huge eruptions in what is now Siberia poured out lava and gases for hundreds of thousands of years. The worst extinction known followed: estimates suggest more than 80 percent of ocean species died.",
+      "today": "How we know: the lava of the Siberian Traps still covers a vast area of Siberia, and dating shows the eruptions began shortly before the extinction."
+    },
+    {
+      "place": "atlantic",
+      "era": "jurassic",
+      "phase": "modern",
+      "title": "The Atlantic opens",
+      "when": "about 200 to 150 m years ago",
+      "at": 72,
+      "camera": {
+        "at": [
+          -15,
+          22
+        ],
+        "width": 90
+      },
+      "legs": [],
+      "text": "About 200 million years ago Pangaea began to split. Molten rock rose along a long crack between what are now North America and Africa, and the land pulled apart around a new ocean, the Atlantic. Pangaea divided into a northern half, Laurasia, and a southern half, Gondwana. This map shows the world about 150 million years ago.",
+      "today": "How we know: the coasts on either side of the Atlantic still fit like puzzle pieces, and its sea floor is older the farther it lies from the ridge in the middle."
+    },
+    {
+      "place": "chicxulub",
+      "era": "end-cretaceous",
+      "phase": "modern",
+      "title": "The asteroid at Chicxulub",
+      "when": "66 m years ago",
+      "at": 78,
+      "camera": {
+        "at": [
+          -70,
+          22
+        ],
+        "width": 80
+      },
+      "legs": [],
+      "text": "About 66 million years ago an asteroid roughly 10 kilometres wide struck shallow sea off what is now the Yucatán in Mexico, leaving a crater about 180 kilometres across. Dust and gases darkened the skies. At the same time, vast eruptions in India were building the Deccan Traps. About three quarters of species died, including every dinosaur except the birds.",
+      "today": "How we know: a thin layer rich in iridium, rare on Earth but common in asteroids, lies at this point in rocks worldwide. The buried crater was identified in 1991."
+    },
+    {
+      "place": "himalaya",
+      "era": "india-asia",
+      "phase": "modern",
+      "title": "India meets Asia",
+      "when": "about 50 m years ago",
+      "at": 83,
+      "camera": {
+        "at": [
+          68,
+          -8
+        ],
+        "width": 100
+      },
+      "legs": [
+        {
+          "from": "india-then",
+          "to": "himalaya",
+          "traveller": "india",
+          "style": "drift",
+          "bend": 0.15
+        }
+      ],
+      "text": "India broke away from Gondwana and crossed the ocean northward, at times unusually fast, up to about 15 centimetres a year. It began to collide with Asia about 50 million years ago, though estimates range from about 60 to 40 million years. The crash crumpled the land into the Himalaya and the Tibetan Plateau, and India is still pushing north.",
+      "today": "How we know: limestone with fossils of sea creatures lies near the summit of Mount Everest. It formed on an ancient sea floor."
+    },
+    {
+      "place": "ice-sheet",
+      "era": "ice-age",
+      "phase": "modern",
+      "title": "The ice ages",
+      "when": "about 20,000 years ago",
+      "at": 89,
+      "camera": {
+        "at": [
+          -80,
+          52
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "For the last 2.6 million years the Earth has swung between cold glacial periods and warmer spells, paced by small regular changes in its orbit. At the coldest point of the last glacial, about 20,000 years ago, ice sheets up to about 3 kilometres thick covered Canada and northern Europe, and sea level was about 120 metres lower than today.",
+      "today": "How we know: air bubbles trapped in Antarctic ice cores, layers of ocean mud, and the boulders and ridges that glaciers left behind across Canada and northern Europe."
+    },
+    {
+      "place": "iceland",
+      "era": "today",
+      "phase": "modern",
+      "title": "Still moving",
+      "when": "today",
+      "at": 94,
+      "camera": {
+        "at": [
+          -21,
+          58
+        ],
+        "width": 70
+      },
+      "legs": [],
+      "text": "The plates have not stopped. Iceland sits on the Mid-Atlantic Ridge, where North America and Europe pull apart by about 2 centimetres a year, roughly as fast as fingernails grow. Models suggest the continents could gather into a new supercontinent in about 200 to 250 million years, but that is a forecast, not a fact.",
+      "today": "How we know: GPS stations measure the plates' movement directly, year after year."
+    },
+    {
+      "place": "ridge",
+      "era": "today",
+      "phase": "found",
+      "title": "How the story was found",
+      "when": "1912 to the 1960s",
+      "at": 98,
+      "camera": {
+        "at": [
+          -40,
+          30
+        ],
+        "width": 100
+      },
+      "legs": [],
+      "text": "In 1912 Alfred Wegener argued that the continents had drifted, but most geologists rejected the idea because he could not say what moved them. In the 1950s Marie Tharp found a rift valley along the Mid-Atlantic Ridge, and in the 1960s magnetic stripes on the sea floor showed that it spreads. In 1956 Clair Patterson measured Earth's age.",
+      "today": "Plate tectonics was widely accepted by the end of the 1960s.",
+      "source": "History"
+    }
+  ],
+  "people": {
+    "heading": "People who worked it out",
+    "items": [
+      {
+        "id": "patterson",
+        "name": "Clair Patterson",
+        "life": "1922–1995",
+        "role": "Geochemist",
+        "steps": [
+          0,
+          14
+        ],
+        "text": "An American geochemist at Caltech who in 1956 dated the Earth to about 4.55 billion years, using lead in pieces of the Canyon Diablo meteorite. To measure such tiny amounts he had to build one of the first ultra-clean laboratories. The lead he found everywhere led him to campaign, successfully, against lead in petrol."
+      },
+      {
+        "id": "wegener",
+        "name": "Alfred Wegener",
+        "life": "1880–1930",
+        "role": "Meteorologist and geophysicist",
+        "steps": [
+          8,
+          14
+        ],
+        "text": "A German scientist who in 1912 proposed that the continents had once been joined and had drifted apart, and later named the supercontinent Pangaea. He pointed to coastlines that fit and to matching fossils on continents far apart. Most geologists rejected the idea. He died in 1930 on an expedition across the Greenland ice sheet."
+      },
+      {
+        "id": "tharp",
+        "name": "Marie Tharp",
+        "life": "1920–2006",
+        "role": "Geologist and ocean mapmaker",
+        "steps": [
+          13,
+          14
+        ],
+        "text": "An American geologist who, working with Bruce Heezen at Columbia University, turned echo soundings into the first detailed maps of the ocean floor. In the early 1950s she spotted a rift valley running along the Mid-Atlantic Ridge, a sign that the sea floor was splitting apart. Heezen was doubtful. Their map of the whole ocean floor appeared in 1977."
+      }
+    ]
+  }
+}

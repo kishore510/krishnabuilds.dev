@@ -10,9 +10,7 @@ One story in each subject still to come would fill the front page's shelves: Ear
 
 Nature first, in this order (design in `docs/earth-deep.md`):
 
-1. The `earth-deep` canvas: engine, then the basemap (PaleoMAP PaleoCoastlines, CC BY 4.0)
-2. The Making of Earth (Earth, `earth-deep`)
-3. Life on Earth (Life, `earth-deep`)
+1. Life on Earth (Life, `earth-deep`)
 
 Biology and Medicine fits the `world` map, so it can go in between at any time: Smallpox, from variolation to eradication, then The Gene (genetics, with a labelled aside on what Jurassic Park got right and wrong).
 
@@ -41,6 +39,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Making of Earth (`making-of-earth`), 2026-11-14
 - The Eastern Gangas (`eastern-ganga`), 2026-11-14
 - Charles Darwin (`darwin`), 2026-11-14
 - Mahatma Gandhi (`gandhi`), 2026-11-14

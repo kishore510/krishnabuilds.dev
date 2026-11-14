@@ -33,7 +33,7 @@ eras.append({"id":"archean","name":"The first continents, 4 to 2.5 billion years
   "labels":[L("Small continents: shapes illustrative",[-20,62],"range")]})
 rod=[blob(5,-5,58,32,201,22,.32),blob(-75,30,14,10,202,12,.3),blob(85,35,12,9,203,12,.3)]
 eras.append({"id":"rodinia","name":"Rodinia, about 1 billion years ago","shapes":rod,
-  "labels":[L("Rodinia",[5,-5],"range"),L("Mirovia Ocean",[-110,-30]),L("One reconstruction of several",[5,-48],"range")]})
+  "labels":[L("Rodinia",[-15,8],"range"),L("Mirovia Ocean",[-110,-30]),L("One reconstruction of several",[5,-48],"range")]})
 sb=[blob(-40,10,26,18,301,16,.3),blob(25,-10,30,20,302,16,.3),blob(90,15,22,14,303,14,.3)]
 eras.append({"id":"snowball","name":"Snowball Earth, about 700 million years ago","shapes":sb,"ice":sb,"wash":{"color":"#e9f3f8","opacity":0.78},
   "labels":[L("Ice from pole to equator?",[-110,-25],"range")]})
@@ -49,7 +49,7 @@ ice=[{"closed":True,"points":[[-165,68],[-140,70],[-120,75],[-90,80],[-70,80],[-
      {"closed":True,"points":[[-11,53],[-6,50.5],[2,51.5],[10,52.5],[20,52],[30,55],[40,62],[55,66],[65,72],[60,80],[40,81],[15,80],[0,72],[-10,62],[-14,57]]},
      {"closed":True,"points":[[-180,-64],[-120,-66],[-60,-62],[0,-66],[60,-64],[120,-63],[180,-64],[180,-90],[-180,-90]]}]
 eras.append({"id":"ice-age","name":"The last ice age, about 20,000 years ago","shapes":today,"ice":ice,
-  "labels":[L("Ice sheets (approximate)",[-100,58],"range"),L("Atlantic Ocean",[-35,15]),L("Pacific Ocean",[-150,0])]})
+  "labels":[L("Ice sheets (approximate)",[-118,71],"range"),L("Atlantic Ocean",[-35,15]),L("Pacific Ocean",[-150,0])]})
 eras.append({"id":"today","name":"Today","shapes":today,"labels":[L("Atlantic Ocean",[-35,15]),L("Pacific Ocean",[-150,0]),L("Indian Ocean",[75,-25])]})
 basemap={"id":"earth-deep","name":"Earth in deep time","kind":"deep",
  "projection":{"lon0":-180,"lat0":90,"unitsPerDegree":5},"size":[1800,900],

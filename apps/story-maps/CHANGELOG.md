@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.71.0
+
+- New story map in Earth: The Making of Earth. From the molten Earth 4.54 billion years ago and the Moon-forming impact, through the first oceans and continents, the Great Oxidation, Rodinia, Snowball Earth, Gondwana, Pangaea and the Great Dying, the opening Atlantic, the asteroid at Chicxulub and India meeting Asia, to the ice ages, today's moving plates and how it was found. 15 chapters, the first on the earth-deep map, and 3 people cards.
+- New basemap: earth-deep, twelve eras of the globe, six simplified from PaleoMAP PaleoCoastlines (CC BY 4.0) and the rest drawn by hand. New glyphs: volcano, snowflake, wave.
+- Catalogue: The Making of Earth opens the story, with chapter entries for Snowball Earth, Pangaea and the Chicxulub impact.
+
 ## 0.70.0
 
 - Engine: the earth-deep canvas. A deep basemap holds eras, snapshots of the globe in deep time, each with its own land, ice, labels and an optional wash over the map. Each chapter names its era and the map fades from one to the next. A place is drawn only in its own era's chapters, and a deep-time story's card draws its own ancient globe. No story uses it yet.
