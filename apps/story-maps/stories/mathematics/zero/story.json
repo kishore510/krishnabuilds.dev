@@ -1,0 +1,347 @@
+{
+  "id": "zero",
+  "title": "The Journey of Zero",
+  "description": "How zero travelled from a Babylonian placeholder and an Indian dot to Brahmagupta’s rules, Baghdad and Fibonacci’s Pisa, with the Maya inventing it on their own.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "The journey of zero",
+  "note": "Babylon’s pin is moved slightly south-east so it does not sit under Baghdad’s. Dotted lines are a book or an idea travelling, not a person.",
+  "places": {
+    "babylon": {
+      "name": "Babylon",
+      "at": [
+        45.9,
+        31.0
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "tikal": {
+      "name": "Tikal",
+      "at": [
+        -89.62,
+        17.22
+      ],
+      "glyph": "maya-temple",
+      "label": "right"
+    },
+    "bakhshali": {
+      "name": "Bakhshali",
+      "at": [
+        72.05,
+        34.25
+      ],
+      "glyph": "palm-leaf",
+      "label": "right"
+    },
+    "bhinmal": {
+      "name": "Bhillamala",
+      "at": [
+        72.27,
+        25.0
+      ],
+      "glyph": "sun-disc",
+      "label": "bottom"
+    },
+    "baghdad": {
+      "name": "Baghdad",
+      "at": [
+        44.36,
+        33.31
+      ],
+      "glyph": "dome",
+      "label": "top"
+    },
+    "bejaia": {
+      "name": "Bugia",
+      "at": [
+        5.08,
+        36.75
+      ],
+      "glyph": "anchor",
+      "label": "bottom"
+    },
+    "pisa": {
+      "name": "Pisa",
+      "at": [
+        10.4,
+        43.72
+      ],
+      "glyph": "pillar",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "book": {
+      "name": "The Indian numerals",
+      "icon": "scroll"
+    },
+    "ship": {
+      "name": "Merchant ship",
+      "icon": "merchant-ship"
+    }
+  },
+  "phases": {
+    "placeholder": {
+      "name": "A mark for an empty place",
+      "color": "#e0b04a"
+    },
+    "number": {
+      "name": "Zero becomes a number",
+      "color": "#e0573a"
+    },
+    "west": {
+      "name": "West through Baghdad",
+      "color": "#4fc3b0"
+    },
+    "europe": {
+      "name": "Into Europe",
+      "color": "#2b7fb4"
+    }
+  },
+  "routeStyles": {
+    "ideas": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "2 6",
+      "cap": "round"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 35,
+        "color": "rgba(224,176,74,.35)"
+      },
+      {
+        "until": 50,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 82,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(43,127,180,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 5,
+        "text": "c. 300 BCE"
+      },
+      {
+        "at": 29,
+        "text": "3rd c. CE"
+      },
+      {
+        "at": 42,
+        "text": "628"
+      },
+      {
+        "at": 58,
+        "text": "773"
+      },
+      {
+        "at": 92,
+        "text": "1202"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "babylon",
+      "phase": "placeholder",
+      "title": "A gap in the wedges",
+      "when": "c. 300 BCE",
+      "camera": {
+        "at": [
+          45,
+          32
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Babylonian scribes counted in sixties and, from about 1800 BCE, wrote numbers by place, as we do. But they had no sign for an empty place, so 61 and 3,601 could look the same. By about 300 BCE they pressed two slanting wedges into the gap: only a placeholder, never written at the end of a number or alone.",
+      "today": "Today: ruins near Hillah, Iraq. We still count sixty seconds and sixty minutes.",
+      "at": 5
+    },
+    {
+      "place": "tikal",
+      "phase": "placeholder",
+      "title": "A zero in the forest",
+      "when": "c. 250 to 900 CE",
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          -89.6,
+          17.2
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Half a world away, with no contact, the Maya invented a zero of their own. Their scribes counted in twenties and often drew zero as a shell. Their Long Count calendar counted days from a starting date in 3114 BCE, so its dates needed zeros, and stelae at cities such as Tikal carry them. This zero never left the Americas.",
+      "today": "Today: a national park and World Heritage Site in northern Guatemala.",
+      "at": 17
+    },
+    {
+      "place": "bakhshali",
+      "phase": "placeholder",
+      "title": "A dot on birch bark",
+      "native": "शून्य",
+      "when": "3rd to 10th century CE (disputed)",
+      "camera": {
+        "at": [
+          72,
+          32
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1881 a farmer near the village of Bakhshali dug up a birch-bark arithmetic manuscript. It writes numbers with ten digits by place, with a dot in an empty place: the dot that grew into our 0. In 2017 radiocarbon tests dated some leaves to the 3rd or 4th century CE, but many scholars date the text centuries later.",
+      "today": "Today: near Mardan, Pakistan. The manuscript is in the Bodleian Library, Oxford.",
+      "at": 29
+    },
+    {
+      "place": "bhinmal",
+      "phase": "number",
+      "title": "Zero becomes a number",
+      "native": "ब्रह्मस्फुटसिद्धान्त",
+      "when": "628 CE",
+      "camera": {
+        "at": [
+          72,
+          27
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At Bhillamala in 628 CE Brahmagupta wrote rules for calculating with zero itself. A number minus itself is zero; any number times zero is zero. He set debts beside fortunes as negative numbers, with rules for both. He said zero divided by zero is zero, which later mathematicians rejected. Zero was now a number, not just a gap.",
+      "today": "Today: Bhinmal, a town in Jalore district, Rajasthan.",
+      "at": 42
+    },
+    {
+      "place": "baghdad",
+      "phase": "west",
+      "title": "The Indian numerals reach Baghdad",
+      "when": "c. 773 to 830 CE",
+      "camera": {
+        "at": [
+          58,
+          30
+        ],
+        "width": 52
+      },
+      "legs": [
+        {
+          "from": "bhinmal",
+          "to": "baghdad",
+          "traveller": "book",
+          "style": "ideas",
+          "bend": 0.12
+        }
+      ],
+      "text": "Around 773 a scholar from India reached the caliph al-Mansur’s new city of Baghdad with a Sanskrit astronomy book, probably drawn from Brahmagupta’s, and it was put into Arabic. About fifty years later al-Khwarizmi wrote a book on calculating with the Indian numerals. Arabic called zero sifr, ‘empty’, which became our ‘cipher’. His own name became ‘algorithm’.",
+      "today": "Today: the capital of Iraq. Al-Khwarizmi’s Arabic text is lost; it survives in Latin.",
+      "at": 58
+    },
+    {
+      "place": "bejaia",
+      "phase": "west",
+      "title": "A merchant’s son learns the figures",
+      "when": "c. 1185 to 1200",
+      "camera": {
+        "at": [
+          25,
+          36
+        ],
+        "width": 52
+      },
+      "legs": [
+        {
+          "from": "baghdad",
+          "to": "bejaia",
+          "traveller": "book",
+          "style": "ideas",
+          "bend": -0.12
+        }
+      ],
+      "text": "Leonardo of Pisa, later called Fibonacci, was a boy when his father went to Bugia, on the North African coast, to run the customs house for Pisan merchants. There he was taught ‘the nine Indian figures’ and loved them. He went on to Egypt, Syria, Greece, Sicily and Provence, studying how merchants everywhere calculated.",
+      "today": "Today: Béjaïa, a port city in Algeria.",
+      "at": 74
+    },
+    {
+      "place": "pisa",
+      "phase": "europe",
+      "title": "Zephirum comes to Europe",
+      "when": "1202",
+      "camera": {
+        "at": [
+          8,
+          40
+        ],
+        "width": 36
+      },
+      "legs": [
+        {
+          "from": "bejaia",
+          "to": "pisa",
+          "traveller": "ship",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1202 Leonardo finished the Liber Abaci, the Book of Calculation: with nine figures ‘and the sign 0, which the Arabs call zephirum, any number can be written’. It taught merchants to keep accounts, change money and share profits. Resistance lasted: in 1299 Florence’s money-changers’ guild banned the numerals from account books. Printing helped them win in the 1500s.",
+      "today": "Today: Pisa, in Tuscany, Italy. Zephirum became zefiro, then ‘zero’.",
+      "at": 92
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "brahmagupta",
+        "name": "Brahmagupta",
+        "native": "ब्रह्मगुप्त",
+        "life": "598 to after 665 CE",
+        "role": "Astronomer and mathematician",
+        "steps": [
+          3,
+          4
+        ],
+        "text": "An astronomer who worked at Bhillamala and is often said to have led the observatory at Ujjain. He wrote the Brahmasphutasiddhanta at thirty, a long verse work on astronomy with chapters on arithmetic and algebra. Its rules for zero and negative numbers are the first known. Through Arabic translations his work shaped mathematics in Baghdad."
+      },
+      {
+        "id": "al-khwarizmi",
+        "name": "al-Khwarizmi",
+        "life": "c. 780 to c. 850",
+        "role": "Mathematician and astronomer",
+        "steps": [
+          4
+        ],
+        "text": "Muhammad ibn Musa al-Khwarizmi, probably from Khwarazm south of the Aral Sea, was a scholar at the House of Wisdom in Baghdad. His book al-jabr gave its name to algebra, and his book on the Indian numerals, known in Latin as Algoritmi de numero Indorum, gave us ‘algorithm’. He also made astronomical tables and a world geography."
+      },
+      {
+        "id": "fibonacci",
+        "name": "Leonardo of Pisa (Fibonacci)",
+        "life": "c. 1170 to c. 1250",
+        "role": "Mathematician",
+        "steps": [
+          5,
+          6
+        ],
+        "text": "He signed himself Leonardo of Pisa, son of Bonacci; ‘Fibonacci’ is a nickname from centuries later. Besides the Liber Abaci he wrote on geometry and number theory, and solved problems set before the Emperor Frederick II. A puzzle in his book about breeding rabbits gives the sequence 1, 1, 2, 3, 5, 8 that now bears his name."
+      }
+    ]
+  }
+}

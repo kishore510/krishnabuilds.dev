@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.64.0
+
+- New story map in Mathematics, the subject's first: The Journey of Zero. From the Babylonian placeholder and the Maya's own zero, through the Bakhshali dot on birch bark and Brahmagupta's rules for zero as a number in 628 CE, to the Indian numerals reaching Baghdad, Leonardo of Pisa learning them at Bugia and the Liber Abaci of 1202. 7 chapters on the world map and 3 people cards.
+- Catalogue: The journey of zero opens the story, with person entries for Brahmagupta, al-Khwarizmi and Fibonacci.
+
 ## 0.63.0
 
 - New story map in Chemistry: The Hunt for the Elements. From Brand’s glowing phosphorus in 1669, Ytterby’s four elements, Lavoisier’s list and Davy’s electric battery, through Bunsen and Kirchhoff’s spectra and helium in the Sun, to Mendeleev’s table and the gaps it predicted, the noble gases and Moseley’s atomic numbers, then technetium, the transuranium elements and the superheavy elements of Darmstadt, Dubna and Wako. 17 chapters on the world map and 5 people cards.
