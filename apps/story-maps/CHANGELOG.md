@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.52.0
+
+- New story map in Legends, Greek epics: The Odyssey. From Troy, the Cicones and the Lotus-eaters, through the Cyclops, Aeolus, the Laestrygonians, Circe, the dead, the Sirens, Scylla and Charybdis, the cattle of the Sun and Calypso, to Telemachus’s journey, the Phaeacians, Odysseus’s return in disguise, the bow and the suitors, and the digs at Pylos and Ithaca. 25 chapters on the europe map and 5 people cards.
+- Catalogue: The Odyssey opens the story.
+
 ## 0.51.0
 
 - Reads: every opening of a story counts as a read, repeat visits included. The count shows on the end card ("Opened N times"), on front-page cards ("340 reads · ♥ 12") and in Browse, which gets a "Most read" sort.
