@@ -6,6 +6,7 @@ const browser = {
   clearTimeout: "readonly",
   document: "readonly",
   Element: "readonly",
+  fetch: "readonly",
   localStorage: "readonly",
   KeyboardEvent: "readonly",
   location: "readonly",
@@ -25,7 +26,12 @@ export default defineConfig(
     languageOptions: { sourceType: "script", globals: browser },
   },
   {
+    // The Cloudflare Worker: an ES module, not an inlined page script.
+    files: ["src/worker.js"],
+    languageOptions: { sourceType: "module", globals: { fetch: "readonly", Request: "readonly", Response: "readonly", URL: "readonly" } },
+  },
+  {
     files: ["scripts/**/*.mjs", "test/**/*.js"],
-    languageOptions: { globals: { console: "readonly", process: "readonly", URL: "readonly", structuredClone: "readonly" } },
+    languageOptions: { globals: { console: "readonly", process: "readonly", URL: "readonly", structuredClone: "readonly", Request: "readonly", Response: "readonly" } },
   },
 );
