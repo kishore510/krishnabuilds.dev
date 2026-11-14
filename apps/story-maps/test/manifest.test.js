@@ -55,6 +55,14 @@ describe("manifest.json", () => {
     expect(problems).not.toContain("x-placeholder: a built story needs added");
   });
 
+  it("keeps story ids off subject pages and the site's own paths", () => {
+    const first = manifest.stories[0];
+    const broken = { ...manifest, stories: [...manifest.stories, { ...first, id: "lives" }, { ...first, id: "explore" }] };
+    const problems = validateManifest(broken).join("\n");
+    expect(problems).toContain("story lives: id clashes with the subject page /lives/");
+    expect(problems).toContain("explore: id is a reserved path");
+  });
+
   it("allows a story with no collection", () => {
     const loose = manifest.stories.find((s) => s.collection === undefined);
     expect(loose).toBeDefined();

@@ -1,6 +1,6 @@
 # CLAUDE.md: Story Maps
 
-Illustrated, data-driven story maps at `story-maps.krishnabuilds.dev`: a front page of three shelves, an Explore page (Timeline, Browse, Atlas; it opens on Timeline) and one page per story. Follows the root `CLAUDE.md`; this file only adds what is specific to Story Maps.
+Illustrated, data-driven story maps at `story-maps.krishnabuilds.dev`: a front page of three shelves, a page per subject (`/<subject>/`, for sharing one subject), an Explore page (Timeline, Browse, Atlas; it opens on Timeline) and one page per story. Follows the root `CLAUDE.md`; this file only adds what is specific to Story Maps.
 
 Story Maps "stories" are not the Portal's `/stories/<slug>` pages (the Portal's write-ups about each app). In this folder, "story" always means a map in `manifest.json`.
 
@@ -78,6 +78,7 @@ The front page has three shelves, fixed in `scripts/manifest.mjs`: **Nature** (w
 - Science: **Physics and Astronomy**, and to come **Mathematics**, **Chemistry**, **Biology and Medicine**, **Invention**. A Science story follows a discovery or an idea from one person and place to the next. How it was found is recorded history, so those cards are tagged History.
 - A person's life goes in Lives, never in a Science subject: Marie Curie is a Life, Radioactivity is Physics and Astronomy.
 - What happened goes on Nature and how it was found out goes on Science: evolution is Life, Darwin is Biology.
+- Every subject also has its own page at `/<subject>/`: all its story maps, newest first, grouped by collection, with a Share button (`hub/front.js`). Stories and subjects share the top-level paths, so the build refuses a story id equal to a section id or to `explore`, `fonts` or `api`.
 
 `manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A `built` story also needs `added`: when its map was finished, as `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM` in UTC (set it when the story is built). The hub's "New story maps" row lists every finished map, newest first by `added`, however old; the New pill marks those from the last 45 days. Placeholder entries and coming-soon stories are never listed there. A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
 
