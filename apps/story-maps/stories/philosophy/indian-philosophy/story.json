@@ -1,0 +1,693 @@
+{
+  "id": "indian-philosophy",
+  "title": "Indian Philosophy",
+  "description": "How Indian thinkers argued about the self, the world and how we know anything, from a doubting hymn in the Rigveda to the Upanishads, the Jain and Buddhist teachers, the six schools, Nagarjuna, Nalanda, the three great teachers of Vedanta, the new logic of Mithila and a Mughal prince's translation, in 16 chapters.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Where Indian philosophy was argued",
+  "note": "Many of these thinkers' dates are uncertain, and some are known only from texts written long after them; each card says where the dates are disputed or come from tradition. Native names are in Sanskrit, with Persian for the last chapter. The map is stylised and not to scale.",
+  "places": {
+    "sapta-sindhu": {
+      "name": "Land of Seven Rivers",
+      "at": [
+        74.5,
+        31.0
+      ],
+      "glyph": "sacred-fire",
+      "label": "bottom"
+    },
+    "kuru-panchala": {
+      "name": "Kuru–Panchala",
+      "at": [
+        78.0,
+        29.15
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "mithila": {
+      "name": "Mithila",
+      "at": [
+        85.92,
+        26.73
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "vaishali": {
+      "name": "Vaishali",
+      "at": [
+        85.13,
+        25.99
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "rajagriha": {
+      "name": "Rajagriha",
+      "at": [
+        85.42,
+        25.03
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "bodh-gaya": {
+      "name": "Bodh Gaya",
+      "at": [
+        84.99,
+        24.7
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [
+        72.83,
+        33.75
+      ],
+      "glyph": "trading-post",
+      "label": "bottom"
+    },
+    "kashi": {
+      "name": "Kashi",
+      "at": [
+        83.0,
+        25.32
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "nagarjunakonda": {
+      "name": "Shriparvata",
+      "at": [
+        79.25,
+        16.52
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "nalanda": {
+      "name": "Nalanda",
+      "at": [
+        85.44,
+        25.14
+      ],
+      "glyph": "palm-leaf",
+      "label": "right"
+    },
+    "kaladi": {
+      "name": "Kaladi",
+      "at": [
+        76.44,
+        10.17
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "sringeri": {
+      "name": "Sringeri",
+      "at": [
+        75.25,
+        13.42
+      ],
+      "glyph": "gopuram",
+      "label": "left"
+    },
+    "dwarka": {
+      "name": "Dwarka",
+      "at": [
+        68.97,
+        22.24
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "puri": {
+      "name": "Puri",
+      "at": [
+        85.83,
+        19.81
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "jyotirmath": {
+      "name": "Jyotirmath",
+      "at": [
+        79.56,
+        30.56
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "sriperumbudur": {
+      "name": "Sriperumbudur",
+      "at": [
+        79.95,
+        12.97
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "srirangam": {
+      "name": "Srirangam",
+      "at": [
+        78.69,
+        10.86
+      ],
+      "glyph": "gopuram",
+      "label": "bottom"
+    },
+    "udupi": {
+      "name": "Udupi",
+      "at": [
+        74.75,
+        13.34
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.21,
+        28.65
+      ],
+      "glyph": "dome",
+      "label": "bottom"
+    },
+    "west-edge": {
+      "name": "West edge",
+      "at": [
+        68.3,
+        34.5
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "hoplite": {
+      "name": "Alexander’s army",
+      "icon": "hoplite"
+    },
+    "monk": {
+      "name": "A teacher on the road",
+      "icon": "monk"
+    },
+    "scroll": {
+      "name": "The translation",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "vedas": {
+      "name": "Questions in the Vedas",
+      "color": "#e0a43a"
+    },
+    "wanderers": {
+      "name": "The wandering teachers",
+      "color": "#4fc3b0"
+    },
+    "schools": {
+      "name": "Schools and monasteries",
+      "color": "#2b7fb4"
+    },
+    "vedanta": {
+      "name": "Three answers of Vedanta",
+      "color": "#e0573a"
+    },
+    "later": {
+      "name": "New logic, new readers",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "tradition": {
+      "color": "#e0573a",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "book": {
+      "color": "#a678e0",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 18.0,
+        "color": "rgba(224,164,58,.35)"
+      },
+      {
+        "until": 43.6,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 62.8,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 88.4,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "c. 1500 BCE"
+      },
+      {
+        "at": 21.2,
+        "text": "6th c. BCE"
+      },
+      {
+        "at": 40.4,
+        "text": "326"
+      },
+      {
+        "at": 60.4,
+        "text": "c. 200 BCE"
+      },
+      {
+        "at": 79.6,
+        "text": "8th c. CE"
+      },
+      {
+        "at": 98.0,
+        "text": "1657"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "sapta-sindhu",
+      "phase": "vedas",
+      "title": "The Hymn of Creation",
+      "native": "नासदीय सूक्त",
+      "when": "c. 1500–1000 BCE",
+      "at": 2.0,
+      "camera": {
+        "at": [
+          74.5,
+          31
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "The oldest Indian text, the Rigveda, is mostly hymns to the gods for the fire ritual (yajna). But one late hymn, the Hymn of Creation (Nasadiya Sukta), asks what there was before being and non-being, and ends in doubt: perhaps even the one who watches from highest heaven does not know. Much Indian philosophy starts from that question.",
+      "today": "Today: the Punjab, in India and Pakistan. The hymns are still recited."
+    },
+    {
+      "place": "kuru-panchala",
+      "phase": "vedas",
+      "title": "You are that",
+      "native": "तत् त्वम् असि",
+      "when": "c. 800–500 BCE",
+      "at": 8.4,
+      "camera": {
+        "at": [
+          78,
+          28.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In the Chandogya Upanishad, Uddalaka Aruni teaches his son Shvetaketu with everyday things. Salt dissolved in water cannot be seen, yet every sip tastes of it; so a subtle essence runs through the world, 'and you are that' (tat tvam asi). The Upanishads link the self (atman) with the ground of everything (brahman), an idea later schools argue over.",
+      "today": "Today: the plain between the Ganga and the Yamuna. The text names no place; scholars put the older Upanishads here and in Videha."
+    },
+    {
+      "place": "mithila",
+      "phase": "vedas",
+      "title": "Janaka's contest",
+      "native": "जनक",
+      "when": "c. 700–500 BCE",
+      "at": 14.8,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          85.9,
+          26.7
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The Brihadaranyaka Upanishad tells how King Janaka of Videha offered a thousand cows, gold tied to their horns, to the wisest priest. Yajnavalkya had them driven off, then answered every challenger, among them the woman scholar Gargi. He taught that the self (atman) cannot be described except by denial: 'not this, not this' (neti neti).",
+      "today": "Today: tradition places Janaka's capital at Janakpur, in Nepal."
+    },
+    {
+      "place": "vaishali",
+      "phase": "wanderers",
+      "title": "Mahavira and many-sidedness",
+      "native": "महावीर",
+      "when": "6th–5th century BCE",
+      "at": 21.2,
+      "camera": {
+        "at": [
+          85.1,
+          26
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Wandering ascetics (shramanas) turned away from Vedic ritual. Vardhamana, called Mahavira ('great hero'), born near Vaishali, taught that every living thing has a soul (jiva) weighed down by karma, freed by non-violence (ahimsa) and renunciation. He taught many-sidedness (anekantavada): truth looks different from each standpoint. Jain tradition dates his death to 527 BCE; many historians put it later.",
+      "today": "Today: Vaishali, Bihar. Jains honour Kundagrama, nearby, as his birthplace."
+    },
+    {
+      "place": "rajagriha",
+      "phase": "wanderers",
+      "title": "Six rival teachers",
+      "when": "5th century BCE",
+      "at": 27.6,
+      "camera": {
+        "at": [
+          85.4,
+          25
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "A Buddhist text, the Fruits of the Homeless Life (Samannaphala Sutta), has King Ajatashatru of Magadha recall six famous teachers. Ajita taught that a person is only the four elements and is gone at death. Makkhali Gosala of the Ajivikas held that fate (niyati) fixes everything. Sanjaya would answer neither yes nor no. Their own writings are lost.",
+      "today": "Today: Rajgir, Bihar."
+    },
+    {
+      "place": "bodh-gaya",
+      "phase": "wanderers",
+      "title": "The Buddha's middle way",
+      "native": "बुद्ध",
+      "when": "5th century BCE",
+      "at": 34.0,
+      "camera": {
+        "at": [
+          85,
+          24.7
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Siddhartha Gautama left home, tried hard austerities, and under a tree at Bodh Gaya reached what he called awakening (bodhi). Near Varanasi he taught that life is marked by suffering (dukkha), caused by craving, that it can end, and that an Eightfold Path leads there. He denied a lasting self (anatta). His dates are disputed by about a century.",
+      "today": "Today: Bodh Gaya, Bihar, a World Heritage Site."
+    },
+    {
+      "place": "taxila",
+      "phase": "wanderers",
+      "title": "The Greeks meet the ascetics",
+      "when": "326 BCE",
+      "at": 40.4,
+      "camera": {
+        "at": [
+          72,
+          33
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "west-edge",
+          "to": "taxila",
+          "traveller": "hoplite",
+          "style": "march",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 326 BCE Alexander of Macedon reached Taxila. Greek writers tell how his officer Onesicritus questioned naked ascetics, whom the Greeks called gymnosophists, and how one, Calanus, joined the army and later burned himself on a pyre in Persia. The philosopher Pyrrho travelled with Alexander too; ancient writers linked his later scepticism to these meetings.",
+      "today": "Today: Taxila, Punjab, Pakistan, a World Heritage Site."
+    },
+    {
+      "place": "kashi",
+      "phase": "schools",
+      "title": "The six views",
+      "native": "षड्दर्शन",
+      "when": "c. 200 BCE – 500 CE",
+      "at": 46.8,
+      "camera": {
+        "at": [
+          83,
+          25.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Six schools that accepted the Vedas set down root texts in short sayings (sutras): Nyaya on logic and debate, Vaisheshika on atoms, Sankhya on spirit and matter, Yoga on stilling the mind, Mimamsa on ritual, and Vedanta on brahman. The dates of these texts are uncertain. Kashi (Varanasi) has long been a great place to study them.",
+      "today": "Today: Varanasi, Uttar Pradesh, still a centre of Sanskrit learning."
+    },
+    {
+      "place": "nagarjunakonda",
+      "phase": "schools",
+      "title": "Nagarjuna and emptiness",
+      "native": "नागार्जुन",
+      "when": "c. 150–250 CE",
+      "at": 53.2,
+      "camera": {
+        "at": [
+          79.25,
+          16.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Nagarjuna, the Buddhist thinker of the Middle Way (Madhyamaka), argued that nothing exists by its own nature: everything arises in dependence on other things, and so is empty (shunyata). Even emptiness is empty. Tradition links him with the Satavahana kings and with Shriparvata, now Nagarjunakonda, but where he lived is uncertain.",
+      "today": "Today: Nagarjunakonda, Andhra Pradesh. Its ruins were moved to an island before a dam flooded the valley."
+    },
+    {
+      "place": "nalanda",
+      "phase": "schools",
+      "title": "Nalanda",
+      "native": "नालन्दा",
+      "when": "5th–12th century CE",
+      "at": 59.6,
+      "camera": {
+        "at": [
+          85.4,
+          25.1
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Nalanda, a Buddhist monastery founded under the Gupta kings in the 5th century CE, grew into Asia's great centre of learning. The Chinese pilgrim Xuanzang studied there in the 630s and described monks debating logic and philosophy. Its teachers carried Buddhist thought to Tibet. It declined, and was sacked around 1200.",
+      "today": "Today: Nalanda, Bihar. Its ruins are a World Heritage Site."
+    },
+    {
+      "place": "kaladi",
+      "phase": "vedanta",
+      "title": "Shankara: only brahman is real",
+      "native": "शङ्कर",
+      "when": "8th century CE",
+      "at": 66.0,
+      "camera": {
+        "at": [
+          76.4,
+          10.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Shankara taught non-dualism (Advaita Vedanta): only brahman is real, the self is not different from it, and the many things we see are appearance (maya). His commentaries on the Upanishads, the Bhagavad Gita and the Brahma Sutra shaped Hindu thought. Tradition dates him 788 to 820 CE and places his birth at Kaladi; many scholars put him earlier.",
+      "today": "Today: Kaladi, Kerala, on the Periyar river."
+    },
+    {
+      "place": "sringeri",
+      "phase": "vedanta",
+      "title": "Four monasteries",
+      "native": "मठ",
+      "when": "8th century CE",
+      "at": 72.4,
+      "source": "Tradition",
+      "camera": {
+        "at": [
+          77.5,
+          21.5
+        ],
+        "width": 26
+      },
+      "legs": [
+        {
+          "from": "sringeri",
+          "to": "dwarka",
+          "traveller": "monk",
+          "style": "tradition",
+          "bend": 0.15
+        },
+        {
+          "from": "sringeri",
+          "to": "jyotirmath",
+          "traveller": "monk",
+          "style": "tradition",
+          "bend": -0.1
+        },
+        {
+          "from": "sringeri",
+          "to": "puri",
+          "traveller": "monk",
+          "style": "tradition",
+          "bend": 0.12
+        }
+      ],
+      "text": "Lives of Shankara written centuries later tell of him walking the length of India, defeating rival teachers in debate, and founding four monasteries (mathas), at Sringeri, Dwarka, Puri and Jyotirmath, one for each direction. They say he died young in the Himalaya, at Kedarnath. Historians treat these lives as legend, but the four mathas still claim him.",
+      "today": "Today: the four mathas are still led by teachers called Shankaracharyas."
+    },
+    {
+      "place": "srirangam",
+      "phase": "vedanta",
+      "title": "Ramanuja: a real world",
+      "native": "रामानुज",
+      "when": "11th–12th century CE",
+      "at": 78.8,
+      "camera": {
+        "at": [
+          79.3,
+          11.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "sriperumbudur",
+          "to": "srirangam",
+          "traveller": "monk",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Ramanuja, born at Sriperumbudur and later head of the temple community at Srirangam, answered Shankara. The world and selves are real, he taught, forming the body of God (Vishnu), who is personal; liberation comes through devotion (bhakti) and God's grace. His school is qualified non-dualism (Vishishtadvaita). Tradition gives his life as 1017 to 1137.",
+      "today": "Today: Srirangam, Tamil Nadu, home of the Ranganathaswamy temple."
+    },
+    {
+      "place": "udupi",
+      "phase": "vedanta",
+      "title": "Madhva: forever different",
+      "native": "मध्व",
+      "when": "13th–14th century CE",
+      "at": 85.2,
+      "camera": {
+        "at": [
+          74.75,
+          13.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Madhva of Udupi went further: God (Vishnu), selves and matter are forever distinct, a dualism (Dvaita). Against Shankara he argued that the world is no illusion. Tradition says he set up the image of Krishna at Udupi, where eight monasteries founded by him still take turns to run the temple. His dates are usually given as 1238 to 1317.",
+      "today": "Today: Udupi, Karnataka."
+    },
+    {
+      "place": "mithila",
+      "phase": "later",
+      "title": "The new logic",
+      "native": "नव्यन्याय",
+      "when": "c. 14th century CE",
+      "at": 91.6,
+      "camera": {
+        "at": [
+          85.9,
+          26.7
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In Mithila, Gangesha wrote the Jewel of Thought on Truth (Tattvachintamani), founding the New Logic (Navya-Nyaya): a precise technical language for how we know things, by perception, inference, comparison and testimony. Scholars in Mithila and later at Navadvipa in Bengal sharpened it for centuries, and its terms entered law, grammar and the debates of many schools.",
+      "today": "Today: Mithila spans north Bihar and south-east Nepal. Gangesha's dates are uncertain."
+    },
+    {
+      "place": "delhi",
+      "phase": "later",
+      "title": "The Great Secret",
+      "native": "سرّ اکبر",
+      "lang": "fa",
+      "when": "1657",
+      "at": 98.0,
+      "camera": {
+        "at": [
+          74,
+          31.5
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "delhi",
+          "to": "west-edge",
+          "traveller": "scroll",
+          "style": "book",
+          "bend": 0.15
+        }
+      ],
+      "text": "In 1657 the Mughal prince Dara Shikoh, working with Sanskrit pandits, had about fifty Upanishads translated into Persian as the Great Secret (Sirr-i-Akbar), believing they agreed with Sufi teaching. A Frenchman, Anquetil-Duperron, turned the Persian into Latin in 1801 to 1802, and the German philosopher Schopenhauer called the Upanishads the consolation of his life.",
+      "today": "Today: Delhi. Some accounts place the translation at Varanasi instead."
+    }
+  ],
+  "people": {
+    "heading": "People in this story",
+    "items": [
+      {
+        "id": "gargi",
+        "name": "Gargi Vachaknavi",
+        "native": "गार्गी वाचक्नवी",
+        "life": "Dates not known",
+        "role": "Scholar at Janaka’s court",
+        "steps": [
+          2
+        ],
+        "text": "A woman scholar named in the Brihadaranyaka Upanishad. At Janaka's contest she pressed Yajnavalkya on what everything is woven upon, until he warned her not to ask too much, or her head would fall off. She returned with two questions sharp as arrows, then told the priests that none of them would beat him. Nothing else is known of her."
+      },
+      {
+        "id": "gosala",
+        "name": "Makkhali Gosala",
+        "native": "मक्खलि गोसाल",
+        "life": "5th century BCE",
+        "role": "Leader of the Ajivikas",
+        "steps": [
+          4
+        ],
+        "text": "Leader of the Ajivikas, ascetics who held that every being passes through a fixed round of rebirths that no effort can change. Jain texts say he lived for years with Mahavira before they quarrelled at Shravasti, and Buddhist texts call his teaching the worst. Ashoka gave the Ajivikas caves in the Barabar Hills. None of their own writings survive."
+      },
+      {
+        "id": "xuanzang",
+        "name": "Xuanzang",
+        "native": "玄奘",
+        "lang": "zh",
+        "life": "c. 602–664",
+        "role": "Chinese pilgrim and translator",
+        "steps": [
+          9
+        ],
+        "text": "A Chinese monk who left Chang'an in 629 against an imperial ban and crossed Central Asia to India in search of Buddhist texts. He studied at Nalanda under its abbot Shilabhadra and debated at Harsha's court. He went home in 645 with more than 600 texts and spent the rest of his life translating them."
+      },
+      {
+        "id": "dara-shikoh",
+        "name": "Dara Shikoh",
+        "native": "دارا شکوه",
+        "lang": "fa",
+        "life": "1615–1659",
+        "role": "Mughal prince and translator",
+        "steps": [
+          15
+        ],
+        "text": "The eldest son of the emperor Shah Jahan, and a Sufi of the Qadiri order. In The Mingling of Two Oceans (Majma-ul-Bahrain) he compared Sufi and Hindu ideas and found them close. He lost the war of succession to his brother Aurangzeb, and was put to death in Delhi in 1659 on a charge of heresy."
+      }
+    ]
+  }
+}
