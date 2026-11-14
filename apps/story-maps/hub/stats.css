@@ -1,0 +1,60 @@
+/* Likes and reads on story pages (hub/stats.js): the like count in the top
+   bar, and the like button and read count on the end card. */
+.sm-like {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--sm-muted);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1;
+}
+.sm-like svg path {
+  fill: none;
+}
+.sm-like--count {
+  padding: 4px 4px;
+}
+.sm-like--count[hidden] {
+  display: none;
+}
+.sm-like--mine,
+.sm-like[aria-pressed="true"] {
+  color: var(--sm-saffron);
+}
+.sm-like--mine svg path,
+.sm-like[aria-pressed="true"] svg path {
+  fill: currentColor;
+}
+.sm-like--end {
+  padding: 5px 12px;
+  border: 1.5px solid var(--sm-saffron);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--sm-ink);
+  font-family: var(--sm-font-head);
+  cursor: pointer;
+}
+.sm-like--end:hover {
+  color: var(--sm-saffron);
+}
+.sm-like--end:focus-visible {
+  outline: 2px solid var(--sm-saffron);
+  outline-offset: 2px;
+}
+.sm-like--end .sm-like__n:not(:empty)::before {
+  content: "· ";
+}
+.sm-end-like {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 12px;
+}
+.sm-reads {
+  color: var(--sm-muted);
+  font-size: 14px;
+}

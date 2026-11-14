@@ -14,14 +14,14 @@ let allow = true;
 let writes = 0;
 const env = {
   ASSETS: { fetch: async () => new Response("asset") },
-  LIKE_COUNTS: {
+  STORY_COUNTS: {
     get: async (/** @type {string} */ k) => kv.get(k) ?? null,
     put: async (/** @type {string} */ k, /** @type {string} */ v) => {
       writes++;
       kv.set(k, v);
     },
   },
-  LIKE_LIMITER: { limit: async () => ({ success: allow }) },
+  WRITE_LIMITER: { limit: async () => ({ success: allow }) },
 };
 
 /** @param {string} path @param {string} [method] */
@@ -33,23 +33,32 @@ beforeEach(() => {
   writes = 0;
 });
 
-describe("likes API", () => {
+describe("counts API", () => {
   it("starts empty, counts a like and takes it back", async () => {
-    expect(await (await call("/api/likes")).json()).toEqual({});
+    expect(await (await call("/api/stats")).json()).toEqual({ likes: {}, reads: {} });
     expect(await (await call(`/api/like/${built}`, "POST")).json()).toEqual({ id: built, count: 1 });
     expect(await (await call(`/api/like/${built}`, "POST")).json()).toEqual({ id: built, count: 2 });
-    expect(await (await call("/api/likes")).json()).toEqual({ [built]: 2 });
+    expect(await (await call("/api/stats")).json()).toEqual({ likes: { [built]: 2 }, reads: {} });
     expect(await (await call(`/api/like/${built}`, "DELETE")).json()).toEqual({ id: built, count: 1 });
   });
 
   it("never goes below zero and drops stories with no likes", async () => {
     expect(await (await call(`/api/like/${built}`, "DELETE")).json()).toEqual({ id: built, count: 0 });
-    expect(await (await call("/api/likes")).json()).toEqual({});
+    expect(await (await call("/api/stats")).json()).toEqual({ likes: {}, reads: {} });
+  });
+
+  it("counts every opening as a read, kept apart from likes", async () => {
+    await call(`/api/read/${built}`, "POST");
+    expect(await (await call(`/api/read/${built}`, "POST")).json()).toEqual({ id: built, count: 2 });
+    await call(`/api/like/${built}`, "POST");
+    expect(await (await call("/api/stats")).json()).toEqual({ likes: { [built]: 1 }, reads: { [built]: 2 } });
+    expect((await call(`/api/read/${built}`, "DELETE")).status).toBe(405);
   });
 
   it("only counts built stories, and leaves KV alone otherwise", async () => {
     for (const id of ["no-such-story", "constructor", "__proto__", soon].filter(Boolean)) {
       expect((await call(`/api/like/${id}`, "POST")).status).toBe(404);
+      expect((await call(`/api/read/${id}`, "POST")).status).toBe(404);
     }
     expect((await call("/api/like/Bad_Id", "POST")).status).toBe(404);
     expect((await call("/api/other")).status).toBe(404);
@@ -58,13 +67,14 @@ describe("likes API", () => {
 
   it("refuses other methods", async () => {
     expect((await call(`/api/like/${built}`)).status).toBe(405);
-    expect((await call("/api/likes", "POST")).status).toBe(405);
+    expect((await call("/api/stats", "POST")).status).toBe(405);
+    expect((await call("/api/likes")).status).toBe(404);
   });
 
   it("rate-limits writes without touching KV", async () => {
     allow = false;
-    const res = await call(`/api/like/${built}`, "POST");
-    expect(res.status).toBe(429);
+    expect((await call(`/api/like/${built}`, "POST")).status).toBe(429);
+    expect((await call(`/api/read/${built}`, "POST")).status).toBe(429);
     expect(writes).toBe(0);
   });
 

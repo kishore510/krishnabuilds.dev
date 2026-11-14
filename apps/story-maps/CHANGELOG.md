@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.51.0
+
+- Reads: every opening of a story counts as a read, repeat visits included. The count shows on the end card ("Opened N times"), on front-page cards ("340 reads · ♥ 12") and in Browse, which gets a "Most read" sort.
+- Likes come only from the end card now, so they come from readers who reached the end. The heart in the top bar shows the count but can't be tapped.
+- The API is now `GET /api/stats` (likes and reads together) plus `POST /api/read/<id>`; `/api/likes` is gone. Same KV namespace, with reads under their own key.
+
 ## 0.50.0
 
 - Likes: readers can like a story, from a heart in the top bar or a button on the end card, and take the like back. The count shows next to the heart and on the story's front-page card. One like per device, remembered on the device; no accounts.

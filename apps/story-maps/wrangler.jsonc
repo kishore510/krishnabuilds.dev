@@ -11,19 +11,19 @@
     "binding": "ASSETS",
     "not_found_handling": "404-page"
   },
-  // Every story's like count, as one JSON blob under the key "likes".
-  // The id names the namespace; it is not a secret.
+  // Every story's counts, one JSON blob per key: "likes" and "reads".
+  // The id names the namespace (story-maps-likes); it is not a secret.
   "kv_namespaces": [
     {
-      "binding": "LIKE_COUNTS",
+      "binding": "STORY_COUNTS",
       "id": "3f9f73ca4a6847d392303575b8b5eaa1"
     }
   ],
-  // Basic per-IP limit on POST and DELETE /api/like/<id>. namespace_id is a
+  // Basic per-IP limit on every write: likes, taking them back and reads. namespace_id is a
   // free-form number unique within the account (Arcade uses 1001).
   "ratelimits": [
     {
-      "name": "LIKE_LIMITER",
+      "name": "WRITE_LIMITER",
       "namespace_id": "1002",
       "simple": { "limit": 20, "period": 60 }
     }

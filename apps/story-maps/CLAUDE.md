@@ -6,7 +6,7 @@ Story Maps "stories" are not the Portal's `/stories/<slug>` pages (the Portal's 
 
 ## What this is
 
-A static site with a small Node build step. The only backend is a tiny likes API in `src/worker.js` (see Likes below). Every page is a single self-contained HTML file with inline `<style>` and `<script>`: `scripts/build.mjs` inlines the shared tokens CSS, `src/theme.css` and the `kb-theme` pre-paint script (`src/prepaint.js`) into each page.
+A static site with a small Node build step. The only backend is a tiny counts API for likes and reads in `src/worker.js` (see Likes and reads below). Every page is a single self-contained HTML file with inline `<style>` and `<script>`: `scripts/build.mjs` inlines the shared tokens CSS, `src/theme.css` and the `kb-theme` pre-paint script (`src/prepaint.js`) into each page.
 
 **One deliberate exception: fonts.** Yatra One and Tiro Devanagari Hindi are self-hosted as same-origin woff2 files in `dist/fonts/` (Latin and Devanagari subsets only, `unicode-range`, `font-display: swap`, with a serif fallback stack). Inlining them would add hundreds of KB to every page; as separate files the browser caches them across pages. No external font or asset requests, ever. Their SIL OFL licences are in `licences/` and ship next to the files.
 
@@ -35,12 +35,12 @@ hub/explore.js     pure catalogue functions (dates, neighbours, meanwhile, timel
 hub/hub.js         the Explore page in the browser: Atlas, Timeline and Browse
 hub/front.js       the front page in the browser: story cards pick up where the reader left off
 hub/progress.js    story pages only: remembers the last chapter read (the engine itself stores nothing)
-hub/likes.js       story pages only: the like button in the top bar and on the end card; remembers this device's likes (`sm-likes`)
-hub/likes.css      styles for the like buttons
+hub/stats.js       story pages only: counts a read on every opening, the like button on the end card and the like count in the top bar; remembers this device's likes (`sm-likes`)
+hub/stats.css      styles for the likes and reads
 hub/tour.js        the guided tour on the hub and story pages, and the button that reopens it; remembers that it has been shown (`sm-tour`)
 hub/tour.css       styles for the tour
 hub/explore.css    styles for the hub and entry pages
-src/worker.js      the Worker: serves dist/ and the likes API (GET /api/likes, POST and DELETE /api/like/<id>)
+src/worker.js      the Worker: serves dist/ and the counts API (GET /api/stats, POST and DELETE /api/like/<id>, POST /api/read/<id>)
 src/theme-picker.js Parchment / Night / Auto picker; test/prepaint.test.js fails if it writes a different cookie from packages/ui
 src/theme.css      painted theme (saffron, lapis, gold), light and dark
 src/prepaint.js    kb-theme pre-paint script; test/prepaint.test.js fails if it drifts from packages/ui/src/theme.ts
@@ -124,9 +124,14 @@ Phones first. In the map:
 - Only the map zooms: it has `touch-action: none` and handles pinch, wheel and drag itself. Never block page zoom elsewhere (no `user-scalable=no`).
 - Keep decoration counts modest (trees, waves, mountains): tens per layer, not hundreds.
 
-## Likes
+## Likes and reads
 
-Readers can like a story. `src/worker.js` keeps every count in one KV key (`likes` in the `LIKE_COUNTS` namespace), the same pattern as Arcade's play counter: `GET /api/likes` returns `{ "<id>": count }` (cached 30 seconds), and `POST` / `DELETE /api/like/<id>` add or take back one like. Only built stories in `manifest.json` can be liked, so a new story needs no Worker change. Writes are limited to 20 a minute per IP (`LIKE_LIMITER`). There are no accounts: `hub/likes.js` remembers on the device which stories it liked, so clearing storage lets someone like again. That is accepted for a friendly counter. Counts are public: on the story page and, from `hub/front.js`, on the front-page cards (hidden while 0), and in Browse (`hub/hub.js`) as a ♥ pill on a story's own entry (not its chapters) and a "Most liked" sort, which ranks entries by their story's likes, the story's entry before its chapters, then the rest oldest first. If the API can't be reached, as in the `python3 -m http.server` preview, no like button, pill or "Most liked" sort is shown. To try it locally, `pnpm exec wrangler dev` after a build serves the site and the API with a local KV.
+Each story has a public like count and read count. `src/worker.js` keeps them in the `STORY_COUNTS` KV namespace, one JSON blob per key (`likes` and `reads`), the same pattern as Arcade's play counter: `GET /api/stats` returns `{ likes: { "<id>": n }, reads: { "<id>": n } }` (cached 30 seconds), `POST` / `DELETE /api/like/<id>` add or take back one like, and `POST /api/read/<id>` counts one opening. Only built stories in `manifest.json` are accepted, so a new story needs no Worker change. Writes are limited to 20 a minute per IP (`WRITE_LIMITER`).
+
+- **Reads:** every opening of a story page counts, repeat visits included (`hub/stats.js`). Readers don't have to finish.
+- **Likes:** only from the end card, so a like comes from someone who reached the end. The top bar shows the like count (hidden while 0) but can't be tapped. There are no accounts: `hub/stats.js` remembers on the device which stories it liked (`sm-likes`), so clearing storage lets someone like again. That is accepted for a friendly counter.
+- **Where they show:** the end card ("Opened N times"), the top bar (likes), the front-page cards ("340 reads · ♥ 12", from `hub/front.js`) and Browse (`hub/hub.js`): a pill on a story's own entry (not its chapters) and "Most read" and "Most liked" sorts, which rank entries by their story's count, the story's entry before its chapters, then the rest oldest first. A count of 0 is never shown.
+- If the API can't be reached, as in the `python3 -m http.server` preview, none of this is shown. To try it locally, `pnpm exec wrangler dev` after a build serves the site and the API with a local KV.
 
 ## Versioning
 
