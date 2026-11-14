@@ -69,6 +69,23 @@
   var explored = store.get("sm-explored", []).filter(function (id) {
     return BY[id];
   });
+  // How far this device has read each story (hub/progress.js): i is the chapter
+  // to continue from, m the furthest reached (both 0-based), n the chapters.
+  var progress = store.get("sm-progress", {}) || {};
+
+  // A tile's reading mark, only where there is a story map to read; opening an
+  // entry's own page never ticks it, so a story map added later never looks read.
+  // The story's own entry: "Chapter 3 of 16" while reading, "✓ You’ve read" at the end.
+  // A chapter entry (Sumer in Mesopotamia): "✓ You’ve read" once that chapter is reached.
+  function readMark(e) {
+    if (!built(e)) return null;
+    var p = progress[e.story];
+    if (!p || !(p.n > 0)) return null;
+    var furthest = Math.max(Number(p.m) || 0, Number(p.i) || 0);
+    if (e.chapter) return furthest >= e.chapter - 1 ? { done: true, text: "✓ You’ve read" } : null;
+    if (furthest >= p.n - 1) return { done: true, text: "✓ You’ve read" };
+    return p.i > 0 ? { done: false, text: "Chapter " + (p.i + 1) + " of " + p.n } : null;
+  }
 
   var $ = function (id) {
     return document.getElementById(id);
@@ -263,7 +280,7 @@
 
   function blockHtml(it, left, w, ov) {
     var e = it.entry;
-    var cls = "sm-blk" + (built(e) ? " sm-built" : "") + (ov ? " sm-ov" : "") + (explored.indexOf(e.id) >= 0 ? " sm-seen" : "");
+    var cls = "sm-blk" + (built(e) ? " sm-built" : "") + (ov ? " sm-ov" : "") + ((readMark(e) || {}).done ? " sm-seen" : "");
     var body;
     if (ov) body = it.h >= 26 && w >= 40 ? '<span class="sm-blk-name">' + esc(e.name) + "</span>" : "";
     else {
@@ -410,7 +427,9 @@
       (isNew ? '<span class="sm-pill sm-pill--new">New</span>' : "") +
       // A story's reads and likes show once: on the entry it is about (see COUNTED).
       (built(e) && COUNTED[e.story] === e ? heart(e.story) : "") +
-      (explored.indexOf(e.id) >= 0 ? '<span class="sm-pill">✓ Explored</span>' : "");
+      (function (mark) {
+        return mark ? '<span class="sm-pill' + (mark.done ? " sm-pill--read" : "") + '">' + mark.text + "</span>" : "";
+      })(readMark(e));
     return '<li><a class="sm-entry-card" href="' + href(e) + '" style="' + hue(r.id) + '">' +
       '<span class="sm-entry-card__kicker"><span class="sm-dot"></span>' + esc(r.short) + " · " + KIND[e.kind] + "</span>" +
       '<span class="sm-entry-card__name">' + esc(e.name) + "</span>" +

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.54.0
+
+- Browse and the timeline: the ✓ now means you have read the story map, not that you opened the entry's page. A story's own tile shows "Chapter 3 of 16" while you read and "✓ You’ve read" at the end; a chapter tile (Sumer in Mesopotamia) shows it once you reach that chapter. Tiles without a story map get no tick, so a story map added later never looks already read.
+- Story pages remember the furthest chapter you have reached, so a tick stays when you go back to an earlier chapter.
+
 ## 0.53.0
 
 - Browse: a story with no entry of its own (Mesopotamia) now shows its reads and likes on its first chapter entry, so Most read and Most liked show why it is at the top.
