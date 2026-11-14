@@ -394,12 +394,17 @@
   };
   // The tile that carries a story's counts: the entry the story is about, or,
   // for a story with no entry of its own (Mesopotamia), its first chapter's.
-  var COUNTED = {};
-  E.forEach(function (e) {
-    if (!built(e)) return;
-    var cur = COUNTED[e.story];
-    if (!cur || (cur.chapter || 0) > (e.chapter || 0)) COUNTED[e.story] = e;
-  });
+  // Computed for the tiles on show, so a filter that hides Sumer moves the counts to the next chapter shown.
+  function leadsOf(entries) {
+    var leads = {};
+    entries.forEach(function (e) {
+      if (!built(e)) return;
+      var cur = leads[e.story];
+      if (!cur || (cur.chapter || 0) > (e.chapter || 0)) leads[e.story] = e;
+    });
+    return leads;
+  }
+  var COUNTED = leadsOf(E);
 
   var heart = function (storyId) {
     var reads = countOf("reads", storyId);
@@ -473,12 +478,16 @@
     var byDate = function (x, y) {
       return (X.isDated(x) ? x.from : 1e9) - (X.isDated(y) ? y.from : 1e9) || x.name.localeCompare(y.name);
     };
-    // Most read and Most liked: entries by their story's count (the story's own entry before its chapters), the rest oldest first.
+    // Most read and Most liked: one tile per story is ranked, the one carrying its counts; every
+    // other tile (a story's other chapters included) follows, oldest first. Ranking every chapter
+    // tile let one story with many chapters fill the top of the list.
+    COUNTED = leadsOf(list);
     var byCount = function (kind) {
+      var c = function (e) {
+        return built(e) && COUNTED[e.story] === e ? countOf(kind, e.story) : 0;
+      };
       return function (x, y) {
-        var cx = built(x) ? countOf(kind, x.story) : 0;
-        var cy = built(y) ? countOf(kind, y.story) : 0;
-        return cy - cx || (cx && x.story === y.story ? (x.chapter || 0) - (y.chapter || 0) : 0) || byDate(x, y);
+        return c(y) - c(x) || byDate(x, y);
       };
     };
     var sort = (b.sort === "liked" || b.sort === "read") && !STATS ? "date" : b.sort;
