@@ -5,3 +5,4 @@ Epics and sacred stories, mapped to the places tradition gives them. Cards here 
 Collections:
 
 - `indian/`: Indian legends.
+- `greek/`: Greek epics.

@@ -1,10 +1,16 @@
 # Changelog
 
-## 0.49.0
+## 0.50.0
 
 - Likes: readers can like a story, from a heart in the top bar or a button on the end card, and take the like back. The count shows next to the heart and on the story's front-page card. One like per device, remembered on the device; no accounts.
 - Explore, Browse: a new "Most liked" sort beside Oldest first and A to Z, and a ♥ count on story-map cards.
 - A small Worker (`src/worker.js`) now serves the site and the likes API, backed by one KV key and a per-IP rate limit.
+
+## 0.49.0
+
+- New story map in Legends, in a new collection, Greek epics: The Iliad. From Homer and the judgement of Paris, through Helen’s flight from Sparta, the fleet at Aulis and the quarrel of Achilles and Agamemnon, to the deaths of Patroclus and Hector, Priam’s ransom, the fall of Troy and the digs at Hisarlık and Mycenae. 25 chapters on the near-east map and 6 people cards.
+- Catalogue: The Iliad opens the story; Mycenaean Greece opens it at chapter 25.
+- Art library: a new lyre glyph.
 
 ## 0.48.0
 
