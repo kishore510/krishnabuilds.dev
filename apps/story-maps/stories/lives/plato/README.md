@@ -1,0 +1,9 @@
+# Plato
+
+Status: built. In Lives. The life of Plato, c. 428 to 348 BCE, in 22 chapters: born in Athens, kinsmen among the Thirty, following Socrates, refuge in Megara, Archytas at Taras, the court of Dionysius at Syracuse, the tale of his sale at Aegina, the Academy, the dialogues, the Republic and the cave, geometry and the heavens, the second and third voyages to Syracuse, Atlantis, Dion’s war, the Laws and his death, Plotinus in Rome, the last Platonists of Athens, Plethon at Mistra, Ficino’s Plato in Latin, Raphael’s School of Athens and the Academy found in 1929. 6 people cards.
+
+- `story.json`: the story data. It uses the `europe` basemap, shared with the Odyssey. Routes show only for the current chapter. Megara is drawn a little west of its true spot so its pin does not touch Athens.
+- No new art: it uses the `greek-temple`, `village`, `anchor`, `palace`, `shrine`, `pillar`, `dome` and `fort` glyphs and the `marcher`, `trireme` and `scroll` traveller icons.
+- Source: every card is **History**, except chapter 7 (**Tradition**) and chapter 22 (**Archaeology**).
+- Native names are in Ancient Greek (`grc`), written in Latin letters; chapters 20 and 21 are Italian (`it`).
+- Sources and what is disputed: Plato’s life is known from his own dialogues, from thirteen letters said to be his, of which only the Seventh is widely accepted and even that is disputed, from Plutarch’s Dion, and from Diogenes Laertius, who wrote some 550 years later. His birth year (428 or 427 BCE, or a few years later) is disputed, and the date of the Republic is approximate. The visits to Cyrene and Egypt, his sale at Aegina and the burning of his tragedies are later stories and are flagged. The geometry motto over the Academy is recorded only centuries later. Atlantis is Plato’s tale; no evidence of it has been found. Whether Justinian’s edict of 529 CE closed the Athenian school, and how formal Ficino’s Platonic Academy was, are debated.
