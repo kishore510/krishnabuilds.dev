@@ -84,6 +84,42 @@ describe("validate", () => {
     expect(map.validate(sky.story, basemap, art).join("\n")).toContain("canvas cosmic cannot use basemap");
   });
 
+  it("draws the earth-deep canvas as eras, one per chapter", () => {
+    const { story, art } = fresh();
+    const square = (lon) => ({ closed: true, points: [[lon, 10], [lon + 20, 10], [lon + 20, -10], [lon, -10]] });
+    const deep = {
+      id: "deep-stub",
+      kind: "deep",
+      projection: { lon0: -180, lat0: 90, unitsPerDegree: 5 },
+      size: [1800, 900],
+      sea: { top: "#000", middle: "#111", bottom: "#222", shallows: "#333", wave: "#444" },
+      land: { top: "#555", middle: "#666", bottom: "#777", edge: "#888" },
+      overview: { at: [0, 0], width: 360 },
+      eras: [
+        { id: "old", name: "Old", shapes: [square(0)], ice: [square(40)], labels: [{ kind: "sea", at: [0, 30], text: "Old Ocean" }] },
+        { id: "unused", name: "Never shown", shapes: [square(90)] },
+        { id: "new", name: "New", shapes: [square(10)], wash: { color: "#f00", opacity: 0.5 } },
+      ],
+    };
+    story.canvas = "earth-deep";
+    story.basemap = deep.id;
+    story.steps.forEach((s, i) => (s.era = i < 2 || i === 4 ? "old" : "new"));
+    expect(map.validate(story, deep, art)).toEqual([]);
+    const { svg } = map.buildMap(story, deep, art);
+    expect(svg).toContain('data-era="old" data-steps="0-1,4-4"');
+    expect(svg).toContain('class="sm-ice"');
+    expect(svg).toContain("Old Ocean");
+    expect(svg).not.toContain('data-era="unused"');
+    expect(map.stepRanges([{}, {}, {}], () => true)).toEqual([[0, 2]]);
+
+    story.steps[3].era = "atlantis";
+    expect(map.validate(story, deep, art).join("\n")).toContain("step 4: era must be one of old, unused, new");
+    const geo = fresh();
+    expect(map.validate(story, geo.basemap, art).join("\n")).toContain("canvas earth-deep cannot use basemap");
+    geo.story.steps[0].era = "old";
+    expect(map.validate(geo.story, geo.basemap, art).join("\n")).toContain("only an earth-deep story names an era");
+  });
+
   it("stretches latitude when the projection asks for it", () => {
     const P = map.projector({ lon0: 0, lat0: 60, unitsPerDegree: 10, stretch: 1.5 });
     expect(P([2, 58])).toEqual([20, 30]);

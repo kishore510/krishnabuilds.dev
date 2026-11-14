@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.74.0
+
+- New story map in Life: Life on Earth. From the first microbes and the oxygen they made, through complex cells, the Ediacaran creatures, the Cambrian explosion, the move onto land, the coal forests, the Great Dying, the first dinosaurs, feathers and flowers, the rise of mammals and whales, our upright ancestors and our own species, to how it was found. 17 chapters on the earth-deep map and 3 people cards.
+- Basemap: earth-deep gains eras for 375, 300 and 125 million years ago. New glyphs: trilobite, fish, dinosaur.
+- Catalogue: Life on Earth opens the story, with chapter entries for the Cambrian explosion and our species.
+
+## 0.73.0
+
+- New story map in Earth: The Making of Earth. From the molten Earth 4.54 billion years ago and the Moon-forming impact, through the first oceans and continents, the Great Oxidation, Rodinia, Snowball Earth, Gondwana, Pangaea and the Great Dying, the opening Atlantic, the asteroid at Chicxulub and India meeting Asia, to the ice ages, today's moving plates and how it was found. 15 chapters, the first on the earth-deep map, and 3 people cards.
+- New basemap: earth-deep, twelve eras of the globe, six simplified from PaleoMAP PaleoCoastlines (CC BY 4.0) and the rest drawn by hand. New glyphs: volcano, snowflake, wave.
+- Catalogue: The Making of Earth opens the story, with chapter entries for Snowball Earth, Pangaea and the Chicxulub impact.
+
+## 0.72.0
+
+- Engine: the earth-deep canvas. A deep basemap holds eras, snapshots of the globe in deep time, each with its own land, ice, labels and an optional wash over the map. Each chapter names its era and the map fades from one to the next. A place is drawn only in its own era's chapters, and a deep-time story's card draws its own ancient globe. No story uses it yet.
+
 ## 0.71.0
 
 - New story map in Philosophy: Greek Philosophy. From Thales and the first search for natural causes in Miletus, through Pythagoras, Heraclitus, Parmenides and Democritus, Socrates, Plato's Academy and Aristotle, to Pyrrho's doubt, the Garden and the Porch, Rome, Plotinus, the last philosophers of Athens and Aristotle's long afterlife in Arabic and Latin. 14 chapters on the europe map and 3 people cards.

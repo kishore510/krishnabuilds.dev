@@ -126,9 +126,12 @@
    * so. `holes` (inland seas such as the Caspian) are cut out with the even-odd rule.
    */
   function landPaths(basemap) {
-    const P = projector(basemap.projection);
+    return shapePaths(basemap.projection, basemap.land.shapes);
+  }
+  function shapePaths(projection, shapes) {
+    const P = projector(projection);
     const pts = (list) => list.map(P);
-    return basemap.land.shapes.map((shape) => {
+    return shapes.map((shape) => {
       const holes = (shape.holes || []).map((h) => smoothPath(pts(h), true)).join("");
       if (shape.closed) return smoothPath(pts(shape.points), true) + holes;
       const tail = pts(shape.extend || []).map(([x, y]) => `L${r1(x)} ${r1(y)}`).join("");
@@ -303,6 +306,76 @@
 
   }
 
+  /**
+   * The step ranges ([[from, to], ...]) in which `test(step)` holds, merged
+   * where they touch.
+   */
+  function stepRanges(steps, test) {
+    const ranges = [];
+    steps.forEach((step, i) => {
+      if (!test(step)) return;
+      const lastRange = ranges[ranges.length - 1];
+      if (lastRange && lastRange[1] === i - 1) lastRange[1] = i;
+      else ranges.push([i, i]);
+    });
+    return ranges;
+  }
+
+  /**
+   * A deep basemap (`kind: "deep"`, the earth-deep canvas) is the globe at a
+   * few moments in deep time. Each era is one snapshot: its own land `shapes`,
+   * optional `ice`, `labels` and a `wash` over the whole map (a molten or
+   * frozen world). Each step names its era, and the player shows only the
+   * current one, fading between them. Snapshots, not motion: nothing morphs.
+   * An era no step uses is not drawn, so a story pays only for its own eras.
+   */
+  function deepLayers(story, basemap, out) {
+    const P = projector(basemap.projection);
+    const [W, H] = basemap.size;
+    const sea = basemap.sea;
+    const land = basemap.land;
+    out.push(
+      "<defs>" +
+        `<linearGradient id="sm-sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sea.top}"/><stop offset=".55" stop-color="${sea.middle}"/><stop offset="1" stop-color="${sea.bottom}"/></linearGradient>` +
+        `<linearGradient id="sm-land" gradientUnits="userSpaceOnUse" x1="0" y1="${r1(H * 0.18)}" x2="0" y2="${r1(H * 0.94)}"><stop offset="0" stop-color="${land.top}"/><stop offset=".5" stop-color="${land.middle}"/><stop offset="1" stop-color="${land.bottom}"/></linearGradient>` +
+        "</defs>",
+    );
+    out.push(`<rect x="${-W * 1.5}" y="${-H * 1.3}" width="${W * 4}" height="${H * 3.7}" fill="url(#sm-sea)"/>`);
+    if (basemap.waves) {
+      const rand = seeded(basemap.waves.seed);
+      let s = "";
+      for (let i = 0; i < basemap.waves.count; i++) {
+        const x = rand() * W;
+        const y = rand() * H;
+        s += `<path d="M${r1(x)} ${r1(y)}q3 -3 6 0t6 0" fill="none" stroke="${sea.wave}" stroke-width=".9" opacity="${r1(0.18 + rand() * 0.25)}"/>`;
+      }
+      out.push(`<g>${s}</g>`);
+    }
+    const shallows = sea.shallowsWidth || 15;
+    let eras = "";
+    for (const era of basemap.eras) {
+      const ranges = stepRanges(story.steps, (s) => s.era === era.id);
+      if (!ranges.length) continue;
+      let g = "";
+      if (era.wash) g += `<rect x="${-W * 1.5}" y="${-H * 1.3}" width="${W * 4}" height="${H * 3.7}" fill="${era.wash.color}" opacity="${era.wash.opacity}"/>`;
+      const lands = shapePaths(basemap.projection, era.shapes || []);
+      if (lands.length) {
+        g += `<g fill="none" stroke-linejoin="round" stroke="${sea.shallows}">${lands
+          .map((d) => `<path d="${d}" stroke-width="${shallows}" opacity=".25"/><path d="${d}" stroke-width="${r1(shallows * 0.47)}" opacity=".35"/>`)
+          .join("")}</g>`;
+        g += `<path d="${lands.join("")}" fill="url(#sm-land)" fill-rule="evenodd" stroke="${land.edge}" stroke-width="1.4" stroke-linejoin="round"/>`;
+      }
+      const ice = shapePaths(basemap.projection, era.ice || []);
+      if (ice.length) g += `<path class="sm-ice" d="${ice.join("")}" fill="#f4fbff" fill-opacity=".88" stroke="#bcd8ea" stroke-width="1.2" stroke-linejoin="round"/>`;
+      for (const label of era.labels || []) {
+        const [x, y] = P(label.at);
+        g += `<text class="sm-${label.kind}-label" x="${r1(x)}" y="${r1(y)}">${esc(label.text)}</text>`;
+      }
+      eras += `<g class="sm-era" data-era="${esc(era.id)}" data-steps="${stepsAttr(ranges)}">${g}</g>`;
+    }
+    out.push(`<g class="sm-eras">${eras}</g>`);
+  }
+
   // --- the map ------------------------------------------------------------------
 
   /**
@@ -314,6 +387,7 @@
     const out = [];
 
     if (basemap.kind === "sky") skyLayers(basemap, out);
+    else if (basemap.kind === "deep") deepLayers(story, basemap, out);
     else landLayers(basemap, art, out);
 
     // Realms (kingdoms, empires): painted loosely, shown only while active.
@@ -461,9 +535,13 @@
     };
     const isLonLat = (v) => Array.isArray(v) && v.length === 2 && v.every((n) => typeof n === "number" && Number.isFinite(n));
     need(CANVASES.includes(story.canvas), `canvas must be one of ${CANVASES.join(", ")}`);
-    need(story.canvas !== "earth-deep", "the earth-deep canvas is not built yet");
-    // The cosmic canvas draws on a sky basemap; geo on a map of land and sea.
-    need((story.canvas === "cosmic") === (basemap.kind === "sky"), `canvas ${story.canvas} cannot use basemap ${basemap.id}`);
+    // The cosmic canvas draws on a sky basemap, earth-deep on a deep one (eras of
+    // the globe) and geo on a map of land and sea.
+    need(
+      (story.canvas === "cosmic") === (basemap.kind === "sky") && (story.canvas === "earth-deep") === (basemap.kind === "deep"),
+      `canvas ${story.canvas} cannot use basemap ${basemap.id}`,
+    );
+    const eraIds = new Set(basemap.kind === "deep" ? basemap.eras.map((e) => e.id) : []);
     need(story.basemap === basemap.id, `basemap ${story.basemap} does not match ${basemap.id}`);
     need(SOURCES.includes(story.source), `source must be ${SOURCES.join(" or ")}`);
     if (story.routes !== undefined) need(["journey", "chapter"].includes(story.routes), "routes must be journey or chapter");
@@ -493,6 +571,9 @@
       lastAt = s.at;
       need(isLonLat(s.camera && s.camera.at) && s.camera.width > 0, `${where}: bad camera`);
       if (s.source !== undefined) need(SOURCES.includes(s.source), `${where}: source must be ${SOURCES.join(" or ")}`);
+      // On the earth-deep canvas every chapter shows one era of the globe; elsewhere there are none.
+      if (story.canvas === "earth-deep") need(eraIds.has(s.era), `${where}: era must be one of ${[...eraIds].join(", ")}`);
+      else need(s.era === undefined, `${where}: only an earth-deep story names an era`);
       for (const key of ["title", "text", "when"]) need(typeof s[key] === "string" && s[key].trim() !== "", `${where}: missing ${key}`);
       const words = (s.text || "").trim().split(/\s+/).length;
       need(words <= 60, `${where}: card is ${words} words; keep it to about 60 at most`);
@@ -556,5 +637,5 @@
     return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
 
-  Object.assign(SM, { buildMap, placesNow, landPaths, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
+  Object.assign(SM, { buildMap, placesNow, landPaths, stepRanges, cameraFor, validate, realmPieces, smoothPath, seeded, projector, esc });
 })((globalThis.StoryMap = globalThis.StoryMap || {}));

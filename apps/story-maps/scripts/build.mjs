@@ -295,11 +295,28 @@ function storyThumb(entry) {
   const { story, basemap } = loadStoryData(entry);
   // A sky story (the cosmic canvas) has no place in the world: it is drawn on its own dark ground.
   const sky = basemap.kind === "sky";
-  const project = sky ? /** @type {(at: number[]) => number[]} */ (mapFunctions.projector(basemap.projection)) : worldP;
+  // A deep-time story (the earth-deep canvas) is drawn on one of its own eras:
+  // the first with land, and only that era's places, since the continents have moved since.
+  const deep = basemap.kind === "deep";
+  /** @type {any} */
+  const era = deep
+    ? basemap.eras.find((/** @type {any} */ e) => (e.shapes || []).length && story.steps.some((/** @type {any} */ st) => st.era === e.id))
+    : null;
+  const project = sky || deep ? /** @type {(at: number[]) => number[]} */ (mapFunctions.projector(basemap.projection)) : worldP;
   /** @type {Record<string, number[]>} */
   const where = {};
   for (const [id, place] of Object.entries(story.places)) where[id] = project(/** @type {{ at: number[] }} */ (place).at);
-  const shown = Object.entries(story.places).filter(([, p]) => !(/** @type {{ hidden?: boolean }} */ (p).hidden)).map(([id]) => where[id]);
+  /** @type {Set<string> | null} */
+  const eraPlaces = era
+    ? new Set(
+        story.steps
+          .map((/** @type {any} */ st, /** @type {number} */ n) => (st.era === era.id ? mapFunctions.placesNow(story, n) : []))
+          .flat(),
+      )
+    : null;
+  const shown = Object.entries(story.places)
+    .filter(([id, p]) => !(/** @type {{ hidden?: boolean }} */ (p).hidden) && (!eraPlaces || eraPlaces.has(id)))
+    .map(([id]) => where[id]);
   const xs = shown.map((p) => p[0]);
   const ys = shown.map((p) => p[1]);
   const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
@@ -309,6 +326,7 @@ function storyThumb(entry) {
   const h = (w * 9) / 16;
   const u = w / 320;
   const legs = story.steps
+    .filter((/** @type {{ era?: string }} */ step) => !era || step.era === era.id)
     .flatMap((/** @type {{ legs: { from: string, to: string }[] }} */ step) => step.legs)
     .map((/** @type {{ from: string, to: string }} */ l) => `M${n1(where[l.from][0])} ${n1(where[l.from][1])}L${n1(where[l.to][0])} ${n1(where[l.to][1])}`)
     .join("");
@@ -317,7 +335,10 @@ function storyThumb(entry) {
     (sky
       ? `<rect x="${n1(cx - w)}" y="${n1(cy - h)}" width="${n1(w * 2)}" height="${n1(h * 2)}" fill="${basemap.sky.middle}"/>` +
         `<circle cx="${n1(shown[0][0])}" cy="${n1(shown[0][1])}" r="${n1(u * 70)}" fill="#ff8a3a" opacity=".3"/><circle cx="${n1(shown[0][0])}" cy="${n1(shown[0][1])}" r="${n1(u * 26)}" fill="#fff3c4" opacity=".7"/>`
-      : WORLD_LAYERS) +
+      : era
+        ? `<rect x="${n1(cx - w)}" y="${n1(cy - h)}" width="${n1(w * 2)}" height="${n1(h * 2)}" fill="${basemap.sea.middle}"/>` +
+          `<path d="${/** @type {string[]} */ (mapFunctions.landPaths({ projection: basemap.projection, land: { shapes: era.shapes } })).join("")}" fill="${basemap.land.middle}" fill-rule="evenodd" stroke="${basemap.land.edge}" stroke-width="${n1(u)}" stroke-linejoin="round"/>`
+        : WORLD_LAYERS) +
     (legs ? `<path d="${legs}" fill="none" stroke="#fff6dc" stroke-width="${n1(u * 1.6)}" stroke-dasharray="${n1(u * 5)} ${n1(u * 4)}" stroke-linecap="round" opacity=".85"/>` : "") +
     shown.map(([x, y]) => `<circle cx="${n1(x)}" cy="${n1(y)}" r="${n1(u * 4)}" fill="#f6e6c0" stroke="#7a3b12" stroke-width="${n1(u * 1.3)}"/>`).join("") +
     "</svg>"

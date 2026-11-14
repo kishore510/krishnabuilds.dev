@@ -1,0 +1,601 @@
+{
+  "id": "life-on-earth",
+  "title": "Life on Earth",
+  "description": "An illustrated map of the history of life, from the first microbes more than 3.5 billion years ago through the oxygen they made, complex cells, the Cambrian explosion, the move onto land, dinosaurs, flowers and the rise of mammals, to our own species.",
+  "canvas": "earth-deep",
+  "basemap": "earth-deep",
+  "source": "Science",
+  "nativeLang": "en",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the whole Earth at one moment in deep time, changing from chapter to chapter, with the fossil sites that tell the story of life",
+  "note": "Each chapter shows the globe at one moment. Coastlines from 535 million years ago to today are simplified from the PaleoMAP reconstruction (Kocsis and Scotese, CC BY 4.0); older eras are drawn by hand and are illustrative. Fossil sites are shown where they were at the time, reconstructed with the PaleoMAP plate model. Some chapters fall between the map's eras; each card says which moment the map shows.",
+  "places": {
+    "stromatolites": {
+      "name": "First life",
+      "at": [
+        95,
+        -30
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "cyanobacteria": {
+      "name": "Cyanobacteria",
+      "at": [
+        60,
+        25
+      ],
+      "glyph": "gas-cloud",
+      "label": "right"
+    },
+    "complex-cells": {
+      "name": "Complex cells",
+      "at": [
+        -20,
+        0
+      ],
+      "glyph": "particles",
+      "label": "right"
+    },
+    "red-algae": {
+      "name": "Bangiomorpha",
+      "at": [
+        30,
+        8
+      ],
+      "glyph": "garden",
+      "label": "right"
+    },
+    "ediacara": {
+      "name": "Ediacara Hills",
+      "at": [
+        18.2,
+        16.2
+      ],
+      "glyph": "palm-leaf",
+      "label": "right"
+    },
+    "burgess": {
+      "name": "Burgess Shale",
+      "at": [
+        93.5,
+        -12.3
+      ],
+      "glyph": "trilobite",
+      "label": "right"
+    },
+    "tiktaalik": {
+      "name": "Tiktaalik",
+      "at": [
+        -17.2,
+        -1.0
+      ],
+      "glyph": "fish",
+      "label": "right"
+    },
+    "joggins": {
+      "name": "Joggins",
+      "at": [
+        -3.5,
+        -3.5
+      ],
+      "glyph": "forest",
+      "label": "right"
+    },
+    "meishan": {
+      "name": "Meishan",
+      "at": [
+        108.6,
+        17.1
+      ],
+      "glyph": "memorial",
+      "label": "right"
+    },
+    "ischigualasto": {
+      "name": "Ischigualasto",
+      "at": [
+        -40.6,
+        -44.9
+      ],
+      "glyph": "dinosaur",
+      "label": "right"
+    },
+    "solnhofen": {
+      "name": "Solnhofen",
+      "at": [
+        18.7,
+        40.9
+      ],
+      "glyph": "great-bird",
+      "label": "right"
+    },
+    "liaoning": {
+      "name": "Liaoning",
+      "at": [
+        122.0,
+        43.9
+      ],
+      "glyph": "garden",
+      "label": "right"
+    },
+    "hell-creek": {
+      "name": "Hell Creek",
+      "at": [
+        -80.7,
+        55.0
+      ],
+      "glyph": "deer",
+      "label": "right"
+    },
+    "pakicetus": {
+      "name": "Pakicetus",
+      "at": [
+        68.2,
+        12.6
+      ],
+      "glyph": "wave",
+      "label": "right"
+    },
+    "hadar": {
+      "name": "Hadar",
+      "at": [
+        40.6,
+        11.1
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "jebel-irhoud": {
+      "name": "Jebel Irhoud",
+      "at": [
+        -8.9,
+        31.9
+      ],
+      "glyph": "house-fire",
+      "label": "right"
+    },
+    "down-house": {
+      "name": "Down House",
+      "at": [
+        0.05,
+        51.3
+      ],
+      "glyph": "garden",
+      "label": "right"
+    }
+  },
+  "travellers": {},
+  "phases": {
+    "microbes": {
+      "name": "A world of microbes",
+      "color": "#4fc3b0"
+    },
+    "animals": {
+      "name": "Animals appear",
+      "color": "#4f9fd0"
+    },
+    "land": {
+      "name": "Onto the land",
+      "color": "#6aa84f"
+    },
+    "reptiles": {
+      "name": "Dinosaurs and flowers",
+      "color": "#e4572e"
+    },
+    "mammals": {
+      "name": "The age of mammals",
+      "color": "#a678e0"
+    },
+    "found": {
+      "name": "How we know",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {},
+  "timeline": {
+    "track": [
+      {
+        "until": 40,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 53,
+        "color": "rgba(79,159,208,.35)"
+      },
+      {
+        "until": 64.5,
+        "color": "rgba(106,168,79,.35)"
+      },
+      {
+        "until": 81.5,
+        "color": "rgba(228,87,46,.35)"
+      },
+      {
+        "until": 96.5,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 4,
+        "text": "3.5 bn"
+      },
+      {
+        "at": 24,
+        "text": "2 bn"
+      },
+      {
+        "at": 34,
+        "text": "1 bn"
+      },
+      {
+        "at": 50,
+        "text": "535 m"
+      },
+      {
+        "at": 67,
+        "text": "252 m"
+      },
+      {
+        "at": 84,
+        "text": "66 m"
+      },
+      {
+        "at": 95,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "stromatolites",
+      "era": "archean",
+      "phase": "microbes",
+      "title": "The first life",
+      "when": "by 3.5 bn years ago",
+      "at": 4,
+      "camera": {
+        "at": [
+          95,
+          -30
+        ],
+        "width": 70
+      },
+      "legs": [],
+      "text": "Life began in the sea, probably more than 3.5 billion years ago, though how is still unknown: one idea places it at hot springs on the sea floor. The oldest widely accepted traces are stromatolites, layered mounds built by mats of microbes, about 3.48 billion years old, in the Pilbara of Western Australia. Older claims are disputed.",
+      "today": "How we know: fossil mounds and chemical traces of life in ancient rock. Living stromatolites still grow at Shark Bay in Western Australia."
+    },
+    {
+      "place": "cyanobacteria",
+      "era": "archean",
+      "phase": "microbes",
+      "title": "Microbes make oxygen",
+      "when": "about 2.4 bn years ago",
+      "at": 14,
+      "camera": {
+        "at": [
+          60,
+          25
+        ],
+        "width": 70
+      },
+      "legs": [],
+      "text": "Some microbes, the cyanobacteria, evolved a way to use sunlight to split water, giving off oxygen as waste. Around 2.4 billion years ago it began to build up in the air, an event told in The Making of Earth. Oxygen poisoned many microbes, but opened the way to life that uses it to release far more energy from food.",
+      "today": "How we know: rocks that form only with oxygen present appear after about 2.4 billion years ago, and plants still capture sunlight with parts descended from cyanobacteria."
+    },
+    {
+      "place": "complex-cells",
+      "era": "rodinia",
+      "phase": "microbes",
+      "title": "Cells with a nucleus",
+      "when": "about 2 bn years ago",
+      "at": 24,
+      "camera": {
+        "at": [
+          -20,
+          0
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "Complex cells, with a nucleus and other inner parts, appeared perhaps 2 billion years ago; estimates vary. They probably began when one cell swallowed a bacterium that went on living inside it, becoming the mitochondria that power our own cells. Every animal, plant and fungus is built from cells like these. This map shows Rodinia, somewhat later.",
+      "today": "How we know: mitochondria still carry their own small set of DNA, closer to bacteria than to the rest of the cell, as Lynn Margulis argued in 1967."
+    },
+    {
+      "place": "red-algae",
+      "era": "rodinia",
+      "phase": "microbes",
+      "title": "Bodies of many cells",
+      "when": "about 1 bn years ago",
+      "at": 34,
+      "camera": {
+        "at": [
+          30,
+          8
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "Living things made of many cooperating cells arose several times. One of the oldest clear examples is Bangiomorpha, a red alga about a billion years old, found in rocks on Somerset Island in Arctic Canada. It is also the oldest known organism that reproduced sexually, mixing genes from two parents. Most life, though, stayed single-celled and microscopic.",
+      "today": "How we know: tiny fossils preserved in fine-grained rock, studied under the microscope and dated by the rocks around them."
+    },
+    {
+      "place": "ediacara",
+      "era": "cambrian",
+      "phase": "animals",
+      "title": "The Ediacaran creatures",
+      "when": "about 575 to 539 m years ago",
+      "at": 44,
+      "camera": {
+        "at": [
+          18.2,
+          16.2
+        ],
+        "width": 100
+      },
+      "legs": [],
+      "text": "After the Snowball Earth thaw, the first large, soft-bodied creatures appeared on the sea floor: fronds, quilted discs and tubes, some over a metre long. Named after the Ediacara Hills of South Australia, they are hard to place on the tree of life; some were early animals. Most vanished as the Cambrian began. This map shows 535 million years ago.",
+      "today": "How we know: their imprints in sandstone, in South Australia and at Mistaken Point in Newfoundland. Traces of fat molecules in Dickinsonia fossils show it was an animal."
+    },
+    {
+      "place": "burgess",
+      "era": "cambrian",
+      "phase": "animals",
+      "title": "The Cambrian explosion",
+      "when": "from about 538 m years ago",
+      "at": 50,
+      "camera": {
+        "at": [
+          93.5,
+          -12.3
+        ],
+        "width": 100
+      },
+      "legs": [],
+      "text": "Within about 20 million years, most of the main animal groups alive today appear in the fossil record: animals with shells, legs, eyes and guts, among them trilobites and the first relatives of vertebrates. Predators and prey began an arms race. The Burgess Shale in Canada, about 508 million years old, preserves even their soft bodies.",
+      "today": "How we know: exceptionally preserved fossils at the Burgess Shale in British Columbia, found in 1909, and at Chengjiang in China."
+    },
+    {
+      "place": "tiktaalik",
+      "era": "devonian",
+      "phase": "land",
+      "title": "Onto the land",
+      "when": "about 470 to 375 m years ago",
+      "at": 57,
+      "camera": {
+        "at": [
+          -17.2,
+          -1
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "Small plants spread onto land by about 470 million years ago, followed by insects and other small animals, and the first forests by about 385 million. Fish with sturdy fins began to haul themselves through shallow water. Tiktaalik, about 375 million years old, had gills and scales but also a neck and fins with wrist-like bones.",
+      "today": "How we know: Tiktaalik was found in 2004 on Ellesmere Island in Arctic Canada, where researchers searched rocks of just the right age. It then lay near the equator."
+    },
+    {
+      "place": "joggins",
+      "era": "carboniferous",
+      "phase": "land",
+      "title": "The coal forests",
+      "when": "about 300 m years ago",
+      "at": 62,
+      "camera": {
+        "at": [
+          -3.5,
+          -3.5
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "Swamp forests of giant clubmosses and ferns covered the tropics. When they died, their wood was buried and over time turned into much of the coal mined today. Oxygen in the air rose higher than now, and insects grew large: Meganeura, a dragonfly-like insect, had wings about 70 centimetres across. Reptiles laid eggs with shells, freeing them from water.",
+      "today": "How we know: fossil trees still stand upright in the sea cliffs at Joggins, Nova Scotia, where some of the oldest known reptiles were found inside their stumps."
+    },
+    {
+      "place": "meishan",
+      "era": "pangaea",
+      "phase": "reptiles",
+      "title": "The Great Dying",
+      "when": "252 m years ago",
+      "at": 67,
+      "camera": {
+        "at": [
+          108.6,
+          17.1
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "At the end of the Permian, as huge eruptions poured carbon dioxide into the air, the planet warmed and the oceans lost oxygen and turned acidic. The result was the worst extinction known: estimates suggest more than 80 percent of ocean species and many land animals died. Trilobites vanished for good. Recovery took millions of years.",
+      "today": "How we know: the rock layers at Meishan in China, chosen as the world's reference for this boundary, record the extinction in fine detail."
+    },
+    {
+      "place": "ischigualasto",
+      "era": "pangaea",
+      "phase": "reptiles",
+      "title": "The first dinosaurs",
+      "when": "about 230 m years ago",
+      "at": 71,
+      "camera": {
+        "at": [
+          -40.6,
+          -44.9
+        ],
+        "width": 110
+      },
+      "legs": [],
+      "text": "In the warm, dry heart of Pangaea, reptiles flourished. The first dinosaurs, small two-legged hunters such as Eoraptor, appear about 230 million years ago. The first mammals, small and probably active at night, followed soon after. After another mass extinction about 201 million years ago, dinosaurs ruled the land for the next 135 million years.",
+      "today": "How we know: the Ischigualasto valley in Argentina holds some of the oldest known dinosaur fossils, including Eoraptor and Herrerasaurus."
+    },
+    {
+      "place": "solnhofen",
+      "era": "jurassic",
+      "phase": "reptiles",
+      "title": "Feathers and flight",
+      "when": "about 150 m years ago",
+      "at": 75,
+      "camera": {
+        "at": [
+          18.7,
+          40.9
+        ],
+        "width": 80
+      },
+      "legs": [],
+      "text": "Birds are living dinosaurs. Archaeopteryx, about 150 million years old, had feathers and wings like a bird but teeth, claws and a long bony tail like its dinosaur relatives. Since the 1990s, many feathered dinosaurs have been found, showing that feathers came before flight, perhaps first for warmth or display.",
+      "today": "How we know: Archaeopteryx was found in the limestone of Solnhofen, Germany, in 1861, two years after Charles Darwin published his theory of evolution."
+    },
+    {
+      "place": "liaoning",
+      "era": "early-cretaceous",
+      "phase": "reptiles",
+      "title": "The first flowers",
+      "when": "about 130 m years ago",
+      "at": 79,
+      "camera": {
+        "at": [
+          122,
+          43.9
+        ],
+        "width": 90
+      },
+      "legs": [],
+      "text": "Flowering plants appear in the fossil record around 130 million years ago and spread with startling speed, a puzzle Darwin called an abominable mystery. Flowers and insects such as bees evolved together, each shaping the other. Today flowering plants make up most of the plants on land, including nearly every crop we eat.",
+      "today": "How we know: early flowering plants such as Archaefructus are preserved in fine lake sediments in Liaoning, China, alongside feathered dinosaurs."
+    },
+    {
+      "place": "hell-creek",
+      "era": "end-cretaceous",
+      "phase": "mammals",
+      "title": "After the asteroid",
+      "when": "66 m years ago",
+      "at": 84,
+      "camera": {
+        "at": [
+          -80.7,
+          55
+        ],
+        "width": 100
+      },
+      "legs": [],
+      "text": "When the asteroid struck at Chicxulub, about three quarters of species died, including all dinosaurs except birds. Small animals that could burrow, swim or eat seeds and scraps had the best chance. Mammals, which had lived in the dinosaurs' shadow for over 100 million years, spread into the empty spaces and grew larger within a few million years.",
+      "today": "How we know: in the Hell Creek rocks of Montana, dinosaur fossils stop at a thin layer of impact debris, and only survivors are found above it."
+    },
+    {
+      "place": "pakicetus",
+      "era": "india-asia",
+      "phase": "mammals",
+      "title": "Whales return to the sea",
+      "when": "about 50 m years ago",
+      "at": 88,
+      "camera": {
+        "at": [
+          68.2,
+          12.6
+        ],
+        "width": 80
+      },
+      "legs": [],
+      "text": "Mammals took to every habitat. Among the strangest journeys is that of whales, whose ancestors were land animals related to hippos. Pakicetus, a wolf-sized animal about 50 million years old from what is now Pakistan, had the ear bones of a whale. Over about 10 million years its relatives' hind legs shrank as they became fully marine.",
+      "today": "How we know: a series of fossils from Pakistan, India and Egypt shows legs shrinking step by step, and DNA links whales with hippos."
+    },
+    {
+      "place": "hadar",
+      "era": "today",
+      "phase": "mammals",
+      "title": "Our ancestors stand up",
+      "when": "about 7 to 3 m years ago",
+      "at": 92,
+      "camera": {
+        "at": [
+          40.6,
+          11.1
+        ],
+        "width": 70
+      },
+      "legs": [],
+      "text": "In Africa, as forests gave way to open woodland, one line of apes began walking upright. Our lineage split from that of chimpanzees roughly 7 to 6 million years ago, an estimate. Lucy, a skeleton about 3.2 million years old found at Hadar in Ethiopia in 1974, walked on two legs but had a small, ape-sized brain.",
+      "today": "How we know: fossils such as Lucy, footprints left in volcanic ash at Laetoli in Tanzania about 3.7 million years ago, and comparison of human and chimpanzee DNA."
+    },
+    {
+      "place": "jebel-irhoud",
+      "era": "ice-age",
+      "phase": "mammals",
+      "title": "Our own species",
+      "when": "about 300,000 years ago",
+      "at": 95,
+      "camera": {
+        "at": [
+          -8.9,
+          31.9
+        ],
+        "width": 80
+      },
+      "legs": [],
+      "text": "The oldest known fossils of our species, Homo sapiens, about 300,000 years old, come from Jebel Irhoud in Morocco. From Africa, modern humans spread across the world, mostly after about 60,000 years ago, meeting Neanderthals and other human groups. During the last ice age they reached Australia and the Americas. Every other kind of human is now extinct.",
+      "today": "How we know: fossils, stone tools and ancient DNA, which shows that most people outside Africa carry a little Neanderthal DNA."
+    },
+    {
+      "place": "down-house",
+      "era": "today",
+      "phase": "found",
+      "title": "How the story was found",
+      "when": "1858 to today",
+      "at": 98,
+      "camera": {
+        "at": [
+          0.05,
+          51.3
+        ],
+        "width": 60
+      },
+      "legs": [],
+      "text": "In 1858 Charles Darwin and Alfred Russel Wallace proposed that species change through natural selection, and in 1859 Darwin's On the Origin of Species set out the evidence. Fossils, dated by radioactivity in the twentieth century, filled in the timeline. Since the 1950s, DNA has shown how all living things are related, descended from one ancestor.",
+      "today": "Darwin worked out his ideas at Down House in Kent, now a museum.",
+      "source": "History"
+    }
+  ],
+  "people": {
+    "heading": "People who worked it out",
+    "items": [
+      {
+        "id": "margulis",
+        "name": "Lynn Margulis",
+        "life": "1938–2011",
+        "role": "Biologist",
+        "steps": [
+          2,
+          16
+        ],
+        "text": "An American biologist who argued in 1967 that mitochondria, and the parts of plant cells that capture sunlight, began as bacteria living inside other cells. Her paper was rejected many times before it was published, and the idea was widely doubted. DNA evidence later showed she was right about both."
+      },
+      {
+        "id": "walcott",
+        "name": "Charles Walcott",
+        "life": "1850–1927",
+        "role": "Palaeontologist",
+        "steps": [
+          5,
+          16
+        ],
+        "text": "An American palaeontologist and head of the Smithsonian Institution who found the Burgess Shale in the Canadian Rockies in 1909. Over the following years he and his family collected tens of thousands of its fossils. Later researchers reinterpreted many of them, revealing how strange and varied early animal life had been."
+      },
+      {
+        "id": "darwin",
+        "name": "Charles Darwin",
+        "life": "1809–1882",
+        "role": "Naturalist",
+        "steps": [
+          10,
+          11,
+          16
+        ],
+        "text": "The English naturalist whose voyage on HMS Beagle and decades of study led to the theory of evolution by natural selection, published in 1859 in On the Origin of Species. He saw that fossils, living species and where they live all fitted one explanation: common descent. His life is told in the story Charles Darwin."
+      }
+    ]
+  }
+}

@@ -43,6 +43,14 @@
     return { ...leg, g, under, over, length: under.getTotalLength(), pattern: leg.dash.split(/[ ,]+/).map(Number), shown: -1 };
   });
   const legsOf = steps.map((_, i) => legs.filter((l) => l.step === i));
+
+  // The earth-deep canvas: each chapter shows one era of the globe (SM.buildMap
+  // draws each era as a .sm-era group with its steps), fading between them.
+  const eraNodes = [...svg.querySelectorAll(".sm-era")].map((node) => ({ node, ranges: node.dataset.steps.split(",").map((r) => r.split("-").map(Number)) }));
+  function renderEras(i) {
+    for (const e of eraNodes) e.node.classList.toggle("current", e.ranges.some(([a, b]) => i >= a && i <= b));
+  }
+  renderEras(0);
   // "journey" (the default) keeps earlier chapters' routes on the map; "chapter"
   // shows only the current chapter's, for stories that are not one journey.
   const keepRoutes = story.routes !== "chapter";
@@ -252,6 +260,7 @@
     el.scroll.scrollTop = 0;
     renderRealms(i);
     renderPeople(i);
+    renderEras(i);
   }
 
   // A chapter draws in full only its own place and the ends of its routes
@@ -267,6 +276,17 @@
       seenBy.push(new Set(seen));
     });
   }
+  // On the earth-deep canvas a place belongs to its era: the map has moved on
+  // since, so a place from another era is not drawn at all, not even as a dot.
+  const eraOf = (n) => steps[n].era;
+  const inEra = steps.map((s) => {
+    const ids = new Set();
+    if (s.era === undefined) return null;
+    steps.forEach((_, n) => {
+      if (eraOf(n) === s.era) for (const id of SM.placesNow(story, n)) ids.add(id);
+    });
+    return ids;
+  });
   function renderPins(i) {
     const now = new Set(SM.placesNow(story, i));
     let active = null;
@@ -278,6 +298,7 @@
       pin.classList.toggle("past", !isNow && seenBy[i].has(id));
       pin.classList.toggle("future", !isNow && !seenBy[i].has(id));
       pin.classList.toggle("active", id === steps[i].place);
+      pin.classList.toggle("elsewhen", inEra[i] !== null && !inEra[i].has(id));
       // Full pins are drawn over the dots, and the chapter's own place over all.
       // A moved node loses its transition, so an arriving pin fades in by animation.
       pin.classList.toggle("arriving", arriving);
