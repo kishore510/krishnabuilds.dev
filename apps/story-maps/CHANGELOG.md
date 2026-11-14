@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.68.0
+
+- New story map in Lives: Charles Darwin. From Shrewsbury, Edinburgh and Cambridge, round the world on HMS Beagle (Brazil, Patagonia, the Andes, the Galápagos, Australia, the Cape) to London, Down House, Wallace's letter from Ternate, the Origin of Species, the Oxford debate and Westminster Abbey. 24 chapters on the world map and 8 people cards.
+- Catalogue: Charles Darwin (a person) opens the story, with chapter entries for the voyage of the Beagle (an event) and On the Origin of Species (a discovery).
+
+## 0.67.0
+
+- New story map in Lives: Mahatma Gandhi. From Porbandar, Rajkot and London, through twenty-one years in South Africa (the night at Pietermaritzburg, the oath of 1906, Tolstoy Farm and the Great March of 1913) to Champaran, the Salt March, the Poona Pact, Quit India, Noakhali and his death at Birla House in 1948. 27 chapters on the world map and 7 people cards.
+- Catalogue: Mahatma Gandhi (a person) opens the story, with chapter entries for the satyagraha in South Africa and the Salt March (both events).
+
 ## 0.66.0
 
 - New story map in Chronicles: The Byzantine Empire. From Constantine’s new capital in 330, through Justinian and the Hagia Sophia, the plague of 541, Heraclius and the Arab conquests, Greek fire, the icons restored and Basil II, to Manzikert, the Fourth Crusade, the empire in exile at Nicaea, Mistra and the fall of the city in 1453. 13 chapters on the near-east map, a Powers layer that changes chapter by chapter and 8 people cards.

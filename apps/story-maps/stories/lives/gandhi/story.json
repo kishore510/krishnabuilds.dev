@@ -1,0 +1,906 @@
+{
+  "id": "gandhi",
+  "title": "Mahatma Gandhi",
+  "description": "An illustrated map of the life of Mohandas Karamchand Gandhi, from Porbandar and London to twenty-one years in South Africa, where he shaped non-violent resistance (satyagraha), and back to India for Champaran, the Salt March, Quit India, Noakhali and his death in Delhi in 1948.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "gu",
+  "routes": "chapter",
+  "mapLabel": "Illustrated world map following the life of Mahatma Gandhi, 1869 to 1948",
+  "note": "Based on Gandhi's own autobiography and his history of the South African struggle, his collected works, and later biographies and histories. Places in South Africa and in western India sit closer together than a pin on this world map, so routes between them are not drawn. Figures for marchers and for Partition deaths are estimates. The map is stylised and not to scale.",
+  "places": {
+    "porbandar": {
+      "name": "Porbandar",
+      "at": [
+        69.6,
+        21.64
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "rajkot": {
+      "name": "Rajkot",
+      "at": [
+        70.8,
+        22.3
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "bombay": {
+      "name": "Bombay",
+      "at": [
+        72.83,
+        18.95
+      ],
+      "glyph": "anchor",
+      "label": "left"
+    },
+    "london": {
+      "name": "London",
+      "at": [
+        -0.12,
+        51.5
+      ],
+      "glyph": "dome",
+      "label": "left"
+    },
+    "durban": {
+      "name": "Durban",
+      "at": [
+        31.03,
+        -29.86
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "pietermaritzburg": {
+      "name": "Pietermaritzburg",
+      "at": [
+        30.38,
+        -29.6
+      ],
+      "glyph": "memorial",
+      "label": "left"
+    },
+    "colenso": {
+      "name": "Colenso",
+      "at": [
+        29.82,
+        -28.74
+      ],
+      "glyph": "field-hospital",
+      "label": "left"
+    },
+    "phoenix": {
+      "name": "Phoenix",
+      "at": [
+        30.98,
+        -29.7
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "johannesburg": {
+      "name": "Johannesburg",
+      "at": [
+        28.05,
+        -26.2
+      ],
+      "glyph": "mine",
+      "label": "right"
+    },
+    "tolstoy-farm": {
+      "name": "Tolstoy Farm",
+      "at": [
+        27.82,
+        -26.4
+      ],
+      "glyph": "garden",
+      "label": "left"
+    },
+    "charlestown": {
+      "name": "Charlestown",
+      "at": [
+        29.87,
+        -27.42
+      ],
+      "glyph": "flag",
+      "label": "right"
+    },
+    "cape-town": {
+      "name": "Cape Town",
+      "at": [
+        18.42,
+        -33.92
+      ],
+      "hidden": true
+    },
+    "sabarmati": {
+      "name": "Sabarmati",
+      "at": [
+        72.58,
+        23.06
+      ],
+      "glyph": "charkha",
+      "label": "right"
+    },
+    "champaran": {
+      "name": "Champaran",
+      "at": [
+        84.9,
+        26.65
+      ],
+      "glyph": "village",
+      "label": "top"
+    },
+    "dandi": {
+      "name": "Dandi",
+      "at": [
+        72.8,
+        21.0
+      ],
+      "glyph": "salt",
+      "label": "left"
+    },
+    "pune": {
+      "name": "Pune",
+      "at": [
+        73.88,
+        18.55
+      ],
+      "glyph": "chain",
+      "label": "right"
+    },
+    "sevagram": {
+      "name": "Sevagram",
+      "at": [
+        78.66,
+        20.73
+      ],
+      "glyph": "hermitage",
+      "label": "right"
+    },
+    "noakhali": {
+      "name": "Noakhali",
+      "at": [
+        91.0,
+        22.9
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "calcutta": {
+      "name": "Calcutta",
+      "at": [
+        88.39,
+        22.56
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.21,
+        28.6
+      ],
+      "glyph": "memorial",
+      "label": "top"
+    }
+  },
+  "travellers": {
+    "liner": {
+      "name": "Voyages by sea",
+      "icon": "liner"
+    }
+  },
+  "phases": {
+    "youth": {
+      "name": "Porbandar to London",
+      "color": "#e0573a"
+    },
+    "africa": {
+      "name": "South Africa",
+      "color": "#4fc3b0"
+    },
+    "india": {
+      "name": "The struggle in India",
+      "color": "#8fcf8a"
+    },
+    "last": {
+      "name": "Last years",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 14.25,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 52.75,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 84.25,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1869"
+      },
+      {
+        "at": 16,
+        "text": "1893"
+      },
+      {
+        "at": 33.5,
+        "text": "1906"
+      },
+      {
+        "at": 54.5,
+        "text": "1915"
+      },
+      {
+        "at": 65,
+        "text": "1930"
+      },
+      {
+        "at": 79,
+        "text": "1942"
+      },
+      {
+        "at": 93,
+        "text": "1948"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "porbandar",
+      "phase": "youth",
+      "title": "Born in Porbandar",
+      "native": "પોરબંદર",
+      "when": "2 October 1869",
+      "camera": {
+        "at": [
+          69.6,
+          21.64
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Mohandas Karamchand Gandhi was born in Porbandar, a small princely state on the Saurashtra coast. His father, Karamchand, was its chief minister (diwan). His mother, Putlibai, was deeply devout and kept long, strict fasts. Gandhi later wrote that her religious life left the deepest mark on him. The family were Hindu traders by caste (Modh Bania).",
+      "today": "Today: The house where he was born is part of Kirti Mandir, a memorial in Porbandar.",
+      "at": 2.0
+    },
+    {
+      "place": "rajkot",
+      "phase": "youth",
+      "title": "A child bride in Rajkot",
+      "native": "રાજકોટ",
+      "when": "1876 to 1887",
+      "camera": {
+        "at": [
+          70.8,
+          22.3
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "When his father became chief minister of Rajkot, the family moved inland. Gandhi was a shy, middling student. At 13 he was married to Kasturba Kapadia, also about 13, in a joint family wedding. He later called child marriage cruel. His father died in 1885, and Gandhi passed the matriculation examination in 1887.",
+      "today": "Today: The family house in Rajkot, Kaba Gandhi no Delo, is a museum, and his old school is a Gandhi museum.",
+      "at": 5.5
+    },
+    {
+      "place": "london",
+      "phase": "youth",
+      "title": "A law student in London",
+      "when": "1888 to 1891",
+      "camera": {
+        "at": [
+          36,
+          36
+        ],
+        "width": 110
+      },
+      "legs": [
+        {
+          "from": "bombay",
+          "to": "london",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.3
+        }
+      ],
+      "text": "He sailed from Bombay in September 1888 to study law at the Inner Temple, after promising his mother to avoid meat, wine and women. He joined the London Vegetarian Society and first read the Bhagavad Gita, in Edwin Arnold's English translation. He was called to the bar in June 1891 and sailed home days later.",
+      "today": "Today: A blue plaque marks 20 Baron's Court Road, West London, where he lodged as a student.",
+      "at": 9.0
+    },
+    {
+      "place": "bombay",
+      "phase": "youth",
+      "title": "A briefless barrister",
+      "native": "મુંબઈ",
+      "when": "1891 to 1893",
+      "camera": {
+        "at": [
+          36,
+          36
+        ],
+        "width": 110
+      },
+      "legs": [
+        {
+          "from": "london",
+          "to": "bombay",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.3
+        }
+      ],
+      "text": "He came home to learn that his mother had died while he was away. In Bombay his first case went badly: he rose to cross-examine a witness, found he could not speak, and handed the brief back. Work in Rajkot was little better, so in 1893 he accepted a year's legal job in South Africa.",
+      "today": "Today: Mani Bhavan, the Bombay house where he stayed on later visits, is a museum.",
+      "at": 12.5
+    },
+    {
+      "place": "durban",
+      "phase": "africa",
+      "title": "A year's work in Natal",
+      "when": "May 1893",
+      "camera": {
+        "at": [
+          52,
+          -5
+        ],
+        "width": 95
+      },
+      "legs": [
+        {
+          "from": "bombay",
+          "to": "durban",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.25
+        }
+      ],
+      "text": "He landed at Durban to work on a lawsuit for Dada Abdulla, a merchant from Porbandar. The colony of Natal held many Indians: indentured labourers brought to work on sugar estates, and traders who followed them. In court he was told to remove his turban. He refused, and wrote to the press about it.",
+      "today": "Today: Durban, in KwaZulu-Natal, has one of the largest communities of Indian origin outside India.",
+      "at": 16.0
+    },
+    {
+      "place": "pietermaritzburg",
+      "phase": "africa",
+      "title": "A night on the platform",
+      "when": "7 June 1893",
+      "camera": {
+        "at": [
+          30.38,
+          -29.6
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "On the train to Pretoria, a white passenger objected to an Indian in first class. At Pietermaritzburg, Gandhi refused to move to the van and was put off the train. He sat all night in the cold waiting room. He later called it a turning point: he resolved to stay and resist such prejudice.",
+      "today": "Today: A plaque on Pietermaritzburg station marks the spot, and his statue stands in the city centre.",
+      "at": 19.5
+    },
+    {
+      "place": "durban",
+      "phase": "africa",
+      "title": "The Natal Indian Congress",
+      "when": "1894 to 1897",
+      "camera": {
+        "at": [
+          31.03,
+          -29.86
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "When his year ended, Natal was preparing to take the vote from Indians. Gandhi stayed, drafted petitions, and in 1894 helped found the Natal Indian Congress. Returning with his family in January 1897, he was attacked by a white mob at Durban. The wife of the police superintendent shielded him. He refused to prosecute.",
+      "today": "Today: The Natal Indian Congress was revived in 1971 in the struggle against apartheid.",
+      "at": 23.0
+    },
+    {
+      "place": "colenso",
+      "phase": "africa",
+      "title": "Stretcher-bearers at war",
+      "when": "1899 to 1900",
+      "camera": {
+        "at": [
+          29.82,
+          -28.74
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In the war between Britain and the Boer republics, Gandhi argued that Indians, as subjects of the empire, should serve. He raised an Indian ambulance corps of about 1,100 volunteers, who carried wounded soldiers from the battlefields at Colenso and Spion Kop. They were praised, but Indians' rights in South Africa did not improve.",
+      "today": "Today: Colenso is a small town on the Tugela River, near several preserved battlefields.",
+      "at": 26.5
+    },
+    {
+      "place": "phoenix",
+      "phase": "africa",
+      "title": "Phoenix Settlement",
+      "when": "1904",
+      "camera": {
+        "at": [
+          30.98,
+          -29.7
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "On an overnight train from Johannesburg, a friend's copy of John Ruskin's Unto This Last changed his plans. Ruskin argued that all work has equal worth. Within weeks Gandhi bought land near Durban and founded Phoenix Settlement, where residents farmed, did manual labour and printed his weekly newspaper, Indian Opinion, on a hand-turned press.",
+      "today": "Today: Phoenix Settlement was burnt in 1985 and restored; his house, Sarvodaya, reopened in 2000.",
+      "at": 30.0
+    },
+    {
+      "place": "johannesburg",
+      "phase": "africa",
+      "title": "An oath at the Empire Theatre",
+      "native": "સત્યાગ્રહ",
+      "when": "11 September 1906",
+      "camera": {
+        "at": [
+          28.05,
+          -26.2
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "The Transvaal proposed a law requiring every Indian to register and give fingerprints. At a packed meeting in Johannesburg's Empire Theatre, Indians, Hindu and Muslim, swore to disobey it and accept the penalties. To name this non-violent resistance, Gandhi chose truth-force (satyagraha), a word refined from a reader's suggestion in Indian Opinion.",
+      "today": "Today: Gandhi Square in central Johannesburg is named after him.",
+      "at": 33.5
+    },
+    {
+      "place": "johannesburg",
+      "phase": "africa",
+      "title": "Certificates in the fire",
+      "when": "1908",
+      "camera": {
+        "at": [
+          28.05,
+          -26.2
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In January 1908 Gandhi was jailed for the first time. He then agreed with the Transvaal minister Jan Smuts that Indians would register voluntarily, and was beaten by a Pathan who felt betrayed. When the law was not repealed, about 2,000 Indians burned their registration certificates in a cauldron outside the Hamidia Mosque on 16 August.",
+      "today": "Today: The Old Fort prison, where he was held, is part of Constitution Hill in Johannesburg.",
+      "at": 37.0
+    },
+    {
+      "place": "london",
+      "phase": "africa",
+      "title": "Hind Swaraj at sea",
+      "native": "હિંદ સ્વરાજ",
+      "when": "1909",
+      "camera": {
+        "at": [
+          14,
+          12
+        ],
+        "width": 115
+      },
+      "legs": [
+        {
+          "from": "johannesburg",
+          "to": "london",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.2
+        }
+      ],
+      "text": "He went to London to lobby for South African Indians, with little success. On the voyage back, on the Kildonan Castle, he wrote Hind Swaraj (Indian Home Rule) in Gujarati in ten days. It argued that India could win freedom only through non-violence, and rejected modern machinery, railways and lawyers as forces that enslaved people.",
+      "today": "Today: The British banned Hind Swaraj in Bombay in 1910; it has since been translated into many languages.",
+      "at": 40.5
+    },
+    {
+      "place": "tolstoy-farm",
+      "phase": "africa",
+      "title": "Tolstoy Farm",
+      "when": "1910 to 1913",
+      "camera": {
+        "at": [
+          27.82,
+          -26.4
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "His friend Hermann Kallenbach, a German-Jewish architect, gave him 1,100 acres near Johannesburg for the families of jailed resisters. They named it after Leo Tolstoy, with whom Gandhi corresponded until Tolstoy's death in 1910. Residents of every faith built their own houses, grew food, made sandals, and taught the children themselves.",
+      "today": "Today: The remains of Tolstoy Farm lie south-west of Johannesburg, near Lenasia.",
+      "at": 44.0
+    },
+    {
+      "place": "charlestown",
+      "phase": "africa",
+      "title": "The Great March",
+      "when": "November 1913",
+      "camera": {
+        "at": [
+          29.87,
+          -27.42
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "A court ruling denied legal standing to Hindu and Muslim marriages, and a £3 annual tax still fell on former indentured workers. Women joined the struggle; Kasturba was jailed. Striking Natal coal miners followed Gandhi across the Transvaal border at Charlestown, roughly 2,000 people. Thousands were arrested, and strikes spread along the coast.",
+      "today": "Today: Charlestown and Volksrust face each other across the KwaZulu-Natal and Mpumalanga border.",
+      "at": 47.5
+    },
+    {
+      "place": "bombay",
+      "phase": "africa",
+      "title": "Home after 21 years",
+      "when": "July 1914 to January 1915",
+      "camera": {
+        "at": [
+          36,
+          10
+        ],
+        "width": 115
+      },
+      "legs": [
+        {
+          "from": "cape-town",
+          "to": "london",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.15
+        },
+        {
+          "from": "london",
+          "to": "bombay",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.3
+        }
+      ],
+      "text": "Smuts and Gandhi reached an agreement, and the Indians' Relief Act of 1914 abolished the £3 tax and recognised Indian marriages. Gandhi sailed from Cape Town in July. He was in London when the First World War began, then landed in Bombay on 9 January 1915, aged 45, to a hero's welcome.",
+      "today": "Today: India marks 9 January as Overseas Indians' Day (Pravasi Bharatiya Divas).",
+      "at": 51.0
+    },
+    {
+      "place": "sabarmati",
+      "phase": "india",
+      "title": "An ashram in Ahmedabad",
+      "native": "સાબરમતી આશ્રમ",
+      "when": "1915 to 1917",
+      "camera": {
+        "at": [
+          72.58,
+          23.06
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "His mentor Gopal Krishna Gokhale advised him to spend a year travelling India before speaking on politics. Gandhi founded an ashram at Kochrab in Ahmedabad in 1915, and admitted a Dalit family, which angered some of its funders. In 1917 the ashram moved to the banks of the Sabarmati River.",
+      "today": "Today: Kochrab Ashram, his first in India, still stands in Ahmedabad's Paldi area.",
+      "at": 54.5
+    },
+    {
+      "place": "champaran",
+      "phase": "india",
+      "title": "Indigo in Champaran",
+      "native": "चंपारण",
+      "lang": "hi",
+      "when": "1917",
+      "camera": {
+        "at": [
+          84.9,
+          26.65
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "A farmer, Raj Kumar Shukla, persuaded him to see how planters in Bihar forced tenants to grow indigo. Ordered to leave the district, Gandhi refused and told the court he would accept the penalty. The case was withdrawn. His inquiry, with thousands of farmers' statements, led to a law ending the forced indigo system.",
+      "today": "Today: Bhitiharwa Ashram, which he set up in West Champaran, is a museum.",
+      "at": 58.0
+    },
+    {
+      "place": "sabarmati",
+      "phase": "india",
+      "title": "Non-cooperation and a trial",
+      "when": "1919 to 1922",
+      "camera": {
+        "at": [
+          72.58,
+          23.06
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "After the Rowlatt Acts and the Amritsar massacre, Gandhi led Congress into non-cooperation: Indians boycotted British courts, schools, titles and cloth. When a crowd killed 22 policemen at Chauri Chaura in February 1922, he called it off. Tried in Ahmedabad for sedition, he pleaded guilty and was sentenced to six years.",
+      "today": "Today: Sabarmati Ashram keeps his room, Hriday Kunj, as a museum.",
+      "at": 61.5
+    },
+    {
+      "place": "dandi",
+      "phase": "india",
+      "title": "The Salt March",
+      "native": "દાંડી કૂચ",
+      "when": "12 March to 6 April 1930",
+      "camera": {
+        "at": [
+          72.8,
+          21.0
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "British law taxed salt and forbade Indians to make it. Gandhi walked about 385 kilometres from Sabarmati Ashram to the sea at Dandi with 78 followers, drawing crowds and the world's press. On 6 April he picked up a lump of natural salt. Tens of thousands were later jailed for making salt.",
+      "today": "Today: The National Salt Satyagraha Memorial at Dandi opened in 2019.",
+      "at": 65.0
+    },
+    {
+      "place": "london",
+      "phase": "india",
+      "title": "The Round Table Conference",
+      "when": "September to December 1931",
+      "camera": {
+        "at": [
+          36,
+          36
+        ],
+        "width": 110
+      },
+      "legs": [
+        {
+          "from": "bombay",
+          "to": "london",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.3
+        }
+      ],
+      "text": "After a pact with the Viceroy, Lord Irwin, he went to London as Congress's only delegate to the Round Table Conference. He chose to stay at Kingsley Hall in the poor East End and visited Lancashire mill workers hurt by India's cloth boycott. The conference split on minority representation and achieved little.",
+      "today": "Today: A plaque at Kingsley Hall in Bow marks his stay.",
+      "at": 68.5
+    },
+    {
+      "place": "pune",
+      "phase": "india",
+      "title": "A fast and the Poona Pact",
+      "native": "येरवडा",
+      "lang": "hi",
+      "when": "September 1932",
+      "camera": {
+        "at": [
+          73.88,
+          18.55
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Britain offered separate electorates to the depressed classes (Dalits). In Yerwada jail, Gandhi fasted against them. B. R. Ambedkar agreed instead to seats reserved for Dalits within joint electorates: the Poona Pact. Ambedkar later wrote that he signed under pressure, and the pact is still debated. Gandhi then campaigned against untouchability across India.",
+      "today": "Today: Yerwada Central Jail in Pune is still a prison.",
+      "at": 72.0
+    },
+    {
+      "place": "sevagram",
+      "phase": "india",
+      "title": "Sevagram",
+      "native": "सेवाग्राम",
+      "lang": "hi",
+      "when": "1936 to 1942",
+      "camera": {
+        "at": [
+          78.66,
+          20.73
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "He settled in a village near Wardha in central India and named his mud-walled ashram Sevagram, village of service. From here he promoted hand-spun cloth (khadi), village industries and basic education through crafts. Congress leaders travelled to see him. The Second World War began, and he opposed Indian support for it without a promise of freedom.",
+      "today": "Today: Sevagram Ashram near Wardha keeps his hut, Bapu Kuti.",
+      "at": 75.5
+    },
+    {
+      "place": "bombay",
+      "phase": "india",
+      "title": "Quit India",
+      "native": "भारत छोड़ो",
+      "lang": "hi",
+      "when": "8 August 1942",
+      "camera": {
+        "at": [
+          72.83,
+          18.95
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At Gowalia Tank in Bombay, Congress demanded that the British quit India at once. Gandhi told the crowd, “Do or die.” He and the Congress leaders were arrested the next morning. Protests, strikes and sabotage followed and were crushed; estimates of those killed vary and are disputed, and about 100,000 were jailed.",
+      "today": "Today: Gowalia Tank maidan is now called August Kranti Maidan.",
+      "at": 79.0
+    },
+    {
+      "place": "pune",
+      "phase": "india",
+      "title": "The Aga Khan Palace",
+      "when": "1942 to 1944",
+      "camera": {
+        "at": [
+          73.88,
+          18.55
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Gandhi was held in the Aga Khan Palace in Poona. His secretary Mahadev Desai died there within a week. In 1943 Gandhi fasted for 21 days against the government's blame for the violence. Kasturba died there in his arms on 22 February 1944. Ill with malaria, he was released that May.",
+      "today": "Today: The Aga Khan Palace holds the memorials of Kasturba and Mahadev Desai.",
+      "at": 82.5
+    },
+    {
+      "place": "noakhali",
+      "phase": "last",
+      "title": "Barefoot in Noakhali",
+      "native": "নোয়াখালী",
+      "lang": "bn",
+      "when": "November 1946 to March 1947",
+      "camera": {
+        "at": [
+          91.0,
+          22.9
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Communal killing spread from Calcutta to Noakhali in eastern Bengal, where Hindus were attacked. Aged 77, Gandhi walked barefoot from village to village for four months, staying in Muslim homes and urging both communities to live together. He opposed the partition of India, but Congress leaders accepted it in June 1947.",
+      "today": "Today: Noakhali is in Bangladesh; the Gandhi Ashram Trust at Joyag carries on his work.",
+      "at": 86.0
+    },
+    {
+      "place": "calcutta",
+      "phase": "last",
+      "title": "Independence in Calcutta",
+      "when": "August to September 1947",
+      "camera": {
+        "at": [
+          88.39,
+          22.56
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Gandhi spent 15 August 1947 not in Delhi but in Beliaghata, Calcutta, fasting and praying. As Partition violence killed many hundreds of thousands, by disputed estimates, Calcutta stayed largely calm. When riots broke out there, his fast in September stopped them. The Viceroy, Lord Mountbatten, called him a one-man boundary force.",
+      "today": "Today: Hydari Manzil in Beliaghata, where he stayed, is now Gandhi Bhavan.",
+      "at": 89.5
+    },
+    {
+      "place": "delhi",
+      "phase": "last",
+      "title": "Birla House",
+      "native": "बिरला हाउस",
+      "lang": "hi",
+      "when": "January 1948",
+      "camera": {
+        "at": [
+          77.21,
+          28.6
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In Delhi he fasted again for peace between Hindus and Muslims. On 30 January 1948, on his way to evening prayer at Birla House, he was shot dead by Nathuram Godse, a Hindu nationalist who blamed him for Partition. He was 78. Nehru told the nation, “The light has gone out of our lives.”",
+      "today": "Today: Birla House is now Gandhi Smriti; Raj Ghat marks where he was cremated.",
+      "at": 93.0
+    }
+  ],
+  "people": {
+    "heading": "People in his story",
+    "items": [
+      {
+        "id": "kasturba",
+        "name": "Kasturba Gandhi",
+        "native": "કસ્તૂરબા ગાંધી",
+        "life": "1869 to 1944",
+        "role": "His wife",
+        "text": "Kasturba Kapadia married Gandhi at about 13 and was married to him for more than 60 years. Unable to read when they married, she ran the households at Phoenix and the ashrams and argued with him when she disagreed. She was jailed in South Africa in 1913 and in India several times, and died in custody in 1944.",
+        "steps": [
+          1,
+          6,
+          13,
+          23
+        ]
+      },
+      {
+        "id": "gokhale",
+        "name": "Gopal Krishna Gokhale",
+        "native": "गोपाल कृष्ण गोखले",
+        "lang": "hi",
+        "life": "1866 to 1915",
+        "role": "Mentor",
+        "text": "A moderate Congress leader and reformer from Maharashtra whom Gandhi called his political guru. Gokhale toured South Africa in 1912 to support the Indians there. When Gandhi came home in 1915, Gokhale asked him to spend a year travelling and observing India before taking a public stand. Gokhale died a month after Gandhi's return.",
+        "steps": [
+          14,
+          15
+        ]
+      },
+      {
+        "id": "kallenbach",
+        "name": "Hermann Kallenbach",
+        "life": "1871 to 1945",
+        "role": "Friend and supporter",
+        "text": "A German-Jewish architect in Johannesburg who became one of Gandhi's closest friends. He took up a simple life, bought the land for Tolstoy Farm, and joined the 1913 march, for which he was jailed. He later sailed with Gandhi to England. Interned there as a German during the First World War, he returned to South Africa.",
+        "steps": [
+          12,
+          13
+        ]
+      },
+      {
+        "id": "smuts",
+        "name": "Jan Smuts",
+        "life": "1870 to 1950",
+        "role": "Opponent",
+        "text": "A Boer general who became a leading minister in the Transvaal and the Union of South Africa. He negotiated with Gandhi in 1908 and again in 1914, when they agreed the Indians' Relief Act. When Gandhi left, Smuts wrote, “The saint has left our shores, I sincerely hope for ever.” He later became prime minister.",
+        "steps": [
+          10,
+          13,
+          14
+        ]
+      },
+      {
+        "id": "desai",
+        "name": "Mahadev Desai",
+        "native": "મહાદેવ દેસાઈ",
+        "life": "1892 to 1942",
+        "role": "Secretary",
+        "text": "Gandhi's secretary from 1917 for 25 years. He wrote down Gandhi's words, kept a detailed diary of their life together and translated Gandhi's autobiography from Gujarati into English. He travelled with Gandhi to the Round Table Conference in London. He died of a heart attack in the Aga Khan Palace in August 1942.",
+        "steps": [
+          17,
+          18,
+          19,
+          23
+        ]
+      },
+      {
+        "id": "ambedkar",
+        "name": "B. R. Ambedkar",
+        "native": "भीमराव रामजी आंबेडकर",
+        "lang": "hi",
+        "life": "1891 to 1956",
+        "role": "Critic",
+        "text": "Bhimrao Ramji Ambedkar, a Dalit lawyer and economist, led the depressed classes at the Round Table Conference and sought separate electorates. He signed the Poona Pact to end Gandhi's fast but became one of his sharpest critics, arguing Gandhi had not challenged caste itself. He later chaired the committee that drafted India's constitution.",
+        "steps": [
+          20
+        ]
+      },
+      {
+        "id": "nehru",
+        "name": "Jawaharlal Nehru",
+        "native": "जवाहरलाल नेहरू",
+        "lang": "hi",
+        "life": "1889 to 1964",
+        "role": "Ally",
+        "text": "A Cambridge-educated lawyer from Allahabad who joined Gandhi's movement in 1919 and was jailed many times. The two often disagreed: Nehru favoured industry and socialism over Gandhi's villages. Gandhi named him his political heir. Nehru became independent India's first prime minister in 1947 and announced Gandhi's death to the nation by radio.",
+        "steps": [
+          17,
+          22,
+          24,
+          26
+        ]
+      }
+    ]
+  }
+}
