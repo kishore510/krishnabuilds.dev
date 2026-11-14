@@ -34,6 +34,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Spanish Empire (`spanish-empire`), 2026-11-13
 - Radioactivity (`radioactivity`), 2026-11-13
 - The Big Bang (`big-bang`), 2026-11-13
 - Marie Curie (`marie-curie`), 2026-11-13
