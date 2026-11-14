@@ -39,8 +39,11 @@ eras.append({"id":"snowball","name":"Snowball Earth, about 700 million years ago
   "labels":[L("Ice from pole to equator?",[-110,-25],"range")]})
 def data_era(i,name,labels): e=data[i]; return {"id":i,"name":name,"shapes":e["shapes"],"labels":labels}
 eras.append(data_era("cambrian","Gondwana, 535 million years ago",[L("Gondwana",[0,-55],"range"),L("Panthalassic Ocean",[-100,20])]))
+eras.append(data_era("devonian","The world 375 million years ago",[L("Panthalassic Ocean",[-120,10]),L("Gondwana",[20,-55],"range")]))
+eras.append(data_era("carboniferous","The world 300 million years ago",[L("Panthalassic Ocean",[-120,10]),L("Pangaea forming",[0,-35],"range")]))
 eras.append(data_era("pangaea","Pangaea, 250 million years ago",[L("Pangaea",[20,-10],"range"),L("Panthalassa",[-120,0]),L("Tethys",[95,15])]))
 eras.append(data_era("jurassic","Pangaea breaking up, 150 million years ago",[L("Laurasia",[40,55],"range"),L("Gondwana",[20,-40],"range"),L("Tethys",[60,10])]))
+eras.append(data_era("early-cretaceous","The world 125 million years ago",[L("Pacific Ocean",[-150,0]),L("Tethys",[60,5])]))
 eras.append(data_era("end-cretaceous","The world 65 million years ago",[L("Pacific Ocean",[-150,0]),L("Tethys",[45,15])]))
 eras.append(data_era("india-asia","The world 45 million years ago",[L("Pacific Ocean",[-150,0]),L("Atlantic Ocean",[-35,15])]))
 today=data["today"]["shapes"]

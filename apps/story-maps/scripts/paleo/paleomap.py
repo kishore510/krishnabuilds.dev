@@ -27,8 +27,11 @@ from shapely.ops import unary_union
 # id, age in millions of years, longitude shift in degrees
 ERAS = [
     ("cambrian", 535, 180),
+    ("devonian", 375, 0),
+    ("carboniferous", 300, 0),
     ("pangaea", 250, 0),
     ("jurassic", 150, 0),
+    ("early-cretaceous", 125, 0),
     ("end-cretaceous", 65, 0),
     ("india-asia", 45, 0),
     ("today", 0, 0),
@@ -42,6 +45,17 @@ SITES = {
     "siberian-traps": (66.0, 95.0),
     "atlantic-rift": (31.0, -60.0),
     "iceland": (64.3, -21.0),
+    # Fossil sites for Life on Earth
+    "ediacara": (-30.8, 138.1),
+    "burgess": (51.4, -116.5),
+    "tiktaalik": (77.2, -86.4),
+    "joggins": (45.7, -64.4),
+    "meishan": (31.1, 119.7),
+    "ischigualasto": (-30.0, -67.9),
+    "solnhofen": (48.9, 11.0),
+    "liaoning": (41.6, 120.8),
+    "hell-creek": (47.5, -106.9),
+    "pakicetus": (33.6, 72.4),
 }
 
 TOLERANCE = 0.9  # degrees

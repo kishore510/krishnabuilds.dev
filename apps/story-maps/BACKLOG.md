@@ -8,10 +8,6 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy, Biology and Medicine, and Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
 
-Nature first, in this order (design in `docs/earth-deep.md`):
-
-1. Life on Earth (Life, `earth-deep`)
-
 Biology and Medicine fits the `world` map, so it can go in between at any time: Smallpox, from variolation to eradication, then The Gene (genetics, with a labelled aside on what Jurassic Park got right and wrong).
 
 Suggested after those. These fit a map that already exists, so each is one session:
@@ -39,6 +35,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Life on Earth (`life-on-earth`), 2026-11-14
 - The Making of Earth (`making-of-earth`), 2026-11-14
 - The Eastern Gangas (`eastern-ganga`), 2026-11-14
 - Charles Darwin (`darwin`), 2026-11-14
