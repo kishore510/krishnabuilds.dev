@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.71.0
+
+- New story map in Philosophy: Greek Philosophy. From Thales and the first search for natural causes in Miletus, through Pythagoras, Heraclitus, Parmenides and Democritus, Socrates, Plato's Academy and Aristotle, to Pyrrho's doubt, the Garden and the Porch, Rome, Plotinus, the last philosophers of Athens and Aristotle's long afterlife in Arabic and Latin. 14 chapters on the europe map and 3 people cards.
+- Catalogue: Greek philosophy (a discovery) opens the story, with person entries for Pythagoras, Democritus, Epicurus, Zeno of Kition, Plotinus and Ibn Rushd.
+
+## 0.70.0
+
+- New story map in Philosophy, the subject's first: Indian Philosophy. From the doubting Hymn of Creation in the Rigveda, the Upanishads and Janaka's contest, through Mahavira, six rival teachers, the Buddha and the Greeks at Taxila, the six schools, Nagarjuna and Nalanda, to Shankara's four monasteries, Ramanuja, Madhva, the new logic of Mithila and Dara Shikoh's Persian Upanishads. 16 chapters on the south-asia map and 4 people cards.
+- Catalogue: Indian philosophy (a discovery) opens the story, with person entries for Mahavira, the Buddha, Nagarjuna, Shankara, Ramanuja and Madhva.
+
 ## 0.69.0
 
 - New story map in Chronicles: The Eastern Gangas. From Kalinganagara and the Chola bride who gave Chodaganga his name, through the conquest of Utkala, the Jagannath temple at Puri, Anangabhima III as Jagannath’s deputy, the war with Bengal and the Sun Temple at Konark, to Firuz Shah’s raid of 1360 and the Gajapati takeover of 1434–1435. 10 chapters on the south-asia map, a Powers layer that changes chapter by chapter and 3 people cards.
