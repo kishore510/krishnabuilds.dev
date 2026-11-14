@@ -1,0 +1,456 @@
+{
+  "id": "subbarow",
+  "title": "Yellapragada Subbarow",
+  "description": "An illustrated map of the life of Yellapragada Subbarow, from Bhimavaram and Madras to Harvard and Lederle Laboratories in New York, where his teams found ATP, made folic acid, and developed methotrexate for cancer, DEC for filariasis and Aureomycin, the first tetracycline.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "te",
+  "routes": "chapter",
+  "mapLabel": "Illustrated world map following the life of Yellapragada Subbarow, 1895 to 1948",
+  "note": "Based on histories of Harvard biochemistry and Lederle Laboratories, the published papers, and later biographical articles. Sources differ on when he reached Boston (1922 or 1923) and on the day he died (8 or 9 August 1948). New York is drawn slightly south-east of its true place so it does not hide Pearl River. The map is stylised and not to scale.",
+  "places": {
+    "bhimavaram": {
+      "name": "Bhimavaram",
+      "at": [
+        81.52,
+        16.54
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "madras": {
+      "name": "Madras",
+      "at": [
+        80.27,
+        13.08
+      ],
+      "glyph": "palm-leaf",
+      "label": "bottom"
+    },
+    "boston": {
+      "name": "Boston",
+      "at": [
+        -71.1,
+        42.34
+      ],
+      "glyph": "flask",
+      "label": "top"
+    },
+    "pearl-river": {
+      "name": "Pearl River",
+      "at": [
+        -74.02,
+        41.06
+      ],
+      "glyph": "pill",
+      "label": "right"
+    },
+    "missouri": {
+      "name": "Columbia, Missouri",
+      "at": [
+        -92.33,
+        38.95
+      ],
+      "glyph": "garden",
+      "label": "bottom"
+    },
+    "new-york": {
+      "name": "New York",
+      "at": [
+        -73.4,
+        40.2
+      ],
+      "glyph": "memorial",
+      "label": "bottom"
+    }
+  },
+  "travellers": {
+    "liner": {
+      "name": "The voyage to Boston",
+      "icon": "liner"
+    },
+    "scroll": {
+      "name": "The Missouri soil sample",
+      "icon": "scroll"
+    }
+  },
+  "phases": {
+    "india": {
+      "name": "The Godavari and Madras",
+      "color": "#e0573a"
+    },
+    "harvard": {
+      "name": "Harvard",
+      "color": "#4fc3b0"
+    },
+    "lederle": {
+      "name": "Lederle",
+      "color": "#8fcf8a"
+    },
+    "legacy": {
+      "name": "Legacy",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "journey": {
+      "color": "#8a5a2b",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 17.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 46,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 91.5,
+        "color": "rgba(143,207,138,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1895"
+      },
+      {
+        "at": 14,
+        "text": "1921"
+      },
+      {
+        "at": 28,
+        "text": "1925"
+      },
+      {
+        "at": 50,
+        "text": "1940"
+      },
+      {
+        "at": 57,
+        "text": "1945"
+      },
+      {
+        "at": 86,
+        "text": "1948"
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "bhimavaram",
+      "phase": "india",
+      "title": "A boy from the Godavari delta",
+      "native": "భీమవరం",
+      "when": "12 January 1895",
+      "camera": {
+        "at": [
+          81.5,
+          16.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Yellapragada Subbarow was born on 12 January 1895 in Bhimavaram, a town in the rice country of the Godavari delta, then part of the Madras Presidency of British India. His family spoke Telugu. He was not a strong pupil: most accounts say he passed his school-leaving examination only at the third attempt, in Madras.",
+      "today": "Today: Bhimavaram is a town in West Godavari district, Andhra Pradesh.",
+      "at": 2
+    },
+    {
+      "place": "madras",
+      "phase": "india",
+      "title": "Two brothers and the sprue",
+      "native": "మద్రాసు",
+      "when": "About 1915 to 1921",
+      "camera": {
+        "at": [
+          80.3,
+          13.1
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In Madras he studied at Presidency College and then Madras Medical College. Tropical sprue, a wasting disease of the gut, killed his elder and younger brothers within eight days of each other, and nearly killed him too. He recovered after Ayurvedic treatment. Accounts tie his later search for medicines to these deaths.",
+      "today": "Today: Madras is now Chennai, capital of Tamil Nadu. Madras Medical College still teaches on its old site by Central station.",
+      "at": 8
+    },
+    {
+      "place": "madras",
+      "phase": "india",
+      "title": "Khadi and a lesser degree",
+      "when": "1921",
+      "camera": {
+        "at": [
+          80.3,
+          13.1
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "He finished his medical studies in 1921 with the Licentiate in Medicine and Surgery (LMS), not the full MBBS degree. The usual story is that he wore homespun cotton (khadi) in surgery after Gandhi’s call and angered his professor. One historian doubts this, as that professor arrived only in 1924. He then taught anatomy at an Ayurvedic college in Madras.",
+      "today": "Today: Khadi is still sold across India in government-backed Khadi Gramodyog shops.",
+      "at": 14
+    },
+    {
+      "place": "boston",
+      "phase": "harvard",
+      "title": "A voyage to Harvard",
+      "when": "1922 or 1923",
+      "camera": {
+        "at": [
+          5,
+          28
+        ],
+        "width": 200
+      },
+      "legs": [
+        {
+          "from": "madras",
+          "to": "boston",
+          "traveller": "liner",
+          "style": "sea",
+          "bend": 0.45
+        }
+      ],
+      "text": "With help from friends and from Kasturi Suryanarayana Murthy, whose daughter he had married, he sailed for the United States to study at the Harvard School of Tropical Medicine. Sources give his arrival in Boston as 1922 or 1923. To pay his way he took night work as a porter at the Peter Bent Brigham Hospital.",
+      "today": "Today: The Peter Bent Brigham Hospital is now part of Brigham and Women’s Hospital, beside Harvard Medical School.",
+      "at": 21
+    },
+    {
+      "place": "boston",
+      "phase": "harvard",
+      "title": "A test for phosphorus",
+      "when": "1925",
+      "camera": {
+        "at": [
+          -71.1,
+          42.3
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "After his diploma in tropical medicine he joined the biochemist Cyrus Fiske. In 1925 they published a simple colour test to measure phosphorus in blood and tissue: the sample turns blue, and the depth of blue gives the amount. The Fiske–Subbarow method became one of the most cited papers in biochemistry and is still used.",
+      "today": "Today: Laboratories still measure phosphate with colour tests descended from the Fiske–Subbarow method.",
+      "at": 28
+    },
+    {
+      "place": "boston",
+      "phase": "harvard",
+      "title": "The energy of muscle",
+      "when": "1927 to 1929",
+      "camera": {
+        "at": [
+          -71.1,
+          42.3
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Studying how muscle uses energy, Fiske and Subbarow found phosphocreatine, a store of energy in muscle, and in 1929 adenosine triphosphate (ATP), the molecule every living cell uses to carry energy. Karl Lohmann found ATP in Germany the same year. Textbooks often credit Lohmann alone, so Subbarow’s share is still argued over.",
+      "today": "Today: ATP is in every biology textbook as the energy currency of the cell.",
+      "at": 35
+    },
+    {
+      "place": "boston",
+      "phase": "harvard",
+      "title": "Passed over at Harvard",
+      "when": "1930s",
+      "camera": {
+        "at": [
+          -71.1,
+          42.3
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "He earned a Harvard doctorate in biochemistry and stayed on to teach and research, working on vitamins and liver extracts. But he was a foreigner and an Indian in Depression-era America, and his chances of promotion to a permanent post were slim. It never came. In 1940 he left for industry, after some seventeen years at Harvard.",
+      "today": "Today: Harvard Medical School stands on Longwood Avenue in Boston.",
+      "at": 42
+    },
+    {
+      "place": "pearl-river",
+      "phase": "lederle",
+      "title": "Head of research at Lederle",
+      "when": "1940",
+      "camera": {
+        "at": [
+          -74,
+          41
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In May 1940 he became associate director of research at Lederle Laboratories, a drug company in Pearl River, New York, owned by American Cyanamid. He soon headed the whole research department; sources date that to late 1940 or 1942. He built teams of chemists, biologists and doctors and kept them working on many projects at once.",
+      "today": "Today: The Pearl River site is now part of Pfizer.",
+      "at": 50
+    },
+    {
+      "place": "pearl-river",
+      "phase": "lederle",
+      "title": "Folic acid from scratch",
+      "when": "1945",
+      "camera": {
+        "at": [
+          -74,
+          41
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1945 his team made folic acid, a B vitamin, from scratch, working out its structure on the way. Folic acid treats some anaemias and helps cure tropical sprue, the disease that had killed his brothers. Today it is given in pregnancy to prevent birth defects of the spine and brain.",
+      "today": "Today: Folic acid tablets are on the World Health Organization’s list of essential medicines.",
+      "at": 57
+    },
+    {
+      "place": "pearl-river",
+      "phase": "lederle",
+      "title": "Aminopterin and the first remissions",
+      "when": "1947 to 1948",
+      "camera": {
+        "at": [
+          -74,
+          41
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "If folic acid feeds growing cells, a false folic acid might starve cancer. At Sidney Farber’s request, Subbarow’s chemists made such antagonists. In 1948 Farber reported that one, aminopterin, gave children with leukaemia the first temporary remissions. His paper did not credit Subbarow. Its successor, methotrexate, is still used against cancer and arthritis.",
+      "today": "Today: Methotrexate is on the WHO list of essential medicines, for cancers and rheumatoid arthritis.",
+      "at": 64
+    },
+    {
+      "place": "pearl-river",
+      "phase": "lederle",
+      "title": "A drug for elephantiasis",
+      "when": "1947",
+      "camera": {
+        "at": [
+          -74,
+          41
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Lymphatic filariasis, spread by mosquitoes, can swell legs into elephantiasis. Subbarow’s group tested 517 compounds and found one, from piperazine, that killed the worms’ larvae; a small change made it work better. In 1947 Redginal Hewitt presented it as Hetrazan, diethylcarbamazine (DEC). It is still a mainstay of treatment worldwide.",
+      "today": "Today: Lymphatic filariasis still affects tens of millions of people, many of them in India.",
+      "at": 70
+    },
+    {
+      "place": "pearl-river",
+      "phase": "lederle",
+      "title": "Gold from Missouri soil",
+      "when": "1944 to 1948",
+      "camera": {
+        "at": [
+          -83,
+          40
+        ],
+        "width": 55
+      },
+      "legs": [
+        {
+          "from": "missouri",
+          "to": "pearl-river",
+          "traveller": "scroll",
+          "style": "journey",
+          "bend": -0.12
+        }
+      ],
+      "text": "In 1944 Subbarow hired Benjamin Duggar, a retired botany professor of seventy-two, to search soils for antibiotics. From a sample dug at the University of Missouri, Duggar grew a golden mould that made chlortetracycline, sold as Aureomycin and announced in 1948. It was the first tetracycline and one of the first broad-spectrum antibiotics.",
+      "today": "Today: Tetracyclines such as doxycycline are among the most prescribed antibiotics in the world.",
+      "at": 77
+    },
+    {
+      "place": "new-york",
+      "phase": "lederle",
+      "title": "Death in New York",
+      "when": "8 August 1948",
+      "camera": {
+        "at": [
+          -73.4,
+          40.6
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Subbarow died of a heart attack in New York City on 8 August 1948, aged 53; some sources give 9 August. Aureomycin, the last great discovery of his department, was reaching doctors that year. He won no Nobel Prize, and his name was missing from much of the work his teams had done.",
+      "today": "Today: Pearl River and New York are an hour apart by road.",
+      "at": 86
+    },
+    {
+      "place": "bhimavaram",
+      "phase": "legacy",
+      "title": "Back to the Godavari",
+      "native": "భీమవరం",
+      "when": "Today",
+      "camera": {
+        "at": [
+          81.5,
+          16.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "His medicines came home. Coastal Andhra is one of the places in India where filariasis is common, and in the World Health Organization’s elimination programme, begun in 2000, whole districts take Subbarow’s DEC together with albendazole once a year. Methotrexate, folic acid and the tetracyclines are on the shelves of every hospital in India.",
+      "today": "Today: India runs mass drug administration against filariasis in the districts where it is still found.",
+      "at": 97
+    }
+  ],
+  "people": {
+    "heading": "People in his story",
+    "items": [
+      {
+        "id": "fiske",
+        "name": "Cyrus Fiske",
+        "life": "1890 to 1978",
+        "role": "Harvard biochemist",
+        "steps": [
+          4,
+          5,
+          6
+        ],
+        "text": "Cyrus Hartwell Fiske was the Harvard biochemist who took Subbarow into his laboratory. Together they devised the Fiske–Subbarow test for phosphorus in 1925 and found phosphocreatine and ATP in muscle. Fiske was cautious about publishing, which some historians think cost the pair credit for ATP, which Karl Lohmann announced in Germany the same year."
+      },
+      {
+        "id": "farber",
+        "name": "Sidney Farber",
+        "life": "1903 to 1973",
+        "role": "Boston pathologist",
+        "steps": [
+          9
+        ],
+        "text": "Sidney Farber was a pathologist at the Children’s Hospital in Boston. He asked Lederle for folic acid antagonists and in 1948 reported the first temporary remissions of childhood leukaemia with aminopterin, which made him a founder of cancer chemotherapy. His paper did not name Subbarow, an omission later writers have called astonishing."
+      },
+      {
+        "id": "duggar",
+        "name": "Benjamin Duggar",
+        "life": "1872 to 1956",
+        "role": "Plant scientist",
+        "steps": [
+          11
+        ],
+        "text": "Benjamin Minge Duggar was a plant scientist who had taught at the University of Missouri and the University of Wisconsin. Hired by Subbarow at seventy-two after retiring, he screened thousands of soil samples for moulds that kill bacteria. One golden mould gave chlortetracycline, Aureomycin, the first of the tetracycline antibiotics, announced in 1948."
+      }
+    ]
+  }
+}

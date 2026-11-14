@@ -153,6 +153,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Building Molecules, the first Chemistry story (0.59.0)
 - [x] Subject pages at /<subject>/ with a Share button, for sharing one subject (0.60.0)
 - [x] Plato, a Life on the europe map (0.61.0)
+- [x] Yellapragada Subbarow, a Life on the world map (0.62.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 

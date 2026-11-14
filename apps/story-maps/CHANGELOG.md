@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.62.0
+
+- New story map in Lives: Yellapragada Subbarow. From the Godavari delta and Madras, through the voyage to Harvard, the Fiske–Subbarow phosphorus test and the finding of ATP, to Lederle Laboratories, where his teams made folic acid and developed aminopterin and methotrexate, a drug for elephantiasis and Aureomycin, the first tetracycline. 14 chapters on the world map and 3 people cards.
+- Catalogue: Yellapragada Subbarow (a person) opens the story, with chapter entries for the Fiske–Subbarow phosphorus test and Aureomycin (both discoveries).
+
 ## 0.61.0
 
 - New story map in Lives: Plato. From his birth in Athens, the Thirty and the death of Socrates, the Academy, the dialogues, the Republic and the cave, three journeys to Syracuse, Atlantis and the Laws, to Plotinus in Rome, the last Platonists of Athens, Plethon at Mistra, Ficino in Florence, Raphael’s School of Athens and the Academy dug up in 1929. 22 chapters on the europe map and 6 people cards.
