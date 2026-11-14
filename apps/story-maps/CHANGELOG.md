@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.66.0
+
+- New story map in Chronicles: The Byzantine Empire. From Constantine’s new capital in 330, through Justinian and the Hagia Sophia, the plague of 541, Heraclius and the Arab conquests, Greek fire, the icons restored and Basil II, to Manzikert, the Fourth Crusade, the empire in exile at Nicaea, Mistra and the fall of the city in 1453. 13 chapters on the near-east map, a Powers layer that changes chapter by chapter and 8 people cards.
+- Catalogue: the Byzantine Empire opens the story, with chapter entries for the Fall of Constantinople and three new events: the Plague of Justinian, the Battle of Manzikert and the Fourth Crusade.
+
 ## 0.65.0
 
 - New story map in Physics and Astronomy: The Sun at the Centre. From Aristarchus’s Sun-centred idea and Ptolemy’s Earth-centred sky, through Aryabhata’s spinning Earth and the Maragha astronomers who mended Ptolemy, to Copernicus in 1543, Kepler’s ellipses, Galileo’s telescope and Newton’s gravity. 8 chapters on the world map and 5 people cards.
