@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.53.0
+
+- Browse: a story with no entry of its own (Mesopotamia) now shows its reads and likes on its first chapter entry, so Most read and Most liked show why it is at the top.
+
 ## 0.52.0
 
 - New story map in Legends, Greek epics: The Odyssey. From Troy, the Cicones and the Lotus-eaters, through the Cyclops, Aeolus, the Laestrygonians, Circe, the dead, the Sirens, Scylla and Charybdis, the cattle of the Sun and Calypso, to Telemachus’s journey, the Phaeacians, Odysseus’s return in disguise, the bow and the suitors, and the digs at Pylos and Ithaca. 25 chapters on the europe map and 5 people cards.
