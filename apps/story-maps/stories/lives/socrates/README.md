@@ -1,0 +1,9 @@
+# Socrates
+
+Status: built. In Lives. The life of Socrates of Athens, c. 469 to 399 BCE, in 19 chapters: born in Alopeke, looking for a cause, the siege of Potidaea, the retreat from Delium, mocked in the Clouds, Amphipolis, the oracle at Delphi, questions in the agora, the Arginusae trial, the Thirty, Xenophon's journey east, the charge, the defence, the ship to Delos, the hemlock, refuge in Megara, the Socratic schools, Plato's Academy and the three Socrateses. 6 people cards.
+
+- `story.json`: the story data. It uses the `near-east` basemap, shared with Greece and Persia. Routes show only for the current chapter. Megara is drawn a little west of its true spot so its pin does not touch Athens.
+- No new art: it uses the `greek-temple`, `fort`, `crossed-swords`, `shrine`, `palace` and `village` glyphs and the `hoplite`, `marcher` and `trireme` traveller icons.
+- Source: every card is **History**.
+- Native names are in Ancient Greek (`grc`), written in Latin letters.
+- Sources and what is disputed: Socrates wrote nothing, so every card follows a named writer: Plato (Apology, Crito, Phaedo, Symposium, Euthyphro, Laches, Parmenides), Xenophon (Memorabilia, Apology, Anabasis, Hellenica), Aristophanes’ Clouds and Aristotle’s Metaphysics, with later stories from Diogenes Laertius and Aelian flagged as later. Which of these is closest to the real Socrates (the Socratic problem) is disputed. His birth year is worked back from Plato; the date of Chaerephon’s question at Delphi is not known; the date of his service at Amphipolis is disputed; whether the young Socrates met Parmenides is disputed; and the jury’s second vote is given differently by different writers, so the cards give no figure for it. The so-called Prison of Socrates on Philopappos Hill is a tradition, not a finding.

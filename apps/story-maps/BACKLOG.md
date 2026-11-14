@@ -6,7 +6,7 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy, Mathematics (the journey of zero), Chemistry, Biology and Medicine, and Invention. Earth and Life need the `earth-deep` canvas first. Lives to add: Socrates (`near-east`), Ashoka (`south-asia`), Einstein and Darwin (`europe`, `world`).
+One story in each subject still to come would fill the front page's shelves: Earth, Life, Philosophy, Mathematics (the journey of zero), Chemistry, Biology and Medicine, and Invention. Earth and Life need the `earth-deep` canvas first. Lives to add: Ashoka (`south-asia`), Einstein and Darwin (`europe`, `world`).
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Socrates (`socrates`), 2026-11-14
 - Minoan Crete (`minoan`), 2026-11-14
 - The Odyssey (`odyssey`), 2026-11-14
 - The Iliad (`iliad`), 2026-11-14

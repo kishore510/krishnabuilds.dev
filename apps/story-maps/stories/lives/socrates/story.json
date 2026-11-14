@@ -1,0 +1,697 @@
+{
+  "id": "socrates",
+  "title": "Socrates",
+  "description": "The life of Socrates of Athens, c. 469 to 399 BCE, who wrote nothing: soldier, questioner in the agora, mocked on stage, tried and put to death, and remembered by his followers, in 19 chapters.",
+  "canvas": "geo",
+  "basemap": "near-east",
+  "source": "History",
+  "nativeLang": "grc",
+  "routes": "chapter",
+  "mapLabel": "The world of Socrates",
+  "note": "Socrates wrote nothing. Almost all we know comes from his followers Plato and Xenophon, from Aristophanes’ comedy the Clouds, and from Aristotle; later writers such as Diogenes Laertius add stories that are less reliable. These sources often disagree, and each card says which it follows. Native names are given in Latin letters. The map is stylised and not to scale. Megara is drawn a little west of its true spot so its pin doesn’t touch Athens.",
+  "places": {
+    "athens": {
+      "name": "Athens",
+      "at": [
+        23.72,
+        37.975
+      ],
+      "glyph": "greek-temple",
+      "label": "right"
+    },
+    "potidaea": {
+      "name": "Potidaea",
+      "at": [
+        23.33,
+        40.19
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "delium": {
+      "name": "Delium",
+      "at": [
+        23.6,
+        38.33
+      ],
+      "glyph": "crossed-swords",
+      "label": "top"
+    },
+    "amphipolis": {
+      "name": "Amphipolis",
+      "at": [
+        23.85,
+        40.82
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "delphi": {
+      "name": "Delphi",
+      "at": [
+        22.5,
+        38.48
+      ],
+      "glyph": "shrine",
+      "label": "left"
+    },
+    "sardis": {
+      "name": "Sardis",
+      "at": [
+        28.04,
+        38.49
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "cunaxa": {
+      "name": "Cunaxa",
+      "at": [
+        43.98,
+        33.3
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "delos": {
+      "name": "Delos",
+      "at": [
+        25.27,
+        37.4
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "megara": {
+      "name": "Megara",
+      "at": [
+        23.18,
+        38.03
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "cyrene": {
+      "name": "Cyrene",
+      "at": [
+        21.86,
+        32.82
+      ],
+      "glyph": "greek-temple",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "hoplite": {
+      "name": "Socrates as a hoplite",
+      "icon": "hoplite"
+    },
+    "marcher": {
+      "name": "On the road",
+      "icon": "marcher"
+    },
+    "trireme": {
+      "name": "By sea",
+      "icon": "trireme"
+    }
+  },
+  "phases": {
+    "youth": {
+      "name": "Youth in Athens",
+      "color": "#f2c14e"
+    },
+    "war": {
+      "name": "The war years",
+      "color": "#e0573a"
+    },
+    "questioner": {
+      "name": "The questioner",
+      "color": "#4fc3b0"
+    },
+    "trial": {
+      "name": "Trial and death",
+      "color": "#5b8fd9"
+    },
+    "after": {
+      "name": "After Socrates",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "envoy": {
+      "color": "#7a3b12",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 24,
+        "color": "rgba(242,193,78,.35)"
+      },
+      {
+        "until": 47,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 60.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 70,
+        "color": "rgba(91,143,217,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "c. 469"
+      },
+      {
+        "at": 31,
+        "text": "432"
+      },
+      {
+        "at": 40,
+        "text": "423"
+      },
+      {
+        "at": 52,
+        "text": "406"
+      },
+      {
+        "at": 64,
+        "text": "399"
+      },
+      {
+        "at": 88,
+        "text": "c. 387"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "athens",
+      "phase": "youth",
+      "title": "Born in Alopeke",
+      "native": "Sokrates",
+      "when": "c. 469 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Socrates (Sokrates) is born around 469 BCE in Alopeke, a village district (deme) just south of Athens. The year is worked back from Plato, who says he was seventy at his trial. His father Sophroniscus is said to have been a stonemason; his mother Phaenarete was a midwife. Later he called his questioning a kind of midwifery.",
+      "today": "Today: Alopeke lay a short way outside the city walls; its exact site in modern Athens is not certain."
+    },
+    {
+      "place": "athens",
+      "phase": "youth",
+      "title": "Looking for a cause",
+      "when": "c. 450 BCE",
+      "at": 17,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato’s Phaedo has Socrates recall reading Anaxagoras, who taught that Mind (nous) orders all things, and being disappointed when the book explained the world by air and water instead. In Plato’s Parmenides the young Socrates debates the visiting thinkers Parmenides and Zeno of Elea; whether that meeting happened is disputed. Later writers name Archelaus as his teacher.",
+      "today": "Today: Anaxagoras’ book survives only in fragments quoted by later writers."
+    },
+    {
+      "place": "potidaea",
+      "phase": "war",
+      "title": "The siege of Potidaea",
+      "when": "432 to 430 BCE",
+      "at": 31,
+      "camera": {
+        "at": [
+          23.5,
+          39.1
+        ],
+        "width": 5.5
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "potidaea",
+          "traveller": "hoplite",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "When Potidaea revolts against Athens, Socrates marches north as a hoplite, a citizen foot soldier who bought his own armour. In Plato’s Symposium, Alcibiades says Socrates walked barefoot on the ice, stood a whole day and night lost in thought, and saved Alcibiades’ life in battle, then urged the generals to give the prize for bravery to Alcibiades.",
+      "today": "Today: Nea Poteidaia, Chalkidiki, Greece; a canal now cuts the isthmus where the city stood."
+    },
+    {
+      "place": "delium",
+      "phase": "war",
+      "title": "The retreat from Delium",
+      "when": "424 BCE",
+      "at": 36,
+      "camera": {
+        "at": [
+          23.65,
+          38.15
+        ],
+        "width": 3.4
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "delium",
+          "traveller": "hoplite",
+          "style": "march",
+          "bend": 0.15
+        }
+      ],
+      "text": "An Athenian army invades Boeotia and is routed at Delium by the Boeotians. In Plato’s Symposium, Alcibiades, on horseback, watches Socrates retreat slowly beside the general Laches, glaring at the enemy so calmly that no one dares attack them. In Plato’s Laches, the general says that if everyone had fought like Socrates, Athens would not have lost.",
+      "today": "Today: the site lies near Dilesi, on the coast of Boeotia facing Euboea, Greece."
+    },
+    {
+      "place": "athens",
+      "phase": "war",
+      "title": "Mocked in the Clouds",
+      "native": "Nephelai",
+      "when": "423 BCE",
+      "at": 40,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Aristophanes’ comedy the Clouds (Nephelai) puts Socrates on stage at the festival of Dionysus, hanging in a basket in his “Thinkery”, studying the sky and teaching students to win unjust arguments. It came third. A later story, told by Aelian, says Socrates stood up in the theatre so the audience could compare him with his mask; it may be invented.",
+      "today": "Today: the Clouds survives in a revised version; the Theatre of Dionysus lies below the Acropolis."
+    },
+    {
+      "place": "amphipolis",
+      "phase": "war",
+      "title": "Amphipolis",
+      "when": "422 BCE (probably)",
+      "at": 43,
+      "camera": {
+        "at": [
+          23.8,
+          39.4
+        ],
+        "width": 7
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "amphipolis",
+          "traveller": "hoplite",
+          "style": "march",
+          "bend": -0.1
+        }
+      ],
+      "text": "Plato’s Apology has Socrates name three campaigns: Potidaea, Delium and Amphipolis. Nothing else is recorded of his part at Amphipolis, and some scholars date it to an earlier expedition. In 422 BCE an Athenian army under Cleon tried to retake the city from the Spartan general Brasidas; both commanders were killed, and peace followed the next year.",
+      "today": "Today: Amfipoli, Central Macedonia, Greece; the Lion of Amphipolis stands by the river Strymon."
+    },
+    {
+      "place": "delphi",
+      "phase": "questioner",
+      "title": "No one is wiser",
+      "native": "Delphoi",
+      "when": "date not known",
+      "at": 46,
+      "camera": {
+        "at": [
+          23.1,
+          38.2
+        ],
+        "width": 4
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "delphi",
+          "traveller": "marcher",
+          "style": "envoy",
+          "bend": 0.12
+        }
+      ],
+      "text": "Plato’s Apology says Socrates’ friend Chaerephon asked the oracle of Apollo at Delphi whether anyone was wiser than Socrates, and the priestess (Pythia) answered no one. Puzzled, Socrates set out to prove it wrong by questioning people thought wise. He concluded he was wiser only in knowing that he did not know.",
+      "today": "Today: the sanctuary of Apollo at Delphi is a UNESCO World Heritage Site."
+    },
+    {
+      "place": "athens",
+      "phase": "questioner",
+      "title": "Questions in the agora",
+      "native": "Agora",
+      "when": "c. 420s to 400 BCE",
+      "at": 49,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Socrates spends his days in the marketplace (agora) and gymnasia, asking what courage, justice or piety are, then showing that the answers don’t hold. This method is called cross-examination (elenchus). He takes no fees, goes barefoot and says a divine sign (daimonion) sometimes warns him off. Rich young men follow him; many people resent him.",
+      "today": "Today: the Ancient Agora of Athens is excavated and open, below the Acropolis."
+    },
+    {
+      "place": "athens",
+      "phase": "questioner",
+      "title": "Against the assembly",
+      "when": "406 BCE",
+      "at": 52,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "After a sea victory at Arginusae, storms stop the rescue of shipwrecked sailors, and the assembly wants to try the generals together, against the law. Plato and Xenophon say Socrates, serving that day on the presiding council (prytaneis), alone opposed the illegal vote. Six generals were condemned and executed, and the Athenians soon regretted it.",
+      "today": "Today: the Arginusae islands lie off the Turkish coast, between Lesbos and the mainland."
+    },
+    {
+      "place": "athens",
+      "phase": "questioner",
+      "title": "The Thirty",
+      "when": "404 to 403 BCE",
+      "at": 56,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Athens loses the war to Sparta, and a Spartan-backed group, the Thirty, rules by terror. Their leader Critias had once followed Socrates. Plato’s Apology says the Thirty ordered Socrates and four others to fetch Leon of Salamis to be killed. The others went; Socrates went home. The Thirty fell soon after, and democracy returned.",
+      "today": "Today: the Pnyx hill, where the restored democracy’s assembly met, is a public park in Athens."
+    },
+    {
+      "place": "cunaxa",
+      "phase": "questioner",
+      "title": "Xenophon goes east",
+      "when": "401 BCE",
+      "at": 59,
+      "camera": {
+        "at": [
+          34,
+          36
+        ],
+        "width": 30
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "sardis",
+          "traveller": "hoplite",
+          "style": "march",
+          "bend": 0.06
+        },
+        {
+          "from": "sardis",
+          "to": "cunaxa",
+          "traveller": "hoplite",
+          "style": "march",
+          "bend": 0.06
+        }
+      ],
+      "text": "Xenophon, a young follower, is invited to join the Persian prince Cyrus. In his Anabasis he says Socrates told him to ask the oracle at Delphi first. Xenophon asked only which gods to pray to for a good journey, and Socrates scolded him but told him to go. Cyrus marched from Sardis and was killed at Cunaxa.",
+      "today": "Today: Sart, Turkey, has the ruins of Sardis; the site of Cunaxa in Iraq is not certain."
+    },
+    {
+      "place": "athens",
+      "phase": "trial",
+      "title": "The charge",
+      "when": "399 BCE",
+      "at": 62,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Meletus, backed by Anytus and Lycon, charges Socrates with impiety: not recognising the city’s gods, bringing in new divine beings, and corrupting the young. Plato’s Euthyphro sets Socrates outside the royal porch (Stoa Basileios), where such charges were filed. An amnesty barred cases over the Thirty, but his links to Critias and Alcibiades were remembered.",
+      "today": "Today: the foundations of the Stoa Basileios can be seen at the north-west corner of the Ancient Agora."
+    },
+    {
+      "place": "athens",
+      "phase": "trial",
+      "title": "The defence",
+      "native": "Apologia",
+      "when": "399 BCE",
+      "at": 64,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Before a jury of about 500 citizens, Socrates defends his life (apologia, a defence, not an apology). Plato says thirty votes the other way would have freed him. Asked to propose a penalty, he suggests free meals at public expense, then a fine his friends would pay. The jury votes for death; a later writer says by a larger margin.",
+      "today": "Today: Plato’s Apology and Xenophon’s shorter Apology give two different versions of his speech."
+    },
+    {
+      "place": "delos",
+      "phase": "trial",
+      "title": "The ship to Delos",
+      "when": "399 BCE",
+      "at": 66,
+      "camera": {
+        "at": [
+          24.5,
+          37.7
+        ],
+        "width": 5
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "delos",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": 0.12
+        }
+      ],
+      "text": "The day before the trial, Athens’ sacred ship sailed for Apollo’s festival on Delos, and no one may be executed until it returns. Socrates waits about a month in prison. In Plato’s Crito, his old friend Crito arranges an escape; Socrates refuses, arguing that having lived under Athens’ laws, he must not break them now.",
+      "today": "Today: the whole island of Delos is an archaeological site, a UNESCO World Heritage Site."
+    },
+    {
+      "place": "athens",
+      "phase": "trial",
+      "title": "The hemlock",
+      "native": "Koneion",
+      "when": "399 BCE",
+      "at": 68,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato’s Phaedo describes the last day: Socrates argues that the soul is immortal, sends his wife Xanthippe and their sons away, and calmly drinks the poison hemlock (koneion). Plato, who was ill, was not there. Socrates’ last words, as Plato gives them: “Crito, we owe a cock to Asclepius. Pay it and don’t forget.”",
+      "today": "Today: a cave on Philopappos Hill is called the “Prison of Socrates”, but that is only a tradition."
+    },
+    {
+      "place": "megara",
+      "phase": "after",
+      "title": "Refuge in Megara",
+      "when": "399 BCE",
+      "at": 72,
+      "camera": {
+        "at": [
+          23.45,
+          38.0
+        ],
+        "width": 2.8
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "megara",
+          "traveller": "marcher",
+          "style": "envoy",
+          "bend": 0.2
+        }
+      ],
+      "text": "A later writer, Diogenes Laertius, citing Hermodorus, says that after the death Plato and other followers withdrew to Megara, to Euclides, a Socratic who taught there. Euclides of Megara (not the mathematician Euclid) founded a school that joined Socrates’ questions with the ideas of Parmenides. How long Plato stayed is not known.",
+      "today": "Today: Megara is a town in West Attica, Greece, about 40 km west of Athens."
+    },
+    {
+      "place": "cyrene",
+      "phase": "after",
+      "title": "Many Socratic schools",
+      "native": "Kyrene",
+      "when": "early 4th century BCE",
+      "at": 80,
+      "camera": {
+        "at": [
+          23.2,
+          35.4
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "athens",
+          "to": "cyrene",
+          "traveller": "trireme",
+          "style": "sea",
+          "bend": -0.1
+        }
+      ],
+      "text": "Socrates’ followers draw opposite lessons from him. Aristippus, from Cyrene, teaches that pleasure is the good; his school is called the Cyrenaics. Antisthenes, in Athens, praises a hard, simple life, and is later counted a forerunner of the Cynics. Phaedo of Elis and Euclides found schools too. Each claims to follow the true Socrates.",
+      "today": "Today: the ruins of Cyrene, at Shahhat in Libya, are a UNESCO World Heritage Site."
+    },
+    {
+      "place": "athens",
+      "phase": "after",
+      "title": "Plato’s Academy",
+      "native": "Akademeia",
+      "when": "c. 387 BCE",
+      "at": 88,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato founds a school in the grove of the Academy outside Athens. In nearly all his dialogues Socrates is the main speaker, but over the years he voices ideas, such as the theory of Forms, that are probably Plato’s own. Xenophon writes his Memorabilia, a more practical Socrates. Aristotle studies at the Academy for twenty years.",
+      "today": "Today: the excavated site of Plato’s Academy is a park in the Akadimia Platonos district of Athens."
+    },
+    {
+      "place": "athens",
+      "phase": "after",
+      "title": "Three Socrateses",
+      "when": "4th century BCE to today",
+      "at": 97,
+      "camera": {
+        "at": [
+          23.72,
+          37.975
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Plato’s Socrates, Xenophon’s and Aristophanes’ are three different men, and which is closest to the real one is called the Socratic problem. Aristotle credits Socrates with two things: arguing from examples and seeking general definitions. Cicero said he called philosophy down from the sky. Socrates himself left not one written word.",
+      "today": "Today: statues of Socrates and Plato stand outside the Academy of Athens, on Panepistimiou Street."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "xanthippe",
+        "name": "Xanthippe",
+        "native": "Xanthippe",
+        "life": "dates not known",
+        "role": "Socrates’ wife",
+        "steps": [
+          7,
+          14
+        ],
+        "text": "Socrates’ wife and mother of his three sons, Lamprocles, Sophroniscus and Menexenus; the youngest was still a small child in 399 BCE. In Xenophon a friend calls her the hardest woman alive to live with; later writers turned her into the classic scolding wife. In Plato’s Phaedo she weeps at the prison and is sent home."
+      },
+      {
+        "id": "alcibiades",
+        "name": "Alcibiades",
+        "native": "Alkibiades",
+        "life": "c. 450 to 404 BCE",
+        "role": "Athenian general; Socrates’ follower",
+        "steps": [
+          2,
+          3,
+          9,
+          11
+        ],
+        "text": "Brilliant, rich and reckless, a ward of Pericles. In Plato’s Symposium he praises Socrates, who saved his life at Potidaea. He led Athens’ disastrous expedition to Sicily, then changed sides to Sparta and later to Persia before returning. He was murdered in Phrygia. His career was later held against Socrates."
+      },
+      {
+        "id": "chaerephon",
+        "name": "Chaerephon",
+        "native": "Chairephon",
+        "life": "died before 399 BCE",
+        "role": "Socrates’ friend since youth",
+        "steps": [
+          4,
+          6
+        ],
+        "text": "Socrates’ lifelong friend, mocked in Aristophanes’ Clouds as pale and thin. Plato’s Apology says it was Chaerephon who asked the oracle at Delphi whether anyone was wiser than Socrates. He supported the democracy and went into exile under the Thirty. By the trial he was dead, so his brother spoke for him."
+      },
+      {
+        "id": "aristophanes",
+        "name": "Aristophanes",
+        "native": "Aristophanes",
+        "life": "c. 446 to c. 386 BCE",
+        "role": "Comic playwright",
+        "steps": [
+          4,
+          12
+        ],
+        "text": "The greatest writer of Athenian Old Comedy; eleven of his plays survive. His Clouds made Socrates a fraud who studied the sky and taught tricks of argument. In Plato’s Apology, Socrates names that picture as the old slander behind his trial. Plato still makes Aristophanes a friendly guest in the Symposium."
+      },
+      {
+        "id": "plato",
+        "name": "Plato",
+        "native": "Platon",
+        "life": "c. 428 to 348 BCE",
+        "role": "Philosopher; Socrates’ follower",
+        "steps": [
+          12,
+          14,
+          15,
+          17,
+          18
+        ],
+        "text": "A young Athenian aristocrat, a relative of Critias, who followed Socrates. He was at the trial and offered to help pay a fine, but was ill on the last day. Some thirty-five dialogues are credited to him, nearly all with Socrates as speaker, and founded the Academy, where Aristotle studied."
+      },
+      {
+        "id": "xenophon",
+        "name": "Xenophon",
+        "native": "Xenophon",
+        "life": "c. 430 to c. 354 BCE",
+        "role": "Soldier, historian; Socrates’ follower",
+        "steps": [
+          10,
+          17,
+          18
+        ],
+        "text": "An Athenian cavalryman who joined Cyrus’ march in 401 BCE and helped lead the Ten Thousand home, as told in his Anabasis. He was away during the trial and later exiled from Athens. His Memorabilia, Apology, Symposium and Oeconomicus show a practical, pious Socrates who gives sound advice."
+      }
+    ]
+  }
+}
