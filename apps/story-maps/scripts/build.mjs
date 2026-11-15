@@ -14,6 +14,7 @@ import { copyFileSync, cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } 
 import { createRequire } from "node:module";
 
 import { checkStory, loadEngineAssets, loadMapFunctions, loadStoryData } from "./engine.mjs";
+import { breadcrumb, ldScript, robots, sitemap, storyText, webPage, webSite } from "./seo.mjs";
 import { loadCatalogue, loadExplore, validateCatalogue } from "./catalogue.mjs";
 import { APP_DIR, loadManifest, validateManifest } from "./manifest.mjs";
 
@@ -130,16 +131,23 @@ const tourJs = read(`${APP_DIR}hub/tour.js`);
 const tourCss = read(`${APP_DIR}hub/tour.css`);
 const themePickerJs = read(`${APP_DIR}src/theme-picker.js`);
 
+// Every page that may be indexed, for sitemap.xml (a noindex page is left out).
+/** @type {{ path: string, lastmod?: string }[]} */
+const indexable = [];
+
 /**
- * @param {{ title: string, description: string, path: string, body: string, noindex?: boolean, story?: boolean, explore?: boolean, tour?: boolean }} page
+ * @param {{ title: string, description: string, path: string, body: string, noindex?: boolean, lastmod?: string, ld?: object[], story?: boolean, explore?: boolean, tour?: boolean }} page
  */
 function render(page) {
+  if (!page.noindex) indexable.push({ path: page.path, lastmod: page.lastmod });
   /** @type {Record<string, string>} */
   const vars = {
     title: esc(page.title),
     description: esc(page.description),
     url: `${ORIGIN}${page.path}`,
     robots: page.noindex ? '<meta name="robots" content="noindex">\n' : "",
+    canonical: page.noindex ? "" : `<link rel="canonical" href="${ORIGIN}${page.path}">\n`,
+    jsonld: (page.ld ?? []).map(ldScript).join(""),
     prepaint,
     styles: page.story ? `${styles}\n${engine.css}\n${tourCss}\n${statsCss}` : page.explore ? `${styles}\n${exploreCss}${page.tour ? `\n${tourCss}` : ""}` : styles,
     bodyAttrs: page.story ? ' class="sm-story-page"' : "",
@@ -198,7 +206,7 @@ function storyPage(entry) {
     },
     "engine/src/player.html",
   );
-  return `${page}\n<script>\n${progressJs}</script>\n<script>\n${statsJs}</script>\n<script>\n${tourJs}</script>`;
+  return `${page}\n${storyText(data.story)}\n<script>\n${progressJs}</script>\n<script>\n${statsJs}</script>\n<script>\n${tourJs}</script>`;
 }
 
 // --- hub: timeline and Browse ------------------------------------------------
@@ -389,6 +397,7 @@ write(
     title: "Story Maps · krishnabuilds",
     description: "Illustrated maps that tell a story chapter by chapter: the universe and the Earth, civilisations and legends, and the people and discoveries of science.",
     path: "/",
+    ld: [webSite(ORIGIN)],
     explore: true,
     tour: true,
     body: [
@@ -429,6 +438,11 @@ for (const section of manifest.sections) {
       title: `${section.title} · Story Maps · krishnabuilds`,
       description: `${section.blurb} ${stories.length ? `${count} on illustrated maps, chapter by chapter.` : "Story maps to come."}`,
       path: `/${section.id}/`,
+      noindex: stories.length === 0,
+      ld: [
+        webPage(ORIGIN, { type: "CollectionPage", name: `${section.title} · Story Maps`, description: section.blurb, path: `/${section.id}/` }),
+        breadcrumb(ORIGIN, [{ name: "Story Maps", path: "/" }, { name: section.title, path: `/${section.id}/` }]),
+      ],
       explore: true,
       body: [
         BACK,
@@ -475,6 +489,7 @@ write(
     title: "Explore · Story Maps · krishnabuilds",
     description: "An atlas and a timeline of civilisations, dynasties and empires, and a list of everything in Story Maps by name.",
     path: "/explore/",
+    ld: [breadcrumb(ORIGIN, [{ name: "Story Maps", path: "/" }, { name: "Explore", path: "/explore/" }])],
     explore: true,
     tour: true,
     body: [
@@ -654,6 +669,11 @@ for (const e of catalogue.entries) {
       title: `${e.name} · Story Maps · krishnabuilds`,
       description: e.summary,
       path: `/explore/${e.id}/`,
+      lastmod: e.added,
+      ld: [
+        webPage(ORIGIN, { type: "WebPage", name: e.name, description: e.summary, path: `/explore/${e.id}/` }),
+        breadcrumb(ORIGIN, [{ name: "Story Maps", path: "/" }, { name: "Explore", path: "/explore/" }, { name: e.name, path: `/explore/${e.id}/` }]),
+      ],
       explore: true,
       body: entryPage(e),
     }),
@@ -668,9 +688,15 @@ for (const story of manifest.stories) {
     write(
       `${story.id}/index.html`,
       render({
-        title: `${story.title} · Story Maps · krishnabuilds`,
+        // Not the entry page's title (`${name} · Story Maps`), so the two don't compete in search.
+        title: `${story.title}: an illustrated story map · krishnabuilds`,
         description: data.description,
         path: `/${story.id}/`,
+        lastmod: story.added,
+        ld: [
+          webPage(ORIGIN, { type: "Article", name: story.title, description: data.description, path: `/${story.id}/`, published: story.added }),
+          breadcrumb(ORIGIN, [{ name: "Story Maps", path: "/" }, { name: story.title, path: `/${story.id}/` }]),
+        ],
         story: true,
         body: storyPage(story),
       }),
@@ -686,6 +712,7 @@ for (const story of manifest.stories) {
       title: `${story.title} · Story Maps · krishnabuilds`,
       description: `${story.title}: an illustrated story map. Coming soon.`,
       path: `/${story.id}/`,
+      noindex: true,
       body: [
         BACK,
         '<main class="sm-page sm-story">',
@@ -720,6 +747,11 @@ write(
     ].join("\n"),
   }),
 );
+
+// --- sitemap and robots ----------------------------------------------------------
+
+write("sitemap.xml", sitemap(ORIGIN, indexable));
+write("robots.txt", robots(ORIGIN));
 
 console.log(
   `Built the front page, Explore, ${manifest.stories.length} story pages, ${catalogue.entries.length} entry pages and 404 into dist/`,

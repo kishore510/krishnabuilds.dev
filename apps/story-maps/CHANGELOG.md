@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.76.0
+
+- Search: the build now writes `sitemap.xml` (every indexable page, with `lastmod` from `added`) and `robots.txt` (keeps crawlers off `/api/`, names the sitemap).
+- Every indexable page has a canonical link and JSON-LD: `Article` on stories, `WebPage` on entries, `CollectionPage` on subjects, `WebSite` on the front page, and breadcrumbs on all but the front page.
+- Story pages now hold each chapter's text in the page itself (a visually hidden copy, out of the reading order of assistive tech), not only inside the script that draws the map.
+- Story page titles read "<Story>: an illustrated story map", so they no longer duplicate the matching entry page's title.
+- Coming-soon story pages and subject pages with no story yet are `noindex` and left out of the sitemap.
+- New `scripts/seo.mjs` (pure helpers) and `test/seo.test.js`.
+
 ## 0.75.0
 
 - New story map in Chronicles: The Portuguese Empire. From the capture of Ceuta in 1415, down Africa’s coast and round the Cape to India, through Goa, Malacca, Macau, Brazil and the Atlantic slave trade, to the Carnation Revolution and the handover of Macau in 1999. 24 chapters on the world map, a Powers layer and 10 people cards.
