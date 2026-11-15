@@ -49,6 +49,7 @@ licences/          OFL texts for the fonts
 docs/              design notes for engine features (earth-deep.md)
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
+scripts/seo.mjs    sitemap.xml, robots.txt, JSON-LD and the hidden text copy of a story (pure; test/seo.test.js)
 scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above
 ```
 
