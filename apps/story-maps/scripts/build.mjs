@@ -24,6 +24,8 @@ import { APP_DIR, loadManifest, validateManifest } from "./manifest.mjs";
 const require = createRequire(import.meta.url);
 const DIST = `${APP_DIR}dist/`;
 const ORIGIN = "https://story-maps.krishnabuilds.dev";
+// A Cloudflare Email Routing alias that forwards to the owner; it can be switched off there if it attracts spam.
+const CONTACT = "hello@krishnabuilds.dev";
 
 // Latin and Devanagari only. Other characters fall back to the stacks in
 // src/theme.css.
@@ -177,7 +179,8 @@ const THEME_SCRIPT = `<script>\n${themePickerJs}</script>`;
 const HOME = `<header class="sm-top"><a href="https://krishnabuilds.dev">← krishnabuilds</a>${THEME_PICKER}</header>`;
 const BACK = `<header class="sm-top"><a href="/">← All story maps</a>${THEME_PICKER}</header>`;
 const FOOT =
-  '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and the historical record; Nature and Science follow the evidence. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.</footer>';
+  '<footer class="sm-foot">Legends follow tradition; Chronicles follow archaeology and the historical record; Nature and Science follow the evidence. Maps are stylised and not to scale. © krishnabuilds. All rights reserved.' +
+  `<br><a href="mailto:${CONTACT}?subject=Story%20Maps">Suggest a story or send feedback</a></footer>`;
 
 /**
  * Fills {{key}} placeholders in one pass, so inserted text is never scanned again.
