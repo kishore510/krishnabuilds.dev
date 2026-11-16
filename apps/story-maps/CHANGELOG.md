@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.78.0
+
+- New story map in Chronicles: The Ikshvakus. From the Satavahanas' fading power and the Ikshvaku kings at Vijayapuri, through Chantamula's horse sacrifice, the royal women who paid for the Nagarjunakonda stupas, a bride from Ujjain, monks sent to far lands and the city of brick and limestone, to the end of the line about 325 CE and the valley under the Nagarjuna Sagar reservoir. 8 chapters on the south-asia map and 3 people cards, no Powers layer.
+- Catalogue: the Ikshvaku dynasty entry opens the story.
+
 ## 0.77.0
 
 - Contact: the footer on the front page, subject pages, Explore and entry pages has a "Suggest a story or send feedback" email link.
