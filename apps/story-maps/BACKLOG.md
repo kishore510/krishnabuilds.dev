@@ -34,6 +34,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Eastern Chalukyas of Vengi (`eastern-chalukya`), 2026-11-16
 - The Vishnukundins (`vishnukundin`), 2026-11-16
 - The Ikshvakus (`ikshvaku`), 2026-11-16
 - The Portuguese Empire (`portuguese-empire`), 2026-11-14

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.80.0
+
+- New story map in Chronicles: The Eastern Chalukyas of Vengi. From Kubja Vishnuvardhana at Pishtapura about 624 CE, through Vengi between the Krishna and Godavari, the Rashtrakuta pressure, the first Telugu verses in stone at Addanki and the Chola marriage ties, to Nannaya at Rajamahendravaram and Kulottunga I taking the Chola throne in 1070. 8 chapters on the south-asia map and 4 people cards, no Powers layer.
+- Catalogue: the Eastern Chalukya dynasty entry opens the story.
+
 ## 0.79.0
 
 - New story map in Chronicles: The Vishnukundins. From the dynasty's rise in Telangana about 420 CE, through Govindavarman's monastery at Indrapalanagara, Madhavavarman II's horse sacrifices and the cave temples on the Krishna, to the Chalukya conquest of Pishtapura about 624 CE and what came after. 6 chapters on the south-asia map and 3 people cards, no Powers layer.
