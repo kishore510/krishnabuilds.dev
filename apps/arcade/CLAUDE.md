@@ -100,7 +100,9 @@ of truth, and `README.md` lists all 36 with their folders and taglines.
    squash merge to `main`. The game is live once the GitHub Actions deploy
    for that merge finishes.
 
-That's the whole process for a new game — no other files need to change.
+Then run `node scripts/seo.mjs --inject` from `apps/arcade`: it adds the game page's description, canonical link, share tags and JSON-LD from its GAMES entry (`scripts/seo.test.mjs` fails until you do). `sitemap.xml` is built from the games folder at deploy time, so it never needs editing.
+
+That's the whole process for a new game.
 
 ## The nav-bar/game-area space contract (applies to canvas AND DOM games)
 
