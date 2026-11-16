@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.77.0
+
+- Contact: the footer on the front page, subject pages, Explore and entry pages has a "Suggest a story or send feedback" email link.
+
 ## 0.76.0
 
 - Search: the build now writes `sitemap.xml` (every indexable page, with `lastmod` from `added`) and `robots.txt` (keeps crawlers off `/api/`, names the sitemap).
