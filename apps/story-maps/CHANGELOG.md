@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.79.0
+
+- New story map in Chronicles: The Vishnukundins. From the dynasty's rise in Telangana about 420 CE, through Govindavarman's monastery at Indrapalanagara, Madhavavarman II's horse sacrifices and the cave temples on the Krishna, to the Chalukya conquest of Pishtapura about 624 CE and what came after. 6 chapters on the south-asia map and 3 people cards, no Powers layer.
+- Catalogue: the Vishnukundin dynasty entry opens the story.
+
 ## 0.78.0
 
 - New story map in Chronicles: The Ikshvakus. From the Satavahanas' fading power and the Ikshvaku kings at Vijayapuri, through Chantamula's horse sacrifice, the royal women who paid for the Nagarjunakonda stupas, a bride from Ujjain, monks sent to far lands and the city of brick and limestone, to the end of the line about 325 CE and the valley under the Nagarjuna Sagar reservoir. 8 chapters on the south-asia map and 3 people cards, no Powers layer.

@@ -34,6 +34,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Vishnukundins (`vishnukundin`), 2026-11-16
 - The Ikshvakus (`ikshvaku`), 2026-11-16
 - The Portuguese Empire (`portuguese-empire`), 2026-11-14
 - Life on Earth (`life-on-earth`), 2026-11-14
