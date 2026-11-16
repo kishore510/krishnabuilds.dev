@@ -1,0 +1,278 @@
+{
+  "id": "vishnukundin",
+  "title": "The Vishnukundins",
+  "description": "An illustrated map of the Vishnukundins, who ruled Telangana and the Krishna–Godavari coast from about 420 to 624 CE, until the Chalukyas of Badami took the east.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "te",
+  "routes": "chapter",
+  "mapLabel": "The Vishnukundins, about 420 to 624 CE",
+  "note": "Based on copper-plate grants and rock-cut monuments. Dates of the early kings, the order of rulers and the sites of early capitals are debated. The map is stylised and not to scale.",
+  "places": {
+    "indrapalanagara": {
+      "name": "Indrapalanagara",
+      "at": [
+        79.27,
+        17.05
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "denduluru": {
+      "name": "Denduluru",
+      "at": [
+        81.07,
+        16.75
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "undavalli": {
+      "name": "Undavalli",
+      "at": [
+        80.57,
+        16.5
+      ],
+      "glyph": "shrine",
+      "label": "bottom"
+    },
+    "pishtapura": {
+      "name": "Pishtapura",
+      "at": [
+        82.26,
+        17.11
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "badami": {
+      "name": "Badami",
+      "at": [
+        75.68,
+        15.92
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    }
+  },
+  "travellers": {
+    "army": {
+      "name": "The Chalukya army",
+      "icon": "war-elephant"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "Rise",
+      "color": "#4fc3b0"
+    },
+    "rock": {
+      "name": "Rock and stone",
+      "color": "#f29a2e"
+    },
+    "fall": {
+      "name": "Fall",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 40,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 65,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3,
+        "text": "c. 420 CE"
+      },
+      {
+        "at": 26,
+        "text": "c. 450"
+      },
+      {
+        "at": 50,
+        "text": "c. 500"
+      },
+      {
+        "at": 82,
+        "text": "c. 616"
+      },
+      {
+        "at": 96,
+        "text": "c. 624"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "indrapalanagara",
+      "phase": "rise",
+      "title": "A dynasty in the east",
+      "when": "c. 420 CE",
+      "at": 3,
+      "camera": {
+        "at": [
+          79.3,
+          17.0
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "After the Ikshvakus and Pallavas, the Vishnukundins appear by about 420 CE, ruling parts of Telangana and the Krishna–Godavari coast. They style themselves lords with a lion on their seals. The dates of the first kings are uncertain, and where their earliest seat lay is debated.",
+      "today": "Nalgonda is a district in Telangana."
+    },
+    {
+      "place": "indrapalanagara",
+      "phase": "rise",
+      "title": "Gifts to the monks",
+      "when": "c. 420 to 450 CE",
+      "at": 14,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.3,
+          17.0
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Copper plates record that a Vishnukundin king, Govindavarman, founded a Buddhist monastery (vihara) at Indrapalanagara and gave it a village. Early Vishnukundin rule thus supported Buddhism, even as later kings turned to Vedic rites. The monastery's own remains have not been securely identified.",
+      "today": "No remains of the vihara are known to stand."
+    },
+    {
+      "place": "denduluru",
+      "phase": "rise",
+      "title": "Eleven horse sacrifices",
+      "when": "c. 440 to 460 CE",
+      "at": 26,
+      "camera": {
+        "at": [
+          80.6,
+          16.8
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Madhavavarman II, called Janashraya (refuge of the people), claims in his grants to have performed eleven horse sacrifices (ashvamedha) and a thousand fire rites. Such figures belong to royal claims, not independent counts. From Denduluru his successors issue plates, and a marriage tie with the Vakatakas is recorded.",
+      "today": "Denduluru is a village near Eluru."
+    },
+    {
+      "place": "undavalli",
+      "phase": "rock",
+      "title": "Cave temples on the Krishna",
+      "when": "c. 400 to 600 CE",
+      "at": 50,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          80.5,
+          16.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "At Undavalli and nearby Mogalrajapuram, near Vijayawada, rock-cut caves are usually dated to Vishnukundin times. Undavalli's large cave holds a reclining Vishnu carved from one block of granite. Who ordered each cave is not named in inscriptions, so the link to the dynasty rests on style and date.",
+      "today": "Undavalli's caves are protected monuments."
+    },
+    {
+      "place": "pishtapura",
+      "phase": "fall",
+      "title": "The Chalukyas march east",
+      "when": "c. 616 to 624 CE",
+      "at": 82,
+      "camera": {
+        "at": [
+          79.3,
+          16.6
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "badami",
+          "to": "pishtapura",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.15
+        }
+      ],
+      "text": "Pulakeshin II of the Chalukyas of Badami marches east and takes Pishtapura and the Kolleru lake country, by about 624 CE. Vishnukundin rule ends with this conquest. The dynasty's last kings are poorly known, and the exact years of the campaign are debated.",
+      "today": "Pithapuram is a town near Kakinada."
+    },
+    {
+      "place": "pishtapura",
+      "phase": "fall",
+      "title": "What came after",
+      "when": "c. 624 CE",
+      "at": 95,
+      "camera": {
+        "at": [
+          81.5,
+          17.0
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Pulakeshin II sets his brother Kubja Vishnuvardhana over the conquered east. Within a generation his line, the Eastern Chalukyas, rules from Vengi, between the Krishna and Godavari. The Vishnukundins pass from the record; their caves, plates and the claims of Madhavavarman II are what remain.",
+      "today": "The Eastern Chalukyas ruled the delta for four centuries."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "madhavavarman2",
+        "name": "Madhavavarman II",
+        "native": "రెండవ మాధవవర్మ",
+        "life": "reigned c. 440 to 460 CE",
+        "role": "King",
+        "steps": [
+          2
+        ],
+        "text": "Called Janashraya, \"refuge of the people\", he is the best known Vishnukundin. His grants claim eleven horse sacrifices and a thousand fire rites. Such claims are royal boasts, not counted facts. He is also linked by marriage to the Vakatakas, though the details come from grants, and are thin."
+      },
+      {
+        "id": "govindavarman",
+        "name": "Govindavarman",
+        "native": "గోవిందవర్మ",
+        "life": "c. early fifth century CE",
+        "role": "Monastery founder",
+        "steps": [
+          1
+        ],
+        "text": "A Vishnukundin king who founded a Buddhist monastery at Indrapalanagara, according to copper plates, and gave it a village. His place in the family tree is debated; some lists place him before Madhavavarman II. What remains is a short record, not a chronicle."
+      },
+      {
+        "id": "pulakeshin",
+        "name": "Pulakeshin II",
+        "native": "రెండవ పులకేశి",
+        "life": "reigned c. 610 to 642 CE",
+        "role": "Chalukya conqueror",
+        "steps": [
+          4,
+          5
+        ],
+        "text": "The greatest Chalukya king of Badami, known from the Aihole inscription of his court poet Ravikirti. He took Pishtapura and the eastern coast about 624 CE and put his brother over it. He later fell to the Pallavas. Some dates for his wars are debated."
+      }
+    ]
+  }
+}

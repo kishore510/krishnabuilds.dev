@@ -1,0 +1,193 @@
+{
+  "id": "eastern-chalukya",
+  "title": "The Eastern Chalukyas of Vengi",
+  "description": "An illustrated map of the Eastern Chalukyas, who ruled the Krishna–Godavari delta from Vengi for four centuries, from about 624 to 1070 CE, and gave Telugu its first great poet.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "te",
+  "routes": "chapter",
+  "mapLabel": "The Eastern Chalukyas, about 624 to 1070 CE",
+  "note": "Based on copper-plate grants, stone inscriptions and later literary tradition. Dates and reign lengths are approximate and some are debated. Claims of conquest in royal grants are given as claims. The map is stylised and not to scale.",
+  "places": {
+    "pishtapura": { "name": "Pishtapura", "at": [82.26, 17.11], "glyph": "fort", "label": "top" },
+    "vengi": { "name": "Vengi", "at": [81.04, 16.79], "glyph": "palace", "label": "bottom" },
+    "manyakheta": { "name": "Manyakheta", "at": [77.15, 17.2], "glyph": "fort", "label": "top" },
+    "addanki": { "name": "Addanki", "at": [79.97, 15.81], "glyph": "stela", "label": "bottom" },
+    "rajamahendravaram": { "name": "Rajamahendravaram", "at": [81.78, 17.0], "glyph": "palace", "label": "top" },
+    "thanjavur": { "name": "Thanjavur", "at": [79.14, 10.79], "glyph": "gopuram", "label": "left" },
+    "gangaikonda": { "name": "Gangaikonda Cholapuram", "at": [79.45, 11.21], "glyph": "gopuram", "label": "bottom" }
+  },
+  "travellers": {
+    "rashtrakuta-army": { "name": "The Rashtrakuta army", "icon": "war-elephant" },
+    "chola-army": { "name": "The Chola army", "icon": "soldier" },
+    "prince": { "name": "Rajendra's party", "icon": "chariot" }
+  },
+  "phases": {
+    "founding": { "name": "Founding", "color": "#4fc3b0" },
+    "between": { "name": "Between great powers", "color": "#f29a2e" },
+    "golden": { "name": "Golden age", "color": "#e0b43a" },
+    "merging": { "name": "Merging with the Cholas", "color": "#a678e0" }
+  },
+  "routeStyles": {
+    "march": { "color": "#b3261e", "width": 3.2, "dash": "9 5", "cap": "butt" },
+    "alliance": { "color": "#2f6fb3", "width": 3.2, "dash": "9 5", "cap": "butt" }
+  },
+  "timeline": {
+    "track": [
+      { "until": 25, "color": "rgba(79,195,176,.35)" },
+      { "until": 52, "color": "rgba(242,154,46,.35)" },
+      { "until": 85, "color": "rgba(224,180,58,.35)" },
+      { "until": 100, "color": "rgba(166,120,224,.35)" }
+    ],
+    "ticks": [
+      { "at": 3, "text": "c. 624 CE" },
+      { "at": 36, "text": "c. 800" },
+      { "at": 44, "text": "c. 848" },
+      { "at": 70, "text": "c. 1000" },
+      { "at": 93, "text": "1070" }
+    ]
+  },
+  "steps": [
+    {
+      "place": "pishtapura",
+      "phase": "founding",
+      "title": "A brother on the eastern coast",
+      "when": "c. 624 CE",
+      "at": 3,
+      "camera": { "at": [81.5, 17.0], "width": 10 },
+      "legs": [],
+      "text": "Kubja Vishnuvardhana, brother of the Chalukya king Pulakeshin II of Badami, is set over the east after the fall of the Vishnukundins, by about 624 CE. He begins as a governor at Pishtapura. His descendants rule as the Eastern Chalukyas, a line that outlasts the western one.",
+      "today": "Pithapuram is a temple town in Kakinada district."
+    },
+    {
+      "place": "vengi",
+      "phase": "founding",
+      "title": "Vengi between two rivers",
+      "native": "వేంగి",
+      "when": "c. 641 to 700 CE",
+      "at": 14,
+      "camera": { "at": [81.0, 16.6], "width": 10 },
+      "legs": [],
+      "text": "The Eastern Chalukyas rule from Vengi, in the rich delta between the Krishna and Godavari. Early kings such as Jayasimha I rule from here, and to their neighbours the whole region becomes \"Vengi\". Succession disputes within the family are common, and the order of some early kings is debated.",
+      "today": "The ruins of Vengi are near Eluru."
+    },
+    {
+      "place": "vengi",
+      "phase": "between",
+      "title": "Caught between the Rashtrakutas",
+      "when": "c. 800 to 843 CE",
+      "at": 36,
+      "source": "Tradition",
+      "camera": { "at": [79.1, 16.9], "width": 9 },
+      "legs": [
+        { "from": "manyakheta", "to": "vengi", "traveller": "rashtrakuta-army", "style": "march", "bend": 0.12 }
+      ],
+      "text": "Rashtrakuta armies from the west repeatedly press into Vengi. Tradition says Vijayaditya II fought 108 battles in twelve years and built 108 Shiva temples, though the numbers are a traditional round figure. Vengi often had to accept Rashtrakuta overlordship and paid in tribute and marriages.",
+      "today": "Malkhed was the Rashtrakuta capital."
+    },
+    {
+      "place": "addanki",
+      "phase": "between",
+      "title": "The first Telugu verses in stone",
+      "native": "అద్దంకి",
+      "when": "c. 848 CE",
+      "at": 44,
+      "source": "Archaeology",
+      "camera": { "at": [80.0, 16.0], "width": 10 },
+      "legs": [],
+      "text": "At Addanki, an inscription of Pandaranga, a general of the Eastern Chalukya king Gunaga Vijayaditya (Vijayaditya III), is among the earliest Telugu verses in stone. It marks the language's move from private speech to royal records. Royal grants of his reign also claim wide victories, which are claims and not proven conquests.",
+      "today": "Addanki is a town in Bapatla district."
+    },
+    {
+      "place": "vengi",
+      "phase": "golden",
+      "title": "A Chola bride, a Chola army",
+      "when": "c. 999 to 1018 CE",
+      "at": 70,
+      "camera": { "at": [80.2, 13.8], "width": 11 },
+      "legs": [
+        { "from": "thanjavur", "to": "vengi", "traveller": "chola-army", "style": "alliance", "bend": -0.12 }
+      ],
+      "text": "Around 999, Rajaraja Chola's armies put Shaktivarman I on the Vengi throne. Shaktivarman's brother Vimaladitya soon marries Rajaraja's daughter Kundavai. Vengi becomes tied to the Cholas by blood. Their son will rule as Rajaraja Narendra, and Chola help keeps the line alive through years of war with neighbours.",
+      "today": "Thanjavur holds the Chola Brihadisvara temple."
+    },
+    {
+      "place": "rajamahendravaram",
+      "phase": "golden",
+      "title": "Nannaya and the Telugu Mahabharata",
+      "native": "రాజమహేంద్రవరం",
+      "when": "1022 to 1061 CE",
+      "at": 82,
+      "camera": { "at": [81.8, 17.0], "width": 8 },
+      "legs": [],
+      "text": "Rajaraja Narendra rules from Rajamahendravaram on the Godavari. Under his patronage the poet Nannaya begins the Telugu Mahabharata, and tradition honours him as the first poet (adikavi) of Telugu. Nannaya completed only part of the epic. The work was finished by later poets, Tikkana and Errana.",
+      "today": "Rajahmundry stands on the Godavari."
+    },
+    {
+      "place": "gangaikonda",
+      "phase": "merging",
+      "title": "A Vengi prince on the Chola throne",
+      "when": "1070 CE",
+      "at": 93,
+      "camera": { "at": [80.4, 14.0], "width": 11 },
+      "legs": [
+        { "from": "rajamahendravaram", "to": "gangaikonda", "traveller": "prince", "style": "alliance", "bend": 0.12 }
+      ],
+      "text": "In 1070, Rajendra, son of Rajaraja Narendra and a Chola princess, takes the Chola throne as Kulottunga I. The Eastern Chalukya male line merges into the Chola house. His descendants are called Chalukya-Cholas. Whether he took the throne by right or by force is argued in the sources.",
+      "today": "Gangaikonda Cholapuram is a village in Tamil Nadu."
+    },
+    {
+      "place": "vengi",
+      "phase": "merging",
+      "title": "What Vengi became",
+      "when": "1070 to c. 1118 CE",
+      "at": 98,
+      "camera": { "at": [81.0, 16.6], "width": 10 },
+      "legs": [],
+      "text": "After 1070 Vengi is governed by Kulottunga's family, often his sons, as Chola viceroys, until about 1118. The Western Chalukya Vikramaditya VI then takes it. Later the delta passes to local Telugu chiefs, among them the Velanati Chodas, and then to the Kakatiyas of Warangal.",
+      "today": "The Godavari delta is a rice-growing heartland."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "kubja",
+        "name": "Kubja Vishnuvardhana",
+        "native": "కుబ్జ విష్ణువర్ధనుడు",
+        "life": "reigned c. 624 to 641 CE",
+        "role": "Founder",
+        "steps": [0, 1],
+        "text": "Younger brother of Pulakeshin II, he was set over the east after the conquest, and founded the line of the Eastern Chalukyas. His epithet kubja means \"hunchbacked\", an epithet whose origin is not explained in the sources. Reign dates are approximate; later kings of Vengi trace their lineage to him."
+      },
+      {
+        "id": "vijayaditya3",
+        "name": "Gunaga Vijayaditya (Vijayaditya III)",
+        "native": "గుణగ విజయాదిత్యుడు",
+        "life": "reigned c. 848 to 892 CE",
+        "role": "King",
+        "steps": [3],
+        "text": "One of the strongest Vengi kings, who fought the Rashtrakutas and the Gangas. His grants claim wide victories in many directions, and his general Pandaranga left a Telugu verse inscription at Addanki. How far his power truly reached is uncertain; reign dates are approximate and debated."
+      },
+      {
+        "id": "nannaya",
+        "name": "Nannaya",
+        "native": "నన్నయ",
+        "life": "11th century CE",
+        "role": "Poet",
+        "steps": [5],
+        "text": "Court poet of Rajaraja Narendra, traditionally the first poet (adikavi) of Telugu. He began a Telugu version of the Mahabharata and completed its first books and part of the third. Little is known of his life, and the later poets Tikkana and Errana finished the epic."
+      },
+      {
+        "id": "kulottunga",
+        "name": "Kulottunga I",
+        "native": "కులోత్తుంగ చోళుడు",
+        "life": "born c. 1033, reigned 1070 to 1122 CE",
+        "role": "Chola emperor",
+        "steps": [6, 7],
+        "text": "Born Rajendra, son of Rajaraja Narendra of Vengi and the Chola princess Ammangadevi. He took the Chola throne in 1070 and ruled for about fifty years. Vengi was governed by his family during his reign. Reign dates are given in round figures here, and his claim to the throne was disputed."
+      }
+    ]
+  }
+}

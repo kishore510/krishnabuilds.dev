@@ -1,0 +1,343 @@
+{
+  "id": "kakatiya",
+  "title": "The Kakatiyas",
+  "description": "An illustrated map of the Kakatiyas of Warangal, who united much of the Telugu country, built the Thousand Pillar and Ramappa temples, and fell to the Delhi Sultanate in 1323.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "te",
+  "routes": "chapter",
+  "mapLabel": "The Kakatiyas, about 1000 to 1323 CE",
+  "note": "Based on inscriptions, temples, and the accounts of Marco Polo and Persian chroniclers of Delhi. Early Kakatiya dates are approximate and some are debated; the end of the last king is told differently by different sources. The map is stylised and not to scale.",
+  "places": {
+    "warangal": {
+      "name": "Warangal",
+      "at": [
+        79.6,
+        17.97
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "motupalli": {
+      "name": "Motupalli",
+      "at": [
+        80.3,
+        15.78
+      ],
+      "glyph": "anchor",
+      "label": "left"
+    },
+    "palampet": {
+      "name": "Palampet",
+      "at": [
+        79.94,
+        18.26
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.2,
+        28.6
+      ],
+      "glyph": "palace",
+      "label": "left"
+    }
+  },
+  "travellers": {
+    "army": {
+      "name": "Ganapatideva's army",
+      "icon": "war-elephant"
+    },
+    "delhi": {
+      "name": "A Delhi army",
+      "icon": "soldier"
+    }
+  },
+  "phases": {
+    "vassals": {
+      "name": "Vassals",
+      "color": "#4fc3b0"
+    },
+    "empire": {
+      "name": "A Telugu empire",
+      "color": "#f29a2e"
+    },
+    "delhi": {
+      "name": "Delhi's armies",
+      "color": "#b3261e"
+    },
+    "after": {
+      "name": "Afterwards",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "army": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "siege": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 12,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 78,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 92,
+        "color": "rgba(179,38,30,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "c. 1000 CE"
+      },
+      {
+        "at": 40,
+        "text": "1213"
+      },
+      {
+        "at": 62,
+        "text": "1262"
+      },
+      {
+        "at": 84,
+        "text": "1310"
+      },
+      {
+        "at": 98,
+        "text": "c. 1336"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "legs": [],
+      "place": "warangal",
+      "phase": "vassals",
+      "title": "Vassals who became kings",
+      "native": "ఓరుగల్లు",
+      "when": "c. 1000 to 1158 CE",
+      "at": 3,
+      "camera": {
+        "at": [
+          79.6,
+          17.97
+        ],
+        "width": 9
+      },
+      "text": "The Kakatiyas begin as local chiefs under the Rashtrakutas and then the Western Chalukyas, around Hanamakonda. Prola II, who ruled about 1110 to 1158, makes the family strong. In the 1160s his son's inscriptions show Kakatiya kings acting independently. Their name may come from a goddess, Kakati; this is debated.",
+      "today": "Hanamakonda is now part of the Warangal urban area."
+    },
+    {
+      "legs": [],
+      "place": "warangal",
+      "phase": "empire",
+      "title": "The fort and the Thousand Pillar temple",
+      "native": "వేయి స్తంభాల గుడి",
+      "when": "1158 to 1195 CE",
+      "at": 19,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.6,
+          17.97
+        ],
+        "width": 9
+      },
+      "text": "Rudradeva (Prataparudra I) makes Warangal the capital and starts its fort. In 1163 he builds the Rudreshwara temple, called the Thousand Pillar Temple, of dark stone on a star-shaped plan. The temple is dedicated to Shiva. Later kings added the great arches, and the fort was rebuilt many times.",
+      "today": "The Thousand Pillar Temple stands in Hanamakonda."
+    },
+    {
+      "legs": [
+        {
+          "from": "warangal",
+          "to": "motupalli",
+          "traveller": "army",
+          "style": "army",
+          "bend": 0.12
+        }
+      ],
+      "place": "motupalli",
+      "phase": "empire",
+      "title": "Ganapatideva and the sea",
+      "native": "మోటుపల్లి",
+      "when": "1199 to 1262 CE",
+      "at": 32,
+      "camera": {
+        "at": [
+          80,
+          16.9
+        ],
+        "width": 9
+      },
+      "text": "Ganapatideva rules for over sixty years and brings the coast under Kakatiya rule, with its rice lands and ports. Motupalli becomes the main harbour for the cloth trade overseas, and a famous inscription of 1244 guarantees safe and fair trade to merchants. The Telugu country is held together under one king for the first time.",
+      "today": "Motupalli is a small village on the coast."
+    },
+    {
+      "legs": [],
+      "place": "palampet",
+      "phase": "empire",
+      "title": "The Ramappa temple",
+      "native": "రామప్ప దేవాలయం",
+      "when": "1213 CE",
+      "at": 42,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.8,
+          18.1
+        ],
+        "width": 9
+      },
+      "text": "In 1213 a general of Ganapatideva, Recherla Rudra, builds the Ramappa temple at Palampet. It is named after the sculptor, Ramappa, which is rare in India. The carved dancers on its pillars are famed. Its bricks are light enough to float; claims about its foundations are argued. UNESCO recognised it in 2021.",
+      "today": "Ramappa is a UNESCO World Heritage Site."
+    },
+    {
+      "legs": [],
+      "place": "warangal",
+      "phase": "empire",
+      "title": "A queen who ruled as a king",
+      "native": "రుద్రమదేవి",
+      "when": "1262 to 1289 CE",
+      "at": 66,
+      "camera": {
+        "at": [
+          79.6,
+          17.97
+        ],
+        "width": 9
+      },
+      "text": "Ganapatideva has no son, so he trains his daughter Rudrama Devi to rule, and she reigns from 1262 under the male name Rudradeva. She holds off Yadava and other rivals. Marco Polo, who visited the coast about 1293, praises the queen of Mutfili; he probably means her. Her death is told differently by different sources.",
+      "today": "Rudrama Devi is widely remembered in Telangana."
+    },
+    {
+      "legs": [
+        {
+          "from": "delhi",
+          "to": "warangal",
+          "traveller": "delhi",
+          "style": "siege",
+          "bend": 0.1
+        }
+      ],
+      "place": "warangal",
+      "phase": "delhi",
+      "title": "The first siege",
+      "when": "1310 CE",
+      "at": 84,
+      "camera": {
+        "at": [
+          78.4,
+          23.3
+        ],
+        "width": 24
+      },
+      "text": "In 1309 to 1310, Malik Kafur, general of Alauddin Khalji of Delhi, besieges Warangal. Prataparudra II agrees to pay a heavy tribute and to become a vassal of Delhi. Tradition says the Koh-i-Noor diamond was among the treasure, but its origin is debated, and the sources do not agree on what was given.",
+      "today": "Warangal lies on the Deccan plateau."
+    },
+    {
+      "legs": [
+        {
+          "from": "delhi",
+          "to": "warangal",
+          "traveller": "delhi",
+          "style": "siege",
+          "bend": -0.1
+        }
+      ],
+      "place": "warangal",
+      "phase": "delhi",
+      "title": "The fall of Warangal",
+      "when": "1323 CE",
+      "at": 92,
+      "camera": {
+        "at": [
+          78.4,
+          23.3
+        ],
+        "width": 24
+      },
+      "text": "In 1323, a Delhi army under Ulugh Khan, the future Muhammad bin Tughluq, besieges Warangal again. After months, Prataparudra II surrenders and is taken as a prisoner toward Delhi. Persian sources say he died on the road. Tradition says he took his own life by the Narmada; this is not confirmed.",
+      "today": "Warangal Fort stands in ruins."
+    },
+    {
+      "legs": [],
+      "place": "warangal",
+      "phase": "after",
+      "title": "After the Kakatiyas",
+      "when": "1323 to c. 1336 CE",
+      "at": 98,
+      "camera": {
+        "at": [
+          79.6,
+          17.97
+        ],
+        "width": 9
+      },
+      "text": "The Kakatiya state breaks up. Telugu chiefs, among them Musunuri Kapaya Nayaka, drive out the Delhi governors around 1336 and rule from Warangal for a time. Later the region falls under other powers. The arch (Kakatiya Kala Thoranam) of the fort is today part of the Telangana emblem.",
+      "today": "The Kakatiya arch appears on Telangana's emblem."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "ganapatideva",
+        "name": "Ganapatideva",
+        "native": "గణపతిదేవుడు",
+        "life": "reigned 1199 to 1262 CE",
+        "role": "King",
+        "steps": [
+          2,
+          3
+        ],
+        "text": "The greatest Kakatiya king. He extended rule from Warangal to the Andhra coast, then south toward Kanchi, and encouraged trade and irrigation. His general Jayapa wrote on dance, the Nritta Ratnavali. His long reign, over sixty years, gave the dynasty its peak. Exact limits of his rule are debated."
+      },
+      {
+        "id": "rudrama",
+        "name": "Rudrama Devi",
+        "native": "రుద్రమదేవి",
+        "life": "reigned 1262 to 1289 CE",
+        "role": "Ruling queen",
+        "steps": [
+          4
+        ],
+        "text": "Daughter of Ganapatideva, raised to rule and known in inscriptions by the male name Rudradeva. She reigned for about twenty-seven years, and kept the kingdom together against Yadava and other rivals. Marco Polo's praise of a queen on the Andhra coast probably refers to her. The details of her death are debated."
+      },
+      {
+        "id": "prataparudra",
+        "name": "Prataparudra II",
+        "native": "ప్రతాపరుద్రుడు",
+        "life": "reigned 1289 to 1323 CE",
+        "role": "Last Kakatiya king",
+        "steps": [
+          5,
+          6
+        ],
+        "text": "Grandson of Rudrama Devi through her daughter, a reign shaped by Delhi's armies. He paid tribute after the siege of 1310 and fought on until Warangal fell in 1323. Persian accounts say he died on the way north; later tradition tells of suicide. Which account is right is not settled."
+      }
+    ]
+  }
+}

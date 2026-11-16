@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.81.0
+
+- New story map in Chronicles: The Kakatiyas. From vassals around Hanamakonda about 1000 CE, through the Thousand Pillar Temple at Warangal, Ganapatideva and the port of Motupalli, the Ramappa temple and Rudrama Devi, to the Delhi sieges of 1310 and 1323 and the arch that now sits on the Telangana emblem. 8 chapters on the south-asia map and 3 people cards, no Powers layer.
+- Catalogue: the Kakatiya dynasty entry opens the story.
+- Catalogue: new Telugu country lane in India, holding the Ikshvaku, Vishnukundin, Eastern Chalukya and Kakatiya entries so the Deccan and East lanes stay readable.
+
+## 0.80.0
+
+- New story map in Chronicles: The Eastern Chalukyas of Vengi. From Kubja Vishnuvardhana at Pishtapura about 624 CE, through Vengi between the Krishna and Godavari, the Rashtrakuta pressure, the first Telugu verses in stone at Addanki and the Chola marriage ties, to Nannaya at Rajamahendravaram and Kulottunga I taking the Chola throne in 1070. 8 chapters on the south-asia map and 4 people cards, no Powers layer.
+- Catalogue: the Eastern Chalukya dynasty entry opens the story.
+
+## 0.79.0
+
+- New story map in Chronicles: The Vishnukundins. From the dynasty's rise in Telangana about 420 CE, through Govindavarman's monastery at Indrapalanagara, Madhavavarman II's horse sacrifices and the cave temples on the Krishna, to the Chalukya conquest of Pishtapura about 624 CE and what came after. 6 chapters on the south-asia map and 3 people cards, no Powers layer.
+- Catalogue: the Vishnukundin dynasty entry opens the story.
+
+## 0.78.0
+
+- New story map in Chronicles: The Ikshvakus. From the Satavahanas' fading power and the Ikshvaku kings at Vijayapuri, through Chantamula's horse sacrifice, the royal women who paid for the Nagarjunakonda stupas, a bride from Ujjain, monks sent to far lands and the city of brick and limestone, to the end of the line about 325 CE and the valley under the Nagarjuna Sagar reservoir. 8 chapters on the south-asia map and 3 people cards, no Powers layer.
+- Catalogue: the Ikshvaku dynasty entry opens the story.
+
 ## 0.77.0
 
 - Contact: the footer on the front page, subject pages, Explore and entry pages has a "Suggest a story or send feedback" email link.

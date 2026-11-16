@@ -1,0 +1,345 @@
+{
+  "id": "ikshvaku",
+  "title": "The Ikshvakus",
+  "description": "An illustrated map of the Andhra Ikshvakus, who ruled the Krishna valley from Vijayapuri after the Satavahanas, from about 225 to 325 CE.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "te",
+  "routes": "chapter",
+  "mapLabel": "The Ikshvakus, about 225 to 325 CE",
+  "note": "Based on Ikshvaku inscriptions in Prakrit and on excavations at Nagarjunakonda; no chronicle of the dynasty survives. Dates are approximate and the order of some kings is debated. The map is stylised and not to scale.",
+  "places": {
+    "vijayapuri": {
+      "name": "Vijayapuri",
+      "at": [
+        79.2,
+        16.5
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "ujjain": {
+      "name": "Ujjain",
+      "at": [
+        75.8,
+        23.2
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "tambapanni": {
+      "name": "Sri Lanka",
+      "at": [
+        80.4,
+        8.35
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    },
+    "kanchipuram": {
+      "name": "Kanchipuram",
+      "at": [
+        79.7,
+        12.8
+      ],
+      "glyph": "gopuram",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "bride": {
+      "name": "A bride's journey",
+      "icon": "chariot"
+    },
+    "monk": {
+      "name": "Buddhist teachers",
+      "icon": "monk"
+    },
+    "army": {
+      "name": "A Pallava force",
+      "icon": "soldier"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "Rise",
+      "color": "#4fc3b0"
+    },
+    "faith": {
+      "name": "Faith and alliance",
+      "color": "#f29a2e"
+    },
+    "end": {
+      "name": "Ending and afterlife",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "bride": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "monk": {
+      "color": "#1f7a8c",
+      "width": 2.8,
+      "dash": "6 5",
+      "cap": "butt"
+    },
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 22,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 72,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "c. 225 CE"
+      },
+      {
+        "at": 15,
+        "text": "c. 250"
+      },
+      {
+        "at": 47,
+        "text": "c. 275"
+      },
+      {
+        "at": 80,
+        "text": "c. 325"
+      },
+      {
+        "at": 97,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "vijayapuri",
+      "phase": "rise",
+      "title": "Heirs of the Satavahanas",
+      "native": "విజయపురి",
+      "when": "c. 225 CE",
+      "at": 3,
+      "camera": {
+        "at": [
+          79.2,
+          16.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Satavahana power fades in the Krishna valley around 225 CE. The Ikshvakus take over, ruling from Vijayapuri, now beneath a reservoir. They claim descent from the legendary Sun-dynasty king Ikshvaku. Their story is known mostly from Prakrit inscriptions, because no chronicle of their own survives.",
+      "today": "Vijayapuri lies under the Nagarjuna Sagar reservoir."
+    },
+    {
+      "place": "vijayapuri",
+      "phase": "rise",
+      "title": "The horse sacrifice",
+      "native": "అశ్వమేధం",
+      "when": "c. 225 to 250 CE",
+      "at": 15,
+      "camera": {
+        "at": [
+          79.2,
+          16.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Chantamula (Shantamula) I, the first Ikshvaku king named in the inscriptions, is said by later records to have performed the horse sacrifice (ashvamedha) and other Vedic rites. Such rites announced royal power. Yet his family also gave generously to Buddhism, so the court served both faiths.",
+      "today": "Inscriptions record his rites in later royal grants."
+    },
+    {
+      "place": "vijayapuri",
+      "phase": "faith",
+      "title": "Women who built the stupas",
+      "when": "c. 250 to 275 CE",
+      "at": 28,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.2,
+          16.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Inscriptions at Nagarjunakonda name royal women of the Ikshvaku house as chief Buddhist donors. Among them is Chamtisiri, who paid for shrines, pillars and a monastery. Their gifts helped raise the great stupa (mahachaitya) and the halls around it, and their names survive on the pillars they gave.",
+      "today": "Their carved pillars stand in the museum on the island."
+    },
+    {
+      "place": "ujjain",
+      "phase": "faith",
+      "title": "A bride from Ujjain",
+      "when": "c. 250 to 275 CE",
+      "at": 41,
+      "camera": {
+        "at": [
+          77.5,
+          19.9
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "vijayapuri",
+          "to": "ujjain",
+          "traveller": "bride",
+          "style": "bride",
+          "bend": 0.1
+        }
+      ],
+      "text": "Virapurushadatta, Chantamula's son, marries Rudradharabhattarika, daughter of a Saka (Western Kshatrapa) ruler of Ujjain. Which ruler her father was is debated. The marriage ties the Krishna valley to the rival power of the western Deccan, and inscriptions record it among the dynasty's alliances.",
+      "today": "Ujjain is a city in Madhya Pradesh."
+    },
+    {
+      "place": "tambapanni",
+      "phase": "faith",
+      "title": "Monks sent to far lands",
+      "when": "c. 250 to 275 CE",
+      "at": 54,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.8,
+          12.4
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "vijayapuri",
+          "to": "tambapanni",
+          "traveller": "monk",
+          "style": "monk",
+          "bend": 0.1
+        }
+      ],
+      "text": "An Ikshvaku-era inscription at Nagarjunakonda lists lands where Buddhist teachers were sent, among them Kashmir, Gandhara, China (Cina) and Sri Lanka (Tambapanni). Whether every land was reached is unclear, but the list shows the valley saw itself as part of a wide Buddhist world.",
+      "today": "Sri Lanka lies across the strait from India's south-east coast."
+    },
+    {
+      "place": "vijayapuri",
+      "phase": "faith",
+      "title": "A city of brick and limestone",
+      "when": "c. 250 to 300 CE",
+      "at": 66,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.2,
+          16.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Excavations in the 1950s found a walled city with an amphitheatre, brick monasteries, apsidal shrines and stupas. Carved limestone slabs show scenes from the Buddha's life. The finds are among the best evidence for Buddhist life in the Deccan in the third and fourth centuries.",
+      "today": "Most of the site was moved before the water rose."
+    },
+    {
+      "place": "kanchipuram",
+      "phase": "end",
+      "title": "The end of the line",
+      "when": "c. 325 CE",
+      "at": 80,
+      "camera": {
+        "at": [
+          79.5,
+          14.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "kanchipuram",
+          "to": "vijayapuri",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Rudrapurushadatta, the last Ikshvaku king in the inscriptions, ruled until about 325 CE. By then the Pallavas of Kanchipuram issue grants in the Andhra country, as in the Mayidavolu plates. How the Ikshvakus ended, by conquest or decline, is not recorded.",
+      "today": "Kanchipuram is a temple city in Tamil Nadu."
+    },
+    {
+      "place": "vijayapuri",
+      "phase": "end",
+      "title": "Under the reservoir",
+      "when": "1950s to 1960s CE",
+      "at": 95,
+      "source": "Archaeology",
+      "camera": {
+        "at": [
+          79.2,
+          16.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Before the Nagarjuna Sagar reservoir filled in the 1960s, archaeologists recorded the valley's sites and moved chosen monuments to a hilltop that is now an island, with a museum. The later name Nagarjunakonda, \"Nagarjuna's hill\", recalls tradition linking the Buddhist teacher Nagarjuna to the valley.",
+      "today": "The island museum can be reached by boat."
+    }
+  ],
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "chantamula",
+        "name": "Chantamula I (Shantamula)",
+        "native": "శాంతమూలుడు",
+        "life": "reigned c. 225 to 250 CE",
+        "role": "Founder of the dynasty",
+        "steps": [
+          0,
+          1
+        ],
+        "text": "The first Ikshvaku king in the inscriptions, with the titles of a great king. Later records credit him with the horse sacrifice and other Vedic rites. His sister and his descendants' wives gave much to Buddhism, so his house backed both faiths. His own inscriptions are few, and details of his reign are thin."
+      },
+      {
+        "id": "virapurushadatta",
+        "name": "Virapurushadatta",
+        "native": "వీరపురుషదత్తుడు",
+        "life": "reigned c. 250 to 275 CE",
+        "role": "King and patron",
+        "steps": [
+          2,
+          3,
+          5
+        ],
+        "text": "Chantamula's son, whose reign is the best recorded in the valley. His rule saw the amphitheatre and many Buddhist monuments at Vijayapuri, and a marriage into the Saka house of Ujjain. Dates for his reign are approximate, and the family ties his inscriptions record are complex."
+      },
+      {
+        "id": "chamtisiri",
+        "name": "Chamtisiri",
+        "native": "చాంతిసిరి",
+        "life": "c. third century CE",
+        "role": "Royal donor",
+        "steps": [
+          2
+        ],
+        "text": "A royal woman of the Ikshvaku house, named in the inscriptions at Nagarjunakonda as a donor of shrines, pillars and a monastery. Her exact family tie to the kings is read differently by scholars. What survives of her is chiefly the record of her gifts, carved on stone."
+      }
+    ]
+  }
+}

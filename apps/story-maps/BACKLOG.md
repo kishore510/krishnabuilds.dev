@@ -34,6 +34,10 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Kakatiyas (`kakatiya`), 2026-11-16
+- The Eastern Chalukyas of Vengi (`eastern-chalukya`), 2026-11-16
+- The Vishnukundins (`vishnukundin`), 2026-11-16
+- The Ikshvakus (`ikshvaku`), 2026-11-16
 - The Portuguese Empire (`portuguese-empire`), 2026-11-14
 - Life on Earth (`life-on-earth`), 2026-11-14
 - The Making of Earth (`making-of-earth`), 2026-11-14
