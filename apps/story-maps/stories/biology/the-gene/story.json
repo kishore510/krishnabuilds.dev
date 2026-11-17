@@ -1,0 +1,469 @@
+{
+  "id": "the-gene",
+  "title": "The Gene",
+  "description": "How genetics was found, from a monk's peas to gene editing, and what Jurassic Park gets right and wrong about bringing extinct animals back.",
+  "canvas": "geo",
+  "basemap": "world",
+  "source": "History",
+  "nativeLang": "de",
+  "routes": "chapter",
+  "mapLabel": "The places where the gene was found, read and rewritten",
+  "note": "Places are the laboratories and sites where each step happened. Chapter 11 is a labelled aside on fiction and fact; the amber mines are a stand-in for the film's opening, not a scientific find site.",
+  "places": {
+    "brno": {
+      "name": "Brno",
+      "at": [
+        16.61,
+        49.19
+      ],
+      "glyph": "garden",
+      "label": "right"
+    },
+    "tubingen": {
+      "name": "Tübingen",
+      "at": [
+        9.06,
+        48.52
+      ],
+      "glyph": "flask",
+      "label": "left"
+    },
+    "new-york": {
+      "name": "New York",
+      "at": [
+        -73.96,
+        40.76
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "london": {
+      "name": "London",
+      "at": [
+        -0.12,
+        51.51
+      ],
+      "glyph": "light-waves",
+      "label": "left"
+    },
+    "cambridge": {
+      "name": "Cambridge",
+      "at": [
+        0.12,
+        52.2
+      ],
+      "glyph": "benzene",
+      "label": "right"
+    },
+    "bethesda": {
+      "name": "Bethesda",
+      "at": [
+        -77.1,
+        39.0
+      ],
+      "glyph": "tablet",
+      "label": "left"
+    },
+    "roslin": {
+      "name": "Roslin",
+      "at": [
+        -3.2,
+        55.86
+      ],
+      "glyph": "sheep",
+      "label": "left"
+    },
+    "washington": {
+      "name": "Washington",
+      "at": [
+        -77.04,
+        38.9
+      ],
+      "glyph": "medal",
+      "label": "right"
+    },
+    "leipzig": {
+      "name": "Leipzig",
+      "at": [
+        12.4,
+        51.31
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "berkeley": {
+      "name": "Berkeley",
+      "at": [
+        -122.26,
+        37.87
+      ],
+      "glyph": "flask",
+      "label": "right"
+    },
+    "amber-mines": {
+      "name": "Amber mines",
+      "at": [
+        -70.7,
+        19.5
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "dallas": {
+      "name": "Dallas",
+      "at": [
+        -96.8,
+        32.78
+      ],
+      "glyph": "mammoth",
+      "label": "right"
+    }
+  },
+  "travellers": {},
+  "phases": {
+    "inherit": {
+      "name": "Inheritance",
+      "color": "#6fa84a"
+    },
+    "molecule": {
+      "name": "The molecule",
+      "color": "#2b7fb4"
+    },
+    "read": {
+      "name": "Reading and writing",
+      "color": "#e0573a"
+    },
+    "back": {
+      "name": "Back from extinction?",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {},
+  "timeline": {
+    "track": [
+      {
+        "until": 18,
+        "color": "rgba(111,168,74,.35)"
+      },
+      {
+        "until": 58,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 89,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3,
+        "text": "1866"
+      },
+      {
+        "at": 44,
+        "text": "1953"
+      },
+      {
+        "at": 64,
+        "text": "1996"
+      },
+      {
+        "at": 86,
+        "text": "2012"
+      },
+      {
+        "at": 97,
+        "text": "2025"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "brno",
+      "phase": "inherit",
+      "title": "Peas in a monastery garden",
+      "native": "Brünn",
+      "when": "1856 to 1866",
+      "camera": {
+        "at": [
+          16.61,
+          49.19
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In the abbey garden at Brno, the friar Gregor Mendel crossed pea plants for eight years and counted the offspring, some 28,000 plants by the usual reckoning. Traits such as flower colour came back in steady ratios, about three to one. He proposed hidden units of inheritance. His 1866 paper was little noticed until 1900.",
+      "today": "Today: The abbey is now the Mendel Museum, and the garden is still tended.",
+      "at": 3
+    },
+    {
+      "place": "tubingen",
+      "phase": "inherit",
+      "title": "A strange substance in pus",
+      "when": "1869",
+      "camera": {
+        "at": [
+          9.06,
+          49.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 1869 the Swiss chemist Friedrich Miescher, working in a Tübingen laboratory, washed white blood cells from pus-soaked surgical bandages. From their nuclei he isolated a phosphorus-rich substance he called nuclein, today's DNA. Nobody knew what it did. For decades most scientists assumed proteins, not nuclein, must carry heredity.",
+      "today": "Today: The castle that housed the laboratory is now part of the University of Tübingen.",
+      "at": 10
+    },
+    {
+      "place": "new-york",
+      "phase": "molecule",
+      "title": "DNA is the carrier",
+      "when": "1944",
+      "camera": {
+        "at": [
+          -73.96,
+          40.76
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At the Rockefeller Institute, Oswald Avery, Colin MacLeod and Maclyn McCarty purified the substance that turned harmless pneumonia bacteria into deadly ones, a change first seen by Frederick Griffith in London in 1928. In 1944 they reported it was DNA, not protein. Many biologists stayed doubtful until the Hershey-Chase experiment of 1952.",
+      "today": "Today: The institute is now Rockefeller University.",
+      "at": 26
+    },
+    {
+      "place": "london",
+      "phase": "molecule",
+      "title": "Photograph 51",
+      "when": "1952",
+      "camera": {
+        "at": [
+          2,
+          51.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At King's College London, Rosalind Franklin and her student Raymond Gosling fired X-rays at DNA fibres. In May 1952 their Photograph 51 showed a cross-shaped pattern pointing to a helix. Her colleague Maurice Wilkins later showed it to James Watson without her knowledge. Franklin's part in the discovery was long underplayed.",
+      "today": "Today: King's College's Franklin-Wilkins Building carries both names.",
+      "at": 37
+    },
+    {
+      "place": "cambridge",
+      "phase": "molecule",
+      "title": "The double helix",
+      "when": "1953",
+      "camera": {
+        "at": [
+          2,
+          51.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At the Cavendish Laboratory, James Watson and Francis Crick built a three-dimensional model that fitted Franklin's X-ray data and Erwin Chargaff's chemical rules: two strands wound round each other, with bases pairing A with T and G with C. Their short Nature paper of April 1953 noted that this pairing hinted at how DNA copies itself.",
+      "today": "Today: A reconstruction of their model is shown at the Science Museum in London.",
+      "at": 44
+    },
+    {
+      "place": "bethesda",
+      "phase": "molecule",
+      "title": "Cracking the code",
+      "when": "1961 to 1966",
+      "camera": {
+        "at": [
+          -77.1,
+          39
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At the National Institutes of Health, Marshall Nirenberg and Heinrich Matthaei added artificial RNA made only of uracil to a cell extract in 1961 and got a chain of a single amino acid, phenylalanine. The method let teams, including Har Gobind Khorana's, decode all 64 three-letter words (codons) by about 1966.",
+      "today": "Today: The NIH campus is still the United States government's main medical research centre.",
+      "at": 53
+    },
+    {
+      "place": "roslin",
+      "phase": "read",
+      "title": "Dolly the sheep",
+      "when": "1996 to 1997",
+      "camera": {
+        "at": [
+          -2,
+          53.5
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "At the Roslin Institute near Edinburgh, Ian Wilmut, Keith Campbell and colleagues placed the nucleus of an adult sheep's udder cell into an egg stripped of its own. Of 277 attempts, only one lamb lived: Dolly, born 5 July 1996 and announced in 1997. She was the first mammal cloned from an adult cell and died in 2003.",
+      "today": "Today: Dolly's preserved body is in the National Museum of Scotland.",
+      "at": 64
+    },
+    {
+      "place": "washington",
+      "phase": "read",
+      "title": "Reading the whole genome",
+      "when": "1990 to 2003",
+      "camera": {
+        "at": [
+          -77.04,
+          38.9
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Using Frederick Sanger's 1977 method of reading DNA letters, labs in six countries raced a private company, Celera. A draft human genome was announced at the White House in June 2000, and the project was declared finished in 2003. It runs to about three billion letters and roughly 20,000 protein-coding genes, fewer than expected.",
+      "today": "Today: In 2022 a research consortium published the first gap-free human genome.",
+      "at": 72
+    },
+    {
+      "place": "leipzig",
+      "phase": "read",
+      "title": "Reading ancient DNA",
+      "when": "2010",
+      "camera": {
+        "at": [
+          10,
+          50
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "Svante Pääbo's team at the Max Planck Institute in Leipzig pieced together short, damaged DNA fragments from Neanderthal bones. Their 2010 draft genome showed that people with recent ancestry outside Africa carry about 1 to 4 per cent Neanderthal DNA. It also showed the limits of the method: old DNA breaks into tiny pieces and is easily contaminated.",
+      "today": "Today: Pääbo won the 2022 Nobel Prize in Physiology or Medicine.",
+      "at": 79
+    },
+    {
+      "place": "berkeley",
+      "phase": "read",
+      "title": "Editing the code",
+      "when": "2012 to 2023",
+      "camera": {
+        "at": [
+          -122.26,
+          37.87
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "In 2012 Jennifer Doudna in Berkeley and Emmanuelle Charpentier, then in Umeå, Sweden, showed that a bacterial defence system, CRISPR-Cas9, could be programmed to cut DNA at a chosen spot. They shared the 2020 Nobel Prize in Chemistry. In 2023 the first CRISPR medicine, for sickle-cell disease, won approval in Britain and the United States.",
+      "today": "Today: Gene editing is now routine in laboratories worldwide.",
+      "at": 86
+    },
+    {
+      "place": "amber-mines",
+      "phase": "back",
+      "title": "The Jurassic Park idea",
+      "when": "1990 to 1993",
+      "source": "Science",
+      "camera": {
+        "at": [
+          -70.7,
+          19.5
+        ],
+        "width": 50
+      },
+      "legs": [],
+      "text": "Fiction: Jurassic Park gets dinosaur DNA from mosquitoes preserved in amber. Science: DNA breaks down. In a 2012 study of moa bones its half-life was about 521 years, so even in ideal conditions it would be unreadable after roughly 6.8 million years. Dinosaurs died out about 66 million years ago. Claims of amber DNA could not be repeated.",
+      "today": "Today: Dominican amber is still mined and prized for its fossil insects.",
+      "at": 92
+    },
+    {
+      "place": "dallas",
+      "phase": "back",
+      "title": "Bringing back the mammoth?",
+      "when": "2021 to 2025",
+      "source": "Science",
+      "camera": {
+        "at": [
+          -96.8,
+          32.78
+        ],
+        "width": 55
+      },
+      "legs": [],
+      "text": "Colossal Biosciences, founded in Dallas in 2021, edits living cells. In 2025 it announced woolly mice and three pups it called dire wolves: gray wolves with about 20 edits. Many scientists call these edited relatives, not resurrected species. A mammoth-like elephant calf, once promised for 2028, remains an aim. Extinct animals cannot be copied; only proxies are made.",
+      "today": "Today: As of 2025 no mammoth-like calf has been born.",
+      "at": 97
+    }
+  ],
+  "people": {
+    "heading": "People in the story",
+    "items": [
+      {
+        "id": "mendel",
+        "name": "Gregor Mendel",
+        "life": "1822 to 1884",
+        "role": "Friar and plant experimenter",
+        "steps": [
+          0
+        ],
+        "text": "Born in Moravia, then in the Austrian Empire, Mendel became an Augustinian friar and trained in physics and botany at Vienna. His pea experiments gave the first rules of heredity. Later he became abbot and had little time for science. He died believing his work had gone unnoticed; its rediscovery in 1900 founded genetics."
+      },
+      {
+        "id": "miescher",
+        "name": "Friedrich Miescher",
+        "life": "1844 to 1895",
+        "role": "Swiss physician and chemist",
+        "steps": [
+          1
+        ],
+        "text": "Miescher trained as a doctor in Basel, then turned to chemistry in Tübingen. He found nuclein in 1869 and later isolated it from salmon sperm in Basel. He guessed that large molecules might carry hereditary information but did not live to see it shown. His discovery lay unused for decades."
+      },
+      {
+        "id": "avery",
+        "name": "Oswald Avery",
+        "life": "1877 to 1955",
+        "role": "Canadian-born physician and bacteriologist",
+        "steps": [
+          2
+        ],
+        "text": "Born in Halifax, Nova Scotia, Avery spent most of his career at the Rockefeller Institute studying pneumonia. His 1944 paper with MacLeod and McCarty identified DNA as the material of heredity. Though nominated for the Nobel Prize several times, he never won it."
+      },
+      {
+        "id": "franklin",
+        "name": "Rosalind Franklin",
+        "life": "1920 to 1958",
+        "role": "X-ray crystallographer",
+        "steps": [
+          3,
+          4
+        ],
+        "text": "Franklin trained at Cambridge, worked in Paris, then took DNA research at King's College London in 1951. Her measurements gave the helix's dimensions. She later moved to Birkbeck College and worked on viruses. She died of ovarian cancer at 37. The Nobel Prize for DNA's structure, given in 1962, went to Watson, Crick and Wilkins."
+      },
+      {
+        "id": "khorana",
+        "name": "Har Gobind Khorana",
+        "life": "1922 to 2011",
+        "role": "Indian-born biochemist",
+        "steps": [
+          5
+        ],
+        "text": "Born in Raipur, in what was British India and is now Pakistan, Khorana studied at Punjab University and Liverpool. At the University of Wisconsin he made synthetic DNA and RNA of known sequence, which helped fix the meaning of each codon. He shared the 1968 Nobel Prize in Physiology or Medicine with Nirenberg and Robert Holley."
+      },
+      {
+        "id": "paabo",
+        "name": "Svante Pääbo",
+        "life": "born 1955",
+        "role": "Swedish geneticist",
+        "steps": [
+          8
+        ],
+        "text": "Born in Stockholm, Pääbo began working on ancient DNA in the 1980s, first with Egyptian mummies. At Leipzig his group sequenced the Neanderthal genome and identified a new human group, the Denisovans, from DNA in a Siberian finger bone. He won the 2022 Nobel Prize in Physiology or Medicine."
+      },
+      {
+        "id": "doudna-charpentier",
+        "name": "Jennifer Doudna and Emmanuelle Charpentier",
+        "life": "born 1964 and 1968",
+        "role": "Biochemist and microbiologist",
+        "steps": [
+          9
+        ],
+        "text": "Doudna, American, led an RNA laboratory at Berkeley. Charpentier, French, studied bacterial infection at Umeå and later in Berlin. Their 2012 paper turned a bacterial defence into a gene-editing tool. In 2020 they became the first two women to share a Nobel Prize in Chemistry. Others, including Feng Zhang, soon applied the tool to human cells."
+      }
+    ]
+  }
+}

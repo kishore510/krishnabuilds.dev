@@ -6,9 +6,9 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-One story in each subject still to come would fill the front page's shelves: Biology and Medicine, and Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
+One subject is still without a story: Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
 
-Biology and Medicine fits the `world` map: Smallpox, from variolation to eradication, then The Gene (genetics, with a labelled aside on what Jurassic Park got right and wrong).
+Biology and Medicine now has The Gene and fits the `world` map; Smallpox, from variolation to eradication, is the remaining biology story.
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
@@ -34,6 +34,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Gene (`the-gene`), 2026-11-17
 - The Kakatiyas (`kakatiya`), 2026-11-16
 - The Eastern Chalukyas of Vengi (`eastern-chalukya`), 2026-11-16
 - The Vishnukundins (`vishnukundin`), 2026-11-16

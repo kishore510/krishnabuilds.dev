@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.82.0
+
+- New story map in Biology and Medicine: The Gene. A story on genetics, from Mendel's peas to CRISPR, with a final aside on de-extinction. First story in Biology and Medicine. 12 chapters on the world map and 7 people cards.
+- Catalogue: the Gene entry opens the story, with chapter entries for the structure of DNA, Dolly the sheep and CRISPR.
+- Art: new `sheep` and `mammoth` place glyphs.
+
 ## 0.81.0
 
 - New story map in Chronicles: The Kakatiyas. From vassals around Hanamakonda about 1000 CE, through the Thousand Pillar Temple at Warangal, Ganapatideva and the port of Motupalli, the Ramappa temple and Rudrama Devi, to the Delhi sieges of 1310 and 1323 and the arch that now sits on the Telangana emblem. 8 chapters on the south-asia map and 3 people cards, no Powers layer.
