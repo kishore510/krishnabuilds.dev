@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.86.0
+
+- New story map in Chronicles: The Holy Roman Empire. From Charlemagne's crowning in 800 and Otto I in 962, through Canossa, Barbarossa and the Lombard League, Frederick II, Charles IV and the Golden Bull, the Council of Constance and the Habsburgs, to Luther at Worms, the Thirty Years' War, Westphalia, the Diet at Regensburg, Austerlitz and the end in 1806. 14 chapters on the mediterranean map, a Powers layer that changes lands chapter by chapter, and 6 people cards.
+- Catalogue: the Holy Roman Empire entry opens the story, the Carolingian Empire entry opens its first chapter, and new chapter entries cover the Walk to Canossa, the Diet of Worms and the Peace of Westphalia.
+
 ## 0.85.0
 
 - New story map in Chronicles: The Roman Empire. From Augustus and the Roman peace, through Teutoburg Forest, Britannia and Boudica, Pompeii, Trajan's conquest of Dacia and the empire at its widest, Hadrian's Wall, Alexandria and the grain fleet and Marcus Aurelius on the Danube, to the third-century crisis, Diocletian, Constantine, the sack of Rome and the last emperor in the West in 476. 14 chapters on the mediterranean map, a Powers layer that grows and shrinks chapter by chapter, and 6 people cards.
