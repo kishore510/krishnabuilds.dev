@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.86.0
+
+- New story map in Chronicles: The Holy Roman Empire. From Charlemagne's crowning in 800 and Otto I in 962, through Canossa, Barbarossa and the Lombard League, Frederick II, Charles IV and the Golden Bull, the Council of Constance and the Habsburgs, to Luther at Worms, the Thirty Years' War, Westphalia, the Diet at Regensburg, Austerlitz and the end in 1806. 14 chapters on the mediterranean map, a Powers layer that changes lands chapter by chapter, and 6 people cards.
+- Catalogue: the Holy Roman Empire entry opens the story, the Carolingian Empire entry opens its first chapter, and new chapter entries cover the Walk to Canossa, the Diet of Worms and the Peace of Westphalia.
+
+## 0.85.0
+
+- New story map in Chronicles: The Roman Empire. From Augustus and the Roman peace, through Teutoburg Forest, Britannia and Boudica, Pompeii, Trajan's conquest of Dacia and the empire at its widest, Hadrian's Wall, Alexandria and the grain fleet and Marcus Aurelius on the Danube, to the third-century crisis, Diocletian, Constantine, the sack of Rome and the last emperor in the West in 476. 14 chapters on the mediterranean map, a Powers layer that grows and shrinks chapter by chapter, and 6 people cards.
+- Catalogue: the Roman Empire entry opens the story, with chapter entries for the Battle of Teutoburg Forest, the eruption of Vesuvius and the fall of the Western Roman Empire.
+
+## 0.84.0
+
+- New story map in Chronicles: The Roman Republic. From the traditional founding of Rome and the expulsion of the kings, through the consuls, the conquest of Italy, Pyrrhus, the three wars with Carthage (Hannibal's crossing of the Alps, Cannae, Zama and the fall of Carthage), to the Gracchi, Sulla, Caesar in Gaul, the Rubicon, the Ides of March and Actium. 14 chapters on the mediterranean map, a Powers layer that grows from Latium to the whole Mediterranean, and 6 people cards.
+- Catalogue: the Roman Republic entry opens the story, with chapter entries for Carthage, the Battle of Cannae and the assassination of Caesar.
+
+## 0.83.0
+
+- New `mediterranean` basemap (lon -11 to 46, lat 28 to 57, 40 units per degree, stretch 1.35) for the Roman Republic, Roman Empire and Holy Roman Empire stories: Britain to Mesopotamia, the Baltic to the Atlas. Coastlines and lakes are Natural Earth data, simplified once; rivers are Natural Earth plus a hand-drawn Tiber. No story uses it yet.
+
 ## 0.82.0
 
 - New story map in Biology and Medicine: The Gene. A story on genetics, from Mendel's peas to CRISPR, with a final aside on de-extinction. First story in Biology and Medicine. 12 chapters on the world map and 7 people cards.

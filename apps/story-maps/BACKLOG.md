@@ -24,7 +24,6 @@ Suggested after those. These fit a map that already exists, so each is one sessi
 
 These need a new map first, which is its own piece of work and its own PR:
 
-- Rome, republic and empire (a Mediterranean map)
 - China, Qin to Qing (an East Asia map; also serves Korea and Japan)
 - The Inca and the Andes (an Andes map)
 - The Khmer, Srivijaya and Majapahit (a Southeast Asia map)
@@ -34,6 +33,9 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Holy Roman Empire (`holy-roman-empire`), 2026-11-17
+- The Roman Empire (`roman-empire`), 2026-11-17
+- The Roman Republic (`roman-republic`), 2026-11-17
 - The Gene (`the-gene`), 2026-11-17
 - The Kakatiyas (`kakatiya`), 2026-11-16
 - The Eastern Chalukyas of Vengi (`eastern-chalukya`), 2026-11-16

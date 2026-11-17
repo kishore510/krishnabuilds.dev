@@ -1,0 +1,6538 @@
+{
+ "id": "holy-roman-empire",
+ "title": "The Holy Roman Empire",
+ "description": "An illustrated map of the Holy Roman Empire, from Charlemagne’s crowning in 800 and Otto I in 962 through Canossa, Barbarossa and the Lombard League, Frederick II, Charles IV and the Golden Bull, the Council of Constance, the Habsburgs, Luther at Worms, the Thirty Years’ War, Westphalia and the Diet at Regensburg to Austerlitz and the end in 1806.",
+ "canvas": "geo",
+ "basemap": "mediterranean",
+ "source": "History",
+ "nativeLang": "la",
+ "routes": "chapter",
+ "mapLabel": "Illustrated map of the Holy Roman Empire, 800 to 1806",
+ "note": "Based mainly on the chronicles of the period (Liudprand of Cremona, Lampert of Hersfeld, Otto of Freising, Matthew Paris), on the imperial charters and the Golden Bull, and on modern histories; each chapter says which it follows. Native names are Latin, the empire’s common language of record. Numbers for armies and deaths are given as the sources give them and are often disputed. The map is stylised and not to scale; coasts are drawn as they are today. Powers areas are loose and show the empire’s core, not its many frontiers.",
+ "travellers": {
+  "charlemagne": {
+   "name": "Charlemagne",
+   "icon": "marcher"
+  },
+  "otto": {
+   "name": "Otto I",
+   "icon": "marcher"
+  },
+  "henry": {
+   "name": "Henry IV",
+   "icon": "horse"
+  },
+  "hus": {
+   "name": "Jan Hus",
+   "icon": "horse"
+  },
+  "luther": {
+   "name": "Martin Luther",
+   "icon": "monk"
+  }
+ },
+ "phases": {
+  "crown": {
+   "name": "Crown and pope",
+   "color": "#d9a441"
+  },
+  "princes": {
+   "name": "Electors and councils",
+   "color": "#2b7fb4"
+  },
+  "reform": {
+   "name": "Reformation and war",
+   "color": "#b3261e"
+  },
+  "last": {
+   "name": "The last century",
+   "color": "#7a2e5e"
+  }
+ },
+ "routeStyles": {
+  "march": {
+   "color": "#b3261e",
+   "width": 3.2,
+   "dash": "9 5",
+   "cap": "butt"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 34.9,
+    "color": "rgba(217,164,65,.4)"
+   },
+   {
+    "until": 56.8,
+    "color": "rgba(43,127,180,.35)"
+   },
+   {
+    "until": 78.7,
+    "color": "rgba(179,38,30,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(122,46,94,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2.0,
+    "text": "800"
+   },
+   {
+    "at": 9.3,
+    "text": "962"
+   },
+   {
+    "at": 16.6,
+    "text": "1077"
+   },
+   {
+    "at": 23.9,
+    "text": "1176"
+   },
+   {
+    "at": 31.2,
+    "text": "1220"
+   },
+   {
+    "at": 38.5,
+    "text": "1348"
+   },
+   {
+    "at": 45.8,
+    "text": "1414"
+   },
+   {
+    "at": 53.1,
+    "text": "1440"
+   },
+   {
+    "at": 60.4,
+    "text": "1521"
+   },
+   {
+    "at": 67.7,
+    "text": "1618"
+   },
+   {
+    "at": 75.0,
+    "text": "1648"
+   },
+   {
+    "at": 82.3,
+    "text": "1663"
+   },
+   {
+    "at": 89.6,
+    "text": "1805"
+   },
+   {
+    "at": 96.9,
+    "text": "1806"
+   }
+  ]
+ },
+ "places": {
+  "rome": {
+   "name": "Rome",
+   "at": [
+    12.5,
+    41.9
+   ],
+   "glyph": "dome",
+   "label": "right"
+  },
+  "aachen": {
+   "name": "Aachen",
+   "at": [
+    6.08,
+    50.78
+   ],
+   "glyph": "palace",
+   "label": "left"
+  },
+  "magdeburg": {
+   "name": "Magdeburg",
+   "at": [
+    11.63,
+    52.12
+   ],
+   "glyph": "crown",
+   "label": "right"
+  },
+  "speyer": {
+   "name": "Speyer",
+   "at": [
+    8.44,
+    49.32
+   ],
+   "glyph": "dome",
+   "label": "left"
+  },
+  "canossa": {
+   "name": "Canossa",
+   "at": [
+    10.45,
+    44.58
+   ],
+   "glyph": "fort",
+   "label": "right"
+  },
+  "legnano": {
+   "name": "Legnano",
+   "at": [
+    8.92,
+    45.6
+   ],
+   "glyph": "crossed-swords",
+   "label": "left"
+  },
+  "palermo": {
+   "name": "Palermo",
+   "at": [
+    13.36,
+    38.12
+   ],
+   "glyph": "palace",
+   "label": "right"
+  },
+  "prague": {
+   "name": "Prague",
+   "at": [
+    14.42,
+    50.09
+   ],
+   "glyph": "crown",
+   "label": "right"
+  },
+  "constance": {
+   "name": "Constance (Konstanz)",
+   "at": [
+    9.18,
+    47.66
+   ],
+   "glyph": "dome",
+   "label": "left"
+  },
+  "vienna": {
+   "name": "Vienna",
+   "at": [
+    16.37,
+    48.21
+   ],
+   "glyph": "palace",
+   "label": "right"
+  },
+  "wittenberg": {
+   "name": "Wittenberg",
+   "at": [
+    12.65,
+    51.87
+   ],
+   "glyph": "codex",
+   "label": "right"
+  },
+  "worms": {
+   "name": "Worms",
+   "at": [
+    8.36,
+    49.63
+   ],
+   "glyph": "dome",
+   "label": "left"
+  },
+  "munster": {
+   "name": "Münster",
+   "at": [
+    7.63,
+    51.96
+   ],
+   "glyph": "treaty",
+   "label": "left"
+  },
+  "regensburg": {
+   "name": "Regensburg",
+   "at": [
+    12.1,
+    49.02
+   ],
+   "glyph": "seal",
+   "label": "right"
+  },
+  "austerlitz": {
+   "name": "Austerlitz (Slavkov)",
+   "at": [
+    16.88,
+    49.15
+   ],
+   "glyph": "crossed-swords",
+   "label": "right"
+  },
+  "eifel": {
+   "name": "Eifel",
+   "at": [
+    6.5,
+    49.9
+   ],
+   "hidden": true
+  },
+  "moselle": {
+   "name": "Moselle",
+   "at": [
+    6.2,
+    49.2
+   ],
+   "hidden": true
+  },
+  "vosges": {
+   "name": "Vosges",
+   "at": [
+    6.4,
+    48.2
+   ],
+   "hidden": true
+  },
+  "burg-gate": {
+   "name": "Burgundian Gate",
+   "at": [
+    6.9,
+    47.4
+   ],
+   "hidden": true
+  },
+  "jura": {
+   "name": "Jura",
+   "at": [
+    6.9,
+    46.7
+   ],
+   "hidden": true
+  },
+  "st-bernard": {
+   "name": "Great St Bernard",
+   "at": [
+    7.17,
+    45.87
+   ],
+   "hidden": true
+  },
+  "aosta": {
+   "name": "Aosta",
+   "at": [
+    7.3,
+    45.55
+   ],
+   "hidden": true
+  },
+  "piedmont": {
+   "name": "Piedmont",
+   "at": [
+    7.8,
+    45.05
+   ],
+   "hidden": true
+  },
+  "po-w": {
+   "name": "Po valley",
+   "at": [
+    9.0,
+    44.95
+   ],
+   "hidden": true
+  },
+  "apennines-n": {
+   "name": "Apennines",
+   "at": [
+    10.2,
+    44.5
+   ],
+   "hidden": true
+  },
+  "etruria": {
+   "name": "Tuscany",
+   "at": [
+    11.0,
+    43.5
+   ],
+   "hidden": true
+  },
+  "rome-n": {
+   "name": "Latium",
+   "at": [
+    11.9,
+    42.6
+   ],
+   "hidden": true
+  },
+  "thuringia": {
+   "name": "Thuringia",
+   "at": [
+    11.0,
+    50.95
+   ],
+   "hidden": true
+  },
+  "franconia": {
+   "name": "Franconia",
+   "at": [
+    10.7,
+    49.9
+   ],
+   "hidden": true
+  },
+  "augsburg": {
+   "name": "Augsburg",
+   "at": [
+    10.9,
+    48.37
+   ],
+   "hidden": true
+  },
+  "tyrol": {
+   "name": "Tyrol",
+   "at": [
+    11.4,
+    47.2
+   ],
+   "hidden": true
+  },
+  "trento": {
+   "name": "Trento",
+   "at": [
+    11.1,
+    46.1
+   ],
+   "hidden": true
+  },
+  "verona": {
+   "name": "Verona",
+   "at": [
+    11.0,
+    45.4
+   ],
+   "hidden": true
+  },
+  "po-e": {
+   "name": "Po valley",
+   "at": [
+    11.3,
+    44.85
+   ],
+   "hidden": true
+  },
+  "bologna": {
+   "name": "Bologna",
+   "at": [
+    11.35,
+    44.5
+   ],
+   "hidden": true
+  },
+  "apennines-c": {
+   "name": "Apennines",
+   "at": [
+    11.2,
+    44.0
+   ],
+   "hidden": true
+  },
+  "florence": {
+   "name": "Florence",
+   "at": [
+    11.25,
+    43.77
+   ],
+   "hidden": true
+  },
+  "siena": {
+   "name": "Siena",
+   "at": [
+    11.3,
+    43.3
+   ],
+   "hidden": true
+  },
+  "etruria-otto": {
+   "name": "Tuscany",
+   "at": [
+    11.9,
+    42.6
+   ],
+   "hidden": true
+  },
+  "alsace": {
+   "name": "Alsace",
+   "at": [
+    7.6,
+    48.3
+   ],
+   "hidden": true
+  },
+  "basel": {
+   "name": "Basel",
+   "at": [
+    7.4,
+    47.4
+   ],
+   "hidden": true
+  },
+  "jura-henry": {
+   "name": "Jura",
+   "at": [
+    6.7,
+    46.6
+   ],
+   "hidden": true
+  },
+  "geneva": {
+   "name": "Geneva",
+   "at": [
+    6.15,
+    46.2
+   ],
+   "hidden": true
+  },
+  "savoy": {
+   "name": "Savoy",
+   "at": [
+    6.5,
+    45.6
+   ],
+   "hidden": true
+  },
+  "mont-cenis": {
+   "name": "Mont Cenis",
+   "at": [
+    6.9,
+    45.25
+   ],
+   "hidden": true
+  },
+  "turin": {
+   "name": "Turin",
+   "at": [
+    7.7,
+    45.07
+   ],
+   "hidden": true
+  },
+  "po-w-henry": {
+   "name": "Po valley",
+   "at": [
+    9.3,
+    45.0
+   ],
+   "hidden": true
+  },
+  "parma": {
+   "name": "Parma",
+   "at": [
+    10.3,
+    44.8
+   ],
+   "hidden": true
+  },
+  "pilsen": {
+   "name": "Pilsen",
+   "at": [
+    13.4,
+    49.75
+   ],
+   "hidden": true
+  },
+  "upper-palatinate": {
+   "name": "Upper Palatinate",
+   "at": [
+    12.1,
+    49.5
+   ],
+   "hidden": true
+  },
+  "nuremberg": {
+   "name": "Nuremberg",
+   "at": [
+    11.08,
+    49.45
+   ],
+   "hidden": true
+  },
+  "ulm": {
+   "name": "Ulm",
+   "at": [
+    9.99,
+    48.4
+   ],
+   "hidden": true
+  },
+  "upper-swabia": {
+   "name": "Upper Swabia",
+   "at": [
+    9.5,
+    47.95
+   ],
+   "hidden": true
+  },
+  "leipzig": {
+   "name": "Leipzig",
+   "at": [
+    12.37,
+    51.34
+   ],
+   "hidden": true
+  },
+  "erfurt": {
+   "name": "Erfurt",
+   "at": [
+    11.03,
+    50.98
+   ],
+   "hidden": true
+  },
+  "eisenach": {
+   "name": "Eisenach",
+   "at": [
+    10.32,
+    50.98
+   ],
+   "hidden": true
+  },
+  "fulda": {
+   "name": "Fulda",
+   "at": [
+    9.68,
+    50.55
+   ],
+   "hidden": true
+  },
+  "frankfurt": {
+   "name": "Frankfurt",
+   "at": [
+    8.68,
+    50.11
+   ],
+   "hidden": true
+  }
+ },
+ "steps": [
+  {
+   "place": "rome",
+   "phase": "crown",
+   "title": "Charlemagne is crowned emperor",
+   "native": "Roma",
+   "when": "25 December 800",
+   "at": 2.0,
+   "camera": {
+    "at": [
+     9.5,
+     47
+    ],
+    "width": 22
+   },
+   "text": "Charlemagne, king of the Franks, was crowned emperor by Pope Leo III in St Peter’s, Rome, on Christmas Day 800. He had conquered Saxony and northern Italy and ruled from Aachen. His court revived learning. The coronation revived the Roman imperial title in the West. His empire split among his grandsons in 843.",
+   "today": "Today: Vatican City, Rome; Aachen’s cathedral holds his throne.",
+   "source": "History",
+   "legs": [
+    {
+     "from": "aachen",
+     "to": "eifel",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "eifel",
+     "to": "moselle",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "moselle",
+     "to": "vosges",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "vosges",
+     "to": "burg-gate",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "burg-gate",
+     "to": "jura",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "jura",
+     "to": "st-bernard",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "st-bernard",
+     "to": "aosta",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "aosta",
+     "to": "piedmont",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "piedmont",
+     "to": "po-w",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "po-w",
+     "to": "apennines-n",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "apennines-n",
+     "to": "etruria",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "etruria",
+     "to": "rome-n",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "rome-n",
+     "to": "rome",
+     "traveller": "charlemagne",
+     "style": "march",
+     "bend": 0.02
+    }
+   ]
+  },
+  {
+   "place": "rome",
+   "phase": "crown",
+   "title": "Otto I and the new empire",
+   "native": "Roma",
+   "when": "2 February 962",
+   "at": 9.3,
+   "camera": {
+    "at": [
+     9.5,
+     47
+    ],
+    "width": 22
+   },
+   "text": "Otto I, king of the Germans, crushed the Magyars at the Lechfeld in 955 and was crowned emperor in Rome by Pope John XII on 2 February 962. The German kings who followed kept the title until 1806. The name “Holy Roman Empire” only came into use in the 13th century, after the empire’s long struggle with the popes.",
+   "today": "Today: Magdeburg, Germany, where Otto lies buried in the cathedral.",
+   "source": "History",
+   "legs": [
+    {
+     "from": "magdeburg",
+     "to": "thuringia",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "thuringia",
+     "to": "franconia",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "franconia",
+     "to": "augsburg",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "augsburg",
+     "to": "tyrol",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "tyrol",
+     "to": "trento",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "trento",
+     "to": "verona",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "verona",
+     "to": "po-e",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "po-e",
+     "to": "bologna",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "bologna",
+     "to": "apennines-c",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "apennines-c",
+     "to": "florence",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "florence",
+     "to": "siena",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "siena",
+     "to": "etruria-otto",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "etruria-otto",
+     "to": "rome",
+     "traveller": "otto",
+     "style": "march",
+     "bend": 0.02
+    }
+   ]
+  },
+  {
+   "place": "canossa",
+   "phase": "crown",
+   "title": "Henry IV at Canossa",
+   "native": "Canossa",
+   "when": "January 1077",
+   "at": 16.6,
+   "camera": {
+    "at": [
+     9.5,
+     46.5
+    ],
+    "width": 12
+   },
+   "text": "Pope Gregory VII and King Henry IV quarrelled over who should appoint bishops, the Investiture Controversy. Excommunicated, and facing rebel princes, Henry crossed the Alps in midwinter and, chroniclers say, stood three days outside Canossa Castle in the snow until the pope forgave him in January 1077. He later returned and drove Gregory out of Rome.",
+   "today": "Today: Canossa, Emilia-Romagna, Italy; only ruins remain of the castle.",
+   "source": "History",
+   "legs": [
+    {
+     "from": "speyer",
+     "to": "alsace",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "alsace",
+     "to": "basel",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "basel",
+     "to": "jura-henry",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "jura-henry",
+     "to": "geneva",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "geneva",
+     "to": "savoy",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "savoy",
+     "to": "mont-cenis",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "mont-cenis",
+     "to": "turin",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "turin",
+     "to": "po-w-henry",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "po-w-henry",
+     "to": "parma",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "parma",
+     "to": "canossa",
+     "traveller": "henry",
+     "style": "march",
+     "bend": 0.02
+    }
+   ]
+  },
+  {
+   "place": "legnano",
+   "phase": "crown",
+   "title": "Barbarossa and the Lombard League",
+   "native": "Legnano",
+   "when": "29 May 1176",
+   "at": 23.9,
+   "camera": {
+    "at": [
+     9,
+     45.5
+    ],
+    "width": 7
+   },
+   "text": "Frederick I Barbarossa (“Red Beard”) crossed the Alps six times to claim imperial rights over the rich cities of northern Italy. They formed the Lombard League with the pope, and at Legnano their militia beat his army. A treaty at Constance in 1183 left them self-governing under the emperor. He drowned in a river in Anatolia on crusade in 1190.",
+   "today": "Today: Legnano, Lombardy, Italy.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "palermo",
+   "phase": "crown",
+   "title": "Frederick II, the wonder of the world",
+   "native": "Panormus",
+   "when": "1220 to 1250",
+   "at": 31.2,
+   "camera": {
+    "at": [
+     13.4,
+     38.2
+    ],
+    "width": 8
+   },
+   "text": "Frederick II grew up in Palermo, where Normans, Greeks and Arabs mixed. Crowned emperor in 1220, he regained Jerusalem by treaty in 1229 while under excommunication. He wrote a book on falconry and founded a university at Naples. Chroniclers called him stupor mundi, “wonder of the world”. After he died in 1250 imperial power in Italy collapsed.",
+   "today": "Today: Palermo, Sicily; Frederick is buried in the cathedral.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "prague",
+   "phase": "princes",
+   "title": "Charles IV and the Golden Bull",
+   "native": "Praga",
+   "when": "1348 to 1378",
+   "at": 38.5,
+   "camera": {
+    "at": [
+     14.4,
+     50
+    ],
+    "width": 8
+   },
+   "text": "Charles IV, king of Bohemia, made Prague his capital and founded its university in 1348. His Golden Bull of 1356, issued at Nuremberg and Metz, named seven electors, three archbishops and four secular princes, who chose the king of the Romans. It fixed the rules for the next four centuries and strengthened the princes against the emperor.",
+   "today": "Today: Prague, Czechia; the Charles Bridge and the university bear his name.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "constance",
+   "phase": "princes",
+   "title": "The Council of Constance",
+   "native": "Constantia",
+   "when": "1414 to 1418",
+   "at": 45.8,
+   "camera": {
+    "at": [
+     11.5,
+     48.7
+    ],
+    "width": 12
+   },
+   "text": "King Sigismund called the Council of Constance to end the Western Schism, when three men claimed to be pope. It deposed or accepted the resignation of all three and elected Martin V. Jan Hus, a Czech preacher, came under a safe-conduct but was condemned and burned in July 1415. His followers began the Hussite Wars.",
+   "today": "Today: Konstanz, Germany, on Lake Constance; a statue of Hus stands in Prague.",
+   "source": "History",
+   "legs": [
+    {
+     "from": "prague",
+     "to": "pilsen",
+     "traveller": "hus",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "pilsen",
+     "to": "upper-palatinate",
+     "traveller": "hus",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "upper-palatinate",
+     "to": "nuremberg",
+     "traveller": "hus",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "nuremberg",
+     "to": "ulm",
+     "traveller": "hus",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "ulm",
+     "to": "upper-swabia",
+     "traveller": "hus",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "upper-swabia",
+     "to": "constance",
+     "traveller": "hus",
+     "style": "march",
+     "bend": 0.02
+    }
+   ]
+  },
+  {
+   "place": "vienna",
+   "phase": "princes",
+   "title": "The Habsburgs and Vienna",
+   "native": "Vindobona",
+   "when": "1440 to 1519",
+   "at": 53.1,
+   "camera": {
+    "at": [
+     16.4,
+     48.2
+    ],
+    "width": 8
+   },
+   "text": "After 1438 the crown stayed almost always with the House of Habsburg, based in Vienna. Maximilian I married Mary of Burgundy in 1477, winning the Netherlands, and arranged marriages that later brought Spain to his grandson. A Latin saying runs: “Let others wage war; you, happy Austria, marry.” Maximilian reformed imperial courts and taxes.",
+   "today": "Today: Vienna, Austria; the Hofburg was the Habsburgs’ palace.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "worms",
+   "phase": "reform",
+   "title": "Luther at the Diet of Worms",
+   "native": "Wormatia",
+   "when": "April 1521",
+   "at": 60.4,
+   "camera": {
+    "at": [
+     10,
+     50.5
+    ],
+    "width": 12
+   },
+   "text": "Martin Luther, a monk and professor at Wittenberg, had attacked the sale of indulgences in 1517. Summoned to the Diet of Worms, he refused to retract before Emperor Charles V. The words “Here I stand” are often credited to him but are not certain. Charles outlawed him. Printing spread Luther’s writings and his German Bible, and the Reformation grew.",
+   "today": "Today: Worms, Germany; a Luther memorial stands in the city.",
+   "source": "History",
+   "legs": [
+    {
+     "from": "wittenberg",
+     "to": "leipzig",
+     "traveller": "luther",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "leipzig",
+     "to": "erfurt",
+     "traveller": "luther",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "erfurt",
+     "to": "eisenach",
+     "traveller": "luther",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "eisenach",
+     "to": "fulda",
+     "traveller": "luther",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "fulda",
+     "to": "frankfurt",
+     "traveller": "luther",
+     "style": "march",
+     "bend": 0.02
+    },
+    {
+     "from": "frankfurt",
+     "to": "worms",
+     "traveller": "luther",
+     "style": "march",
+     "bend": 0.02
+    }
+   ]
+  },
+  {
+   "place": "prague",
+   "phase": "reform",
+   "title": "The Thirty Years’ War",
+   "native": "Praga",
+   "when": "1618 to 1648",
+   "at": 67.7,
+   "camera": {
+    "at": [
+     14.4,
+     50
+    ],
+    "width": 8
+   },
+   "text": "In May 1618 Protestant nobles threw two imperial officials out of a window of Prague Castle. The war that followed drew in Sweden, France and Spain and ravaged the German lands. Fighting, famine and plague killed many; some estimates say a fifth or more of the population in the empire, but figures are disputed.",
+   "today": "Today: Prague Castle, Czechia; the window is among its tourist sights.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "munster",
+   "phase": "reform",
+   "title": "The Peace of Westphalia",
+   "native": "Monasterium",
+   "when": "1648",
+   "at": 75.0,
+   "camera": {
+    "at": [
+     7.6,
+     52
+    ],
+    "width": 8
+   },
+   "text": "Talks at Münster and Osnabrück ended the Thirty Years’ War in 1648. Lutherans, Catholics and Calvinists were all recognised. The princes gained the right to make their own alliances, so the emperor’s real power shrank. The Swiss Confederation and the Dutch Republic were recognised as independent. Historians still debate how far Westphalia made the modern state system.",
+   "today": "Today: Münster, North Rhine-Westphalia, Germany; the Peace Hall of its town hall survives.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "regensburg",
+   "phase": "last",
+   "title": "The Diet at Regensburg",
+   "native": "Ratisbona",
+   "when": "1663 to 1806",
+   "at": 82.3,
+   "camera": {
+    "at": [
+     12.1,
+     49
+    ],
+    "width": 8
+   },
+   "text": "After 1663 the imperial Diet (Reichstag) sat permanently at Regensburg, with delegates from hundreds of states, bishoprics and free cities. In 1803 it redrew the map, ending most church lands and many small states. Voltaire joked that the empire was neither holy, nor Roman, nor an empire. Its law courts still worked.",
+   "today": "Today: Regensburg, Bavaria, Germany; the old town hall is a museum.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "austerlitz",
+   "phase": "last",
+   "title": "Austerlitz",
+   "native": "Slavkov",
+   "when": "2 December 1805",
+   "at": 89.6,
+   "camera": {
+    "at": [
+     16.9,
+     49
+    ],
+    "width": 8
+   },
+   "text": "Napoleon beat the armies of Austria and Russia at Austerlitz on 2 December 1805, often called the battle of the three emperors. Austria made peace at Pressburg. In July 1806 sixteen German states left the empire to join Napoleon’s Confederation of the Rhine. Napoleon then announced that he no longer recognised the empire.",
+   "today": "Today: Slavkov u Brna, Czechia, east of Brno.",
+   "source": "History",
+   "legs": []
+  },
+  {
+   "place": "vienna",
+   "phase": "last",
+   "title": "The empire is dissolved",
+   "native": "Vindobona",
+   "when": "6 August 1806",
+   "at": 96.9,
+   "camera": {
+    "at": [
+     16.4,
+     48.2
+    ],
+    "width": 8
+   },
+   "text": "On 6 August 1806 Francis II declared that he no longer held the imperial crown and released the empire’s states from their duty to him. He had styled himself Emperor of Austria since 1804. The Holy Roman Empire, which had lasted since 962, had ended. Its Imperial Crown is now kept in Vienna.",
+   "today": "Today: Vienna; the Imperial Crown is in the Hofburg treasury.",
+   "source": "History",
+   "legs": []
+  }
+ ],
+ "realms": {
+  "toggle": "Powers",
+  "mainHeading": "Powers at this point",
+  "minorHeading": "Also in play",
+  "items": [
+   {
+    "id": "holy-roman-empire",
+    "name": "Holy Roman Empire",
+    "native": "Sacrum Romanum Imperium",
+    "lang": "la",
+    "color": "#3d4fa3",
+    "active": [
+     [
+      0,
+      13
+     ]
+    ],
+    "label": {
+     "text": "Holy Roman Empire",
+     "at": [
+      10.8,
+      48.9
+     ],
+     "moves": [
+      {
+       "from": 11,
+       "at": [
+        9.9,
+        48.0
+       ]
+      }
+     ]
+    },
+    "pieces": [
+     {
+      "steps": [
+       [
+        0,
+        0
+       ]
+      ],
+      "areas": [
+       [
+        [
+         0.6,
+         41.2
+        ],
+        [
+         -0.6,
+         42.0
+        ],
+        [
+         -1.5,
+         43.3
+        ],
+        [
+         -1.85,
+         43.37
+        ],
+        [
+         -1.6,
+         43.44
+        ],
+        [
+         -1.45,
+         43.67
+        ],
+        [
+         -1.26,
+         44.56
+        ],
+        [
+         -1.19,
+         44.67
+        ],
+        [
+         -1.04,
+         44.67
+        ],
+        [
+         -1.17,
+         44.78
+        ],
+        [
+         -1.26,
+         44.63
+        ],
+        [
+         -1.09,
+         45.57
+        ],
+        [
+         -0.77,
+         45.33
+        ],
+        [
+         -0.72,
+         45.13
+        ],
+        [
+         -0.53,
+         44.89
+        ],
+        [
+         -0.6,
+         45.02
+        ],
+        [
+         -0.49,
+         45.0
+        ],
+        [
+         -0.66,
+         45.1
+        ],
+        [
+         -0.8,
+         45.48
+        ],
+        [
+         -1.25,
+         45.71
+        ],
+        [
+         -1.16,
+         45.81
+        ],
+        [
+         -0.99,
+         45.72
+        ],
+        [
+         -1.15,
+         45.87
+        ],
+        [
+         -1.07,
+         45.9
+        ],
+        [
+         -1.11,
+         46.02
+        ],
+        [
+         -1.05,
+         46.04
+        ],
+        [
+         -1.21,
+         46.17
+        ],
+        [
+         -1.11,
+         46.3
+        ],
+        [
+         -1.24,
+         46.28
+        ],
+        [
+         -1.8,
+         46.49
+        ],
+        [
+         -1.91,
+         46.69
+        ],
+        [
+         -2.12,
+         46.82
+        ],
+        [
+         -2.13,
+         46.89
+        ],
+        [
+         -1.99,
+         47.04
+        ],
+        [
+         -2.24,
+         47.14
+        ],
+        [
+         -2.17,
+         47.17
+        ],
+        [
+         -2.16,
+         47.27
+        ],
+        [
+         -2.01,
+         47.3
+        ],
+        [
+         -1.73,
+         47.21
+        ],
+        [
+         -2.01,
+         47.32
+        ],
+        [
+         -2.28,
+         47.25
+        ],
+        [
+         -2.54,
+         47.3
+        ],
+        [
+         -2.44,
+         47.31
+        ],
+        [
+         -2.56,
+         47.38
+        ],
+        [
+         -2.39,
+         47.42
+        ],
+        [
+         -2.49,
+         47.49
+        ],
+        [
+         -2.36,
+         47.51
+        ],
+        [
+         -2.63,
+         47.52
+        ],
+        [
+         -2.58,
+         47.55
+        ],
+        [
+         -2.82,
+         47.5
+        ],
+        [
+         -2.91,
+         47.56
+        ],
+        [
+         -2.74,
+         47.55
+        ],
+        [
+         -2.68,
+         47.62
+        ],
+        [
+         -2.71,
+         47.64
+        ],
+        [
+         -2.92,
+         47.6
+        ],
+        [
+         -2.97,
+         47.66
+        ],
+        [
+         -2.94,
+         47.56
+        ],
+        [
+         -3.12,
+         47.6
+        ],
+        [
+         -3.08,
+         47.48
+        ],
+        [
+         -3.13,
+         47.48
+        ],
+        [
+         -3.2,
+         47.64
+        ],
+        [
+         -3.12,
+         47.73
+        ],
+        [
+         -3.19,
+         47.75
+        ],
+        [
+         -3.22,
+         47.66
+        ],
+        [
+         -3.36,
+         47.7
+        ],
+        [
+         -3.28,
+         47.69
+        ],
+        [
+         -3.36,
+         47.71
+        ],
+        [
+         -3.28,
+         47.79
+        ],
+        [
+         -3.45,
+         47.7
+        ],
+        [
+         -3.53,
+         47.78
+        ],
+        [
+         -3.85,
+         47.8
+        ],
+        [
+         -3.96,
+         47.9
+        ],
+        [
+         -4.04,
+         47.86
+        ],
+        [
+         -4.13,
+         47.92
+        ],
+        [
+         -4.19,
+         47.81
+        ],
+        [
+         -4.37,
+         47.81
+        ],
+        [
+         -4.43,
+         47.98
+        ],
+        [
+         -4.73,
+         48.04
+        ],
+        [
+         -4.29,
+         48.12
+        ],
+        [
+         -4.38,
+         48.23
+        ],
+        [
+         -4.56,
+         48.18
+        ],
+        [
+         -4.55,
+         48.25
+        ],
+        [
+         -4.63,
+         48.29
+        ],
+        [
+         -4.55,
+         48.35
+        ],
+        [
+         -4.52,
+         48.3
+        ],
+        [
+         -4.19,
+         48.31
+        ],
+        [
+         -4.32,
+         48.32
+        ],
+        [
+         -4.27,
+         48.36
+        ],
+        [
+         -4.45,
+         48.34
+        ],
+        [
+         -4.29,
+         48.43
+        ],
+        [
+         -4.77,
+         48.35
+        ],
+        [
+         -4.74,
+         48.55
+        ],
+        [
+         -3.97,
+         48.73
+        ],
+        [
+         -3.95,
+         48.66
+        ],
+        [
+         -3.85,
+         48.63
+        ],
+        [
+         -3.81,
+         48.73
+        ],
+        [
+         -3.57,
+         48.69
+        ],
+        [
+         -3.53,
+         48.74
+        ],
+        [
+         -3.58,
+         48.79
+        ],
+        [
+         -3.52,
+         48.84
+        ],
+        [
+         -3.4,
+         48.81
+        ],
+        [
+         -3.21,
+         48.87
+        ],
+        [
+         -3.22,
+         48.79
+        ],
+        [
+         -3.1,
+         48.88
+        ],
+        [
+         -3.13,
+         48.76
+        ],
+        [
+         -3.01,
+         48.82
+        ],
+        [
+         -3.04,
+         48.79
+        ],
+        [
+         -2.93,
+         48.77
+        ],
+        [
+         -2.68,
+         48.51
+        ],
+        [
+         -2.32,
+         48.7
+        ],
+        [
+         -2.33,
+         48.63
+        ],
+        [
+         -2.25,
+         48.65
+        ],
+        [
+         -2.21,
+         48.58
+        ],
+        [
+         -2.05,
+         48.65
+        ],
+        [
+         -1.98,
+         48.51
+        ],
+        [
+         -1.95,
+         48.58
+        ],
+        [
+         -2.03,
+         48.64
+        ],
+        [
+         -1.95,
+         48.7
+        ],
+        [
+         -1.84,
+         48.71
+        ],
+        [
+         -1.86,
+         48.64
+        ],
+        [
+         -1.8,
+         48.62
+        ],
+        [
+         -1.36,
+         48.64
+        ],
+        [
+         -1.55,
+         48.75
+        ],
+        [
+         -1.6,
+         48.85
+        ],
+        [
+         -1.51,
+         49.03
+        ],
+        [
+         -1.59,
+         49.03
+        ],
+        [
+         -1.61,
+         49.22
+        ],
+        [
+         -1.55,
+         49.23
+        ],
+        [
+         -1.82,
+         49.38
+        ],
+        [
+         -1.88,
+         49.53
+        ],
+        [
+         -1.84,
+         49.62
+        ],
+        [
+         -1.89,
+         49.67
+        ],
+        [
+         -1.82,
+         49.7
+        ],
+        [
+         -1.61,
+         49.65
+        ],
+        [
+         -1.26,
+         49.7
+        ],
+        [
+         -1.23,
+         49.62
+        ],
+        [
+         -1.31,
+         49.56
+        ],
+        [
+         -1.12,
+         49.35
+        ],
+        [
+         -0.94,
+         49.39
+        ],
+        [
+         -0.22,
+         49.28
+        ],
+        [
+         0.46,
+         49.47
+        ],
+        [
+         0.08,
+         49.53
+        ],
+        [
+         0.24,
+         49.73
+        ],
+        [
+         1.22,
+         49.98
+        ],
+        [
+         1.52,
+         50.21
+        ],
+        [
+         1.67,
+         50.19
+        ],
+        [
+         1.54,
+         50.28
+        ],
+        [
+         1.61,
+         50.37
+        ],
+        [
+         1.56,
+         50.4
+        ],
+        [
+         1.61,
+         50.55
+        ],
+        [
+         1.56,
+         50.7
+        ],
+        [
+         1.58,
+         50.86
+        ],
+        [
+         1.92,
+         50.97
+        ],
+        [
+         2.47,
+         51.07
+        ],
+        [
+         3.53,
+         51.42
+        ],
+        [
+         3.83,
+         51.34
+        ],
+        [
+         3.98,
+         51.41
+        ],
+        [
+         4.2,
+         51.38
+        ],
+        [
+         4.32,
+         51.28
+        ],
+        [
+         4.23,
+         51.42
+        ],
+        [
+         3.96,
+         51.46
+        ],
+        [
+         3.83,
+         51.39
+        ],
+        [
+         3.54,
+         51.46
+        ],
+        [
+         3.45,
+         51.55
+        ],
+        [
+         3.85,
+         51.61
+        ],
+        [
+         4.1,
+         51.45
+        ],
+        [
+         4.28,
+         51.45
+        ],
+        [
+         4.27,
+         51.51
+        ],
+        [
+         3.99,
+         51.59
+        ],
+        [
+         4.21,
+         51.59
+        ],
+        [
+         4.11,
+         51.64
+        ],
+        [
+         4.18,
+         51.69
+        ],
+        [
+         3.86,
+         51.82
+        ],
+        [
+         4.08,
+         51.84
+        ],
+        [
+         4.02,
+         51.99
+        ],
+        [
+         4.14,
+         52.01
+        ],
+        [
+         4.51,
+         52.34
+        ],
+        [
+         4.73,
+         52.96
+        ],
+        [
+         4.87,
+         52.9
+        ],
+        [
+         5.08,
+         52.95
+        ],
+        [
+         5.38,
+         53.1
+        ],
+        [
+         5.59,
+         53.3
+        ],
+        [
+         5.98,
+         53.41
+        ],
+        [
+         6.73,
+         53.46
+        ],
+        [
+         7.19,
+         53.25
+        ],
+        [
+         7.25,
+         53.32
+        ],
+        [
+         7.37,
+         53.3
+        ],
+        [
+         7.3,
+         53.33
+        ],
+        [
+         7.04,
+         53.35
+        ],
+        [
+         7.05,
+         53.51
+        ],
+        [
+         7.14,
+         53.54
+        ],
+        [
+         7.1,
+         53.6
+        ],
+        [
+         7.31,
+         53.68
+        ],
+        [
+         7.95,
+         53.72
+        ],
+        [
+         8.17,
+         53.55
+        ],
+        [
+         8.06,
+         53.5
+        ],
+        [
+         8.09,
+         53.46
+        ],
+        [
+         8.21,
+         53.41
+        ],
+        [
+         8.32,
+         53.47
+        ],
+        [
+         8.23,
+         53.53
+        ],
+        [
+         8.27,
+         53.61
+        ],
+        [
+         8.55,
+         53.54
+        ],
+        [
+         8.49,
+         53.49
+        ],
+        [
+         8.5,
+         53.36
+        ],
+        [
+         8.57,
+         53.55
+        ],
+        [
+         8.49,
+         53.7
+        ],
+        [
+         8.65,
+         53.89
+        ],
+        [
+         8.86,
+         53.83
+        ],
+        [
+         9.27,
+         53.87
+        ],
+        [
+         9.57,
+         53.6
+        ],
+        [
+         9.83,
+         53.54
+        ],
+        [
+         9.58,
+         53.61
+        ],
+        [
+         9.4,
+         53.83
+        ],
+        [
+         9.26,
+         53.89
+        ],
+        [
+         8.98,
+         53.9
+        ],
+        [
+         8.92,
+         53.94
+        ],
+        [
+         8.83,
+         54.04
+        ],
+        [
+         9.0,
+         54.03
+        ],
+        [
+         9.02,
+         54.1
+        ],
+        [
+         8.81,
+         54.18
+        ],
+        [
+         8.96,
+         54.32
+        ],
+        [
+         8.6,
+         54.31
+        ],
+        [
+         8.7,
+         54.36
+        ],
+        [
+         8.65,
+         54.41
+        ],
+        [
+         8.89,
+         54.42
+        ],
+        [
+         9.01,
+         54.51
+        ],
+        [
+         8.69,
+         54.74
+        ],
+        [
+         8.68,
+         54.95
+        ],
+        [
+         8.8,
+         55.0
+        ],
+        [
+         9.91,
+         54.51
+        ],
+        [
+         9.84,
+         54.48
+        ],
+        [
+         9.96,
+         54.48
+        ],
+        [
+         10.17,
+         54.39
+        ],
+        [
+         10.14,
+         54.32
+        ],
+        [
+         10.22,
+         54.37
+        ],
+        [
+         10.6,
+         54.2
+        ],
+        [
+         11.8,
+         52.5
+        ],
+        [
+         13.0,
+         50.3
+        ],
+        [
+         15.0,
+         49.3
+        ],
+        [
+         16.4,
+         48.3
+        ],
+        [
+         14.8,
+         47.5
+        ],
+        [
+         14.6,
+         46.5
+        ],
+        [
+         13.9,
+         45.4
+        ],
+        [
+         13.87,
+         44.82
+        ],
+        [
+         13.77,
+         44.96
+        ],
+        [
+         13.62,
+         45.07
+        ],
+        [
+         13.73,
+         45.13
+        ],
+        [
+         13.6,
+         45.15
+        ],
+        [
+         13.61,
+         45.32
+        ],
+        [
+         13.54,
+         45.35
+        ],
+        [
+         13.51,
+         45.51
+        ],
+        [
+         13.59,
+         45.49
+        ],
+        [
+         13.57,
+         45.54
+        ],
+        [
+         13.81,
+         45.61
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.4,
+         45.68
+        ],
+        [
+         13.37,
+         45.74
+        ],
+        [
+         13.12,
+         45.77
+        ],
+        [
+         13.08,
+         45.7
+        ],
+        [
+         13.15,
+         45.7
+        ],
+        [
+         13.08,
+         45.64
+        ],
+        [
+         12.42,
+         45.44
+        ],
+        [
+         12.58,
+         45.55
+        ],
+        [
+         12.4,
+         45.54
+        ],
+        [
+         12.42,
+         45.5
+        ],
+        [
+         12.31,
+         45.49
+        ],
+        [
+         12.15,
+         45.31
+        ],
+        [
+         12.23,
+         45.2
+        ],
+        [
+         12.31,
+         45.23
+        ],
+        [
+         12.3,
+         45.09
+        ],
+        [
+         12.37,
+         45.01
+        ],
+        [
+         12.37,
+         45.07
+        ],
+        [
+         12.53,
+         44.97
+        ],
+        [
+         12.44,
+         44.82
+        ],
+        [
+         12.41,
+         44.89
+        ],
+        [
+         12.42,
+         44.8
+        ],
+        [
+         12.27,
+         44.83
+        ],
+        [
+         12.28,
+         44.49
+        ],
+        [
+         12.39,
+         44.22
+        ],
+        [
+         12.69,
+         43.99
+        ],
+        [
+         13.62,
+         43.56
+        ],
+        [
+         13.72,
+         43.35
+        ],
+        [
+         13.4,
+         42.4
+        ],
+        [
+         12.4,
+         42.0
+        ],
+        [
+         10.75,
+         42.87
+        ],
+        [
+         10.76,
+         42.92
+        ],
+        [
+         10.68,
+         42.93
+        ],
+        [
+         10.52,
+         43.16
+        ],
+        [
+         10.53,
+         43.25
+        ],
+        [
+         10.32,
+         43.49
+        ],
+        [
+         10.18,
+         43.96
+        ],
+        [
+         9.87,
+         44.1
+        ],
+        [
+         9.8,
+         44.2
+        ],
+        [
+         9.5,
+         44.21
+        ],
+        [
+         9.23,
+         44.35
+        ],
+        [
+         9.21,
+         44.31
+        ],
+        [
+         8.76,
+         44.43
+        ],
+        [
+         8.43,
+         44.26
+        ],
+        [
+         7.4,
+         44.3
+        ],
+        [
+         7.22,
+         43.67
+        ],
+        [
+         7.15,
+         43.65
+        ],
+        [
+         7.14,
+         43.59
+        ],
+        [
+         5.03,
+         43.37
+        ],
+        [
+         5.03,
+         43.41
+        ],
+        [
+         5.23,
+         43.48
+        ],
+        [
+         5.03,
+         43.56
+        ],
+        [
+         5.05,
+         43.43
+        ],
+        [
+         4.87,
+         43.42
+        ],
+        [
+         4.84,
+         43.35
+        ],
+        [
+         4.76,
+         43.42
+        ],
+        [
+         4.69,
+         43.58
+        ],
+        [
+         4.74,
+         43.42
+        ],
+        [
+         4.82,
+         43.35
+        ],
+        [
+         4.59,
+         43.36
+        ],
+        [
+         4.51,
+         43.46
+        ],
+        [
+         4.18,
+         43.46
+        ],
+        [
+         4.05,
+         43.56
+        ],
+        [
+         3.51,
+         43.28
+        ],
+        [
+         3.32,
+         43.26
+        ],
+        [
+         3.11,
+         43.11
+        ],
+        [
+         3.04,
+         42.94
+        ],
+        [
+         3.05,
+         42.55
+        ],
+        [
+         3.15,
+         42.51
+        ],
+        [
+         3.19,
+         42.35
+        ],
+        [
+         3.32,
+         42.32
+        ],
+        [
+         3.26,
+         42.24
+        ],
+        [
+         3.12,
+         42.22
+        ],
+        [
+         3.21,
+         42.07
+        ],
+        [
+         3.19,
+         41.89
+        ],
+        [
+         2.93,
+         41.71
+        ],
+        [
+         2.3,
+         41.47
+        ],
+        [
+         2.06,
+         41.27
+        ],
+        [
+         1.48,
+         41.15
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        1,
+        1
+       ]
+      ],
+      "areas": [
+       [
+        [
+         3.42,
+         51.38
+        ],
+        [
+         3.53,
+         51.42
+        ],
+        [
+         3.83,
+         51.34
+        ],
+        [
+         3.98,
+         51.41
+        ],
+        [
+         4.2,
+         51.38
+        ],
+        [
+         4.32,
+         51.28
+        ],
+        [
+         4.23,
+         51.42
+        ],
+        [
+         3.96,
+         51.46
+        ],
+        [
+         3.83,
+         51.39
+        ],
+        [
+         3.54,
+         51.46
+        ],
+        [
+         3.45,
+         51.55
+        ],
+        [
+         3.85,
+         51.61
+        ],
+        [
+         4.1,
+         51.45
+        ],
+        [
+         4.28,
+         51.45
+        ],
+        [
+         4.27,
+         51.51
+        ],
+        [
+         3.99,
+         51.59
+        ],
+        [
+         4.21,
+         51.59
+        ],
+        [
+         4.11,
+         51.64
+        ],
+        [
+         4.18,
+         51.69
+        ],
+        [
+         3.86,
+         51.82
+        ],
+        [
+         4.08,
+         51.84
+        ],
+        [
+         4.02,
+         51.99
+        ],
+        [
+         4.14,
+         52.01
+        ],
+        [
+         4.51,
+         52.34
+        ],
+        [
+         4.73,
+         52.96
+        ],
+        [
+         4.87,
+         52.9
+        ],
+        [
+         5.08,
+         52.95
+        ],
+        [
+         5.38,
+         53.1
+        ],
+        [
+         5.59,
+         53.3
+        ],
+        [
+         5.98,
+         53.41
+        ],
+        [
+         6.73,
+         53.46
+        ],
+        [
+         7.19,
+         53.25
+        ],
+        [
+         7.25,
+         53.32
+        ],
+        [
+         7.37,
+         53.3
+        ],
+        [
+         7.3,
+         53.33
+        ],
+        [
+         7.04,
+         53.35
+        ],
+        [
+         7.05,
+         53.51
+        ],
+        [
+         7.14,
+         53.54
+        ],
+        [
+         7.1,
+         53.6
+        ],
+        [
+         7.31,
+         53.68
+        ],
+        [
+         7.95,
+         53.72
+        ],
+        [
+         8.17,
+         53.55
+        ],
+        [
+         8.06,
+         53.5
+        ],
+        [
+         8.09,
+         53.46
+        ],
+        [
+         8.21,
+         53.41
+        ],
+        [
+         8.32,
+         53.47
+        ],
+        [
+         8.23,
+         53.53
+        ],
+        [
+         8.27,
+         53.61
+        ],
+        [
+         8.55,
+         53.54
+        ],
+        [
+         8.49,
+         53.49
+        ],
+        [
+         8.5,
+         53.36
+        ],
+        [
+         8.57,
+         53.55
+        ],
+        [
+         8.49,
+         53.7
+        ],
+        [
+         8.65,
+         53.89
+        ],
+        [
+         8.86,
+         53.83
+        ],
+        [
+         9.27,
+         53.87
+        ],
+        [
+         9.57,
+         53.6
+        ],
+        [
+         9.83,
+         53.54
+        ],
+        [
+         9.58,
+         53.61
+        ],
+        [
+         9.4,
+         53.83
+        ],
+        [
+         9.26,
+         53.89
+        ],
+        [
+         8.98,
+         53.9
+        ],
+        [
+         8.92,
+         53.94
+        ],
+        [
+         8.83,
+         54.04
+        ],
+        [
+         9.0,
+         54.03
+        ],
+        [
+         9.02,
+         54.1
+        ],
+        [
+         8.81,
+         54.18
+        ],
+        [
+         8.96,
+         54.32
+        ],
+        [
+         8.6,
+         54.31
+        ],
+        [
+         8.7,
+         54.36
+        ],
+        [
+         8.65,
+         54.41
+        ],
+        [
+         8.89,
+         54.42
+        ],
+        [
+         9.01,
+         54.51
+        ],
+        [
+         8.69,
+         54.74
+        ],
+        [
+         8.68,
+         54.97
+        ],
+        [
+         8.8,
+         55.0
+        ],
+        [
+         10.04,
+         54.65
+        ],
+        [
+         10.03,
+         54.56
+        ],
+        [
+         9.84,
+         54.48
+        ],
+        [
+         10.14,
+         54.49
+        ],
+        [
+         10.2,
+         54.46
+        ],
+        [
+         10.14,
+         54.32
+        ],
+        [
+         10.35,
+         54.43
+        ],
+        [
+         11.9,
+         52.6
+        ],
+        [
+         12.9,
+         51.3
+        ],
+        [
+         13.0,
+         50.3
+        ],
+        [
+         13.6,
+         49.1
+        ],
+        [
+         14.6,
+         48.5
+        ],
+        [
+         14.6,
+         47.2
+        ],
+        [
+         13.9,
+         46.5
+        ],
+        [
+         13.72,
+         45.68
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.4,
+         45.68
+        ],
+        [
+         13.37,
+         45.74
+        ],
+        [
+         13.12,
+         45.77
+        ],
+        [
+         13.08,
+         45.7
+        ],
+        [
+         13.15,
+         45.7
+        ],
+        [
+         13.08,
+         45.64
+        ],
+        [
+         12.42,
+         45.44
+        ],
+        [
+         12.58,
+         45.55
+        ],
+        [
+         12.4,
+         45.54
+        ],
+        [
+         12.42,
+         45.5
+        ],
+        [
+         12.31,
+         45.49
+        ],
+        [
+         12.15,
+         45.31
+        ],
+        [
+         12.23,
+         45.2
+        ],
+        [
+         12.31,
+         45.23
+        ],
+        [
+         12.3,
+         45.09
+        ],
+        [
+         12.37,
+         45.01
+        ],
+        [
+         12.37,
+         45.07
+        ],
+        [
+         12.53,
+         44.97
+        ],
+        [
+         12.44,
+         44.82
+        ],
+        [
+         12.41,
+         44.89
+        ],
+        [
+         12.42,
+         44.8
+        ],
+        [
+         12.27,
+         44.83
+        ],
+        [
+         12.28,
+         44.49
+        ],
+        [
+         12.39,
+         44.22
+        ],
+        [
+         12.69,
+         43.99
+        ],
+        [
+         13.62,
+         43.56
+        ],
+        [
+         13.87,
+         43.05
+        ],
+        [
+         13.8,
+         42.2
+        ],
+        [
+         12.9,
+         41.9
+        ],
+        [
+         12.1,
+         41.9
+        ],
+        [
+         12.02,
+         41.99
+        ],
+        [
+         11.83,
+         42.03
+        ],
+        [
+         11.66,
+         42.28
+        ],
+        [
+         11.38,
+         42.41
+        ],
+        [
+         11.11,
+         42.39
+        ],
+        [
+         11.19,
+         42.48
+        ],
+        [
+         11.16,
+         42.56
+        ],
+        [
+         10.94,
+         42.74
+        ],
+        [
+         10.73,
+         42.8
+        ],
+        [
+         10.76,
+         42.92
+        ],
+        [
+         10.5,
+         42.94
+        ],
+        [
+         10.53,
+         43.25
+        ],
+        [
+         10.32,
+         43.49
+        ],
+        [
+         10.18,
+         43.96
+        ],
+        [
+         9.84,
+         44.11
+        ],
+        [
+         9.83,
+         44.04
+        ],
+        [
+         9.23,
+         44.35
+        ],
+        [
+         9.21,
+         44.31
+        ],
+        [
+         8.76,
+         44.43
+        ],
+        [
+         8.47,
+         44.3
+        ],
+        [
+         8.07,
+         43.9
+        ],
+        [
+         7.82,
+         43.83
+        ],
+        [
+         7.4,
+         43.8
+        ],
+        [
+         6.6,
+         44.9
+        ],
+        [
+         6.5,
+         46.2
+        ],
+        [
+         7.0,
+         47.4
+        ],
+        [
+         6.5,
+         48.4
+        ],
+        [
+         5.3,
+         49.0
+        ],
+        [
+         4.8,
+         50.0
+        ],
+        [
+         3.4,
+         51.3
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        2,
+        4
+       ]
+      ],
+      "areas": [
+       [
+        [
+         5.0,
+         47.3
+        ],
+        [
+         6.4,
+         47.6
+        ],
+        [
+         6.9,
+         47.6
+        ],
+        [
+         6.5,
+         48.4
+        ],
+        [
+         5.3,
+         49.0
+        ],
+        [
+         4.8,
+         50.0
+        ],
+        [
+         3.4,
+         51.3
+        ],
+        [
+         3.42,
+         51.38
+        ],
+        [
+         3.53,
+         51.42
+        ],
+        [
+         3.83,
+         51.34
+        ],
+        [
+         3.98,
+         51.41
+        ],
+        [
+         4.2,
+         51.38
+        ],
+        [
+         4.32,
+         51.28
+        ],
+        [
+         4.23,
+         51.42
+        ],
+        [
+         3.96,
+         51.46
+        ],
+        [
+         3.83,
+         51.39
+        ],
+        [
+         3.54,
+         51.46
+        ],
+        [
+         3.45,
+         51.55
+        ],
+        [
+         3.85,
+         51.61
+        ],
+        [
+         4.1,
+         51.45
+        ],
+        [
+         4.28,
+         51.45
+        ],
+        [
+         4.27,
+         51.51
+        ],
+        [
+         3.99,
+         51.59
+        ],
+        [
+         4.21,
+         51.59
+        ],
+        [
+         4.11,
+         51.64
+        ],
+        [
+         4.18,
+         51.69
+        ],
+        [
+         3.86,
+         51.82
+        ],
+        [
+         4.08,
+         51.84
+        ],
+        [
+         4.02,
+         51.99
+        ],
+        [
+         4.14,
+         52.01
+        ],
+        [
+         4.51,
+         52.34
+        ],
+        [
+         4.73,
+         52.96
+        ],
+        [
+         4.87,
+         52.9
+        ],
+        [
+         5.08,
+         52.95
+        ],
+        [
+         5.38,
+         53.1
+        ],
+        [
+         5.59,
+         53.3
+        ],
+        [
+         5.98,
+         53.41
+        ],
+        [
+         6.73,
+         53.46
+        ],
+        [
+         7.19,
+         53.25
+        ],
+        [
+         7.25,
+         53.32
+        ],
+        [
+         7.37,
+         53.3
+        ],
+        [
+         7.3,
+         53.33
+        ],
+        [
+         7.04,
+         53.35
+        ],
+        [
+         7.05,
+         53.51
+        ],
+        [
+         7.14,
+         53.54
+        ],
+        [
+         7.1,
+         53.6
+        ],
+        [
+         7.31,
+         53.68
+        ],
+        [
+         7.95,
+         53.72
+        ],
+        [
+         8.17,
+         53.55
+        ],
+        [
+         8.06,
+         53.5
+        ],
+        [
+         8.09,
+         53.46
+        ],
+        [
+         8.21,
+         53.41
+        ],
+        [
+         8.32,
+         53.47
+        ],
+        [
+         8.23,
+         53.53
+        ],
+        [
+         8.27,
+         53.61
+        ],
+        [
+         8.55,
+         53.54
+        ],
+        [
+         8.49,
+         53.49
+        ],
+        [
+         8.5,
+         53.36
+        ],
+        [
+         8.57,
+         53.55
+        ],
+        [
+         8.49,
+         53.7
+        ],
+        [
+         8.65,
+         53.89
+        ],
+        [
+         8.86,
+         53.83
+        ],
+        [
+         9.27,
+         53.87
+        ],
+        [
+         9.57,
+         53.6
+        ],
+        [
+         9.83,
+         53.54
+        ],
+        [
+         9.58,
+         53.61
+        ],
+        [
+         9.4,
+         53.83
+        ],
+        [
+         9.26,
+         53.89
+        ],
+        [
+         8.98,
+         53.9
+        ],
+        [
+         8.92,
+         53.94
+        ],
+        [
+         8.83,
+         54.04
+        ],
+        [
+         9.0,
+         54.03
+        ],
+        [
+         9.02,
+         54.1
+        ],
+        [
+         8.81,
+         54.18
+        ],
+        [
+         8.96,
+         54.32
+        ],
+        [
+         8.6,
+         54.31
+        ],
+        [
+         8.7,
+         54.36
+        ],
+        [
+         8.65,
+         54.41
+        ],
+        [
+         8.89,
+         54.42
+        ],
+        [
+         9.01,
+         54.51
+        ],
+        [
+         8.69,
+         54.74
+        ],
+        [
+         8.68,
+         54.97
+        ],
+        [
+         8.8,
+         55.0
+        ],
+        [
+         10.04,
+         54.65
+        ],
+        [
+         10.03,
+         54.56
+        ],
+        [
+         9.84,
+         54.48
+        ],
+        [
+         10.14,
+         54.49
+        ],
+        [
+         10.2,
+         54.46
+        ],
+        [
+         10.14,
+         54.32
+        ],
+        [
+         10.35,
+         54.43
+        ],
+        [
+         11.9,
+         52.6
+        ],
+        [
+         12.9,
+         51.3
+        ],
+        [
+         12.93,
+         51.02
+        ],
+        [
+         14.9,
+         51.1
+        ],
+        [
+         16.8,
+         50.5
+        ],
+        [
+         18.2,
+         49.7
+        ],
+        [
+         17.4,
+         48.8
+        ],
+        [
+         16.62,
+         48.63
+        ],
+        [
+         17.0,
+         47.5
+        ],
+        [
+         16.4,
+         46.7
+        ],
+        [
+         15.3,
+         46.5
+        ],
+        [
+         14.6,
+         47.81
+        ],
+        [
+         14.6,
+         47.2
+        ],
+        [
+         14.5,
+         47.1
+        ],
+        [
+         14.5,
+         46.5
+        ],
+        [
+         13.96,
+         46.56
+        ],
+        [
+         13.9,
+         46.5
+        ],
+        [
+         13.72,
+         45.68
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.4,
+         45.68
+        ],
+        [
+         13.37,
+         45.74
+        ],
+        [
+         13.12,
+         45.77
+        ],
+        [
+         13.08,
+         45.7
+        ],
+        [
+         13.15,
+         45.7
+        ],
+        [
+         13.08,
+         45.64
+        ],
+        [
+         12.42,
+         45.44
+        ],
+        [
+         12.58,
+         45.55
+        ],
+        [
+         12.4,
+         45.54
+        ],
+        [
+         12.42,
+         45.5
+        ],
+        [
+         12.31,
+         45.49
+        ],
+        [
+         12.15,
+         45.31
+        ],
+        [
+         12.23,
+         45.2
+        ],
+        [
+         12.31,
+         45.23
+        ],
+        [
+         12.3,
+         45.09
+        ],
+        [
+         12.37,
+         45.01
+        ],
+        [
+         12.37,
+         45.07
+        ],
+        [
+         12.53,
+         44.97
+        ],
+        [
+         12.44,
+         44.82
+        ],
+        [
+         12.41,
+         44.89
+        ],
+        [
+         12.42,
+         44.8
+        ],
+        [
+         12.27,
+         44.83
+        ],
+        [
+         12.28,
+         44.49
+        ],
+        [
+         12.39,
+         44.22
+        ],
+        [
+         12.69,
+         43.99
+        ],
+        [
+         13.62,
+         43.56
+        ],
+        [
+         13.87,
+         43.05
+        ],
+        [
+         13.8,
+         42.2
+        ],
+        [
+         12.9,
+         41.9
+        ],
+        [
+         12.1,
+         41.9
+        ],
+        [
+         12.02,
+         41.99
+        ],
+        [
+         11.83,
+         42.03
+        ],
+        [
+         11.66,
+         42.28
+        ],
+        [
+         11.38,
+         42.41
+        ],
+        [
+         11.11,
+         42.39
+        ],
+        [
+         11.19,
+         42.48
+        ],
+        [
+         11.16,
+         42.56
+        ],
+        [
+         10.94,
+         42.74
+        ],
+        [
+         10.73,
+         42.8
+        ],
+        [
+         10.76,
+         42.92
+        ],
+        [
+         10.5,
+         42.94
+        ],
+        [
+         10.53,
+         43.25
+        ],
+        [
+         10.32,
+         43.49
+        ],
+        [
+         10.18,
+         43.96
+        ],
+        [
+         9.84,
+         44.11
+        ],
+        [
+         9.83,
+         44.04
+        ],
+        [
+         9.23,
+         44.35
+        ],
+        [
+         9.21,
+         44.31
+        ],
+        [
+         8.76,
+         44.43
+        ],
+        [
+         8.47,
+         44.3
+        ],
+        [
+         8.07,
+         43.9
+        ],
+        [
+         7.82,
+         43.83
+        ],
+        [
+         7.49,
+         43.81
+        ],
+        [
+         5.33,
+         43.28
+        ],
+        [
+         5.29,
+         43.36
+        ],
+        [
+         5.03,
+         43.34
+        ],
+        [
+         5.03,
+         43.41
+        ],
+        [
+         5.23,
+         43.48
+        ],
+        [
+         5.03,
+         43.56
+        ],
+        [
+         5.05,
+         43.43
+        ],
+        [
+         4.87,
+         43.42
+        ],
+        [
+         4.86,
+         43.34
+        ],
+        [
+         4.76,
+         43.42
+        ],
+        [
+         4.69,
+         43.58
+        ],
+        [
+         4.74,
+         43.42
+        ],
+        [
+         4.82,
+         43.35
+        ],
+        [
+         4.59,
+         43.36
+        ],
+        [
+         4.51,
+         43.46
+        ],
+        [
+         4.18,
+         43.46
+        ],
+        [
+         4.05,
+         43.56
+        ],
+        [
+         3.91,
+         43.49
+        ],
+        [
+         4.0,
+         44.6
+        ],
+        [
+         4.4,
+         46.0
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        4,
+        4
+       ]
+      ],
+      "areas": [
+       [
+        [
+         13.9,
+         42.9
+        ],
+        [
+         13.94,
+         42.88
+        ],
+        [
+         14.08,
+         42.6
+        ],
+        [
+         14.71,
+         42.18
+        ],
+        [
+         14.74,
+         42.08
+        ],
+        [
+         15.17,
+         41.93
+        ],
+        [
+         16.14,
+         41.92
+        ],
+        [
+         16.19,
+         41.79
+        ],
+        [
+         15.9,
+         41.61
+        ],
+        [
+         15.93,
+         41.48
+        ],
+        [
+         17.06,
+         41.08
+        ],
+        [
+         17.48,
+         40.83
+        ],
+        [
+         18.01,
+         40.65
+        ],
+        [
+         18.52,
+         40.14
+        ],
+        [
+         18.35,
+         39.8
+        ],
+        [
+         18.07,
+         39.91
+        ],
+        [
+         17.86,
+         40.29
+        ],
+        [
+         17.51,
+         40.3
+        ],
+        [
+         17.2,
+         40.42
+        ],
+        [
+         17.32,
+         40.5
+        ],
+        [
+         17.05,
+         40.52
+        ],
+        [
+         16.91,
+         40.45
+        ],
+        [
+         16.6,
+         40.08
+        ],
+        [
+         16.63,
+         39.97
+        ],
+        [
+         16.49,
+         39.78
+        ],
+        [
+         16.55,
+         39.66
+        ],
+        [
+         16.78,
+         39.61
+        ],
+        [
+         17.16,
+         39.41
+        ],
+        [
+         17.12,
+         39.09
+        ],
+        [
+         17.21,
+         39.03
+        ],
+        [
+         17.1,
+         38.9
+        ],
+        [
+         16.94,
+         38.94
+        ],
+        [
+         16.59,
+         38.8
+        ],
+        [
+         16.53,
+         38.7
+        ],
+        [
+         16.57,
+         38.43
+        ],
+        [
+         16.17,
+         38.14
+        ],
+        [
+         16.06,
+         37.93
+        ],
+        [
+         15.76,
+         37.93
+        ],
+        [
+         15.64,
+         38.01
+        ],
+        [
+         15.63,
+         38.22
+        ],
+        [
+         15.81,
+         38.3
+        ],
+        [
+         15.9,
+         38.47
+        ],
+        [
+         15.84,
+         38.65
+        ],
+        [
+         16.15,
+         38.73
+        ],
+        [
+         16.22,
+         38.86
+        ],
+        [
+         16.08,
+         39.08
+        ],
+        [
+         16.0,
+         39.44
+        ],
+        [
+         15.81,
+         39.7
+        ],
+        [
+         15.77,
+         39.89
+        ],
+        [
+         15.62,
+         40.08
+        ],
+        [
+         15.41,
+         39.99
+        ],
+        [
+         15.26,
+         40.03
+        ],
+        [
+         15.13,
+         40.17
+        ],
+        [
+         14.91,
+         40.24
+        ],
+        [
+         15.0,
+         40.4
+        ],
+        [
+         14.78,
+         40.67
+        ],
+        [
+         14.34,
+         40.57
+        ],
+        [
+         14.47,
+         40.73
+        ],
+        [
+         14.29,
+         40.84
+        ],
+        [
+         14.05,
+         40.79
+        ],
+        [
+         14.02,
+         40.92
+        ],
+        [
+         13.72,
+         41.25
+        ],
+        [
+         13.54,
+         41.21
+        ],
+        [
+         13.29,
+         41.3
+        ],
+        [
+         13.02,
+         41.25
+        ]
+       ],
+       [
+        [
+         15.16,
+         36.92
+        ],
+        [
+         15.09,
+         36.65
+        ],
+        [
+         14.49,
+         36.79
+        ],
+        [
+         14.28,
+         37.04
+        ],
+        [
+         13.72,
+         37.17
+        ],
+        [
+         13.17,
+         37.49
+        ],
+        [
+         12.94,
+         37.57
+        ],
+        [
+         12.66,
+         37.57
+        ],
+        [
+         12.43,
+         37.8
+        ],
+        [
+         12.49,
+         38.02
+        ],
+        [
+         12.7,
+         38.11
+        ],
+        [
+         12.73,
+         38.19
+        ],
+        [
+         12.9,
+         38.03
+        ],
+        [
+         13.06,
+         38.08
+        ],
+        [
+         13.1,
+         38.19
+        ],
+        [
+         13.32,
+         38.22
+        ],
+        [
+         13.39,
+         38.1
+        ],
+        [
+         13.79,
+         37.97
+        ],
+        [
+         14.02,
+         38.05
+        ],
+        [
+         14.51,
+         38.04
+        ],
+        [
+         14.91,
+         38.19
+        ],
+        [
+         15.09,
+         38.13
+        ],
+        [
+         15.24,
+         38.26
+        ],
+        [
+         15.29,
+         38.21
+        ],
+        [
+         15.53,
+         38.3
+        ],
+        [
+         15.65,
+         38.28
+        ],
+        [
+         15.21,
+         37.76
+        ],
+        [
+         15.09,
+         37.48
+        ],
+        [
+         15.1,
+         37.33
+        ],
+        [
+         15.25,
+         37.26
+        ],
+        [
+         15.18,
+         37.21
+        ],
+        [
+         15.33,
+         37.01
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        5,
+        9
+       ]
+      ],
+      "areas": [
+       [
+        [
+         13.76,
+         44.97
+        ],
+        [
+         13.62,
+         45.07
+        ],
+        [
+         13.73,
+         45.13
+        ],
+        [
+         13.6,
+         45.15
+        ],
+        [
+         13.61,
+         45.32
+        ],
+        [
+         13.54,
+         45.35
+        ],
+        [
+         13.51,
+         45.51
+        ],
+        [
+         13.59,
+         45.49
+        ],
+        [
+         13.57,
+         45.54
+        ],
+        [
+         13.81,
+         45.61
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.4,
+         45.68
+        ],
+        [
+         13.37,
+         45.74
+        ],
+        [
+         13.12,
+         45.77
+        ],
+        [
+         13.08,
+         45.7
+        ],
+        [
+         13.15,
+         45.7
+        ],
+        [
+         13.08,
+         45.64
+        ],
+        [
+         12.42,
+         45.44
+        ],
+        [
+         12.58,
+         45.55
+        ],
+        [
+         12.4,
+         45.54
+        ],
+        [
+         12.42,
+         45.5
+        ],
+        [
+         12.31,
+         45.49
+        ],
+        [
+         12.15,
+         45.31
+        ],
+        [
+         12.23,
+         45.2
+        ],
+        [
+         12.31,
+         45.23
+        ],
+        [
+         12.3,
+         45.09
+        ],
+        [
+         12.37,
+         45.01
+        ],
+        [
+         12.37,
+         45.07
+        ],
+        [
+         12.53,
+         44.97
+        ],
+        [
+         12.44,
+         44.82
+        ],
+        [
+         12.41,
+         44.89
+        ],
+        [
+         12.42,
+         44.8
+        ],
+        [
+         12.27,
+         44.83
+        ],
+        [
+         12.28,
+         44.49
+        ],
+        [
+         12.39,
+         44.22
+        ],
+        [
+         12.69,
+         43.99
+        ],
+        [
+         13.62,
+         43.56
+        ],
+        [
+         13.7,
+         43.4
+        ],
+        [
+         10.4,
+         43.4
+        ],
+        [
+         10.32,
+         43.49
+        ],
+        [
+         10.18,
+         43.96
+        ],
+        [
+         9.84,
+         44.11
+        ],
+        [
+         9.83,
+         44.04
+        ],
+        [
+         9.23,
+         44.35
+        ],
+        [
+         9.21,
+         44.31
+        ],
+        [
+         8.76,
+         44.43
+        ],
+        [
+         8.47,
+         44.3
+        ],
+        [
+         8.07,
+         43.9
+        ],
+        [
+         7.82,
+         43.83
+        ],
+        [
+         7.4,
+         43.8
+        ],
+        [
+         6.6,
+         44.9
+        ],
+        [
+         6.5,
+         46.2
+        ],
+        [
+         7.0,
+         47.4
+        ],
+        [
+         6.5,
+         48.4
+        ],
+        [
+         5.3,
+         49.0
+        ],
+        [
+         4.8,
+         50.0
+        ],
+        [
+         3.4,
+         51.3
+        ],
+        [
+         3.42,
+         51.38
+        ],
+        [
+         3.53,
+         51.42
+        ],
+        [
+         3.83,
+         51.34
+        ],
+        [
+         3.98,
+         51.41
+        ],
+        [
+         4.2,
+         51.38
+        ],
+        [
+         4.32,
+         51.28
+        ],
+        [
+         4.23,
+         51.42
+        ],
+        [
+         3.96,
+         51.46
+        ],
+        [
+         3.83,
+         51.39
+        ],
+        [
+         3.54,
+         51.46
+        ],
+        [
+         3.45,
+         51.55
+        ],
+        [
+         3.85,
+         51.61
+        ],
+        [
+         4.1,
+         51.45
+        ],
+        [
+         4.28,
+         51.45
+        ],
+        [
+         4.27,
+         51.51
+        ],
+        [
+         3.99,
+         51.59
+        ],
+        [
+         4.21,
+         51.59
+        ],
+        [
+         4.11,
+         51.64
+        ],
+        [
+         4.18,
+         51.69
+        ],
+        [
+         3.86,
+         51.82
+        ],
+        [
+         4.08,
+         51.84
+        ],
+        [
+         4.02,
+         51.99
+        ],
+        [
+         4.14,
+         52.01
+        ],
+        [
+         4.51,
+         52.34
+        ],
+        [
+         4.73,
+         52.96
+        ],
+        [
+         4.87,
+         52.9
+        ],
+        [
+         5.08,
+         52.95
+        ],
+        [
+         5.38,
+         53.1
+        ],
+        [
+         5.59,
+         53.3
+        ],
+        [
+         5.98,
+         53.41
+        ],
+        [
+         6.73,
+         53.46
+        ],
+        [
+         7.19,
+         53.25
+        ],
+        [
+         7.25,
+         53.32
+        ],
+        [
+         7.37,
+         53.3
+        ],
+        [
+         7.3,
+         53.33
+        ],
+        [
+         7.04,
+         53.35
+        ],
+        [
+         7.05,
+         53.51
+        ],
+        [
+         7.14,
+         53.54
+        ],
+        [
+         7.1,
+         53.6
+        ],
+        [
+         7.31,
+         53.68
+        ],
+        [
+         7.95,
+         53.72
+        ],
+        [
+         8.17,
+         53.55
+        ],
+        [
+         8.06,
+         53.5
+        ],
+        [
+         8.09,
+         53.46
+        ],
+        [
+         8.21,
+         53.41
+        ],
+        [
+         8.32,
+         53.47
+        ],
+        [
+         8.23,
+         53.53
+        ],
+        [
+         8.27,
+         53.61
+        ],
+        [
+         8.55,
+         53.54
+        ],
+        [
+         8.49,
+         53.49
+        ],
+        [
+         8.5,
+         53.36
+        ],
+        [
+         8.57,
+         53.55
+        ],
+        [
+         8.49,
+         53.7
+        ],
+        [
+         8.65,
+         53.89
+        ],
+        [
+         8.86,
+         53.83
+        ],
+        [
+         9.27,
+         53.87
+        ],
+        [
+         9.57,
+         53.6
+        ],
+        [
+         9.83,
+         53.54
+        ],
+        [
+         9.58,
+         53.61
+        ],
+        [
+         9.4,
+         53.83
+        ],
+        [
+         9.26,
+         53.89
+        ],
+        [
+         8.98,
+         53.9
+        ],
+        [
+         8.92,
+         53.94
+        ],
+        [
+         8.83,
+         54.04
+        ],
+        [
+         9.0,
+         54.03
+        ],
+        [
+         9.02,
+         54.1
+        ],
+        [
+         8.81,
+         54.18
+        ],
+        [
+         8.96,
+         54.32
+        ],
+        [
+         8.6,
+         54.31
+        ],
+        [
+         8.7,
+         54.36
+        ],
+        [
+         8.65,
+         54.41
+        ],
+        [
+         8.89,
+         54.42
+        ],
+        [
+         9.01,
+         54.51
+        ],
+        [
+         8.69,
+         54.74
+        ],
+        [
+         8.68,
+         54.97
+        ],
+        [
+         8.8,
+         55.0
+        ],
+        [
+         10.04,
+         54.65
+        ],
+        [
+         10.03,
+         54.56
+        ],
+        [
+         9.84,
+         54.48
+        ],
+        [
+         10.14,
+         54.49
+        ],
+        [
+         10.2,
+         54.46
+        ],
+        [
+         10.14,
+         54.32
+        ],
+        [
+         10.35,
+         54.43
+        ],
+        [
+         11.9,
+         52.6
+        ],
+        [
+         12.9,
+         51.3
+        ],
+        [
+         12.93,
+         51.02
+        ],
+        [
+         14.97,
+         51.08
+        ],
+        [
+         15.3,
+         51.9
+        ],
+        [
+         17.6,
+         52.0
+        ],
+        [
+         18.3,
+         51.0
+        ],
+        [
+         18.3,
+         50.2
+        ],
+        [
+         17.2,
+         50.27
+        ],
+        [
+         18.2,
+         49.7
+        ],
+        [
+         17.4,
+         48.8
+        ],
+        [
+         16.62,
+         48.63
+        ],
+        [
+         17.0,
+         47.5
+        ],
+        [
+         16.4,
+         46.7
+        ],
+        [
+         15.3,
+         46.5
+        ],
+        [
+         14.6,
+         47.81
+        ],
+        [
+         14.6,
+         47.2
+        ],
+        [
+         14.5,
+         47.1
+        ],
+        [
+         14.5,
+         46.5
+        ],
+        [
+         13.96,
+         46.56
+        ],
+        [
+         13.9,
+         46.5
+        ],
+        [
+         13.79,
+         46.03
+        ],
+        [
+         13.9,
+         45.5
+        ],
+        [
+         13.72,
+         45.34
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        10,
+        11
+       ]
+      ],
+      "areas": [
+       [
+        [
+         7.4,
+         43.8
+        ],
+        [
+         6.6,
+         44.9
+        ],
+        [
+         6.52,
+         45.96
+        ],
+        [
+         7.0,
+         45.85
+        ],
+        [
+         8.9,
+         45.8
+        ],
+        [
+         9.3,
+         46.2
+        ],
+        [
+         10.45,
+         46.5
+        ],
+        [
+         10.45,
+         46.9
+        ],
+        [
+         9.6,
+         47.5
+        ],
+        [
+         9.2,
+         47.67
+        ],
+        [
+         7.62,
+         47.6
+        ],
+        [
+         7.85,
+         48.6
+        ],
+        [
+         8.25,
+         49.0
+        ],
+        [
+         5.9,
+         49.0
+        ],
+        [
+         5.9,
+         48.7
+        ],
+        [
+         5.3,
+         49.0
+        ],
+        [
+         4.8,
+         50.0
+        ],
+        [
+         3.4,
+         51.3
+        ],
+        [
+         3.42,
+         51.38
+        ],
+        [
+         3.53,
+         51.42
+        ],
+        [
+         3.83,
+         51.34
+        ],
+        [
+         3.98,
+         51.41
+        ],
+        [
+         4.2,
+         51.38
+        ],
+        [
+         4.32,
+         51.28
+        ],
+        [
+         4.23,
+         51.42
+        ],
+        [
+         3.96,
+         51.46
+        ],
+        [
+         3.83,
+         51.39
+        ],
+        [
+         3.54,
+         51.46
+        ],
+        [
+         3.45,
+         51.55
+        ],
+        [
+         3.85,
+         51.61
+        ],
+        [
+         4.1,
+         51.45
+        ],
+        [
+         4.28,
+         51.45
+        ],
+        [
+         4.27,
+         51.51
+        ],
+        [
+         3.99,
+         51.59
+        ],
+        [
+         4.21,
+         51.59
+        ],
+        [
+         4.11,
+         51.64
+        ],
+        [
+         4.18,
+         51.69
+        ],
+        [
+         4.16,
+         51.7
+        ],
+        [
+         7.4,
+         51.7
+        ],
+        [
+         7.4,
+         53.69
+        ],
+        [
+         7.95,
+         53.72
+        ],
+        [
+         8.17,
+         53.55
+        ],
+        [
+         8.06,
+         53.5
+        ],
+        [
+         8.09,
+         53.46
+        ],
+        [
+         8.21,
+         53.41
+        ],
+        [
+         8.32,
+         53.47
+        ],
+        [
+         8.23,
+         53.53
+        ],
+        [
+         8.27,
+         53.61
+        ],
+        [
+         8.55,
+         53.54
+        ],
+        [
+         8.49,
+         53.49
+        ],
+        [
+         8.5,
+         53.36
+        ],
+        [
+         8.57,
+         53.55
+        ],
+        [
+         8.49,
+         53.7
+        ],
+        [
+         8.65,
+         53.89
+        ],
+        [
+         8.86,
+         53.83
+        ],
+        [
+         9.27,
+         53.87
+        ],
+        [
+         9.57,
+         53.6
+        ],
+        [
+         9.83,
+         53.54
+        ],
+        [
+         9.58,
+         53.61
+        ],
+        [
+         9.4,
+         53.83
+        ],
+        [
+         9.26,
+         53.89
+        ],
+        [
+         8.98,
+         53.9
+        ],
+        [
+         8.92,
+         53.94
+        ],
+        [
+         8.83,
+         54.04
+        ],
+        [
+         9.0,
+         54.03
+        ],
+        [
+         9.02,
+         54.1
+        ],
+        [
+         8.81,
+         54.18
+        ],
+        [
+         8.96,
+         54.32
+        ],
+        [
+         8.6,
+         54.31
+        ],
+        [
+         8.7,
+         54.36
+        ],
+        [
+         8.65,
+         54.41
+        ],
+        [
+         8.89,
+         54.42
+        ],
+        [
+         9.01,
+         54.51
+        ],
+        [
+         8.69,
+         54.74
+        ],
+        [
+         8.68,
+         54.97
+        ],
+        [
+         8.8,
+         55.0
+        ],
+        [
+         10.04,
+         54.65
+        ],
+        [
+         10.03,
+         54.56
+        ],
+        [
+         9.84,
+         54.48
+        ],
+        [
+         10.14,
+         54.49
+        ],
+        [
+         10.2,
+         54.46
+        ],
+        [
+         10.14,
+         54.32
+        ],
+        [
+         10.35,
+         54.43
+        ],
+        [
+         11.9,
+         52.6
+        ],
+        [
+         12.9,
+         51.3
+        ],
+        [
+         12.93,
+         51.02
+        ],
+        [
+         14.97,
+         51.08
+        ],
+        [
+         15.3,
+         51.9
+        ],
+        [
+         17.6,
+         52.0
+        ],
+        [
+         18.3,
+         51.0
+        ],
+        [
+         18.3,
+         50.2
+        ],
+        [
+         17.2,
+         50.27
+        ],
+        [
+         18.2,
+         49.7
+        ],
+        [
+         17.4,
+         48.8
+        ],
+        [
+         16.62,
+         48.63
+        ],
+        [
+         17.0,
+         47.5
+        ],
+        [
+         16.4,
+         46.7
+        ],
+        [
+         15.3,
+         46.5
+        ],
+        [
+         14.6,
+         47.81
+        ],
+        [
+         14.6,
+         47.2
+        ],
+        [
+         14.5,
+         47.1
+        ],
+        [
+         14.5,
+         46.5
+        ],
+        [
+         13.96,
+         46.56
+        ],
+        [
+         13.9,
+         46.5
+        ],
+        [
+         13.79,
+         46.03
+        ],
+        [
+         13.9,
+         45.5
+        ],
+        [
+         13.72,
+         45.34
+        ],
+        [
+         13.76,
+         44.97
+        ],
+        [
+         13.62,
+         45.07
+        ],
+        [
+         13.73,
+         45.13
+        ],
+        [
+         13.6,
+         45.15
+        ],
+        [
+         13.61,
+         45.32
+        ],
+        [
+         13.54,
+         45.35
+        ],
+        [
+         13.51,
+         45.51
+        ],
+        [
+         13.59,
+         45.49
+        ],
+        [
+         13.57,
+         45.54
+        ],
+        [
+         13.81,
+         45.61
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.4,
+         45.68
+        ],
+        [
+         13.37,
+         45.74
+        ],
+        [
+         13.12,
+         45.77
+        ],
+        [
+         13.08,
+         45.7
+        ],
+        [
+         13.15,
+         45.7
+        ],
+        [
+         13.08,
+         45.64
+        ],
+        [
+         12.42,
+         45.44
+        ],
+        [
+         12.58,
+         45.55
+        ],
+        [
+         12.4,
+         45.54
+        ],
+        [
+         12.42,
+         45.5
+        ],
+        [
+         12.31,
+         45.49
+        ],
+        [
+         12.15,
+         45.31
+        ],
+        [
+         12.23,
+         45.2
+        ],
+        [
+         12.31,
+         45.23
+        ],
+        [
+         12.3,
+         45.09
+        ],
+        [
+         12.37,
+         45.01
+        ],
+        [
+         12.37,
+         45.07
+        ],
+        [
+         12.53,
+         44.97
+        ],
+        [
+         12.44,
+         44.82
+        ],
+        [
+         12.41,
+         44.89
+        ],
+        [
+         12.42,
+         44.8
+        ],
+        [
+         12.27,
+         44.83
+        ],
+        [
+         12.28,
+         44.49
+        ],
+        [
+         12.39,
+         44.22
+        ],
+        [
+         12.69,
+         43.99
+        ],
+        [
+         13.62,
+         43.56
+        ],
+        [
+         13.7,
+         43.4
+        ],
+        [
+         10.4,
+         43.4
+        ],
+        [
+         10.32,
+         43.49
+        ],
+        [
+         10.18,
+         43.96
+        ],
+        [
+         9.84,
+         44.11
+        ],
+        [
+         9.83,
+         44.04
+        ],
+        [
+         9.23,
+         44.35
+        ],
+        [
+         9.21,
+         44.31
+        ],
+        [
+         8.76,
+         44.43
+        ],
+        [
+         8.47,
+         44.3
+        ],
+        [
+         8.07,
+         43.9
+        ],
+        [
+         7.82,
+         43.83
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        12,
+        12
+       ]
+      ],
+      "areas": [
+       [
+        [
+         7.4,
+         43.8
+        ],
+        [
+         6.76,
+         44.68
+        ],
+        [
+         8.5,
+         45.0
+        ],
+        [
+         10.0,
+         46.3
+        ],
+        [
+         12.0,
+         46.7
+        ],
+        [
+         13.1,
+         47.4
+        ],
+        [
+         13.1,
+         49.1
+        ],
+        [
+         12.4,
+         50.0
+        ],
+        [
+         9.6,
+         51.0
+        ],
+        [
+         8.2,
+         51.4
+        ],
+        [
+         3.58,
+         51.13
+        ],
+        [
+         3.4,
+         51.3
+        ],
+        [
+         3.42,
+         51.38
+        ],
+        [
+         3.53,
+         51.42
+        ],
+        [
+         3.83,
+         51.34
+        ],
+        [
+         3.98,
+         51.41
+        ],
+        [
+         4.2,
+         51.38
+        ],
+        [
+         4.32,
+         51.28
+        ],
+        [
+         4.23,
+         51.42
+        ],
+        [
+         3.96,
+         51.46
+        ],
+        [
+         3.83,
+         51.39
+        ],
+        [
+         3.54,
+         51.46
+        ],
+        [
+         3.45,
+         51.55
+        ],
+        [
+         3.85,
+         51.61
+        ],
+        [
+         4.1,
+         51.45
+        ],
+        [
+         4.28,
+         51.45
+        ],
+        [
+         4.27,
+         51.51
+        ],
+        [
+         3.99,
+         51.59
+        ],
+        [
+         4.21,
+         51.59
+        ],
+        [
+         4.11,
+         51.64
+        ],
+        [
+         4.18,
+         51.69
+        ],
+        [
+         4.16,
+         51.7
+        ],
+        [
+         7.4,
+         51.7
+        ],
+        [
+         7.4,
+         53.69
+        ],
+        [
+         7.95,
+         53.72
+        ],
+        [
+         8.17,
+         53.55
+        ],
+        [
+         8.06,
+         53.5
+        ],
+        [
+         8.09,
+         53.46
+        ],
+        [
+         8.21,
+         53.41
+        ],
+        [
+         8.32,
+         53.47
+        ],
+        [
+         8.23,
+         53.53
+        ],
+        [
+         8.27,
+         53.61
+        ],
+        [
+         8.55,
+         53.54
+        ],
+        [
+         8.49,
+         53.49
+        ],
+        [
+         8.5,
+         53.36
+        ],
+        [
+         8.57,
+         53.55
+        ],
+        [
+         8.49,
+         53.7
+        ],
+        [
+         8.65,
+         53.89
+        ],
+        [
+         8.86,
+         53.83
+        ],
+        [
+         9.27,
+         53.87
+        ],
+        [
+         9.57,
+         53.6
+        ],
+        [
+         9.83,
+         53.54
+        ],
+        [
+         9.58,
+         53.61
+        ],
+        [
+         9.4,
+         53.83
+        ],
+        [
+         9.26,
+         53.89
+        ],
+        [
+         8.98,
+         53.9
+        ],
+        [
+         8.92,
+         53.94
+        ],
+        [
+         8.83,
+         54.04
+        ],
+        [
+         9.0,
+         54.03
+        ],
+        [
+         9.02,
+         54.1
+        ],
+        [
+         8.81,
+         54.18
+        ],
+        [
+         8.96,
+         54.32
+        ],
+        [
+         8.6,
+         54.31
+        ],
+        [
+         8.7,
+         54.36
+        ],
+        [
+         8.65,
+         54.41
+        ],
+        [
+         8.89,
+         54.42
+        ],
+        [
+         9.01,
+         54.51
+        ],
+        [
+         8.69,
+         54.74
+        ],
+        [
+         8.68,
+         54.97
+        ],
+        [
+         8.8,
+         55.0
+        ],
+        [
+         10.04,
+         54.65
+        ],
+        [
+         10.03,
+         54.56
+        ],
+        [
+         9.84,
+         54.48
+        ],
+        [
+         10.14,
+         54.49
+        ],
+        [
+         10.2,
+         54.46
+        ],
+        [
+         10.14,
+         54.32
+        ],
+        [
+         10.35,
+         54.43
+        ],
+        [
+         11.9,
+         52.6
+        ],
+        [
+         12.9,
+         51.3
+        ],
+        [
+         12.93,
+         51.02
+        ],
+        [
+         14.9,
+         51.1
+        ],
+        [
+         14.97,
+         51.08
+        ],
+        [
+         14.9,
+         50.9
+        ],
+        [
+         16.8,
+         50.3
+        ],
+        [
+         17.2,
+         50.27
+        ],
+        [
+         18.2,
+         49.7
+        ],
+        [
+         17.4,
+         48.8
+        ],
+        [
+         16.62,
+         48.63
+        ],
+        [
+         17.0,
+         47.5
+        ],
+        [
+         16.4,
+         46.7
+        ],
+        [
+         15.3,
+         46.5
+        ],
+        [
+         14.6,
+         47.81
+        ],
+        [
+         14.6,
+         47.2
+        ],
+        [
+         14.5,
+         47.1
+        ],
+        [
+         14.5,
+         46.5
+        ],
+        [
+         13.96,
+         46.56
+        ],
+        [
+         13.9,
+         46.5
+        ],
+        [
+         13.79,
+         46.03
+        ],
+        [
+         13.9,
+         45.5
+        ],
+        [
+         13.72,
+         45.34
+        ],
+        [
+         13.76,
+         44.97
+        ],
+        [
+         13.62,
+         45.07
+        ],
+        [
+         13.73,
+         45.13
+        ],
+        [
+         13.6,
+         45.15
+        ],
+        [
+         13.61,
+         45.32
+        ],
+        [
+         13.54,
+         45.35
+        ],
+        [
+         13.51,
+         45.51
+        ],
+        [
+         13.59,
+         45.49
+        ],
+        [
+         13.57,
+         45.54
+        ],
+        [
+         13.81,
+         45.61
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.4,
+         45.68
+        ],
+        [
+         13.37,
+         45.74
+        ],
+        [
+         13.12,
+         45.77
+        ],
+        [
+         13.08,
+         45.7
+        ],
+        [
+         13.15,
+         45.7
+        ],
+        [
+         13.08,
+         45.64
+        ],
+        [
+         12.42,
+         45.44
+        ],
+        [
+         12.58,
+         45.55
+        ],
+        [
+         12.4,
+         45.54
+        ],
+        [
+         12.42,
+         45.5
+        ],
+        [
+         12.31,
+         45.49
+        ],
+        [
+         12.15,
+         45.31
+        ],
+        [
+         12.23,
+         45.2
+        ],
+        [
+         12.31,
+         45.23
+        ],
+        [
+         12.3,
+         45.09
+        ],
+        [
+         12.37,
+         45.01
+        ],
+        [
+         12.37,
+         45.07
+        ],
+        [
+         12.53,
+         44.97
+        ],
+        [
+         12.44,
+         44.82
+        ],
+        [
+         12.41,
+         44.89
+        ],
+        [
+         12.42,
+         44.8
+        ],
+        [
+         12.27,
+         44.83
+        ],
+        [
+         12.28,
+         44.49
+        ],
+        [
+         12.39,
+         44.22
+        ],
+        [
+         12.69,
+         43.99
+        ],
+        [
+         13.62,
+         43.56
+        ],
+        [
+         13.7,
+         43.4
+        ],
+        [
+         10.4,
+         43.4
+        ],
+        [
+         10.32,
+         43.49
+        ],
+        [
+         10.18,
+         43.96
+        ],
+        [
+         9.84,
+         44.11
+        ],
+        [
+         9.83,
+         44.04
+        ],
+        [
+         9.23,
+         44.35
+        ],
+        [
+         9.21,
+         44.31
+        ],
+        [
+         8.76,
+         44.43
+        ],
+        [
+         8.47,
+         44.3
+        ],
+        [
+         8.07,
+         43.9
+        ],
+        [
+         7.82,
+         43.83
+        ]
+       ]
+      ]
+     },
+     {
+      "steps": [
+       [
+        13,
+        13
+       ]
+      ],
+      "areas": [
+       [
+        [
+         13.0,
+         47.55
+        ],
+        [
+         13.65,
+         45.73
+        ],
+        [
+         13.57,
+         45.79
+        ],
+        [
+         13.48,
+         45.73
+        ],
+        [
+         12.4,
+         46.4
+        ],
+        [
+         10.5,
+         46.45
+        ],
+        [
+         9.55,
+         46.9
+        ],
+        [
+         10.4,
+         47.55
+        ]
+       ],
+       [
+        [
+         13.6,
+         48.3
+        ],
+        [
+         14.38,
+         48.64
+        ],
+        [
+         13.4,
+         48.8
+        ],
+        [
+         12.3,
+         49.4
+        ],
+        [
+         12.0,
+         50.4
+        ],
+        [
+         12.4,
+         51.0
+        ],
+        [
+         14.9,
+         51.1
+        ],
+        [
+         16.8,
+         50.5
+        ],
+        [
+         18.2,
+         49.7
+        ],
+        [
+         17.4,
+         48.8
+        ],
+        [
+         16.62,
+         48.63
+        ],
+        [
+         17.0,
+         47.5
+        ],
+        [
+         16.4,
+         46.7
+        ],
+        [
+         15.3,
+         46.5
+        ],
+        [
+         14.5,
+         48.0
+        ],
+        [
+         14.5,
+         46.5
+        ],
+        [
+         13.6,
+         46.6
+        ]
+       ]
+      ]
+     }
+    ],
+    "facts": {
+     "Capital": "None fixed; the court moved, and Prague and Vienna were its chief seats",
+     "Language": "Latin for law and church; German in everyday use",
+     "Government": "An elected king and emperor, with princes, bishops and free cities",
+     "Began": "962 with Otto I, or 800 with Charlemagne as its prologue",
+     "Ended": "6 August 1806, when Francis II laid down the crown",
+     "Today": "Germany, Austria, Czechia, Switzerland, Belgium, the Netherlands and northern Italy"
+    },
+    "rulers": [
+     {
+      "from": 0,
+      "text": "Charlemagne, king of the Franks and emperor"
+     },
+     {
+      "from": 1,
+      "text": "Otto I"
+     },
+     {
+      "from": 2,
+      "text": "Henry IV"
+     },
+     {
+      "from": 3,
+      "text": "Frederick I Barbarossa"
+     },
+     {
+      "from": 4,
+      "text": "Frederick II"
+     },
+     {
+      "from": 5,
+      "text": "Charles IV"
+     },
+     {
+      "from": 6,
+      "text": "Sigismund"
+     },
+     {
+      "from": 7,
+      "text": "Frederick III, then Maximilian I"
+     },
+     {
+      "from": 8,
+      "text": "Charles V"
+     },
+     {
+      "from": 9,
+      "text": "Ferdinand II"
+     },
+     {
+      "from": 10,
+      "text": "Ferdinand III"
+     },
+     {
+      "from": 11,
+      "text": "Leopold I and the emperors after him"
+     },
+     {
+      "from": 12,
+      "text": "Francis II, the last emperor"
+     }
+    ],
+    "ties": [],
+    "role": "The Holy Roman Empire: a loose union of German, Bohemian, Burgundian and Italian lands under an elected emperor, from Otto I in 962 to Francis II in 1806, with Charlemagne’s empire as its prologue."
+   }
+  ]
+ },
+ "people": {
+  "heading": "People of the story",
+  "items": [
+   {
+    "id": "charlemagne",
+    "name": "Charlemagne",
+    "native": "Karolus Magnus",
+    "life": "about 747 to 814",
+    "role": "King of the Franks, emperor",
+    "steps": [
+     0
+    ],
+    "text": "Charlemagne became king of the Franks in 768 and doubled his realm by conquest. He fought the Saxons for thirty years and took the Lombard kingdom in Italy. He gathered scholars at Aachen, including Alcuin, and standardised weights and the coinage. His coronation as emperor in 800 set the pattern for later rulers."
+   },
+   {
+    "id": "otto-i",
+    "name": "Otto I",
+    "native": "Otto der Große",
+    "life": "912 to 973",
+    "role": "King of Germany, emperor",
+    "steps": [
+     1
+    ],
+    "text": "Otto, son of Henry the Fowler, put down rebel dukes and gave church lands and bishops duties as royal officials. After the Lechfeld victory he was hailed “the Great”. Crowned emperor in 962, he made Magdeburg an archbishopric and relied on bishops and abbots as royal officials. He is buried at Magdeburg.",
+    "lang": "de"
+   },
+   {
+    "id": "frederick-ii",
+    "name": "Frederick II",
+    "native": "Friedrich II",
+    "life": "1194 to 1250",
+    "role": "King of Sicily, emperor",
+    "steps": [
+     4
+    ],
+    "text": "Frederick, grandson of Barbarossa, was king of Sicily from infancy and emperor from 1220. He spoke several languages, patronised poets and scientists and issued the Constitutions of Melfi in 1231, a law code for Sicily. He fought the popes for decades. They called him the Antichrist, and admirers called him stupor mundi.",
+    "lang": "de"
+   },
+   {
+    "id": "charles-iv",
+    "name": "Charles IV",
+    "native": "Karl IV",
+    "life": "1316 to 1378",
+    "role": "King of Bohemia, emperor",
+    "steps": [
+     5
+    ],
+    "text": "Charles, born Wenceslas in Prague, became king of Bohemia and, in 1355, emperor. A scholar who wrote his own life story, he founded the first university in central Europe at Prague, built Charles Bridge and Karlštejn Castle, and secured peace through the Golden Bull. He is regarded as the father of the Czech lands.",
+    "lang": "de"
+   },
+   {
+    "id": "martin-luther",
+    "name": "Martin Luther",
+    "native": "Martin Luther",
+    "life": "1483 to 1546",
+    "role": "Monk and reformer",
+    "steps": [
+     8
+    ],
+    "text": "Luther, an Augustinian friar and professor at Wittenberg, attacked the sale of indulgences in 1517. Refusing to recant at Worms, he was sheltered in the Wartburg, where he translated the New Testament into German. His writings, spread by printing, split western Christianity. His followers took the name Lutherans, though he never wanted a new church.",
+    "lang": "de"
+   },
+   {
+    "id": "francis-ii",
+    "name": "Francis II",
+    "native": "Franz II",
+    "life": "1768 to 1835",
+    "role": "Last Holy Roman emperor",
+    "steps": [
+     12
+    ],
+    "text": "Francis, born in Florence, became emperor in 1792, in the middle of war with revolutionary France. After defeat at Austerlitz he gave up the imperial crown in 1806, keeping the title Emperor Francis I of Austria. After 1815 he worked with his minister Metternich to restore the old order. He died in 1835, after forty-three years on the throne.",
+    "lang": "de"
+   }
+  ]
+ }
+}
