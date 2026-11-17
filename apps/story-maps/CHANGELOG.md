@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.83.0
+
+- New `mediterranean` basemap (lon -11 to 46, lat 28 to 57, 40 units per degree, stretch 1.35) for the Roman Republic, Roman Empire and Holy Roman Empire stories: Britain to Mesopotamia, the Baltic to the Atlas. Coastlines and lakes are Natural Earth data, simplified once; rivers are Natural Earth plus a hand-drawn Tiber. No story uses it yet.
+
 ## 0.82.0
 
 - New story map in Biology and Medicine: The Gene. A story on genetics, from Mendel's peas to CRISPR, with a final aside on de-extinction. First story in Biology and Medicine. 12 chapters on the world map and 7 people cards.

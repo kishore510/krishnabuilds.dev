@@ -24,7 +24,6 @@ Suggested after those. These fit a map that already exists, so each is one sessi
 
 These need a new map first, which is its own piece of work and its own PR:
 
-- Rome, republic and empire (a Mediterranean map)
 - China, Qin to Qing (an East Asia map; also serves Korea and Japan)
 - The Inca and the Andes (an Andes map)
 - The Khmer, Srivijaya and Majapahit (a Southeast Asia map)
