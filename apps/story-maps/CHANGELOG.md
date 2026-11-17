@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.84.0
+
+- New story map in Chronicles: The Roman Republic. From the traditional founding of Rome and the expulsion of the kings, through the consuls, the conquest of Italy, Pyrrhus, the three wars with Carthage (Hannibal's crossing of the Alps, Cannae, Zama and the fall of Carthage), to the Gracchi, Sulla, Caesar in Gaul, the Rubicon, the Ides of March and Actium. 14 chapters on the mediterranean map, a Powers layer that grows from Latium to the whole Mediterranean, and 6 people cards.
+- Catalogue: the Roman Republic entry opens the story, with chapter entries for Carthage, the Battle of Cannae and the assassination of Caesar.
+
 ## 0.83.0
 
 - New `mediterranean` basemap (lon -11 to 46, lat 28 to 57, 40 units per degree, stretch 1.35) for the Roman Republic, Roman Empire and Holy Roman Empire stories: Britain to Mesopotamia, the Baltic to the Atlas. Coastlines and lakes are Natural Earth data, simplified once; rivers are Natural Earth plus a hand-drawn Tiber. No story uses it yet.
