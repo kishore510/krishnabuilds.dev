@@ -33,6 +33,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Roman Empire (`roman-empire`), 2026-11-17
 - The Roman Republic (`roman-republic`), 2026-11-17
 - The Gene (`the-gene`), 2026-11-17
 - The Kakatiyas (`kakatiya`), 2026-11-16

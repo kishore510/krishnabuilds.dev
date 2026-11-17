@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.85.0
+
+- New story map in Chronicles: The Roman Empire. From Augustus and the Roman peace, through Teutoburg Forest, Britannia and Boudica, Pompeii, Trajan's conquest of Dacia and the empire at its widest, Hadrian's Wall, Alexandria and the grain fleet and Marcus Aurelius on the Danube, to the third-century crisis, Diocletian, Constantine, the sack of Rome and the last emperor in the West in 476. 14 chapters on the mediterranean map, a Powers layer that grows and shrinks chapter by chapter, and 6 people cards.
+- Catalogue: the Roman Empire entry opens the story, with chapter entries for the Battle of Teutoburg Forest, the eruption of Vesuvius and the fall of the Western Roman Empire.
+
 ## 0.84.0
 
 - New story map in Chronicles: The Roman Republic. From the traditional founding of Rome and the expulsion of the kings, through the consuls, the conquest of Italy, Pyrrhus, the three wars with Carthage (Hannibal's crossing of the Alps, Cannae, Zama and the fall of Carthage), to the Gracchi, Sulla, Caesar in Gaul, the Rubicon, the Ides of March and Actium. 14 chapters on the mediterranean map, a Powers layer that grows from Latium to the whole Mediterranean, and 6 people cards.
