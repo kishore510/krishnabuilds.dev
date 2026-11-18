@@ -5,7 +5,8 @@
  *   browser would fetch them (script src, stylesheet, image, CSS url());
  * - plain https links to krishnabuilds.dev or one of its subdomains (the
  *   home link and app switcher in the menu), with the same rule;
- * - the exact inert identifiers in INERT_URLS, which are never requested.
+ * - the exact inert identifiers in INERT_URLS, which are never requested;
+ * - the href of a <link rel="canonical">, which browsers never fetch (it must still be krishnabuilds.dev).
  * Anything else fails the build.
  */
 
@@ -24,7 +25,7 @@ export interface Finding {
  * Adding one is a privacy decision: say so in the PR. The build check fails
  * on an entry the build no longer contains, so the list can only shrink.
  */
-type InertFileType = '.js' | '.css' | '.svg'
+type InertFileType = '.js' | '.css' | '.svg' | '.html' | '.xml'
 
 export const INERT_URLS: Readonly<Record<string, { reason: string; fileTypes: readonly InertFileType[] }>> = {
   'http://www.w3.org/2000/svg': {
@@ -44,6 +45,15 @@ export const INERT_URLS: Readonly<Record<string, { reason: string; fileTypes: re
     fileTypes: ['.js'],
     reason: "Prefix of the link React's production build puts in error messages (console only); never fetched.",
   },
+  'https://schema.org': {
+    fileTypes: ['.html'],
+    reason:
+      "The @context identifier of the JSON-LD block in index.html (search-engine metadata, in a script type browsers don't run); never fetched.",
+  },
+  'http://www.sitemaps.org/schemas/sitemap/0.9': {
+    fileTypes: ['.xml'],
+    reason: 'The xmlns of sitemap.xml, an identifier that search engines read; never fetched.',
+  },
   'https://tailwindcss.com': {
     fileTypes: ['.css'],
     reason: "Tailwind CSS's licence comment at the top of the stylesheet (kept for the MIT licence); never fetched.",
@@ -60,6 +70,9 @@ const GOV_UK = /^https:\/\/(?:www\.)?gov\.uk(?:[/?#][^\s]*)?$/i
 
 // The other krishnabuilds.dev apps and the home page: links someone follows, never fetched.
 const KRISHNABUILDS = /^https:\/\/(?:[a-z0-9-]+\.)?krishnabuilds\.dev(?:[/?#][^\s]*)?$/i
+
+/** A canonical link names the page's own address for search engines; the browser never requests it. */
+const CANONICAL_LINK = /<link\b[^>]*\brel\s*=\s*["']?canonical["']?[^>]*\bhref\s*=\s*["']?\s*$/i
 
 /** Places where the browser fetches a URL by itself (not a link someone follows). */
 const REQUEST_CONTEXTS = [
@@ -80,7 +93,7 @@ export function scanText(file: string, text: string): Finding[] {
   for (const match of text.matchAll(URL_PATTERN)) {
     const url = trimUrl(match[0])
     const before = text.slice(Math.max(0, match.index - 300), match.index)
-    const requested = REQUEST_CONTEXTS.some((context) => context.test(before))
+    const requested = !CANONICAL_LINK.test(before) && REQUEST_CONTEXTS.some((context) => context.test(before))
     if (requested) {
       findings.push({ file, url, reason: 'External URL in a place the browser fetches it' })
       continue
