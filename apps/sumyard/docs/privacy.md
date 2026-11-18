@@ -39,11 +39,14 @@ Nothing is uploaded: files are made in the browser (a Blob and a download link) 
 
 ## External-URL allowlist
 
+Search visibility (the owner's decision, November 2026): Sumyard holds nothing confidential and makes no requests, so it is meant to be found in search. `index.html` carries a canonical link and a JSON-LD block, and `public/` carries `robots.txt` and a one-page `sitemap.xml`. The three allowlist additions below exist only for those; none is fetched.
+
 The build scan (`scripts/checks/externalUrls.ts`, run by `npm run build`) fails on any external URL except:
 
 1. **Plain https GOV.UK links** (`https://www.gov.uk/...` or `https://gov.uk/...`), and never where the browser would fetch them (script, stylesheet, image, CSS `url()`). Help can link only there: the Markdown parser shows any other link as text.
 2. **Plain https krishnabuilds.dev links** (`https://krishnabuilds.dev` or one subdomain, such as `https://chalkline.krishnabuilds.dev`), with the same rule: links someone follows, never fetched. They are the home link and the other apps in the main menu.
-3. **Exact inert strings** in `INERT_URLS`, each allowed only in the kinds of file listed and never fetched:
+3. **The `href` of `<link rel="canonical">`**, which names the page's own address for search engines and is never fetched. It must still be a krishnabuilds.dev address (rule 2).
+4. **Exact inert strings** in `INERT_URLS`, each allowed only in the kinds of file listed and never fetched:
 
 | String | File type | Why it is in the build |
 |---|---|---|
@@ -53,6 +56,8 @@ The build scan (`scripts/checks/externalUrls.ts`, run by `npm run build`) fails 
 | `http://www.w3.org/XML/1998/namespace` | `.js` | XML namespace identifier used by React DOM. |
 | `https://react.dev/errors/` | `.js` | Prefix of React's production error messages (console only). |
 | `https://tailwindcss.com` | `.css` | Tailwind's licence comment. |
+| `https://schema.org` | `.html` | The `@context` of the JSON-LD block in `index.html` (search-engine metadata; browsers don't run it). |
+| `http://www.sitemaps.org/schemas/sitemap/0.9` | `.xml` | The `xmlns` of `sitemap.xml`, which search engines read. |
 
 ### Tax-data sources (0.3.0)
 

@@ -28,6 +28,29 @@ describe('scanText', () => {
     expect(urls('a.css', 'a{background:url(https://www.gov.uk/x.png)}')).toEqual(['https://www.gov.uk/x.png'])
   })
 
+  it('allows a canonical link and the search-engine identifiers, and nothing else like them', () => {
+    expect(scanText('index.html', '<link rel="canonical" href="https://sumyard.krishnabuilds.dev/" />')).toEqual([])
+    expect(
+      scanText(
+        'index.html',
+        '<script type="application/ld+json">{"@context":"https://schema.org","url":"https://sumyard.krishnabuilds.dev/"}</script>',
+      ),
+    ).toEqual([])
+    expect(
+      scanText(
+        'sitemap.xml',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://sumyard.krishnabuilds.dev/</loc></url></urlset>',
+      ),
+    ).toEqual([])
+    // A canonical link to another host, other links, and the identifiers in the wrong kind of file still fail.
+    expect(urls('index.html', '<link rel="canonical" href="https://example.com/">')).toEqual(['https://example.com/'])
+    expect(urls('index.html', '<link rel="stylesheet" href="https://sumyard.krishnabuilds.dev/a.css">')).toEqual([
+      'https://sumyard.krishnabuilds.dev/a.css',
+    ])
+    expect(urls('a.js', '"https://schema.org"')).toEqual(['https://schema.org'])
+    expect(urls('a.js', '"http://www.sitemaps.org/schemas/sitemap/0.9"')).toHaveLength(1)
+  })
+
   it('fails on look-alike and insecure gov.uk hosts', () => {
     expect(urls('a.js', '"https://www.gov.uk.example.com/x"')).toHaveLength(1)
     expect(urls('a.js', '"https://notgov.uk/x"')).toHaveLength(1)

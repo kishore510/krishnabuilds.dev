@@ -83,10 +83,8 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 23 October 2026, C2.1 (0.31.0): pre-check (PR #45 merged and deployed). Composer: optional `ageNow` (red/green). Inputs version 2 with the picked sources and a v1 migration; `sources.ts`, `screen.ts`; the page rebuilt to the mock; `RangeBar`. Red/green pairs throughout.
-- Differs from the brief: no success token exists, so the Guaranteed badge uses the teal swatch; the callout's "£X of take-home" is the composer's cost; the headline's state clauses are as worded but read awkwardly.
-- Browser: 42 checks at 360, 768, 1280 px, light and dark; Lighthouse CLS 0 (after a fix); picker changes at most 173 ms at 4x slowdown. The owner's reference reproduces to the penny with a 0.5% fee (the brief says no fee).
-- Not verified: a real phone, Safari, a screen reader, any real statement or illustration.
+- 18 November 2026 (no version bump, nothing user-visible): search visibility. `index.html` gets a canonical link and JSON-LD; `public/` gets `robots.txt` and a one-page `sitemap.xml`. The external-URL scan now allows a canonical link's href and two inert identifiers (`https://schema.org` in `.html`, the sitemap `xmlns` in `.xml`); recorded in `docs/privacy.md`. The owner decided Sumyard should be found in search.
+- Not done: calculators sit behind `#/c/<id>` hash routes, so search engines see one page; separate pages would need path routes and per-page metadata.
 
 ## Next
 
