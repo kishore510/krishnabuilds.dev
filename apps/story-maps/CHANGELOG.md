@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.88.0
+
+- New story map in Chronicles: The Pala Empire. Four centuries of Bengal and Bihar, from the king chosen to end "the law of the fishes" and Dharmapala's race for Kannauj, through the monasteries of Vikramashila, Somapura and Nalanda, Mahipala's revival and the Chola raid to the Ganga, to Atisha's journey to Tibet, the Kaivarta revolt, the Senas and the fall of the monasteries in about 1200. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 4 people cards.
+- Catalogue: the Pala Empire entry opens the story.
+
 ## 0.87.0
 
 - New story map in Chronicles: The Chalukyas and Rashtrakutas. Six centuries of the Deccan, from the Badami cliff inscription of 543 and the cave temples, through Pulakeshin II and Harsha on the Narmada, the Pallava capture of Vatapi and Pattadakal, to the Rashtrakutas at Ellora, Kannauj and Manyakheta, Takkolam, the sack of Manyakheta, and the Chalukyas of Kalyani to their break-up in about 1189. 16 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 5 people cards.
