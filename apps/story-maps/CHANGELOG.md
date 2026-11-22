@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.87.0
+
+- New story map in Chronicles: The Chalukyas and Rashtrakutas. Six centuries of the Deccan, from the Badami cliff inscription of 543 and the cave temples, through Pulakeshin II and Harsha on the Narmada, the Pallava capture of Vatapi and Pattadakal, to the Rashtrakutas at Ellora, Kannauj and Manyakheta, Takkolam, the sack of Manyakheta, and the Chalukyas of Kalyani to their break-up in about 1189. 16 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 5 people cards.
+- Catalogue: the Chalukyas of Badami entry opens the story, with chapter entries for the Rashtrakuta dynasty and the Western Chalukyas.
+
 ## 0.86.0
 
 - New story map in Chronicles: The Holy Roman Empire. From Charlemagne's crowning in 800 and Otto I in 962, through Canossa, Barbarossa and the Lombard League, Frederick II, Charles IV and the Golden Bull, the Council of Constance and the Habsburgs, to Luther at Worms, the Thirty Years' War, Westphalia, the Diet at Regensburg, Austerlitz and the end in 1806. 14 chapters on the mediterranean map, a Powers layer that changes lands chapter by chapter, and 6 people cards.

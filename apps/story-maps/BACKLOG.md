@@ -6,16 +6,27 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-One subject is still without a story: Invention. Lives to add: Ashoka (`south-asia`) and Einstein (`europe`).
+**India first**, so the Indian Chronicles are complete. All on `south-asia`; each has a catalogue entry waiting. In order:
+
+1. The Palas
+2. The Gurjara-Pratiharas
+3. The Hoysalas
+4. The Yadavas of Devagiri
+5. The Later Pandyas
+6. The Deccan Sultanates
+7. The Nayakas of Madurai
+8. The Sikh Empire
+9. The Ahom Kingdom
+10. Ashoka, a Life
+
+After India:
+
+One subject is still without a story: Invention. Lives to add: Einstein (`europe`).
 
 Biology and Medicine now has The Gene and fits the `world` map; Smallpox, from variolation to eradication, is the remaining biology story.
 
 Suggested after those. These fit a map that already exists, so each is one session:
 
-- The Sikh Empire (`south-asia`)
-- The Deccan Sultanates (`south-asia`)
-- The Chalukyas and Rashtrakutas (`south-asia`)
-- The Palas (`south-asia`)
 - The Hittites (`near-east`)
 - The Parthians and Sasanians (`near-east`)
 - The first caliphates: Rashidun, Umayyad, Abbasid (`near-east`)
@@ -33,6 +44,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Chalukyas and Rashtrakutas (`chalukya-rashtrakuta`), 2026-11-22
 - The Holy Roman Empire (`holy-roman-empire`), 2026-11-17
 - The Roman Empire (`roman-empire`), 2026-11-17
 - The Roman Republic (`roman-republic`), 2026-11-17

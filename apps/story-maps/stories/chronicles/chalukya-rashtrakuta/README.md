@@ -1,0 +1,8 @@
+# The Chalukyas and Rashtrakutas
+
+Status: built. The Deccan from 543 to about 1189 CE: the Chalukyas of Badami (the cliff inscription, the cave temples, Pulakeshin II and Harsha on the Narmada, Vatapi taken by the Pallavas, Pattadakal), the Rashtrakutas (Ellora, Kannauj, Manyakheta, Takkolam) and the Chalukyas of Kalyani (the sack of Manyakheta, Attimabbe, the Cholas, Vikramaditya VI and the end of the kingdom). 16 chapters, 5 people cards and a **Powers** layer that changes lands chapter by chapter.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes of earlier chapters stay on the map (`journey`).
+- Source: History throughout.
+- Native names are in Kannada (`kn`); the Ellora chapters are in Marathi (`mr`), Kannauj in Hindi (`hi`) and Takkolam in Tamil (`ta`).
+- Sources: the Chalukya and Rashtrakuta inscriptions (the Badami cliff inscription of 543, the Aihole inscription of 634, the Kailasanatha and Pattadakal inscriptions, Rashtrakuta copper-plate grants), Xuanzang's account, the Arab merchant Sulaiman's account (c. 851), Bilhana's Vikramankadevacharita, and standard histories (K. A. Nilakanta Sastri, A History of South India; R. C. Majumdar (ed.), The History and Culture of the Indian People). Disputed: the date of Pulakeshin II's victory over Harsha (c. 618 to 635) and the battlefield; the origin of the Rashtrakutas and their capitals before Manyakheta; the authorship of the Kavirajamarga (Amoghavarsha I or Srivijaya); the site and the result of the battle of Koppam (1054); and Basava's role at Bijjala's court, known mainly from later Lingayat tradition.
