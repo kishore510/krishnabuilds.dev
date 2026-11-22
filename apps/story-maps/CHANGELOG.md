@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.92.0
+
+- New story map in Chronicles: The Later Pandyas. The far south from Maravarman Sundara Pandya's sack of Thanjavur in about 1219, through Jatavarman Sundara Pandya's golden roofs and crowning at Nellore, the Tooth Relic, Marco Polo on the pearl coast and the war of brothers, to Malik Kafur in 1311, the Madurai Sultanate and the Pandyas of Tenkasi. 9 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards. With the Hoysalas and the Yadavas, a set of three kingdoms raided by Malik Kafur.
+- Catalogue: the Later Pandyas entry opens the story.
+
 ## 0.91.0
 
 - New story map in Chronicles: The Yadavas of Devagiri. Four centuries of the western Deccan, from the Seunas at Chandor and Bhillama V's rock fort, through Singhana II's astronomers and musicians, Chakradhar Swami, Hemadri and Dnyaneshwar's Marathi Gita, to Alauddin Khalji's raid in 1296, Malik Kafur, the end of the kingdom in 1318 and Daulatabad. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 4 people cards.
