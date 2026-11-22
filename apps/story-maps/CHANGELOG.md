@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.101.0
+
+- New story map in Universe: Missions to the Moon. From Luna 2’s impact in 1959 and the first far-side photographs, through Ranger 7, Luna 9’s soft landing, the Apollo landings and the Soviet robots Luna 16, Lunokhod 1 and 2 and Luna 24, to ice in the dark, China’s Chang’e 3, 4, 5 and 6, India’s Chandrayaan-3, Japan’s SLIM, Blue Ghost, Artemis II and the race for the south pole. 23 chapters on the `moon` basemap, 4 people cards (Korolev, Armstrong, Schmitt, Koch), new glyphs `lander` and `rover`.
+- Catalogue: a new Missions to the Moon entry opens the story; new Apollo 11, Chang’e 4, Chandrayaan-3 and Neil Armstrong entries open it at chapters 5, 16, 18 and 5.
+
 ## 0.100.0
 
 - New `moon` basemap for the Exploring the Solar System series: the whole Moon (lon -180 to 180, lat -90 to 90, 10 units per degree) as a sky basemap (cosmic canvas) whose units are selenographic longitude and latitude, the near side in the middle and the far side at both edges. Maria are simplified from NASA LRO's LROC Global Mare Boundaries; 16 large or well-known craters are drawn as rings from the IAU/USGS gazetteer; the South Pole–Aitken basin is a dashed ring; the limb as seen from Earth is marked at 90° W and 90° E. `scripts/moon/moon.py` rebuilds it. No story uses it yet.
