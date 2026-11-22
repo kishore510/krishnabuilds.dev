@@ -43,6 +43,7 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- The Seleucid Empire (`seleucid`), 2026-11-22
 - Missions to Venus (`venus-missions`), 2026-11-22
 - Missions to Mars (`mars-missions`), 2026-11-22
 - Missions to the Moon (`moon-missions`), 2026-11-22

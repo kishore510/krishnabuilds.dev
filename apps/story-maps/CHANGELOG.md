@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.104.0
+
+- New story map in Chronicles: The Seleucid Empire. From Alexander’s death at Babylon and Seleucus’s return through the elephants of Ipsus, the founding of Antioch and the march of Antiochus the Great to Bactria, to Rome’s victory at Magnesia, the Maccabees, the Parthian conquest of Mesopotamia, Pompey’s end of the dynasty and Dura-Europos dug up. 15 chapters on the `near-east` basemap, a Powers layer (Seleucids, Antigonus, Ptolemaic Egypt, Parthia, Rome), 6 people cards, no new glyphs.
+- Catalogue: the Seleucid Empire entry now opens the story and names the Parthian Empire as its successor.
+
 ## 0.103.0
 
 - New `venus` basemap for the Exploring the Solar System series: the whole of Venus (lon -180 to 180, lat -90 to 90) as a sky basemap whose units are longitude (east positive) and latitude, with heights shaded from Magellan radar altimetry and names, centres and sizes from the IAU/USGS gazetteer; the colours are painted. `scripts/venus/venus.py` rebuilds it.
