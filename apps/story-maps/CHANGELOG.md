@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.107.0
+
+- New story map in Chronicles: The First Caliphates. From Abu Bakr in Medina through the Rashidun conquests, Ali and Karbala, the Umayyads of Damascus and the Dome of the Rock, to the Abbasid revolution, the Round City of Baghdad, the House of Wisdom, Samarra, the Mongol sack of 1258 and the end of the caliphate in 1924. 18 chapters on the `near-east` basemap, a Powers layer (the caliphate, Mu’awiya’s Syria, the Sasanians, Eastern Rome, the Mamluks, the Mongols), 8 people cards, native names in Arabic, and a new place glyph, `minaret`, for the spiral minaret of Samarra.
+- Catalogue: no entry of its own; the Rashidun, Umayyad and Abbasid Caliphate entries now open the story at chapters 1, 7 and 13.
+
 ## 0.106.0
 
 - New story map in Chronicles: The Sasanian Empire. From Ardashir’s round city and Shapur’s capture of a Roman emperor through Mani, the walls of Derbent, Khosrow I’s great arch and the books brought from India, to the last war with Rome, the Arab conquest, the death of Yazdegerd III and Ferdowsi’s Book of Kings. 17 chapters on the `near-east` basemap, a Powers layer (Sasanians, Parthia, Rome, the Lakhmids, the caliphate), 8 people cards, no new glyphs.
