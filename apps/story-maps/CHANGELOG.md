@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.90.0
+
+- New story map in Chronicles: The Hoysalas. Three centuries of southern Karnataka, from the tiger at Sosevur and Vishnuvardhana's victory at Talakad, through the temples of Belur, Halebidu and Somanathapura and the Hoysalas as guardians of the Cholas, to Malik Kafur at Dorasamudra in 1311 and Ballala III's death in 1343. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards.
+- Catalogue: the Hoysala Empire entry opens the story.
+
 ## 0.89.0
 
 - New story map in Chronicles: The Gurjara-Pratiharas. Three centuries of north India, from the Pratiharas holding back Arab armies from Sindh and Vatsaraja's gamble, through Nagabhata II's capture of Kannauj, the zero at Gwalior and the poets of Mahodaya, to the Rashtrakuta sack of Kannauj, the Chandelas' break-away, Mahmud of Ghazni and the Gahadavalas in about 1090. 9 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards.
