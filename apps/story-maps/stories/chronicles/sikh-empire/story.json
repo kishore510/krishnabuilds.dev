@@ -1,0 +1,2342 @@
+{
+  "id": "sikh-empire",
+  "title": "The Sikh Empire",
+  "description": "An illustrated map of the Sikh Empire, from Guru Nanak at Kartarpur and the founding of the Khalsa, through the misls and Ranjit Singh’s conquests of Lahore, Multan, Kashmir and Peshawar, to the Anglo-Sikh wars, the annexation of the Punjab in 1849 and the exile of Duleep Singh.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "pa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the Punjab and the Sikh kingdom, from about 1520 to 1849",
+  "note": "Based on Sikh sources, Persian histories, British records and modern historians; each chapter says which it follows. Some episodes rest on tradition and are labelled so, and death tolls are disputed estimates. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders.",
+  "places": {
+    "kartarpur": {
+      "name": "Kartarpur",
+      "at": [
+        75.02,
+        32.09
+      ],
+      "glyph": "shrine",
+      "label": "top"
+    },
+    "amritsar": {
+      "name": "Amritsar",
+      "at": [
+        74.88,
+        31.62
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "anandpur": {
+      "name": "Anandpur",
+      "at": [
+        76.5,
+        31.24
+      ],
+      "glyph": "flag",
+      "label": "right"
+    },
+    "nanded": {
+      "name": "Nanded",
+      "at": [
+        77.32,
+        19.15
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "sirhind": {
+      "name": "Sirhind",
+      "at": [
+        76.39,
+        30.64
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "kup": {
+      "name": "Kup",
+      "at": [
+        75.9,
+        30.55
+      ],
+      "glyph": "memorial",
+      "label": "bottom"
+    },
+    "gujranwala": {
+      "name": "Gujranwala",
+      "at": [
+        74.19,
+        32.16
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "lahore": {
+      "name": "Lahore",
+      "at": [
+        74.31,
+        31.59
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "attock": {
+      "name": "Attock",
+      "at": [
+        72.24,
+        33.89
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "multan": {
+      "name": "Multan",
+      "at": [
+        71.47,
+        30.2
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "srinagar": {
+      "name": "Srinagar",
+      "at": [
+        74.8,
+        34.08
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "peshawar": {
+      "name": "Peshawar",
+      "at": [
+        71.57,
+        34.01
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "jamrud": {
+      "name": "Jamrud",
+      "at": [
+        71.37,
+        34.0
+      ],
+      "glyph": "fort",
+      "label": "bottom"
+    },
+    "sobraon": {
+      "name": "Sobraon",
+      "at": [
+        74.85,
+        31.13
+      ],
+      "glyph": "crossed-swords",
+      "label": "bottom"
+    },
+    "chillianwala": {
+      "name": "Chillianwala",
+      "at": [
+        73.62,
+        32.65
+      ],
+      "glyph": "crossed-swords",
+      "label": "top"
+    },
+    "fatehgarh": {
+      "name": "Fatehgarh",
+      "at": [
+        79.63,
+        27.37
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "kabul": {
+      "name": "Kabul",
+      "at": [
+        69.2,
+        34.5
+      ],
+      "hidden": true
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.21,
+        28.64
+      ],
+      "hidden": true
+    },
+    "ferozepur": {
+      "name": "Ferozepur",
+      "at": [
+        74.61,
+        30.92
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "guru": {
+      "name": "Guru Gobind Singh",
+      "icon": "prince"
+    },
+    "banda": {
+      "name": "Banda Singh Bahadur",
+      "icon": "horse"
+    },
+    "afghans": {
+      "name": "Ahmad Shah Durrani’s army",
+      "icon": "horse"
+    },
+    "khalsa-army": {
+      "name": "The Sikh army",
+      "icon": "soldier"
+    },
+    "envoy": {
+      "name": "The Company’s envoy",
+      "icon": "scroll"
+    },
+    "company": {
+      "name": "The Company’s army",
+      "icon": "redcoat"
+    },
+    "duleep": {
+      "name": "Duleep Singh",
+      "icon": "prince"
+    }
+  },
+  "phases": {
+    "gurus": {
+      "name": "The Gurus",
+      "color": "#4fc3b0"
+    },
+    "misls": {
+      "name": "The misls",
+      "color": "#5b8fd0"
+    },
+    "rise": {
+      "name": "Ranjit Singh’s rise",
+      "color": "#f29a2e"
+    },
+    "height": {
+      "name": "The kingdom at its height",
+      "color": "#a678e0"
+    },
+    "fall": {
+      "name": "The fall",
+      "color": "#e0573a"
+    },
+    "memory": {
+      "name": "What remains",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "afghan": {
+      "color": "#2f8a4a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "company": {
+      "color": "#2b5fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 30.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 37,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 50.5,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 75.5,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 94.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1539"
+      },
+      {
+        "at": 16,
+        "text": "1699"
+      },
+      {
+        "at": 34,
+        "text": "1762"
+      },
+      {
+        "at": 44,
+        "text": "1799"
+      },
+      {
+        "at": 87,
+        "text": "1849"
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "kartarpur",
+      "phase": "gurus",
+      "title": "The first Guru at Kartarpur",
+      "native": "ਗੁਰੂ ਨਾਨਕ",
+      "when": "c. 1520s to 1539",
+      "at": 2,
+      "camera": {
+        "at": [
+          75.2,
+          32.0
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Guru Nanak, born in 1469 at Talwandi, now Nankana Sahib in Pakistan, taught that there is one God, beyond any one faith, and that all people are equal. After long journeys he settled at Kartarpur, on the Ravi, where his followers (Sikhs, ‘learners’) farmed, sang his hymns and ate together in a free kitchen (langar). He died there in 1539.",
+      "today": "Today: Gurdwara Darbar Sahib, Kartarpur, Pakistan, reached from India by the Kartarpur Corridor since 2019."
+    },
+    {
+      "place": "amritsar",
+      "phase": "gurus",
+      "title": "Guru Arjan and the Harmandir",
+      "native": "ਹਰਿਮੰਦਰ ਸਾਹਿਬ",
+      "when": "1588 to 1606",
+      "at": 9,
+      "camera": {
+        "at": [
+          75.0,
+          31.8
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "The fifth Guru, Arjan, builds the Harmandir Sahib in the pool at Amritsar, with doors on all four sides, open to everyone. In 1604 he installs there the Adi Granth, the hymns of the Gurus with those of Hindu and Muslim saints. Arrested under the Mughal emperor Jahangir, he dies in custody at Lahore in 1606.",
+      "today": "Today: the Golden Temple, Amritsar, Punjab, India."
+    },
+    {
+      "place": "anandpur",
+      "phase": "gurus",
+      "title": "The Khalsa is born",
+      "native": "ਖ਼ਾਲਸਾ",
+      "when": "1699",
+      "at": 16,
+      "camera": {
+        "at": [
+          76.2,
+          31.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "At Anandpur, at the Baisakhi gathering of 1699, the tenth Guru, Gobind Singh, creates the Khalsa, a brotherhood of the initiated. Tradition tells how he called for five men ready to give their heads for the faith. The Khalsa take the name Singh, or Kaur for women, and keep five articles of faith, uncut hair (kesh) among them.",
+      "today": "Today: Takht Sri Kesgarh Sahib, Anandpur Sahib, Punjab, India."
+    },
+    {
+      "place": "nanded",
+      "phase": "gurus",
+      "title": "The Granth becomes the Guru",
+      "native": "ਗੁਰੂ ਗ੍ਰੰਥ ਸਾਹਿਬ",
+      "when": "1708",
+      "at": 22,
+      "camera": {
+        "at": [
+          77.0,
+          25.2
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "anandpur",
+          "to": "nanded",
+          "traveller": "guru",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Guru Gobind Singh, who has lost his four sons in the wars with the Mughals and the hill rajas, travels south with the new emperor, Bahadur Shah. At Nanded, on the Godavari, he is stabbed by an assassin and dies in 1708. He names no human successor: the scripture, the Guru Granth Sahib, is to be the Guru.",
+      "today": "Today: Takht Sachkhand Sri Hazur Sahib, Nanded, Maharashtra."
+    },
+    {
+      "place": "sirhind",
+      "phase": "gurus",
+      "title": "Banda Singh takes Sirhind",
+      "native": "ਬੰਦਾ ਸਿੰਘ ਬਹਾਦਰ",
+      "when": "1710 to 1716",
+      "at": 27,
+      "camera": {
+        "at": [
+          76.9,
+          25.0
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "nanded",
+          "to": "sirhind",
+          "traveller": "banda",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "From Nanded the Guru sent Banda Singh Bahadur north. Gathering Sikh peasants, he defeats and kills Wazir Khan, the Mughal governor of Sirhind, in 1710; Wazir Khan had ordered the deaths of the Guru’s two youngest sons. Banda strikes coins in the Gurus’ name. Captured after a long siege in 1715, he is executed in Delhi in 1716.",
+      "today": "Today: Fatehgarh Sahib, Punjab, where the Guru’s younger sons are remembered."
+    },
+    {
+      "place": "kup",
+      "phase": "misls",
+      "title": "The Great Massacre",
+      "native": "ਵੱਡਾ ਘੱਲੂਘਾਰਾ",
+      "when": "1762",
+      "at": 34,
+      "camera": {
+        "at": [
+          74.0,
+          31.6
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "kabul",
+          "to": "kup",
+          "traveller": "afghans",
+          "style": "afghan",
+          "bend": 0.1
+        }
+      ],
+      "text": "Through the 18th century Sikh bands, later grouped into twelve confederacies (misls), fight Mughal governors and the Afghan king Ahmad Shah Durrani. In February 1762 Durrani falls on a Sikh camp near Kup: the Great Massacre (Vadda Ghallughara). Estimates of the dead run from about 10,000 to 30,000 and are disputed. Weeks later he blows up the Harmandir.",
+      "today": "Today: a memorial at Kup Rahira, near Malerkotla, Punjab."
+    },
+    {
+      "place": "gujranwala",
+      "phase": "rise",
+      "title": "Ranjit Singh of the Sukerchakias",
+      "native": "ਰਣਜੀਤ ਸਿੰਘ",
+      "when": "1780 to 1792",
+      "at": 40,
+      "camera": {
+        "at": [
+          74.3,
+          32.0
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Ranjit Singh is born in 1780, son of Maha Singh, chief of the Sukerchakia misl, with its fort at Gujranwala. Smallpox in childhood leaves him blind in one eye. He becomes chief at about twelve when his father dies, and his mother-in-law Sada Kaur, who leads the Kanhaiya misl, becomes his strongest ally.",
+      "today": "Today: Gujranwala, Punjab, Pakistan."
+    },
+    {
+      "place": "lahore",
+      "phase": "rise",
+      "title": "Lahore, and a Maharaja",
+      "native": "ਲਾਹੌਰ",
+      "when": "1799 to 1801",
+      "at": 44,
+      "camera": {
+        "at": [
+          74.3,
+          31.8
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In July 1799 Ranjit Singh, aged eighteen, rides into Lahore, the old Mughal capital of the Punjab, after its leading men open a gate to him. On Baisakhi in 1801 he is proclaimed Maharaja of the Punjab. He strikes coins in the name of the Gurus, not his own, and calls his state the Sarkar-i-Khalsa.",
+      "today": "Today: Lahore Fort, Punjab, Pakistan, a World Heritage Site."
+    },
+    {
+      "place": "amritsar",
+      "phase": "rise",
+      "title": "The Treaty of Amritsar",
+      "native": "ਅੰਮ੍ਰਿਤਸਰ",
+      "when": "1802 to 1809",
+      "at": 48,
+      "camera": {
+        "at": [
+          75.5,
+          30.2
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "delhi",
+          "to": "amritsar",
+          "traveller": "envoy",
+          "style": "company",
+          "bend": 0.1
+        }
+      ],
+      "text": "Ranjit Singh takes Amritsar in 1802. His raids across the Sutlej alarm the East India Company, and in 1809 its envoy Charles Metcalfe signs a treaty with him at Amritsar: the Company protects the Sikh chiefs south of the Sutlej, and Ranjit Singh is left free to grow north and west. He kept the treaty all his life.",
+      "today": "Today: Amritsar, Punjab, India."
+    },
+    {
+      "place": "attock",
+      "phase": "height",
+      "title": "Attock and the Koh-i-Noor",
+      "native": "ਅਟਕ",
+      "when": "1813",
+      "at": 53,
+      "camera": {
+        "at": [
+          73.3,
+          32.8
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "attock",
+          "traveller": "khalsa-army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1813 Sikh forces seize the fort of Attock, where the old road to Kabul crosses the Indus, and beat the Afghan army sent to retake it. The same year Shah Shuja, an exiled Afghan king held at Lahore, gives up the Koh-i-Noor diamond to Ranjit Singh, who wears it on his arm.",
+      "today": "Today: Attock Fort, Punjab, Pakistan, still an army fort."
+    },
+    {
+      "place": "multan",
+      "phase": "height",
+      "title": "The siege of Multan",
+      "native": "ਮੁਲਤਾਨ",
+      "when": "1818",
+      "at": 57,
+      "camera": {
+        "at": [
+          73.0,
+          31.5
+        ],
+        "width": 11
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "multan",
+          "traveller": "khalsa-army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "After years of raids and tribute, a Sikh army under Misr Diwan Chand storms Multan in June 1818. The rich trading city was held for the Afghans by Nawab Muzaffar Khan, who dies fighting alongside his sons. The great gun Zamzama, now in Lahore, is used in the siege. Multan gives the kingdom the southern Punjab.",
+      "today": "Today: Multan, Punjab, Pakistan."
+    },
+    {
+      "place": "srinagar",
+      "phase": "height",
+      "title": "Kashmir",
+      "native": "ਕਸ਼ਮੀਰ",
+      "when": "1819",
+      "at": 61,
+      "camera": {
+        "at": [
+          74.2,
+          33.2
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "srinagar",
+          "traveller": "khalsa-army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1819, after a failed attempt five years before, Misr Diwan Chand and the prince Kharak Singh defeat the Afghan governor’s army at Shopian and take Kashmir. The valley’s shawl weavers and saffron fields pay heavy taxes to governors sent from Lahore, and Kashmir stays under Sikh rule for twenty-seven years.",
+      "today": "Today: Srinagar, Jammu and Kashmir, India."
+    },
+    {
+      "place": "peshawar",
+      "phase": "height",
+      "title": "To the Khyber",
+      "native": "ਪਿਸ਼ਾਵਰ",
+      "when": "1834",
+      "at": 65,
+      "camera": {
+        "at": [
+          73.0,
+          33.0
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "peshawar",
+          "traveller": "khalsa-army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Peshawar has paid tribute since the Sikh victory at Nowshera in 1823. In 1834 Hari Singh Nalwa, the kingdom’s boldest general, takes it outright and becomes its governor, building forts to hold the frontier. The kingdom now reaches the Khyber Pass, the gateway to Afghanistan, as far west as it will ever go.",
+      "today": "Today: Peshawar, Khyber Pakhtunkhwa, Pakistan."
+    },
+    {
+      "place": "jamrud",
+      "phase": "height",
+      "title": "Hari Singh falls at Jamrud",
+      "native": "ਜਮਰੌਦ",
+      "when": "1837",
+      "at": 69,
+      "camera": {
+        "at": [
+          72.5,
+          33.0
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "kabul",
+          "to": "jamrud",
+          "traveller": "afghans",
+          "style": "afghan",
+          "bend": 0.1
+        }
+      ],
+      "text": "At the mouth of the Khyber Pass Hari Singh Nalwa builds the fort of Jamrud. In April 1837 an Afghan army sent by Dost Mohammad Khan attacks it. Hari Singh rides out, is mortally wounded, and orders his death kept secret until help arrives from Lahore. The fort holds and the Afghans fall back.",
+      "today": "Today: Jamrud Fort, Khyber district, Pakistan."
+    },
+    {
+      "place": "lahore",
+      "phase": "height",
+      "title": "The Maharaja’s court",
+      "native": "ਸਰਕਾਰ-ਏ-ਖ਼ਾਲਸਾ",
+      "when": "1820s to 1839",
+      "at": 73,
+      "camera": {
+        "at": [
+          74.3,
+          31.8
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Ranjit Singh’s court mixes faiths: Fakir Azizuddin, a Muslim, handles foreign affairs, and the Dogra brothers Gulab Singh and Dhian Singh, Hindus, are among his most powerful nobles. Former officers of Napoleon, Jean-Baptiste Ventura and Jean-François Allard, help train an army on European lines. Ranjit Singh dies at Lahore in June 1839.",
+      "today": "Today: his samadhi beside the Badshahi Mosque, Lahore."
+    },
+    {
+      "place": "lahore",
+      "phase": "fall",
+      "title": "A court at war with itself",
+      "native": "ਦਲੀਪ ਸਿੰਘ",
+      "when": "1839 to 1843",
+      "at": 78,
+      "camera": {
+        "at": [
+          74.3,
+          31.8
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Without Ranjit Singh the court tears itself apart. His son Kharak Singh dies in 1840; his grandson Nau Nihal Singh is killed by a falling archway on the day of his father’s cremation. Sher Singh, another son, is murdered in 1843, with Dhian Singh. The boy Duleep Singh is crowned, with his mother, Jind Kaur, as regent.",
+      "today": "Today: Lahore Fort, where much of it happened."
+    },
+    {
+      "place": "sobraon",
+      "phase": "fall",
+      "title": "The First Anglo-Sikh War",
+      "native": "ਸਭਰਾਉਂ",
+      "when": "1845 to 1846",
+      "at": 83,
+      "camera": {
+        "at": [
+          74.9,
+          31.6
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In December 1845 the Sikh army crosses the Sutlej. Four hard battles follow: Mudki, Ferozeshah, Aliwal and, in February 1846, Sobraon, where the Sikh army is pinned against the river and routed. By the Treaty of Lahore the kingdom loses the Jalandhar Doab, and by the Treaty of Amritsar Kashmir is sold to Gulab Singh.",
+      "today": "Today: Sobraon, near Harike on the Sutlej, Punjab, India."
+    },
+    {
+      "place": "chillianwala",
+      "phase": "fall",
+      "title": "Chillianwala and the annexation",
+      "native": "ਚਿਲਿਆਂਵਾਲਾ",
+      "when": "1848 to 1849",
+      "at": 87,
+      "camera": {
+        "at": [
+          74.0,
+          31.8
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "ferozepur",
+          "to": "chillianwala",
+          "traveller": "company",
+          "style": "company",
+          "bend": 0.1
+        }
+      ],
+      "text": "A revolt at Multan in 1848 grows into the Second Anglo-Sikh War. At Chillianwala, in January 1849, the Sikhs inflict some of the Company’s heaviest losses in India; at Gujrat in February they are defeated. On 29 March 1849 the Company annexes the Punjab, and Duleep Singh, aged ten, signs away his kingdom.",
+      "today": "Today: Chillianwala, Mandi Bahauddin district, Pakistan, with its British war memorial."
+    },
+    {
+      "place": "fatehgarh",
+      "phase": "fall",
+      "title": "The diamond and the boy king",
+      "native": "ਕੋਹਿਨੂਰ",
+      "when": "1849 to 1893",
+      "at": 91,
+      "camera": {
+        "at": [
+          77.0,
+          29.5
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "fatehgarh",
+          "traveller": "duleep",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Under the terms of annexation the Koh-i-Noor goes to Queen Victoria in 1850; it is now among the Crown Jewels in London. Duleep Singh is sent to Fatehgarh, becomes a Christian and in 1854 sails for England, where he lives as a country squire. Late in life he returns to the Sikh faith. He dies in Paris in 1893.",
+      "today": "Today: Fatehgarh, Uttar Pradesh. India, Pakistan, Iran and Afghanistan have all claimed the Koh-i-Noor."
+    },
+    {
+      "place": "amritsar",
+      "phase": "memory",
+      "title": "The Golden Temple",
+      "native": "ਸੁਨਹਿਰੀ ਮੰਦਰ",
+      "when": "Today",
+      "at": 98,
+      "camera": {
+        "at": [
+          75.2,
+          31.8
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Ranjit Singh covered the upper Harmandir Sahib in gilded copper, which is why the world calls it the Golden Temple. In 1947 the Punjab he ruled was split between India and Pakistan, and millions crossed the new border. His capital Lahore, and Kartarpur and Nankana Sahib, lie in Pakistan, and Sikhs make pilgrimages there.",
+      "today": "Today: the Golden Temple, Amritsar, visited by tens of thousands of people every day."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "sikh",
+        "name": "The Sikh kingdom",
+        "native": "ਸਰਕਾਰ-ਏ-ਖ਼ਾਲਸਾ",
+        "color": "#f29a2e",
+        "active": [
+          [
+            7,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Sikh kingdom",
+          "at": [
+            74.0,
+            32.5
+          ],
+          "moves": [
+            {
+              "from": 9,
+              "at": [
+                73.0,
+                32.7
+              ]
+            },
+            {
+              "from": 17,
+              "at": [
+                72.3,
+                31.6
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73.4,
+                  32.5
+                ],
+                [
+                  74.6,
+                  32.6
+                ],
+                [
+                  75.3,
+                  32.3
+                ],
+                [
+                  75.3,
+                  31.8
+                ],
+                [
+                  75.0,
+                  31.2
+                ],
+                [
+                  74.3,
+                  30.85
+                ],
+                [
+                  73.5,
+                  31.0
+                ],
+                [
+                  73.2,
+                  31.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.8,
+                  33.0
+                ],
+                [
+                  74.0,
+                  33.0
+                ],
+                [
+                  74.9,
+                  32.5
+                ],
+                [
+                  75.9,
+                  32.1
+                ],
+                [
+                  76.4,
+                  31.6
+                ],
+                [
+                  76.5,
+                  31.1
+                ],
+                [
+                  75.9,
+                  30.95
+                ],
+                [
+                  75.0,
+                  31.1
+                ],
+                [
+                  74.2,
+                  30.7
+                ],
+                [
+                  73.2,
+                  30.9
+                ],
+                [
+                  72.9,
+                  31.6
+                ],
+                [
+                  72.6,
+                  32.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.0,
+                  34.1
+                ],
+                [
+                  72.9,
+                  34.0
+                ],
+                [
+                  73.5,
+                  33.6
+                ],
+                [
+                  74.1,
+                  33.1
+                ],
+                [
+                  74.9,
+                  32.5
+                ],
+                [
+                  75.9,
+                  32.1
+                ],
+                [
+                  76.4,
+                  31.6
+                ],
+                [
+                  76.5,
+                  31.1
+                ],
+                [
+                  75.9,
+                  30.95
+                ],
+                [
+                  75.0,
+                  31.1
+                ],
+                [
+                  74.2,
+                  30.7
+                ],
+                [
+                  73.2,
+                  30.9
+                ],
+                [
+                  72.6,
+                  31.6
+                ],
+                [
+                  72.2,
+                  32.3
+                ],
+                [
+                  71.8,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.0,
+                  34.1
+                ],
+                [
+                  72.9,
+                  34.0
+                ],
+                [
+                  73.5,
+                  33.6
+                ],
+                [
+                  74.1,
+                  33.1
+                ],
+                [
+                  74.9,
+                  32.5
+                ],
+                [
+                  75.9,
+                  32.1
+                ],
+                [
+                  76.4,
+                  31.6
+                ],
+                [
+                  76.5,
+                  31.1
+                ],
+                [
+                  75.9,
+                  30.95
+                ],
+                [
+                  75.0,
+                  31.1
+                ],
+                [
+                  74.2,
+                  30.7
+                ],
+                [
+                  73.0,
+                  30.2
+                ],
+                [
+                  71.8,
+                  29.7
+                ],
+                [
+                  71.0,
+                  29.4
+                ],
+                [
+                  70.9,
+                  30.0
+                ],
+                [
+                  71.0,
+                  31.0
+                ],
+                [
+                  71.5,
+                  31.8
+                ],
+                [
+                  71.8,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.0,
+                  34.1
+                ],
+                [
+                  72.9,
+                  34.0
+                ],
+                [
+                  73.5,
+                  33.6
+                ],
+                [
+                  74.1,
+                  33.1
+                ],
+                [
+                  74.9,
+                  32.5
+                ],
+                [
+                  75.9,
+                  32.1
+                ],
+                [
+                  76.4,
+                  31.6
+                ],
+                [
+                  76.5,
+                  31.1
+                ],
+                [
+                  75.9,
+                  30.95
+                ],
+                [
+                  75.0,
+                  31.1
+                ],
+                [
+                  74.2,
+                  30.7
+                ],
+                [
+                  73.0,
+                  30.2
+                ],
+                [
+                  71.8,
+                  29.7
+                ],
+                [
+                  71.0,
+                  29.4
+                ],
+                [
+                  70.9,
+                  30.0
+                ],
+                [
+                  71.0,
+                  31.0
+                ],
+                [
+                  71.5,
+                  31.8
+                ],
+                [
+                  71.8,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                16,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.0,
+                  34.1
+                ],
+                [
+                  72.9,
+                  34.0
+                ],
+                [
+                  73.5,
+                  33.6
+                ],
+                [
+                  74.1,
+                  33.1
+                ],
+                [
+                  74.9,
+                  32.5
+                ],
+                [
+                  75.3,
+                  31.9
+                ],
+                [
+                  75.1,
+                  31.4
+                ],
+                [
+                  75.0,
+                  31.15
+                ],
+                [
+                  74.2,
+                  30.7
+                ],
+                [
+                  73.0,
+                  30.2
+                ],
+                [
+                  71.8,
+                  29.7
+                ],
+                [
+                  71.0,
+                  29.4
+                ],
+                [
+                  70.9,
+                  30.0
+                ],
+                [
+                  71.0,
+                  31.0
+                ],
+                [
+                  71.5,
+                  31.8
+                ],
+                [
+                  71.8,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73.7,
+                  33.6
+                ],
+                [
+                  74.4,
+                  34.3
+                ],
+                [
+                  75.4,
+                  34.5
+                ],
+                [
+                  75.9,
+                  34.0
+                ],
+                [
+                  75.6,
+                  33.2
+                ],
+                [
+                  75.0,
+                  32.6
+                ],
+                [
+                  74.2,
+                  32.7
+                ],
+                [
+                  73.8,
+                  33.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.0,
+                  34.2
+                ],
+                [
+                  71.6,
+                  34.3
+                ],
+                [
+                  72.3,
+                  34.1
+                ],
+                [
+                  72.0,
+                  33.6
+                ],
+                [
+                  71.8,
+                  33.0
+                ],
+                [
+                  71.5,
+                  32.2
+                ],
+                [
+                  71.0,
+                  31.8
+                ],
+                [
+                  70.6,
+                  32.2
+                ],
+                [
+                  70.9,
+                  33.2
+                ],
+                [
+                  71.0,
+                  33.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Lahore",
+          "Army": "The Khalsa, trained partly on European lines",
+          "Ended": "Annexed by the East India Company in 1849",
+          "Today": "The Punjab in India and Pakistan; at its height also Kashmir and Peshawar"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Ranjit Singh"
+          },
+          {
+            "from": 15,
+            "text": "Kharak Singh, Sher Singh and Duleep Singh in turn"
+          }
+        ],
+        "role": "The kingdom of the five rivers that Ranjit Singh built from the Sikh misls, ruled from Lahore, called by its own people the Sarkar-i-Khalsa.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Treaty with the Company, 1809"
+          },
+          {
+            "from": 16,
+            "text": "Loses the Jalandhar Doab, 1846"
+          },
+          {
+            "from": 16,
+            "text": "Kashmir sold to Gulab Singh, 1846"
+          }
+        ]
+      },
+      {
+        "id": "durrani",
+        "name": "The Durrani Afghans",
+        "native": "ਦੁੱਰਾਨੀ",
+        "color": "#2f8a4a",
+        "active": [
+          [
+            5,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Durrani",
+          "at": [
+            70.0,
+            34.9
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.0,
+                  29.5
+                ],
+                [
+                  68.0,
+                  37.0
+                ],
+                [
+                  71.5,
+                  37.0
+                ],
+                [
+                  73.5,
+                  36.0
+                ],
+                [
+                  75.0,
+                  35.3
+                ],
+                [
+                  76.0,
+                  34.3
+                ],
+                [
+                  75.8,
+                  33.2
+                ],
+                [
+                  75.0,
+                  32.2
+                ],
+                [
+                  74.2,
+                  31.5
+                ],
+                [
+                  73.0,
+                  30.8
+                ],
+                [
+                  72.0,
+                  30.0
+                ],
+                [
+                  70.8,
+                  29.4
+                ],
+                [
+                  69.5,
+                  29.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.0,
+                  29.8
+                ],
+                [
+                  68.0,
+                  37.0
+                ],
+                [
+                  71.5,
+                  37.0
+                ],
+                [
+                  72.4,
+                  36.3
+                ],
+                [
+                  72.9,
+                  34.8
+                ],
+                [
+                  72.8,
+                  34.0
+                ],
+                [
+                  72.3,
+                  33.3
+                ],
+                [
+                  71.7,
+                  32.5
+                ],
+                [
+                  71.1,
+                  31.4
+                ],
+                [
+                  70.6,
+                  30.5
+                ],
+                [
+                  70.0,
+                  29.7
+                ],
+                [
+                  69.0,
+                  29.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  70.9,
+                  29.9
+                ],
+                [
+                  71.4,
+                  29.6
+                ],
+                [
+                  72.2,
+                  29.7
+                ],
+                [
+                  72.3,
+                  30.4
+                ],
+                [
+                  71.8,
+                  30.8
+                ],
+                [
+                  71.2,
+                  30.7
+                ],
+                [
+                  70.8,
+                  30.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73.8,
+                  33.8
+                ],
+                [
+                  74.4,
+                  34.4
+                ],
+                [
+                  75.3,
+                  34.6
+                ],
+                [
+                  75.9,
+                  34.2
+                ],
+                [
+                  75.7,
+                  33.4
+                ],
+                [
+                  74.9,
+                  33.0
+                ],
+                [
+                  74.2,
+                  33.1
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.0,
+                  29.8
+                ],
+                [
+                  68.0,
+                  37.0
+                ],
+                [
+                  71.5,
+                  37.0
+                ],
+                [
+                  72.0,
+                  36.2
+                ],
+                [
+                  72.0,
+                  34.6
+                ],
+                [
+                  71.8,
+                  33.8
+                ],
+                [
+                  71.5,
+                  32.5
+                ],
+                [
+                  71.0,
+                  31.4
+                ],
+                [
+                  70.6,
+                  30.5
+                ],
+                [
+                  70.0,
+                  29.7
+                ],
+                [
+                  69.0,
+                  29.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.0,
+                  29.8
+                ],
+                [
+                  68.0,
+                  37.0
+                ],
+                [
+                  70.8,
+                  37.0
+                ],
+                [
+                  71.1,
+                  36.2
+                ],
+                [
+                  71.0,
+                  34.8
+                ],
+                [
+                  70.9,
+                  34.1
+                ],
+                [
+                  70.5,
+                  33.2
+                ],
+                [
+                  70.3,
+                  32.0
+                ],
+                [
+                  70.0,
+                  30.8
+                ],
+                [
+                  69.5,
+                  29.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Kandahar, then Kabul",
+          "Founded": "1747, by Ahmad Shah Durrani",
+          "Today": "Afghanistan, with lands now in Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 5,
+            "text": "Ahmad Shah Durrani"
+          },
+          {
+            "from": 6,
+            "text": "His successors"
+          },
+          {
+            "from": 13,
+            "text": "Dost Mohammad Khan, at Kabul"
+          }
+        ],
+        "role": "The Afghan empire of Ahmad Shah Durrani, whose armies came down on the Punjab again and again, until the Sikhs pushed its frontier back to the Khyber.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Falls on the Sikhs at Kup, 1762"
+          },
+          {
+            "from": 9,
+            "text": "Loses Attock to the Sikhs"
+          },
+          {
+            "from": 10,
+            "text": "Loses Multan"
+          },
+          {
+            "from": 11,
+            "text": "Loses Kashmir"
+          },
+          {
+            "from": 12,
+            "text": "Loses Peshawar"
+          }
+        ]
+      },
+      {
+        "id": "mughal",
+        "name": "The Mughal Empire",
+        "color": "#9a4f96",
+        "active": [
+          [
+            1,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Mughal Empire",
+          "at": [
+            80.0,
+            25.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.5,
+                  32.0
+                ],
+                [
+                  73.5,
+                  33.0
+                ],
+                [
+                  75.5,
+                  32.8
+                ],
+                [
+                  77.5,
+                  30.5
+                ],
+                [
+                  80.0,
+                  29.5
+                ],
+                [
+                  82.0,
+                  27.8
+                ],
+                [
+                  85.5,
+                  26.5
+                ],
+                [
+                  88.0,
+                  26.0
+                ],
+                [
+                  88.8,
+                  24.0
+                ],
+                [
+                  87.0,
+                  22.5
+                ],
+                [
+                  85.0,
+                  22.0
+                ],
+                [
+                  82.0,
+                  21.5
+                ],
+                [
+                  80.0,
+                  20.5
+                ],
+                [
+                  77.0,
+                  20.5
+                ],
+                [
+                  74.5,
+                  20.4
+                ],
+                [
+                  73.0,
+                  22.0
+                ],
+                [
+                  72.5,
+                  24.5
+                ],
+                [
+                  72.0,
+                  27.0
+                ],
+                [
+                  71.8,
+                  30.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.5,
+                  32.0
+                ],
+                [
+                  73.5,
+                  33.0
+                ],
+                [
+                  75.5,
+                  32.8
+                ],
+                [
+                  77.5,
+                  30.5
+                ],
+                [
+                  80.0,
+                  29.5
+                ],
+                [
+                  82.0,
+                  27.8
+                ],
+                [
+                  85.5,
+                  26.5
+                ],
+                [
+                  88.0,
+                  26.0
+                ],
+                [
+                  88.8,
+                  24.0
+                ],
+                [
+                  87.0,
+                  22.5
+                ],
+                [
+                  85.0,
+                  22.0
+                ],
+                [
+                  82.0,
+                  21.5
+                ],
+                [
+                  80.0,
+                  19.5
+                ],
+                [
+                  78.5,
+                  18.2
+                ],
+                [
+                  76.0,
+                  18.3
+                ],
+                [
+                  74.5,
+                  19.0
+                ],
+                [
+                  73.5,
+                  20.4
+                ],
+                [
+                  73.0,
+                  22.0
+                ],
+                [
+                  72.5,
+                  24.5
+                ],
+                [
+                  72.0,
+                  27.0
+                ],
+                [
+                  71.8,
+                  30.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Agra, Delhi and Lahore, in turn",
+          "Today": "North India, Pakistan and Bangladesh, with the Deccan at its edge"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Jahangir"
+          },
+          {
+            "from": 2,
+            "text": "Aurangzeb"
+          },
+          {
+            "from": 3,
+            "text": "Bahadur Shah I"
+          },
+          {
+            "from": 4,
+            "text": "Bahadur Shah I and his successors"
+          }
+        ],
+        "role": "The empire of the Gurus' time, whose governors, courts and armies the early Sikhs lived under and fought.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Arrests Guru Arjan, who dies in custody"
+          },
+          {
+            "from": 4,
+            "text": "Loses Sirhind to Banda Singh, 1710"
+          }
+        ]
+      },
+      {
+        "id": "company",
+        "name": "The East India Company",
+        "color": "#2b5fb4",
+        "active": [
+          [
+            8,
+            19
+          ]
+        ],
+        "label": {
+          "text": "Company",
+          "at": [
+            77.9,
+            28.5
+          ],
+          "moves": [
+            {
+              "from": 18,
+              "at": [
+                73.2,
+                32.9
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                8,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  76.9,
+                  28.9
+                ],
+                [
+                  77.5,
+                  30.0
+                ],
+                [
+                  79.5,
+                  30.3
+                ],
+                [
+                  81.5,
+                  28.8
+                ],
+                [
+                  84.0,
+                  27.5
+                ],
+                [
+                  87.0,
+                  26.8
+                ],
+                [
+                  89.0,
+                  25.6
+                ],
+                [
+                  88.6,
+                  23.0
+                ],
+                [
+                  87.0,
+                  22.3
+                ],
+                [
+                  85.5,
+                  23.5
+                ],
+                [
+                  84.0,
+                  24.0
+                ],
+                [
+                  82.0,
+                  24.2
+                ],
+                [
+                  80.0,
+                  25.0
+                ],
+                [
+                  78.6,
+                  26.0
+                ],
+                [
+                  77.4,
+                  27.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.3,
+                  30.7
+                ],
+                [
+                  75.3,
+                  30.9
+                ],
+                [
+                  76.3,
+                  30.95
+                ],
+                [
+                  76.9,
+                  30.4
+                ],
+                [
+                  76.5,
+                  29.8
+                ],
+                [
+                  75.5,
+                  29.5
+                ],
+                [
+                  74.7,
+                  29.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                16,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.0,
+                  31.1
+                ],
+                [
+                  75.3,
+                  31.9
+                ],
+                [
+                  75.9,
+                  32.1
+                ],
+                [
+                  76.4,
+                  31.6
+                ],
+                [
+                  76.5,
+                  31.1
+                ],
+                [
+                  75.9,
+                  30.95
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                18,
+                19
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  70.9,
+                  34.2
+                ],
+                [
+                  72.3,
+                  34.2
+                ],
+                [
+                  73.5,
+                  33.8
+                ],
+                [
+                  74.5,
+                  33.2
+                ],
+                [
+                  75.5,
+                  32.8
+                ],
+                [
+                  76.4,
+                  32.0
+                ],
+                [
+                  76.5,
+                  31.1
+                ],
+                [
+                  75.9,
+                  30.9
+                ],
+                [
+                  74.6,
+                  30.8
+                ],
+                [
+                  73.0,
+                  30.2
+                ],
+                [
+                  71.0,
+                  29.35
+                ],
+                [
+                  70.7,
+                  30.0
+                ],
+                [
+                  70.8,
+                  31.2
+                ],
+                [
+                  70.7,
+                  32.2
+                ],
+                [
+                  70.9,
+                  33.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Calcutta",
+          "Today": "Bengal, the Ganga plain and, by 1849, the Punjab"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "The Governor-General, at Calcutta"
+          }
+        ],
+        "role": "A trading company turned ruler of the Ganga plain, watching the Sikh kingdom across the Sutlej until it took the Punjab.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Treaty with Ranjit Singh, 1809"
+          },
+          {
+            "from": 16,
+            "text": "Takes the Jalandhar Doab, 1846"
+          },
+          {
+            "from": 18,
+            "text": "Annexes the Punjab, 1849"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "guru-nanak",
+        "name": "Guru Nanak",
+        "native": "ਗੁਰੂ ਨਾਨਕ",
+        "life": "1469 to 1539",
+        "role": "First Guru of the Sikhs",
+        "steps": [
+          0
+        ],
+        "text": "Born at Talwandi to a Hindu Khatri family, Nanak worked as a storekeeper at Sultanpur Lodhi until, tradition says, a vision came to him in the river Bein. He then travelled widely, tradition says as far as Mecca and Sri Lanka, with the Muslim musician Mardana. His hymns, in Punjabi, open the Guru Granth Sahib."
+      },
+      {
+        "id": "gobind-singh",
+        "name": "Guru Gobind Singh",
+        "native": "ਗੁਰੂ ਗੋਬਿੰਦ ਸਿੰਘ",
+        "life": "1666 to 1708",
+        "role": "Tenth Guru of the Sikhs",
+        "steps": [
+          2,
+          3
+        ],
+        "text": "Born at Patna, son of the ninth Guru, Tegh Bahadur, who was executed in Delhi in 1675 on Aurangzeb’s orders. He became Guru at nine, founded the Khalsa in 1699 and fought the Mughals and the hill rajas from Anandpur. A poet in several languages, he made the scripture the Guru after him."
+      },
+      {
+        "id": "banda",
+        "name": "Banda Singh Bahadur",
+        "native": "ਬੰਦਾ ਸਿੰਘ ਬਹਾਦਰ",
+        "life": "1670 to 1716",
+        "role": "Sikh commander",
+        "steps": [
+          4
+        ],
+        "text": "Born Lachman Dev, he became an ascetic named Madho Das and was living at Nanded when he met Guru Gobind Singh in 1708. Sent north, he led the first great Sikh rising against Mughal rule, took Sirhind and held a fort at Lohgarh. After a long siege he was captured at Gurdas Nangal and executed in Delhi."
+      },
+      {
+        "id": "ranjit-singh",
+        "name": "Ranjit Singh",
+        "native": "ਮਹਾਰਾਜਾ ਰਣਜੀਤ ਸਿੰਘ",
+        "life": "1780 to 1839",
+        "role": "Maharaja of the Punjab",
+        "steps": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "text": "Short, pockmarked and blind in one eye, he was a superb horseman and soldier who never learned to read. It was said he never passed a death sentence, and he gave high office to Sikhs, Hindus and Muslims alike. Called the Lion of the Punjab (Sher-e-Punjab), he kept the peace with the British until he died."
+      },
+      {
+        "id": "hari-singh-nalwa",
+        "name": "Hari Singh Nalwa",
+        "native": "ਹਰੀ ਸਿੰਘ ਨਲੂਆ",
+        "life": "1791 to 1837",
+        "role": "Commander and governor",
+        "steps": [
+          11,
+          12,
+          13
+        ],
+        "text": "A Sikh commander from Gujranwala who fought at Attock, Multan and Kashmir, governed Kashmir and then Peshawar, and founded the town of Haripur. Legend says that as a young man he killed a tiger with his bare hands. He fell at Jamrud in 1837, holding the Khyber frontier."
+      },
+      {
+        "id": "jind-kaur",
+        "name": "Jind Kaur",
+        "native": "ਮਹਾਰਾਣੀ ਜਿੰਦ ਕੌਰ",
+        "life": "1817 to 1863",
+        "role": "Regent of the Punjab",
+        "steps": [
+          15,
+          16,
+          17
+        ],
+        "text": "The youngest wife of Ranjit Singh and mother of Duleep Singh, she ruled as regent from 1843. The British saw her as their most dangerous opponent: they removed her from Lahore, then held her at Chunar fort, from which she escaped to Nepal in disguise in 1849. She was reunited with her son in 1861 and died in London."
+      },
+      {
+        "id": "duleep-singh",
+        "name": "Duleep Singh",
+        "native": "ਦਲੀਪ ਸਿੰਘ",
+        "life": "1838 to 1893",
+        "role": "Last Maharaja of the Punjab",
+        "steps": [
+          15,
+          17,
+          18
+        ],
+        "text": "Ranjit Singh’s youngest son, crowned at five and deposed at ten. Raised in England as a favourite of Queen Victoria, he bought the Elveden estate in Suffolk. Reunited with his mother, he grew bitter at the loss of his kingdom, returned to the Sikh faith in 1886 and tried, and failed, to go back to India."
+      }
+    ]
+  }
+}

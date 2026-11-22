@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.95.0
+
+- New story map in Chronicles: The Sikh Empire. From Guru Nanak at Kartarpur, the Harmandir and the founding of the Khalsa in 1699, through Banda Singh at Sirhind, the Great Massacre and the misls, to Ranjit Singh’s Lahore, the Treaty of Amritsar, Attock and the Koh-i-Noor, Multan, Kashmir, Peshawar and Jamrud, the two Anglo-Sikh wars, the annexation in 1849 and Duleep Singh’s exile. 20 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 7 people cards.
+- Catalogue: the Sikh Empire entry opens the story; new Guru Nanak and Ranjit Singh entries open it at chapters 1 and 7.
+
 ## 0.94.0
 
 - New story map in Chronicles: The Nayakas of Madurai. Vijayanagara's governors in the old Pandya country, from Kumara Kampana's conquest of Madurai in about 1371 and Viswanatha's palayam system, through Talikota, Roberto de Nobili, the Rock Fort and Tirumala Nayaka's palace, to the war of noses, Thanjavur and Ekoji, Rani Mangammal, Queen Meenakshi's fall to Chanda Sahib in 1736, the poligars and the towers of the Meenakshi temple. 13 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 6 people cards.

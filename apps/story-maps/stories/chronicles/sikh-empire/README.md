@@ -1,0 +1,6 @@
+# The Sikh Empire
+
+Status: built. The Sikh Empire, from Guru Nanak at Kartarpur and the Harmandir to the Khalsa of 1699, Banda Singh at Sirhind, the Great Massacre and the misls, then Ranjit Singh’s Lahore, the Treaty of Amritsar, Attock and the Koh-i-Noor, Multan, Kashmir, Peshawar and Jamrud, the court, the two Anglo-Sikh wars, the annexation of 1849 and Duleep Singh’s exile, and the Golden Temple today. 20 chapters, a Powers layer and 7 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library. Routes show only for the current chapter.
+- Sources: Sikh tradition and writings (the janamsakhis on Guru Nanak, written down later; the Guru Granth Sahib), Persian histories of the Mughal and Lahore courts such as Sohan Lal Suri’s Umdat-ut-Tawarikh, British and Company records and travellers’ accounts, and modern historians. Disputed or traditional: the details of Guru Nanak’s travels, the call for five heads in 1699, Hari Singh Nalwa’s tiger, the dead of the Vadda Ghallughara (given as an estimated 10,000 to 30,000), whether Kharak Singh was poisoned and whether the archway that killed Nau Nihal Singh fell by accident. Native names are in Punjabi (`pa`). Powers areas are loose regions, not borders.
