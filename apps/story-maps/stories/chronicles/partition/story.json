@@ -1,0 +1,2463 @@
+{
+  "id": "partition",
+  "title": "The Partition of India",
+  "description": "An illustrated map of the Partition of India, from the Lahore Resolution of 1940 through the riots of 1946, the 3 June Plan and the Radcliffe Line, to independence in Karachi and Delhi, the trains and refugee columns of Punjab, the princely states, Gandhi’s death, and the second partition of 1971 that made Bangladesh.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "hi",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of British India and its partition, from 1940 to 1971",
+  "note": "Based on official records, the leaders’ own words, survivors’ accounts and modern historians. Death tolls and numbers of people displaced are disputed estimates and are given as such. The map is stylised and not to scale: Lahore and Amritsar are drawn a little further apart than they are, Karachi sits just inside the map’s western edge, and the areas under Powers are painted loosely and are not borders; Kashmir is left unpainted because its status is disputed.",
+  "places": {
+    "lahore": {
+      "name": "Lahore",
+      "at": [
+        73.9,
+        31.6
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "simla": {
+      "name": "Simla",
+      "at": [
+        77.17,
+        31.1
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.21,
+        28.61
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "calcutta": {
+      "name": "Calcutta",
+      "at": [
+        88.36,
+        22.57
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "noakhali": {
+      "name": "Noakhali",
+      "at": [
+        91.1,
+        22.82
+      ],
+      "glyph": "village",
+      "label": "right"
+    },
+    "rawalpindi": {
+      "name": "Rawalpindi",
+      "at": [
+        73.05,
+        33.6
+      ],
+      "glyph": "house-fire",
+      "label": "right"
+    },
+    "peshawar": {
+      "name": "Peshawar",
+      "at": [
+        71.58,
+        34.01
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "gurdaspur": {
+      "name": "Gurdaspur",
+      "at": [
+        75.4,
+        32.04
+      ],
+      "glyph": "treaty",
+      "label": "top"
+    },
+    "karachi": {
+      "name": "Karachi",
+      "at": [
+        68.55,
+        24.75
+      ],
+      "glyph": "flag",
+      "label": "right"
+    },
+    "amritsar": {
+      "name": "Amritsar",
+      "at": [
+        75.5,
+        31.65
+      ],
+      "glyph": "shrine",
+      "label": "right"
+    },
+    "lyallpur": {
+      "name": "Lyallpur",
+      "at": [
+        73.08,
+        31.42
+      ],
+      "glyph": "village",
+      "label": "left"
+    },
+    "kurukshetra": {
+      "name": "Kurukshetra",
+      "at": [
+        76.84,
+        29.97
+      ],
+      "glyph": "field-hospital",
+      "label": "right"
+    },
+    "junagadh": {
+      "name": "Junagadh",
+      "at": [
+        70.46,
+        21.52
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "srinagar": {
+      "name": "Srinagar",
+      "at": [
+        74.8,
+        34.08
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "hyderabad": {
+      "name": "Hyderabad",
+      "at": [
+        78.49,
+        17.39
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "chandigarh": {
+      "name": "Chandigarh",
+      "at": [
+        76.78,
+        30.73
+      ],
+      "glyph": "dome",
+      "label": "right"
+    },
+    "dhaka": {
+      "name": "Dhaka",
+      "at": [
+        90.41,
+        23.81
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "attari": {
+      "name": "Attari",
+      "at": [
+        74.7,
+        31.55
+      ],
+      "glyph": "gate",
+      "label": "bottom"
+    },
+    "muzaffarabad": {
+      "name": "Muzaffarabad",
+      "at": [
+        73.47,
+        34.37
+      ],
+      "hidden": true
+    },
+    "solapur": {
+      "name": "Solapur",
+      "at": [
+        75.91,
+        17.66
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "chronicle": {
+      "name": "The chronicle",
+      "icon": "scroll"
+    },
+    "train": {
+      "name": "Refugee trains",
+      "icon": "train"
+    },
+    "refugees": {
+      "name": "Refugee columns on foot",
+      "icon": "refugees"
+    },
+    "soldier": {
+      "name": "Troops",
+      "icon": "soldier"
+    }
+  },
+  "phases": {
+    "demand": {
+      "name": "The demand for Pakistan",
+      "color": "#4fc3b0"
+    },
+    "riots": {
+      "name": "A year of riots",
+      "color": "#e0573a"
+    },
+    "division": {
+      "name": "Dividing the land",
+      "color": "#a678e0"
+    },
+    "migration": {
+      "name": "The great migration",
+      "color": "#f29a2e"
+    },
+    "states": {
+      "name": "The princely states",
+      "color": "#5b8fd0"
+    },
+    "aftermath": {
+      "name": "Aftermath",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "rail": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "army": {
+      "color": "#2b5fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "raid": {
+      "color": "#2f8a4a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 14,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 29,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 50,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 68,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 83,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1940"
+      },
+      {
+        "at": 8,
+        "text": "1945"
+      },
+      {
+        "at": 32,
+        "text": "1947"
+      },
+      {
+        "at": 78,
+        "text": "1948"
+      },
+      {
+        "at": 92,
+        "text": "1971"
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "lahore",
+      "phase": "demand",
+      "title": "A resolution at Lahore",
+      "native": "قراردادِ لاہور",
+      "lang": "ur",
+      "when": "March 1940",
+      "at": 2,
+      "camera": {
+        "at": [
+          74.5,
+          32
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "At Minto Park in Lahore, the All-India Muslim League under Muhammad Ali Jinnah passes a resolution asking that the Muslim-majority areas of the north-west and east form “independent states”. The word Pakistan is not in it, but the press soon calls it the Pakistan Resolution. Jinnah argues that Hindus and Muslims are two nations, not one.",
+      "today": "Today: the Minar-e-Pakistan stands on the spot, in Greater Iqbal Park, Lahore, Pakistan."
+    },
+    {
+      "place": "simla",
+      "phase": "demand",
+      "title": "Talks at Simla",
+      "native": "शिमला सम्मेलन",
+      "when": "June to July 1945",
+      "at": 7,
+      "camera": {
+        "at": [
+          76.5,
+          31.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "With the war in Europe over, the Viceroy, Lord Wavell, calls Indian leaders to Simla to form a council of Indians to govern under him. The talks fail when Jinnah insists that only the Muslim League may name its Muslim members, which Congress refuses. Elections that winter make Congress and the League the two great parties.",
+      "today": "Today: the Viceregal Lodge, now the Indian Institute of Advanced Study, Shimla, India."
+    },
+    {
+      "place": "delhi",
+      "phase": "demand",
+      "title": "The Cabinet Mission",
+      "when": "March to July 1946",
+      "at": 12,
+      "camera": {
+        "at": [
+          77.2,
+          29.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Three British ministers come to Delhi with a plan to keep India united: a weak centre over groups of provinces, with Muslim-majority groups in the north-west and east. Both sides accept it, then fall out over what it means. In July Nehru says Congress is not bound by it, and the League withdraws and calls for “direct action”.",
+      "today": "Today: Rashtrapati Bhavan, then the Viceroy’s House, New Delhi, India."
+    },
+    {
+      "place": "calcutta",
+      "phase": "riots",
+      "title": "Direct Action Day",
+      "native": "প্রত্যক্ষ সংগ্রাম দিবস",
+      "lang": "bn",
+      "when": "16 to 19 August 1946",
+      "at": 17,
+      "camera": {
+        "at": [
+          88.4,
+          23.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "The League calls a day of protest, and Bengal’s League government, led by Huseyn Shaheed Suhrawardy, declares a public holiday. Fighting between Muslims and Hindus and Sikhs spreads across Calcutta for four days. Estimates of the dead run from about 4,000 to over 10,000 and are disputed. The Great Calcutta Killing begins a year of riots.",
+      "today": "Today: Kolkata, West Bengal, India."
+    },
+    {
+      "place": "noakhali",
+      "phase": "riots",
+      "title": "Noakhali and Bihar",
+      "native": "নোয়াখালী",
+      "lang": "bn",
+      "when": "October to November 1946",
+      "at": 22,
+      "camera": {
+        "at": [
+          90.3,
+          23.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In October, mobs in Noakhali and Tippera in east Bengal kill Hindus, burn homes and force conversions; Gandhi walks there from village to village for four months. Within weeks, in Bihar, Hindu mobs kill Muslims in far greater numbers. Both death tolls are disputed: estimates for Bihar run to several thousand, more than in Noakhali.",
+      "today": "Today: Noakhali District, Bangladesh, where the Gandhi Ashram Trust still works at Jayag."
+    },
+    {
+      "place": "rawalpindi",
+      "phase": "riots",
+      "title": "Rawalpindi burns",
+      "native": "راولپنڈی",
+      "lang": "ur",
+      "when": "March 1947",
+      "at": 27,
+      "camera": {
+        "at": [
+          73.5,
+          33
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In early March, after the Punjab’s coalition government falls, rioting breaks out in Lahore, Amritsar and Multan. In the villages around Rawalpindi, Muslim mobs attack Sikh and Hindu villagers and thousands are killed. At Thoa Khalsa, women are reported to have drowned themselves in a well rather than be taken. The Punjab is set on division.",
+      "today": "Today: Rawalpindi, Punjab, Pakistan."
+    },
+    {
+      "place": "delhi",
+      "phase": "division",
+      "title": "The 3 June Plan",
+      "when": "3 June 1947",
+      "at": 32,
+      "camera": {
+        "at": [
+          77.2,
+          29.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Lord Mountbatten, Viceroy since March, announces on the radio that Britain will hand over power to two dominions, India and Pakistan, and that Punjab and Bengal will be divided if their legislators vote for it. They do. The handover is brought forward from June 1948 to 15 August 1947, little more than ten weeks away.",
+      "today": "Today: Rashtrapati Bhavan, New Delhi, India."
+    },
+    {
+      "place": "peshawar",
+      "phase": "division",
+      "title": "Two referendums",
+      "when": "July 1947",
+      "at": 36,
+      "camera": {
+        "at": [
+          72.6,
+          33.6
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Two provinces are asked to choose by vote. In the North-West Frontier Province, Congress and Khan Abdul Ghaffar Khan’s Servants of God (Khudai Khidmatgar) boycott a vote that offers only India or Pakistan, and Pakistan wins. In Sylhet, in Assam, voters choose to join East Bengal, though part of the district stays in India.",
+      "today": "Today: Peshawar, Khyber Pakhtunkhwa, Pakistan."
+    },
+    {
+      "place": "gurdaspur",
+      "phase": "division",
+      "title": "A line drawn in five weeks",
+      "when": "July to August 1947",
+      "at": 40,
+      "camera": {
+        "at": [
+          75,
+          32
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Cyril Radcliffe, a London lawyer who had never been to India, arrives on 8 July to chair the commissions dividing Punjab and Bengal. With old maps and census figures, he finishes in about five weeks. Most of Gurdaspur district, narrowly Muslim-majority, goes to India; critics in Pakistan say this gave India its road to Kashmir.",
+      "today": "Today: Gurdaspur, Punjab, India; Shakargarh, the district’s western part, is in Pakistan."
+    },
+    {
+      "place": "karachi",
+      "phase": "division",
+      "title": "Pakistan is born",
+      "native": "پاکستان",
+      "lang": "ur",
+      "when": "11 to 14 August 1947",
+      "at": 44,
+      "camera": {
+        "at": [
+          69.8,
+          25.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "In Karachi, the first capital, Jinnah tells Pakistan’s Constituent Assembly that its people are “free to go to your temples… free to go to your mosques”, since religion is no business of the state. On 14 August Mountbatten hands over power and Jinnah becomes Governor-General. Pakistan comes in two parts, a thousand miles apart.",
+      "today": "Today: the Sindh Assembly building, where the Constituent Assembly met, Karachi, Pakistan."
+    },
+    {
+      "place": "delhi",
+      "phase": "division",
+      "title": "Midnight in Delhi",
+      "native": "स्वतंत्रता",
+      "when": "14 and 15 August 1947",
+      "at": 48,
+      "camera": {
+        "at": [
+          77.2,
+          29.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "At midnight Nehru tells the Constituent Assembly that India keeps its “tryst with destiny”. Next day the flag rises in Delhi, but Gandhi is in Calcutta, fasting and praying. The boundary award is still secret. When it is published on 17 August, millions in Punjab and Bengal learn which country they are in.",
+      "today": "Today: the old Parliament House, now Samvidhan Sadan, New Delhi, India."
+    },
+    {
+      "place": "amritsar",
+      "phase": "migration",
+      "title": "Trains of the dead",
+      "native": "ਵੰਡ",
+      "lang": "pa",
+      "when": "August to September 1947",
+      "at": 52,
+      "camera": {
+        "at": [
+          74.7,
+          31.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "lahore",
+          "to": "amritsar",
+          "traveller": "train",
+          "style": "rail",
+          "bend": 0.15
+        }
+      ],
+      "text": "Across Punjab, Hindus and Sikhs flee east and Muslims west, by road and rail. Trains running between Lahore and Amritsar are attacked by mobs on both sides, and some arrive filled with the dead. Killing, rape and abduction are everywhere: an estimated 75,000 to 100,000 women are abducted. Punjab suffers the worst of Partition’s violence.",
+      "today": "Today: Amritsar, Punjab, India; the Partition Museum is in the Town Hall."
+    },
+    {
+      "place": "lyallpur",
+      "phase": "migration",
+      "title": "Columns on foot",
+      "native": "قافلہ",
+      "lang": "ur",
+      "when": "September to October 1947",
+      "at": 56,
+      "camera": {
+        "at": [
+          74.3,
+          31.7
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "lyallpur",
+          "to": "amritsar",
+          "traveller": "refugees",
+          "style": "walk",
+          "bend": 0.15
+        }
+      ],
+      "text": "From the canal colonies of west Punjab, where Sikh farmers had prospered, whole villages walk east in columns (kafilas) with their carts and cattle. One from around Lyallpur is reported to have stretched for miles and held hundreds of thousands of people. Cholera, floods and ambushes kill many on the way; Muslim columns pass them going west.",
+      "today": "Today: Faisalabad, Punjab, Pakistan."
+    },
+    {
+      "place": "kurukshetra",
+      "phase": "migration",
+      "title": "A camp at Kurukshetra",
+      "native": "शरणार्थी शिविर",
+      "when": "Autumn 1947",
+      "at": 60,
+      "camera": {
+        "at": [
+          76.6,
+          30.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "On the plain where the Mahabharata places its great battle, India opens its largest refugee camp. At its height it holds an estimated 300,000 people under canvas, fed by the government and volunteers. In the years after, refugees are given land and houses left by Muslims who had gone west, and new towns and colonies are built for them.",
+      "today": "Today: Kurukshetra, Haryana, India."
+    },
+    {
+      "place": "delhi",
+      "phase": "migration",
+      "title": "Delhi in September",
+      "native": "पुराना क़िला",
+      "when": "September 1947",
+      "at": 63,
+      "camera": {
+        "at": [
+          77.2,
+          29.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Refugees from Punjab pour into Delhi, and in early September killing breaks out in the capital. Muslims flee to camps in the Purana Qila and at Humayun’s Tomb, many waiting for trains to Pakistan. Nehru and Patel call in the army, and Mountbatten chairs an emergency committee. Old Muslim quarters empty and fill again with refugees.",
+      "today": "Today: the Purana Qila and Humayun’s Tomb, New Delhi, India."
+    },
+    {
+      "place": "calcutta",
+      "phase": "migration",
+      "title": "A fast in Calcutta",
+      "native": "অনশন",
+      "lang": "bn",
+      "when": "August to September 1947",
+      "at": 66,
+      "camera": {
+        "at": [
+          88.4,
+          23.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Gandhi spends Independence Day in Calcutta with Suhrawardy, in a house in Beliaghata. When rioting returns, he fasts from 1 September until leaders of all sides pledge peace, and ends it on the fourth day. Bengal is spared Punjab’s slaughter that year, but Hindus keep leaving East Bengal for decades, many for camps around Calcutta.",
+      "today": "Today: Gandhi Bhawan, Beliaghata, Kolkata, India."
+    },
+    {
+      "place": "junagadh",
+      "phase": "states",
+      "title": "Junagadh chooses Pakistan",
+      "native": "જૂનાગઢ",
+      "lang": "gu",
+      "when": "August 1947 to February 1948",
+      "at": 70,
+      "camera": {
+        "at": [
+          71.2,
+          22.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "More than 550 princely states must join India or Pakistan. Junagadh’s Muslim Nawab accedes to Pakistan, though most of his people are Hindu and his land lies within India’s. India blockades the state, the Nawab flies to Karachi, and in November India takes control. A vote in February 1948 goes overwhelmingly for India.",
+      "today": "Today: Junagadh, Gujarat, India."
+    },
+    {
+      "place": "srinagar",
+      "phase": "states",
+      "title": "War in Kashmir",
+      "native": "کشمیر",
+      "lang": "ur",
+      "when": "October 1947 to January 1949",
+      "at": 74,
+      "camera": {
+        "at": [
+          76,
+          31.3
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "muzaffarabad",
+          "to": "srinagar",
+          "traveller": "soldier",
+          "style": "raid",
+          "bend": 0.1
+        },
+        {
+          "from": "delhi",
+          "to": "srinagar",
+          "traveller": "soldier",
+          "style": "army",
+          "bend": -0.1
+        }
+      ],
+      "text": "Hari Singh, Hindu Maharaja of Muslim-majority Jammu and Kashmir, holds back from joining either. In October, tribesmen from Pakistan’s frontier invade towards Srinagar. He signs accession to India, and Indian troops fly in on 27 October. War with Pakistan lasts until a UN-arranged ceasefire on 1 January 1949. The state stays divided and disputed.",
+      "today": "Today: Srinagar, Jammu and Kashmir; the Line of Control still divides Kashmir between India and Pakistan."
+    },
+    {
+      "place": "hyderabad",
+      "phase": "states",
+      "title": "Operation Polo",
+      "native": "حیدرآباد",
+      "lang": "ur",
+      "when": "September 1948",
+      "at": 77,
+      "camera": {
+        "at": [
+          77.2,
+          18.4
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "solapur",
+          "to": "hyderabad",
+          "traveller": "soldier",
+          "style": "army",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Nizam of Hyderabad, ruler of the largest princely state, wants independence. Armed volunteers, the Razakars, terrorise opponents, while a communist-led revolt holds Telangana’s villages. On 13 September 1948 the Indian army marches in, and the Nizam gives in after four days. The killings that follow, mostly of Muslims, are estimated in tens of thousands; figures are disputed.",
+      "today": "Today: Hyderabad, capital of Telangana, India."
+    },
+    {
+      "place": "delhi",
+      "phase": "aftermath",
+      "title": "A death at Birla House",
+      "when": "30 January 1948",
+      "at": 80,
+      "camera": {
+        "at": [
+          77.2,
+          29.2
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Gandhi has fasted again in Delhi, for peace between communities and for India to pay Pakistan its share of the cash reserves. On 30 January, walking to evening prayers at Birla House, he is shot dead by Nathuram Godse, a Hindu nationalist who blamed him for Partition. Nehru tells India, “the light has gone out of our lives”.",
+      "today": "Today: Gandhi Smriti, Tees January Marg, New Delhi, India."
+    },
+    {
+      "place": "chandigarh",
+      "phase": "aftermath",
+      "title": "A new capital for Punjab",
+      "native": "चंडीगढ़",
+      "when": "1950s",
+      "at": 86,
+      "camera": {
+        "at": [
+          76.8,
+          30.7
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Lahore, Punjab’s old capital, is now in Pakistan, so India’s Punjab needs a new one. Nehru asks for a city “unfettered by the traditions of the past”, and the Swiss-French architect Le Corbusier plans Chandigarh at the foot of the Shivalik hills. Its government buildings rise through the 1950s, for a state where millions of refugees are starting again.",
+      "today": "Today: Chandigarh, capital of Punjab and Haryana; its Capitol Complex is a World Heritage Site."
+    },
+    {
+      "place": "dhaka",
+      "phase": "aftermath",
+      "title": "A second partition",
+      "native": "মুক্তিযুদ্ধ",
+      "lang": "bn",
+      "when": "1971",
+      "at": 92,
+      "camera": {
+        "at": [
+          90.4,
+          23.9
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "East Pakistan resents rule from the west, beginning with the attempt to make Urdu the only national language. After the Awami League wins the 1970 election, the army cracks down in March 1971. Around ten million refugees flee to India; estimates of the dead are disputed. India enters the war in December, and on 16 December Bangladesh is free.",
+      "today": "Today: Suhrawardy Udyan, where Pakistan’s forces surrendered, Dhaka, Bangladesh."
+    },
+    {
+      "place": "attari",
+      "phase": "aftermath",
+      "title": "The border today",
+      "native": "ਅਟਾਰੀ",
+      "lang": "pa",
+      "when": "Today",
+      "at": 98,
+      "camera": {
+        "at": [
+          74.7,
+          31.7
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Every evening at the Attari–Wagah crossing, Indian and Pakistani guards stamp, glare and lower their flags together before cheering crowds. An estimated 10 to 20 million people were uprooted by Partition, and between a few hundred thousand and two million died; the figures are disputed. In Amritsar, the Partition Museum keeps survivors’ voices, objects and letters.",
+      "today": "Today: Attari, Punjab, India, facing Wagah, Punjab, Pakistan."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "british-india",
+        "name": "British India",
+        "color": "#c0504d",
+        "active": [
+          [
+            0,
+            8
+          ]
+        ],
+        "label": {
+          "text": "British India",
+          "at": [
+            79,
+            23.5
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  23.85
+                ],
+                [
+                  68.25,
+                  23.7
+                ],
+                [
+                  68.5,
+                  23.3
+                ],
+                [
+                  69.9,
+                  22.8
+                ],
+                [
+                  69,
+                  22.3
+                ],
+                [
+                  69.3,
+                  21.9
+                ],
+                [
+                  70.2,
+                  20.9
+                ],
+                [
+                  71.2,
+                  20.8
+                ],
+                [
+                  72.1,
+                  21.4
+                ],
+                [
+                  72.55,
+                  22.1
+                ],
+                [
+                  72.6,
+                  21.4
+                ],
+                [
+                  72.75,
+                  20.7
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  73,
+                  18.5
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  76.4,
+                  9.5
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  81.3,
+                  16
+                ],
+                [
+                  82.3,
+                  16.8
+                ],
+                [
+                  83.5,
+                  18
+                ],
+                [
+                  84.7,
+                  19
+                ],
+                [
+                  85.5,
+                  19.8
+                ],
+                [
+                  86.8,
+                  20.6
+                ],
+                [
+                  87.6,
+                  21.5
+                ],
+                [
+                  88.9,
+                  21.7
+                ],
+                [
+                  89.5,
+                  21.8
+                ],
+                [
+                  90.3,
+                  21.9
+                ],
+                [
+                  91.2,
+                  22.4
+                ],
+                [
+                  92.3,
+                  21.7
+                ],
+                [
+                  92.35,
+                  20.7
+                ],
+                [
+                  92.7,
+                  21.6
+                ],
+                [
+                  93.1,
+                  22.4
+                ],
+                [
+                  93.4,
+                  23
+                ],
+                [
+                  93.4,
+                  24.2
+                ],
+                [
+                  94,
+                  24
+                ],
+                [
+                  94.5,
+                  24.6
+                ],
+                [
+                  94.7,
+                  25.3
+                ],
+                [
+                  95.2,
+                  26
+                ],
+                [
+                  95.2,
+                  26.8
+                ],
+                [
+                  96,
+                  27.3
+                ],
+                [
+                  97.1,
+                  27.8
+                ],
+                [
+                  97.1,
+                  28.3
+                ],
+                [
+                  95.5,
+                  28.3
+                ],
+                [
+                  94,
+                  28.6
+                ],
+                [
+                  92.5,
+                  27.9
+                ],
+                [
+                  91.6,
+                  27.8
+                ],
+                [
+                  91.7,
+                  26.85
+                ],
+                [
+                  90,
+                  26.85
+                ],
+                [
+                  89,
+                  26.8
+                ],
+                [
+                  88.9,
+                  27.3
+                ],
+                [
+                  88.8,
+                  28.05
+                ],
+                [
+                  88.1,
+                  27.95
+                ],
+                [
+                  88.05,
+                  27
+                ],
+                [
+                  88.15,
+                  26.45
+                ],
+                [
+                  87.3,
+                  26.4
+                ],
+                [
+                  85.8,
+                  26.6
+                ],
+                [
+                  84.3,
+                  27.35
+                ],
+                [
+                  83,
+                  27.4
+                ],
+                [
+                  81.5,
+                  28.3
+                ],
+                [
+                  80.3,
+                  28.95
+                ],
+                [
+                  80.2,
+                  30.2
+                ],
+                [
+                  79,
+                  30.9
+                ],
+                [
+                  78.7,
+                  31.5
+                ],
+                [
+                  78.9,
+                  31.9
+                ],
+                [
+                  79.5,
+                  32.6
+                ],
+                [
+                  79.4,
+                  33.5
+                ],
+                [
+                  79.2,
+                  34.4
+                ],
+                [
+                  78.8,
+                  35.4
+                ],
+                [
+                  77.8,
+                  35.5
+                ],
+                [
+                  76.5,
+                  35.8
+                ],
+                [
+                  75.5,
+                  36.7
+                ],
+                [
+                  74.5,
+                  37
+                ],
+                [
+                  73,
+                  36.9
+                ],
+                [
+                  72.6,
+                  36.95
+                ],
+                [
+                  71.6,
+                  37
+                ],
+                [
+                  71.4,
+                  36.4
+                ],
+                [
+                  71.2,
+                  35.6
+                ],
+                [
+                  71,
+                  34.9
+                ],
+                [
+                  71.1,
+                  34.1
+                ],
+                [
+                  70.4,
+                  33.9
+                ],
+                [
+                  69.9,
+                  33.6
+                ],
+                [
+                  69.5,
+                  32.7
+                ],
+                [
+                  69.3,
+                  31.7
+                ],
+                [
+                  68,
+                  31
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Burma": "Separated from British India in 1937",
+          "Princely states": "About 560, covering around two-fifths of the land",
+          "Today": "India, Pakistan and Bangladesh"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Viceroy Linlithgow"
+          },
+          {
+            "from": 1,
+            "text": "Viceroy Wavell"
+          },
+          {
+            "from": 6,
+            "text": "Viceroy Mountbatten"
+          }
+        ],
+        "role": "British provinces and the princely states under the Crown.",
+        "ties": []
+      },
+      {
+        "id": "india",
+        "name": "India",
+        "native": "भारत",
+        "color": "#f29a2e",
+        "active": [
+          [
+            10,
+            22
+          ]
+        ],
+        "label": {
+          "text": "India",
+          "at": [
+            79.5,
+            22.5
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                10,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.25,
+                  23.7
+                ],
+                [
+                  68.5,
+                  23.3
+                ],
+                [
+                  69.9,
+                  22.8
+                ],
+                [
+                  69,
+                  22.3
+                ],
+                [
+                  69.3,
+                  21.9
+                ],
+                [
+                  70.2,
+                  20.9
+                ],
+                [
+                  71.2,
+                  20.8
+                ],
+                [
+                  72.1,
+                  21.4
+                ],
+                [
+                  72.55,
+                  22.1
+                ],
+                [
+                  72.6,
+                  21.4
+                ],
+                [
+                  72.75,
+                  20.7
+                ],
+                [
+                  72.8,
+                  19.7
+                ],
+                [
+                  73,
+                  18.5
+                ],
+                [
+                  73.5,
+                  16.8
+                ],
+                [
+                  74.1,
+                  15
+                ],
+                [
+                  74.7,
+                  13.5
+                ],
+                [
+                  75.4,
+                  12
+                ],
+                [
+                  76,
+                  10.5
+                ],
+                [
+                  76.4,
+                  9.5
+                ],
+                [
+                  77,
+                  8.5
+                ],
+                [
+                  77.55,
+                  8.08
+                ],
+                [
+                  78.4,
+                  9
+                ],
+                [
+                  79.35,
+                  9.3
+                ],
+                [
+                  79,
+                  9.5
+                ],
+                [
+                  79.2,
+                  9.95
+                ],
+                [
+                  79.85,
+                  10.35
+                ],
+                [
+                  79.8,
+                  11.3
+                ],
+                [
+                  80.1,
+                  12.2
+                ],
+                [
+                  80.2,
+                  13.4
+                ],
+                [
+                  80.3,
+                  15.2
+                ],
+                [
+                  81.3,
+                  16
+                ],
+                [
+                  82.3,
+                  16.8
+                ],
+                [
+                  83.5,
+                  18
+                ],
+                [
+                  84.7,
+                  19
+                ],
+                [
+                  85.5,
+                  19.8
+                ],
+                [
+                  86.8,
+                  20.6
+                ],
+                [
+                  87.6,
+                  21.5
+                ],
+                [
+                  88.95,
+                  21.75
+                ],
+                [
+                  88.95,
+                  22.3
+                ],
+                [
+                  89,
+                  23
+                ],
+                [
+                  88.85,
+                  23.6
+                ],
+                [
+                  88.75,
+                  24.2
+                ],
+                [
+                  88.4,
+                  24.5
+                ],
+                [
+                  88.55,
+                  25
+                ],
+                [
+                  88.4,
+                  25.6
+                ],
+                [
+                  88.5,
+                  26.55
+                ],
+                [
+                  89,
+                  26.4
+                ],
+                [
+                  89.4,
+                  26.2
+                ],
+                [
+                  89.8,
+                  26.1
+                ],
+                [
+                  89.8,
+                  25.8
+                ],
+                [
+                  90.2,
+                  25.2
+                ],
+                [
+                  90.9,
+                  25.15
+                ],
+                [
+                  91.5,
+                  25.15
+                ],
+                [
+                  92,
+                  25.1
+                ],
+                [
+                  92.2,
+                  24.9
+                ],
+                [
+                  91.9,
+                  24.4
+                ],
+                [
+                  91.6,
+                  24
+                ],
+                [
+                  91.3,
+                  23.5
+                ],
+                [
+                  91.6,
+                  23
+                ],
+                [
+                  92,
+                  22.5
+                ],
+                [
+                  92.3,
+                  23.3
+                ],
+                [
+                  93.1,
+                  22.4
+                ],
+                [
+                  93.4,
+                  23
+                ],
+                [
+                  93.4,
+                  24.2
+                ],
+                [
+                  94,
+                  24
+                ],
+                [
+                  94.5,
+                  24.6
+                ],
+                [
+                  94.7,
+                  25.3
+                ],
+                [
+                  95.2,
+                  26
+                ],
+                [
+                  95.2,
+                  26.8
+                ],
+                [
+                  96,
+                  27.3
+                ],
+                [
+                  97.1,
+                  27.8
+                ],
+                [
+                  97.1,
+                  28.3
+                ],
+                [
+                  95.5,
+                  28.3
+                ],
+                [
+                  94,
+                  28.6
+                ],
+                [
+                  92.5,
+                  27.9
+                ],
+                [
+                  91.6,
+                  27.8
+                ],
+                [
+                  91.7,
+                  26.85
+                ],
+                [
+                  90,
+                  26.85
+                ],
+                [
+                  89,
+                  26.8
+                ],
+                [
+                  88.9,
+                  27.3
+                ],
+                [
+                  88.8,
+                  28.05
+                ],
+                [
+                  88.1,
+                  27.95
+                ],
+                [
+                  88.05,
+                  27
+                ],
+                [
+                  88.15,
+                  26.45
+                ],
+                [
+                  87.3,
+                  26.4
+                ],
+                [
+                  85.8,
+                  26.6
+                ],
+                [
+                  84.3,
+                  27.35
+                ],
+                [
+                  83,
+                  27.4
+                ],
+                [
+                  81.5,
+                  28.3
+                ],
+                [
+                  80.3,
+                  28.95
+                ],
+                [
+                  80.2,
+                  30.2
+                ],
+                [
+                  79,
+                  30.9
+                ],
+                [
+                  78.7,
+                  31.5
+                ],
+                [
+                  78.9,
+                  31.9
+                ],
+                [
+                  78.4,
+                  32.4
+                ],
+                [
+                  77.2,
+                  32.95
+                ],
+                [
+                  76.3,
+                  32.7
+                ],
+                [
+                  75.65,
+                  32.45
+                ],
+                [
+                  75.05,
+                  32.4
+                ],
+                [
+                  74.95,
+                  32.1
+                ],
+                [
+                  74.75,
+                  31.85
+                ],
+                [
+                  74.6,
+                  31.6
+                ],
+                [
+                  74.55,
+                  31.3
+                ],
+                [
+                  74.5,
+                  31
+                ],
+                [
+                  74.1,
+                  30.6
+                ],
+                [
+                  73.9,
+                  30.1
+                ],
+                [
+                  73.1,
+                  29.3
+                ],
+                [
+                  72.3,
+                  28.5
+                ],
+                [
+                  71,
+                  27.9
+                ],
+                [
+                  70,
+                  27.7
+                ],
+                [
+                  70.1,
+                  26.5
+                ],
+                [
+                  70.2,
+                  25.7
+                ],
+                [
+                  69.5,
+                  24.5
+                ],
+                [
+                  68.8,
+                  24.25
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Became": "A dominion on 15 August 1947, a republic from 1950",
+          "Today": "The Republic of India"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Nehru (Prime Minister); Mountbatten, then C. Rajagopalachari (Governors-General)"
+          }
+        ],
+        "role": "Dominion of India from 15 August 1947, a republic from 1950.",
+        "ties": []
+      },
+      {
+        "id": "pakistan",
+        "name": "Pakistan",
+        "native": "پاکستان",
+        "lang": "ur",
+        "color": "#2f8a4a",
+        "active": [
+          [
+            9,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Pakistan",
+          "at": [
+            70.2,
+            28.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                9,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  23.85
+                ],
+                [
+                  68.25,
+                  23.7
+                ],
+                [
+                  68.8,
+                  24.25
+                ],
+                [
+                  69.5,
+                  24.5
+                ],
+                [
+                  70.2,
+                  25.7
+                ],
+                [
+                  70.1,
+                  26.5
+                ],
+                [
+                  70,
+                  27.7
+                ],
+                [
+                  71,
+                  27.9
+                ],
+                [
+                  72.3,
+                  28.5
+                ],
+                [
+                  73.1,
+                  29.3
+                ],
+                [
+                  73.9,
+                  30.1
+                ],
+                [
+                  74.1,
+                  30.6
+                ],
+                [
+                  74.5,
+                  31
+                ],
+                [
+                  74.55,
+                  31.3
+                ],
+                [
+                  74.6,
+                  31.6
+                ],
+                [
+                  74.75,
+                  31.85
+                ],
+                [
+                  74.95,
+                  32.1
+                ],
+                [
+                  75.05,
+                  32.4
+                ],
+                [
+                  74.75,
+                  32.6
+                ],
+                [
+                  74.3,
+                  32.85
+                ],
+                [
+                  73.75,
+                  33
+                ],
+                [
+                  73.4,
+                  33.7
+                ],
+                [
+                  73.3,
+                  34.3
+                ],
+                [
+                  73.2,
+                  34.9
+                ],
+                [
+                  72.9,
+                  35.4
+                ],
+                [
+                  72.7,
+                  36.3
+                ],
+                [
+                  72.8,
+                  36.95
+                ],
+                [
+                  72,
+                  37
+                ],
+                [
+                  71.4,
+                  36.5
+                ],
+                [
+                  71.2,
+                  35.6
+                ],
+                [
+                  71,
+                  34.9
+                ],
+                [
+                  71.1,
+                  34.1
+                ],
+                [
+                  70.4,
+                  33.9
+                ],
+                [
+                  69.9,
+                  33.6
+                ],
+                [
+                  69.5,
+                  32.7
+                ],
+                [
+                  69.3,
+                  31.7
+                ],
+                [
+                  68,
+                  31
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                20
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  88.2,
+                  26.5
+                ],
+                [
+                  88.4,
+                  25.6
+                ],
+                [
+                  88.55,
+                  25
+                ],
+                [
+                  88.4,
+                  24.5
+                ],
+                [
+                  88.75,
+                  24.2
+                ],
+                [
+                  88.85,
+                  23.6
+                ],
+                [
+                  89,
+                  23
+                ],
+                [
+                  88.95,
+                  22.3
+                ],
+                [
+                  89,
+                  21.75
+                ],
+                [
+                  89.5,
+                  21.8
+                ],
+                [
+                  90.3,
+                  21.9
+                ],
+                [
+                  91.2,
+                  22.4
+                ],
+                [
+                  91.8,
+                  22.2
+                ],
+                [
+                  92.3,
+                  21.7
+                ],
+                [
+                  92.35,
+                  20.8
+                ],
+                [
+                  92.6,
+                  21.6
+                ],
+                [
+                  92.4,
+                  22.5
+                ],
+                [
+                  92.2,
+                  23.5
+                ],
+                [
+                  91.6,
+                  23
+                ],
+                [
+                  91.3,
+                  23.5
+                ],
+                [
+                  91.6,
+                  24
+                ],
+                [
+                  91.9,
+                  24.4
+                ],
+                [
+                  92.2,
+                  24.9
+                ],
+                [
+                  92,
+                  25.1
+                ],
+                [
+                  91.5,
+                  25.15
+                ],
+                [
+                  90.9,
+                  25.15
+                ],
+                [
+                  90.2,
+                  25.2
+                ],
+                [
+                  89.8,
+                  25.8
+                ],
+                [
+                  89.8,
+                  26.1
+                ],
+                [
+                  89.4,
+                  26.2
+                ],
+                [
+                  89,
+                  26.4
+                ],
+                [
+                  88.5,
+                  26.55
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Became": "A dominion on 14 August 1947",
+          "Parts": "West Pakistan and East Pakistan, a thousand miles apart; East Pakistan until 1971"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "Jinnah (Governor-General); Liaquat Ali Khan (Prime Minister)"
+          }
+        ],
+        "role": "Dominion of Pakistan from 14 August 1947.",
+        "ties": []
+      },
+      {
+        "id": "bangladesh",
+        "name": "Bangladesh",
+        "native": "বাংলাদেশ",
+        "lang": "bn",
+        "color": "#5b8fd0",
+        "active": [
+          [
+            21,
+            22
+          ]
+        ],
+        "label": {
+          "text": "Bangladesh",
+          "at": [
+            90,
+            24.7
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                21,
+                22
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  88.2,
+                  26.5
+                ],
+                [
+                  88.4,
+                  25.6
+                ],
+                [
+                  88.55,
+                  25
+                ],
+                [
+                  88.4,
+                  24.5
+                ],
+                [
+                  88.75,
+                  24.2
+                ],
+                [
+                  88.85,
+                  23.6
+                ],
+                [
+                  89,
+                  23
+                ],
+                [
+                  88.95,
+                  22.3
+                ],
+                [
+                  89,
+                  21.75
+                ],
+                [
+                  89.5,
+                  21.8
+                ],
+                [
+                  90.3,
+                  21.9
+                ],
+                [
+                  91.2,
+                  22.4
+                ],
+                [
+                  91.8,
+                  22.2
+                ],
+                [
+                  92.3,
+                  21.7
+                ],
+                [
+                  92.35,
+                  20.8
+                ],
+                [
+                  92.6,
+                  21.6
+                ],
+                [
+                  92.4,
+                  22.5
+                ],
+                [
+                  92.2,
+                  23.5
+                ],
+                [
+                  91.6,
+                  23
+                ],
+                [
+                  91.3,
+                  23.5
+                ],
+                [
+                  91.6,
+                  24
+                ],
+                [
+                  91.9,
+                  24.4
+                ],
+                [
+                  92.2,
+                  24.9
+                ],
+                [
+                  92,
+                  25.1
+                ],
+                [
+                  91.5,
+                  25.15
+                ],
+                [
+                  90.9,
+                  25.15
+                ],
+                [
+                  90.2,
+                  25.2
+                ],
+                [
+                  89.8,
+                  25.8
+                ],
+                [
+                  89.8,
+                  26.1
+                ],
+                [
+                  89.4,
+                  26.2
+                ],
+                [
+                  89,
+                  26.4
+                ],
+                [
+                  88.5,
+                  26.55
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Became": "Independent on 16 December 1971",
+          "Before": "East Bengal, then East Pakistan"
+        },
+        "rulers": [
+          {
+            "from": 21,
+            "text": "Sheikh Mujibur Rahman"
+          }
+        ],
+        "role": "Independent from 1971.",
+        "ties": []
+      },
+      {
+        "id": "hyderabad",
+        "name": "Hyderabad State",
+        "native": "حیدرآباد",
+        "lang": "ur",
+        "color": "#a678e0",
+        "active": [
+          [
+            10,
+            17
+          ]
+        ],
+        "label": {
+          "text": "Hyderabad State",
+          "at": [
+            78,
+            18.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                10,
+                17
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.3,
+                  19.9
+                ],
+                [
+                  76.6,
+                  20.3
+                ],
+                [
+                  78,
+                  20.1
+                ],
+                [
+                  79.3,
+                  20
+                ],
+                [
+                  80.5,
+                  19.6
+                ],
+                [
+                  81.1,
+                  18.5
+                ],
+                [
+                  81.3,
+                  17.5
+                ],
+                [
+                  80.8,
+                  16.8
+                ],
+                [
+                  79.9,
+                  16.5
+                ],
+                [
+                  79,
+                  16.1
+                ],
+                [
+                  77.8,
+                  15.8
+                ],
+                [
+                  76.9,
+                  15.8
+                ],
+                [
+                  76.5,
+                  16.5
+                ],
+                [
+                  76.6,
+                  17.3
+                ],
+                [
+                  76,
+                  18.2
+                ],
+                [
+                  75.5,
+                  18.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Hyderabad",
+          "Today": "Telangana, with Marathwada and part of north Karnataka"
+        },
+        "rulers": [
+          {
+            "from": 10,
+            "text": "Nizam Mir Osman Ali Khan"
+          }
+        ],
+        "role": "The largest princely state, holding out.",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People",
+    "items": [
+      {
+        "id": "jinnah",
+        "name": "Muhammad Ali Jinnah",
+        "native": "محمد علی جناح",
+        "lang": "ur",
+        "life": "1876 to 1948",
+        "role": "Leader of the Muslim League, Pakistan’s first Governor-General",
+        "steps": [
+          0,
+          1,
+          9
+        ],
+        "text": "A Bombay lawyer who began in Congress as an advocate of Hindu-Muslim unity, he led the Muslim League from the 1930s and argued that Muslims were a separate nation. He became Pakistan’s first Governor-General and is honoured there as the Great Leader (Quaid-e-Azam). Already ill with tuberculosis, he died in Karachi in September 1948."
+      },
+      {
+        "id": "nehru",
+        "name": "Jawaharlal Nehru",
+        "native": "जवाहरलाल नेहरू",
+        "life": "1889 to 1964",
+        "role": "India’s first Prime Minister",
+        "steps": [
+          2,
+          6,
+          10,
+          14,
+          17,
+          19,
+          20
+        ],
+        "text": "Gandhi’s chosen heir and leader of Congress’s younger generation, he accepted partition in 1947 as the price of a strong central government. He led the interim government from 1946 and was Prime Minister from independence until his death in 1964, through the refugee crisis, the Kashmir war and the building of Chandigarh."
+      },
+      {
+        "id": "gandhi",
+        "name": "Mahatma Gandhi",
+        "native": "मोहनदास करमचंद गांधी",
+        "life": "1869 to 1948",
+        "role": "Leader of the national movement",
+        "steps": [
+          4,
+          10,
+          15,
+          19
+        ],
+        "text": "He opposed partition to the end, calling it a vivisection of India, and spent its months among the riot-torn: in Noakhali, then in Calcutta and Delhi, where he fasted for peace. Many Hindu nationalists blamed him for Partition and for defending Muslims, and one of them shot him in January 1948."
+      },
+      {
+        "id": "patel",
+        "name": "Vallabhbhai Patel",
+        "native": "वल्लभभाई पटेल",
+        "life": "1875 to 1950",
+        "role": "Deputy Prime Minister and Home Minister",
+        "steps": [
+          6,
+          14,
+          16,
+          18
+        ],
+        "text": "Congress’s great organiser, he accepted partition as better than civil war. As Home Minister, working with the official V. P. Menon, he persuaded or pressed more than 500 princely states into India, took Junagadh and sent the army into Hyderabad. He also handled Delhi’s emergency in September 1947."
+      },
+      {
+        "id": "mountbatten",
+        "name": "Louis Mountbatten",
+        "life": "1900 to 1979",
+        "role": "Last Viceroy, India’s first Governor-General",
+        "steps": [
+          6,
+          9,
+          14
+        ],
+        "text": "A naval officer and cousin of the King, he became Viceroy in March 1947 to wind up British rule, and brought the handover forward by ten months. Critics blame the haste for the bloodshed; his defenders say delay would have been worse. He stayed on as India’s Governor-General until June 1948."
+      },
+      {
+        "id": "radcliffe",
+        "name": "Cyril Radcliffe",
+        "life": "1899 to 1977",
+        "role": "Chairman of the boundary commissions",
+        "steps": [
+          8,
+          10
+        ],
+        "text": "A barrister who had never been to India, he was given about five weeks to divide Punjab and Bengal. The Indian judges on his commissions split by community, so he decided almost everything himself. He destroyed his papers, refused his fee, and is said never to have returned to India."
+      },
+      {
+        "id": "ghaffar-khan",
+        "name": "Khan Abdul Ghaffar Khan",
+        "native": "خان عبدالغفار خان",
+        "lang": "ur",
+        "life": "1890 to 1988",
+        "role": "Leader of the Servants of God",
+        "steps": [
+          7
+        ],
+        "text": "A Pashtun follower of non-violence, called the Frontier Gandhi, he led the Khudai Khidmatgar, who allied with Congress and opposed partition. When the 1947 referendum offered the Pashtuns no choice but India or Pakistan, his movement boycotted it. In Pakistan he spent many years in prison, and he died in Peshawar in 1988."
+      },
+      {
+        "id": "suhrawardy",
+        "name": "Huseyn Shaheed Suhrawardy",
+        "native": "হোসেন শহীদ সোহরাওয়ার্দী",
+        "lang": "bn",
+        "life": "1892 to 1963",
+        "role": "Premier of Bengal",
+        "steps": [
+          3,
+          15,
+          21
+        ],
+        "text": "Bengal’s League premier in 1946, he was blamed by many for failing to stop the Calcutta killings that August. In 1947 he backed a united, independent Bengal, then stayed in Calcutta with Gandhi to keep the peace. He was Prime Minister of Pakistan from 1956 to 1957."
+      }
+    ]
+  }
+}

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.98.0
+
+- New story map in Chronicles: The Partition of India. From the Lahore Resolution and the Simla talks to the Cabinet Mission, Direct Action Day, Noakhali and Rawalpindi, the 3 June Plan, the referendums, the Radcliffe Line, independence in Karachi and Delhi, the trains, columns and camps of Punjab, Delhi and Calcutta in 1947, Junagadh, Kashmir and Hyderabad, Gandhi’s death, Chandigarh, Bangladesh in 1971 and the Attari–Wagah border. 23 chapters on the south-asia map, a Powers layer and 8 people cards.
+- Catalogue: the Partition of India entry opens the story.
+
 ## 0.97.0
 
 - New story map in Lives: Ashoka. The Maurya emperor’s life, from his birth at Pataliputra and the legends of Taxila, Ujjain and Devi of Vidisha, through the throne war and the conquest of Kalinga, to his edicts at Dhauli, Maski, Girnar and Shahbazgarhi, his journeys to Bodh Gaya and Lumbini, Mahinda’s mission to Sri Lanka, the lions of Sarnath, his last years and James Prinsep’s decipherment of Brahmi in 1837. 16 chapters on the south-asia map, a Powers layer and 5 people cards. 

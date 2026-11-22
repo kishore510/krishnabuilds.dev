@@ -31,6 +31,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Partition of India (`partition`), 2026-11-22
 - Ashoka (`ashoka`), 2026-11-22
 - The Ahom Kingdom (`ahom`), 2026-11-22
 - The Sikh Empire (`sikh-empire`), 2026-11-22
