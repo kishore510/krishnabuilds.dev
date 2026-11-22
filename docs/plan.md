@@ -190,6 +190,11 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Missions to the Moon, a Universe story on the moon map (0.101.0)
 - [x] Missions to Mars, a Universe story on the new mars map (0.102.0)
 - [x] Missions to Venus, a Universe story on the new venus map (0.103.0)
+- [x] The Seleucid Empire, a Chronicles story on the near-east map (0.104.0)
+- [x] The Parthian Empire, a Chronicles story on the near-east map (0.105.0)
+- [x] The Sasanian Empire, a Chronicles story on the near-east map (0.106.0)
+- [x] The First Caliphates, a Chronicles story on the near-east map (0.107.0)
+- [x] The Safavid Empire, a Chronicles story on the near-east map (0.108.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 

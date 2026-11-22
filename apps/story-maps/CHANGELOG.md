@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.108.0
+
+- New story map in Chronicles: The Safavid Empire. From the Sufi shrine at Ardabil and Ismail’s crowning at Tabriz through Chaldiran, the Ardabil carpet and Humayun’s exile, to Shah Abbas’s Isfahan, the Armenians of New Julfa, Hormuz and Baghdad, the Afghan siege of 1722 and Nader Shah’s crowning on the Mughan plain. 14 chapters on the `near-east` basemap, a Powers layer (the Safavids, Aq Qoyunlu, the Ottomans, Portuguese Hormuz, the Hotaki Afghans, Russia, Nader’s Iran), 8 people cards, native names in Persian, no new glyphs.
+- Catalogue: the Safavid Empire entry now opens the story.
+
+## 0.107.0
+
+- New story map in Chronicles: The First Caliphates. From Abu Bakr in Medina through the Rashidun conquests, Ali and Karbala, the Umayyads of Damascus and the Dome of the Rock, to the Abbasid revolution, the Round City of Baghdad, the House of Wisdom, Samarra, the Mongol sack of 1258 and the end of the caliphate in 1924. 18 chapters on the `near-east` basemap, a Powers layer (the caliphate, Mu’awiya’s Syria, the Sasanians, Eastern Rome, the Mamluks, the Mongols), 8 people cards, native names in Arabic, and a new place glyph, `minaret`, for the spiral minaret of Samarra.
+- Catalogue: no entry of its own; the Rashidun, Umayyad and Abbasid Caliphate entries now open the story at chapters 1, 7 and 13.
+
+## 0.106.0
+
+- New story map in Chronicles: The Sasanian Empire. From Ardashir’s round city and Shapur’s capture of a Roman emperor through Mani, the walls of Derbent, Khosrow I’s great arch and the books brought from India, to the last war with Rome, the Arab conquest, the death of Yazdegerd III and Ferdowsi’s Book of Kings. 17 chapters on the `near-east` basemap, a Powers layer (Sasanians, Parthia, Rome, the Lakhmids, the caliphate), 8 people cards, no new glyphs.
+- Catalogue: the Sasanian Empire entry now opens the story and names the Rashidun Caliphate as its successor.
+
+## 0.105.0
+
+- New story map in Chronicles: The Parthian Empire. From Arsaces and the horsemen of Nisa through Mithridates I’s conquests, Ctesiphon and the envoys of Han China, to the Roman disaster at Carrhae, the struggle for Armenia, Trajan at the Gulf, Hatra’s walls, the rise of Ardashir and Nisa dug up. 13 chapters on the `near-east` basemap, a Powers layer (Parthia, Seleucids, Rome, Armenia), 6 people cards, no new glyphs.
+- Catalogue: the Parthian Empire entry now opens the story.
+
+## 0.104.0
+
+- New story map in Chronicles: The Seleucid Empire. From Alexander’s death at Babylon and Seleucus’s return through the elephants of Ipsus, the founding of Antioch and the march of Antiochus the Great to Bactria, to Rome’s victory at Magnesia, the Maccabees, the Parthian conquest of Mesopotamia, Pompey’s end of the dynasty and Dura-Europos dug up. 15 chapters on the `near-east` basemap, a Powers layer (Seleucids, Antigonus, Ptolemaic Egypt, Parthia, Rome), 6 people cards, no new glyphs.
+- Catalogue: the Seleucid Empire entry now opens the story and names the Parthian Empire as its successor.
+
 ## 0.103.0
 
 - New `venus` basemap for the Exploring the Solar System series: the whole of Venus (lon -180 to 180, lat -90 to 90) as a sky basemap whose units are longitude (east positive) and latitude, with heights shaded from Magellan radar altimetry and names, centres and sizes from the IAU/USGS gazetteer; the colours are painted. `scripts/venus/venus.py` rebuilds it.
