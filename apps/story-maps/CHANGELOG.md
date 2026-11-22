@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.94.0
+
+- New story map in Chronicles: The Nayakas of Madurai. Vijayanagara's governors in the old Pandya country, from Kumara Kampana's conquest of Madurai in about 1371 and Viswanatha's palayam system, through Talikota, Roberto de Nobili, the Rock Fort and Tirumala Nayaka's palace, to the war of noses, Thanjavur and Ekoji, Rani Mangammal, Queen Meenakshi's fall to Chanda Sahib in 1736, the poligars and the towers of the Meenakshi temple. 13 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 6 people cards.
+- Catalogue: the Nayakas of Madurai entry opens the story.
+
+## 0.93.0
+
+- New story map in Chronicles: The Deccan Sultanates. The Bahmani Sultanate and the five kingdoms that grew out of it, from the revolt at Daulatabad in 1347, the capitals at Gulbarga and Bidar and Mahmud Gawan's college, through Golconda's diamonds, the alliance and the battle of Talikota, Ibrahim II's songs, the Charminar, Chand Bibi and Malik Ambar, to the Gol Gumbaz, Aurangzeb's conquest of Bijapur and Golconda in 1687 and the Deccani inheritance. 16 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 4 people cards.
+- Catalogue: the Deccan Sultanates entry opens the story, and the Bahmani Sultanate entry now opens it at chapter 1.
+
 ## 0.92.0
 
 - New story map in Chronicles: The Later Pandyas. The far south from Maravarman Sundara Pandya's sack of Thanjavur in about 1219, through Jatavarman Sundara Pandya's golden roofs and crowning at Nellore, the Tooth Relic, Marco Polo on the pearl coast and the war of brothers, to Malik Kafur in 1311, the Madurai Sultanate and the Pandyas of Tenkasi. 9 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards. With the Hoysalas and the Yadavas, a set of three kingdoms raided by Malik Kafur.
