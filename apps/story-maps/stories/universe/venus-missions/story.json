@@ -1,0 +1,595 @@
+{
+ "id": "venus-missions",
+ "title": "Missions to Venus",
+ "description": "An illustrated map of the missions to Venus, from Mariner 2’s flyby in 1962 through the Soviet Venera landers, Pioneer Venus and the Vega balloons to Magellan’s radar map, Venus Express, Japan’s Akatsuki, the disputed phosphine and the missions still to come.",
+ "canvas": "cosmic",
+ "basemap": "venus",
+ "source": "History",
+ "nativeLang": "ru",
+ "mapLabel": "Illustrated map of the whole of Venus, drawn flat with 0° longitude in the middle, its heights shaded from the dark lava plains to the pale mountains of Ishtar Terra, with the sites where spacecraft landed from 1970 to 1985",
+ "note": "The whole of Venus is drawn flat, like a world map: longitude runs left to right and latitude bottom to top, so the poles are stretched. The shading is height, measured by radar on Magellan: dark is low, pale is high. Venus is hidden under cloud, so the colours are painted. Landing sites follow NASA’s National Space Science Data Center; names follow the IAU’s Gazetteer of Planetary Nomenclature. Orbiters and the phosphine chapter are shown at a pin above the north pole.",
+ "places": {
+  "orbit": {
+   "name": "In orbit",
+   "at": [
+    0,
+    100
+   ],
+   "glyph": "orbiter",
+   "label": "bottom"
+  },
+  "venera4": {
+   "name": "Venera 4",
+   "at": [
+    38,
+    19
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "venera7": {
+   "name": "Venera 7",
+   "at": [
+    -9,
+    -5
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "venera8": {
+   "name": "Venera 8",
+   "at": [
+    -24.75,
+    -10.7
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "venera9": {
+   "name": "Venera 9",
+   "at": [
+    -68.36,
+    31.01
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "pvday": {
+   "name": "Pioneer Venus Day probe",
+   "at": [
+    -43,
+    -31.3
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "maxwell": {
+   "name": "Maxwell Montes",
+   "at": [
+    3.3,
+    65.2
+   ],
+   "glyph": "mountain",
+   "label": "right"
+  },
+  "venera13": {
+   "name": "Venera 13",
+   "at": [
+    -57,
+    -7.5
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "lakshmi": {
+   "name": "Lakshmi Planum",
+   "at": [
+    -20.7,
+    68.6
+   ],
+   "glyph": "orbiter",
+   "label": "right"
+  },
+  "vega": {
+   "name": "Vega 1",
+   "at": [
+    177.8,
+    7.2
+   ],
+   "glyph": "lander",
+   "label": "left"
+  },
+  "mead": {
+   "name": "Mead crater",
+   "at": [
+    57.2,
+    12.5
+   ],
+   "glyph": "burst",
+   "label": "right"
+  },
+  "idunn": {
+   "name": "Idunn Mons",
+   "at": [
+    -145.5,
+    -46.5
+   ],
+   "glyph": "volcano",
+   "label": "right"
+  },
+  "aphrodite": {
+   "name": "Aphrodite Terra",
+   "at": [
+    104.8,
+    -5.8
+   ],
+   "glyph": "orbiter",
+   "label": "right"
+  },
+  "maat": {
+   "name": "Maat Mons",
+   "at": [
+    -165.4,
+    0.5
+   ],
+   "glyph": "volcano",
+   "label": "right"
+  },
+  "alpha": {
+   "name": "Alpha Regio",
+   "at": [
+    0.3,
+    -25.5
+   ],
+   "glyph": "lander",
+   "label": "right"
+  }
+ },
+ "travellers": {
+  "probe": {
+   "name": "Spacecraft",
+   "icon": "probe"
+  }
+ },
+ "phases": {
+  "first": {
+   "name": "The first looks",
+   "color": "#ff8a3a"
+  },
+  "landers": {
+   "name": "Landers in the furnace",
+   "color": "#a678e0"
+  },
+  "magellan": {
+   "name": "Mapping through the cloud",
+   "color": "#4fc3b0"
+  },
+  "now": {
+   "name": "Back to Venus",
+   "color": "#e8726a"
+  }
+ },
+ "routeStyles": {
+  "probe": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 16.4,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 56.7,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 74.0,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(232,114,106,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2.0,
+    "text": "1962"
+   },
+   {
+    "at": 25.0,
+    "text": "1975"
+   },
+   {
+    "at": 59.6,
+    "text": "1990"
+   },
+   {
+    "at": 76.9,
+    "text": "2006"
+   },
+   {
+    "at": 93.0,
+    "text": "Now"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "orbit",
+   "phase": "first",
+   "title": "Mariner 2 sails past",
+   "when": "14 December 1962",
+   "at": 2.0,
+   "camera": {
+    "at": [
+     0,
+     70
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "The Soviet Venera 1, launched in February 1961, fell silent on the way: the first probe sent towards another planet. On 14 December 1962 NASA’s Mariner 2 flew past Venus about 35,000 kilometres up, the first spacecraft to visit another planet. Its microwave radiometer found a searingly hot surface beneath cool, thick cloud, ending dreams of tropical swamps.",
+   "today": "Mariner 2 still circles the Sun, silent since January 1963."
+  },
+  {
+   "place": "venera4",
+   "phase": "first",
+   "title": "Venera 4 falls through the air",
+   "native": "Венера-4",
+   "when": "18 October 1967",
+   "at": 7.8,
+   "camera": {
+    "at": [
+     38,
+     19
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On 18 October 1967 the Soviet Venera 4 capsule parachuted into Venus’s atmosphere, the first probe to send back measurements from inside another planet’s air. For about 93 minutes it reported heat and pressure rising, and found the air almost all carbon dioxide. Its signal stopped about 25 kilometres above the ground. The next day NASA’s Mariner 5 flew past.",
+   "today": "Sixteen numbered Venera probes were launched between 1961 and 1983."
+  },
+  {
+   "place": "venera7",
+   "phase": "first",
+   "title": "The first landing on another planet",
+   "native": "Венера-7",
+   "when": "15 December 1970",
+   "at": 13.5,
+   "camera": {
+    "at": [
+     -9,
+     -5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On 15 December 1970 Venera 7 came down on Venus after its parachute failed partway, the first spacecraft to send signals from the surface of another planet. Its faint signal lasted about 23 minutes and was found in the recordings only weeks later. It measured about 475 °C and roughly 90 times Earth’s air pressure.",
+   "today": "Venus’s surface is hotter than Mercury’s, though Mercury is closer to the Sun."
+  },
+  {
+   "place": "venera8",
+   "phase": "landers",
+   "title": "Daylight at the surface",
+   "native": "Венера-8",
+   "when": "22 July 1972",
+   "at": 19.3,
+   "camera": {
+    "at": [
+     -24.75,
+     -10.7
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Venera 8 landed on 22 July 1972, the first landing on the sunlit side, and worked for 50 minutes. Its light meter found the ground about as bright as an overcast day on Earth, enough for cameras on later landers. A gamma-ray instrument measured potassium, uranium and thorium in the soil, more than in most basalt.",
+   "today": "Venus turns once every 243 Earth days, backwards compared with most planets."
+  },
+  {
+   "place": "venera9",
+   "phase": "landers",
+   "title": "The first pictures from the surface",
+   "native": "Венера-9",
+   "when": "22 October 1975",
+   "at": 25.0,
+   "camera": {
+    "at": [
+     -68.36,
+     31.01
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Venera 9 landed on 22 October 1975 near Beta Regio and sent back the first picture from the surface of another planet: a black-and-white view of sharp, flat rocks. It worked for 53 minutes, and its carrier became the first spacecraft to orbit Venus. Three days later Venera 10 landed to the south and showed broad slabs of rock.",
+   "today": "Beta Regio is a vast rise split by a rift valley, crowned by the volcanoes Rhea and Theia Mons."
+  },
+  {
+   "place": "pvday",
+   "phase": "landers",
+   "title": "Four probes at once",
+   "when": "9 December 1978",
+   "at": 30.8,
+   "camera": {
+    "at": [
+     -43,
+     -31.3
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "NASA’s Pioneer Venus sent four probes into the atmosphere on 9 December 1978, spread over the day and night sides. None was built to survive landing, yet one, the Day probe, kept sending from the surface for about an hour. That month the Soviet Venera 11 and 12 also landed, but their camera covers stuck.",
+   "today": "The Pioneer Venus orbiter, which arrived on 4 December 1978, kept working until 1992."
+  },
+  {
+   "place": "maxwell",
+   "phase": "landers",
+   "title": "The highest mountains",
+   "when": "1978 to 1981",
+   "source": "Science",
+   "at": 36.6,
+   "camera": {
+    "at": [
+     3.3,
+     65.2
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Radar on the Pioneer Venus orbiter bounced pulses off the ground through the clouds and made the first map of heights over most of Venus. It showed mostly rolling plains, with two highland “continents”: Ishtar Terra in the north and Aphrodite Terra near the equator. On Ishtar, Maxwell Montes rises about 11 kilometres above the average surface.",
+   "today": "Maxwell Montes is one of only three features on Venus not named after a woman or goddess; the others are Alpha and Beta Regio."
+  },
+  {
+   "place": "venera13",
+   "phase": "landers",
+   "title": "Colour, a drill and sound",
+   "native": "Венера-13",
+   "when": "1 March 1982",
+   "at": 42.3,
+   "camera": {
+    "at": [
+     -57,
+     -7.5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Venera 13 landed on 1 March 1982 east of Phoebe Regio and survived 127 minutes, far longer than planned. It took the first colour pictures from Venus’s surface: flat, orange-lit rocks under a yellow sky. A drill pulled soil inside to be measured, finding rock like basalt, and a microphone recorded the wind. Venera 14 landed four days later.",
+   "today": "Venera 14’s soil probe came down on its own ejected camera cover, and measured the cover instead of the ground."
+  },
+  {
+   "place": "lakshmi",
+   "phase": "landers",
+   "title": "Radar maps of the north",
+   "native": "Венера-15",
+   "when": "October 1983 to July 1984",
+   "at": 48.1,
+   "camera": {
+    "at": [
+     -20.7,
+     68.6
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Venera 15 and 16 reached orbit in October 1983 carrying side-looking radars instead of landers. In about eight months they mapped the northern quarter of Venus, seeing features 1 to 2 kilometres across. The maps showed Lakshmi Planum, a high lava plateau ringed by mountains, and crumpled, ridged ground later called tesserae (tiles).",
+   "today": "Lakshmi Planum stands about 3 to 4 kilometres above the surrounding plains."
+  },
+  {
+   "place": "vega",
+   "phase": "landers",
+   "title": "Balloons in the clouds",
+   "native": "Вега-1",
+   "when": "11 to 15 June 1985",
+   "at": 53.8,
+   "camera": {
+    "at": [
+     166,
+     5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On their way to Halley’s Comet, the Soviet Vega 1 and 2 each dropped a lander and a balloon in June 1985. The landers came down near Aphrodite Terra. The balloons, the first on another planet, floated about 54 kilometres up for some 46 hours, carried thousands of kilometres by fierce winds while radio telescopes around the world tracked them.",
+   "today": "Both Vega spacecraft flew past Halley’s Comet in March 1986 and still circle the Sun."
+  },
+  {
+   "place": "orbit",
+   "phase": "magellan",
+   "title": "Magellan maps through the cloud",
+   "when": "10 August 1990",
+   "at": 59.6,
+   "camera": {
+    "at": [
+     0,
+     70
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "NASA’s Magellan, carried into space by the Space Shuttle Atlantis in May 1989, reached orbit on 10 August 1990. Over four years its radar mapped 98 percent of Venus, seeing features about 100 metres across, and it measured heights and gravity. Its pictures showed a volcanic world: lava plains, many volcanoes, ridges, rifts and impact craters.",
+   "today": "Magellan was the first planetary probe launched from the Space Shuttle."
+  },
+  {
+   "place": "mead",
+   "phase": "magellan",
+   "title": "Too few craters",
+   "when": "1990 to 1994",
+   "source": "Science",
+   "at": 65.3,
+   "camera": {
+    "at": [
+     57.2,
+     12.5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Magellan found about 1,000 impact craters, scattered almost evenly and mostly fresh. Small meteors burn up in the thick air, so almost none is under 3 kilometres. So few craters mean the surface is young: estimates of its average age range from about 300 to 800 million years. Whether lava covered it all at once or gradually is still argued.",
+   "today": "Mead, about 270 kilometres across, is the largest crater on Venus, named after the anthropologist Margaret Mead."
+  },
+  {
+   "place": "orbit",
+   "phase": "magellan",
+   "title": "Magellan’s final plunge",
+   "when": "13 October 1994",
+   "at": 71.1,
+   "camera": {
+    "at": [
+     0,
+     70
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "To map gravity better, engineers lowered Magellan’s orbit in 1993 by dipping it again and again into the upper air, the first time a planetary probe was steered by drag (aerobraking). In October 1994, with its solar panels failing, it was sent deeper into the atmosphere to measure it, and contact was lost on 13 October.",
+   "today": "Aerobraking has since saved fuel for Mars orbiters, from Mars Global Surveyor to the Trace Gas Orbiter."
+  },
+  {
+   "place": "idunn",
+   "phase": "now",
+   "title": "Venus Express sees fresh lava",
+   "when": "2006 to 2014",
+   "source": "Science",
+   "at": 76.9,
+   "camera": {
+    "at": [
+     -145.5,
+     -46.5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Europe’s Venus Express reached orbit on 11 April 2006 and worked for eight years. It watched a giant, twisting whirlwind of cloud over the south pole. Its infrared camera found lava around volcanoes such as Idunn Mons glowing as if barely weathered, suggesting flows less than 2.5 million years old, perhaps only a few hundred thousand.",
+   "today": "Idunn Mons is named after a Norse goddess who kept the apples of youth."
+  },
+  {
+   "place": "aphrodite",
+   "phase": "now",
+   "title": "Akatsuki’s second chance",
+   "native": "あかつき",
+   "lang": "ja",
+   "when": "7 December 2015",
+   "at": 82.6,
+   "camera": {
+    "at": [
+     104.8,
+     -5.8
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Japan’s Akatsuki (Dawn) failed to enter orbit in December 2010 when its main engine broke. It circled the Sun for five years, then on 7 December 2015 small steering thrusters put it into orbit. It tracked the clouds racing around the planet and saw a bow-shaped wave, about 10,000 kilometres long, standing still in the clouds above Aphrodite Terra.",
+   "today": "JAXA lost contact with Akatsuki in April 2024 and ended the mission in 2025."
+  },
+  {
+   "place": "orbit",
+   "phase": "now",
+   "title": "A whiff of phosphine?",
+   "when": "14 September 2020",
+   "source": "Science",
+   "at": 88.4,
+   "camera": {
+    "at": [
+     0,
+     70
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "In September 2020 astronomers using telescopes in Hawaii and Chile reported phosphine in Venus’s clouds, a gas that on Earth comes mostly from microbes or industry. If real, it might hint at life. Other teams could not confirm it, the signal was revised lower, and the claim remains disputed. It renewed interest, and new missions were chosen within a year.",
+   "today": "About 50 kilometres up, Venus’s air has Earth-like pressure and temperature, though its clouds are droplets of sulphuric acid."
+  },
+  {
+   "place": "maat",
+   "phase": "now",
+   "title": "A volcano caught changing",
+   "when": "1991, found in 2023",
+   "source": "Science",
+   "at": 94.1,
+   "camera": {
+    "at": [
+     -158,
+     0.5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "In 2023 two scientists comparing Magellan radar images taken eight months apart in 1991 found that a vent on Maat Mons, Venus’s highest volcano, had grown and changed shape, probably erupting. In 2024 another team found signs of new lava flows at Sif Mons and in Niobe Planitia. It is the strongest evidence yet that Venus is volcanically active.",
+   "today": "Maat Mons is named after Maat, the ancient Egyptian goddess of truth and justice."
+  },
+  {
+   "place": "alpha",
+   "phase": "now",
+   "title": "What comes next",
+   "when": "Now",
+   "at": 99.9,
+   "camera": {
+    "at": [
+     0.3,
+     -25.5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "As of late 2026, Europe’s EnVision is planned to launch in 2031 to map Venus and probe beneath its surface with radar. NASA chose DAVINCI, a probe to fall through the air onto Alpha Regio, and VERITAS, a radar orbiter, for the early 2030s, but budget cuts have put them in doubt. India plans an orbiter. These plans will change.",
+   "today": "Alpha Regio is a high block of tessera, some of the oldest-looking ground on Venus."
+  }
+ ],
+ "people": {
+  "heading": "People",
+  "items": [
+   {
+    "id": "sagan",
+    "name": "Carl Sagan",
+    "life": "1934–1996",
+    "role": "Planetary scientist",
+    "steps": [
+     0,
+     2
+    ],
+    "text": "An American astronomer whose work around 1960 argued that a strong greenhouse effect, from air thick with carbon dioxide, kept Venus’s surface searingly hot. Mariner 2 and the Venera landers bore him out. He later pointed to Venus as a warning of what runaway warming can do, and became famous explaining science on television in Cosmos."
+   },
+   {
+    "id": "babakin",
+    "name": "Georgy Babakin",
+    "native": "Георгий Бабакин",
+    "life": "1914–1971",
+    "role": "Chief designer, Lavochkin bureau",
+    "steps": [
+     1,
+     2
+    ],
+    "text": "A Soviet engineer who began without a university degree and became chief designer at the Lavochkin bureau in 1965. His team took over the troubled Venus and Mars probes and built Venera 4 to 7, strengthening the capsules to survive ever higher pressures. He died in August 1971, eight months after Venera 7 made the first landing."
+   },
+   {
+    "id": "barsukov",
+    "name": "Valery Barsukov",
+    "native": "Валерий Барсуков",
+    "life": "1928–1992",
+    "role": "Geochemist, Venera and Vega landers",
+    "steps": [
+     7,
+     9
+    ],
+    "text": "A Soviet geochemist who directed Moscow’s Vernadsky Institute from 1976 and led the study of Venus’s surface rocks. His teams’ instruments measured the soil at the Venera and Vega landing sites and showed that much of Venus is covered in basalt, a volcanic rock like the floors of Earth’s oceans."
+   },
+   {
+    "id": "sagdeev",
+    "name": "Roald Sagdeev",
+    "native": "Роальд Сагдеев",
+    "life": "born 1932",
+    "role": "Director, Space Research Institute (IKI); Vega",
+    "steps": [
+     9
+    ],
+    "text": "A Soviet physicist who directed Moscow’s Space Research Institute (IKI) from 1973 to 1988 and led the Vega project. He opened it to scientists from France, other European countries and the United States, adding the balloons and the Halley’s Comet flybys. After the Cold War he moved to the United States and taught at the University of Maryland."
+   }
+  ]
+ }
+}
