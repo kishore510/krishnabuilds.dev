@@ -6,6 +6,11 @@ import { z } from "zod";
 
 /** Cap on the create passcode, in characters. */
 export const MAX_PASSCODE_LENGTH = 256;
+/**
+ * Sessions one person (one address) may start each UTC day without the passcode (v0.45.0).
+ * The Worker enforces it (worker/src/limits.ts); the start page says it.
+ */
+export const OPEN_CREATIONS_PER_CLIENT_PER_DAY = 5;
 /** Cap on the POST /rooms body, in bytes. */
 export const MAX_CREATE_BODY_BYTES = 1024;
 
@@ -20,9 +25,12 @@ export function isRoomCodeShape(code: string): boolean {
 
 export const roomCodeSchema = z.string().refine(isRoomCodeShape);
 
-/** POST /rooms body. The passcode travels only here, never in a URL or header. */
+/**
+ * POST /rooms body. The passcode travels only here, never in a URL or header. Since v0.45.0 it is
+ * optional: `{}` starts a session under the smaller no-passcode limits. When present it is never empty.
+ */
 export const createRoomRequestSchema = z.strictObject({
-  passcode: z.string().min(1).max(MAX_PASSCODE_LENGTH),
+  passcode: z.string().min(1).max(MAX_PASSCODE_LENGTH).optional(),
 });
 
 /**

@@ -1,6 +1,6 @@
 import { useId, useState, type FormEvent } from "react";
 import { Link2, LogIn, MonitorSmartphone, Plus, StickyNote, type LucideIcon } from "lucide-react";
-import { MAX_PASSCODE_LENGTH } from "@stickyard/shared";
+import { MAX_PASSCODE_LENGTH, OPEN_CREATIONS_PER_CLIENT_PER_DAY } from "@stickyard/shared";
 import { StickyardMark } from "../brand/StickyardMark";
 import { Button } from "../components/ui/button";
 import { FieldError, Label } from "../components/ui/field";
@@ -17,9 +17,10 @@ const CARD = "flex flex-col gap-sm rounded-lg border border-border bg-surface p-
 const FIELD_ROW = "flex items-start gap-sm";
 
 /**
- * Start a session. The passcode lives only in this component's state: it is cleared as soon
- * as it is sent, never written to browser storage, and sent only in the request body. The
- * host token the relay answers with is kept for that room only (stickyard:host:<room id>).
+ * Start a session. The passcode is optional (v0.45.0): left empty, the relay allows a few
+ * sessions a day. It lives only in this component's state: it is cleared as soon as it is sent,
+ * never written to browser storage, and sent only in the request body. The host token the
+ * relay answers with is kept for that room only (stickyard:host:<room id>).
  */
 function StartCard() {
   const id = useId();
@@ -29,9 +30,9 @@ function StartCard() {
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (busy) return;
     const value = passcode;
     setPasscode("");
-    if (!value || busy) return;
     setBusy(true);
     setError(null);
     const result = await createRoom(WORKER_URL, value, browserFetch);
@@ -41,7 +42,7 @@ function StartCard() {
       writeKey(hostTokenKey(result.code.split(".")[0] ?? ""), result.hostToken);
       window.location.hash = roomHash(result.code);
     }
-    else setError(createErrorMessage(result));
+    else setError(createErrorMessage(result, value !== ""));
   };
 
   return (
@@ -49,7 +50,9 @@ function StartCard() {
       <h2 id={`${id}-heading`} className="text-lg font-semibold">
         Start a session
       </h2>
-      <p className="text-sm text-fg-muted">Starting a session needs the create passcode. Joining one doesn’t.</p>
+      <p id={`${id}-hint`} className="text-sm text-fg-muted">
+        Anyone can start {OPEN_CREATIONS_PER_CLIENT_PER_DAY} sessions a day. Have the create passcode? Add it for more.
+      </p>
       <form onSubmit={submit} className="flex flex-col gap-sm" aria-busy={busy}>
         <Label htmlFor={`${id}-passcode`}>Create passcode</Label>
         <div className={FIELD_ROW}>
@@ -58,10 +61,10 @@ function StartCard() {
             type="password"
             autoComplete="current-password"
             maxLength={MAX_PASSCODE_LENGTH}
-            required
+            placeholder="Optional"
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
-            aria-describedby={error ? `${id}-error` : undefined}
+            aria-describedby={error ? `${id}-hint ${id}-error` : `${id}-hint`}
             className="min-w-0 flex-1"
           />
           <Button type="submit" variant="primary" disabled={busy}>

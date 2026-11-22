@@ -2,6 +2,15 @@
 
 All notable changes to Stickyard, newest first. The format follows Keep a Changelog. Versions are 0.x: a minor bump for each slice and a patch bump for each follow-up fix. This file is shown in the app under **What’s new**, so entries are written for the people using it.
 
+## [0.46.0] - 2026-11-22
+
+### Changed
+- **You no longer need the create passcode to start a session.** Leave it empty and choose **Start session**: anyone can start 5 sessions a day.
+- **With the create passcode** there's no limit of your own; only a high daily limit across everyone, so a leaked passcode can't use up the day's allowance.
+- Starting without a passcode has its own daily limit across everyone (50 sessions), separate from the passcode's. When you reach a limit, the message says when to try again, and, without a passcode, that the create passcode gets you more.
+- A wrong passcode is still refused and counts towards the pause after several wrong tries; it never quietly starts a session without the passcode. During that pause, sessions without a passcode are paused too.
+- No reload needed: older pages, which always send a passcode, keep working.
+
 ## [0.45.0] - 2026-11-05
 
 ### Changed

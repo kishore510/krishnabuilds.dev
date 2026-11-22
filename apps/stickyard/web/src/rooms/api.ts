@@ -3,7 +3,8 @@ import { apiUrl } from "../config";
 
 /*
  * The relay's HTTP API for rooms. The create passcode goes only in the POST body,
- * never in a URL or header, and is never stored.
+ * never in a URL or header, and is never stored. It is optional (v0.45.0): an empty
+ * one sends `{}`, which the relay allows a few times a day.
  */
 
 export type CreateError =
@@ -37,7 +38,7 @@ export async function createRoom(workerUrl: string, passcode: string, fetchFn: F
     res = await fetchFn(apiUrl(workerUrl, "/rooms").toString(), {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ passcode }),
+      body: JSON.stringify(passcode ? { passcode } : {}),
       credentials: "omit",
       cache: "no-store",
     });
@@ -82,15 +83,20 @@ function waitText(seconds: number): string {
   return hours === 1 ? "1 hour" : `${hours} hours`;
 }
 
-/** Friendly text for a failed creation. Says no more than the relay's response did. */
-export function createErrorMessage(result: Extract<CreateResult, { ok: false }>): string {
+/**
+ * Friendly text for a failed creation. Says no more than the relay's response did.
+ * `withPasscode` says whether a passcode was sent: without one, a limit points to it.
+ */
+export function createErrorMessage(result: Extract<CreateResult, { ok: false }>, withPasscode = true): string {
   switch (result.error) {
     case "invalid_passcode":
       return "That passcode didn’t work. Check it and try again.";
-    case "rate_limited":
-      return result.retryAfterSeconds
-        ? `Too many attempts. Try again in ${waitText(result.retryAfterSeconds)}.`
-        : "Too many attempts. Try again later.";
+    case "rate_limited": {
+      const when = result.retryAfterSeconds ? `in ${waitText(result.retryAfterSeconds)}` : "later";
+      return withPasscode
+        ? `Too many attempts. Try again ${when}.`
+        : `That’s today’s limit for sessions without a passcode. Try again ${when}, or use the create passcode.`;
+    }
     case "creation_disabled":
       return "Starting new sessions is switched off at the moment. Joining an existing session still works.";
     case "not_configured":

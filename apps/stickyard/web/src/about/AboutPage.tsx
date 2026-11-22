@@ -175,8 +175,9 @@ export function AboutPage() {
             first-time notice) are stored in this browser too, without the key.
           </li>
           <li>
-            The create passcode is sent only to the relay, only when you start a session, and is never stored in your
-            browser.
+            The create passcode is optional. If you type one, it is sent only to the relay, only when you start a session, and is
+            never stored in your browser. To count the sessions started each day, the relay keeps a scrambled (hashed) form of
+            your IP address, never the address itself, and clears out entries more than two days old.
           </li>
           <li>
             The app is served by GitHub Pages and the relay runs on Cloudflare. Cloudflare keeps short-term request logs

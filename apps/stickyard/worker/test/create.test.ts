@@ -52,6 +52,13 @@ describe("POST /rooms", () => {
     client.close();
   });
 
+  it("creates a room with no passcode at all (v0.45.0)", async () => {
+    const res = await post({});
+    expect(res.status).toBe(200);
+    const body = createRoomResponseSchema.parse(await res.json());
+    expect(isRoomCodeShape(body.code)).toBe(true);
+  });
+
   it.each([
     ["wrong passcode", "wrong-passcode"],
     ["one character off", `${TEST_PASSCODE.slice(0, -1)}x`],
@@ -69,7 +76,6 @@ describe("POST /rooms", () => {
     it.each([
       ["not JSON", "passcode=test-passcode"],
       ["JSON null", "null"],
-      ["missing passcode", {}],
       ["empty passcode", { passcode: "" }],
       ["number passcode", { passcode: 1234 }],
       ["extra fields", { passcode: TEST_PASSCODE, admin: true }],

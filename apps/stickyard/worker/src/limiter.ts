@@ -6,6 +6,12 @@ import { CREATE_LIMITS } from "./limits";
 /** The one limiter instance's name. */
 export const LIMITER_NAME = "global";
 
+/**
+ * What a creation attempt came with: the right passcode, a wrong one, or none at all
+ * (v0.45.0: anyone may start a few sessions a day without the passcode).
+ */
+export type Credential = "passcode" | "wrong" | "none";
+
 export type Decision = { outcome: "created" } | { outcome: "invalid" } | { outcome: "limited"; retryAfterSeconds: number };
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -42,14 +48,20 @@ export class Limiter extends DurableObject<WorkerEnv> {
       CREATE TABLE IF NOT EXISTS creations (
         client TEXT NOT NULL, day INTEGER NOT NULL, count INTEGER NOT NULL, PRIMARY KEY (client, day)
       );
+      CREATE TABLE IF NOT EXISTS open_creations (
+        client TEXT NOT NULL, day INTEGER NOT NULL, count INTEGER NOT NULL, PRIMARY KEY (client, day)
+      );
     `);
   }
 
   /**
-   * One creation attempt by `client` at time `now`. `passcodeOk` says whether the passcode
-   * matched. Only a failed passcode adds a failure; only a granted creation adds a creation.
+   * One creation attempt by `client` at time `now`. `credential` says whether it came with the
+   * right passcode, a wrong one, or none. Only a wrong passcode adds a failure; only a granted
+   * creation adds a creation. A lockout (from wrong passcodes) refuses every kind of attempt.
+   * Passcode creations go in `creations` (one daily ceiling across everyone); creations without
+   * a passcode go in `open_creations` (per client and in total).
    */
-  attempt(client: string, passcodeOk: boolean, now: number): Decision {
+  attempt(client: string, credential: Credential, now: number): Decision {
     const L = CREATE_LIMITS;
 
     const lock = this.sql.exec<{ until: number }>("SELECT until FROM lockouts WHERE client = ? AND until > ?", client, now).toArray()[0];
@@ -65,7 +77,7 @@ export class Limiter extends DurableObject<WorkerEnv> {
       return limited(global.oldest + L.globalFailureWindowMs, now);
     }
 
-    if (!passcodeOk) {
+    if (credential === "wrong") {
       this.prune(now);
       this.sql.exec("INSERT INTO failures (client, ts) VALUES (?, ?)", client, now);
       const mine = this.sql
@@ -79,14 +91,17 @@ export class Limiter extends DurableObject<WorkerEnv> {
 
     const day = Math.floor(now / DAY);
     const midnight = (day + 1) * DAY;
-    const mine = this.sql.exec<{ count: number }>("SELECT count FROM creations WHERE client = ? AND day = ?", client, day).toArray()[0];
-    if ((mine?.count ?? 0) >= L.creationsPerClientPerDay) return limited(midnight, now);
-    const total = this.sql.exec<{ n: number | null }>("SELECT SUM(count) AS n FROM creations WHERE day = ?", day).one();
-    if ((total.n ?? 0) >= L.creationsPerDay) return limited(midnight, now);
+    const table = credential === "passcode" ? "creations" : "open_creations";
+    if (credential === "none") {
+      const mine = this.sql.exec<{ count: number }>("SELECT count FROM open_creations WHERE client = ? AND day = ?", client, day).toArray()[0];
+      if ((mine?.count ?? 0) >= L.openPerClientPerDay) return limited(midnight, now);
+    }
+    const total = this.sql.exec<{ n: number | null }>(`SELECT SUM(count) AS n FROM ${table} WHERE day = ?`, day).one();
+    if ((total.n ?? 0) >= (credential === "passcode" ? L.passcodePerDay : L.openPerDay)) return limited(midnight, now);
 
     this.prune(now);
     this.sql.exec(
-      "INSERT INTO creations (client, day, count) VALUES (?, ?, 1) ON CONFLICT (client, day) DO UPDATE SET count = count + 1",
+      `INSERT INTO ${table} (client, day, count) VALUES (?, ?, 1) ON CONFLICT (client, day) DO UPDATE SET count = count + 1`,
       client,
       day,
     );
@@ -99,5 +114,6 @@ export class Limiter extends DurableObject<WorkerEnv> {
     this.sql.exec("DELETE FROM failures WHERE ts < ?", cutoff);
     this.sql.exec("DELETE FROM lockouts WHERE until < ?", now);
     this.sql.exec("DELETE FROM creations WHERE day < ?", Math.floor(cutoff / DAY));
+    this.sql.exec("DELETE FROM open_creations WHERE day < ?", Math.floor(cutoff / DAY));
   }
 }

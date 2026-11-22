@@ -17,8 +17,11 @@ describe("createRoomRequestSchema", () => {
     expect(createRoomRequestSchema.safeParse({ passcode: "test-passcode" }).success).toBe(true);
   });
 
+  it("accepts no passcode at all (v0.45.0)", () => {
+    expect(createRoomRequestSchema.safeParse({}).success).toBe(true);
+  });
+
   it.each([
-    ["missing", {}],
     ["empty", { passcode: "" }],
     ["not a string", { passcode: 12345 }],
     ["too long", { passcode: "x".repeat(MAX_PASSCODE_LENGTH + 1) }],
