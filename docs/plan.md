@@ -177,6 +177,9 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Chalukyas and Rashtrakutas, a Chronicles story on the south-asia map (0.87.0)
 - [x] The Pala Empire, a Chronicles story on the south-asia map (0.88.0)
 - [x] The Gurjara-Pratiharas, a Chronicles story on the south-asia map (0.89.0)
+- [x] The Hoysalas, a Chronicles story on the south-asia map (0.90.0)
+- [x] The Yadavas of Devagiri, a Chronicles story on the south-asia map (0.91.0)
+- [x] The Later Pandyas, a Chronicles story on the south-asia map (0.92.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 

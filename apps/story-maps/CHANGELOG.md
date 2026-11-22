@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.92.0
+
+- New story map in Chronicles: The Later Pandyas. The far south from Maravarman Sundara Pandya's sack of Thanjavur in about 1219, through Jatavarman Sundara Pandya's golden roofs and crowning at Nellore, the Tooth Relic, Marco Polo on the pearl coast and the war of brothers, to Malik Kafur in 1311, the Madurai Sultanate and the Pandyas of Tenkasi. 9 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards. With the Hoysalas and the Yadavas, a set of three kingdoms raided by Malik Kafur.
+- Catalogue: the Later Pandyas entry opens the story.
+
+## 0.91.0
+
+- New story map in Chronicles: The Yadavas of Devagiri. Four centuries of the western Deccan, from the Seunas at Chandor and Bhillama V's rock fort, through Singhana II's astronomers and musicians, Chakradhar Swami, Hemadri and Dnyaneshwar's Marathi Gita, to Alauddin Khalji's raid in 1296, Malik Kafur, the end of the kingdom in 1318 and Daulatabad. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 4 people cards.
+- Catalogue: the Yadavas of Devagiri entry opens the story.
+
+## 0.90.0
+
+- New story map in Chronicles: The Hoysalas. Three centuries of southern Karnataka, from the tiger at Sosevur and Vishnuvardhana's victory at Talakad, through the temples of Belur, Halebidu and Somanathapura and the Hoysalas as guardians of the Cholas, to Malik Kafur at Dorasamudra in 1311 and Ballala III's death in 1343. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards.
+- Catalogue: the Hoysala Empire entry opens the story.
+
 ## 0.89.0
 
 - New story map in Chronicles: The Gurjara-Pratiharas. Three centuries of north India, from the Pratiharas holding back Arab armies from Sindh and Vatsaraja's gamble, through Nagabhata II's capture of Kannauj, the zero at Gwalior and the poets of Mahodaya, to the Rashtrakuta sack of Kannauj, the Chandelas' break-away, Mahmud of Ghazni and the Gahadavalas in about 1090. 9 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards.
