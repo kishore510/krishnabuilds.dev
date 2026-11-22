@@ -31,7 +31,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. In this order:
 
-1. The Moon: Luna, Surveyor, Apollo, Lunokhod, Chang'e, Chandrayaan, SLIM, Artemis (needs a Moon near-side map: maria, craters, landing sites; its own PR)
+1. The Moon: Luna, Surveyor, Apollo, Lunokhod, Chang'e, Chandrayaan, SLIM, Artemis (the `moon` basemap is built: whole Moon, near side in the middle, units are selenographic longitude and latitude, so landing sites go in as [lon, lat]; gazetteer station names such as Statio Tranquillitatis, Tianhe, Tianjiang and Shiv Shakti give the official sites)
 2. Mars: Mariner, Viking, Pathfinder, Spirit and Opportunity, Curiosity, Perseverance and Ingenuity, Zhurong, Mangalyaan (needs a Mars map; its own PR)
 3. Venus: the Venera landers, Magellan, Akatsuki, DAVINCI and EnVision to come (a Venus map, or `solar-system`)
 4. Jupiter and its moons: Pioneer, Galileo, Juno, JUICE, Europa Clipper (needs a Jupiter-system sky diagram; its own PR)
@@ -40,7 +40,7 @@ A series in the Universe subject, one story per world and the missions sent to i
 7. Pluto and the Kuiper belt: New Horizons and Arrokoth (`solar-system`)
 8. Mercury: Mariner 10, MESSENGER, BepiColombo (`solar-system`)
 
-Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. Moon and Mars surface outlines need a public-domain source (NASA or USGS) checked before they are committed.
+Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. Mars surface outlines need a public-domain source (NASA or USGS) checked before they are committed. The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`).
 
 ## Built
 
