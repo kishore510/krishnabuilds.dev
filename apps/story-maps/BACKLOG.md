@@ -41,6 +41,7 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- The Safavid Empire (`safavid`), 2026-11-22
 - The First Caliphates (`caliphates`), 2026-11-22
 - The Sasanian Empire (`sasanian`), 2026-11-22
 - The Parthian Empire (`parthian`), 2026-11-22

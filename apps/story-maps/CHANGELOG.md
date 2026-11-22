@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.108.0
+
+- New story map in Chronicles: The Safavid Empire. From the Sufi shrine at Ardabil and Ismail’s crowning at Tabriz through Chaldiran, the Ardabil carpet and Humayun’s exile, to Shah Abbas’s Isfahan, the Armenians of New Julfa, Hormuz and Baghdad, the Afghan siege of 1722 and Nader Shah’s crowning on the Mughan plain. 14 chapters on the `near-east` basemap, a Powers layer (the Safavids, Aq Qoyunlu, the Ottomans, Portuguese Hormuz, the Hotaki Afghans, Russia, Nader’s Iran), 8 people cards, native names in Persian, no new glyphs.
+- Catalogue: the Safavid Empire entry now opens the story.
+
 ## 0.107.0
 
 - New story map in Chronicles: The First Caliphates. From Abu Bakr in Medina through the Rashidun conquests, Ali and Karbala, the Umayyads of Damascus and the Dome of the Rock, to the Abbasid revolution, the Round City of Baghdad, the House of Wisdom, Samarra, the Mongol sack of 1258 and the end of the caliphate in 1924. 18 chapters on the `near-east` basemap, a Powers layer (the caliphate, Mu’awiya’s Syria, the Sasanians, Eastern Rome, the Mamluks, the Mongols), 8 people cards, native names in Arabic, and a new place glyph, `minaret`, for the spiral minaret of Samarra.
