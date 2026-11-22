@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.105.0
+
+- New story map in Chronicles: The Parthian Empire. From Arsaces and the horsemen of Nisa through Mithridates I’s conquests, Ctesiphon and the envoys of Han China, to the Roman disaster at Carrhae, the struggle for Armenia, Trajan at the Gulf, Hatra’s walls, the rise of Ardashir and Nisa dug up. 13 chapters on the `near-east` basemap, a Powers layer (Parthia, Seleucids, Rome, Armenia), 6 people cards, no new glyphs.
+- Catalogue: the Parthian Empire entry now opens the story.
+
 ## 0.104.0
 
 - New story map in Chronicles: The Seleucid Empire. From Alexander’s death at Babylon and Seleucus’s return through the elephants of Ipsus, the founding of Antioch and the march of Antiochus the Great to Bactria, to Rome’s victory at Magnesia, the Maccabees, the Parthian conquest of Mesopotamia, Pompey’s end of the dynasty and Dura-Europos dug up. 15 chapters on the `near-east` basemap, a Powers layer (Seleucids, Antigonus, Ptolemaic Egypt, Parthia, Rome), 6 people cards, no new glyphs.
