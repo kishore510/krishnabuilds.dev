@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.103.0
+
+- New `venus` basemap for the Exploring the Solar System series: the whole of Venus (lon -180 to 180, lat -90 to 90) as a sky basemap whose units are longitude (east positive) and latitude, with heights shaded from Magellan radar altimetry and names, centres and sizes from the IAU/USGS gazetteer; the colours are painted. `scripts/venus/venus.py` rebuilds it.
+- New story map in Universe: Missions to Venus. From Mariner 2’s flyby in 1962 through the Soviet Venera landers, Pioneer Venus and the Vega balloons to Magellan’s radar map, Venus Express, Japan’s Akatsuki, the disputed phosphine and the missions still to come. 18 chapters on the `venus` basemap, 4 people cards (Sagan, Babakin, Barsukov, Sagdeev), no new glyphs.
+- Catalogue: a new Missions to Venus entry opens the story; new Venera 7, Vega balloons, Magellan and Akatsuki entries open it at chapters 3, 10, 11 and 15.
+
 ## 0.102.0
 
 - New `mars` basemap for the Exploring the Solar System series: the whole of Mars (lon -180 to 180, lat -90 to 90) as a sky basemap whose units are planetocentric longitude (east positive) and latitude, with heights shaded from MOLA on Mars Global Surveyor and names, centres and sizes from the IAU/USGS gazetteer; the polar caps are hand-drawn. `scripts/mars/mars.py` rebuilds it. Sky shapes can now list `holes`, cut out with the even-odd rule, like land shapes.
