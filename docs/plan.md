@@ -188,6 +188,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] The Partition of India, a Chronicles story on the south-asia map (0.98.0)
 - [x] The Voyager Probes, a Universe story on a new solar-system map (0.99.0)
 - [x] Missions to the Moon, a Universe story on the moon map (0.101.0)
+- [x] Missions to Mars, a Universe story on the new mars map (0.102.0)
 
 The running list of what is built and what is next is `apps/story-maps/BACKLOG.md`. Agreed order for the next stories: the Mughals first, then the Delhi Sultanate, the Silk Road, the Marathas, and the Mahajanapadas and the Buddha. Together they close the gaps in the Indian Chronicles, which then run from the Indus to 1947 except for north India from about 550 to 1200 CE.
 
