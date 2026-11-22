@@ -27,6 +27,21 @@ These need a new map first, which is its own piece of work and its own PR:
 - The Khmer, Srivijaya and Majapahit (a Southeast Asia map)
 - Mali, Ghana and Songhai (a West Africa map)
 
+### Exploring the Solar System (Universe)
+
+A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. In this order:
+
+1. The Moon: Luna, Surveyor, Apollo, Lunokhod, Chang'e, Chandrayaan, SLIM, Artemis (needs a Moon near-side map: maria, craters, landing sites; its own PR)
+2. Mars: Mariner, Viking, Pathfinder, Spirit and Opportunity, Curiosity, Perseverance and Ingenuity, Zhurong, Mangalyaan (needs a Mars map; its own PR)
+3. Venus: the Venera landers, Magellan, Akatsuki, DAVINCI and EnVision to come (a Venus map, or `solar-system`)
+4. Jupiter and its moons: Pioneer, Galileo, Juno, JUICE, Europa Clipper (needs a Jupiter-system sky diagram; its own PR)
+5. Saturn and Titan: Pioneer 11, Cassini–Huygens, Dragonfly to come (a Saturn-system sky diagram)
+6. Asteroids and comets: Giotto, NEAR, Rosetta and Philae, Hayabusa and Hayabusa2, OSIRIS-REx, DART (`solar-system`)
+7. Pluto and the Kuiper belt: New Horizons and Arrokoth (`solar-system`)
+8. Mercury: Mariner 10, MESSENGER, BepiColombo (`solar-system`)
+
+Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. Moon and Mars surface outlines need a public-domain source (NASA or USGS) checked before they are committed.
+
 ## Built
 
 Newest first.

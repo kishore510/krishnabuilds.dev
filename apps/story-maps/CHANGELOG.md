@@ -2,7 +2,7 @@
 
 ## 0.99.0
 
-- New story map in Physics and Astronomy: The Voyager Probes. From the Grand Tour line-up of 1965 and the launches of 1977, through Jupiter, Saturn, Uranus and Neptune, the Pale Blue Dot, the termination shock and the heliopause, to the failing memory of 2023, where the probes are today and where they are going. 15 chapters on a new `solar-system` sky basemap (a logarithmic distance diagram), new glyphs `gas-giant`, `ringed-planet` and `ice-giant` and the `probe` traveller icon, and 3 people cards.
+- New story map in Universe: The Voyager Probes. From the Grand Tour line-up of 1965 and the launches of 1977, through Jupiter, Saturn, Uranus and Neptune, the Pale Blue Dot, the termination shock and the heliopause, to the failing memory of 2023, where the probes are today and where they are going. 15 chapters on a new `solar-system` sky basemap (a logarithmic distance diagram), new glyphs `gas-giant`, `ringed-planet` and `ice-giant` and the `probe` traveller icon, and 3 people cards.
 - Catalogue: a new Voyager probes entry opens the story; new Pale Blue Dot and Carl Sagan entries open it at chapters 9 and 3.
 
 ## 0.98.0
