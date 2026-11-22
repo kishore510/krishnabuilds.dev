@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.89.0
+
+- New story map in Chronicles: The Gurjara-Pratiharas. Three centuries of north India, from the Pratiharas holding back Arab armies from Sindh and Vatsaraja's gamble, through Nagabhata II's capture of Kannauj, the zero at Gwalior and the poets of Mahodaya, to the Rashtrakuta sack of Kannauj, the Chandelas' break-away, Mahmud of Ghazni and the Gahadavalas in about 1090. 9 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards.
+- Catalogue: the Gurjara-Pratihara dynasty entry opens the story.
+
 ## 0.88.0
 
 - New story map in Chronicles: The Pala Empire. Four centuries of Bengal and Bihar, from the king chosen to end "the law of the fishes" and Dharmapala's race for Kannauj, through the monasteries of Vikramashila, Somapura and Nalanda, Mahipala's revival and the Chola raid to the Ganga, to Atisha's journey to Tibet, the Kaivarta revolt, the Senas and the fall of the monasteries in about 1200. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 4 people cards.

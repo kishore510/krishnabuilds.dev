@@ -1,0 +1,1589 @@
+{
+  "id": "pratihara",
+  "title": "The Gurjara-Pratiharas",
+  "description": "Three centuries of north India: the Pratiharas hold back Arab armies from Sindh, win Kannauj in the three-way struggle with the Palas and Rashtrakutas, rule the north under Mihira Bhoja, then lose their vassals and their capital to Mahmud of Ghazni.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "hi",
+  "routes": "journey",
+  "mapLabel": "North India, c. 725 to 1090 CE",
+  "note": "The early Pratihara capital is disputed (Ujjain or Bhinmal and Jalore); chapter 1 is placed at Ujjain. The Sindh pin marks the Arab province, at its capital Mansura. Dates of kings are approximate.",
+  "places": {
+    "sindh": {
+      "name": "Sindh (Mansura)",
+      "at": [
+        68.95,
+        25.88
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "ujjain": {
+      "name": "Ujjain",
+      "at": [
+        75.78,
+        23.18
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "jalore": {
+      "name": "Jalore (Jabalipura)",
+      "at": [
+        72.62,
+        25.35
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "kannauj": {
+      "name": "Kannauj (Mahodaya)",
+      "at": [
+        79.92,
+        27.05
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "gwalior": {
+      "name": "Gwalior",
+      "at": [
+        78.17,
+        26.23
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "manyakheta": {
+      "name": "Manyakheta",
+      "at": [
+        77.16,
+        17.19
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "khajuraho": {
+      "name": "Khajuraho",
+      "at": [
+        79.92,
+        24.85
+      ],
+      "glyph": "step-temple",
+      "label": "right"
+    },
+    "ghazni": {
+      "name": "Ghazni",
+      "at": [
+        68.42,
+        33.55
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "varanasi": {
+      "name": "Varanasi",
+      "at": [
+        83.0,
+        25.32
+      ],
+      "glyph": "shrine",
+      "label": "bottom"
+    }
+  },
+  "travellers": {
+    "arab-army": {
+      "name": "Arab army",
+      "icon": "horse"
+    },
+    "pratihara-army": {
+      "name": "Pratihara army",
+      "icon": "soldier"
+    },
+    "rashtrakuta-army": {
+      "name": "Rashtrakuta army",
+      "icon": "horse"
+    },
+    "mahmud-army": {
+      "name": "Mahmud's army",
+      "icon": "horse"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "Guardians of the west",
+      "color": "#4fc3b0"
+    },
+    "height": {
+      "name": "Lords of Kannauj",
+      "color": "#e0b43a"
+    },
+    "decline": {
+      "name": "Raids and breakaways",
+      "color": "#d0584a"
+    }
+  },
+  "routeStyles": {
+    "arab": {
+      "color": "#2f8f6b",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "pratihara": {
+      "color": "#c98a2b",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "rashtrakuta": {
+      "color": "#e0573a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "ghaznavid": {
+      "color": "#3a6fb0",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 30,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 54,
+        "color": "rgba(224,180,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(208,88,74,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 4,
+        "text": "c. 725 CE"
+      },
+      {
+        "at": 26,
+        "text": "c. 815"
+      },
+      {
+        "at": 38,
+        "text": "876"
+      },
+      {
+        "at": 60,
+        "text": "c. 916"
+      },
+      {
+        "at": 84,
+        "text": "1018"
+      },
+      {
+        "at": 97,
+        "text": "c. 1090"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "ujjain",
+      "phase": "rise",
+      "title": "Holding back the Arabs",
+      "native": "उज्जयिनी",
+      "when": "c. 725 to 740 CE",
+      "at": 4,
+      "camera": {
+        "at": [
+          72.4,
+          24.5
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "sindh",
+          "to": "ujjain",
+          "traveller": "arab-army",
+          "style": "arab",
+          "bend": 0.15
+        }
+      ],
+      "text": "After the Arab conquest of Sindh in 712, its Umayyad governors raided east, and the Arab historian al-Baladhuri says they reached Ujjain. A later Pratihara inscription at Gwalior praises Nagabhata I, the dynasty’s founder, for crushing the armies of a foreign (mlechchha) king. Further south, a Chalukya prince also claimed to have beaten the raiders, in 739.",
+      "today": "Ujjain, Madhya Pradesh; where the first Pratiharas ruled from is disputed."
+    },
+    {
+      "place": "jalore",
+      "phase": "rise",
+      "title": "Vatsaraja’s gamble",
+      "native": "जालोर",
+      "when": "778 to c. 790 CE",
+      "at": 15,
+      "camera": {
+        "at": [
+          76,
+          25.2
+        ],
+        "width": 16
+      },
+      "legs": [],
+      "text": "In 778 the Jain monk Udyotana finished his Prakrit novel, the Kuvalayamala, at Jabalipura (Jalore) ‘while Vatsaraja ruled’. Vatsaraja marched into the Ganga plain and beat the Pala king Dharmapala in the race for Kannauj. Then the Rashtrakuta Dhruva came north and defeated him, and Rashtrakuta grants boast that Vatsaraja fled into the desert.",
+      "today": "Jalore, Rajasthan; its hill fort was rebuilt many times after the Pratiharas."
+    },
+    {
+      "place": "kannauj",
+      "phase": "rise",
+      "title": "Kannauj won",
+      "native": "कन्नौज",
+      "when": "c. 815 CE",
+      "at": 26,
+      "camera": {
+        "at": [
+          78,
+          26
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "jalore",
+          "to": "kannauj",
+          "traveller": "pratihara-army",
+          "style": "pratihara",
+          "bend": 0.12
+        }
+      ],
+      "text": "Vatsaraja’s son Nagabhata II was also beaten, by Govinda III, but when the Rashtrakuta went home he struck. He drove the Pala ally Chakrayudha out of Kannauj, defeated Dharmapala in the east, and made Kannauj, Harsha’s old capital, his own. For the next two centuries the Pratiharas ruled from it, and their rivals kept coming back for it.",
+      "today": "Kannauj, Uttar Pradesh; the city is now best known for its perfume (attar)."
+    },
+    {
+      "place": "gwalior",
+      "phase": "height",
+      "title": "A zero at Gwalior",
+      "native": "ग्वालियर",
+      "when": "876 CE",
+      "at": 38,
+      "camera": {
+        "at": [
+          76.5,
+          26.3
+        ],
+        "width": 20
+      },
+      "legs": [],
+      "text": "Mihira Bhoja, Nagabhata’s grandson, ruled the north for about fifty years. In 876, under him, a small rock-cut temple to Vishnu at Gwalior fort was given land, and its inscription writes the numbers 270 and 50 with a round zero. It is one of the oldest dated zeros written in India, and it can still be read there.",
+      "today": "The Chaturbhuj temple, Gwalior Fort, Madhya Pradesh."
+    },
+    {
+      "place": "kannauj",
+      "phase": "height",
+      "title": "Poets at Mahodaya",
+      "native": "महोदय",
+      "when": "c. 885 to 910 CE",
+      "at": 48,
+      "camera": {
+        "at": [
+          76.5,
+          26.3
+        ],
+        "width": 20
+      },
+      "legs": [],
+      "text": "Under Bhoja’s son Mahendrapala I, Kannauj, which court poets called Mahodaya, was the richest city of the north. Mahendrapala’s teacher Rajashekhara wrote plays in Sanskrit and Prakrit and the Kavyamimamsa, a handbook for poets that quotes his wife Avantisundari as a critic. The empire then stretched from Saurashtra and the edge of Sindh to north Bengal.",
+      "today": "Kannauj, Uttar Pradesh; Rajashekhara’s Karpuramanjari is still studied as a Prakrit classic."
+    },
+    {
+      "place": "kannauj",
+      "phase": "decline",
+      "title": "The Rashtrakutas sack Kannauj",
+      "native": "कन्नौज",
+      "when": "c. 916 CE",
+      "at": 60,
+      "camera": {
+        "at": [
+          78,
+          22
+        ],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "manyakheta",
+          "to": "kannauj",
+          "traveller": "rashtrakuta-army",
+          "style": "rashtrakuta",
+          "bend": 0.1
+        }
+      ],
+      "text": "In about 916 the Rashtrakuta king Indra III marched north and sacked Kannauj, and the Pratihara Mahipala fled. The Kannada poet Pampa says Indra’s feudatory bathed his horses where the Ganga meets the Yamuna. Mahipala recovered his capital, but the empire never fully recovered its strength. The Arab traveller al-Masudi, in India about then, described its armies.",
+      "today": "Prayagraj, where the Ganga and the Yamuna meet."
+    },
+    {
+      "place": "khajuraho",
+      "phase": "decline",
+      "title": "The Chandelas break away",
+      "native": "खजुराहो",
+      "when": "c. 954 CE",
+      "at": 72,
+      "camera": {
+        "at": [
+          79.6,
+          25.2
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "Pratihara governors and vassals now built kingdoms of their own. The Chandelas of Khajuraho had served the Pratiharas, but an inscription of 954 says Yashovarman had taken an image of Vishnu from the Pratihara king and set it in his new temple, the Lakshmana. His son Dhanga ruled as an independent king. Khajuraho’s temples rose under them.",
+      "today": "The Khajuraho temples, Madhya Pradesh, a UNESCO World Heritage Site since 1986."
+    },
+    {
+      "place": "kannauj",
+      "phase": "decline",
+      "title": "Mahmud comes to Kannauj",
+      "native": "कन्नौज",
+      "when": "1018 CE",
+      "at": 84,
+      "camera": {
+        "at": [
+          76,
+          30.3
+        ],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "ghazni",
+          "to": "kannauj",
+          "traveller": "mahmud-army",
+          "style": "ghaznavid",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1018 Mahmud of Ghazni raided into the Ganga plain. The Pratihara king Rajyapala abandoned Kannauj, and Mahmud’s army plundered its temples. Neighbouring kings were outraged at his flight: an inscription says a vassal of the Chandela Vidyadhara killed Rajyapala. Pratiharas lingered for a few more years, but the empire that had ruled the north was gone.",
+      "today": "Ghazni, Afghanistan; Mahmud’s tomb is at Rauza, just outside the town."
+    },
+    {
+      "place": "varanasi",
+      "phase": "decline",
+      "title": "After the Pratiharas",
+      "native": "वाराणसी",
+      "when": "c. 1036 to 1090 CE",
+      "at": 95,
+      "camera": {
+        "at": [
+          81.5,
+          26
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "The last Pratiharas known from inscriptions, Trilochanapala and Yashahpala, held only a small kingdom around Kannauj into the 1030s. In about 1090 a new dynasty, the Gahadavalas, took Kannauj and ruled from it and from Varanasi. They held the city until 1194, when Muhammad of Ghor defeated Jayachandra, opening the way to the Delhi Sultanate.",
+      "today": "Varanasi, Uttar Pradesh, the Gahadavalas’ second capital."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "pratihara",
+        "name": "Pratiharas",
+        "color": "#c98a2b",
+        "active": [
+          [
+            0,
+            7
+          ]
+        ],
+        "label": {
+          "text": "Pratiharas",
+          "at": [
+            74.4,
+            24.6
+          ],
+          "moves": [
+            {
+              "from": 1,
+              "at": [
+                75.4,
+                26.6
+              ]
+            },
+            {
+              "from": 2,
+              "at": [
+                76,
+                24.2
+              ]
+            },
+            {
+              "from": 3,
+              "at": [
+                74.4,
+                25.8
+              ]
+            },
+            {
+              "from": 4,
+              "at": [
+                75.4,
+                25.8
+              ]
+            },
+            {
+              "from": 5,
+              "at": [
+                76.2,
+                25.0
+              ]
+            },
+            {
+              "from": 6,
+              "at": [
+                76.6,
+                26.6
+              ]
+            },
+            {
+              "from": 7,
+              "at": [
+                80.0,
+                28.3
+              ]
+            }
+          ]
+        },
+        "facts": {
+          "Region": "Malwa and Rajasthan, later the Ganga plain",
+          "Capital": "Kannauj (Mahodaya); the early capital is disputed"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Nagabhata I"
+          },
+          {
+            "from": 1,
+            "text": "Vatsaraja"
+          },
+          {
+            "from": 2,
+            "text": "Nagabhata II"
+          },
+          {
+            "from": 3,
+            "text": "Mihira Bhoja"
+          },
+          {
+            "from": 4,
+            "text": "Mahendrapala I"
+          },
+          {
+            "from": 5,
+            "text": "Mahipala"
+          },
+          {
+            "from": 7,
+            "text": "Rajyapala"
+          }
+        ],
+        "role": "The dynasty of this story.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Holds back Arab armies"
+          },
+          {
+            "from": 1,
+            "text": "Races the Palas and Rashtrakutas for Kannauj"
+          },
+          {
+            "from": 5,
+            "text": "Kannauj sacked by the Rashtrakutas"
+          },
+          {
+            "from": 6,
+            "text": "Vassals break away"
+          },
+          {
+            "from": 7,
+            "text": "Loses Kannauj to Mahmud’s raid"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73,
+                  25.5
+                ],
+                [
+                  75,
+                  26.2
+                ],
+                [
+                  77,
+                  25.4
+                ],
+                [
+                  77.4,
+                  23.6
+                ],
+                [
+                  76,
+                  22.6
+                ],
+                [
+                  74,
+                  22.6
+                ],
+                [
+                  73,
+                  23.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.6,
+                  26.8
+                ],
+                [
+                  73,
+                  28.2
+                ],
+                [
+                  75.5,
+                  28
+                ],
+                [
+                  77,
+                  26.6
+                ],
+                [
+                  77.4,
+                  24
+                ],
+                [
+                  76.2,
+                  22.7
+                ],
+                [
+                  74,
+                  22.4
+                ],
+                [
+                  72.4,
+                  23.4
+                ],
+                [
+                  71.6,
+                  25
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.6,
+                  26.8
+                ],
+                [
+                  73,
+                  28.2
+                ],
+                [
+                  76,
+                  28.6
+                ],
+                [
+                  79,
+                  28.4
+                ],
+                [
+                  80.8,
+                  27.8
+                ],
+                [
+                  81,
+                  26.2
+                ],
+                [
+                  79.6,
+                  25.4
+                ],
+                [
+                  78,
+                  24.4
+                ],
+                [
+                  77,
+                  23.4
+                ],
+                [
+                  75.5,
+                  22.6
+                ],
+                [
+                  73.5,
+                  22.6
+                ],
+                [
+                  72.4,
+                  23.6
+                ],
+                [
+                  71.6,
+                  25
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  70.4,
+                  21.1
+                ],
+                [
+                  70.6,
+                  24.4
+                ],
+                [
+                  70.8,
+                  26.4
+                ],
+                [
+                  71.8,
+                  28
+                ],
+                [
+                  74,
+                  29.2
+                ],
+                [
+                  77,
+                  29.6
+                ],
+                [
+                  80,
+                  28.8
+                ],
+                [
+                  82.6,
+                  28
+                ],
+                [
+                  85,
+                  26.6
+                ],
+                [
+                  85.2,
+                  25.2
+                ],
+                [
+                  83.2,
+                  24.8
+                ],
+                [
+                  81,
+                  24.2
+                ],
+                [
+                  78,
+                  22.6
+                ],
+                [
+                  75,
+                  21.9
+                ],
+                [
+                  73,
+                  22.5
+                ],
+                [
+                  71.6,
+                  21.9
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  74.6,
+                  27.4
+                ],
+                [
+                  76.4,
+                  28.4
+                ],
+                [
+                  78.6,
+                  28.2
+                ],
+                [
+                  80.4,
+                  27.4
+                ],
+                [
+                  80.6,
+                  26
+                ],
+                [
+                  79,
+                  25.2
+                ],
+                [
+                  78,
+                  24
+                ],
+                [
+                  76.6,
+                  22.8
+                ],
+                [
+                  75,
+                  22.6
+                ],
+                [
+                  74.2,
+                  24
+                ],
+                [
+                  74.4,
+                  25.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                6
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  76,
+                  25
+                ],
+                [
+                  76.6,
+                  26.6
+                ],
+                [
+                  77.6,
+                  28.2
+                ],
+                [
+                  79.2,
+                  28.4
+                ],
+                [
+                  80.6,
+                  27.6
+                ],
+                [
+                  80.6,
+                  26.2
+                ],
+                [
+                  79.2,
+                  25.9
+                ],
+                [
+                  78.2,
+                  25
+                ],
+                [
+                  78,
+                  23.4
+                ],
+                [
+                  77,
+                  22.8
+                ],
+                [
+                  75.4,
+                  22.8
+                ],
+                [
+                  75,
+                  24
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  26.4
+                ],
+                [
+                  79.4,
+                  27.4
+                ],
+                [
+                  80.6,
+                  27.5
+                ],
+                [
+                  81.2,
+                  26.6
+                ],
+                [
+                  80.6,
+                  25.8
+                ],
+                [
+                  79.4,
+                  25.8
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "arab-sindh",
+        "name": "Arab Sindh",
+        "color": "#2f8f6b",
+        "active": [
+          [
+            0,
+            0
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Arab Sindh",
+          "at": [
+            69.4,
+            27.3
+          ],
+          "moves": [
+            {
+              "from": 3,
+              "at": [
+                69.3,
+                26.5
+              ]
+            }
+          ]
+        },
+        "facts": {
+          "Region": "The lower Indus valley",
+          "Capital": "Mansura"
+        },
+        "rulers": [],
+        "role": "Umayyad, then Abbasid, province.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Raids east, says al-Baladhuri"
+          },
+          {
+            "from": 3,
+            "text": "Faces a Pratihara king called a great enemy of the Arabs"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.1,
+                  27.8
+                ],
+                [
+                  69.6,
+                  28
+                ],
+                [
+                  70.8,
+                  27.2
+                ],
+                [
+                  70.6,
+                  25.4
+                ],
+                [
+                  69.8,
+                  24.5
+                ],
+                [
+                  68.6,
+                  24.4
+                ],
+                [
+                  68.1,
+                  25.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.3,
+                  27
+                ],
+                [
+                  69.5,
+                  27.2
+                ],
+                [
+                  70.2,
+                  26.2
+                ],
+                [
+                  69.8,
+                  25
+                ],
+                [
+                  68.8,
+                  24.6
+                ],
+                [
+                  68.3,
+                  25.4
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "pala",
+        "name": "Palas",
+        "color": "#b3261e",
+        "active": [
+          [
+            1,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Palas",
+          "at": [
+            87.6,
+            25.2
+          ],
+          "moves": [
+            {
+              "from": 3,
+              "at": [
+                87.6,
+                24.4
+              ]
+            }
+          ]
+        },
+        "facts": {
+          "Region": "Bengal and Bihar"
+        },
+        "rulers": [],
+        "role": "Rivals for Kannauj.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Loses the race for Kannauj to Vatsaraja"
+          },
+          {
+            "from": 2,
+            "text": "Beaten again by Nagabhata II"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  84.2,
+                  25
+                ],
+                [
+                  85,
+                  26.2
+                ],
+                [
+                  86.5,
+                  26.4
+                ],
+                [
+                  88.2,
+                  26.4
+                ],
+                [
+                  89.6,
+                  26
+                ],
+                [
+                  89.8,
+                  24.2
+                ],
+                [
+                  89.3,
+                  23.2
+                ],
+                [
+                  88.4,
+                  22.8
+                ],
+                [
+                  87.2,
+                  22.8
+                ],
+                [
+                  86.2,
+                  23.6
+                ],
+                [
+                  85,
+                  24.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                3,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  86,
+                  25.6
+                ],
+                [
+                  87,
+                  26.3
+                ],
+                [
+                  88.4,
+                  26.4
+                ],
+                [
+                  89.6,
+                  26
+                ],
+                [
+                  89.8,
+                  24.2
+                ],
+                [
+                  89.3,
+                  23.2
+                ],
+                [
+                  88.4,
+                  22.8
+                ],
+                [
+                  87.2,
+                  22.8
+                ],
+                [
+                  86.2,
+                  23.6
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rashtrakuta",
+        "name": "Rashtrakutas",
+        "color": "#e0573a",
+        "active": [
+          [
+            1,
+            2
+          ],
+          [
+            5,
+            5
+          ]
+        ],
+        "label": {
+          "text": "Rashtrakutas",
+          "at": [
+            75.6,
+            19.8
+          ]
+        },
+        "facts": {
+          "Region": "The western Deccan, Narmada to the Tungabhadra"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Dhruva"
+          },
+          {
+            "from": 2,
+            "text": "Govinda III"
+          },
+          {
+            "from": 5,
+            "text": "Indra III"
+          }
+        ],
+        "role": "Rivals for Kannauj.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Defeats Vatsaraja"
+          },
+          {
+            "from": 2,
+            "text": "Defeats Nagabhata II"
+          },
+          {
+            "from": 5,
+            "text": "Sacks Kannauj"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                2
+              ],
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73.4,
+                  21.8
+                ],
+                [
+                  75.5,
+                  22
+                ],
+                [
+                  77.5,
+                  21.8
+                ],
+                [
+                  78.6,
+                  20.4
+                ],
+                [
+                  78.6,
+                  18
+                ],
+                [
+                  78,
+                  15.8
+                ],
+                [
+                  76.5,
+                  15.2
+                ],
+                [
+                  75,
+                  15.4
+                ],
+                [
+                  74,
+                  16.5
+                ],
+                [
+                  73.3,
+                  18.5
+                ],
+                [
+                  73.3,
+                  20.5
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "chandela",
+        "name": "Chandelas",
+        "color": "#7a5ab0",
+        "active": [
+          [
+            6,
+            7
+          ]
+        ],
+        "label": {
+          "text": "Chandelas",
+          "at": [
+            79.8,
+            23.3
+          ]
+        },
+        "facts": {
+          "Region": "Bundelkhand, around Khajuraho"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Yashovarman, then his son Dhanga"
+          },
+          {
+            "from": 7,
+            "text": "Vidyadhara"
+          }
+        ],
+        "role": "Former vassals.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Break away from the Pratiharas"
+          },
+          {
+            "from": 7,
+            "text": "A vassal of Vidyadhara kills Rajyapala, says an inscription"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.4,
+                  25.2
+                ],
+                [
+                  79.4,
+                  25.7
+                ],
+                [
+                  80.8,
+                  25.6
+                ],
+                [
+                  81.6,
+                  24.8
+                ],
+                [
+                  81.2,
+                  23.6
+                ],
+                [
+                  79.8,
+                  23.2
+                ],
+                [
+                  78.6,
+                  23.8
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ghaznavid",
+        "name": "Ghaznavids",
+        "color": "#3a6fb0",
+        "active": [
+          [
+            7,
+            7
+          ]
+        ],
+        "label": {
+          "text": "Ghaznavids",
+          "at": [
+            72.2,
+            31.8
+          ]
+        },
+        "facts": {
+          "Region": "Eastern Afghanistan and Punjab",
+          "Capital": "Ghazni"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Mahmud of Ghazni"
+          }
+        ],
+        "role": "Raided from Ghazni.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Raid Kannauj in 1018"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68.1,
+                  34.6
+                ],
+                [
+                  69.8,
+                  35.2
+                ],
+                [
+                  71.2,
+                  34.6
+                ],
+                [
+                  72.6,
+                  33.4
+                ],
+                [
+                  74.2,
+                  32.6
+                ],
+                [
+                  74.6,
+                  31
+                ],
+                [
+                  73,
+                  29.6
+                ],
+                [
+                  71,
+                  29.6
+                ],
+                [
+                  69.6,
+                  30.8
+                ],
+                [
+                  68.1,
+                  31.6
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "gahadavala",
+        "name": "Gahadavalas",
+        "color": "#c2477a",
+        "active": [
+          [
+            8,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Gahadavalas",
+          "at": [
+            81.6,
+            26.4
+          ]
+        },
+        "facts": {
+          "Region": "The middle Ganga plain",
+          "Capitals": "Kannauj and Varanasi"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Jayachandra, defeated in 1194"
+          }
+        ],
+        "role": "Took Kannauj in about 1090.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Take Kannauj in about 1090"
+          }
+        ],
+        "pieces": [
+          {
+            "steps": [
+              [
+                8,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  79.2,
+                  26.6
+                ],
+                [
+                  80.4,
+                  27.4
+                ],
+                [
+                  82,
+                  27.2
+                ],
+                [
+                  83.6,
+                  26.6
+                ],
+                [
+                  84.2,
+                  25.6
+                ],
+                [
+                  82.6,
+                  24.9
+                ],
+                [
+                  81,
+                  25
+                ],
+                [
+                  79.8,
+                  25.4
+                ]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "Kings and poets",
+    "items": [
+      {
+        "id": "vatsaraja",
+        "name": "Vatsaraja",
+        "native": "वत्सराज",
+        "life": "r. c. 775 to 805",
+        "role": "Pratihara king who opened the struggle for Kannauj.",
+        "steps": [
+          1
+        ],
+        "text": "Ruling in Rajasthan and Malwa, he was the first Pratihara to strike into the Ganga plain, beating Dharmapala of Bengal. The Rashtrakuta Dhruva then defeated him, and he had to give up his gains. Jain writers of his time, Udyotana and Jinasena, name him in their works, which is how his dates are known."
+      },
+      {
+        "id": "mihira-bhoja",
+        "name": "Mihira Bhoja",
+        "native": "मिहिर भोज",
+        "life": "r. c. 836 to 885",
+        "role": "The most powerful Pratihara king.",
+        "steps": [
+          3,
+          4
+        ],
+        "text": "He called himself Adivaraha, after Vishnu’s boar form, and put a boar on his coins. In about 851 the Arab merchant Sulaiman wrote that the Gurjara king had the finest cavalry in India and was a great enemy of the Arabs, and that his land was safe from robbers. He fought the Palas and Rashtrakutas throughout his reign."
+      },
+      {
+        "id": "rajashekhara",
+        "name": "Rajashekhara",
+        "native": "राजशेखर",
+        "life": "fl. c. 880 to 920",
+        "role": "Poet and critic at the Pratihara court.",
+        "steps": [
+          4,
+          5
+        ],
+        "text": "Teacher of Mahendrapala I and poet of his son Mahipala, he came from a family of poets in the Deccan. He wrote the Karpuramanjari, a play entirely in Prakrit, a Sanskrit Ramayana play and the Kavyamimamsa, a guide to the poet’s craft. He quotes his wife Avantisundari, one of the few women critics of the time whose views survive."
+      }
+    ]
+  }
+}
