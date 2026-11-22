@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.91.0
+
+- New story map in Chronicles: The Yadavas of Devagiri. Four centuries of the western Deccan, from the Seunas at Chandor and Bhillama V's rock fort, through Singhana II's astronomers and musicians, Chakradhar Swami, Hemadri and Dnyaneshwar's Marathi Gita, to Alauddin Khalji's raid in 1296, Malik Kafur, the end of the kingdom in 1318 and Daulatabad. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 4 people cards.
+- Catalogue: the Yadavas of Devagiri entry opens the story.
+
 ## 0.90.0
 
 - New story map in Chronicles: The Hoysalas. Three centuries of southern Karnataka, from the tiger at Sosevur and Vishnuvardhana's victory at Talakad, through the temples of Belur, Halebidu and Somanathapura and the Hoysalas as guardians of the Cholas, to Malik Kafur at Dorasamudra in 1311 and Ballala III's death in 1343. 10 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 3 people cards.

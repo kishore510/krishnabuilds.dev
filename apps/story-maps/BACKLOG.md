@@ -8,13 +8,12 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 **India first**, so the Indian Chronicles are complete. All on `south-asia`; each has a catalogue entry waiting. In order:
 
-1. The Yadavas of Devagiri
-2. The Later Pandyas
-3. The Deccan Sultanates
-4. The Nayakas of Madurai
-5. The Sikh Empire
-6. The Ahom Kingdom
-7. Ashoka, a Life
+1. The Later Pandyas
+2. The Deccan Sultanates
+3. The Nayakas of Madurai
+4. The Sikh Empire
+5. The Ahom Kingdom
+6. Ashoka, a Life
 
 After India:
 
@@ -41,6 +40,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- The Yadavas of Devagiri (`yadava`), 2026-11-22
 - The Hoysalas (`hoysala`), 2026-11-22
 - The Gurjara-Pratiharas (`pratihara`), 2026-11-22
 - The Pala Empire (`pala`), 2026-11-22
