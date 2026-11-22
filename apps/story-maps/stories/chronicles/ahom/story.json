@@ -1,0 +1,2111 @@
+{
+  "id": "ahom",
+  "title": "The Ahom Kingdom",
+  "description": "An illustrated map of the Ahom kingdom of Assam, from Sukaphaa’s crossing of the Patkai in 1228 and the first capital at Charaideo, through Sankardeva’s satras, the paik system and the wars with the Mughals at Garhgaon and Saraighat, to Rangpur, the Moamoria rebellion, the Burmese invasions, the Treaty of Yandabo in 1826 and Maniram Dewan.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "as",
+  "routes": "chapter",
+  "overview": {
+    "at": [
+      93.5,
+      24.8
+    ],
+    "width": 11
+  },
+  "mapLabel": "Illustrated map of the Brahmaputra valley and the Ahom kingdom, from 1228 to 1826",
+  "note": "Based on the Ahom chronicles (buranjis), Mughal Persian histories such as Shihabuddin Talish’s account of Mir Jumla’s invasion, British records and modern historians; each chapter says which it follows. Early dates come from the chronicles, and some episodes rest on tradition and are labelled so. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders.",
+  "places": {
+    "patkai": {
+      "name": "Patkai hills",
+      "at": [
+        96.0,
+        27.35
+      ],
+      "glyph": "mountain",
+      "label": "top"
+    },
+    "charaideo": {
+      "name": "Charaideo",
+      "at": [
+        94.83,
+        26.94
+      ],
+      "glyph": "memorial",
+      "label": "left"
+    },
+    "dimapur": {
+      "name": "Dimapur",
+      "at": [
+        93.73,
+        25.91
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "majuli": {
+      "name": "Majuli",
+      "at": [
+        94.2,
+        26.95
+      ],
+      "glyph": "shrine",
+      "label": "top"
+    },
+    "garhgaon": {
+      "name": "Garhgaon",
+      "at": [
+        94.73,
+        26.93
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "saraighat": {
+      "name": "Saraighat",
+      "at": [
+        91.68,
+        26.18
+      ],
+      "glyph": "boat",
+      "label": "bottom"
+    },
+    "rangpur": {
+      "name": "Rangpur",
+      "at": [
+        94.62,
+        26.98
+      ],
+      "glyph": "palace",
+      "label": "top"
+    },
+    "jorhat": {
+      "name": "Jorhat",
+      "at": [
+        94.21,
+        26.75
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "yandabo": {
+      "name": "Yandabo",
+      "at": [
+        95.03,
+        21.65
+      ],
+      "glyph": "treaty",
+      "label": "left"
+    },
+    "mong-mao": {
+      "name": "Mong Mao",
+      "at": [
+        97.85,
+        24.05
+      ],
+      "hidden": true
+    },
+    "dhaka": {
+      "name": "Dhaka",
+      "at": [
+        90.4,
+        23.72
+      ],
+      "hidden": true
+    },
+    "goalpara": {
+      "name": "Goalpara",
+      "at": [
+        90.62,
+        26.17
+      ],
+      "hidden": true
+    },
+    "ava": {
+      "name": "Ava",
+      "at": [
+        95.98,
+        21.86
+      ],
+      "hidden": true
+    },
+    "rangoon": {
+      "name": "Rangoon",
+      "at": [
+        96.16,
+        16.8
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "sukaphaa": {
+      "name": "Sukaphaa and his followers",
+      "icon": "horse"
+    },
+    "ahom-army": {
+      "name": "The Ahom army",
+      "icon": "soldier"
+    },
+    "ahom-fleet": {
+      "name": "The Ahom fleet",
+      "icon": "canoe"
+    },
+    "mughals": {
+      "name": "The Mughal army",
+      "icon": "war-elephant"
+    },
+    "company": {
+      "name": "Company sepoys",
+      "icon": "sepoy"
+    },
+    "burmese": {
+      "name": "The Burmese army",
+      "icon": "soldier"
+    },
+    "british": {
+      "name": "The Company’s army",
+      "icon": "redcoat"
+    }
+  },
+  "phases": {
+    "founding": {
+      "name": "Across the Patkai",
+      "color": "#4fc3b0"
+    },
+    "growth": {
+      "name": "A kingdom grows",
+      "color": "#5b8fd0"
+    },
+    "mughals": {
+      "name": "The Mughal wars",
+      "color": "#a678e0"
+    },
+    "height": {
+      "name": "Rangpur",
+      "color": "#f29a2e"
+    },
+    "decline": {
+      "name": "Revolt and invasion",
+      "color": "#e0573a"
+    },
+    "memory": {
+      "name": "What remains",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "ahom": {
+      "color": "#b3261e",
+      "width": 3,
+      "dash": "2 4",
+      "cap": "round"
+    },
+    "mughal": {
+      "color": "#8a3f9e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "burmese": {
+      "color": "#2f8a4a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "company": {
+      "color": "#2b5fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 14,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 40,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 54,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 63,
+        "color": "rgba(242,154,46,.35)"
+      },
+      {
+        "until": 88.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1228"
+      },
+      {
+        "at": 20,
+        "text": "1523"
+      },
+      {
+        "at": 36,
+        "text": "1603"
+      },
+      {
+        "at": 50,
+        "text": "1671"
+      },
+      {
+        "at": 68,
+        "text": "1769"
+      },
+      {
+        "at": 85,
+        "text": "1826"
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "patkai",
+      "phase": "founding",
+      "title": "Sukaphaa crosses the Patkai",
+      "native": "চুকাফা",
+      "when": "c. 1215 to 1228",
+      "at": 2,
+      "camera": {
+        "at": [
+          96.0,
+          25.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "mong-mao",
+          "to": "patkai",
+          "traveller": "sukaphaa",
+          "style": "march",
+          "bend": 0.08
+        }
+      ],
+      "text": "The Ahom chronicles (buranjis) tell how Sukaphaa, a Tai prince from Mong Mao, on today’s border of China and Myanmar, leaves home around 1215 with followers, horses and elephants. After years on the road he crosses the Patkai hills into the upper Brahmaputra valley in 1228. The size of his following varies from one chronicle to another.",
+      "today": "Today: the Patkai range, on the border of Arunachal Pradesh and Nagaland with Myanmar."
+    },
+    {
+      "place": "charaideo",
+      "phase": "founding",
+      "title": "Charaideo, the first capital",
+      "native": "চৰাইদেউ",
+      "when": "c. 1253",
+      "at": 8,
+      "camera": {
+        "at": [
+          94.9,
+          26.9
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "patkai",
+          "to": "charaideo",
+          "traveller": "sukaphaa",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "After years of moving, fighting and making peace with the Moran and Borahi peoples, Sukaphaa makes Charaideo his capital around 1253. His followers bring wet-rice farming to the valley. For centuries kings and nobles are buried here in great earthen mounds (maidams), with goods for the afterlife. Sukaphaa dies around 1268.",
+      "today": "Today: Charaideo district, Assam."
+    },
+    {
+      "place": "dimapur",
+      "phase": "growth",
+      "title": "Suhungmung widens the kingdom",
+      "native": "চুহুংমুং",
+      "when": "1523 to 1536",
+      "at": 20,
+      "camera": {
+        "at": [
+          93.2,
+          26.2
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "charaideo",
+          "to": "dimapur",
+          "traveller": "ahom-army",
+          "style": "march",
+          "bend": 0.1
+        }
+      ],
+      "text": "Suhungmung (r. 1497 to 1539), the first Ahom king to take a Hindu title, Swarganarayan, turns a small state into a regional power. He annexes the Chutiya kingdom around Sadiya in 1523, beats back an invasion from the Bengal sultanate in 1532 and sacks Dimapur, the capital of the Dimasa (Kachari) kingdom, in 1536.",
+      "today": "Today: the Kachari ruins, Dimapur, Nagaland, with their carved stone pillars."
+    },
+    {
+      "place": "majuli",
+      "phase": "growth",
+      "title": "Sankardeva and the satras",
+      "native": "শংকৰদেৱ",
+      "when": "15th and 16th centuries",
+      "at": 27,
+      "camera": {
+        "at": [
+          93.4,
+          26.3
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "The saint Sankardeva (1449 to 1568, by tradition), born into a family of Bhuyan chiefs, preaches devotion to one God, Krishna, open to all castes. He writes plays and songs in Assamese. His followers found monasteries (satras), many on the river island of Majuli. Ahom kings first persecute the movement and later become patrons of the satras.",
+      "today": "Today: Majuli, Assam, among the largest river islands in the world, with its living satras."
+    },
+    {
+      "place": "garhgaon",
+      "phase": "growth",
+      "title": "Every man a soldier",
+      "native": "পাইক",
+      "when": "1603 to 1641",
+      "at": 36,
+      "camera": {
+        "at": [
+          93.6,
+          26.6
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "Under Pratap Singha (r. 1603 to 1641) and his officer Momai Tamuli Borbarua, the kingdom is ordered by the paik system: every adult man owes the state labour or military service, taking turns with others in his unit (got), and receives rice land in return. It gives the Ahoms an army and a workforce without a paid standing army.",
+      "today": "Today: the Kareng Ghar palace site at Garhgaon, near Sivasagar, Assam."
+    },
+    {
+      "place": "garhgaon",
+      "phase": "mughals",
+      "title": "Mir Jumla takes Garhgaon",
+      "native": "মীৰজুমলা",
+      "when": "1662 to 1663",
+      "at": 44,
+      "camera": {
+        "at": [
+          92.5,
+          25.3
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "dhaka",
+          "to": "garhgaon",
+          "traveller": "mughals",
+          "style": "mughal",
+          "bend": -0.3
+        }
+      ],
+      "text": "In 1662 Mir Jumla, Aurangzeb’s governor of Bengal, invades with a large army and fleet and takes Garhgaon, the capital. King Jayadhwaj Singha flees to the hills. The monsoon floods the valley, cutting off the Mughals, and disease spreads through their camp. By a treaty in 1663 the Ahoms give up the west and pay an indemnity.",
+      "today": "Today: Garhgaon, Sivasagar district, Assam."
+    },
+    {
+      "place": "saraighat",
+      "phase": "mughals",
+      "title": "The battle of Saraighat",
+      "native": "শৰাইঘাটৰ যুদ্ধ",
+      "when": "1667 to 1671",
+      "at": 50,
+      "camera": {
+        "at": [
+          93.2,
+          25.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "dhaka",
+          "to": "saraighat",
+          "traveller": "mughals",
+          "style": "mughal",
+          "bend": 0.1
+        },
+        {
+          "from": "garhgaon",
+          "to": "saraighat",
+          "traveller": "ahom-fleet",
+          "style": "ahom",
+          "bend": -0.1
+        }
+      ],
+      "text": "The Ahoms win back Guwahati in 1667, and a Mughal army under Raja Ram Singh of Amber comes to retake it. In March 1671 the Ahom commander Lachit Borphukan, ill but carried to the battle, leads his boats against the Mughal fleet in the narrow river at Saraighat and wins. Assam marks his birthday as Lachit Divas.",
+      "today": "Today: the Saraighat bridges across the Brahmaputra, Guwahati, Assam."
+    },
+    {
+      "place": "rangpur",
+      "phase": "height",
+      "title": "Rudra Singha’s Rangpur",
+      "native": "ৰংপুৰ",
+      "when": "1682 to 1746",
+      "at": 58,
+      "camera": {
+        "at": [
+          93.0,
+          26.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In 1682 Gadadhar Singha drives the Mughals out of Guwahati for good at Itakhuli, setting the western frontier at the Manas river. His son Rudra Singha (r. 1696 to 1714) builds a new capital at Rangpur, with brick buildings, tanks and roads. His successors add the Rang Ghar, a royal pavilion for watching games and buffalo fights.",
+      "today": "Today: Sivasagar, Assam, with the Rang Ghar, the Talatal Ghar and the Shivadol temple."
+    },
+    {
+      "place": "rangpur",
+      "phase": "decline",
+      "title": "The Moamoria rebellion",
+      "native": "মোৱামৰীয়া বিদ্ৰোহ",
+      "when": "1769 to 1805",
+      "at": 68,
+      "camera": {
+        "at": [
+          92.6,
+          26.3
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "goalpara",
+          "to": "rangpur",
+          "traveller": "company",
+          "style": "company",
+          "bend": 0.08
+        }
+      ],
+      "text": "Followers of the Moamara satra, many of them paiks angered by forced labour and by insults to their leaders, rise against the kingdom in 1769 and twice take Rangpur. In 1792 King Gaurinath Singha asks the East India Company for help, and Captain Thomas Welsh’s sepoys restore him. Rebellion and civil war leave the state badly weakened.",
+      "today": "Today: Rangpur is part of Sivasagar town, Assam."
+    },
+    {
+      "place": "jorhat",
+      "phase": "decline",
+      "title": "The Burmese invasions",
+      "native": "মানৰ আক্ৰমণ",
+      "when": "1817 to 1824",
+      "at": 78,
+      "camera": {
+        "at": [
+          95.0,
+          24.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "ava",
+          "to": "jorhat",
+          "traveller": "burmese",
+          "style": "burmese",
+          "bend": 0.3
+        }
+      ],
+      "text": "Rival nobles invite the kings of Burma in. Burmese armies enter Assam in 1817, 1819 and 1821, setting up kings of their choosing and taking many captives away. Assamese memory calls this time the Burmese terror (Manar upadrav). How many died or were carried off is not known, and the estimates are disputed.",
+      "today": "Today: Jorhat, Assam, the last Ahom capital."
+    },
+    {
+      "place": "yandabo",
+      "phase": "decline",
+      "title": "The Treaty of Yandabo",
+      "native": "য়াণ্ডাবু সন্ধি",
+      "when": "1824 to 1838",
+      "at": 85,
+      "camera": {
+        "at": [
+          95.6,
+          19.2
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "rangoon",
+          "to": "yandabo",
+          "traveller": "british",
+          "style": "company",
+          "bend": 0.08
+        }
+      ],
+      "text": "The First Anglo-Burmese War begins in 1824, and Company troops drive the Burmese out of Assam. By the Treaty of Yandabo, signed in February 1826 near Ava, Burma gives up its claims to Assam, Manipur and Arakan, and Assam passes to the Company. From 1833 to 1838 an Ahom prince, Purandar Singha, rules Upper Assam under the British.",
+      "today": "Today: Yandabo, a village on the Irrawaddy, Mandalay Region, Myanmar."
+    },
+    {
+      "place": "jorhat",
+      "phase": "memory",
+      "title": "Maniram Dewan",
+      "native": "মণিৰাম দেৱান",
+      "when": "1857 to 1858",
+      "at": 92,
+      "camera": {
+        "at": [
+          94.2,
+          26.7
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "The British found tea growing wild in Assam in the 1820s. Maniram Dutta Barua, called Maniram Dewan, worked for them and became one of the first Indians to plant tea there. In 1857 he plots to restore the Ahom prince Kandarpeswar Singha. The plot is found out, and he is hanged at Jorhat in 1858.",
+      "today": "Today: Jorhat, Assam, at the heart of the tea country."
+    },
+    {
+      "place": "charaideo",
+      "phase": "memory",
+      "title": "Six hundred years",
+      "native": "আহোম",
+      "when": "Today",
+      "at": 98,
+      "camera": {
+        "at": [
+          94.8,
+          26.9
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "The Ahoms ruled for almost six hundred years, among the longest reigns of any Indian dynasty, and gave Assam much of its shape, and perhaps its name. Their buranjis are among India’s richest court chronicles, Tai Ahom priests still keep the old language for ritual, and in 2024 the maidams of Charaideo became a World Heritage Site.",
+      "today": "Today: the Charaideo maidams, Assam, a UNESCO World Heritage Site."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "ahom",
+        "name": "The Ahom kingdom",
+        "native": "আহোম ৰাজ্য",
+        "color": "#e8731a",
+        "active": [
+          [
+            1,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Ahom kingdom",
+          "at": [
+            95.4,
+            25.6
+          ],
+          "moves": [
+            {
+              "from": 2,
+              "at": [
+                96.3,
+                25.5
+              ]
+            },
+            {
+              "from": 4,
+              "at": [
+                94.3,
+                25.5
+              ]
+            },
+            {
+              "from": 6,
+              "at": [
+                94.9,
+                25.1
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  94.4,
+                  26.55
+                ],
+                [
+                  94.9,
+                  26.4
+                ],
+                [
+                  95.5,
+                  26.7
+                ],
+                [
+                  95.5,
+                  27.2
+                ],
+                [
+                  94.9,
+                  27.25
+                ],
+                [
+                  94.4,
+                  27.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                3
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  92.9,
+                  27.0
+                ],
+                [
+                  93.7,
+                  27.25
+                ],
+                [
+                  94.5,
+                  27.4
+                ],
+                [
+                  95.2,
+                  27.8
+                ],
+                [
+                  95.8,
+                  27.9
+                ],
+                [
+                  95.8,
+                  27.22
+                ],
+                [
+                  95.6,
+                  26.95
+                ],
+                [
+                  95.1,
+                  26.5
+                ],
+                [
+                  94.5,
+                  26.3
+                ],
+                [
+                  93.7,
+                  26.05
+                ],
+                [
+                  93.0,
+                  25.95
+                ],
+                [
+                  92.9,
+                  25.94
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                4,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  91.9,
+                  26.85
+                ],
+                [
+                  92.9,
+                  27.0
+                ],
+                [
+                  93.7,
+                  27.25
+                ],
+                [
+                  94.5,
+                  27.4
+                ],
+                [
+                  95.2,
+                  27.8
+                ],
+                [
+                  95.8,
+                  27.9
+                ],
+                [
+                  95.8,
+                  27.22
+                ],
+                [
+                  95.6,
+                  26.95
+                ],
+                [
+                  95.1,
+                  26.5
+                ],
+                [
+                  94.5,
+                  26.3
+                ],
+                [
+                  93.7,
+                  26.05
+                ],
+                [
+                  93.0,
+                  25.95
+                ],
+                [
+                  92.4,
+                  25.9
+                ],
+                [
+                  91.9,
+                  25.9
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  92.8,
+                  26.98
+                ],
+                [
+                  92.9,
+                  27.0
+                ],
+                [
+                  93.7,
+                  27.25
+                ],
+                [
+                  94.5,
+                  27.4
+                ],
+                [
+                  95.2,
+                  27.8
+                ],
+                [
+                  95.8,
+                  27.9
+                ],
+                [
+                  95.8,
+                  27.22
+                ],
+                [
+                  95.6,
+                  26.95
+                ],
+                [
+                  95.1,
+                  26.5
+                ],
+                [
+                  94.5,
+                  26.3
+                ],
+                [
+                  93.7,
+                  26.05
+                ],
+                [
+                  93.0,
+                  25.95
+                ],
+                [
+                  92.8,
+                  25.93
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  90.9,
+                  26.85
+                ],
+                [
+                  91.9,
+                  26.85
+                ],
+                [
+                  92.9,
+                  27.0
+                ],
+                [
+                  93.7,
+                  27.25
+                ],
+                [
+                  94.5,
+                  27.4
+                ],
+                [
+                  95.2,
+                  27.8
+                ],
+                [
+                  95.8,
+                  27.9
+                ],
+                [
+                  95.8,
+                  27.22
+                ],
+                [
+                  95.6,
+                  26.95
+                ],
+                [
+                  95.1,
+                  26.5
+                ],
+                [
+                  94.5,
+                  26.3
+                ],
+                [
+                  93.7,
+                  26.05
+                ],
+                [
+                  93.0,
+                  25.95
+                ],
+                [
+                  92.4,
+                  25.9
+                ],
+                [
+                  91.9,
+                  25.9
+                ],
+                [
+                  91.0,
+                  25.85
+                ],
+                [
+                  90.9,
+                  25.86
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capitals": "Charaideo, Garhgaon, Rangpur, Jorhat",
+          "Founded": "1228, by Sukaphaa",
+          "Ended": "Passed to the East India Company in 1826",
+          "Today": "Assam"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Sukaphaa"
+          },
+          {
+            "from": 2,
+            "text": "Suhungmung"
+          },
+          {
+            "from": 4,
+            "text": "Pratap Singha"
+          },
+          {
+            "from": 5,
+            "text": "Jayadhwaj Singha"
+          },
+          {
+            "from": 6,
+            "text": "Chakradhwaj Singha and Udayaditya Singha"
+          },
+          {
+            "from": 7,
+            "text": "Gadadhar Singha and Rudra Singha"
+          },
+          {
+            "from": 8,
+            "text": "Lakshmi Singha and Gaurinath Singha"
+          }
+        ],
+        "role": "The Tai kingdom of the Brahmaputra valley, founded at Charaideo in 1228 and ruled in turn from Garhgaon, Rangpur and Jorhat.",
+        "ties": [
+          {
+            "from": 2,
+            "text": "Takes Sadiya from the Chutiyas, 1523"
+          },
+          {
+            "from": 4,
+            "text": "Treaty of Asurar Ali with the Mughals, 1639"
+          },
+          {
+            "from": 5,
+            "text": "Gives up the west by treaty, 1663"
+          },
+          {
+            "from": 6,
+            "text": "Wins Guwahati back, 1667"
+          },
+          {
+            "from": 7,
+            "text": "Frontier set at the Manas river, 1682"
+          },
+          {
+            "from": 8,
+            "text": "Asks the East India Company for help, 1792"
+          }
+        ]
+      },
+      {
+        "id": "koch",
+        "name": "The Koch kingdom",
+        "native": "কোচ ৰাজ্য",
+        "color": "#2f9e6a",
+        "active": [
+          [
+            3,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Koch kingdom",
+          "at": [
+            90.2,
+            26.35
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                3
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  88.6,
+                  26.1
+                ],
+                [
+                  89.4,
+                  25.8
+                ],
+                [
+                  90.5,
+                  25.8
+                ],
+                [
+                  91.4,
+                  25.9
+                ],
+                [
+                  92.0,
+                  26.0
+                ],
+                [
+                  92.0,
+                  26.9
+                ],
+                [
+                  91.0,
+                  26.9
+                ],
+                [
+                  89.8,
+                  26.9
+                ],
+                [
+                  88.8,
+                  26.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Koch Bihar",
+          "Today": "Koch Bihar and western Assam"
+        },
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Naranarayan"
+          }
+        ],
+        "role": "The kingdom west of the Ahoms, in Koch Bihar and lower Assam, where Sankardeva spent his last years.",
+        "ties": [
+          {
+            "from": 3,
+            "text": "Shelters Sankardeva after he leaves Ahom lands"
+          }
+        ]
+      },
+      {
+        "id": "bengal-sultanate",
+        "name": "The Bengal Sultanate",
+        "color": "#9a4f96",
+        "active": [
+          [
+            2,
+            3
+          ]
+        ],
+        "label": {
+          "text": "Bengal Sultanate",
+          "at": [
+            90.4,
+            24.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                2,
+                3
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.8,
+                  25.0
+                ],
+                [
+                  89.0,
+                  25.4
+                ],
+                [
+                  90.0,
+                  25.3
+                ],
+                [
+                  91.0,
+                  25.2
+                ],
+                [
+                  91.8,
+                  24.6
+                ],
+                [
+                  91.5,
+                  23.6
+                ],
+                [
+                  91.2,
+                  22.9
+                ],
+                [
+                  90.6,
+                  22.5
+                ],
+                [
+                  90.0,
+                  22.3
+                ],
+                [
+                  89.2,
+                  22.1
+                ],
+                [
+                  88.3,
+                  22.0
+                ],
+                [
+                  87.8,
+                  22.5
+                ],
+                [
+                  87.5,
+                  23.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Gaur",
+          "Today": "Bengal, in Bangladesh and India"
+        },
+        "rulers": [
+          {
+            "from": 2,
+            "text": "The sultans of Bengal"
+          }
+        ],
+        "role": "The Muslim sultanate of the Bengal plain, on the Ahom kingdom’s western flank.",
+        "ties": [
+          {
+            "from": 2,
+            "text": "Invasion beaten back by Suhungmung, 1532"
+          }
+        ]
+      },
+      {
+        "id": "mughal",
+        "name": "The Mughal Empire",
+        "color": "#9a4f96",
+        "active": [
+          [
+            4,
+            7
+          ]
+        ],
+        "label": {
+          "text": "Mughal Empire",
+          "at": [
+            90.4,
+            24.6
+          ],
+          "moves": [
+            {
+              "from": 6,
+              "at": [
+                90.6,
+                23.8
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                4,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.5,
+                  23.5
+                ],
+                [
+                  87.6,
+                  25.0
+                ],
+                [
+                  88.3,
+                  26.1
+                ],
+                [
+                  89.2,
+                  26.6
+                ],
+                [
+                  90.0,
+                  26.7
+                ],
+                [
+                  90.9,
+                  26.85
+                ],
+                [
+                  91.9,
+                  26.85
+                ],
+                [
+                  91.9,
+                  25.9
+                ],
+                [
+                  91.0,
+                  25.85
+                ],
+                [
+                  91.3,
+                  25.2
+                ],
+                [
+                  91.8,
+                  24.6
+                ],
+                [
+                  91.5,
+                  23.6
+                ],
+                [
+                  91.2,
+                  22.9
+                ],
+                [
+                  90.6,
+                  22.5
+                ],
+                [
+                  90.0,
+                  22.3
+                ],
+                [
+                  89.2,
+                  22.1
+                ],
+                [
+                  88.3,
+                  22.0
+                ],
+                [
+                  87.8,
+                  22.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.5,
+                  23.5
+                ],
+                [
+                  87.6,
+                  25.0
+                ],
+                [
+                  88.3,
+                  26.1
+                ],
+                [
+                  89.2,
+                  26.6
+                ],
+                [
+                  90.0,
+                  26.7
+                ],
+                [
+                  90.9,
+                  26.85
+                ],
+                [
+                  91.9,
+                  26.85
+                ],
+                [
+                  92.8,
+                  26.98
+                ],
+                [
+                  92.8,
+                  25.93
+                ],
+                [
+                  92.4,
+                  25.9
+                ],
+                [
+                  91.9,
+                  25.9
+                ],
+                [
+                  91.0,
+                  25.85
+                ],
+                [
+                  91.3,
+                  25.2
+                ],
+                [
+                  91.8,
+                  24.6
+                ],
+                [
+                  91.5,
+                  23.6
+                ],
+                [
+                  91.2,
+                  22.9
+                ],
+                [
+                  90.6,
+                  22.5
+                ],
+                [
+                  90.0,
+                  22.3
+                ],
+                [
+                  89.2,
+                  22.1
+                ],
+                [
+                  88.3,
+                  22.0
+                ],
+                [
+                  87.8,
+                  22.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.5,
+                  23.5
+                ],
+                [
+                  87.6,
+                  25.0
+                ],
+                [
+                  88.3,
+                  26.1
+                ],
+                [
+                  89.2,
+                  26.6
+                ],
+                [
+                  90.0,
+                  26.7
+                ],
+                [
+                  90.9,
+                  26.85
+                ],
+                [
+                  90.9,
+                  25.86
+                ],
+                [
+                  91.3,
+                  25.2
+                ],
+                [
+                  91.8,
+                  24.6
+                ],
+                [
+                  91.5,
+                  23.6
+                ],
+                [
+                  91.2,
+                  22.9
+                ],
+                [
+                  90.6,
+                  22.5
+                ],
+                [
+                  90.0,
+                  22.3
+                ],
+                [
+                  89.2,
+                  22.1
+                ],
+                [
+                  88.3,
+                  22.0
+                ],
+                [
+                  87.8,
+                  22.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Delhi",
+          "Province": "Bengal, at Dhaka",
+          "Today": "North India, Pakistan and Bangladesh"
+        },
+        "rulers": [
+          {
+            "from": 4,
+            "text": "Jahangir and Shah Jahan"
+          },
+          {
+            "from": 5,
+            "text": "Aurangzeb"
+          }
+        ],
+        "role": "The empire whose province of Bengal, ruled from Dhaka, pressed on the Ahom kingdom’s western frontier.",
+        "ties": [
+          {
+            "from": 4,
+            "text": "Treaty of Asurar Ali with the Ahoms, 1639"
+          },
+          {
+            "from": 5,
+            "text": "Takes Garhgaon, 1662"
+          },
+          {
+            "from": 6,
+            "text": "Loses Guwahati to the Ahoms, 1667; beaten at Saraighat, 1671"
+          }
+        ]
+      },
+      {
+        "id": "burma",
+        "name": "The Kingdom of Burma",
+        "color": "#2f8a4a",
+        "active": [
+          [
+            9,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Burma",
+          "at": [
+            96.7,
+            23.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                9,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  96.0,
+                  27.5
+                ],
+                [
+                  98.0,
+                  27.5
+                ],
+                [
+                  98.0,
+                  17.0
+                ],
+                [
+                  96.6,
+                  16.55
+                ],
+                [
+                  95.7,
+                  16.4
+                ],
+                [
+                  95.0,
+                  17.2
+                ],
+                [
+                  94.95,
+                  18.4
+                ],
+                [
+                  94.6,
+                  19.9
+                ],
+                [
+                  94.0,
+                  21.3
+                ],
+                [
+                  93.4,
+                  22.4
+                ],
+                [
+                  93.6,
+                  23.0
+                ],
+                [
+                  93.8,
+                  24.0
+                ],
+                [
+                  94.2,
+                  25.2
+                ],
+                [
+                  95.0,
+                  26.0
+                ],
+                [
+                  95.8,
+                  26.9
+                ]
+              ],
+              [
+                [
+                  92.9,
+                  27.0
+                ],
+                [
+                  93.7,
+                  27.25
+                ],
+                [
+                  94.5,
+                  27.4
+                ],
+                [
+                  95.2,
+                  27.8
+                ],
+                [
+                  95.2,
+                  26.59
+                ],
+                [
+                  95.1,
+                  26.5
+                ],
+                [
+                  94.5,
+                  26.3
+                ],
+                [
+                  93.7,
+                  26.05
+                ],
+                [
+                  93.0,
+                  25.95
+                ],
+                [
+                  92.9,
+                  25.94
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  96.0,
+                  27.5
+                ],
+                [
+                  98.0,
+                  27.5
+                ],
+                [
+                  98.0,
+                  17.0
+                ],
+                [
+                  96.6,
+                  16.55
+                ],
+                [
+                  95.7,
+                  16.4
+                ],
+                [
+                  95.0,
+                  17.2
+                ],
+                [
+                  94.95,
+                  18.4
+                ],
+                [
+                  94.6,
+                  19.9
+                ],
+                [
+                  94.0,
+                  21.3
+                ],
+                [
+                  93.4,
+                  22.4
+                ],
+                [
+                  93.6,
+                  23.0
+                ],
+                [
+                  93.8,
+                  24.0
+                ],
+                [
+                  94.2,
+                  25.2
+                ],
+                [
+                  95.0,
+                  26.0
+                ],
+                [
+                  95.8,
+                  26.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Dynasty": "Konbaung",
+          "Capital": "Ava",
+          "Today": "Myanmar"
+        },
+        "rulers": [
+          {
+            "from": 9,
+            "text": "Bodawpaya, then Bagyidaw"
+          }
+        ],
+        "role": "The Konbaung kingdom, whose armies entered Assam on the invitation of rival nobles and fought the Company in the First Anglo-Burmese War.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Armies in Assam, 1817, 1819 and 1821"
+          },
+          {
+            "from": 10,
+            "text": "Gives up Assam, Manipur and Arakan, 1826"
+          }
+        ]
+      },
+      {
+        "id": "company",
+        "name": "The East India Company",
+        "color": "#2b5fb4",
+        "active": [
+          [
+            8,
+            12
+          ]
+        ],
+        "label": {
+          "text": "Company",
+          "at": [
+            90.4,
+            24.6
+          ],
+          "moves": [
+            {
+              "from": 9,
+              "at": [
+                91.7,
+                24.4
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                8,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.5,
+                  23.5
+                ],
+                [
+                  87.6,
+                  25.0
+                ],
+                [
+                  88.3,
+                  26.1
+                ],
+                [
+                  89.2,
+                  26.6
+                ],
+                [
+                  90.0,
+                  26.7
+                ],
+                [
+                  90.6,
+                  26.8
+                ],
+                [
+                  90.6,
+                  25.87
+                ],
+                [
+                  91.3,
+                  25.2
+                ],
+                [
+                  91.8,
+                  24.6
+                ],
+                [
+                  91.5,
+                  23.6
+                ],
+                [
+                  91.2,
+                  22.9
+                ],
+                [
+                  90.6,
+                  22.5
+                ],
+                [
+                  90.0,
+                  22.3
+                ],
+                [
+                  89.2,
+                  22.1
+                ],
+                [
+                  88.3,
+                  22.0
+                ],
+                [
+                  87.8,
+                  22.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.5,
+                  23.5
+                ],
+                [
+                  87.6,
+                  25.0
+                ],
+                [
+                  88.3,
+                  26.1
+                ],
+                [
+                  89.2,
+                  26.6
+                ],
+                [
+                  90.0,
+                  26.7
+                ],
+                [
+                  90.9,
+                  26.85
+                ],
+                [
+                  91.9,
+                  26.85
+                ],
+                [
+                  92.9,
+                  27.0
+                ],
+                [
+                  93.7,
+                  27.25
+                ],
+                [
+                  94.5,
+                  27.4
+                ],
+                [
+                  95.2,
+                  27.8
+                ],
+                [
+                  95.8,
+                  27.9
+                ],
+                [
+                  95.8,
+                  27.22
+                ],
+                [
+                  95.6,
+                  26.95
+                ],
+                [
+                  95.1,
+                  26.5
+                ],
+                [
+                  94.5,
+                  26.3
+                ],
+                [
+                  93.7,
+                  26.05
+                ],
+                [
+                  93.0,
+                  25.95
+                ],
+                [
+                  92.4,
+                  25.9
+                ],
+                [
+                  91.9,
+                  25.9
+                ],
+                [
+                  91.0,
+                  25.85
+                ],
+                [
+                  91.3,
+                  25.2
+                ],
+                [
+                  91.8,
+                  24.6
+                ],
+                [
+                  91.5,
+                  23.6
+                ],
+                [
+                  91.2,
+                  22.9
+                ],
+                [
+                  90.6,
+                  22.5
+                ],
+                [
+                  90.0,
+                  22.3
+                ],
+                [
+                  89.2,
+                  22.1
+                ],
+                [
+                  88.3,
+                  22.0
+                ],
+                [
+                  87.8,
+                  22.5
+                ]
+              ],
+              [
+                [
+                  92.55,
+                  21.7
+                ],
+                [
+                  93.6,
+                  20.25
+                ],
+                [
+                  94.5,
+                  18.3
+                ],
+                [
+                  94.95,
+                  18.4
+                ],
+                [
+                  94.6,
+                  19.9
+                ],
+                [
+                  94.0,
+                  21.3
+                ],
+                [
+                  93.4,
+                  22.4
+                ],
+                [
+                  92.8,
+                  22.6
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Calcutta",
+          "Today": "Bengal and, from 1826, Assam"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "The Governor-General, at Calcutta"
+          }
+        ],
+        "role": "A trading company turned ruler of Bengal, which sent troops to restore the Ahom king in 1792 and took Assam in 1826.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Sends Captain Welsh’s sepoys to Assam, 1792"
+          },
+          {
+            "from": 10,
+            "text": "Takes Assam by the Treaty of Yandabo, 1826"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "sukaphaa",
+        "name": "Sukaphaa",
+        "native": "চুকাফা",
+        "life": "died c. 1268",
+        "role": "Founder of the Ahom kingdom",
+        "steps": [
+          0,
+          1
+        ],
+        "text": "The founder of the Ahom kingdom, a Tai prince from Mong Mao. The buranjis tell of his long march, of wars with the peoples of the valley and marriages into them, and of his capital at Charaideo. Since 1996 Assam has marked 2 December as Asom Divas, or Sukaphaa Day, in his memory."
+      },
+      {
+        "id": "suhungmung",
+        "name": "Suhungmung",
+        "native": "চুহুংমুং",
+        "life": "r. 1497 to 1539",
+        "role": "Ahom king",
+        "steps": [
+          2
+        ],
+        "text": "Called the Dihingia Raja, after his capital on the Dihing river. He fought the Chutiyas, the Kacharis and the Bengal sultanate, greatly enlarging the kingdom, and took the Hindu title Swarganarayan. The buranjis say he was killed in 1539 by a servant, in a plot said to involve his son and successor, Suklenmung."
+      },
+      {
+        "id": "sankardeva",
+        "name": "Sankardeva",
+        "native": "শ্ৰীমন্ত শংকৰদেৱ",
+        "life": "1449 to 1568, by tradition",
+        "role": "Saint and poet",
+        "steps": [
+          3
+        ],
+        "text": "A scholar and poet from Bordowa, in Nagaon, who after a long pilgrimage across India taught single-minded devotion (ek-sarana) to Krishna. His songs (borgeet) and one-act plays (ankiya naat) are still performed, and he founded the village prayer house (namghar) at the heart of Assamese life. Persecuted in Ahom lands, he spent his last years in the Koch kingdom."
+      },
+      {
+        "id": "lachit",
+        "name": "Lachit Borphukan",
+        "native": "লাচিত বৰফুকন",
+        "life": "1622 to 1672",
+        "role": "Ahom general",
+        "steps": [
+          6
+        ],
+        "text": "Son of Momai Tamuli Borbarua, he was made Borphukan, commander of the west, by Chakradhwaj Singha, and took Guwahati back from the Mughals in 1667. Tradition says that when his uncle failed to finish a rampart overnight he beheaded him, saying his country mattered more than his uncle. He died in 1672, the year after Saraighat."
+      },
+      {
+        "id": "rudra-singha",
+        "name": "Rudra Singha",
+        "native": "ৰুদ্ৰ সিংহ",
+        "life": "r. 1696 to 1714",
+        "role": "Ahom king",
+        "steps": [
+          7
+        ],
+        "text": "The son of Gadadhar Singha, he ruled the kingdom at its height. He brought in craftsmen and artists from other parts of India, built roads, tanks and a new capital at Rangpur, and was preparing a march on Mughal Bengal, with allies from the hill kingdoms, when he died in 1714."
+      },
+      {
+        "id": "maniram",
+        "name": "Maniram Dewan",
+        "native": "মণিৰাম দেৱান",
+        "life": "1806 to 1858",
+        "role": "Tea planter and rebel",
+        "steps": [
+          11
+        ],
+        "text": "Born into an Ahom noble family, he served the British as an officer and as dewan of the Assam Company, then left to plant tea on his own estates at Cinnamara and Singlo. Angered at losing his lands and honours, he joined a plot in 1857 to bring back Ahom rule, and was hanged with his fellow plotter Piyali Barua."
+      }
+    ]
+  }
+}

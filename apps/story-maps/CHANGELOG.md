@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.96.0
+
+- New story map in Chronicles: The Ahom Kingdom. Six centuries of Assam, from Sukaphaa’s crossing of the Patkai in 1228 and the maidams of Charaideo, through Suhungmung, Sankardeva’s satras, the paik system, Mir Jumla at Garhgaon and Lachit Borphukan at Saraighat, to Rudra Singha’s Rangpur, the Moamoria rebellion, the Burmese invasions, the Treaty of Yandabo in 1826 and Maniram Dewan in 1858. 13 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 6 people cards.
+- Catalogue: the Ahom kingdom entry opens the story; new Lachit Borphukan and Battle of Saraighat entries open it at chapter 7.
+
 ## 0.95.0
 
 - New story map in Chronicles: The Sikh Empire. From Guru Nanak at Kartarpur, the Harmandir and the founding of the Khalsa in 1699, through Banda Singh at Sirhind, the Great Massacre and the misls, to Ranjit Singh’s Lahore, the Treaty of Amritsar, Attock and the Koh-i-Noor, Multan, Kashmir, Peshawar and Jamrud, the two Anglo-Sikh wars, the annexation in 1849 and Duleep Singh’s exile. 20 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 7 people cards.
