@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.100.0
+
+- New `moon` basemap for the Exploring the Solar System series: the whole Moon (lon -180 to 180, lat -90 to 90, 10 units per degree) as a sky basemap (cosmic canvas) whose units are selenographic longitude and latitude, the near side in the middle and the far side at both edges. Maria are simplified from NASA LRO's LROC Global Mare Boundaries; 16 large or well-known craters are drawn as rings from the IAU/USGS gazetteer; the South Pole–Aitken basin is a dashed ring; the limb as seen from Earth is marked at 90° W and 90° E. `scripts/moon/moon.py` rebuilds it. No story uses it yet.
+
 ## 0.99.0
 
 - New story map in Universe: The Voyager Probes. From the Grand Tour line-up of 1965 and the launches of 1977, through Jupiter, Saturn, Uranus and Neptune, the Pale Blue Dot, the termination shock and the heliopause, to the failing memory of 2023, where the probes are today and where they are going. 15 chapters on a new `solar-system` sky basemap (a logarithmic distance diagram), new glyphs `gas-giant`, `ringed-planet` and `ice-giant` and the `probe` traveller icon, and 3 people cards.
