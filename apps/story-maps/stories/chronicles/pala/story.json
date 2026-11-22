@@ -1,0 +1,1383 @@
+{
+  "id": "pala",
+  "title": "The Pala Empire",
+  "description": "Four centuries of Bengal and Bihar: a king chosen to end disorder, the race for Kannauj, the great Buddhist monasteries of Vikramashila, Somapura and Nalanda, and the teachers who carried their learning to Tibet.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "bn",
+  "routes": "journey",
+  "mapLabel": "Bengal and Bihar, c. 750 to 1200 CE",
+  "note": "The Varendra pin stands for north Bengal, the Palas' homeland; their early capitals are not certain. The Sumatra start of the route in chapter 5 is off the map edge and marks the Sailendra king's homeland only roughly. Pala dates are approximate and vary by a decade or more between historians.",
+  "places": {
+    "varendra": {
+      "name": "Varendra",
+      "at": [
+        89.35,
+        24.95
+      ],
+      "glyph": "palace",
+      "label": "left"
+    },
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [
+        85.14,
+        25.61
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "kannauj": {
+      "name": "Kannauj",
+      "at": [
+        79.92,
+        27.05
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "vikramashila": {
+      "name": "Vikramashila",
+      "at": [
+        87.28,
+        25.33
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "somapura": {
+      "name": "Somapura (Paharpur)",
+      "at": [
+        88.98,
+        25.03
+      ],
+      "glyph": "stupa",
+      "label": "top"
+    },
+    "nalanda": {
+      "name": "Nalanda",
+      "at": [
+        85.44,
+        25.14
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "tamralipti": {
+      "name": "Tamralipti",
+      "at": [
+        87.92,
+        22.3
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "sumatra": {
+      "name": "Sumatra",
+      "at": [
+        97.5,
+        5.0
+      ],
+      "glyph": "anchor",
+      "label": "left",
+      "hidden": true
+    },
+    "gangaikonda": {
+      "name": "Gangaikondacholapuram",
+      "at": [
+        79.45,
+        11.21
+      ],
+      "glyph": "gopuram",
+      "label": "right"
+    },
+    "nepal": {
+      "name": "Kathmandu valley",
+      "at": [
+        85.32,
+        27.7
+      ],
+      "glyph": "shrine",
+      "label": "right",
+      "hidden": true
+    },
+    "tholing": {
+      "name": "Tholing",
+      "at": [
+        79.8,
+        31.48
+      ],
+      "glyph": "stupa",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "dharmapala-army": {
+      "name": "Dharmapala's army",
+      "icon": "horse"
+    },
+    "sailendra-envoys": {
+      "name": "Sailendra envoys",
+      "icon": "merchant-ship"
+    },
+    "nalanda-monk": {
+      "name": "Monk",
+      "icon": "monk"
+    },
+    "chola-army": {
+      "name": "Chola army",
+      "icon": "war-elephant"
+    },
+    "atisha": {
+      "name": "Atisha",
+      "icon": "monk"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "A king chosen",
+      "color": "#4fc3b0"
+    },
+    "height": {
+      "name": "The great monasteries",
+      "color": "#e0b43a"
+    },
+    "revival": {
+      "name": "Revival and reach",
+      "color": "#a678e0"
+    },
+    "end": {
+      "name": "Revolt and fall",
+      "color": "#d0584a"
+    }
+  },
+  "routeStyles": {
+    "pala": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "rival": {
+      "color": "#2f6fb3",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#1f8a8a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "pilgrim": {
+      "color": "#7a3fb0",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 14,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 44,
+        "color": "rgba(224,180,58,.35)"
+      },
+      {
+        "until": 68,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(208,88,74,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3,
+        "text": "c. 750 CE"
+      },
+      {
+        "at": 36,
+        "text": "c. 850"
+      },
+      {
+        "at": 52,
+        "text": "988"
+      },
+      {
+        "at": 62,
+        "text": "1040"
+      },
+      {
+        "at": 97,
+        "text": "c. 1200"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "varendra",
+      "phase": "rise",
+      "title": "A king chosen to end chaos",
+      "native": "গোপাল",
+      "when": "c. 750 CE",
+      "at": 3,
+      "camera": {
+        "at": [
+          88.5,
+          24.8
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "In the mid 8th century Bengal had no stable ruler. A later Pala copper plate, found at Khalimpur, says the people made Gopala king to end ‘the law of the fishes’ (matsyanyaya), where the big swallow the small. How he was chosen, and by whom, is not recorded. His dynasty would rule Bengal and Bihar for about four centuries.",
+      "today": "Varendra is north Bengal, today divided between Bangladesh and West Bengal."
+    },
+    {
+      "place": "kannauj",
+      "phase": "rise",
+      "title": "A king who made kings",
+      "native": "कन्नौज",
+      "lang": "hi",
+      "when": "c. 780 to 810 CE",
+      "at": 10,
+      "camera": {
+        "at": [
+          82.6,
+          26.3
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "kannauj",
+          "traveller": "dharmapala-army",
+          "style": "pala",
+          "bend": 0.1
+        }
+      ],
+      "text": "Gopala’s son Dharmapala pushed west into the race for Kannauj against the Pratiharas and the Rashtrakutas. The Khalimpur plate says he placed his ally Chakrayudha on its throne before an assembly of northern kings. Both rivals beat him in turn: the Rashtrakuta Dhruva, then the Pratihara Nagabhata II, who drove Chakrayudha from Kannauj. Bengal and Bihar stayed his.",
+      "today": "Kannauj, Uttar Pradesh; Pataliputra is Patna, Bihar."
+    },
+    {
+      "place": "vikramashila",
+      "phase": "height",
+      "title": "Founding Vikramashila",
+      "native": "विक्रमशिला",
+      "lang": "hi",
+      "when": "c. 800 CE",
+      "at": 18,
+      "camera": {
+        "at": [
+          87.3,
+          25.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Dharmapala founded the monastery of Vikramashila on the Ganga, according to Tibetan histories, which also say it had 108 temples and a ruling council of monks. It became the leading centre of Tantric (Vajrayana) Buddhism, and many of its teachers travelled to Tibet. Excavations at Antichak have uncovered a great cross-shaped stupa surrounded by monks’ cells.",
+      "today": "Antichak, Bhagalpur district, Bihar; the excavated site is protected by the Archaeological Survey of India."
+    },
+    {
+      "place": "somapura",
+      "phase": "height",
+      "title": "The great monastery of Somapura",
+      "native": "সোমপুর মহাবিহার",
+      "when": "late 8th century CE",
+      "at": 26,
+      "camera": {
+        "at": [
+          89,
+          25
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Clay seals found at Paharpur name the monastery as Somapura, built by Dharmapala. Its square of 177 cells, each side about 280 metres long, surrounds a towering temple raised on stepped terraces and lined with terracotta plaques of gods, animals and village life. It was among the largest monasteries south of the Himalayas, in use for about four centuries.",
+      "today": "Paharpur, Naogaon district, Bangladesh; a UNESCO World Heritage Site since 1985."
+    },
+    {
+      "place": "nalanda",
+      "phase": "height",
+      "title": "A gift from Sumatra",
+      "native": "नालंदा",
+      "lang": "hi",
+      "when": "c. 850 CE",
+      "at": 36,
+      "camera": {
+        "at": [
+          87,
+          23.6
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "sumatra",
+          "to": "tamralipti",
+          "traveller": "sailendra-envoys",
+          "style": "sea",
+          "bend": 0.1
+        },
+        {
+          "from": "tamralipti",
+          "to": "nalanda",
+          "traveller": "nalanda-monk",
+          "style": "pilgrim",
+          "bend": 0.1
+        }
+      ],
+      "text": "Under Dharmapala’s son Devapala the empire was at its height. His copper plate found at Nalanda records that Balaputradeva, a Sailendra king of Suvarnadvipa (Sumatra and Java), had built a monastery there and asked for its support; Devapala granted five villages. Nalanda, already ancient, drew students from across Asia, and Pala patronage kept it rich.",
+      "today": "The Nalanda ruins, Bihar, a UNESCO World Heritage Site since 2016."
+    },
+    {
+      "place": "varendra",
+      "phase": "revival",
+      "title": "Mahipala’s revival",
+      "native": "মহীপাল",
+      "when": "c. 988 to 1038 CE (dates disputed)",
+      "at": 52,
+      "camera": {
+        "at": [
+          84.5,
+          19.2
+        ],
+        "width": 19
+      },
+      "legs": [
+        {
+          "from": "gangaikonda",
+          "to": "varendra",
+          "traveller": "chola-army",
+          "style": "rival",
+          "bend": 0.1
+        }
+      ],
+      "text": "After Devapala the Palas lost ground to the Pratiharas, and outsiders called Kambojas seized north Bengal. Mahipala I won his family’s lands back. In about 1022 the Chola king Rajendra I sent an army north to the Ganga; his inscriptions say it defeated Mahipala, and he built a new capital, Gangaikondacholapuram, ‘city of the Chola who took the Ganga’.",
+      "today": "Gangaikondacholapuram, Ariyalur district, Tamil Nadu; its temple is a UNESCO World Heritage Site."
+    },
+    {
+      "place": "tholing",
+      "phase": "revival",
+      "title": "Atisha goes to Tibet",
+      "native": "ཐོ་ལིང",
+      "lang": "bo",
+      "when": "1040 to 1042 CE",
+      "at": 62,
+      "camera": {
+        "at": [
+          82.6,
+          28.6
+        ],
+        "width": 15
+      },
+      "legs": [
+        {
+          "from": "vikramashila",
+          "to": "nepal",
+          "traveller": "atisha",
+          "style": "pilgrim",
+          "bend": 0.1
+        },
+        {
+          "from": "nepal",
+          "to": "tholing",
+          "traveller": "atisha",
+          "style": "pilgrim",
+          "bend": 0.1
+        }
+      ],
+      "text": "Atisha Dipankara Shrijnana, the most famous teacher at Vikramashila, was invited to western Tibet by the rulers of Guge. He left in 1040, travelled through Nepal and reached Ngari in 1042. He taught in Tibet for the rest of his life, and his disciple Dromtön founded the Kadam school, which later fed into the Gelug tradition of the Dalai Lamas.",
+      "today": "Tholing Monastery, Zanda county, Ngari, Tibet Autonomous Region, China."
+    },
+    {
+      "place": "varendra",
+      "phase": "end",
+      "title": "The Kaivarta revolt",
+      "native": "বরেন্দ্র",
+      "when": "c. 1070s to 1080s CE",
+      "at": 76,
+      "camera": {
+        "at": [
+          89.6,
+          24.8
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "Under Mahipala II, Varendra revolted, led by Divya (Divvoka), an official of the Kaivarta community. The king was killed, and Kaivarta chiefs ruled north Bengal for a generation. His brother Ramapala won it back with help from feudatory chiefs. The poet Sandhyakara Nandi told the story in the Ramacharita, where each verse reads as both Rama’s story and Ramapala’s.",
+      "today": "The Dibar Dighi pillar in Naogaon, Bangladesh, is traditionally linked to Divya."
+    },
+    {
+      "place": "varendra",
+      "phase": "end",
+      "title": "The Senas take Bengal",
+      "native": "সেন",
+      "when": "c. 1150 to 1161 CE",
+      "at": 88,
+      "camera": {
+        "at": [
+          88.5,
+          24.5
+        ],
+        "width": 12
+      },
+      "legs": [],
+      "text": "The Senas, whose inscriptions say they came from Karnata in the Deccan, rose under the Palas in western Bengal. Vijayasena took most of Bengal from them in the mid 12th century. The last Pala known from his own inscriptions, Madanapala, ruled until about 1161, and parts of Bihar passed to the Gahadavalas of Kannauj. The Pala age was over.",
+      "today": "The Senas’ Deopara inscription, recording Vijayasena’s wars, is in the Varendra Research Museum, Rajshahi, Bangladesh."
+    },
+    {
+      "place": "vikramashila",
+      "phase": "end",
+      "title": "The monasteries fall",
+      "native": "विक्रमशिला",
+      "lang": "hi",
+      "when": "c. 1200 CE",
+      "at": 96,
+      "camera": {
+        "at": [
+          87.3,
+          25.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Around 1200 Turkish raiders under Bakhtiyar Khalji sacked a fortified monastery in Bihar, usually identified as Odantapuri, killing its shaven-headed residents, according to the historian Minhaj-i-Siraj. Tibetan sources say Vikramashila was destroyed in the same years. Nalanda declined, though in 1235 the Tibetan pilgrim Dharmasvamin still found a teacher and about seventy students there.",
+      "today": "Pala bronzes and stone images fill museums from Patna and Dhaka to Kathmandu and Lhasa."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "pala",
+        "name": "Palas",
+        "color": "#b3261e",
+        "active": [
+          [
+            0,
+            8
+          ]
+        ],
+        "label": {
+          "text": "Palas",
+          "at": [
+            88.1,
+            25.8
+          ],
+          "moves": [
+            {
+              "from": 1,
+              "at": [
+                86.5,
+                24.6
+              ]
+            },
+            {
+              "from": 3,
+              "at": [
+                88.6,
+                23.7
+              ]
+            },
+            {
+              "from": 5,
+              "at": [
+                85.0,
+                23.9
+              ]
+            },
+            {
+              "from": 7,
+              "at": [
+                85.2,
+                25.9
+              ]
+            },
+            {
+              "from": 8,
+              "at": [
+                84.7,
+                24.4
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  88,
+                  26
+                ],
+                [
+                  89.5,
+                  25.9
+                ],
+                [
+                  89.8,
+                  24.2
+                ],
+                [
+                  89.3,
+                  23.2
+                ],
+                [
+                  88.2,
+                  23
+                ],
+                [
+                  87.8,
+                  24
+                ],
+                [
+                  87.8,
+                  25.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                1,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  82.9,
+                  25.6
+                ],
+                [
+                  84,
+                  26.2
+                ],
+                [
+                  86,
+                  26.4
+                ],
+                [
+                  88,
+                  26.4
+                ],
+                [
+                  89.5,
+                  26
+                ],
+                [
+                  89.8,
+                  24.2
+                ],
+                [
+                  89.3,
+                  23.2
+                ],
+                [
+                  88.4,
+                  22.8
+                ],
+                [
+                  87.2,
+                  22.8
+                ],
+                [
+                  86.2,
+                  23.6
+                ],
+                [
+                  85,
+                  24.2
+                ],
+                [
+                  83.6,
+                  24.4
+                ],
+                [
+                  82.8,
+                  24.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                6
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  83.6,
+                  25.4
+                ],
+                [
+                  84.4,
+                  26.2
+                ],
+                [
+                  86,
+                  26.4
+                ],
+                [
+                  88,
+                  26.4
+                ],
+                [
+                  89.5,
+                  26
+                ],
+                [
+                  89.8,
+                  24.2
+                ],
+                [
+                  89.3,
+                  23.2
+                ],
+                [
+                  88.4,
+                  22.8
+                ],
+                [
+                  87.2,
+                  22.8
+                ],
+                [
+                  86.2,
+                  23.6
+                ],
+                [
+                  85,
+                  24.2
+                ],
+                [
+                  84,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  83.5,
+                  25.2
+                ],
+                [
+                  84,
+                  26.2
+                ],
+                [
+                  86,
+                  26.3
+                ],
+                [
+                  88,
+                  26.1
+                ],
+                [
+                  88.4,
+                  25
+                ],
+                [
+                  88.2,
+                  24
+                ],
+                [
+                  89,
+                  23.2
+                ],
+                [
+                  88.4,
+                  22.8
+                ],
+                [
+                  87.2,
+                  22.8
+                ],
+                [
+                  86.2,
+                  23.6
+                ],
+                [
+                  85,
+                  24.2
+                ],
+                [
+                  83.8,
+                  24.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                8
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  84.9,
+                  25.5
+                ],
+                [
+                  86,
+                  25.5
+                ],
+                [
+                  87.4,
+                  25.3
+                ],
+                [
+                  87.6,
+                  24.7
+                ],
+                [
+                  86.4,
+                  24.5
+                ],
+                [
+                  85.2,
+                  24.6
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "Bengal and Bihar",
+          "Capitals": "Early capitals not certain"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Gopala"
+          },
+          {
+            "from": 1,
+            "text": "Dharmapala"
+          },
+          {
+            "from": 4,
+            "text": "Devapala"
+          },
+          {
+            "from": 5,
+            "text": "Mahipala I"
+          },
+          {
+            "from": 7,
+            "text": "Mahipala II, then Ramapala"
+          },
+          {
+            "from": 8,
+            "text": "Madanapala"
+          }
+        ],
+        "role": "The dynasty of this story.",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Races for Kannauj"
+          },
+          {
+            "from": 5,
+            "text": "Defeated by the Chola army, say Rajendra I’s inscriptions"
+          },
+          {
+            "from": 7,
+            "text": "Loses Varendra to the Kaivartas"
+          },
+          {
+            "from": 8,
+            "text": "Loses Bengal to the Senas"
+          }
+        ]
+      },
+      {
+        "id": "pratihara",
+        "name": "Pratiharas",
+        "color": "#c98a2b",
+        "active": [
+          [
+            1,
+            1
+          ],
+          [
+            5,
+            5
+          ]
+        ],
+        "label": {
+          "text": "Pratiharas",
+          "at": [
+            77.8,
+            26.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ],
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.5,
+                  27.5
+                ],
+                [
+                  73,
+                  28.8
+                ],
+                [
+                  76,
+                  28.4
+                ],
+                [
+                  78.5,
+                  28
+                ],
+                [
+                  80.5,
+                  27.8
+                ],
+                [
+                  80.8,
+                  26.4
+                ],
+                [
+                  79,
+                  25.8
+                ],
+                [
+                  78,
+                  24.4
+                ],
+                [
+                  76,
+                  23.3
+                ],
+                [
+                  74,
+                  23.3
+                ],
+                [
+                  72,
+                  24.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "Rajasthan and Malwa to the western Ganga plain"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Nagabhata II"
+          }
+        ],
+        "role": "Rivals for Kannauj.",
+        "ties": []
+      },
+      {
+        "id": "rashtrakuta",
+        "name": "Rashtrakutas",
+        "color": "#e0573a",
+        "active": [
+          [
+            1,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Rashtrakutas",
+          "at": [
+            77.2,
+            21
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73.4,
+                  21.8
+                ],
+                [
+                  75.5,
+                  22
+                ],
+                [
+                  77.5,
+                  21.8
+                ],
+                [
+                  78.6,
+                  20.4
+                ],
+                [
+                  78.6,
+                  18
+                ],
+                [
+                  78,
+                  15.8
+                ],
+                [
+                  76.5,
+                  15.2
+                ],
+                [
+                  75,
+                  15.4
+                ],
+                [
+                  74,
+                  16.5
+                ],
+                [
+                  73.3,
+                  18.5
+                ],
+                [
+                  73.3,
+                  20.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "The western Deccan, Narmada to the Tungabhadra"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Dhruva"
+          }
+        ],
+        "role": "Rivals from the Deccan.",
+        "ties": []
+      },
+      {
+        "id": "chola",
+        "name": "Cholas",
+        "color": "#c2477a",
+        "active": [
+          [
+            5,
+            5
+          ]
+        ],
+        "label": {
+          "text": "Cholas",
+          "at": [
+            77.9,
+            12.9
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  76.4,
+                  12.8
+                ],
+                [
+                  77.6,
+                  14
+                ],
+                [
+                  79,
+                  15.6
+                ],
+                [
+                  80.3,
+                  16.3
+                ],
+                [
+                  80.1,
+                  14.5
+                ],
+                [
+                  80.3,
+                  13
+                ],
+                [
+                  79.9,
+                  11.6
+                ],
+                [
+                  79.8,
+                  10.6
+                ],
+                [
+                  78.4,
+                  9.8
+                ],
+                [
+                  77.4,
+                  8.4
+                ],
+                [
+                  76.6,
+                  9.5
+                ],
+                [
+                  76.6,
+                  11
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "The Tamil country, southern Karnataka and the east coast to about the Godavari",
+          "Capital": "Gangaikondacholapuram"
+        },
+        "rulers": [
+          {
+            "from": 5,
+            "text": "Rajendra I"
+          }
+        ],
+        "role": "Raided north to the Ganga.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Sends an army north to the Ganga"
+          }
+        ]
+      },
+      {
+        "id": "kaivarta",
+        "name": "Kaivarta rule",
+        "color": "#6aa84f",
+        "active": [
+          [
+            7,
+            7
+          ]
+        ],
+        "label": {
+          "text": "Kaivartas",
+          "at": [
+            89,
+            26.3
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                7,
+                7
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  88.5,
+                  25.9
+                ],
+                [
+                  89.7,
+                  25.8
+                ],
+                [
+                  89.8,
+                  24.4
+                ],
+                [
+                  89.2,
+                  24
+                ],
+                [
+                  88.4,
+                  24.3
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "North Bengal (Varendra)"
+        },
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Divya (Divvoka)"
+          }
+        ],
+        "role": "Rebels who held Varendra.",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Rise against Mahipala II"
+          }
+        ]
+      },
+      {
+        "id": "sena",
+        "name": "Senas",
+        "color": "#2f6fb3",
+        "active": [
+          [
+            8,
+            9
+          ]
+        ],
+        "label": {
+          "text": "Senas",
+          "at": [
+            89.3,
+            23.7
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                8,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  87.2,
+                  25.6
+                ],
+                [
+                  88.6,
+                  26.2
+                ],
+                [
+                  89.8,
+                  26
+                ],
+                [
+                  90.3,
+                  24.6
+                ],
+                [
+                  90,
+                  23
+                ],
+                [
+                  89.2,
+                  22.6
+                ],
+                [
+                  88.6,
+                  22.4
+                ],
+                [
+                  87.6,
+                  22.8
+                ],
+                [
+                  86.6,
+                  23.4
+                ],
+                [
+                  86.6,
+                  24.5
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "Bengal",
+          "Origin": "Karnata in the Deccan, by their own inscriptions"
+        },
+        "rulers": [
+          {
+            "from": 8,
+            "text": "Vijayasena"
+          }
+        ],
+        "role": "Took Bengal from the Palas.",
+        "ties": [
+          {
+            "from": 8,
+            "text": "Take most of Bengal"
+          }
+        ]
+      },
+      {
+        "id": "guge",
+        "name": "Guge",
+        "color": "#8a6ad0",
+        "active": [
+          [
+            6,
+            6
+          ]
+        ],
+        "label": {
+          "text": "Guge",
+          "at": [
+            80.6,
+            32.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                6
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  32.4
+                ],
+                [
+                  80.2,
+                  32.8
+                ],
+                [
+                  81.4,
+                  32
+                ],
+                [
+                  81.2,
+                  30.8
+                ],
+                [
+                  79.6,
+                  30.4
+                ],
+                [
+                  78.4,
+                  31
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Region": "Western Tibet around Tholing (Ngari)"
+        },
+        "rulers": [],
+        "role": "The Tibetan kingdom that invited Atisha.",
+        "ties": [
+          {
+            "from": 6,
+            "text": "Invites Atisha"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "Kings, teachers and poets",
+    "items": [
+      {
+        "id": "dharmapala",
+        "name": "Dharmapala",
+        "native": "ধর্মপাল",
+        "life": "r. c. 770 to 810",
+        "role": "Second Pala king, who made the dynasty a great power.",
+        "steps": [
+          1,
+          2,
+          3
+        ],
+        "text": "Gopala’s son fought the Pratiharas and Rashtrakutas for Kannauj, lost to both, yet kept an empire across Bengal and Bihar. His copper plates call him supreme lord. A devoted Buddhist, he founded Vikramashila and Somapura, two of the greatest monasteries of his age, and Tibetan histories remember him as a patron of learning."
+      },
+      {
+        "id": "devapala",
+        "name": "Devapala",
+        "native": "দেবপাল",
+        "life": "r. c. 810 to 850",
+        "role": "Pala king under whom the empire was at its height.",
+        "steps": [
+          4
+        ],
+        "text": "Dharmapala’s son ruled for about forty years. His inscriptions claim conquests from the Himalayas to the Vindhyas; how much is true is disputed. His Nalanda copper plate records his grant to a monastery built by a Sailendra king of Sumatra and Java, a sign of the links between Pala India and Buddhist Southeast Asia."
+      },
+      {
+        "id": "atisha",
+        "name": "Atisha Dipankara Shrijnana",
+        "native": "অতীশ দীপঙ্কর",
+        "life": "982 to 1054",
+        "role": "Teacher at Vikramashila who went to Tibet.",
+        "steps": [
+          6
+        ],
+        "text": "Born in Bengal, by tradition at Vikrampur near Dhaka, he studied in India and, according to his biographies, in Sumatra. He became a leading teacher at Vikramashila before going to Tibet, where he wrote the Lamp for the Path to Enlightenment. He died near Lhasa in 1054 and is honoured in Tibet and Bangladesh."
+      },
+      {
+        "id": "sandhyakara-nandi",
+        "name": "Sandhyakara Nandi",
+        "native": "সন্ধ্যাকর নন্দী",
+        "life": "11th to 12th century",
+        "role": "Poet of the Ramacharita.",
+        "steps": [
+          7
+        ],
+        "text": "A court poet whose father served Ramapala, he wrote the Ramacharita, a Sanskrit poem in which every verse carries two meanings, one telling the Ramayana and one telling Ramapala’s recovery of Varendra. It is the main source for the Kaivarta revolt. Only one manuscript survives, found in Nepal in the 19th century."
+      }
+    ]
+  }
+}
