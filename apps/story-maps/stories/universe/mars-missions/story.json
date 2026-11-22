@@ -1,0 +1,700 @@
+{
+ "id": "mars-missions",
+ "title": "Missions to Mars",
+ "description": "An illustrated map of the missions to Mars, from Mariner 4’s first close-ups in 1965 through the Soviet Mars 3, Viking, Sojourner, Spirit and Opportunity, Phoenix, Curiosity, India’s Mangalyaan and InSight to Perseverance, Ingenuity, China’s Zhurong and the missions still to come.",
+ "canvas": "cosmic",
+ "basemap": "mars",
+ "source": "History",
+ "nativeLang": "ru",
+ "mapLabel": "Illustrated map of the whole of Mars, drawn flat with 0° longitude in the middle, its heights shaded from the dark northern lowlands to the pale volcanoes of Tharsis, with the sites where spacecraft landed and rovers drove from 1971 to today",
+ "note": "The whole of Mars is drawn flat, like a world map: longitude runs left to right and latitude bottom to top, so the poles are stretched. The shading is height, measured by the laser altimeter on Mars Global Surveyor: dark is low, pale is high. The polar caps are drawn by hand; their size changes with the seasons. Landing sites follow NASA, ESA, CNSA and the IAU’s Gazetteer of Planetary Nomenclature. Orbiters are shown at a pin above the north pole.",
+ "places": {
+  "mariner4": {
+   "name": "Mariner crater",
+   "at": [
+    -164.23,
+    -34.68
+   ],
+   "glyph": "telescope",
+   "label": "right"
+  },
+  "valles": {
+   "name": "Valles Marineris",
+   "at": [
+    -58.59,
+    -14.01
+   ],
+   "glyph": "telescope",
+   "label": "bottom"
+  },
+  "mars3": {
+   "name": "Mars 3",
+   "at": [
+    -158.0,
+    -45.0
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "viking1": {
+   "name": "Viking 1",
+   "at": [
+    -47.95,
+    22.27
+   ],
+   "glyph": "lander",
+   "label": "top"
+  },
+  "viking2": {
+   "name": "Viking 2",
+   "at": [
+    134.29,
+    47.64
+   ],
+   "glyph": "lander",
+   "label": "left"
+  },
+  "pathfinder": {
+   "name": "Pathfinder",
+   "at": [
+    -33.22,
+    19.13
+   ],
+   "glyph": "rover",
+   "label": "right"
+  },
+  "olympus": {
+   "name": "Olympus Mons",
+   "at": [
+    -133.8,
+    18.65
+   ],
+   "glyph": "volcano",
+   "label": "left"
+  },
+  "beagle2": {
+   "name": "Beagle 2",
+   "at": [
+    90.43,
+    11.53
+   ],
+   "glyph": "lander",
+   "label": "bottom"
+  },
+  "southpole": {
+   "name": "South polar ice",
+   "at": [
+    -167.0,
+    -81.0
+   ],
+   "glyph": "snowflake",
+   "label": "top"
+  },
+  "gusev": {
+   "name": "Spirit",
+   "at": [
+    175.47,
+    -14.57
+   ],
+   "glyph": "rover",
+   "label": "left"
+  },
+  "eagle": {
+   "name": "Opportunity",
+   "at": [
+    -5.53,
+    -1.95
+   ],
+   "glyph": "rover",
+   "label": "right"
+  },
+  "phoenix": {
+   "name": "Phoenix",
+   "at": [
+    -125.75,
+    68.22
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "gale": {
+   "name": "Curiosity",
+   "at": [
+    137.44,
+    -4.59
+   ],
+   "glyph": "rover",
+   "label": "right"
+  },
+  "orbit": {
+   "name": "In orbit",
+   "at": [
+    0,
+    100
+   ],
+   "glyph": "orbiter",
+   "label": "bottom"
+  },
+  "endeavour": {
+   "name": "Endeavour crater",
+   "at": [
+    -5.2,
+    -2.28
+   ],
+   "glyph": "rover",
+   "label": "left"
+  },
+  "insight": {
+   "name": "InSight",
+   "at": [
+    135.62,
+    4.5
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "jezero": {
+   "name": "Jezero crater",
+   "at": [
+    77.45,
+    18.44
+   ],
+   "glyph": "rover",
+   "label": "right"
+  },
+  "wright": {
+   "name": "Wright Brothers Field",
+   "at": [
+    77.45,
+    18.45
+   ],
+   "glyph": "helicopter",
+   "label": "left"
+  },
+  "zhurong": {
+   "name": "Zhurong",
+   "at": [
+    109.93,
+    25.07
+   ],
+   "glyph": "rover",
+   "label": "right"
+  },
+  "oxia": {
+   "name": "Oxia Planum",
+   "at": [
+    -25.71,
+    17.28
+   ],
+   "glyph": "flag",
+   "label": "right"
+  }
+ },
+ "travellers": {
+  "probe": {
+   "name": "Spacecraft",
+   "icon": "probe"
+  }
+ },
+ "phases": {
+  "first": {
+   "name": "The first looks",
+   "color": "#ff8a3a"
+  },
+  "viking": {
+   "name": "Viking",
+   "color": "#a678e0"
+  },
+  "return": {
+   "name": "Rovers, orbiters and losses",
+   "color": "#4fc3b0"
+  },
+  "big": {
+   "name": "Bigger rovers, more nations",
+   "color": "#f2c14e"
+  },
+  "now": {
+   "name": "A crowded sky",
+   "color": "#e8726a"
+  }
+ },
+ "routeStyles": {
+  "probe": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 14.2,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 24.1,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 58.2,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 77.8,
+    "color": "rgba(242,193,78,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(232,114,106,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2.0,
+    "text": "1965"
+   },
+   {
+    "at": 16.7,
+    "text": "1976"
+   },
+   {
+    "at": 26.5,
+    "text": "1997"
+   },
+   {
+    "at": 60.7,
+    "text": "2012"
+   },
+   {
+    "at": 80.3,
+    "text": "2021"
+   },
+   {
+    "at": 93.0,
+    "text": "Now"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "mariner4",
+   "phase": "first",
+   "title": "Mariner 4’s first close-ups",
+   "when": "15 July 1965",
+   "at": 2.0,
+   "camera": {
+    "at": [
+     -164.23,
+     -34.68
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "NASA’s Mariner 4 flew past Mars on 15 July 1965, about 9,800 kilometres above the surface, the first spacecraft to do so. Its camera took 21 pictures and part of a 22nd, read back to Earth over several days. They showed a cratered, Moon-like land and a thin air of mostly carbon dioxide, ending hopes of canals or forests.",
+   "today": "A crater in the strip Mariner 4 photographed, about 150 kilometres across, is named Mariner after it."
+  },
+  {
+   "place": "valles",
+   "phase": "first",
+   "title": "Mariner 9 waits out the dust",
+   "when": "14 November 1971",
+   "at": 6.9,
+   "camera": {
+    "at": [
+     -58.59,
+     -14.01
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "On 14 November 1971 Mariner 9 became the first spacecraft to orbit another planet. A dust storm hid the whole of Mars, so it waited. As the dust cleared, its pictures showed giant volcanoes, dry riverbeds and a canyon system about 4,000 kilometres long, now named Valles Marineris (Mariner Valleys) after the probe.",
+   "today": "Valles Marineris is still the largest canyon known in the solar system, up to about 7 kilometres deep."
+  },
+  {
+   "place": "mars3",
+   "phase": "first",
+   "title": "Mars 3’s twenty seconds",
+   "native": "Марс-3",
+   "when": "2 December 1971",
+   "at": 11.8,
+   "camera": {
+    "at": [
+     -158.0,
+     -45.0
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "The Soviet Union sent two orbiters with landers into the same dust storm. Mars 2’s lander crashed on 27 November 1971, the first human-made object on Mars. On 2 December Mars 3’s lander made the first soft landing, in Terra Sirenum, and began sending a picture. After about 20 seconds the signal stopped. The cause is not known.",
+   "today": "In 2013 an amateur team, working with NASA orbiter pictures, suggested parts of Mars 3; the find is not confirmed."
+  },
+  {
+   "place": "viking1",
+   "phase": "viking",
+   "title": "Viking 1 in Chryse Planitia",
+   "when": "20 July 1976",
+   "at": 16.7,
+   "camera": {
+    "at": [
+     -47.95,
+     22.27
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On 20 July 1976, seven years to the day after Apollo 11, NASA’s Viking 1 lander settled on the plain of Chryse Planitia. Within minutes it sent the first clear picture from the surface of Mars: rocks, fine soil and, later, a pinkish sky. It weather-watched for over six years, until November 1982.",
+   "today": "The site is named the Thomas Mutch Memorial Station, after the head of the Viking camera team."
+  },
+  {
+   "place": "viking2",
+   "phase": "viking",
+   "title": "Looking for life",
+   "when": "3 September 1976",
+   "source": "Science",
+   "at": 21.6,
+   "camera": {
+    "at": [
+     134.29,
+     47.64
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Viking 2 landed on Utopia Planitia on 3 September 1976 and photographed frost on the ground. Both landers scooped soil into three experiments looking for living things. One, labelled release, gave a result that looked like life, but no organic matter was found, and most scientists put it down to reactive soil chemistry. A few still disagree.",
+   "today": "Perchlorate, found by Phoenix in 2008, now explains much of the soil’s reactive chemistry."
+  },
+  {
+   "place": "pathfinder",
+   "phase": "return",
+   "title": "Sojourner, the first Mars rover",
+   "when": "4 July 1997",
+   "at": 26.5,
+   "camera": {
+    "at": [
+     -33.22,
+     19.13
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "After twenty years without a landing, NASA’s Mars Pathfinder bounced down in Ares Vallis on 4 July 1997, wrapped in airbags. It carried Sojourner, a six-wheeled rover the size of a microwave oven, the first rover on another planet. Over about three months it studied rocks near the lander, in an old flood channel.",
+   "today": "Airbag landings were used again by Spirit and Opportunity in 2004."
+  },
+  {
+   "place": "olympus",
+   "phase": "return",
+   "title": "Measuring every height",
+   "when": "1997 to 2006",
+   "source": "Science",
+   "at": 31.4,
+   "camera": {
+    "at": [
+     -133.8,
+     18.65
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "Mars Global Surveyor reached orbit in September 1997. Its laser altimeter (MOLA) fired more than 600 million pulses at the ground and timed their echoes, mapping heights across the planet. It showed the northern lowlands lying several kilometres below the southern highlands, and Olympus Mons rising nearly 22 kilometres, the tallest volcano known.",
+   "today": "The heights on this map are MOLA’s measurements: dark is low, pale is high."
+  },
+  {
+   "place": "beagle2",
+   "phase": "return",
+   "title": "The landers that went quiet",
+   "when": "25 December 2003",
+   "at": 36.3,
+   "camera": {
+    "at": [
+     90.43,
+     11.53
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Mars is hard to reach. In 1999 NASA lost Mars Climate Orbiter, because one team’s software used pound-force while another expected newtons, and then Mars Polar Lander. Britain’s Beagle 2, carried by Europe’s Mars Express, was due to land on Isidis Planitia on 25 December 2003. Nothing was heard from it.",
+   "today": "In 2015 NASA’s orbiting HiRISE camera found Beagle 2 on the ground, its solar panels only partly unfolded."
+  },
+  {
+   "place": "southpole",
+   "phase": "return",
+   "title": "Water under the ice?",
+   "when": "2003 to today",
+   "source": "Science",
+   "at": 41.2,
+   "camera": {
+    "at": [
+     -167.0,
+     -81.0
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "Europe’s Mars Express has orbited since December 2003, mapping clays and salts that formed in water. In 2018 its radar, MARSIS, found bright echoes about 1.5 kilometres beneath the south polar ice, which its team read as a lake of salty liquid water. Other researchers argue the echoes come from clays or frozen layers. It is disputed.",
+   "today": "Mars Express is still working, more than twenty years after it arrived."
+  },
+  {
+   "place": "gusev",
+   "phase": "return",
+   "title": "Spirit in Gusev crater",
+   "when": "4 January 2004",
+   "at": 46.1,
+   "camera": {
+    "at": [
+     175.47,
+     -14.57
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "NASA’s Spirit landed in Gusev crater on 4 January 2004, sent to find an old lake. The plain was volcanic, so it drove about 7.7 kilometres to the Columbia Hills. In 2007 a stuck wheel, dragged behind, scraped up almost pure silica, a sign of hot springs or steam vents. Trapped in soft sand, it fell silent in 2010.",
+   "today": "Its landing site is the Columbia Memorial Station, after the crew of the space shuttle lost in 2003."
+  },
+  {
+   "place": "eagle",
+   "phase": "return",
+   "title": "Opportunity finds water’s traces",
+   "when": "25 January 2004",
+   "source": "Science",
+   "at": 51.0,
+   "camera": {
+    "at": [
+     -5.53,
+     -1.95
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Three weeks after Spirit, its twin Opportunity rolled into Eagle crater on Meridiani Planum, a small hole in a flat plain. Its rocks were layered, with ripples laid by flowing water, and studded with small grey hematite spheres the team called blueberries. Together they showed that liquid water once soaked the ground here.",
+   "today": "Meridiani was chosen because an orbiter had seen hematite there from above."
+  },
+  {
+   "place": "phoenix",
+   "phase": "return",
+   "title": "Phoenix digs into ice",
+   "when": "25 May 2008",
+   "source": "Science",
+   "at": 55.8,
+   "camera": {
+    "at": [
+     -125.75,
+     68.22
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "In 2002 the Mars Odyssey orbiter measured hydrogen just under the ground near the poles, a sign of ice. On 25 May 2008 NASA’s Phoenix landed on the northern plains to check. Its scoop uncovered bright patches that faded away in days: water ice turning to vapour. It also found perchlorate salt, and saw snow falling from clouds.",
+   "today": "Phoenix fell silent in the polar winter of 2008; ice later covered its solar panels."
+  },
+  {
+   "place": "gale",
+   "phase": "big",
+   "title": "Curiosity and the sky crane",
+   "when": "6 August 2012",
+   "at": 60.7,
+   "camera": {
+    "at": [
+     137.44,
+     -4.59
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Curiosity, a nuclear-powered rover the size of a small car, was too heavy for airbags. On 6 August 2012 a rocket-powered sky crane lowered it on cables into Gale crater. Within a year it found mudstone from an ancient lake, with the chemistry life could have used. Since 2014 it has been climbing Mount Sharp (Aeolis Mons).",
+   "today": "Curiosity is still driving, reading the layers of Mount Sharp like pages of Mars’s history."
+  },
+  {
+   "place": "orbit",
+   "phase": "big",
+   "title": "Mangalyaan, first time lucky",
+   "native": "मंगलयान",
+   "lang": "hi",
+   "when": "24 September 2014",
+   "at": 65.6,
+   "camera": {
+    "at": [
+     0,
+     70
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "text": "On 24 September 2014 India’s Mars Orbiter Mission, Mangalyaan (Mars craft), entered orbit, two days after NASA’s MAVEN. India became the first Asian nation to reach Mars, and the first to succeed on its first attempt. It cost about 74 million US dollars. Planned for six months, it worked for nearly eight years, until 2022.",
+   "today": "MAVEN still measures how the solar wind strips away Mars’s thin air."
+  },
+  {
+   "place": "endeavour",
+   "phase": "big",
+   "title": "Opportunity’s marathon",
+   "when": "2011 to 2018",
+   "at": 70.5,
+   "camera": {
+    "at": [
+     -5.2,
+     -2.28
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Built to last 90 days, Opportunity kept going. In 2011 it reached Endeavour crater, 22 kilometres wide, and found clays and veins of gypsum laid down by water. In June 2018 a dust storm darkened the whole planet and its solar panels starved. Its last signal came on 10 June. NASA ended the mission in February 2019.",
+   "today": "It drove 45.16 kilometres, still the record for any vehicle on another world."
+  },
+  {
+   "place": "insight",
+   "phase": "big",
+   "title": "InSight listens for quakes",
+   "when": "26 November 2018",
+   "source": "Science",
+   "at": 75.4,
+   "camera": {
+    "at": [
+     135.62,
+     4.5
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "NASA’s InSight landed on Elysium Planitia on 26 November 2018 to study the inside of Mars. Its seismometer recorded more than 1,300 marsquakes, the largest of magnitude 4.7 in May 2022, and their echoes measured the crust, the mantle and a liquid iron core. Its heat probe, the mole, could not dig into the soil.",
+   "today": "Dust covered its solar panels, and its last signal came in December 2022."
+  },
+  {
+   "place": "jezero",
+   "phase": "now",
+   "title": "Perseverance in Jezero",
+   "when": "18 February 2021",
+   "at": 80.3,
+   "camera": {
+    "at": [
+     77.45,
+     18.44
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "February 2021 was busy: the UAE’s Hope and China’s Tianwen-1 reached orbit, and on 18 February NASA’s Perseverance landed in Jezero crater, beside a dried river delta. It drills rock cores and seals them in tubes for return to Earth, and left ten on the ground as a backup. Its MOXIE experiment made oxygen from carbon dioxide.",
+   "today": "The landing site is named Octavia E. Butler Landing, after the science-fiction writer."
+  },
+  {
+   "place": "wright",
+   "phase": "now",
+   "title": "Ingenuity takes off",
+   "when": "19 April 2021",
+   "at": 85.2,
+   "camera": {
+    "at": [
+     77.45,
+     18.45
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Perseverance carried a small helicopter, Ingenuity, weighing 1.8 kilograms. On 19 April 2021 it rose 3 metres, hovered and landed: the first powered, controlled flight on another planet. Planned for five test flights, it made 72, flying about 17 kilometres in all and scouting ahead for the rover, until a rotor blade broke in January 2024.",
+   "today": "The take-off spot is named Wright Brothers Field, and Ingenuity carries a scrap of their 1903 aeroplane’s wing."
+  },
+  {
+   "place": "zhurong",
+   "phase": "now",
+   "title": "Zhurong on Utopia Planitia",
+   "native": "祝融号",
+   "lang": "zh",
+   "when": "15 May 2021",
+   "at": 90.1,
+   "camera": {
+    "at": [
+     109.93,
+     25.07
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "China’s Tianwen-1 (Questions to Heaven) orbited, landed and roved on its first try. On 15 May 2021, Beijing time, its lander set down on southern Utopia Planitia, and the rover Zhurong, named after a fire god, drove off. China became the second nation to run a rover on Mars. Zhurong went to sleep in May 2022.",
+   "today": "Zhurong has not woken; dust on its solar panels is the likely cause."
+  },
+  {
+   "place": "jezero",
+   "phase": "now",
+   "title": "Leopard spots",
+   "when": "July 2024",
+   "source": "Science",
+   "at": 95.0,
+   "camera": {
+    "at": [
+     77.45,
+     18.44
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "In July 2024 Perseverance drilled a reddish rock called Cheyava Falls, from an old river channel, Neretva Vallis. It has pale spots ringed with dark minerals. On Earth, such patterns can come from microbes. In 2025 NASA called it a potential sign of past life. Chemistry without life could also make them; only study on Earth can tell.",
+   "today": "The core, Sapphire Canyon, waits in its tube; how and when it might reach Earth is uncertain."
+  },
+  {
+   "place": "oxia",
+   "phase": "now",
+   "title": "What comes next",
+   "when": "Now",
+   "at": 99.9,
+   "camera": {
+    "at": [
+     -25.71,
+     17.28
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "As of late 2026, Europe’s Rosalind Franklin rover is due to launch in 2028 for Oxia Planum, to drill 2 metres down. NASA’s twin ESCAPADE orbiters, launched in 2025, should arrive in 2027. China plans Tianwen-3 to bring samples home about 2031. No crewed Mars mission is scheduled. These plans will change.",
+   "today": "Oxia Planum holds clays at least 3.9 billion years old, laid down when Mars was wetter."
+  }
+ ],
+ "people": {
+  "heading": "People",
+  "items": [
+   {
+    "id": "levin",
+    "name": "Gilbert Levin",
+    "life": "1924–2021",
+    "role": "Labelled release experiment, Viking",
+    "steps": [
+     4
+    ],
+    "text": "An American engineer who designed Viking’s labelled release experiment, which fed soil a nutrient broth marked with radioactive carbon and watched for gas. Both landers gave positive results. Most scientists concluded the soil’s chemistry, not life, made the gas, but Levin argued for the rest of his life that Viking had found microbes on Mars."
+   },
+   {
+    "id": "squyres",
+    "name": "Steve Squyres",
+    "life": "born 1956",
+    "role": "Principal investigator, Spirit and Opportunity",
+    "steps": [
+     9,
+     10,
+     14
+    ],
+    "text": "An American planetary scientist at Cornell who led the science of Spirit and Opportunity. He spent years proposing a Mars rover before NASA chose his team in 2000. He helped pick the sites, and the rovers’ discoveries of water’s traces were his team’s. He told the story in his book Roving Mars (2005)."
+   },
+   {
+    "id": "annadurai",
+    "name": "Mylswamy Annadurai",
+    "native": "மயில்சாமி அண்ணாதுரை",
+    "lang": "ta",
+    "life": "born 1958",
+    "role": "Programme director, Mars Orbiter Mission",
+    "steps": [
+     13
+    ],
+    "text": "An Indian space engineer from Tamil Nadu who led ISRO’s Chandrayaan-1 to the Moon and then directed the Mars Orbiter Mission, built in about fifteen months. He is known in India as the Moon Man. After retiring from ISRO he has written books and spoken widely to students about science and space."
+   },
+   {
+    "id": "steltzner",
+    "name": "Adam Steltzner",
+    "life": "born 1963",
+    "role": "Landing engineer, Curiosity and Perseverance",
+    "steps": [
+     12,
+     16
+    ],
+    "text": "An American engineer at NASA’s Jet Propulsion Laboratory who led the team that designed Curiosity’s landing, the ‘seven minutes of terror’ ending in the sky crane. He later led the engineering of Perseverance’s sample-collecting system. He came to science late, after a youth playing in rock bands, and wrote The Right Kind of Crazy (2016)."
+   }
+  ]
+ }
+}

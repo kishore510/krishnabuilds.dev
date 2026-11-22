@@ -158,8 +158,10 @@
     );
     let shapes = "";
     for (const shape of basemap.shapes || []) {
-      const d = smoothPath(shape.points.map(P), Boolean(shape.closed));
-      shapes += `<path d="${d}" fill="${shape.fill || "none"}" fill-opacity="${shape.opacity === undefined ? 1 : shape.opacity}"${
+      // `holes` are cut out with the even-odd rule, as on land shapes.
+      const holes = (shape.holes || []).map((h) => smoothPath(h.map(P), true)).join("");
+      const d = smoothPath(shape.points.map(P), Boolean(shape.closed)) + holes;
+      shapes += `<path d="${d}"${holes ? ' fill-rule="evenodd"' : ""} fill="${shape.fill || "none"}" fill-opacity="${shape.opacity === undefined ? 1 : shape.opacity}"${
         shape.stroke ? ` stroke="${shape.stroke}" stroke-width="${shape.width || 1.5}" stroke-linecap="round"${shape.dash ? ` stroke-dasharray="${shape.dash}"` : ""}` : ""
       }/>`;
     }

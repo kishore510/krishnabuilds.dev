@@ -31,20 +31,20 @@ These need a new map first, which is its own piece of work and its own PR:
 
 A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. In this order:
 
-1. Mars: Mariner, Viking, Pathfinder, Spirit and Opportunity, Curiosity, Perseverance and Ingenuity, Zhurong, Mangalyaan (needs a Mars map; its own PR)
-2. Venus: the Venera landers, Magellan, Akatsuki, DAVINCI and EnVision to come (a Venus map, or `solar-system`)
-3. Jupiter and its moons: Pioneer, Galileo, Juno, JUICE, Europa Clipper (needs a Jupiter-system sky diagram; its own PR)
-4. Saturn and Titan: Pioneer 11, Cassini–Huygens, Dragonfly to come (a Saturn-system sky diagram)
-5. Asteroids and comets: Giotto, NEAR, Rosetta and Philae, Hayabusa and Hayabusa2, OSIRIS-REx, DART (`solar-system`)
-6. Pluto and the Kuiper belt: New Horizons and Arrokoth (`solar-system`)
-7. Mercury: Mariner 10, MESSENGER, BepiColombo (`solar-system`)
+1. Venus: the Venera landers, Magellan, Akatsuki, DAVINCI and EnVision to come (a Venus map, or `solar-system`)
+2. Jupiter and its moons: Pioneer, Galileo, Juno, JUICE, Europa Clipper (needs a Jupiter-system sky diagram; its own PR)
+3. Saturn and Titan: Pioneer 11, Cassini–Huygens, Dragonfly to come (a Saturn-system sky diagram)
+4. Asteroids and comets: Giotto, NEAR, Rosetta and Philae, Hayabusa and Hayabusa2, OSIRIS-REx, DART (`solar-system`)
+5. Pluto and the Kuiper belt: New Horizons and Arrokoth (`solar-system`)
+6. Mercury: Mariner 10, MESSENGER, BepiColombo (`solar-system`)
 
-Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. Mars surface outlines need a public-domain source (NASA or USGS) checked before they are committed. The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`).
+Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. The Mars map came from MOLA heights on NASA's Mars Global Surveyor and the USGS gazetteer (see `README.md`). The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`).
 
 ## Built
 
 Newest first.
 
+- Missions to Mars (`mars-missions`), 2026-11-22
 - Missions to the Moon (`moon-missions`), 2026-11-22
 - The Voyager Probes (`voyager`), 2026-11-22
 - The Partition of India (`partition`), 2026-11-22

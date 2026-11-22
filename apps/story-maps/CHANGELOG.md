@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.102.0
+
+- New `mars` basemap for the Exploring the Solar System series: the whole of Mars (lon -180 to 180, lat -90 to 90) as a sky basemap whose units are planetocentric longitude (east positive) and latitude, with heights shaded from MOLA on Mars Global Surveyor and names, centres and sizes from the IAU/USGS gazetteer; the polar caps are hand-drawn. `scripts/mars/mars.py` rebuilds it. Sky shapes can now list `holes`, cut out with the even-odd rule, like land shapes.
+- New story map in Universe: Missions to Mars. From Mariner 4’s first close-ups in 1965 and Mariner 9 in the dust, through Mars 3, Viking, Sojourner, Spirit and Opportunity, Phoenix, Curiosity, India’s Mangalyaan and InSight to Perseverance, Ingenuity, China’s Zhurong and the missions still to come. 21 chapters on the `mars` basemap, 4 people cards (Levin, Squyres, Annadurai, Steltzner), new glyphs `orbiter` and `helicopter`.
+- Catalogue: a new Missions to Mars entry opens the story; new Curiosity rover, Mangalyaan, Ingenuity helicopter and Tianwen-1 and Zhurong entries open it at chapters 13, 14, 18 and 19.
+
 ## 0.101.0
 
 - New story map in Universe: Missions to the Moon. From Luna 2’s impact in 1959 and the first far-side photographs, through Ranger 7, Luna 9’s soft landing, the Apollo landings and the Soviet robots Luna 16, Lunokhod 1 and 2 and Luna 24, to ice in the dark, China’s Chang’e 3, 4, 5 and 6, India’s Chandrayaan-3, Japan’s SLIM, Blue Ghost, Artemis II and the race for the south pole. 23 chapters on the `moon` basemap, 4 people cards (Korolev, Armstrong, Schmitt, Koch), new glyphs `lander` and `rover`.
