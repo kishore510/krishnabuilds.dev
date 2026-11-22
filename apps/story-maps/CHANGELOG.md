@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.106.0
+
+- New story map in Chronicles: The Sasanian Empire. From Ardashir’s round city and Shapur’s capture of a Roman emperor through Mani, the walls of Derbent, Khosrow I’s great arch and the books brought from India, to the last war with Rome, the Arab conquest, the death of Yazdegerd III and Ferdowsi’s Book of Kings. 17 chapters on the `near-east` basemap, a Powers layer (Sasanians, Parthia, Rome, the Lakhmids, the caliphate), 8 people cards, no new glyphs.
+- Catalogue: the Sasanian Empire entry now opens the story and names the Rashidun Caliphate as its successor.
+
 ## 0.105.0
 
 - New story map in Chronicles: The Parthian Empire. From Arsaces and the horsemen of Nisa through Mithridates I’s conquests, Ctesiphon and the envoys of Han China, to the Roman disaster at Carrhae, the struggle for Armenia, Trajan at the Gulf, Hatra’s walls, the rise of Ardashir and Nisa dug up. 13 chapters on the `near-east` basemap, a Powers layer (Parthia, Seleucids, Rome, Armenia), 6 people cards, no new glyphs.

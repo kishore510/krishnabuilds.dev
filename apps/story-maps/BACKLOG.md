@@ -15,7 +15,6 @@ Biology and Medicine now has The Gene and fits the `world` map; Smallpox, from v
 Suggested after those. These fit a map that already exists, so each is one session:
 
 - The Hittites (`near-east`)
-- The Sasanians (`near-east`)
 - The first caliphates: Rashidun, Umayyad, Abbasid (`near-east`)
 - Teotihuacan and the Toltecs (`mesoamerica`)
 - The Mongol Empire (`world`)
@@ -43,6 +42,7 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- The Sasanian Empire (`sasanian`), 2026-11-22
 - The Parthian Empire (`parthian`), 2026-11-22
 - The Seleucid Empire (`seleucid`), 2026-11-22
 - Missions to Venus (`venus-missions`), 2026-11-22
