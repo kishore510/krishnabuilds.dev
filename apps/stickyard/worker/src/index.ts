@@ -3,7 +3,7 @@ import { safeEqual } from "./crypto";
 import { creationEnabled, readConfig, type WorkerEnv } from "./env";
 import { apiError, corsHeaders, json, notFound, readCappedBody } from "./http";
 import { legacySocket } from "./legacy";
-import { LIMITER_NAME, clientKey } from "./limiter";
+import { LIMITER_NAME, clientKey, type Credential } from "./limiter";
 import { isAllowedOrigin, parseAllowedOrigins } from "./origin";
 import { hostTokenFor } from "./hostToken";
 import { ROOM_ID_HEADER } from "./room";
@@ -40,9 +40,11 @@ async function createRoom(request: Request, env: WorkerEnv, origin: string): Pro
   const parsed = createRoomRequestSchema.safeParse(body);
   if (!parsed.success) return apiError("bad_request", 400, cors);
 
-  const passcodeOk = await safeEqual(parsed.data.passcode, config.passcode);
+  // No passcode at all is allowed (v0.45.0), with its own smaller daily limits; a wrong one is a failure.
+  const given = parsed.data.passcode;
+  const credential: Credential = given === undefined ? "none" : (await safeEqual(given, config.passcode)) ? "passcode" : "wrong";
   const client = await clientKey(request.headers.get("CF-Connecting-IP") ?? "unknown", config.signingKey);
-  const decision = await env.LIMITER.getByName(LIMITER_NAME).attempt(client, passcodeOk, Date.now());
+  const decision = await env.LIMITER.getByName(LIMITER_NAME).attempt(client, credential, Date.now());
 
   switch (decision.outcome) {
     case "created": {

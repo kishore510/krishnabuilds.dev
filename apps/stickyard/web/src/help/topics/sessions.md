@@ -1,17 +1,18 @@
 ---
 title: Starting and joining a session
 order: 2
-summary: Start a session with the create passcode, share its link, and join by link or code.
+summary: Start a session (with or without the create passcode), share its link, and join by link or code.
 keywords: start, create, new, session, room, passcode, join, link, code, copy, share, qr, scan, leave, full, invalid, limit, host, expire, expired, expiry, idle, delete, deleted, days, last
 ---
 A **session** is one shared room with its own link. Its address looks like `#/room/` followed by a long code.
 
 ## Starting a session
 
-- On the start page, type the **create passcode** under **Start a session** and choose **Start session**. You go straight into the new session.
-- The passcode only gates starting sessions. It's sent to the relay once, and isn't kept in your browser. Your password manager can fill it in for you.
-- If the passcode is wrong, you'll see "That passcode didn't work". After several wrong tries, starting a session is paused for a while; the message says how long.
-- There's a daily limit on new sessions. Starting new sessions can also be switched off; joining existing sessions keeps working when it is.
+- On the start page, choose **Start session** under **Start a session**. You go straight into the new session.
+- You don't need a passcode: anyone can start **5 sessions a day**. There's also a daily limit across everyone starting sessions without a passcode.
+- If you have the **create passcode**, type it in first: it lifts your own limit. It's sent to the relay once, and isn't kept in your browser. Your password manager can fill it in for you.
+- If the passcode is wrong, you'll see "That passcode didn't work", and no session is started. After several wrong tries, starting a session is paused for a while, with or without a passcode; the message says how long.
+- When you reach a daily limit, the message says when you can start another. Starting new sessions can also be switched off; joining existing sessions keeps working when it is.
 
 ## Sharing and joining
 

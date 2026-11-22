@@ -81,6 +81,12 @@ describe("createRoom", () => {
     expect(init?.credentials ?? "omit").toBe("omit");
   });
 
+  it("sends an empty body when there's no passcode (v0.45.0)", async () => {
+    const fetchFn = respond(200, { code: CODE, hostToken: HOST_TOKEN });
+    expect(await createRoom(WORKER, "", fetchFn)).toEqual({ ok: true, code: CODE, hostToken: HOST_TOKEN });
+    expect(JSON.parse(String(vi.mocked(fetchFn).mock.calls[0]?.[1]?.body))).toEqual({});
+  });
+
   it.each<[string, FetchFn, CreateResult]>([
     ["401", respond(401, { error: "invalid_passcode" }), { ok: false, error: "invalid_passcode" }],
     [
@@ -114,6 +120,13 @@ describe("createErrorMessage", () => {
     [{ ok: false, error: "unreachable" }, /couldn’t reach/i],
   ])("%j", (result, pattern) => {
     expect(createErrorMessage(result)).toMatch(pattern);
+  });
+
+  it("without a passcode, a limit points to the create passcode", () => {
+    const text = createErrorMessage({ ok: false, error: "rate_limited", retryAfterSeconds: 3 * 3600 }, false);
+    expect(text).toMatch(/without a passcode/);
+    expect(text).toMatch(/3 hours/);
+    expect(text).toMatch(/create passcode/);
   });
 
   it("never mentions the passcode value or which part failed", () => {

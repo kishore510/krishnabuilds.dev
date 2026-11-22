@@ -2,7 +2,7 @@ import { exports } from "cloudflare:workers";
 import { env, runInDurableObject } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import { CREATE_LIMITS } from "../src/limits";
-import { LIMITER_NAME, clientKey, type Decision } from "../src/limiter";
+import { LIMITER_NAME, clientKey, type Credential, type Decision } from "../src/limiter";
 import { TEST_PASSCODE, TEST_SIGNING_KEY, createRequest, freshIp } from "./helpers";
 
 const MINUTE = 60_000;
@@ -18,8 +18,11 @@ function limiter() {
 let dayCounter = 0;
 const freshDay = () => Date.UTC(2031, 0, 1 + dayCounter++, 10);
 
-const attempt = (stub: ReturnType<typeof limiter>, client: string, ok: boolean, now: number): Promise<Decision> =>
-  stub.attempt(client, ok, now);
+/** `true` = the right passcode, `false` = a wrong one, "none" = no passcode at all. */
+const attempt = (stub: ReturnType<typeof limiter>, client: string, ok: boolean | "none", now: number): Promise<Decision> => {
+  const credential: Credential = ok === "none" ? "none" : ok ? "passcode" : "wrong";
+  return stub.attempt(client, credential, now);
+};
 
 describe("limits config", () => {
   it("holds the chosen defaults", () => {
@@ -29,8 +32,9 @@ describe("limits config", () => {
       lockoutMs: 15 * MINUTE,
       globalFailures: 50,
       globalFailureWindowMs: HOUR,
-      creationsPerClientPerDay: 5,
-      creationsPerDay: 50,
+      openPerClientPerDay: 5,
+      openPerDay: 50,
+      passcodePerDay: 200,
       retentionMs: 2 * DAY,
     });
   });
@@ -101,46 +105,86 @@ describe("failed passcode attempts", () => {
   });
 });
 
-describe("room creations", () => {
+describe("room creations without a passcode", () => {
   it("5 per client per UTC day, then refused until midnight UTC", async () => {
     const stub = limiter();
     const t = freshDay(); // 10:00 UTC
-    for (let i = 0; i < 5; i++) expect((await attempt(stub, "client-a", true, t)).outcome).toBe("created");
-    const sixth = await attempt(stub, "client-a", true, t);
+    for (let i = 0; i < 5; i++) expect((await attempt(stub, "client-a", "none", t)).outcome).toBe("created");
+    const sixth = await attempt(stub, "client-a", "none", t);
     expect(sixth.outcome).toBe("limited");
     if (sixth.outcome === "limited") expect(sixth.retryAfterSeconds).toBe(14 * 3600);
   });
 
-  it("50 per UTC day across all clients", async () => {
+  it("50 per UTC day across all clients without a passcode", async () => {
     const stub = limiter();
     const t = freshDay();
     for (let c = 0; c < 10; c++) {
-      for (let i = 0; i < 5; i++) expect((await attempt(stub, `client-${c}`, true, t)).outcome).toBe("created");
+      for (let i = 0; i < 5; i++) expect((await attempt(stub, `client-${c}`, "none", t)).outcome).toBe("created");
     }
-    expect((await attempt(stub, "client-new", true, t)).outcome).toBe("limited");
+    expect((await attempt(stub, "client-new", "none", t)).outcome).toBe("limited");
+  });
+
+  it("don't count as failures and don't add to the lockout", async () => {
+    const stub = limiter();
+    const t = freshDay();
+    for (let i = 0; i < 4; i++) await attempt(stub, "client-a", false, t);
+    for (let i = 0; i < 5; i++) expect((await attempt(stub, "client-a", "none", t)).outcome).toBe("created");
+    expect((await attempt(stub, "client-a", false, t)).outcome).toBe("invalid");
+  });
+
+  it("are refused during a wrong-passcode lockout", async () => {
+    const stub = limiter();
+    const t = freshDay();
+    for (let i = 0; i < 5; i++) await attempt(stub, "client-a", false, t);
+    expect((await attempt(stub, "client-a", "none", t + MINUTE)).outcome).toBe("limited");
   });
 
   it("a refused creation is not counted", async () => {
     const stub = limiter();
     const t = freshDay();
-    for (let i = 0; i < 5; i++) await attempt(stub, "client-a", true, t);
-    for (let i = 0; i < 3; i++) await attempt(stub, "client-a", true, t);
-    const count = await runInDurableObject(stub, (_instance, state) => {
-      const row = state.storage.sql
-        .exec<{ n: number }>("SELECT SUM(count) AS n FROM creations")
-        .one();
-      return row.n;
-    });
+    for (let i = 0; i < 8; i++) await attempt(stub, "client-a", "none", t);
+    const count = await runInDurableObject(stub, (_instance, state) =>
+      state.storage.sql.exec<{ n: number }>("SELECT SUM(count) AS n FROM open_creations").one().n,
+    );
     expect(count).toBe(5);
   });
 
   it("counters reset on a new UTC day", async () => {
     const stub = limiter();
     const t = freshDay();
-    for (let i = 0; i < 5; i++) await attempt(stub, "client-a", true, t);
-    expect((await attempt(stub, "client-a", true, t)).outcome).toBe("limited");
+    for (let i = 0; i < 5; i++) await attempt(stub, "client-a", "none", t);
+    expect((await attempt(stub, "client-a", "none", t)).outcome).toBe("limited");
     const nextDay = Date.UTC(new Date(t).getUTCFullYear(), new Date(t).getUTCMonth(), new Date(t).getUTCDate() + 1, 0, 0, 1);
-    expect((await attempt(stub, "client-a", true, nextDay)).outcome).toBe("created");
+    expect((await attempt(stub, "client-a", "none", nextDay)).outcome).toBe("created");
+  });
+});
+
+describe("room creations with the passcode", () => {
+  it("have no per-client cap", async () => {
+    const stub = limiter();
+    const t = freshDay();
+    for (let i = 0; i < 30; i++) expect((await attempt(stub, "client-a", true, t)).outcome).toBe("created");
+  });
+
+  it("stop at the daily ceiling of 200 across everyone, until midnight UTC", async () => {
+    const stub = limiter();
+    const t = freshDay(); // 10:00 UTC
+    for (let i = 0; i < 200; i++) expect((await attempt(stub, `client-${i % 3}`, true, t)).outcome).toBe("created");
+    const over = await attempt(stub, "client-new", true, t);
+    expect(over.outcome).toBe("limited");
+    if (over.outcome === "limited") expect(over.retryAfterSeconds).toBe(14 * 3600);
+  });
+
+  it("are not held back by the no-passcode limits, and don't use them up", async () => {
+    const stub = limiter();
+    const t = freshDay();
+    for (let i = 0; i < 5; i++) await attempt(stub, "client-a", "none", t);
+    expect((await attempt(stub, "client-a", "none", t)).outcome).toBe("limited");
+    for (let i = 0; i < 10; i++) expect((await attempt(stub, "client-a", true, t)).outcome).toBe("created");
+
+    const other = limiter();
+    for (let i = 0; i < 10; i++) await attempt(other, "client-b", true, t);
+    for (let i = 0; i < 5; i++) expect((await attempt(other, "client-b", "none", t)).outcome).toBe("created");
   });
 
   it("failures don't use up the creation allowance", async () => {
@@ -162,12 +206,14 @@ describe("storage", () => {
           state.storage.sql.exec("SELECT * FROM failures ORDER BY rowid").toArray(),
           state.storage.sql.exec("SELECT * FROM lockouts").toArray(),
           state.storage.sql.exec("SELECT * FROM creations").toArray(),
+          state.storage.sql.exec("SELECT * FROM open_creations").toArray(),
         ]),
       );
     const before = await snapshot();
     for (let i = 0; i < 3; i++) {
       await attempt(stub, "client-a", false, t + MINUTE);
       await attempt(stub, "client-a", true, t + MINUTE);
+      await attempt(stub, "client-a", "none", t + MINUTE);
     }
     expect(await snapshot()).toBe(before);
   });
@@ -177,13 +223,16 @@ describe("storage", () => {
     const t = freshDay();
     await attempt(stub, "old-client", false, t);
     await attempt(stub, "old-client", true, t);
+    await attempt(stub, "old-client", "none", t);
     await attempt(stub, "new-client", false, t + 3 * DAY);
     const rows = await runInDurableObject(stub, (_i, state) => ({
       failures: state.storage.sql.exec<{ client: string }>("SELECT client FROM failures").toArray(),
       creations: state.storage.sql.exec<{ client: string }>("SELECT client FROM creations").toArray(),
+      open: state.storage.sql.exec<{ client: string }>("SELECT client FROM open_creations").toArray(),
     }));
     expect(rows.failures).toEqual([{ client: "new-client" }]);
     expect(rows.creations).toEqual([]);
+    expect(rows.open).toEqual([]);
   });
 
   it("client keys are a truncated HMAC of the IP, never the IP", async () => {
@@ -214,6 +263,22 @@ describe("storage", () => {
 });
 
 describe("through the Worker", () => {
+  it("no passcode: 5 rooms a day from one address, then 429 with Retry-After", async () => {
+    const ip = freshIp();
+    for (let i = 0; i < 5; i++) {
+      const res = await exports.default.fetch(createRequest({}, { ip }));
+      expect(res.status).toBe(200);
+    }
+    const res = await exports.default.fetch(createRequest({}, { ip }));
+    expect(res.status).toBe(429);
+    expect(await res.json()).toEqual({ error: "rate_limited" });
+    expect(Number(res.headers.get("retry-after"))).toBeGreaterThan(0);
+
+    // The passcode still works from the same address.
+    const right = await exports.default.fetch(createRequest({ passcode: TEST_PASSCODE }, { ip }));
+    expect(right.status).toBe(200);
+  });
+
   it("5 wrong passcodes get 401, the 6th gets 429 with Retry-After", async () => {
     const ip = freshIp();
     for (let i = 0; i < 5; i++) {

@@ -6,6 +6,7 @@ Architecture notes, moved out of CLAUDE.md on 7 October 2026 so they load only w
 - `PROTOCOL_VERSION = 2`. Client: `hello`, `join { name }`, `say { text }`. Server: `welcome`, `error`, `joined`, `participant_joined`, `participant_left`, `echo`. `/ws` without a code only answers a v1 hello with `version_mismatch` (compatibility for old pages); keep that until a later protocol bump replaces it.
 - Room code `<id>.<sig>` (see `worker/src/roomCode.ts`). The Worker verifies it, in constant time, BEFORE touching any Durable Object; invalid codes all get the same 404. Rooms are addressed by `id`.
 - All secret comparisons go through `safeEqual` (`worker/src/crypto.ts`: SHA-256 both sides, `timingSafeEqual`).
+- Since v0.46.0 the passcode is optional: see "Open session creation" below.
 - Secrets `CREATE_PASSCODE`, `ROOM_SIGNING_KEY` (pushed from GitHub secrets by the deploy job) and the kill switch `CREATION_ENABLED` (set by the "Room creation switch" workflow). Missing secrets fail closed.
 - Abuse limits live in `worker/src/limits.ts`; participant and text caps in `shared/src/protocol.ts`. One `Limiter` DO (fixed name) stores only HMAC-hashed client keys, writes only when a counter changes.
 - Room DOs store notes in SQLite since slice 2 (`noteStore.ts`, see below); slice 5 adds expiry. Per-socket state (hello, participant, token bucket) lives in the WebSocket attachment so it survives hibernation.
@@ -50,3 +51,12 @@ Architecture notes, moved out of CLAUDE.md on 7 October 2026 so they load only w
 ## Hardening: the load harness (v0.39.1)
 - `dev/load/` (dev only; never bundled): `npm run load` starts `wrangler dev` on 127.0.0.1:8799 (`relay.ts`: fake `--var` secrets, throwaway `--persist-to`), signs room codes and host tokens with the fake key (creation is capped at 5 a day per client), and runs `scenarios/*.load.ts`: pages are the web's own `RoomSession` over Node's WebSocket with a localhost Origin (`harness.ts` `Page`), raw protocol clients are `Raw`; every frame is recorded per recipient. `target.ts` `localTarget` refuses anything but http/ws on 127.0.0.1, localhost or [::1] (tested in the root `npm test`). Scenario 6 runs its own relay on 8798 to stop and restart it. Reports go to `dev/load/out/report.jsonl` (gitignored).
 - `worker/test/budget.test.ts` (normal worker suite): the scripted two-hour, 12-person session's rows on the real Durable Object (`SESSION` holds the plan); rate buckets are refilled between actions so it runs in seconds. Results and the arithmetic: LIMITS.md "Hardening findings".
+
+## Open session creation (v0.46.0)
+- `createRoomRequestSchema` takes `{}` or `{ passcode }` (still non-empty and at most 256 characters when present). No protocol bump: older pages always send a passcode, which behaves as before.
+- The Worker turns the body into a `Credential` (`worker/src/limiter.ts`): `"none"` (no passcode), `"passcode"` (right, by `safeEqual`) or `"wrong"`. `Limiter.attempt(client, credential, now)` checks the lockout and the global failure cap first for every kind, so a lockout also stops creation without a passcode, and a right passcode can't be told apart from a wrong one during one.
+- `"wrong"`: a failure, as before (5 in 15 minutes lock that client out for 15 minutes).
+- `"none"`: `CREATE_LIMITS.openPerClientPerDay` (`OPEN_CREATIONS_PER_CLIENT_PER_DAY` 5, in shared so the start page can say it) and `openPerDay` 50 across all clients, counted per UTC day in `open_creations (client, day, count)`.
+- `"passcode"`: no per-client cap; `passcodePerDay` 200 across all clients in `creations`. The two pools are separate: neither uses the other up.
+- Both tables are created with `IF NOT EXISTS` and pruned with the others after 2 days; refused attempts write nothing.
+- Web: the passcode field is optional (placeholder "Optional", a hint giving the daily number, described by `aria-describedby`); an empty field sends `{}`. `createErrorMessage(result, withPasscode)` says, for `rate_limited` without a passcode, that the create passcode gets more.

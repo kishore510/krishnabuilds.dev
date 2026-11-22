@@ -1,4 +1,4 @@
-import { ROOM_IDLE_EXPIRY_DAYS } from "@stickyard/shared";
+import { OPEN_CREATIONS_PER_CLIENT_PER_DAY, ROOM_IDLE_EXPIRY_DAYS } from "@stickyard/shared";
 
 /*
  * Abuse limits for room creation and per-connection message rates, in one place.
@@ -18,10 +18,18 @@ export const CREATE_LIMITS = {
   /** Failed attempts across all clients in `globalFailureWindowMs` before everyone is refused. */
   globalFailures: 50,
   globalFailureWindowMs: HOUR,
-  /** Successful room creations per client, per UTC day. */
-  creationsPerClientPerDay: 5,
-  /** Successful room creations across all clients, per UTC day. */
-  creationsPerDay: 50,
+  /**
+   * Rooms started without a passcode (v0.45.0): per client, per UTC day, and across everyone
+   * without a passcode, per UTC day. The shared cap keeps a script hopping IP addresses inside
+   * the free plan.
+   */
+  openPerClientPerDay: OPEN_CREATIONS_PER_CLIENT_PER_DAY,
+  openPerDay: 50,
+  /**
+   * Rooms started with the right passcode: no per-client cap, only this daily ceiling across
+   * everyone with it, so a leaked passcode can't spend the free plan's daily budget.
+   */
+  passcodePerDay: 200,
   /** Limiter rows older than this are deleted when it next writes. */
   retentionMs: 2 * DAY,
 } as const;

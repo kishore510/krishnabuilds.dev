@@ -210,7 +210,10 @@ describe("home", () => {
     expect(field.type).toBe("password");
     expect(field.autocomplete).toBe("current-password");
     expect(field.maxLength).toBe(256);
-    expect(field.required).toBe(true);
+    // Optional since v0.45.0: the hint says how many sessions anyone can start without it.
+    expect(field.required).toBe(false);
+    const hint = document.getElementById(field.getAttribute("aria-describedby") ?? "");
+    expect(hint?.textContent).toMatch(/5 sessions a day/);
   });
 
   it.each([
@@ -272,6 +275,26 @@ describe("start a session", () => {
     expect(input("Create passcode").value).toBe("");
     expect(window.location.hash).toBe("#/");
     expect(storageSnapshot()).toBe(before);
+  });
+
+  it("with the passcode left empty, starts a session with no passcode in the body", async () => {
+    routes = (url, init) =>
+      url.endsWith("/rooms") && init?.method === "POST" ? jsonResponse(200, { code: CODE, hostToken: HOST_TOKEN }) : healthy(url, init);
+    await mount();
+    await submit(button("Start session"));
+    const post = fetchCalls.find(([url]) => url.endsWith("/rooms"));
+    expect(JSON.parse(String(post?.[1]?.body))).toEqual({});
+    expect(window.location.hash).toBe(`#/room/${CODE}`);
+    localStorage.removeItem(`stickyard:host:${CODE.split(".")[0]}`);
+  });
+
+  it("over the no-passcode limit, points to the create passcode", async () => {
+    routes = (url, init) => (url.endsWith("/rooms") ? jsonResponse(429, { error: "rate_limited" }, { "retry-after": "7200" }) : healthy(url, init));
+    await mount();
+    await submit(button("Start session"));
+    expect(alertText()).toMatch(/limit for sessions without a passcode/i);
+    expect(alertText()).toMatch(/2 hours/);
+    expect(alertText()).toMatch(/create passcode/i);
   });
 
   it("a network failure says the relay couldn't be reached", async () => {
