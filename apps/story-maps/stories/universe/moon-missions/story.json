@@ -1,0 +1,755 @@
+{
+ "id": "moon-missions",
+ "title": "Missions to the Moon",
+ "description": "An illustrated map of the missions to the Moon, from Luna 2 in 1959 through the Apollo landings and the Soviet rovers to China’s far-side landings, India’s Chandrayaan-3, Japan’s SLIM, the first company landers and Artemis II, and on to the race for the south pole.",
+ "canvas": "cosmic",
+ "basemap": "moon",
+ "source": "History",
+ "nativeLang": "ru",
+ "mapLabel": "Illustrated map of the whole Moon, near side in the middle and far side at both edges, with the dark seas, the large craters and the sites where spacecraft crashed and landed from 1959 to today",
+ "note": "The whole Moon is drawn flat, like a world map: longitude runs left to right and latitude bottom to top, so the near side, which faces Earth, is in the middle and the far side is split between both edges. The poles are stretched, as on any flat world map. Landing sites follow NASA and the IAU’s Gazetteer of Planetary Nomenclature.",
+ "places": {
+  "luna2": {
+   "name": "Luna 2",
+   "at": [
+    0.0,
+    29.1
+   ],
+   "glyph": "burst",
+   "label": "right"
+  },
+  "luna3": {
+   "name": "Sea of Muscovy",
+   "at": [
+    148.1,
+    27.3
+   ],
+   "glyph": "telescope",
+   "label": "bottom"
+  },
+  "ranger7": {
+   "name": "Ranger 7",
+   "at": [
+    -20.58,
+    -10.35
+   ],
+   "glyph": "burst",
+   "label": "left"
+  },
+  "luna9": {
+   "name": "Luna 9",
+   "at": [
+    -64.37,
+    7.08
+   ],
+   "glyph": "lander",
+   "label": "bottom"
+  },
+  "apollo11": {
+   "name": "Apollo 11",
+   "at": [
+    23.47,
+    0.67
+   ],
+   "glyph": "flag",
+   "label": "right"
+  },
+  "apollo12": {
+   "name": "Apollo 12",
+   "at": [
+    -23.42,
+    -3.01
+   ],
+   "glyph": "flag",
+   "label": "left"
+  },
+  "luna16": {
+   "name": "Luna 16",
+   "at": [
+    56.36,
+    -0.51
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "lunokhod1": {
+   "name": "Lunokhod 1",
+   "at": [
+    -35.0,
+    38.24
+   ],
+   "glyph": "rover",
+   "label": "top"
+  },
+  "fra-mauro": {
+   "name": "Fra Mauro",
+   "at": [
+    -17.47,
+    -3.65
+   ],
+   "glyph": "flag",
+   "label": "bottom"
+  },
+  "apollo15": {
+   "name": "Hadley Rille",
+   "at": [
+    3.63,
+    26.13
+   ],
+   "glyph": "rover",
+   "label": "left"
+  },
+  "apollo17": {
+   "name": "Taurus-Littrow",
+   "at": [
+    30.77,
+    20.19
+   ],
+   "glyph": "flag",
+   "label": "right"
+  },
+  "lunokhod2": {
+   "name": "Lunokhod 2",
+   "at": [
+    30.45,
+    25.85
+   ],
+   "glyph": "rover",
+   "label": "top"
+  },
+  "luna24": {
+   "name": "Luna 24",
+   "at": [
+    62.21,
+    12.71
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "cabeus": {
+   "name": "Cabeus",
+   "at": [
+    -48.73,
+    -84.68
+   ],
+   "glyph": "snowflake",
+   "label": "top"
+  },
+  "change3": {
+   "name": "Chang’e 3",
+   "at": [
+    -19.51,
+    44.12
+   ],
+   "glyph": "rover",
+   "label": "top"
+  },
+  "change4": {
+   "name": "Chang’e 4",
+   "at": [
+    177.6,
+    -45.44
+   ],
+   "glyph": "lander",
+   "label": "left"
+  },
+  "change5": {
+   "name": "Chang’e 5",
+   "at": [
+    -51.92,
+    43.06
+   ],
+   "glyph": "lander",
+   "label": "top"
+  },
+  "chandrayaan3": {
+   "name": "Chandrayaan-3",
+   "at": [
+    32.32,
+    -69.37
+   ],
+   "glyph": "lander",
+   "label": "top"
+  },
+  "slim": {
+   "name": "SLIM",
+   "at": [
+    25.25,
+    -13.32
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "change6": {
+   "name": "Chang’e 6",
+   "at": [
+    -153.98,
+    -41.63
+   ],
+   "glyph": "lander",
+   "label": "top"
+  },
+  "blue-ghost": {
+   "name": "Blue Ghost",
+   "at": [
+    61.81,
+    18.56
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "orientale": {
+   "name": "Orientale basin",
+   "at": [
+    -94.67,
+    -19.87
+   ],
+   "glyph": "earth-moon",
+   "label": "right"
+  },
+  "shackleton": {
+   "name": "Shackleton",
+   "at": [
+    129.78,
+    -89.67
+   ],
+   "glyph": "flag",
+   "label": "top"
+  }
+ },
+ "travellers": {
+  "probe": {
+   "name": "Spacecraft",
+   "icon": "probe"
+  }
+ },
+ "phases": {
+  "race": {
+   "name": "The race to the Moon",
+   "color": "#ff8a3a"
+  },
+  "apollo": {
+   "name": "Apollo and the Soviet robots",
+   "color": "#a678e0"
+  },
+  "return": {
+   "name": "The return",
+   "color": "#4fc3b0"
+  },
+  "now": {
+   "name": "Companies, crews and the south pole",
+   "color": "#f2c14e"
+  }
+ },
+ "routeStyles": {
+  "probe": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 17.6,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 57.6,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 88.8,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(242,193,78,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 2.0,
+    "text": "1959"
+   },
+   {
+    "at": 19.8,
+    "text": "1969"
+   },
+   {
+    "at": 55.4,
+    "text": "1976"
+   },
+   {
+    "at": 64.3,
+    "text": "2013"
+   },
+   {
+    "at": 91.0,
+    "text": "Now"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "luna2",
+   "phase": "race",
+   "title": "The first touch",
+   "native": "Луна-2",
+   "when": "13 September 1959",
+   "at": 2.0,
+   "camera": {
+    "at": [
+     0.0,
+     29.1
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On 13 September 1959 the Soviet probe Luna 2 struck the Moon east of the Sea of Showers, near the craters Archimedes and Autolycus. It was the first human-made object to reach another world. It carried metal pennants with the Soviet coat of arms, and its instruments found that the Moon has no strong magnetic field.",
+   "today": "The exact impact point has never been found; the spot on this map is the usual estimate."
+  },
+  {
+   "place": "luna3",
+   "phase": "race",
+   "title": "The far side",
+   "native": "Луна-3",
+   "when": "7 October 1959",
+   "at": 6.5,
+   "camera": {
+    "at": [
+     148.1,
+     27.3
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "The Moon always keeps the same face to Earth, so its far side had never been seen. On 7 October 1959 Luna 3 swung behind it and photographed about 70 percent of it, developing the film on board and radioing scans home. The far side had almost no dark seas. One was named the Sea of Muscovy (Mare Moscoviense).",
+   "today": "The usual explanation for the missing seas is the far side’s thicker crust, which lava rarely broke through."
+  },
+  {
+   "place": "ranger7",
+   "phase": "race",
+   "title": "Close-up at last",
+   "when": "31 July 1964",
+   "at": 10.9,
+   "camera": {
+    "at": [
+     -20.58,
+     -10.35
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "After six failed Ranger probes, NASA’s Ranger 7 flew straight into the Moon on 31 July 1964, sending back 4,308 pictures in its last 17 minutes. The final frames showed craters less than a metre across, a thousand times finer than any telescope could see. The plain where it fell was renamed the Sea that has become known (Mare Cognitum).",
+   "today": "Ranger’s pictures, and the Lunar Orbiters that followed, were used to choose the Apollo landing sites."
+  },
+  {
+   "place": "luna9",
+   "phase": "race",
+   "title": "The first soft landing",
+   "native": "Луна-9",
+   "when": "3 February 1966",
+   "at": 15.4,
+   "camera": {
+    "at": [
+     -64.37,
+     7.08
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Some scientists feared the dark seas were deep dust that would swallow a lander. On 3 February 1966 Luna 9 settled in the Ocean of Storms (Oceanus Procellarum), the first craft to land softly on another world, and sent back the first pictures from the surface: grey, pitted, firm ground. Its chief designer, Sergei Korolev, had died three weeks earlier.",
+   "today": "The landing area is now officially the Plain of Descent (Planitia Descensus)."
+  },
+  {
+   "place": "apollo11",
+   "phase": "apollo",
+   "title": "Tranquillity Base",
+   "when": "20 July 1969",
+   "at": 19.8,
+   "camera": {
+    "at": [
+     23.47,
+     0.67
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On 20 July 1969 Neil Armstrong and Buzz Aldrin landed the Eagle in the Sea of Tranquillity while Michael Collins circled overhead in Columbia. Armstrong stepped out six and a half hours later, the first person on another world. The two walked for about two and a half hours, set up experiments and collected 21.5 kilograms of rock and soil.",
+   "today": "Observatories still bounce lasers off the reflector they left, measuring that the Moon drifts about 3.8 centimetres farther from Earth each year."
+  },
+  {
+   "place": "apollo12",
+   "phase": "apollo",
+   "title": "Beside Surveyor 3",
+   "when": "19 November 1969",
+   "at": 24.2,
+   "camera": {
+    "at": [
+     -23.42,
+     -3.01
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Pete Conrad and Alan Bean set Apollo 12 down in the Ocean of Storms, about 180 metres from Surveyor 3, one of five robot Surveyors that had landed to test the ground for Apollo. They walked over and cut off its camera and other parts, to learn what two and a half years on the Moon does to hardware.",
+   "today": "Surveyor 3’s camera is on show at the Smithsonian’s National Air and Space Museum in Washington."
+  },
+  {
+   "place": "luna16",
+   "phase": "apollo",
+   "title": "A robot brings soil home",
+   "native": "Луна-16",
+   "when": "20 to 24 September 1970",
+   "at": 28.7,
+   "camera": {
+    "at": [
+     56.36,
+     -0.51
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "The Soviet Union answered Apollo with robots. Luna 16 landed in the Sea of Fecundity (Mare Fecunditatis) on 20 September 1970, drilled into the ground and sealed 101 grams of soil in a capsule that flew straight back to Earth, landing in Kazakhstan on 24 September. It was the first sample brought home without a crew.",
+   "today": "Three Luna missions returned about 300 grams in all, small next to Apollo’s haul but from places Apollo never went."
+  },
+  {
+   "place": "lunokhod1",
+   "phase": "apollo",
+   "title": "The first rover",
+   "native": "Луноход-1",
+   "when": "November 1970 to September 1971",
+   "at": 33.2,
+   "camera": {
+    "at": [
+     -35.0,
+     38.24
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Two months later Luna 17 lowered Lunokhod 1, an eight-wheeled rover, onto the Sea of Showers (Mare Imbrium). Drivers in Crimea steered it from television pictures that took seconds to arrive. Over ten months it covered about 10.5 kilometres, the first rover on another world.",
+   "today": "Lost for decades, it was found again in 2010 in NASA orbiter pictures, and its laser reflector now returns signals to Earth."
+  },
+  {
+   "place": "fra-mauro",
+   "phase": "apollo",
+   "title": "Apollo 13 and Fra Mauro",
+   "when": "April 1970 and February 1971",
+   "at": 37.6,
+   "camera": {
+    "at": [
+     -17.47,
+     -3.65
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Apollo 13 was bound for the Fra Mauro hills when an oxygen tank exploded on 13 April 1970. Jim Lovell, Jack Swigert and Fred Haise looped round the Moon in their lander and got home safely. In February 1971 Alan Shepard and Edgar Mitchell of Apollo 14 landed at Fra Mauro instead, for rock thrown out by the Imbrium impact.",
+   "today": "Apollo 13’s loop behind the Moon set a human distance record from Earth that stood until 2026."
+  },
+  {
+   "place": "apollo15",
+   "phase": "apollo",
+   "title": "The first car on the Moon",
+   "when": "30 July to 2 August 1971",
+   "at": 42.1,
+   "camera": {
+    "at": [
+     3.63,
+     26.13
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Apollo 15 brought the first Lunar Roving Vehicle. David Scott and James Irwin landed between the Apennine mountains and the winding Hadley Rille on 30 July 1971 and drove about 28 kilometres in three trips. They found the Genesis Rock, a piece of the Moon’s early crust, and Scott dropped a hammer and a feather to show they fell together.",
+   "today": "The rover is still parked where Scott left it, filmed by its own camera as the crew lifted off."
+  },
+  {
+   "place": "apollo17",
+   "phase": "apollo",
+   "title": "The last steps",
+   "when": "11 to 14 December 1972",
+   "at": 46.5,
+   "camera": {
+    "at": [
+     30.77,
+     20.19
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Apollo 17 landed in the Taurus-Littrow valley on 11 December 1972. Harrison Schmitt was the only geologist to walk on the Moon; he and Gene Cernan found orange soil, made of glass beads from ancient volcanic fountains. Cernan was the last to climb aboard, on 14 December. Twelve men walked on the Moon in six landings, bringing home 382 kilograms.",
+   "today": "No one has walked on the Moon since; NASA now plans its next landing for 2028."
+  },
+  {
+   "place": "lunokhod2",
+   "phase": "apollo",
+   "title": "Forty kilometres",
+   "native": "Луноход-2",
+   "when": "January to May 1973",
+   "at": 51.0,
+   "camera": {
+    "at": [
+     30.45,
+     25.85
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "A month later Luna 21 landed Lunokhod 2 in Le Monnier, a flooded crater on the edge of the Sea of Serenity, 170 kilometres north of Apollo 17. In four months it drove some 39 to 42 kilometres, a record off Earth until NASA’s Opportunity passed it on Mars in 2014. Contact was lost in May 1973.",
+   "today": "Dust on its radiator, picked up when it brushed a crater wall, is thought to have overheated it."
+  },
+  {
+   "place": "luna24",
+   "phase": "apollo",
+   "title": "The long pause",
+   "native": "Луна-24",
+   "when": "18 August 1976",
+   "at": 55.4,
+   "camera": {
+    "at": [
+     62.21,
+     12.71
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Luna 24 landed in the Sea of Crises (Mare Crisium) on 18 August 1976, drilled about two metres down and sent 170 grams of layered soil back to Earth. It was the last Soviet Moon mission. For 37 years no spacecraft landed softly on the Moon; orbiters such as Clementine (1994) and Lunar Prospector (1998) mapped it from above.",
+   "today": "Russia’s next attempt, Luna 25 in 2023, crashed before landing."
+  },
+  {
+   "place": "cabeus",
+   "phase": "return",
+   "title": "Ice in the dark",
+   "source": "Science",
+   "when": "2009",
+   "at": 59.9,
+   "camera": {
+    "at": [
+     -48.73,
+     -75
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Near the poles, some crater floors never see the Sun and stay colder than −200 °C. In 2009 NASA’s Moon Mineralogy Mapper, flying on India’s first lunar probe Chandrayaan-1, found signs of water bound in the soil. That October NASA’s LCROSS crashed a spent rocket stage into Cabeus crater; the plume held water, about 5.6 percent by mass.",
+   "today": "The ice is measured, but how much there is remains an estimate. Water could one day give astronauts drinking water, air and rocket fuel."
+  },
+  {
+   "place": "change3",
+   "phase": "return",
+   "title": "The Jade Rabbit",
+   "native": "嫦娥三号",
+   "lang": "zh",
+   "when": "14 December 2013",
+   "at": 64.3,
+   "camera": {
+    "at": [
+     -19.51,
+     44.12
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "On 14 December 2013 China’s Chang’e 3 landed in the north of the Sea of Showers, the first soft landing since 1976 and China’s first, making it the third country to land. It set down Yutu, the Jade Rabbit, named after the pet of Chang’e, the Moon goddess of Chinese legend. Yutu drove about 114 metres before its wheels failed.",
+   "today": "Yutu’s radar mapped layers of old lava flows beneath its short track."
+  },
+  {
+   "place": "change4",
+   "phase": "return",
+   "title": "Landing on the far side",
+   "native": "嫦娥四号",
+   "lang": "zh",
+   "when": "3 January 2019",
+   "at": 68.8,
+   "camera": {
+    "at": [
+     177.6,
+     -45.44
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "No radio signal can reach the far side from Earth, so China first placed a relay satellite, Queqiao, beyond the Moon. On 3 January 2019 Chang’e 4 landed in Von Kármán crater, inside the vast South Pole–Aitken basin: the first landing on the far side. Its rover, Yutu-2, became the longest-working rover on the Moon.",
+   "today": "The landing site is Statio Tianhe, after an ancient Chinese name for the Milky Way."
+  },
+  {
+   "place": "change5",
+   "phase": "return",
+   "title": "Young lava",
+   "native": "嫦娥五号",
+   "lang": "zh",
+   "when": "1 to 17 December 2020",
+   "at": 73.2,
+   "camera": {
+    "at": [
+     -51.92,
+     43.06
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Chang’e 5 landed near Mons Rümker in the Ocean of Storms on 1 December 2020, gathered 1,731 grams of soil and launched it to lunar orbit to meet its return capsule: the first samples brought to Earth since 1976. Dating showed the lava there to be about 2 billion years old, younger than any Apollo or Luna rock.",
+   "today": "The capsule landed in Inner Mongolia on 17 December 2020."
+  },
+  {
+   "place": "chandrayaan3",
+   "phase": "return",
+   "title": "Near the south pole",
+   "native": "चंद्रयान-३",
+   "lang": "hi",
+   "when": "23 August 2023",
+   "at": 77.7,
+   "camera": {
+    "at": [
+     32.32,
+     -69.37
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "India’s Chandrayaan-2 lander had crashed in 2019. On 23 August 2023 Chandrayaan-3’s lander Vikram touched down about 600 kilometres from the south pole, making India the fourth country to land softly on the Moon and the farthest south any craft had landed until then. Its rover Pragyan found sulphur in the soil. Russia’s Luna 25 had crashed four days earlier.",
+   "today": "The landing point is Statio Shiv Shakti, and 23 August is now India’s National Space Day."
+  },
+  {
+   "place": "slim",
+   "phase": "return",
+   "title": "The Moon Sniper",
+   "native": "小型月着陸実証機",
+   "lang": "ja",
+   "when": "19 January 2024",
+   "at": 82.1,
+   "camera": {
+    "at": [
+     25.25,
+     -13.32
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Japan’s SLIM, the Moon Sniper, aimed at a 100-metre circle beside Shioli crater. On 19 January 2024 it landed about 55 metres from its target, but an engine had lost a nozzle and it came to rest on its nose. Two tiny rovers photographed it. Japan became the fifth country to land, and SLIM survived three freezing lunar nights.",
+   "today": "Landing within metres, not kilometres, lets future craft aim for small sites such as sunlit crater rims."
+  },
+  {
+   "place": "change6",
+   "phase": "return",
+   "title": "Far-side samples",
+   "native": "嫦娥六号",
+   "lang": "zh",
+   "when": "1 to 25 June 2024",
+   "at": 86.5,
+   "camera": {
+    "at": [
+     -153.98,
+     -41.63
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Chang’e 6 landed in Apollo crater, inside the South Pole–Aitken basin, on 1 June 2024, talking to Earth through the relay satellite Queqiao-2. It collected 1,935 grams of soil and rock, and on 25 June its capsule landed in Inner Mongolia with the first samples ever brought back from the far side, from the Moon’s largest and oldest impact basin.",
+   "today": "The landing site is Statio Tianjiang, named after a constellation in the ancient Chinese star map."
+  },
+  {
+   "place": "blue-ghost",
+   "phase": "now",
+   "title": "Companies on the Moon",
+   "when": "2 March 2025",
+   "at": 91.0,
+   "camera": {
+    "at": [
+     61.81,
+     18.56
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "NASA now buys rides from companies. Intuitive Machines’ Odysseus landed near the south pole in February 2024 but tipped over. On 2 March 2025 Firefly’s Blue Ghost touched down beside Mons Latreille in the Sea of Crises, the first fully successful commercial landing. All ten NASA instruments worked, and it filmed sunset before the lunar night ended it.",
+   "today": "More company landers are due from 2027, carrying instruments for NASA and other space agencies."
+  },
+  {
+   "place": "orientale",
+   "phase": "now",
+   "title": "Round the far side",
+   "when": "1 to 10 April 2026",
+   "at": 95.5,
+   "camera": {
+    "at": [
+     -94.67,
+     -19.87
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Artemis I flew an empty Orion capsule round the Moon in 2022. On 1 April 2026 Artemis II launched Reid Wiseman, Victor Glover, Christina Koch and Canada’s Jeremy Hansen, the first crew to leave Earth orbit since 1972. On 6 April, swinging behind the far side, they reached 406,771 kilometres from Earth, a human record, and photographed the Orientale basin.",
+   "today": "Koch became the first woman, and Glover the first Black astronaut, to travel beyond low Earth orbit. They splashed down on 10 April."
+  },
+  {
+   "place": "shackleton",
+   "phase": "now",
+   "title": "The race to the south pole",
+   "when": "2027 onward",
+   "at": 99.9,
+   "camera": {
+    "at": [
+     129.78,
+     -75
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Next comes the south pole, where sunlit crater rims sit beside ice in permanent shadow. China’s Chang’e 7, bound for the rim of Shackleton crater, was postponed in August 2026 to 2027. Artemis III will test docking with NASA’s landers in Earth orbit in 2027; the first Artemis landing is planned for 2028. China aims to land astronauts before 2030.",
+   "today": "These dates are plans as of November 2026, and plans for the Moon have often slipped."
+  }
+ ],
+ "people": {
+  "heading": "People",
+  "items": [
+   {
+    "id": "korolev",
+    "name": "Sergei Korolev",
+    "native": "Сергей Королёв",
+    "life": "1907–1966",
+    "role": "Chief designer of the Soviet space programme",
+    "steps": [
+     0,
+     1,
+     3
+    ],
+    "text": "A Soviet rocket engineer who spent six years in prison camps and prison design bureaus under Stalin, then built the R-7 rocket that launched Sputnik and Yuri Gagarin. His bureau began the Luna probes. His name was kept secret until he died in January 1966, weeks before Luna 9, a craft begun in his bureau, made the first soft landing."
+   },
+   {
+    "id": "armstrong",
+    "name": "Neil Armstrong",
+    "life": "1930–2012",
+    "role": "Commander of Apollo 11",
+    "steps": [
+     4
+    ],
+    "text": "An American test pilot who flew the X-15 rocket plane and, on Gemini 8 in 1966, made the first docking of two craft in orbit. On Apollo 11 he took the Eagle over by hand when the computer steered it toward a field of boulders, landing with little fuel to spare. He later taught engineering at the University of Cincinnati."
+   },
+   {
+    "id": "schmitt",
+    "name": "Harrison Schmitt",
+    "life": "born 1935",
+    "role": "Geologist on Apollo 17",
+    "steps": [
+     10
+    ],
+    "text": "A geologist trained at Caltech and Harvard who helped teach the Apollo crews to read rocks, then flew on Apollo 17 as the only scientist to walk on the Moon. He spotted the orange soil at Shorty crater. He later served one term as a United States senator for New Mexico."
+   },
+   {
+    "id": "koch",
+    "name": "Christina Koch",
+    "life": "born 1979",
+    "role": "Mission specialist on Artemis II",
+    "steps": [
+     21
+    ],
+    "text": "An American electrical engineer who worked at the South Pole station and in the Arctic before joining NASA. In 2019 and 2020 she made the longest single spaceflight by a woman, 328 days, and took part in the first all-woman spacewalk. On Artemis II in 2026 she became the first woman to travel round the Moon."
+   }
+  ]
+ }
+}
