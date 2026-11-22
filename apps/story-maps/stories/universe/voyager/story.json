@@ -1,0 +1,643 @@
+{
+ "id": "voyager",
+ "title": "The Voyager Probes",
+ "description": "An illustrated map of the two Voyager probes, from their launch in 1977 past Jupiter, Saturn, Uranus and Neptune, through the edge of the Sun’s bubble into interstellar space, to where they are today and where they are going.",
+ "canvas": "cosmic",
+ "basemap": "solar-system",
+ "source": "History",
+ "nativeLang": "en",
+ "mapLabel": "Illustrated diagram of the Solar System by distance, with the Sun on the left, the orbits of the planets, the edge of the Sun’s bubble and the paths of Voyager 1 and Voyager 2 running out into interstellar space",
+ "note": "This map is a diagram of distance, not a picture of space. Distance from the Sun runs left to right on a logarithmic scale: each step along the bottom is ten times farther than the last. Up and down show only that Voyager 1 left the planets’ plane to the north and Voyager 2 to the south, and the planets are not drawn where they were at each flyby. Figures follow NASA and JPL.",
+ "places": {
+  "earth": {
+   "name": "Earth",
+   "at": [
+    22,
+    45
+   ],
+   "glyph": "earth-moon",
+   "label": "bottom"
+  },
+  "jupiter": {
+   "name": "Jupiter",
+   "at": [
+    59.1,
+    41.3
+   ],
+   "glyph": "gas-giant",
+   "label": "bottom"
+  },
+  "saturn": {
+   "name": "Saturn",
+   "at": [
+    72.8,
+    48.5
+   ],
+   "glyph": "ringed-planet",
+   "label": "top"
+  },
+  "uranus": {
+   "name": "Uranus",
+   "at": [
+    88.4,
+    37.8
+   ],
+   "glyph": "ice-giant",
+   "label": "bottom"
+  },
+  "neptune": {
+   "name": "Neptune",
+   "at": [
+    98.8,
+    41.8
+   ],
+   "glyph": "ice-giant",
+   "label": "top"
+  },
+  "pbd": {
+   "name": "Pale Blue Dot",
+   "at": [
+    103.8,
+    62.2
+   ],
+   "glyph": "telescope",
+   "label": "left"
+  },
+  "shock": {
+   "name": "Termination shock",
+   "at": [
+    121.6,
+    71.7
+   ],
+   "glyph": "swell",
+   "label": "left"
+  },
+  "shock2": {
+   "name": "Voyager 2 at the shock",
+   "at": [
+    119.9,
+    22.9
+   ],
+   "hidden": true
+  },
+  "hp1": {
+   "name": "Heliopause, 2012",
+   "at": [
+    126.7,
+    75.1
+   ],
+   "glyph": "particles",
+   "label": "left"
+  },
+  "hp2": {
+   "name": "Heliopause, 2018",
+   "at": [
+    127.2,
+    19.2
+   ],
+   "glyph": "particles",
+   "label": "left"
+  },
+  "v1now": {
+   "name": "Voyager 1 today",
+   "at": [
+    133.9,
+    79.3
+   ],
+   "glyph": "light-waves",
+   "label": "right"
+  },
+  "v2now": {
+   "name": "Voyager 2 today",
+   "at": [
+    131.1,
+    16.1
+   ],
+   "glyph": "light-waves",
+   "label": "right"
+  },
+  "oort": {
+   "name": "Towards the Oort cloud",
+   "at": [
+    172,
+    45
+   ],
+   "glyph": "snowflake",
+   "label": "top"
+  }
+ },
+ "travellers": {
+  "v1": {
+   "name": "Voyager 1",
+   "icon": "probe"
+  },
+  "v2": {
+   "name": "Voyager 2",
+   "icon": "probe"
+  }
+ },
+ "phases": {
+  "plan": {
+   "name": "The plan and the launch",
+   "color": "#ff8a3a"
+  },
+  "planets": {
+   "name": "The giant planets",
+   "color": "#a678e0"
+  },
+  "edge": {
+   "name": "To the edge of the Sun’s bubble",
+   "color": "#4fc3b0"
+  },
+  "now": {
+   "name": "Today and beyond",
+   "color": "#f2c14e"
+  }
+ },
+ "routeStyles": {
+  "v1": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "v2": {
+   "color": "#6fd3f0",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "future": {
+   "color": "#cfd8ff",
+   "width": 2,
+   "dash": "1 6",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 18.5,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 50,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 77.5,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(242,193,78,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 3,
+    "text": "1965"
+   },
+   {
+    "at": 22,
+    "text": "1979"
+   },
+   {
+    "at": 47,
+    "text": "1989"
+   },
+   {
+    "at": 67,
+    "text": "2012"
+   },
+   {
+    "at": 88,
+    "text": "Now"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "earth",
+   "phase": "plan",
+   "title": "The Grand Tour",
+   "when": "1965 to 1977",
+   "at": 3,
+   "camera": {
+    "at": [
+     22,
+     45
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "In 1965 Gary Flandro, a graduate student on a summer job at NASA’s Jet Propulsion Laboratory, found that Jupiter, Saturn, Uranus and Neptune would line up in the late 1970s, a chance that comes about once in 175 years. A probe could swing from planet to planet, gaining speed from each. NASA approved two probes in 1972.",
+   "today": "The same pull of gravity, the gravity assist, now steers almost every probe sent to the outer planets."
+  },
+  {
+   "place": "earth",
+   "phase": "plan",
+   "title": "Two launches",
+   "when": "August and September 1977",
+   "at": 9,
+   "camera": {
+    "at": [
+     22,
+     45
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Voyager 2 lifted off first, on 20 August 1977, from Cape Canaveral in Florida. Voyager 1 followed on 5 September on a faster path and overtook its twin before the year was out, which is why the numbers look backwards. Each weighed about 825 kilograms and was powered by three generators heated by decaying plutonium.",
+   "today": "Both still run on those generators, which lose about 4 watts of power every year."
+  },
+  {
+   "place": "earth",
+   "phase": "plan",
+   "title": "The Golden Record",
+   "when": "1977",
+   "at": 15,
+   "camera": {
+    "at": [
+     22,
+     45
+    ],
+    "width": 40
+   },
+   "legs": [],
+   "text": "Each Voyager carries a gold-plated copper disc, a message for anyone who might one day find it. A committee led by Carl Sagan chose 115 images, greetings in 55 languages, the sounds of Earth and 90 minutes of music, from Bach and Chuck Berry to an Indian raga and Javanese gamelan. The cover shows how to play it.",
+   "today": "NASA expects the records to survive in space for a billion years or more."
+  },
+  {
+   "place": "jupiter",
+   "phase": "planets",
+   "title": "Jupiter’s volcanoes",
+   "when": "March and July 1979",
+   "at": 22,
+   "camera": {
+    "at": [
+     41,
+     43
+    ],
+    "width": 50
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "jupiter",
+     "traveller": "v1",
+     "style": "v1",
+     "bend": 0.18
+    },
+    {
+     "from": "earth",
+     "to": "jupiter",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.18
+    }
+   ],
+   "source": "Science",
+   "text": "Voyager 1 passed Jupiter on 5 March 1979 and Voyager 2 on 9 July. They showed the Great Red Spot as a vast storm, found a thin ring, and caught volcanoes erupting on the moon Io, the first active volcanoes seen beyond Earth. The cracked ice of Europa hinted at an ocean hidden beneath it.",
+   "today": "NASA’s Europa Clipper, launched in 2024, is on its way to study that ocean."
+  },
+  {
+   "place": "saturn",
+   "phase": "planets",
+   "title": "Titan, and a choice",
+   "when": "November 1980",
+   "at": 28,
+   "camera": {
+    "at": [
+     66,
+     45
+    ],
+    "width": 40
+   },
+   "legs": [
+    {
+     "from": "jupiter",
+     "to": "saturn",
+     "traveller": "v1",
+     "style": "v1",
+     "bend": 0.14
+    }
+   ],
+   "source": "Science",
+   "text": "Voyager 1 reached Saturn on 12 November 1980. Its team chose a close pass of Titan, a moon with a thick atmosphere, over a later chance to reach Pluto. It found an orange haze of mostly nitrogen, too thick to see through. The pass bent Voyager 1 north, out of the planets’ plane, ending its tour of planets.",
+   "today": "Cassini’s Huygens probe landed on Titan in 2005 and found lakes of liquid methane."
+  },
+  {
+   "place": "saturn",
+   "phase": "planets",
+   "title": "Saturn’s rings",
+   "when": "August 1981",
+   "at": 34,
+   "camera": {
+    "at": [
+     66,
+     45
+    ],
+    "width": 40
+   },
+   "legs": [
+    {
+     "from": "jupiter",
+     "to": "saturn",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.14
+    }
+   ],
+   "source": "Science",
+   "text": "Voyager 2 passed Saturn on 25 August 1981. Like its twin, it showed the rings split into thousands of narrow ringlets, crossed by dark spokes that came and went. Soon after its closest approach its camera platform jammed, and engineers took days to free it. Saturn’s pull then sent the probe on towards Uranus.",
+   "today": "The Cassini orbiter studied Saturn from 2004 to 2017; how old the rings are is still argued."
+  },
+  {
+   "place": "uranus",
+   "phase": "planets",
+   "title": "Uranus",
+   "when": "January 1986",
+   "at": 40,
+   "camera": {
+    "at": [
+     80,
+     43
+    ],
+    "width": 40
+   },
+   "legs": [
+    {
+     "from": "saturn",
+     "to": "uranus",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.14
+    }
+   ],
+   "source": "Science",
+   "text": "On 24 January 1986 Voyager 2 became the first, and so far the only, spacecraft to visit Uranus. It found ten new moons, two new rings and a magnetic field tilted far from the planet’s spin. The moon Miranda looked patched together, with cliffs about 20 kilometres high. Four days later the shuttle Challenger broke apart.",
+   "today": "No probe has been back; a US survey in 2022 made a Uranus orbiter its top priority."
+  },
+  {
+   "place": "neptune",
+   "phase": "planets",
+   "title": "Neptune",
+   "when": "August 1989",
+   "at": 47,
+   "camera": {
+    "at": [
+     93,
+     40
+    ],
+    "width": 36
+   },
+   "legs": [
+    {
+     "from": "uranus",
+     "to": "neptune",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.14
+    }
+   ],
+   "source": "Science",
+   "text": "On 25 August 1989 Voyager 2 passed about 4,950 kilometres above Neptune’s clouds, its closest pass of any planet. It found the Great Dark Spot, the fastest winds measured in the Solar System and six new moons. On the big moon Triton, dark plumes rose from geysers. A last swing past Triton sent the probe south.",
+   "today": "Neptune has had no other visitor; the Great Dark Spot had gone when Hubble looked in 1994."
+  },
+  {
+   "place": "pbd",
+   "phase": "edge",
+   "title": "The Pale Blue Dot",
+   "when": "14 February 1990",
+   "at": 53,
+   "camera": {
+    "at": [
+     88,
+     55
+    ],
+    "width": 50
+   },
+   "legs": [
+    {
+     "from": "saturn",
+     "to": "pbd",
+     "traveller": "v1",
+     "style": "v1",
+     "bend": 0.14
+    }
+   ],
+   "text": "At Carl Sagan’s urging, Voyager 1 turned back from about 6 billion kilometres and took 60 frames of six planets and the Sun, a family portrait. In one, Earth is a speck less than a pixel across, caught in a beam of scattered sunlight. Shortly afterwards its cameras were switched off for good, to save power.",
+   "today": "They were the last pictures taken by either Voyager. NASA reprocessed the image in 2020."
+  },
+  {
+   "place": "shock",
+   "phase": "edge",
+   "title": "The termination shock",
+   "when": "2004 and 2007",
+   "at": 60,
+   "camera": {
+    "at": [
+     110,
+     50
+    ],
+    "width": 56
+   },
+   "legs": [
+    {
+     "from": "pbd",
+     "to": "shock",
+     "traveller": "v1",
+     "style": "v1",
+     "bend": 0.14
+    },
+    {
+     "from": "neptune",
+     "to": "shock2",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.14
+    }
+   ],
+   "source": "Science",
+   "text": "The Sun blows out a thin wind of charged particles at over a million kilometres an hour. Far out, it slows sharply as it meets the gas between the stars. Voyager 1 crossed this termination shock in December 2004, 94 times Earth’s distance from the Sun (94 AU). Voyager 2 crossed in 2007 at about 84 AU.",
+   "today": "The two crossings showed the Sun’s bubble is lopsided, and it swells and shrinks with the Sun’s cycle."
+  },
+  {
+   "place": "hp1",
+   "phase": "edge",
+   "title": "Into interstellar space",
+   "when": "25 August 2012",
+   "at": 67,
+   "camera": {
+    "at": [
+     124,
+     70
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "shock",
+     "to": "hp1",
+     "traveller": "v1",
+     "style": "v1",
+     "bend": 0.14
+    }
+   ],
+   "source": "Science",
+   "text": "On 25 August 2012, about 122 AU out, Voyager 1 saw particles from the Sun suddenly fall away and particles from the galaxy rise. It had crossed the heliopause, the edge of the Sun’s bubble, into interstellar space. Its plasma instrument had failed in 1980, so the crossing was only confirmed a year later.",
+   "today": "It is still bound to the Sun: the Oort cloud, if it exists as thought, starts far beyond."
+  },
+  {
+   "place": "hp2",
+   "phase": "edge",
+   "title": "Voyager 2 follows",
+   "when": "5 November 2018",
+   "at": 74,
+   "camera": {
+    "at": [
+     124,
+     28
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "shock2",
+     "to": "hp2",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.14
+    }
+   ],
+   "source": "Science",
+   "text": "Voyager 2 crossed the heliopause on 5 November 2018, about 119 AU from the Sun, on the other side of the bubble. Its plasma instrument still worked, so for the first time a probe measured the crossing directly: the gas around it suddenly became denser and cooler. Both edges lay at almost the same distance.",
+   "today": "NASA’s IMAP probe, launched in 2025, maps the bubble’s edge from near Earth."
+  },
+  {
+   "place": "v1now",
+   "phase": "now",
+   "title": "A failing memory",
+   "when": "November 2023 to June 2024",
+   "at": 81,
+   "camera": {
+    "at": [
+     130,
+     70
+    ],
+    "width": 30
+   },
+   "legs": [
+    {
+     "from": "hp1",
+     "to": "v1now",
+     "traveller": "v1",
+     "style": "v1",
+     "bend": 0.14
+    }
+   ],
+   "text": "In November 2023 Voyager 1 began sending back nonsense. Engineers traced the fault to one failed memory chip in its flight data computer. With each message taking 22.5 hours to arrive, they rewrote the code and moved it, piece by piece, around the broken chip. By June 2024 all four working instruments were sending science again.",
+   "today": "In 2025 engineers revived roll thrusters on Voyager 1 that had not worked since 2004."
+  },
+  {
+   "place": "v1now",
+   "phase": "now",
+   "title": "Where they are today",
+   "when": "November 2026",
+   "at": 88,
+   "camera": {
+    "at": [
+     128,
+     48
+    ],
+    "width": 80
+   },
+   "legs": [
+    {
+     "from": "hp2",
+     "to": "v2now",
+     "traveller": "v2",
+     "style": "v2",
+     "bend": -0.14
+    }
+   ],
+   "text": "Voyager 1 is about 173 AU from the Sun, nearly 26 billion kilometres, and its radio signal takes almost a day to reach us. Voyager 2 is about 145 AU out, nearly 22 billion kilometres. They travel at about 17 and 15 kilometres a second. NASA switches off an instrument every year or so to save their fading power.",
+   "today": "Voyager 2, far south of the planets’ plane, can be sent commands only from the dish at Canberra, Australia."
+  },
+  {
+   "place": "oort",
+   "phase": "now",
+   "title": "The long goodbye",
+   "when": "The next 40,000 years",
+   "at": 96,
+   "camera": {
+    "at": [
+     140,
+     47
+    ],
+    "width": 100
+   },
+   "legs": [
+    {
+     "from": "v1now",
+     "to": "oort",
+     "traveller": "v1",
+     "style": "future",
+     "bend": 0.12
+    },
+    {
+     "from": "v2now",
+     "to": "oort",
+     "traveller": "v2",
+     "style": "future",
+     "bend": -0.12
+    }
+   ],
+   "source": "Science",
+   "text": "In the early 2030s the probes will run out of power for any instrument and fall silent, but they will keep going. In about 300 years Voyager 1 should reach the Oort cloud, a shell of icy bodies thought to surround the Sun. In about 40,000 years it will pass 1.6 light-years from the star Gliese 445.",
+   "today": "Voyager 2 will pass about 1.7 light-years from the star Ross 248 around the same time."
+  }
+ ],
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "stone",
+    "name": "Edward Stone",
+    "life": "1936 to 2024",
+    "role": "Voyager project scientist",
+    "steps": [
+     0,
+     3,
+     6,
+     7,
+     10,
+     11
+    ],
+    "text": "A Caltech physicist who was Voyager’s project scientist for fifty years, from 1972 to 2022, and directed NASA’s Jet Propulsion Laboratory from 1991 to 2001. At every flyby he was the one who explained the new discoveries to the public as they came in. He received the National Medal of Science in 1991."
+   },
+   {
+    "id": "sagan",
+    "name": "Carl Sagan",
+    "life": "1934 to 1996",
+    "role": "American astronomer and writer",
+    "steps": [
+     2,
+     8
+    ],
+    "text": "An astronomer at Cornell University who worked on Voyager’s imaging team and led the committee that chose the Golden Record. For years he pressed NASA to turn Voyager 1’s camera back towards Earth, and his book Pale Blue Dot (1994) made the picture famous. His television series Cosmos reached viewers in about 60 countries."
+   },
+   {
+    "id": "morabito",
+    "name": "Linda Morabito",
+    "life": "born 1953",
+    "role": "Navigation engineer",
+    "steps": [
+     3
+    ],
+    "text": "A Canadian-born engineer in Voyager’s navigation team at the Jet Propulsion Laboratory. On 9 March 1979, studying a picture of Io taken to fix Voyager 1’s position against the stars, she noticed a faint crescent rising above the moon’s edge. It was a volcanic plume, the first sign of active volcanoes on another world."
+   }
+  ]
+ }
+}
