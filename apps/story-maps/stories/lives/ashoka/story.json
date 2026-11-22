@@ -1,0 +1,1381 @@
+{
+  "id": "ashoka",
+  "title": "Ashoka",
+  "description": "An illustrated map of the life of Ashoka, the Maurya emperor, from his birth at Pataliputra and the legends of Taxila, Ujjain and Vidisha, through the throne war and the conquest of Kalinga, to his edicts on rocks and pillars from Girnar to Shahbazgarhi, his pilgrimages to Bodh Gaya and Lumbini, Mahinda’s mission to Sri Lanka, the lions of Sarnath and the decipherment of his script in 1837.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "sa",
+  "routes": "chapter",
+  "mapLabel": "Illustrated map of the life of Ashoka, about 304 to 232 BCE",
+  "note": "Ashoka’s own edicts are the firm ground; his early life and last years come from Buddhist texts written centuries later, the Sanskrit Ashokavadana and the Sri Lankan chronicles (Dipavamsa and Mahavamsa), and those chapters are tagged Tradition. His dates are estimates. The map is stylised and not to scale; the areas under Powers are painted loosely and are not borders.",
+  "places": {
+    "pataliputra": {
+      "name": "Pataliputra",
+      "at": [
+        85.17,
+        25.6
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "taxila": {
+      "name": "Taxila",
+      "at": [
+        72.82,
+        33.74
+      ],
+      "glyph": "hermitage",
+      "label": "bottom"
+    },
+    "ujjain": {
+      "name": "Ujjain",
+      "at": [
+        75.78,
+        23.18
+      ],
+      "glyph": "palace",
+      "label": "bottom"
+    },
+    "sanchi": {
+      "name": "Vidisha and Sanchi",
+      "at": [
+        77.74,
+        23.48
+      ],
+      "glyph": "stupa",
+      "label": "top"
+    },
+    "dhauli": {
+      "name": "Dhauli",
+      "at": [
+        85.84,
+        20.19
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "maski": {
+      "name": "Maski",
+      "at": [
+        76.66,
+        15.96
+      ],
+      "glyph": "rock",
+      "label": "bottom"
+    },
+    "bodh-gaya": {
+      "name": "Bodh Gaya",
+      "at": [
+        84.99,
+        24.7
+      ],
+      "glyph": "shrine",
+      "label": "bottom"
+    },
+    "girnar": {
+      "name": "Girnar",
+      "at": [
+        70.48,
+        21.53
+      ],
+      "glyph": "rock",
+      "label": "bottom"
+    },
+    "shahbazgarhi": {
+      "name": "Shahbazgarhi",
+      "at": [
+        72.17,
+        34.22
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "lumbini": {
+      "name": "Lumbini",
+      "at": [
+        83.28,
+        27.47
+      ],
+      "glyph": "pillar",
+      "label": "left"
+    },
+    "mihintale": {
+      "name": "Mihintale",
+      "at": [
+        80.51,
+        8.35
+      ],
+      "glyph": "stupa",
+      "label": "left"
+    },
+    "sarnath": {
+      "name": "Sarnath",
+      "at": [
+        83.03,
+        25.38
+      ],
+      "glyph": "pillar",
+      "label": "left"
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.25,
+        28.64
+      ],
+      "glyph": "pillar",
+      "label": "left"
+    },
+    "topra": {
+      "name": "Topra",
+      "at": [
+        77.15,
+        30.1
+      ],
+      "hidden": true
+    }
+  },
+  "travellers": {
+    "ashoka": {
+      "name": "Ashoka",
+      "icon": "prince"
+    },
+    "army": {
+      "name": "The Maurya army",
+      "icon": "war-elephant"
+    },
+    "edicts": {
+      "name": "The edicts",
+      "icon": "scroll"
+    },
+    "mahinda": {
+      "name": "Mahinda",
+      "icon": "monk"
+    },
+    "pillar": {
+      "name": "The Topra pillar",
+      "icon": "ox-cart"
+    }
+  },
+  "phases": {
+    "prince": {
+      "name": "The prince",
+      "color": "#4fc3b0"
+    },
+    "conqueror": {
+      "name": "The conqueror",
+      "color": "#e0573a"
+    },
+    "dhamma": {
+      "name": "The law of dhamma",
+      "color": "#5b8fd0"
+    },
+    "last": {
+      "name": "Last years",
+      "color": "#a678e0"
+    },
+    "memory": {
+      "name": "Forgotten and found",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "walk": {
+      "color": "#ff8a1f",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "march": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "edict": {
+      "color": "#b8860b",
+      "width": 2.2,
+      "dash": "7 4",
+      "cap": "butt"
+    },
+    "monk": {
+      "color": "#e08a1f",
+      "width": 3,
+      "dash": "2 5",
+      "cap": "round"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 27,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 38.5,
+        "color": "rgba(224,87,58,.35)"
+      },
+      {
+        "until": 76,
+        "color": "rgba(91,143,208,.35)"
+      },
+      {
+        "until": 88,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "c. 304 BCE"
+      },
+      {
+        "at": 31,
+        "text": "261"
+      },
+      {
+        "at": 62,
+        "text": "249"
+      },
+      {
+        "at": 80,
+        "text": "232 BCE"
+      },
+      {
+        "at": 97,
+        "text": "1837"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "place": "pataliputra",
+      "phase": "prince",
+      "source": "History",
+      "title": "A prince of Pataliputra",
+      "native": "अशोक",
+      "when": "c. 304 BCE",
+      "at": 2,
+      "camera": {
+        "at": [
+          84.5,
+          24.8
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Ashoka is born, about 304 BCE by most estimates, in the Maurya capital Pataliputra, a son of the emperor Bindusara and grandson of Chandragupta, the empire’s founder. Almost all we know of his early life comes from Buddhist texts written centuries later, in Sanskrit and in Sri Lanka, and they do not agree even on his mother’s name.",
+      "today": "Today: Patna, Bihar, India, built over the old city."
+    },
+    {
+      "place": "taxila",
+      "phase": "prince",
+      "source": "Tradition",
+      "title": "Sent to Taxila",
+      "native": "तक्षशिला",
+      "when": "c. 280s BCE",
+      "at": 7,
+      "camera": {
+        "at": [
+          79,
+          29.6
+        ],
+        "width": 19
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "taxila",
+          "traveller": "ashoka",
+          "style": "walk",
+          "bend": 0.08
+        }
+      ],
+      "text": "The Ashokavadana, a Sanskrit legend of the king, says Bindusara disliked the young prince, who was ugly and rough-skinned, and sent him with an army but no weapons to put down a revolt at Taxila. The people came out to greet him, saying they had risen against wicked ministers, not against the king.",
+      "today": "Today: Taxila, near Islamabad, Pakistan, a World Heritage Site."
+    },
+    {
+      "place": "ujjain",
+      "phase": "prince",
+      "source": "Tradition",
+      "title": "Governor at Ujjain",
+      "native": "उज्जयिनी",
+      "when": "c. 280s BCE",
+      "at": 12,
+      "camera": {
+        "at": [
+          80.5,
+          24.4
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "ujjain",
+          "traveller": "ashoka",
+          "style": "walk",
+          "bend": 0.08
+        }
+      ],
+      "text": "The Sri Lankan chronicles (Dipavamsa and Mahavamsa) say instead that Ashoka governed Avanti from Ujjain, a great city on the road from the Ganga to the western ports. That fits how the empire was run: his own later edicts mention princes sent out to govern from Ujjain and Taxila. No inscription, though, puts Ashoka himself there.",
+      "today": "Today: Ujjain, Madhya Pradesh, India."
+    },
+    {
+      "place": "sanchi",
+      "phase": "prince",
+      "source": "Tradition",
+      "title": "Devi of Vidisha",
+      "native": "विदिशा",
+      "when": "c. 280s BCE",
+      "at": 17,
+      "camera": {
+        "at": [
+          77.7,
+          23.5
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The chronicles say that at Vidisha he married Devi, a merchant’s daughter. Their son Mahinda and daughter Sanghamitta later became a monk and a nun. Devi did not follow him to the capital. On the hill at Sanchi nearby, Ashoka later built a brick stupa and set up a pillar, the beginning of the Great Stupa there.",
+      "today": "Today: Sanchi, Madhya Pradesh, a World Heritage Site, ten kilometres from Vidisha."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "prince",
+      "source": "Tradition",
+      "title": "A fight for the throne",
+      "native": "पाटलिपुत्र",
+      "when": "c. 273 to 268 BCE",
+      "at": 23,
+      "camera": {
+        "at": [
+          81.5,
+          24.5
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "sanchi",
+          "to": "pataliputra",
+          "traveller": "ashoka",
+          "style": "walk",
+          "bend": 0.08
+        }
+      ],
+      "text": "Bindusara dies around 273 BCE. Buddhist texts tell of a struggle for the throne lasting four years, won with the help of the minister Radhagupta, and the Sri Lankan chronicles say Ashoka killed ninety-nine brothers. His own edicts speak of living brothers and sisters, so most historians treat that number as legend. He is crowned around 268 BCE.",
+      "today": "Today: Patna, Bihar, India."
+    },
+    {
+      "place": "dhauli",
+      "phase": "conqueror",
+      "source": "History",
+      "title": "The war in Kalinga",
+      "native": "कलिङ्ग",
+      "when": "c. 261 BCE",
+      "at": 31,
+      "camera": {
+        "at": [
+          85.5,
+          22.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "dhauli",
+          "traveller": "army",
+          "style": "march",
+          "bend": 0.08
+        }
+      ],
+      "text": "Eight years after his crowning, Ashoka conquers Kalinga, on the east coast. His Thirteenth Rock Edict says 150,000 people were carried away, 100,000 killed and many times that number died, figures as the edict gives them. ‘The Beloved of the Gods,’ it says of the king himself, ‘feels remorse for the conquest of Kalinga.’",
+      "today": "Today: Dhauli, near Bhubaneswar, Odisha, with a peace pagoda built in 1972."
+    },
+    {
+      "place": "dhauli",
+      "phase": "conqueror",
+      "source": "History",
+      "title": "All men are my children",
+      "native": "सवे मुनिसे पजा ममा",
+      "lang": "pra",
+      "when": "c. 260 BCE",
+      "at": 36,
+      "camera": {
+        "at": [
+          85.5,
+          21.2
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "At Dhauli and Jaugada, in Kalinga itself, the edicts carved on the rock leave out the Thirteenth, with its remorse, and add two of their own. ‘All men are my children,’ they say, and they order the officials of Tosali to judge fairly, to avoid cruelty and hasty imprisonment, and to win the trust of the peoples beyond the border.",
+      "today": "Today: the Dhauli rock, with an elephant carved emerging from the stone above the edicts."
+    },
+    {
+      "place": "maski",
+      "phase": "dhamma",
+      "source": "History",
+      "title": "The name in the rock",
+      "native": "देवानंपिय असोक",
+      "lang": "pra",
+      "when": "c. 258 BCE",
+      "at": 41,
+      "camera": {
+        "at": [
+          76.7,
+          16
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "In his minor rock edicts Ashoka says that for over two and a half years he had been a lay follower of the Buddha, at first without much zeal, until he drew close to the community of monks (sangha). Most copies call him only the Beloved of the Gods, Piyadasi. One found at Maski in 1915 adds his name: Ashoka.",
+      "today": "Today: Maski, Raichur district, Karnataka."
+    },
+    {
+      "place": "bodh-gaya",
+      "phase": "dhamma",
+      "source": "History",
+      "title": "A journey to the tree",
+      "native": "सम्बोधि",
+      "when": "c. 258 BCE",
+      "at": 46,
+      "camera": {
+        "at": [
+          85,
+          24.7
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Ten years after his crowning, says the Eighth Rock Edict, the king went to Sambodhi, the place of the Buddha’s awakening. Kings once went on pleasure tours, hunting and feasting; from then on he made tours of dhamma, meeting holy men, giving gifts to the old and speaking to country people about right conduct.",
+      "today": "Today: the Mahabodhi Temple, Bodh Gaya, Bihar, a World Heritage Site."
+    },
+    {
+      "place": "girnar",
+      "phase": "dhamma",
+      "source": "History",
+      "title": "A law carved on rocks",
+      "native": "धंम",
+      "lang": "pra",
+      "when": "c. 256 BCE",
+      "at": 51,
+      "camera": {
+        "at": [
+          78.4,
+          23.4
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "girnar",
+          "traveller": "edicts",
+          "style": "edict",
+          "bend": 0.1
+        }
+      ],
+      "text": "From about his twelfth year Ashoka has fourteen edicts carved on rocks across his empire, as at Girnar in Gujarat. They ask for obedience to parents, kindness to slaves and servants, gentleness to animals and respect for every sect. He bans some animal sacrifices, and the royal kitchen, he says, now kills only two peacocks and a deer a day.",
+      "today": "Today: the edict rock below Girnar hill, Junagadh, Gujarat, which later kings also carved."
+    },
+    {
+      "place": "shahbazgarhi",
+      "phase": "dhamma",
+      "source": "History",
+      "title": "Letters to the Greek kings",
+      "native": "योन",
+      "lang": "pra",
+      "when": "c. 256 BCE",
+      "at": 56,
+      "camera": {
+        "at": [
+          78.6,
+          29.4
+        ],
+        "width": 19
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "shahbazgarhi",
+          "traveller": "edicts",
+          "style": "edict",
+          "bend": -0.1
+        }
+      ],
+      "text": "In the north-west the edicts are carved in the Kharoshthi script, as at Shahbazgarhi, and at Kandahar in Greek and Aramaic. The Thirteenth Edict says his dhamma has reached five Greek kings, among them Antiochus of Syria and Ptolemy of Egypt, and lands south as far as Sri Lanka, and it calls this the best conquest.",
+      "today": "Today: Shahbazgarhi, Mardan district, Khyber Pakhtunkhwa, Pakistan."
+    },
+    {
+      "place": "lumbini",
+      "phase": "dhamma",
+      "source": "History",
+      "title": "Here the Buddha was born",
+      "native": "हिद बुधे जाते",
+      "lang": "pra",
+      "when": "c. 249 BCE",
+      "at": 62,
+      "camera": {
+        "at": [
+          84.2,
+          26.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "lumbini",
+          "traveller": "ashoka",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Twenty years after his crowning, his inscription says, the king came in person to Lumbini, where the Buddha was born, worshipped there and set up a stone pillar. He freed the village from tax and cut its share of the harvest to an eighth. The pillar, found in 1896, is how Lumbini was identified.",
+      "today": "Today: Lumbini, Nepal, a World Heritage Site."
+    },
+    {
+      "place": "mihintale",
+      "phase": "dhamma",
+      "source": "Tradition",
+      "title": "Mahinda in Sri Lanka",
+      "native": "महिन्द",
+      "lang": "pi",
+      "when": "c. 250 BCE",
+      "at": 67,
+      "camera": {
+        "at": [
+          82.8,
+          16.6
+        ],
+        "width": 22
+      },
+      "legs": [
+        {
+          "from": "pataliputra",
+          "to": "mihintale",
+          "traveller": "mahinda",
+          "style": "monk",
+          "bend": -0.4
+        }
+      ],
+      "text": "The Sri Lankan chronicles say that after a Buddhist council at Pataliputra, missions went out to nine lands. Ashoka’s son Mahinda flew, they say, to the hill of Mihintale, met King Devanampiya Tissa out hunting and converted him. His sister Sanghamitta followed with a branch of the Bodhi tree, which was planted at Anuradhapura.",
+      "today": "Today: Mihintale and the Sri Maha Bodhi at Anuradhapura, Sri Lanka, said to grow from that branch."
+    },
+    {
+      "place": "sarnath",
+      "phase": "dhamma",
+      "source": "History",
+      "title": "The lions of Sarnath",
+      "native": "सारनाथ",
+      "when": "c. 250 BCE",
+      "at": 72,
+      "camera": {
+        "at": [
+          83,
+          25.4
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "At Sarnath, where the Buddha first taught, Ashoka raises a polished stone pillar warning that monks or nuns who split the community will be expelled. Its capital, four lions back to back above a wheel, is among the finest works of Maurya art. Since 1950 the lions have been India’s national emblem, and the wheel is on its flag.",
+      "today": "Today: the lion capital in the Sarnath Museum, near Varanasi, Uttar Pradesh."
+    },
+    {
+      "place": "pataliputra",
+      "phase": "last",
+      "source": "Tradition",
+      "title": "Half a fruit",
+      "native": "आमलक",
+      "when": "c. 232 BCE",
+      "at": 80,
+      "camera": {
+        "at": [
+          85.17,
+          25.6
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "The Ashokavadana says that in old age Ashoka gave so much to the monks that his ministers stopped him using the treasury, until all he had left to give was half a myrobalan fruit (amalaka). The same text blames his queen Tishyarakshita for the blinding of his son Kunala. He dies around 232 BCE.",
+      "today": "Today: Kumhrar, Patna, where a pillared Maurya hall has been dug up."
+    },
+    {
+      "place": "delhi",
+      "phase": "memory",
+      "source": "History",
+      "title": "Forgotten and found",
+      "native": "देवानंपिय पियदसि",
+      "lang": "pra",
+      "when": "1356 to 1837",
+      "at": 97,
+      "camera": {
+        "at": [
+          77.2,
+          29.4
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "topra",
+          "to": "delhi",
+          "traveller": "pillar",
+          "style": "walk",
+          "bend": 0.1
+        }
+      ],
+      "text": "Within fifty years of his death the Maurya empire was gone, and in time the Brahmi script of his edicts was forgotten. In 1356 Sultan Firuz Shah Tughlaq had a pillar moved from Topra to Delhi, but no one could read it. In 1837 James Prinsep deciphered Brahmi, and Piyadasi, the Beloved of the Gods, spoke again.",
+      "today": "Today: the Topra pillar stands at Feroz Shah Kotla, Delhi."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "maurya",
+        "name": "The Maurya Empire",
+        "native": "मौर्य साम्राज्य",
+        "color": "#e0892e",
+        "active": [
+          [
+            0,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Maurya Empire",
+          "at": [
+            79.0,
+            25.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  62.0,
+                  25.3
+                ],
+                [
+                  62.5,
+                  30.0
+                ],
+                [
+                  64.0,
+                  33.0
+                ],
+                [
+                  68.0,
+                  35.2
+                ],
+                [
+                  71.5,
+                  36.0
+                ],
+                [
+                  74.5,
+                  35.0
+                ],
+                [
+                  77.0,
+                  32.5
+                ],
+                [
+                  80.0,
+                  30.0
+                ],
+                [
+                  83.99,
+                  27.7
+                ],
+                [
+                  88.5,
+                  26.6
+                ],
+                [
+                  89.5,
+                  24.5
+                ],
+                [
+                  88.0,
+                  21.7
+                ],
+                [
+                  86.6,
+                  21.4
+                ],
+                [
+                  85.9,
+                  21.1
+                ],
+                [
+                  84.8,
+                  20.6
+                ],
+                [
+                  83.9,
+                  19.9
+                ],
+                [
+                  83.0,
+                  19.0
+                ],
+                [
+                  82.0,
+                  18.2
+                ],
+                [
+                  81.4,
+                  17.2
+                ],
+                [
+                  82.2,
+                  16.5
+                ],
+                [
+                  81.0,
+                  15.8
+                ],
+                [
+                  80.3,
+                  15.3
+                ],
+                [
+                  80.1,
+                  14.0
+                ],
+                [
+                  78.8,
+                  14.0
+                ],
+                [
+                  76.8,
+                  14.0
+                ],
+                [
+                  75.0,
+                  14.0
+                ],
+                [
+                  74.4,
+                  14.8
+                ],
+                [
+                  73.9,
+                  16.0
+                ],
+                [
+                  73.32,
+                  17.42
+                ],
+                [
+                  73.0,
+                  18.5
+                ],
+                [
+                  72.86,
+                  19.37
+                ],
+                [
+                  72.98,
+                  21.31
+                ],
+                [
+                  72.63,
+                  21.28
+                ],
+                [
+                  72.54,
+                  21.98
+                ],
+                [
+                  72.1,
+                  21.4
+                ],
+                [
+                  71.47,
+                  20.98
+                ],
+                [
+                  70.2,
+                  20.9
+                ],
+                [
+                  69.09,
+                  22.35
+                ],
+                [
+                  69.82,
+                  22.82
+                ],
+                [
+                  68.63,
+                  23.25
+                ],
+                [
+                  66.4,
+                  25.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                14
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  62.0,
+                  25.3
+                ],
+                [
+                  62.5,
+                  30.0
+                ],
+                [
+                  64.0,
+                  33.0
+                ],
+                [
+                  68.0,
+                  35.2
+                ],
+                [
+                  71.5,
+                  36.0
+                ],
+                [
+                  74.5,
+                  35.0
+                ],
+                [
+                  77.0,
+                  32.5
+                ],
+                [
+                  80.0,
+                  30.0
+                ],
+                [
+                  83.99,
+                  27.7
+                ],
+                [
+                  88.5,
+                  26.6
+                ],
+                [
+                  89.5,
+                  24.5
+                ],
+                [
+                  88.0,
+                  21.7
+                ],
+                [
+                  87.2,
+                  21.2
+                ],
+                [
+                  86.7,
+                  20.7
+                ],
+                [
+                  86.0,
+                  19.9
+                ],
+                [
+                  85.2,
+                  19.4
+                ],
+                [
+                  84.5,
+                  18.8
+                ],
+                [
+                  83.8,
+                  18.0
+                ],
+                [
+                  83.3,
+                  17.6
+                ],
+                [
+                  82.5,
+                  17.0
+                ],
+                [
+                  82.2,
+                  16.5
+                ],
+                [
+                  81.0,
+                  15.8
+                ],
+                [
+                  80.3,
+                  15.3
+                ],
+                [
+                  80.1,
+                  14.0
+                ],
+                [
+                  78.8,
+                  14.0
+                ],
+                [
+                  76.8,
+                  14.0
+                ],
+                [
+                  75.0,
+                  14.0
+                ],
+                [
+                  74.4,
+                  14.8
+                ],
+                [
+                  73.9,
+                  16.0
+                ],
+                [
+                  73.32,
+                  17.42
+                ],
+                [
+                  73.0,
+                  18.5
+                ],
+                [
+                  72.86,
+                  19.37
+                ],
+                [
+                  72.98,
+                  21.31
+                ],
+                [
+                  72.63,
+                  21.28
+                ],
+                [
+                  72.54,
+                  21.98
+                ],
+                [
+                  72.1,
+                  21.4
+                ],
+                [
+                  71.47,
+                  20.98
+                ],
+                [
+                  70.2,
+                  20.9
+                ],
+                [
+                  69.09,
+                  22.35
+                ],
+                [
+                  69.82,
+                  22.82
+                ],
+                [
+                  68.63,
+                  23.25
+                ],
+                [
+                  66.4,
+                  25.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Pataliputra",
+          "Founded": "About 322 BCE, by Chandragupta",
+          "Today": "Most of India, Pakistan and Bangladesh, and parts of Nepal and Afghanistan"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Bindusara"
+          },
+          {
+            "from": 4,
+            "text": "Ashoka, crowned about 268 BCE"
+          }
+        ],
+        "role": "The first empire to rule most of the subcontinent, from Afghanistan to Bengal and south into Karnataka.",
+        "ties": [
+          {
+            "from": 5,
+            "text": "Conquers Kalinga (about 261 BCE)"
+          },
+          {
+            "from": 10,
+            "text": "Names five Greek kings in the Thirteenth Edict"
+          },
+          {
+            "from": 12,
+            "text": "Sends Buddhist missions, by tradition to Sri Lanka and beyond"
+          }
+        ]
+      },
+      {
+        "id": "kalinga",
+        "name": "Kalinga",
+        "native": "कलिङ्ग",
+        "color": "#2fa39a",
+        "active": [
+          [
+            0,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Kalinga",
+          "at": [
+            83.9,
+            18.9
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  86.7,
+                  20.7
+                ],
+                [
+                  86.0,
+                  19.9
+                ],
+                [
+                  85.2,
+                  19.4
+                ],
+                [
+                  84.5,
+                  18.8
+                ],
+                [
+                  83.8,
+                  18.0
+                ],
+                [
+                  83.3,
+                  17.6
+                ],
+                [
+                  82.5,
+                  17.0
+                ],
+                [
+                  82.2,
+                  16.5
+                ],
+                [
+                  81.4,
+                  17.2
+                ],
+                [
+                  82.0,
+                  18.2
+                ],
+                [
+                  83.0,
+                  19.0
+                ],
+                [
+                  83.9,
+                  19.9
+                ],
+                [
+                  84.8,
+                  20.6
+                ],
+                [
+                  85.9,
+                  21.1
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Today": "Coastal Odisha and northern coastal Andhra Pradesh"
+        },
+        "role": "The independent east-coast country between the Mahanadi and the Godavari, which Ashoka conquered about 261 BCE.",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Conquered by Ashoka, about 261 BCE"
+          }
+        ],
+        "rulers": []
+      },
+      {
+        "id": "tamil",
+        "name": "The Cholas, Pandyas and Cheras",
+        "color": "#8a5fb0",
+        "active": [
+          [
+            9,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Cholas, Pandyas, Cheras",
+          "at": [
+            77.8,
+            10.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                9,
+                14
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  75.0,
+                  12.5
+                ],
+                [
+                  80.2,
+                  12.5
+                ],
+                [
+                  79.9,
+                  11.0
+                ],
+                [
+                  79.8,
+                  10.3
+                ],
+                [
+                  79.1,
+                  9.3
+                ],
+                [
+                  78.3,
+                  8.8
+                ],
+                [
+                  77.6,
+                  8.0
+                ],
+                [
+                  76.5,
+                  8.9
+                ],
+                [
+                  76.0,
+                  10.2
+                ],
+                [
+                  75.4,
+                  11.8
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Today": "Tamil Nadu and Kerala"
+        },
+        "role": "The kingdoms of the far south, which Ashoka’s edicts name among his neighbours beyond the empire.",
+        "ties": [
+          {
+            "from": 9,
+            "text": "Named as neighbours in the Second and Thirteenth Rock Edicts"
+          }
+        ],
+        "rulers": []
+      },
+      {
+        "id": "lanka",
+        "name": "Anuradhapura (Sri Lanka)",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            12,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Anuradhapura",
+          "at": [
+            81.9,
+            9.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                12,
+                14
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  79.95,
+                  9.0
+                ],
+                [
+                  80.0,
+                  9.7
+                ],
+                [
+                  80.7,
+                  9.6
+                ],
+                [
+                  81.3,
+                  8.9
+                ],
+                [
+                  81.2,
+                  8.2
+                ],
+                [
+                  80.8,
+                  7.6
+                ],
+                [
+                  80.2,
+                  7.7
+                ],
+                [
+                  79.85,
+                  8.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Anuradhapura",
+          "Today": "Sri Lanka"
+        },
+        "rulers": [
+          {
+            "from": 12,
+            "text": "Devanampiya Tissa"
+          }
+        ],
+        "role": "The kingdom of the north-central plains of Sri Lanka, which the chronicles say turned Buddhist through Mahinda’s mission.",
+        "ties": [
+          {
+            "from": 12,
+            "text": "Receives Mahinda, say the Sri Lankan chronicles"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "bindusara",
+        "name": "Bindusara",
+        "native": "बिन्दुसार",
+        "life": "r. c. 297 to 273 BCE",
+        "role": "Ashoka’s father, the second Maurya emperor",
+        "steps": [
+          0,
+          1,
+          4
+        ],
+        "text": "The second Maurya emperor, son of Chandragupta. Greek writers call him Amitrochates, from the Sanskrit for ‘slayer of foes’, and tell how he asked the Seleucid king Antiochus to send him sweet wine, dried figs and a philosopher. Buddhist texts say he followed the Ajivika ascetics and did not want Ashoka as his heir."
+      },
+      {
+        "id": "devi",
+        "name": "Devi",
+        "native": "देवी",
+        "life": "Not known",
+        "role": "Ashoka’s first wife, by the chronicles",
+        "steps": [
+          3
+        ],
+        "text": "A merchant’s daughter of Vidisha, known only from the Sri Lankan chronicles, which call her Devi or Vedisa-Mahadevi. She married Ashoka while he governed Avanti and bore Mahinda and Sanghamitta, but stayed at Vidisha when he became king. The chronicles say Mahinda visited her there, at a monastery she had built, before leaving for Sri Lanka."
+      },
+      {
+        "id": "mahinda",
+        "name": "Mahinda",
+        "native": "महिन्द (lang pi)",
+        "life": "3rd century BCE",
+        "role": "Monk, Ashoka’s son",
+        "steps": [
+          3,
+          12
+        ],
+        "text": "Ashoka’s son, by the Sri Lankan account, who became a monk at about twenty and led the mission to Sri Lanka. There he converted King Devanampiya Tissa, and the Mahavihara, the great monastery of Anuradhapura, was founded. He is said to have stayed for the rest of his life. The Chinese pilgrim Xuanzang calls him Ashoka’s brother instead."
+      },
+      {
+        "id": "sanghamitta",
+        "name": "Sanghamitta",
+        "native": "सङ्घमित्ता (lang pi)",
+        "life": "3rd century BCE",
+        "role": "Nun, Ashoka’s daughter",
+        "steps": [
+          3,
+          12
+        ],
+        "text": "Ashoka’s daughter, by the Sri Lankan chronicles, a nun who brought a branch of the Bodhi tree from Bodh Gaya to Anuradhapura and there founded an order of nuns. Sri Lankan Buddhists remember her on the full moon of Unduvap, in December, which is kept as Sanghamitta Day."
+      },
+      {
+        "id": "prinsep",
+        "name": "James Prinsep",
+        "life": "1799 to 1840",
+        "role": "Scholar who read the edicts",
+        "steps": [
+          15
+        ],
+        "text": "An English scholar and assay master of the Calcutta Mint who ran the Asiatic Society’s journal. Working from short donors’ inscriptions at Sanchi, he cracked the Brahmi script in 1837 and soon read edicts on pillars and rocks across India. Their author, Devanampiya Piyadasi, was linked to the Ashoka of the chronicles at about the same time."
+      }
+    ]
+  }
+}

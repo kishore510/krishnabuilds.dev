@@ -6,11 +6,7 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-**India first**, so the Indian Chronicles are complete. All on `south-asia`; each has a catalogue entry waiting. In order:
-
-1. Ashoka, a Life
-
-After India:
+The Indian Chronicles are complete.
 
 One subject is still without a story: Invention. Lives to add: Einstein (`europe`).
 
@@ -35,6 +31,7 @@ These need a new map first, which is its own piece of work and its own PR:
 
 Newest first.
 
+- Ashoka (`ashoka`), 2026-11-22
 - The Ahom Kingdom (`ahom`), 2026-11-22
 - The Sikh Empire (`sikh-empire`), 2026-11-22
 - The Nayakas of Madurai (`nayaka-madurai`), 2026-11-22

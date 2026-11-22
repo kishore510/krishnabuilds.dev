@@ -1,0 +1,10 @@
+# Ashoka
+
+Status: built. In Lives. The life of Ashoka, the Maurya emperor, from about 304 to 232 BCE, in 16 chapters: birth at Pataliputra, the legends of Taxila, Ujjain and Devi of Vidisha, the throne war, the conquest of Kalinga and the edicts at Dhauli, Maski, Girnar and Shahbazgarhi, his journeys to Bodh Gaya and Lumbini, Mahinda's mission to Sri Lanka, the lions of Sarnath, his last years, and the Topra pillar and James Prinsep's decipherment of Brahmi in 1837. 5 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap. Routes show only for the current chapter. Pataliputra and Bodh Gaya are 0.9° apart, closer than a pin on this map, so no route runs between them (chapter 9 has none). The Mihintale route is bent out over the Bay of Bengal so it stays off the peninsula's pins; Topra is a hidden waypoint.
+- Powers: the Maurya Empire (without Kalinga until chapter 6), Kalinga, the Cholas, Pandyas and Cheras, and Anuradhapura. Loose regions, not borders.
+- No new art.
+- Source: History, with Tradition on the chapters that rest on the Ashokavadana and the Sri Lankan chronicles (2 to 5, 13 and 15).
+- Native names are in Sanskrit (`sa`), with quotations from the edicts in Prakrit (`pra`) and Pali names (`pi`).
+- Sources and what is disputed: Ashoka's own inscriptions (the major and minor rock edicts, the pillar edicts and the Lumbini and Sarnath pillars), in Prakrit in the Brahmi and Kharoshthi scripts, with Greek and Aramaic versions at Kandahar; the Sanskrit Ashokavadana; the Pali chronicles of Sri Lanka, the Dipavamsa and Mahavamsa; Greek writers on Bindusara; and modern historians. Disputed or traditional: his birth and death years, which are estimates; the Taxila and Ujjain postings; Devi of Vidisha; the throne war and the ninety-nine brothers; the Third Council; Mahinda's and Sanghamitta's mission; and the last-years stories of the half fruit and Kunala. The Kalinga figures are as the Thirteenth Edict gives them. Powers areas are loose regions, not borders.

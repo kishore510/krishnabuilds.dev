@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.97.0
+
+- New story map in Lives: Ashoka. The Maurya emperor’s life, from his birth at Pataliputra and the legends of Taxila, Ujjain and Devi of Vidisha, through the throne war and the conquest of Kalinga, to his edicts at Dhauli, Maski, Girnar and Shahbazgarhi, his journeys to Bodh Gaya and Lumbini, Mahinda’s mission to Sri Lanka, the lions of Sarnath, his last years and James Prinsep’s decipherment of Brahmi in 1837. 16 chapters on the south-asia map, a Powers layer and 5 people cards. 
+- Catalogue: a new Ashoka entry opens the story.
+
 ## 0.96.0
 
 - New story map in Chronicles: The Ahom Kingdom. Six centuries of Assam, from Sukaphaa’s crossing of the Patkai in 1228 and the maidams of Charaideo, through Suhungmung, Sankardeva’s satras, the paik system, Mir Jumla at Garhgaon and Lachit Borphukan at Saraighat, to Rudra Singha’s Rangpur, the Moamoria rebellion, the Burmese invasions, the Treaty of Yandabo in 1826 and Maniram Dewan in 1858. 13 chapters on the south-asia map, a Powers layer that changes lands chapter by chapter, and 6 people cards.
