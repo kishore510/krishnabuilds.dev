@@ -506,8 +506,8 @@ are the current values in the tables below; check those before quoting.
 
 ## Wildcard notes
 
-A Crazy Eights family card game (`games/wildcard/`): you against three bots,
-portrait, DOM rather than canvas. Our own name and card art; it must not take
+A Crazy Eights family card game (`games/wildcard/`): you against 1, 2 or 3
+bots (title screen, saved as `wildcardBots`), portrait, DOM rather than canvas. Our own name and card art; it must not take
 the name, logo or look of any commercial card game.
 
 - **Rules** live in `engine.js` (top comment): 108 cards, 7 each, first discard
@@ -539,7 +539,11 @@ the name, logo or look of any commercial card game.
   `wildcardTheme` (`light` / `dark`, absent = auto) and sets
   `data-theme` on `<html>`, like `kb-tokens.css`. The page around the table
   stays dark in both, matching the shared nav bar and guide link.
-- **Storage** (`localStorage`, all guarded): `wildcardTheme`,
+- **Seats:** engine seats run clockwise from you (0). `POSITIONS` maps them
+  to places at the table: 1 bot sits at the top, 2 bots left and right, 3
+  fill all three. Bot names and faces belong to the place (Pip left, Bao
+  top, Rio right), via `P(seat)`.
+- **Storage** (`localStorage`, all guarded): `wildcardTheme`, `wildcardBots`,
   `wildcardLevel`, `wildcardMuted`, `wildcardStats` (`{games, wins}`),
   `wildcardHowtoSeen`.
 - **Test handle:** `window.wildcard` (`state`, `busy`, `E`, `newGame`,

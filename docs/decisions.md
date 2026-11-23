@@ -415,7 +415,7 @@ Wars get their own subject on the Humankind shelf, after Chronicles: Wars and Ca
 
 ## 2026-11-23 — Arcade: Wildcard, and how it goes online
 
-Wildcard is a Crazy Eights family card game with our own name and card art, not a copy of a commercial game. It ships first as single player against three bots (Arcade 1.75.0). Its rules are a pure `engine.js`, like Tennis's, so the same file can run in the browser and in a Worker.
+Wildcard is a Crazy Eights family card game with our own name and card art, not a copy of a commercial game. It ships first as single player against 1, 2 or 3 bots (Arcade 1.75.0), and that mode stays offline and unlimited once online tables arrive. Its rules are a pure `engine.js`, like Tennis's, so the same file can run in the browser and in a Worker.
 
 Online play follows Stickyard's pattern: one Durable Object per table, WebSocket Hibernation, the server as the only authority. Unlike Stickyard, players have hidden hands, so the server deals and shuffles and sends each player only `viewFor` their seat. It goes in the existing Arcade Worker rather than a new app.
 

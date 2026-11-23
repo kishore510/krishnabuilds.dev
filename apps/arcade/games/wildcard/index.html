@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wildcard · Arcade · krishnabuilds</title>
-<meta name="description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before three bots do.">
+<meta name="description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.">
 <link rel="canonical" href="https://arcade.krishnabuilds.dev/games/wildcard/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="krishnabuilds">
 <meta property="og:title" content="Wildcard · Arcade · krishnabuilds">
-<meta property="og:description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before three bots do.">
+<meta property="og:description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.">
 <meta property="og:url" content="https://arcade.krishnabuilds.dev/games/wildcard/">
 <meta property="og:image" content="https://krishnabuilds.dev/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Wildcard","description":"Play Wildcard free in your browser. Match the colour or the number, then empty your hand before three bots do.","url":"https://arcade.krishnabuilds.dev/games/wildcard/","gamePlatform":"Web browser","playMode":"SinglePlayer","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"Arcade","url":"https://arcade.krishnabuilds.dev/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Wildcard","description":"Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.","url":"https://arcade.krishnabuilds.dev/games/wildcard/","gamePlatform":"Web browser","playMode":"SinglePlayer","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"Arcade","url":"https://arcade.krishnabuilds.dev/"}}</script>
 <script>
   // Apply a saved theme before first paint so there is no flash.
   try { const t = localStorage.getItem('wildcardTheme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
@@ -172,6 +172,7 @@
   .fan { position: relative; height: 40px; width: 92px; }
   .fan .card { bottom: 0; left: 50%; margin-left: -13px; transform-origin: 50% 130%; }
   .opp.s2 .fan { order: -1; }
+  .opp[hidden] { display: none; }
   .thinking { position: absolute; top: -6px; left: -10px; display: none; gap: 3px; background: var(--panel); border: 1px solid var(--panel-b); border-radius: 10px; padding: 4px 6px; }
   .opp.active .thinking { display: flex; }
   .thinking i { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
@@ -247,7 +248,8 @@
     background: conic-gradient(var(--coral) 0 25%, var(--saffron) 0 50%, var(--jade) 0 75%, var(--indigo) 0); box-shadow: 0 6px 18px rgba(91,108,255,0.35); }
   .logo h1 { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -0.02em; }
   .tag { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; text-align: center; font-weight: 600; }
-  #titleFan { position: relative; height: 150px; width: 100%; margin: 14px 0 10px; }
+  #titleFan { position: relative; height: 118px; width: 100%; margin: 18px 0 40px; }
+  #titleFan .card { transform-origin: 50% 130%; scale: 0.85; }
   #titleFan .card { left: 50%; bottom: 0; margin-left: -36px; transform-origin: 50% 130%; }
   #resultBox { text-align: center; margin-bottom: 14px; }
   #resultBox h2 { margin: 0 0 4px; font-size: 28px; font-weight: 900; }
@@ -337,7 +339,13 @@
           <p class="tag">Match the colour. Match the number. Empty your hand.</p>
           <div id="titleFan" aria-hidden="true"></div>
         </div>
-        <div class="label">Bots</div>
+        <div class="label">Opponents</div>
+        <div class="seg three" id="botSeg" style="margin-bottom:12px">
+          <button data-bots="1" aria-pressed="false">1 bot<small>Head to head</small></button>
+          <button data-bots="2" aria-pressed="false">2 bots<small>Three-way</small></button>
+          <button data-bots="3" aria-pressed="true">3 bots<small>Full table</small></button>
+        </div>
+        <div class="label">Bot skill</div>
         <div class="seg" id="levelSeg">
           <button data-level="easy" aria-pressed="true">Easy<small>Relaxed</small></button>
           <button data-level="hard" aria-pressed="false">Hard<small>Plays to win</small></button>
@@ -383,7 +391,7 @@
           <li>Play a card that matches the <b>colour</b> or the <b>number or symbol</b> on top of the pile.</li>
           <li><b>Wild</b> cards go on anything. You pick the next colour.</li>
           <li>Nothing to play? <b>Tap the deck</b> to draw. If the new card fits, play it or keep it.</li>
-          <li><b>Skip</b> (⊘) jumps the next player. <b>Reverse</b> (⇄) turns play around. <b>+2</b> and <b>+4</b> make the next player draw and miss a go.</li>
+          <li><b>Skip</b> (⊘) jumps the next player. <b>Reverse</b> (⇄) turns play around (against one bot it works like a Skip). <b>+2</b> and <b>+4</b> make the next player draw and miss a go.</li>
           <li>Down to two cards? Tap <b>Last card!</b> before you play, or draw two.</li>
           <li>First to empty their hand wins.</li>
         </ol>
@@ -409,12 +417,18 @@
   };
 
   // ---------- table setup ----------
-  const SEATS = [
+  // People by table position: 0 you (bottom), 1 left, 2 top, 3 right.
+  // Engine seats run clockwise from you; with fewer bots some places stay empty.
+  const PEOPLE = [
     { name: 'You', em: '🙂' },
     { name: 'Pip', em: '🦊' },
     { name: 'Bao', em: '🐼' },
     { name: 'Rio', em: '🐯' },
   ];
+  const POSITIONS = { 2: [0, 2], 3: [0, 1, 3], 4: [0, 1, 2, 3] };
+  const posOf = (seat) => POSITIONS[state.players][seat];
+  const P = (seat) => PEOPLE[posOf(seat)];
+  const oppEl = (seat) => stage.querySelector('.opp.s' + posOf(seat));
   const COLOUR_NAME = { coral: 'Coral', saffron: 'Saffron', jade: 'Jade', indigo: 'Indigo' };
   const VALUE_LABEL = { skip: 'Skip', rev: 'Reverse', draw2: '+2', wild: 'Wild', wild4: '+4' };
   const ICON = {
@@ -425,7 +439,8 @@
 
   let state = null;
   let level = store.get('wildcardLevel', 'easy') === 'hard' ? 'hard' : 'easy';
-  let busy = false, armed = false, paused = false, botTimer = null;
+  let bots = Math.min(3, Math.max(1, parseInt(store.get('wildcardBots', '3'), 10) || 3));
+  let busy = false, armed = false, paused = false, botTimer = null, previewing = true;
   const discardLook = new Map(); // card id -> {rot, dx, dy}
   let scale = 1;
 
@@ -498,19 +513,21 @@
     stage.style.setProperty('--cur', 'var(--' + curColour() + ')');
     $('ring').classList.toggle('ccw', state.dir === -1);
     $('dirText').textContent = state.dir === 1 ? 'Clockwise' : 'Anticlockwise';
-    $('modeChip').textContent = 'vs bots · ' + (level === 'hard' ? 'Hard' : 'Easy');
+    const nb = state.players - 1;
+    $('modeChip').textContent = 'vs ' + nb + (nb === 1 ? ' bot' : ' bots') + ' · ' + (level === 'hard' ? 'Hard' : 'Easy');
     $('colourName').textContent = COLOUR_NAME[curColour()];
 
     // opponents
-    for (let s = 1; s <= 3; s++) {
-      const el = stage.querySelector('.opp.s' + s);
+    for (let pos = 1; pos <= 3; pos++) stage.querySelector('.opp.s' + pos).hidden = !POSITIONS[state.players].includes(pos);
+    for (let s = 1; s < state.players; s++) {
+      const el = oppEl(s);
       const n = state.hands[s].length;
-      el.querySelector('.em').textContent = SEATS[s].em;
+      el.querySelector('.em').textContent = P(s).em;
       el.querySelector('.count').textContent = n;
-      el.querySelector('.name').innerHTML = SEATS[s].name + ' <small>bot</small>';
+      el.querySelector('.name').innerHTML = P(s).name + ' <small>bot</small>';
       el.classList.toggle('active', state.winner === null && state.turn === s);
       el.classList.toggle('last', n === 1 && state.winner === null);
-      el.setAttribute('aria-label', SEATS[s].name + ', ' + n + (n === 1 ? ' card' : ' cards'));
+      el.setAttribute('aria-label', P(s).name + ', ' + n + (n === 1 ? ' card' : ' cards'));
       const fan = el.querySelector('.fan');
       fan.innerHTML = '';
       const shown = Math.min(n, 9);
@@ -601,8 +618,8 @@
 
   function renderTurn() {
     const t = $('turn');
-    if (state.winner !== null) { t.className = 'wait'; t.textContent = SEATS[state.winner].name + (state.winner === 0 ? ' win!' : ' wins!'); return; }
-    if (state.turn !== 0) { t.className = 'wait'; t.textContent = SEATS[state.turn].name + ' is thinking…'; return; }
+    if (state.winner !== null) { t.className = 'wait'; t.textContent = P(state.winner).name + (state.winner === 0 ? ' win!' : ' wins!'); return; }
+    if (state.turn !== 0) { t.className = 'wait'; t.textContent = P(state.turn).name + ' is thinking…'; return; }
     t.className = '';
     if (state.drawn !== null) { t.textContent = 'Play it or keep it'; return; }
     const top = E.topCard(state);
@@ -639,7 +656,7 @@
   }
   function seatPoint(seat) {
     if (seat === 0) return { x: W / 2, y: 470 + 92, s: 1 };
-    return Object.assign(centre(stage.querySelector('.opp.s' + seat + ' .avatar')), { s: 0.36 });
+    return Object.assign(centre(oppEl(seat).querySelector('.avatar')), { s: 0.36 });
   }
   const deckPoint = () => Object.assign(centre($('deck')), { s: 80 / 72 });
   const pilePoint = () => Object.assign(centre($('discard')), { s: 80 / 72 });
@@ -703,7 +720,7 @@
   }
 
   async function animate(ev, from) {
-    const who = SEATS[ev.seat] ? SEATS[ev.seat].name : '';
+    const who = ev.seat == null ? '' : P(ev.seat).name;
     if (ev.type === 'play') {
       const look = lookFor(ev.card);
       sfx.play();
@@ -742,7 +759,7 @@
   }
   function labelPoint(seat) {
     if (seat === 0) return { x: W / 2, y: 470 };
-    const p = centre(stage.querySelector('.opp.s' + seat + ' .avatar'));
+    const p = centre(oppEl(seat).querySelector('.avatar'));
     return { x: Math.min(Math.max(p.x, 60), W - 60), y: p.y - 34 };
   }
 
@@ -803,20 +820,22 @@
   // ---------- game flow ----------
   async function newGame() {
     clearTimeout(botTimer);
+    previewing = false;
     discardLook.clear();
     armed = false;
-    state = E.createGame({ players: 4, first: Math.floor(Math.random() * 4) });
+    const players = bots + 1;
+    state = E.createGame({ players, first: Math.floor(Math.random() * players) });
     $('title').hidden = true;
     log('');
     // Deal: show an empty table, then fly the cards out round by round.
     const hands = state.hands;
-    state.hands = [[], [], [], []];
+    state.hands = hands.map(() => []);
     busy = true;
     render();
     const jobs = [];
     for (let r = 0; r < E.HAND_SIZE; r++) {
-      for (let s = 0; s < 4; s++) {
-        const k = r * 4 + s;
+      for (let s = 0; s < players; s++) {
+        const k = r * players + s;
         setTimeout(sfx.draw, reduced ? 0 : k * 55);
         jobs.push(fly(null, deckPoint(), Object.assign({}, seatPoint(s), { rot: s === 0 ? 0 : 12 }), 320, k * 55));
       }
@@ -825,7 +844,7 @@
     state.hands = hands;
     busy = false;
     render();
-    log(SEATS[state.turn].name + (state.turn === 0 ? ' go' : ' goes') + ' first');
+    log(P(state.turn).name + (state.turn === 0 ? ' go' : ' goes') + ' first');
     next();
   }
 
@@ -835,16 +854,16 @@
     const st = stats();
     st.games++; if (won) st.wins++;
     store.set('wildcardStats', JSON.stringify(st));
-    $('resultHead').textContent = won ? 'You win! 🎉' : SEATS[state.winner].name + ' wins';
+    $('resultHead').textContent = won ? 'You win! 🎉' : P(state.winner).name + ' wins';
     $('resultSub').textContent = won ? 'Hand emptied. Nicely played.' : 'So close. Deal again?';
     const list = $('resultList');
     list.innerHTML = '';
-    const order = [0, 1, 2, 3].sort((a, b) => state.hands[a].length - state.hands[b].length);
+    const order = state.hands.map((_, i) => i).sort((a, b) => state.hands[a].length - state.hands[b].length);
     for (const s of order) {
       const li = document.createElement('li');
       const n = state.hands[s].length;
       li.className = s === state.winner ? 'win' : '';
-      li.innerHTML = '<span>' + SEATS[s].em + ' ' + SEATS[s].name + '</span><span>' + (n === 0 ? 'Out! 🏆' : n + (n === 1 ? ' card' : ' cards')) + '</span>';
+      li.innerHTML = '<span>' + P(s).em + ' ' + P(s).name + '</span><span>' + (n === 0 ? 'Out! 🏆' : n + (n === 1 ? ' card' : ' cards')) + '</span>';
       list.appendChild(li);
     }
     $('resultBox').hidden = false;
@@ -871,6 +890,14 @@
     for (const b of $('levelSeg').children) b.setAttribute('aria-pressed', b.dataset.level === l);
     if (state) render();
   }
+  function setBots(n) {
+    bots = n;
+    store.set('wildcardBots', String(n));
+    for (const b of $('botSeg').children) b.setAttribute('aria-pressed', Number(b.dataset.bots) === n);
+    // Redeal the preview table behind the title so it shows the chosen size.
+    if (previewing) { state = E.createGame({ players: n + 1 }); render(); }
+  }
+  $('botSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setBots(Number(b.dataset.bots)); });
   $('levelSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setLevel(b.dataset.level); });
   $('startBtn').addEventListener('click', () => { audio(); if (!$('title').hidden) newGame(); });
 
@@ -930,8 +957,9 @@
   })();
 
   // A dealt table sits behind the title screen; nothing on it can be played.
-  state = E.createGame({ players: 4 });
+  state = E.createGame({ players: bots + 1 });
   busy = true;
+  setBots(bots);
   setLevel(level);
   render();
   showStats();
