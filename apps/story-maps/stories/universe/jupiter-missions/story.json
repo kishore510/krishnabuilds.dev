@@ -1,0 +1,605 @@
+{
+ "id": "jupiter-missions",
+ "title": "Missions to Jupiter",
+ "description": "An illustrated map of the missions to Jupiter, from the Pioneer and Voyager flybys and Io’s volcanoes through Galileo’s probe and Europa’s hidden ocean to Juno at the poles, and JUICE and Europa Clipper on their way to the icy moons.",
+ "canvas": "cosmic",
+ "basemap": "jupiter-system",
+ "source": "History",
+ "nativeLang": "en",
+ "mapLabel": "Illustrated diagram of the Jupiter system by distance, with Jupiter and its Great Red Spot on the left, its rings, Io, Europa, Ganymede and Callisto, the outer moons and the edge of the magnetosphere, and the paths of probes arriving from Earth",
+ "note": "This map is a diagram of distance, not a picture of space. Jupiter is drawn to scale; beyond its cloud tops, distance from the planet’s centre runs left to right on a logarithmic scale. The moons are drawn larger than scale and in a line. Up and down mean nothing except on Jupiter’s disc, where north is up. Figures follow NASA and ESA.",
+ "routes": "chapter",
+ "overview": {
+  "at": [
+   88,
+   45
+  ],
+  "width": 180
+ },
+ "places": {
+  "earth": {
+   "name": "Earth",
+   "at": [
+    176,
+    78
+   ],
+   "glyph": "earth-moon",
+   "label": "left",
+   "hidden": true
+  },
+  "belts": {
+   "name": "Radiation belts",
+   "at": [
+    60.4,
+    51
+   ],
+   "glyph": "particles",
+   "label": "top"
+  },
+  "red-spot": {
+   "name": "Great Red Spot",
+   "at": [
+    27,
+    38.9
+   ],
+   "glyph": "swell",
+   "label": "right"
+  },
+  "io": {
+   "name": "Io",
+   "at": [
+    76.5,
+    45
+   ],
+   "glyph": "volcano",
+   "label": "bottom"
+  },
+  "sl9": {
+   "name": "Comet impact scars",
+   "at": [
+    16,
+    33.9
+   ],
+   "glyph": "burst",
+   "label": "bottom"
+  },
+  "probe-entry": {
+   "name": "Galileo probe’s entry",
+   "at": [
+    20.5,
+    46.8
+   ],
+   "glyph": "lander",
+   "label": "left"
+  },
+  "ganymede": {
+   "name": "Ganymede",
+   "at": [
+    96.8,
+    45
+   ],
+   "glyph": "rocky-planet",
+   "label": "bottom"
+  },
+  "europa": {
+   "name": "Europa",
+   "at": [
+    86.7,
+    45
+   ],
+   "glyph": "snowflake",
+   "label": "top"
+  },
+  "cassini-pass": {
+   "name": "Cassini’s pass",
+   "at": [
+    144.8,
+    49
+   ],
+   "glyph": "orbiter",
+   "label": "top"
+  },
+  "galileo-end": {
+   "name": "Galileo’s last plunge",
+   "at": [
+    25.5,
+    43.5
+   ],
+   "glyph": "orbiter",
+   "label": "right"
+  },
+  "north-pole": {
+   "name": "North pole",
+   "at": [
+    22,
+    60.2
+   ],
+   "glyph": "swell",
+   "label": "top"
+  },
+  "core": {
+   "name": "Jupiter’s core",
+   "at": [
+    22,
+    45
+   ],
+   "glyph": "gas-giant",
+   "label": "right"
+  }
+ },
+ "travellers": {
+  "pioneer10": {
+   "name": "Pioneer 10",
+   "icon": "probe"
+  },
+  "pioneer11": {
+   "name": "Pioneer 11",
+   "icon": "probe"
+  },
+  "voyager1": {
+   "name": "Voyager 1",
+   "icon": "probe"
+  },
+  "galileo": {
+   "name": "Galileo",
+   "icon": "probe"
+  },
+  "cassini": {
+   "name": "Cassini",
+   "icon": "probe"
+  },
+  "juno": {
+   "name": "Juno",
+   "icon": "probe"
+  },
+  "juice": {
+   "name": "JUICE",
+   "icon": "probe"
+  },
+  "clipper": {
+   "name": "Europa Clipper",
+   "icon": "probe"
+  }
+ },
+ "phases": {
+  "flybys": {
+   "name": "The first flybys",
+   "color": "#ff8a3a"
+  },
+  "galileo": {
+   "name": "Galileo",
+   "color": "#4fc3b0"
+  },
+  "juno": {
+   "name": "Juno",
+   "color": "#a678e0"
+  },
+  "icy": {
+   "name": "Back to the icy moons",
+   "color": "#6fa8ff"
+  }
+ },
+ "routeStyles": {
+  "pioneer10": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "pioneer11": {
+   "color": "#6fd3f0",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "voyager1": {
+   "color": "#d9a8f5",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "galileo": {
+   "color": "#ff9f80",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "cassini": {
+   "color": "#9be28f",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "juno": {
+   "color": "#f5a3c7",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "juice": {
+   "color": "#8fb8ff",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "clipper": {
+   "color": "#f2e08a",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 23.6,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 65,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 80.8,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(111,168,255,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 1.6,
+    "text": "1973"
+   },
+   {
+    "at": 36.5,
+    "text": "1995"
+   },
+   {
+    "at": 69.8,
+    "text": "2016"
+   },
+   {
+    "at": 85.7,
+    "text": "Now"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "belts",
+   "phase": "flybys",
+   "title": "Through the radiation belts",
+   "when": "December 1973",
+   "at": 3.0,
+   "camera": {
+    "at": [
+     98,
+     58
+    ],
+    "width": 170
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "belts",
+     "traveller": "pioneer10",
+     "style": "pioneer10",
+     "bend": 0.12
+    }
+   ],
+   "text": "NASA’s Pioneer 10, launched in March 1972, was the first craft to cross the asteroid belt and reach Jupiter. On 3 December 1973 it passed about 130,000 kilometres above the cloud tops. Jupiter’s radiation belts, far fiercer than Earth’s, scrambled some of its commands and nearly overwhelmed it, but it sent back the first close pictures.",
+   "today": "Pioneer 10 sent its last faint signal in January 2003, about 12 billion kilometres from Earth."
+  },
+  {
+   "place": "red-spot",
+   "phase": "flybys",
+   "title": "Pioneer 11 dives closer",
+   "when": "December 1974",
+   "at": 4.6,
+   "camera": {
+    "at": [
+     100,
+     60
+    ],
+    "width": 170
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "red-spot",
+     "traveller": "pioneer11",
+     "style": "pioneer11",
+     "bend": -0.12
+    }
+   ],
+   "text": "Warned by Pioneer 10, NASA sent Pioneer 11 in faster and closer. In early December 1974 it passed about 40,000 kilometres above the clouds, climbing steeply from south to north, and took the first pictures of Jupiter’s poles and close views of the Great Red Spot, a storm wider than Earth. Jupiter’s pull then flung it on towards Saturn.",
+   "today": "Pioneer 11 made the first visit to Saturn in 1979; its last signal came in 1995."
+  },
+  {
+   "place": "io",
+   "phase": "flybys",
+   "title": "Volcanoes on Io",
+   "when": "March to July 1979",
+   "at": 11.6,
+   "camera": {
+    "at": [
+     92,
+     52
+    ],
+    "width": 100
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "io",
+     "traveller": "voyager1",
+     "style": "voyager1",
+     "bend": 0.12
+    }
+   ],
+   "text": "Voyager 1 swept past Jupiter on 5 March 1979; Voyager 2 followed in July. Days later, Linda Morabito, a navigation engineer, saw a plume rising off Io’s edge in an image taken to fix the craft’s course. It was a volcano erupting. The Voyagers found more plumes, and a faint ring round Jupiter: Io is the most volcanic world known.",
+   "today": "Io’s volcanoes are fed by tides: Europa and Ganymede tug its orbit out of round, and Jupiter flexes it."
+  },
+  {
+   "place": "sl9",
+   "phase": "galileo",
+   "title": "A comet hits Jupiter",
+   "when": "16 to 22 July 1994",
+   "at": 35.7,
+   "camera": {
+    "at": [
+     22,
+     42
+    ],
+    "width": 50
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "Comet Shoemaker–Levy 9, found in 1993, had been torn into a string of pieces by Jupiter’s pull. From 16 to 22 July 1994 more than 20 fragments struck the southern hemisphere, leaving dark scars some as wide as Earth. The hits were out of Earth’s view, but NASA’s Galileo, launched in 1989 and still on its way, saw several directly.",
+   "today": "It was the first collision between two Solar System bodies ever seen, and it spurred the search for asteroids that could hit Earth."
+  },
+  {
+   "place": "probe-entry",
+   "phase": "galileo",
+   "title": "Into the clouds",
+   "when": "7 December 1995",
+   "at": 37.9,
+   "camera": {
+    "at": [
+     30,
+     48
+    ],
+    "width": 60
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "probe-entry",
+     "traveller": "galileo",
+     "style": "galileo",
+     "bend": 0.1
+    }
+   ],
+   "text": "Galileo’s main antenna failed to open, so it sent home its data slowly through a small one. On 7 December 1995 its probe plunged into Jupiter at about 170,000 kilometres an hour and radioed for 58 minutes under a parachute, sinking some 150 kilometres. That day Galileo fired its engine and became the first craft to orbit an outer planet.",
+   "today": "The probe found less water than expected: it had fallen into an unusually dry, clear patch of sky."
+  },
+  {
+   "place": "ganymede",
+   "phase": "galileo",
+   "title": "A moon with a magnetic field",
+   "when": "1996",
+   "at": 38.9,
+   "camera": {
+    "at": [
+     110,
+     52
+    ],
+    "width": 100
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "On 27 June 1996 Galileo made the first of six close passes of Ganymede, the largest moon in the Solar System, bigger than Mercury. Its magnetometer found that Ganymede makes its own magnetic field, the only moon known to. Scientists think the field comes from a churning iron core; the moon also seems to hide salty water under its ice.",
+   "today": "In 2015 the Hubble telescope saw Ganymede’s aurorae rock less than expected, more evidence for an ocean below."
+  },
+  {
+   "place": "europa",
+   "phase": "galileo",
+   "title": "An ocean under the ice",
+   "when": "1996 to 2000",
+   "at": 41.3,
+   "camera": {
+    "at": [
+     100,
+     52
+    ],
+    "width": 100
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "Galileo’s pictures of Europa showed a young, cracked shell of ice, with jumbled blocks like broken pack ice. Its magnetometer then found Europa’s field flipping as Jupiter’s swept over it, best explained by a salty, electrically conducting ocean under the ice. In January 2000 a pass timed to test this bore it out. The ocean remains inferred, not seen.",
+   "today": "Europa probably holds about twice as much water as all Earth’s oceans, the reason two new missions are on their way."
+  },
+  {
+   "place": "cassini-pass",
+   "phase": "galileo",
+   "title": "Two craft at once",
+   "when": "December 2000",
+   "at": 46.0,
+   "camera": {
+    "at": [
+     140,
+     58
+    ],
+    "width": 110
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "cassini-pass",
+     "traveller": "cassini",
+     "style": "cassini",
+     "bend": 0.12
+    }
+   ],
+   "text": "On its way to Saturn, Cassini swung past Jupiter on 30 December 2000, about 10 million kilometres out, while Galileo flew inside the magnetosphere. The two worked together, Cassini measuring the solar wind outside and Galileo its effects inside. In February 2007 New Horizons, bound for Pluto, passed too and filmed a plume on Io.",
+   "today": "Cassini reached Saturn in 2004, and New Horizons reached Pluto in 2015."
+  },
+  {
+   "place": "galileo-end",
+   "phase": "galileo",
+   "title": "Galileo’s last plunge",
+   "when": "21 September 2003",
+   "at": 50.3,
+   "camera": {
+    "at": [
+     28,
+     46
+    ],
+    "width": 50
+   },
+   "legs": [],
+   "text": "Galileo outlived its planned two years by six, making 35 orbits and close passes of all four large moons, including Io’s volcanoes. With its fuel nearly gone, NASA steered it into Jupiter on 21 September 2003, so that it could never crash onto Europa and carry Earth microbes to a moon that might hold life.",
+   "today": "Cassini ended the same way at Saturn in 2017, to protect its moons Enceladus and Titan."
+  },
+  {
+   "place": "north-pole",
+   "phase": "juno",
+   "title": "Juno over the poles",
+   "when": "July 2016",
+   "at": 70.6,
+   "camera": {
+    "at": [
+     30,
+     52
+    ],
+    "width": 60
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "north-pole",
+     "traveller": "juno",
+     "style": "juno",
+     "bend": -0.1
+    }
+   ],
+   "source": "Science",
+   "text": "NASA’s Juno, launched in 2011, the first solar-powered craft at Jupiter, entered orbit on 4 July 2016, US time. Its long, looping orbit passes over the poles, diving close beneath the radiation belts. It found the poles unlike the rest of Jupiter: eight giant cyclones ring the north pole and five the south, each ring round a central storm.",
+   "today": "In 2019 a sixth cyclone squeezed into the southern ring."
+  },
+  {
+   "place": "core",
+   "phase": "juno",
+   "title": "Inside Jupiter",
+   "when": "2016 to 2021",
+   "at": 73.8,
+   "camera": {
+    "at": [
+     26,
+     45
+    ],
+    "width": 50
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "Juno weighs Jupiter’s insides by tracking how its pull tugs the spacecraft. It found the colourful bands run about 3,000 kilometres deep, and the core is not a compact ball but large and diluted, its heavy elements mixed far up into the hydrogen. One idea is that a giant collision long ago stirred it; that is still theory.",
+   "today": "Juno also mapped a lopsided magnetic field, with an intense patch near the equator called the Great Blue Spot."
+  },
+  {
+   "place": "io",
+   "phase": "juno",
+   "title": "Juno turns to the moons",
+   "when": "June 2021 to February 2024",
+   "at": 80.2,
+   "camera": {
+    "at": [
+     86,
+     50
+    ],
+    "width": 110
+   },
+   "legs": [],
+   "text": "Its main mission done, Juno was given new targets. It passed 1,038 kilometres from Ganymede in June 2021 and 352 from Europa in September 2022. In December 2023 and February 2024 it came within about 1,500 kilometres of Io, seeing lava lakes and mountains. NASA planned to end the mission in September 2025.",
+   "today": "Io’s Loki Patera is a lava lake about 200 kilometres across, its crust smooth as glass in Juno’s pictures."
+  },
+  {
+   "place": "ganymede",
+   "phase": "icy",
+   "title": "JUICE, bound for Ganymede",
+   "when": "April 2023 to 2034",
+   "at": 81.4,
+   "camera": {
+    "at": [
+     110,
+     54
+    ],
+    "width": 100
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "ganymede",
+     "traveller": "juice",
+     "style": "juice",
+     "bend": -0.12
+    }
+   ],
+   "text": "Europe’s Jupiter Icy Moons Explorer (JUICE) launched on 14 April 2023 from Kourou in French Guiana. It is looping past Earth, the Moon and Venus to gain speed, and is due at Jupiter in July 2031. After 35 flybys of Ganymede, Europa and Callisto, it plans to orbit Ganymede from December 2034, the first craft to orbit another planet’s moon.",
+   "today": "On 28 September 2026 it passed 8,640 kilometres from Earth; one more Earth flyby, in January 2029, sends it to Jupiter."
+  },
+  {
+   "place": "europa",
+   "phase": "icy",
+   "title": "Europa Clipper",
+   "when": "October 2024 to the 2030s",
+   "at": 83.8,
+   "camera": {
+    "at": [
+     104,
+     54
+    ],
+    "width": 100
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "europa",
+     "traveller": "clipper",
+     "style": "clipper",
+     "bend": 0.12
+    }
+   ],
+   "text": "NASA’s Europa Clipper, the largest craft it has built for a planetary mission, launched on 14 October 2024. It passed Mars in March 2025, swings past Earth in December 2026 and is due at Jupiter in April 2030. It will fly past Europa about 49 times, measuring its ice and ocean and asking whether they could support life.",
+   "today": "It is due to reach Jupiter about a year before JUICE, and the two plan to work there together."
+  }
+ ],
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "morabito",
+    "name": "Linda Morabito",
+    "life": "born 1953",
+    "role": "Navigation engineer",
+    "steps": [
+     2
+    ],
+    "text": "A Canadian-born American engineer at NASA’s Jet Propulsion Laboratory who worked on optical navigation, finding a spacecraft’s position from pictures of stars and moons. In March 1979, processing a Voyager 1 image of Io, she noticed a strange crescent off its edge: a volcanic plume. It was the first active volcano found beyond Earth."
+   },
+   {
+    "id": "kivelson",
+    "name": "Margaret Kivelson",
+    "life": "born 1928",
+    "role": "Space physicist",
+    "steps": [
+     5,
+     6
+    ],
+    "text": "An American space physicist at the University of California, Los Angeles, who led the magnetometer on Galileo. Her team found that Ganymede makes its own magnetic field, and that Europa’s field flips as Jupiter’s does, the strongest early evidence for a salty ocean beneath its ice. A pass in 2000 was planned to test the idea, and it held."
+   }
+  ]
+ }
+}
