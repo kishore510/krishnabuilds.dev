@@ -7,17 +7,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A static games hub — no build step, no backend, no package manager. Every
 page is a single self-contained HTML file with inline `<style>`/`<script>`
 (one exception: a game whose logic needs headless tests may split it into a
-pure, DOM-free script next to its `index.html`; Tennis's `engine.js` is the
-only one so far, see `docs/decisions.md`, 2026-11-08).
+pure, DOM-free script next to its `index.html`; Tennis's and Wildcard's
+`engine.js` are the two so far, see `docs/decisions.md`, 2026-11-08).
 Live at `arcade.krishnabuilds.dev`. Arcade now lives in the krishnabuilds.dev
 monorepo and follows the root `CLAUDE.md`: work on a branch, open a PR,
 squash merge; deploys run from GitHub Actions on merge to `main`.
 
 ## Commands
 
-There's no build step — it's plain HTML/CSS/JS. The one test suite is
-Tennis's engine tests (`node --test scripts/tennis.test.js` from
-`apps/arcade`, or `pnpm --filter @krishnabuilds/arcade test`), which CI runs.
+There's no build step — it's plain HTML/CSS/JS. The test suites are
+Tennis's and Wildcard's engine tests (`node --test scripts/tennis.test.js
+scripts/wildcard.test.js` from `apps/arcade`, or `pnpm --filter
+@krishnabuilds/arcade test`), which CI runs.
 To preview locally:
 
 ```
@@ -56,11 +57,13 @@ games/mosaica/index.html      — Mosaica (canvas, drag-to-column/rotate tetromi
 games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fighter vs CPU; see "Dojo Duel notes" below for its layout and tuning tables)
 games/tennis/index.html       — Tennis (canvas, landscape fullscreen like Dojo Duel: left-thumb stick, right-thumb swipes; World Tour, quick match, practice; page, rendering, sound and input)
 games/tennis/engine.js        — Tennis's pure logic (physics, swing, swipe gestures, rules, CPU, surfaces, tour; CONFIG tables at the top), tested by scripts/tennis.test.js
+games/wildcard/index.html     — Wildcard (DOM, portrait card game vs 3 bots; see "Wildcard notes" below)
+games/wildcard/engine.js      — Wildcard's pure rules, seeded deal and bots, tested by scripts/wildcard.test.js; written to run unchanged in a Worker later
 games/<slug>/index.html       — next game goes here
 ```
 
 This list is not every game. The `GAMES` array in `index.html` is the source
-of truth, and `README.md` lists all 36 with their folders and taglines.
+of truth, and `README.md` lists all 37 with their folders and taglines.
 
 ## Adding a new game
 
@@ -500,6 +503,51 @@ are the current values in the tables below; check those before quoting.
   `localStorage` `dojoDuelHowtoSeen` (the How to play panel opens by itself
   until it's dismissed once) and `dojoDuelPowers` (the loadout, e.g.
   `fireball,boost,shield`; anything invalid falls back to the default).
+
+## Wildcard notes
+
+A Crazy Eights family card game (`games/wildcard/`): you against three bots,
+portrait, DOM rather than canvas. Our own name and card art; it must not take
+the name, logo or look of any commercial card game.
+
+- **Rules** live in `engine.js` (top comment): 108 cards, 7 each, first discard
+  always a number, match colour or number/symbol, wilds pick a colour, Skip,
+  Reverse (a Skip with two players), Draw two, Wild draw four (no stacking, no
+  challenge), draw one and optionally play it, "Last card" or draw two.
+- **Engine API:** `createGame({players, seed, first})`, `legalPlays`, `play`,
+  `draw`, `pass`, `apply(state, seat, move)` (the one entry point a server
+  will use), `viewFor(state, seat)` (only what that seat may see: its hand,
+  counts, top card), `botMove(state, seat, 'easy'|'hard', rand)`. Every move
+  returns `{ok, error, events}`; the page animates the events in order.
+  Bots decide from `viewFor` only, so they can't see other hands.
+- **Bots:** Easy plays a random legal card and forgets Last card 25% of the
+  time. Hard keeps wilds, saves Skip / +2 / +4 for a player on 2 or fewer
+  cards, sheds its biggest colour and high numbers. In 2,000 seeded games
+  Hard wins about 35% against Easy's 15% (an even table is 25%); the test
+  only checks Hard beats Easy.
+- **Page:** a fixed 380x700 stage scaled with `transform` to fit the space
+  left by the nav bar and guide link (`fit()` uses
+  `documentElement.clientWidth/Height`, because on phones a stage that was
+  briefly too wide grows `innerWidth` with it). Cards fly between seats with
+  the Web Animations API; `prefers-reduced-motion` cuts them to nothing.
+- **Contrast:** card numbers are dark ink on the white centre gem or white
+  on a dark ink corner chip (7.8:1 or better for every colour; never white
+  straight on a card colour, which is 1.75:1 on saffron). Unplayable cards
+  are dimmed with `--dim` (saturation and brightness, never opacity, so the
+  ink stays dark).
+- **Themes:** follows `prefers-color-scheme`; the menu's Theme picker saves
+  `wildcardTheme` (`light` / `dark`, absent = auto) and sets
+  `data-theme` on `<html>`, like `kb-tokens.css`. The page around the table
+  stays dark in both, matching the shared nav bar and guide link.
+- **Storage** (`localStorage`, all guarded): `wildcardTheme`,
+  `wildcardLevel`, `wildcardMuted`, `wildcardStats` (`{games, wins}`),
+  `wildcardHowtoSeen`.
+- **Test handle:** `window.wildcard` (`state`, `busy`, `E`, `newGame`,
+  `step`, `setTheme`). Nothing in the game uses it.
+- **Online play** (next slices, `BACKLOG.md`): room codes only, a Durable
+  Object per table running this same `engine.js`, bots in empty seats, and
+  5 new rooms per IP per day for everyone (no passcode); see
+  `docs/decisions.md`, 2026-11-23.
 
 ## Mobile-first constraints learned the hard way
 

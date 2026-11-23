@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d2033"/>
+      <stop offset="0.55" stop-color="#17395a"/>
+      <stop offset="1" stop-color="#3a45c9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22b8a0" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#22b8a0" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="felt" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.7" fill="#ffffff" fill-opacity="0.1"/>
+    </pattern>
+    <pattern id="back" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M0 5 L5 0" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1.5"/>
+    </pattern>
+    <g id="gem4">
+      <path d="M0 -7 L7 0 L0 7 L-7 0Z" fill="#ff5a5f"/>
+      <path d="M0 -7 L7 0 L0 0Z" fill="#ffb703"/>
+      <path d="M7 0 L0 7 L0 0Z" fill="#22b8a0"/>
+      <path d="M0 7 L-7 0 L0 0Z" fill="#5b6cff"/>
+    </g>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <rect width="240" height="92" fill="url(#felt)"/>
+  <ellipse cx="120" cy="60" rx="64" ry="34" fill="url(#glow)"/>
+  <!-- spare backs at the edges -->
+  <g transform="translate(22 40) rotate(-12)"><rect width="24" height="34" rx="3" fill="#1b2540"/><rect x="2" y="2" width="20" height="30" rx="2" fill="#24315a"/><rect x="2" y="2" width="20" height="30" rx="2" fill="url(#back)"/></g>
+  <g transform="translate(196 36) rotate(10)"><rect width="24" height="34" rx="3" fill="#1b2540"/><rect x="2" y="2" width="20" height="30" rx="2" fill="#24315a"/><rect x="2" y="2" width="20" height="30" rx="2" fill="url(#back)"/></g>
+  <ellipse cx="120" cy="86" rx="46" ry="4" fill="#000" fill-opacity="0.3"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif" font-weight="800" text-anchor="middle">
+    <!-- coral 7 -->
+    <g transform="translate(80 36) rotate(-16 16 22)">
+      <rect width="32" height="46" rx="4" fill="#ffffff"/>
+      <rect x="2" y="2" width="28" height="42" rx="3" fill="#ff5a5f"/>
+      <path d="M16 12 L26 23 L16 34 L6 23Z" fill="#ffffff"/>
+      <text x="16" y="28" font-size="14" fill="#a3161c">7</text>
+    </g>
+    <!-- jade +2 -->
+    <g transform="translate(128 36) rotate(16 16 22)">
+      <rect width="32" height="46" rx="4" fill="#ffffff"/>
+      <rect x="2" y="2" width="28" height="42" rx="3" fill="#22b8a0"/>
+      <path d="M16 12 L26 23 L16 34 L6 23Z" fill="#ffffff"/>
+      <text x="16" y="27.5" font-size="11" fill="#075548">+2</text>
+    </g>
+    <!-- the wild, lifted, being played -->
+    <g transform="translate(104 28)">
+      <rect width="32" height="46" rx="4" fill="#ffffff" stroke="#ffb703" stroke-width="1.6"/>
+      <rect x="2" y="2" width="28" height="42" rx="3" fill="#161e30"/>
+      <use href="#gem4" transform="translate(16 23) scale(1.35)"/>
+      <circle cx="16" cy="23" r="5" fill="#0b101c" stroke="#ffffff" stroke-width="1"/>
+      <path d="M16 20.2 l0.9 1.9 2 .25 -1.5 1.4 .4 2 -1.8 -1 -1.8 1 .4 -2 -1.5 -1.4 2 -.25z" fill="#ffffff"/>
+    </g>
+  </g>
+</svg>

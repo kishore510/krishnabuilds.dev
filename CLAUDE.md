@@ -12,7 +12,7 @@ Guidance for Claude (and humans) working in this repo.
 | **Chalkline** | Simple app, migrating in week 2 |
 | **Stickyard** | Simple app, migrating in week 2 |
 | **Sumyard** | Simple app, migrating in week 2 |
-| **Arcade** | Games (36). Game list in `apps/arcade/README.md`; maintainer notes, incl. Dojo Duel, in `apps/arcade/CLAUDE.md` |
+| **Arcade** | Games (37). Game list in `apps/arcade/README.md`; maintainer notes, incl. Dojo Duel, in `apps/arcade/CLAUDE.md` |
 | **Story Maps** | Illustrated, data-driven story maps; one self-contained page per story. Notes in `apps/story-maps/CLAUDE.md` |
 | **Stonks** | Portfolio tracker: GitHub Actions cron + D1 + read-only Worker dashboard |
 
