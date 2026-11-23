@@ -1485,3 +1485,88 @@ a.sm-mini:hover {
   margin: 0;
   line-height: 1.8;
 }
+
+/* The story as text, /<id>/read/ (scripts/seo.mjs storyRead) */
+.sm-read {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-space-6);
+}
+
+.sm-read-head h1 {
+  margin: var(--kb-space-1) 0 var(--kb-space-3);
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.sm-read-desc {
+  margin: 0 0 var(--kb-space-4);
+  font-size: var(--kb-font-size-lg);
+  line-height: 1.6;
+}
+
+.sm-read-contents ol {
+  margin: 0;
+  padding-left: 1.6em;
+  line-height: 1.7;
+}
+
+.sm-read-ch {
+  scroll-margin-top: var(--kb-space-4);
+  padding-top: var(--kb-space-4);
+  border-top: 1px solid var(--sm-line);
+}
+
+.sm-read-ch h2,
+.sm-read-people h2 {
+  margin: var(--kb-space-1) 0 var(--kb-space-2);
+  font-size: var(--kb-font-size-2xl);
+}
+
+.sm-read-ch p,
+.sm-read-person p {
+  margin: 0 0 var(--kb-space-3);
+  line-height: 1.65;
+}
+
+.sm-read .sm-read-meta {
+  margin: 0;
+  font-size: var(--kb-font-size-sm);
+  color: var(--sm-muted);
+}
+
+.sm-read .sm-read-native {
+  margin-top: calc(-1 * var(--kb-space-1));
+  color: var(--sm-muted);
+}
+
+.sm-read-today {
+  color: var(--sm-muted);
+  font-style: italic;
+}
+
+.sm-read .sm-read-open {
+  margin: 0;
+  font-size: var(--kb-font-size-sm);
+}
+
+.sm-read-person h3 {
+  margin: var(--kb-space-4) 0 var(--kb-space-1);
+  font-size: var(--kb-font-size-lg);
+}
+
+.sm-read .sm-read-role {
+  margin-bottom: var(--kb-space-1);
+  color: var(--sm-muted);
+}
+
+.sm-read-related ul {
+  margin: 0;
+  padding-left: 1.2em;
+  line-height: 1.8;
+}
+
+.sm-read .sm-note {
+  margin: 0;
+}

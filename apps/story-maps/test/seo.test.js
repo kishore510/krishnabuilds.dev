@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { breadcrumb, ldScript, robots, sitemap, storyText, webPage } from "../scripts/seo.mjs";
+import { breadcrumb, ldScript, robots, sitemap, storyRead, storyText, webPage } from "../scripts/seo.mjs";
 
 const ORIGIN = "https://example.test";
 
@@ -44,19 +44,63 @@ describe("structured data", () => {
 });
 
 describe("storyText", () => {
-  it("copies every chapter into the page, escaped", () => {
-    const html = storyText({ title: "T & U", description: "Desc", steps: [{ title: "One", when: "c. 1 BCE", text: "A <b> text" }, { title: "Two", text: "More", today: "Today" }] });
+  const story = { title: "T & U", description: "Desc", steps: [{ title: "One", when: "c. 1 BCE", text: "A <b> text" }, { title: "Two", text: "More" }] };
+
+  it("lists the chapter titles and links to the text page, without the chapter text", () => {
+    const html = storyText(story, "/t/read/");
     expect(html).toContain("<h2>T &amp; U</h2>");
     expect(html).not.toContain("<h1");
-    expect(html).toContain("1. One (c. 1 BCE)");
-    expect(html).toContain("A &lt;b&gt; text");
-    expect(html).toContain("2. Two");
-    expect(html).toContain("<p>Today</p>");
+    expect(html).toContain("<li>One (c. 1 BCE)</li>");
+    expect(html).not.toContain("A &lt;b&gt; text");
+    expect(html).toContain('<a href="/t/read/" tabindex="-1">Read the whole story</a>');
     expect(html).not.toContain("<nav");
   });
 
   it("adds related links that keyboard focus skips", () => {
-    const html = storyText({ title: "T", description: "D", steps: [] }, [{ text: "A & B", href: "/explore/a/" }]);
+    const html = storyText({ title: "T", description: "D", steps: [] }, "/t/read/", [{ text: "A & B", href: "/explore/a/" }]);
     expect(html).toContain('<a href="/explore/a/" tabindex="-1">A &amp; B</a>');
+  });
+});
+
+describe("storyRead", () => {
+  const story = {
+    title: "T & U",
+    description: "Desc",
+    source: "History",
+    note: "A note",
+    nativeLang: "fr",
+    phases: { p1: { name: "Rise" } },
+    steps: [
+      { title: "One", phase: "p1", when: "1800", native: "Un", text: "A <b> text", today: "Now a museum" },
+      { title: "Two", text: "More", source: "Tradition", native: "Zwei", lang: "de" },
+    ],
+    people: { heading: "People", items: [{ name: "N", life: "1–2", role: "Role", text: "Bio" }] },
+  };
+  const html = storyRead(story, { kicker: "Wars", mapHref: "/t/", links: [{ text: "Rel", href: "/explore/r/" }] });
+
+  it("has one h1 and every chapter's full text, escaped, in order", () => {
+    expect(html.match(/<h1/g)).toHaveLength(1);
+    expect(html).toContain("<h1>T &amp; U</h1>");
+    expect(html).toContain("A &lt;b&gt; text");
+    expect(html.indexOf('id="chapter-1"')).toBeLessThan(html.indexOf('id="chapter-2"'));
+    expect(html).toContain("Now a museum");
+  });
+
+  it("gives each chapter its phase, date, source, native name and a link to it on the map", () => {
+    expect(html).toContain("Chapter 1 · Rise · 1800");
+    expect(html).toContain('<span class="sm-tag">History</span>');
+    expect(html).toContain('<span class="sm-tag">Tradition</span>');
+    expect(html).toContain('lang="fr" dir="auto">Un<');
+    expect(html).toContain('lang="de" dir="auto">Zwei<');
+    expect(html).toContain('href="/t/#2"');
+    expect(html).toContain('<a href="#chapter-2">Two</a>');
+  });
+
+  it("adds the people, the note and plain related links", () => {
+    expect(html).toContain("<h2>People</h2>");
+    expect(html).toContain("Bio");
+    expect(html).toContain("A note");
+    expect(html).toContain('<a href="/explore/r/">Rel</a>');
+    expect(html).not.toContain("tabindex");
   });
 });

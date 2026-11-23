@@ -14,7 +14,7 @@ import { copyFileSync, cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } 
 import { createRequire } from "node:module";
 
 import { checkStory, loadEngineAssets, loadMapFunctions, loadStoryData } from "./engine.mjs";
-import { breadcrumb, ldScript, robots, sitemap, storyText, webPage, webSite } from "./seo.mjs";
+import { breadcrumb, ldScript, robots, sitemap, storyRead, storyText, webPage, webSite } from "./seo.mjs";
 import { loadCatalogue, loadExplore, validateCatalogue } from "./catalogue.mjs";
 import { APP_DIR, loadManifest, validateManifest } from "./manifest.mjs";
 
@@ -220,12 +220,32 @@ function storyPage(entry) {
       title: esc(data.story.title),
       mapLabel: esc(data.story.mapLabel),
       note: esc(data.story.note),
+      readHref: `/${entry.id}/read/`,
       data: json,
       engine: engine.js,
     },
     "engine/src/player.html",
   );
-  return `${page}\n${storyText(data.story, seoLinks(entry, data.more))}\n<script>\n${progressJs}</script>\n<script>\n${statsJs}</script>\n<script>\n${tourJs}</script>`;
+  return `${page}\n${storyText(data.story, `/${entry.id}/read/`, seoLinks(entry, data.more))}\n<script>\n${progressJs}</script>\n<script>\n${statsJs}</script>\n<script>\n${tourJs}</script>`;
+}
+
+/**
+ * The story as text, at /<id>/read/: every chapter in order, for readers who would rather read
+ * than follow the map, and for search engines.
+ * @param {Story} entry @param {ReturnType<typeof loadStoryData>["story"]} data
+ */
+function readPage(entry, data) {
+  const section = manifest.sections.find((x) => x.id === entry.section);
+  const collection = manifest.collections.find((c) => c.id === entry.collection);
+  const kicker = [section?.title, collection?.title].filter(Boolean).join(" · ");
+  return [
+    `<header class="sm-top"><a href="/${entry.id}/">← Back to the map</a>${THEME_PICKER}</header>`,
+    '<main class="sm-page sm-story sm-read-page">',
+    storyRead(data, { kicker, mapHref: `/${entry.id}/`, links: seoLinks(entry, storyLinks(entry)) }),
+    FOOT,
+    "</main>",
+    THEME_SCRIPT,
+  ].join("\n");
 }
 
 // --- hub: timeline and Browse ------------------------------------------------
@@ -611,9 +631,9 @@ function entryPage(e) {
   if (story && isBuilt(e) && e.chapter) {
     // Part of a larger story: open it at this entry's chapter.
     const step = loadStoryData(story).story.steps[e.chapter - 1];
-    storyPanel = `<section class="sm-panel sm-panel--map"><h2>Part of the story map: ${esc(story.title)}</h2><p>It is told in chapter ${e.chapter}, “${esc(step.title)}”, of the larger story.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/#${e.chapter}">Open at chapter ${e.chapter}</a><a class="sm-btn" href="/${story.id}/">Start from the beginning</a></div></section>`;
+    storyPanel = `<section class="sm-panel sm-panel--map"><h2>Part of the story map: ${esc(story.title)}</h2><p>It is told in chapter ${e.chapter}, “${esc(step.title)}”, of the larger story.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/#${e.chapter}">Open at chapter ${e.chapter}</a><a class="sm-btn" href="/${story.id}/">Start from the beginning</a><a class="sm-btn" href="/${story.id}/read/#chapter-${e.chapter}">Read it as text</a></div></section>`;
   } else if (story && isBuilt(e)) {
-    storyPanel = `<section class="sm-panel sm-panel--map"><h2>Story map: ${esc(story.title)}</h2><p>Follow it across an illustrated map, chapter by chapter.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/">Open the story map</a></div></section>`;
+    storyPanel = `<section class="sm-panel sm-panel--map"><h2>Story map: ${esc(story.title)}</h2><p>Follow it across an illustrated map, chapter by chapter.</p><div class="sm-btns"><a class="sm-btn sm-btn--primary" href="/${story.id}/">Open the story map</a><a class="sm-btn" href="/${story.id}/read/">Read the whole story</a></div></section>`;
   } else if (story) {
     storyPanel = `<section class="sm-panel"><h2>Story map coming: ${esc(story.title)}</h2><p class="sm-muted">This map is still being drawn.</p></section>`;
   } else {
@@ -718,6 +738,25 @@ for (const story of manifest.stories) {
         ],
         story: true,
         body: storyPage(story),
+      }),
+    );
+    write(
+      `${story.id}/read/index.html`,
+      render({
+        title: `${story.title}: the whole story, chapter by chapter · krishnabuilds`,
+        description: data.description,
+        path: `/${story.id}/read/`,
+        lastmod: story.added,
+        ld: [
+          webPage(ORIGIN, { type: "Article", name: `${story.title}: the whole story`, description: data.description, path: `/${story.id}/read/`, published: story.added }),
+          breadcrumb(ORIGIN, [
+            { name: "Story Maps", path: "/" },
+            { name: story.title, path: `/${story.id}/` },
+            { name: "The whole story", path: `/${story.id}/read/` },
+          ]),
+        ],
+        explore: true,
+        body: readPage(story, data),
       }),
     );
     continue;

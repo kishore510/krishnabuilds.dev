@@ -1,6 +1,6 @@
 # CLAUDE.md: Story Maps
 
-Illustrated, data-driven story maps at `story-maps.krishnabuilds.dev`: a front page of three shelves, a page per subject (`/<subject>/`, for sharing one subject), an Explore page (Timeline, Browse, Atlas; it opens on Timeline) and one page per story. Follows the root `CLAUDE.md`; this file only adds what is specific to Story Maps.
+Illustrated, data-driven story maps at `story-maps.krishnabuilds.dev`: a front page of three shelves, a page per subject (`/<subject>/`, for sharing one subject), an Explore page (Timeline, Browse, Atlas; it opens on Timeline) and one page per story, with its whole text at `/<id>/read/`. Follows the root `CLAUDE.md`; this file only adds what is specific to Story Maps.
 
 Story Maps "stories" are not the Portal's `/stories/<slug>` pages (the Portal's write-ups about each app). In this folder, "story" always means a map in `manifest.json`.
 
@@ -49,7 +49,7 @@ licences/          OFL texts for the fonts
 docs/              design notes for engine features (earth-deep.md)
 engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, validate), player.js (browser), engine.css, player.html
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
-scripts/seo.mjs    sitemap.xml, robots.txt, JSON-LD and the hidden text copy of a story (pure; test/seo.test.js)
+scripts/seo.mjs    sitemap.xml, robots.txt, JSON-LD, the short hidden copy on a story page and the story's text page at /<id>/read/ (pure; test/seo.test.js)
 scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above
 ```
 
