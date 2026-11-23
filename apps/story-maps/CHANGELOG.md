@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.114.0
+
+- New story map in Wars and Campaigns: The Second World War. From Japan’s war in China and the Munich crisis through the invasion of Poland, Dunkirk, the Battle of Britain, Barbarossa, Pearl Harbor, Singapore, Midway, El Alamein, Stalingrad, the Holocaust and the Bengal famine to Imphal and Kohima, D-Day, the fall of Berlin, Hiroshima and Nagasaki and the United Nations. 18 chapters on the `world` basemap, a Powers layer (Germany and occupied Europe, Italy, Japan and its conquests, the Soviet Union, Britain and its empire, the United States, China), 8 people cards, native names in Chinese, German, Polish, French, Russian, Japanese, Arabic and Bengali, no new glyphs.
+- Catalogue: a new Second World War entry opens the story; new Holocaust, Attack on Pearl Harbor, Battle of Stalingrad, Bengal famine of 1943 and Hiroshima and Nagasaki entries open it at chapters 12, 7, 11, 13 and 17.
+
 ## 0.113.0
 
 - New story map in Wars and Campaigns: The First World War. From the shots in Sarajevo through Belgium, the Marne, Tannenberg, the Indian Corps at Ypres, Gallipoli, Verdun, the Somme and the siege of Kut, to America’s entry, Caporetto, Brest-Litovsk, Amiens, Palestine, the armistice at Compiègne and the Treaty of Versailles. 16 chapters on the `mediterranean` basemap, a Powers layer (Germany, Austria-Hungary, the Ottoman Empire, the occupied west and east, France and Britain, Russia, Italy), 7 people cards, native names in Serbian, German, Turkish, French, Arabic, Italian and Russian, no new glyphs.

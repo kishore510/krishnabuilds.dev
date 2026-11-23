@@ -1,0 +1,9 @@
+# The Second World War
+
+Status: built. The war of 1939 to 1945 across the world: Japan’s war in China, Munich, the invasion of Poland, the fall of France, the Battle of Britain, Operation Barbarossa, Pearl Harbor, the fall of Singapore, Midway, El Alamein, Stalingrad, the Holocaust, the Bengal famine, Imphal and Kohima, D-Day, the fall of Berlin, Hiroshima and Nagasaki and the United Nations. 18 chapters, a **Powers** layer (Germany and occupied Europe, Italy, Japan and its conquests, the Soviet Union, Britain and its empire, the United States and China) and 8 people cards.
+
+- `story.json`: the story data. It uses the `world` basemap and the shared art library, with no additions. Routes stay on the map from chapter to chapter. Midway is given at longitude 182.63 (177.37°W) so it sits on the basemap’s eastern edge.
+- Source: every card is **History**.
+- Native names are in German (`de`), with each step or person setting its own language (`zh`, `pl`, `fr`, `ru`, `ja`, `ar`, `bn`).
+- Sources: standard histories of the war (Richard Overy, Blood and Ruins; Antony Beevor, The Second World War; Rana Mitter, China’s War with Japan; Christopher Bayly and Tim Harper, Forgotten Armies; Srinath Raghavan, India’s War; Yasmin Khan, The Raj at War), the United States Holocaust Memorial Museum and the Auschwitz-Birkenau State Museum. Disputed: total deaths (70 to 85 million) and every casualty figure, above all for Nanjing, Stalingrad and the Soviet Union as a whole; the deaths and causes of the Bengal famine, and how far London’s decisions were to blame; the death toll at Hiroshima and Nagasaki; whether the atomic bombs or the Soviet declaration of war did more to bring Japan’s surrender; and the circumstances of Subhas Chandra Bose’s death. The war in China is dated from 1937 here; some historians date the Second World War from then rather than from 1939.
+- Powers areas are loose regions, not borders, and the front lines are simplified.

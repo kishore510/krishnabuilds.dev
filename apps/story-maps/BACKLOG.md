@@ -6,10 +6,6 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
-### Wars and Campaigns
-
-1. The Second World War (`world`)
-
 The Indian Chronicles are complete.
 
 One subject is still without a story: Invention. Lives to add: Einstein (`europe`).
@@ -42,6 +38,7 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- The Second World War (`second-world-war`), 2026-11-23
 - The First World War (`first-world-war`), 2026-11-23
 - Missions to Mercury (`mercury-missions`), 2026-11-23
 - Pluto and the Kuiper Belt (`pluto`), 2026-11-23
