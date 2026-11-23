@@ -165,8 +165,13 @@
   .avatar { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 24px; position: relative;
     background: var(--panel); border: 3px solid var(--chip-b); box-shadow: 0 6px 14px -4px var(--shadow); transition: box-shadow 0.3s, border-color 0.3s; }
   .opp.active .avatar, .me.active .avatar { border-color: var(--cur); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cur) 30%, transparent), 0 0 20px color-mix(in srgb, var(--cur) 70%, transparent); }
-  .count { position: absolute; bottom: -5px; right: -9px; background: #fff; color: #0a0f1a; font-size: 11.5px; font-weight: 900;
-    min-width: 22px; height: 22px; border-radius: 11px; display: grid; place-items: center; padding: 0 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+  /* Cards left, for every player: dark ink on white (the hand size is
+     the score that matters), red when a player is down to one or two. */
+  .count { background: #fff; color: #0a0f1a; font-size: 11.5px; font-weight: 900; line-height: 1; white-space: nowrap;
+    padding: 4px 9px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+  .count.low { background: var(--danger); color: #fff; }
+  /* The top seat has no room under its name (the log sits there), so its count goes beside the avatar. */
+  .opp.s2 .count { position: absolute; top: 57px; left: 76px; }
   .name { font-size: 12.5px; font-weight: 700; }
   .name small { color: var(--muted); font-weight: 600; }
   .fan { position: relative; height: 40px; width: 92px; }
@@ -304,9 +309,9 @@
       <path d="M13 135 l-6 -11 h12z" fill="currentColor"/>
     </g></svg></div>
 
-    <div class="opp s1" data-seat="1"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
-    <div class="opp s2" data-seat="2"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
-    <div class="opp s3" data-seat="3"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s1" data-seat="1"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span></div><div class="name"></div><div class="count"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s2" data-seat="2"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span></div><div class="name"></div><div class="count"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s3" data-seat="3"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span></div><div class="name"></div><div class="count"></div><div class="fan"></div><div class="badge">Last card!</div></div>
 
     <div id="log" aria-live="polite"></div>
 
@@ -319,7 +324,7 @@
     <div id="hand" role="group" aria-label="Your hand"></div>
 
     <div class="actions">
-      <div class="me" data-seat="0"><div class="avatar">🙂</div><span id="meText">You</span></div>
+      <div class="me" data-seat="0"><div class="avatar">🙂</div><span>You</span><span class="count" id="meCount"></span></div>
       <div style="display:flex;gap:8px">
         <button class="btn keep" id="keepBtn" hidden>Keep it</button>
         <button class="btn last" id="lastBtn" hidden aria-pressed="false">LAST CARD!</button>
@@ -523,7 +528,9 @@
       const el = oppEl(s);
       const n = state.hands[s].length;
       el.querySelector('.em').textContent = P(s).em;
-      el.querySelector('.count').textContent = n;
+      const cnt = el.querySelector('.count');
+      cnt.textContent = cardsText(n);
+      cnt.classList.toggle('low', n <= 2 && state.winner === null);
       el.querySelector('.name').innerHTML = P(s).name + ' <small>bot</small>';
       el.classList.toggle('active', state.winner === null && state.turn === s);
       el.classList.toggle('last', n === 1 && state.winner === null);
@@ -574,6 +581,11 @@
     return discardLook.get(id);
   }
 
+  const cardsText = (n) => n + (n === 1 ? ' card' : ' cards');
+  // Cards drawn into your hand that are still in the air: their slot stays
+  // hidden until the flying card lands on it, so one draw shows one card.
+  const incoming = new Set();
+
   function renderHand() {
     const hand = $('hand');
     const ids = state.hands[0];
@@ -602,11 +614,14 @@
       el.style.transform = 'rotate(' + p.rot + 'deg) translateY(' + (ok ? -14 : 0) + 'px)';
       el.setAttribute('aria-label', label(id) + (ok ? ', playable' : ''));
       el.tabIndex = myTurn ? 0 : -1;
+      el.style.visibility = incoming.has(id) ? 'hidden' : '';
       hand.appendChild(el); // keeps DOM order = hand order
     });
     for (const [id, el] of old) if (!keep.has(id)) el.remove();
 
-    $('meText').textContent = 'You · ' + ids.length + (ids.length === 1 ? ' card' : ' cards');
+    const mine = ids.length - incoming.size;
+    $('meCount').textContent = cardsText(mine);
+    $('meCount').classList.toggle('low', mine <= 2 && state.winner === null);
     const showLast = myTurn && !busy && ids.length === 2 && legal.size > 0;
     if (!showLast && !(myTurn && armed)) armed = false;
     $('lastBtn').hidden = !showLast;
@@ -710,7 +725,8 @@
     }
     const r = E.apply(state, seat, move);
     if (!r.ok) { busy = false; render(); return r; }
-    renderHand(); // the played card leaves the hand straight away
+    for (const ev of r.events) if (ev.seat === 0 && (ev.type === 'draw' || ev.type === 'penalty')) ev.cards.forEach((id) => incoming.add(id));
+    renderHand(); // the played card leaves the hand straight away; drawn ones wait for their flight
 
     for (const ev of r.events) await animate(ev, from);
     busy = false;
@@ -739,7 +755,11 @@
       const to = seatPoint(ev.seat);
       const jobs = ev.cards.map((id, i) => {
         setTimeout(sfx.draw, i * 120);
-        return fly(ev.seat === 0 ? id : null, deckPoint(), Object.assign({}, to, { rot: ev.seat === 0 ? 0 : 10 }), 360, i * 120);
+        if (ev.seat !== 0) return fly(null, deckPoint(), Object.assign({}, to, { rot: 10 }), 360, i * 120);
+        // Yours flies face up to its own slot, which appears as it lands.
+        const slot = $('hand').querySelector('[data-id="' + id + '"]');
+        const at = slot ? Object.assign(centre(slot), { s: 1, rot: handLayout(state.hands[0].length)[state.hands[0].indexOf(id)].rot }) : to;
+        return fly(id, deckPoint(), at, 360, i * 120).then(() => { incoming.delete(id); renderHand(); });
       });
       await Promise.all(jobs);
       if (!ev.forced && ev.type === 'draw') log((ev.seat === 0 ? 'You' : who) + ' drew a card');
@@ -820,6 +840,7 @@
   // ---------- game flow ----------
   async function newGame() {
     clearTimeout(botTimer);
+    incoming.clear();
     previewing = false;
     discardLook.clear();
     armed = false;
