@@ -8,8 +8,7 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ### Wars and Campaigns
 
-1. The First World War (`mediterranean`: the Western Front to Gallipoli, Mesopotamia and Palestine)
-2. The Second World War (`world`)
+1. The Second World War (`world`)
 
 The Indian Chronicles are complete.
 
@@ -43,6 +42,7 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- The First World War (`first-world-war`), 2026-11-23
 - Missions to Mercury (`mercury-missions`), 2026-11-23
 - Pluto and the Kuiper Belt (`pluto`), 2026-11-23
 - Asteroids and Comets (`asteroids-comets`), 2026-11-23

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.113.0
+
+- New story map in Wars and Campaigns: The First World War. From the shots in Sarajevo through Belgium, the Marne, Tannenberg, the Indian Corps at Ypres, Gallipoli, Verdun, the Somme and the siege of Kut, to America’s entry, Caporetto, Brest-Litovsk, Amiens, Palestine, the armistice at Compiègne and the Treaty of Versailles. 16 chapters on the `mediterranean` basemap, a Powers layer (Germany, Austria-Hungary, the Ottoman Empire, the occupied west and east, France and Britain, Russia, Italy), 7 people cards, native names in Serbian, German, Turkish, French, Arabic, Italian and Russian, no new glyphs.
+- Catalogue: a new First World War entry opens the story; new Gallipoli campaign and Treaty of Brest-Litovsk entries open it at chapters 6 and 12.
+
 ## 0.112.0
 
 - New subject on the Humankind shelf: Wars and Campaigns, with its own page at `/wars/`. The Kalinga War moves there from Chronicles; its address (`/kalinga/`) does not change. The battles of Panipat stay chapters of The Mughal Empire and The Marathas.

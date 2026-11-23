@@ -1,0 +1,2936 @@
+{
+  "id": "first-world-war",
+  "title": "The First World War",
+  "description": "The war of 1914 to 1918, from the shots in Sarajevo through the Western Front, Gallipoli, Mesopotamia, Caporetto and Palestine to the armistice at Compiègne and the peace at Versailles.",
+  "canvas": "geo",
+  "basemap": "mediterranean",
+  "source": "History",
+  "nativeLang": "fr",
+  "mapLabel": "Europe and the Middle East, 1914–1919",
+  "note": "Petrograd, Basra and the Atlantic crossing lie beyond the map’s edge; routes arrive from there. Powers areas are loose regions, not borders, and the front lines are simplified.",
+  "travellers": {
+    "german-army": {
+      "name": "German armies",
+      "icon": "soldier"
+    },
+    "indian-corps": {
+      "name": "Indian Corps",
+      "icon": "sepoy"
+    },
+    "troopships": {
+      "name": "Allied troopships",
+      "icon": "liner"
+    },
+    "indian-army": {
+      "name": "Indian Army force",
+      "icon": "sepoy"
+    },
+    "us-transports": {
+      "name": "American transports",
+      "icon": "liner"
+    },
+    "italian-army": {
+      "name": "Italian army",
+      "icon": "marcher"
+    },
+    "lenin-train": {
+      "name": "Lenin’s train",
+      "icon": "train"
+    },
+    "lancers": {
+      "name": "Jodhpur and Mysore Lancers",
+      "icon": "horse"
+    }
+  },
+  "phases": {
+    "road": {
+      "name": "The road to war",
+      "color": "#8a6bd1"
+    },
+    "movement": {
+      "name": "The war of movement",
+      "color": "#b3261e"
+    },
+    "stalemate": {
+      "name": "Stalemate",
+      "color": "#8a8f98"
+    },
+    "turning": {
+      "name": "Turning points",
+      "color": "#d9a441"
+    },
+    "victory": {
+      "name": "The last hundred days",
+      "color": "#2b7fb4"
+    },
+    "peace": {
+      "name": "The peace",
+      "color": "#2f9e8f"
+    }
+  },
+  "routeStyles": {
+    "advance": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "allied": {
+      "color": "#2f7d5a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "retreat": {
+      "color": "#c07a3a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "rail": {
+      "color": "#6b6f78",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 6,
+        "color": "rgba(138,107,209,.4)"
+      },
+      {
+        "until": 29,
+        "color": "rgba(179,38,30,.35)"
+      },
+      {
+        "until": 56,
+        "color": "rgba(138,143,152,.45)"
+      },
+      {
+        "until": 78,
+        "color": "rgba(217,164,65,.4)"
+      },
+      {
+        "until": 95,
+        "color": "rgba(43,127,180,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(47,158,143,.4)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1914"
+      },
+      {
+        "at": 30,
+        "text": "1915"
+      },
+      {
+        "at": 40,
+        "text": "1916"
+      },
+      {
+        "at": 58,
+        "text": "1917"
+      },
+      {
+        "at": 80,
+        "text": "1918"
+      },
+      {
+        "at": 97,
+        "text": "1919"
+      }
+    ]
+  },
+  "places": {
+    "sarajevo": {
+      "name": "Sarajevo",
+      "at": [
+        18.43,
+        43.86
+      ],
+      "glyph": "burst",
+      "label": "right"
+    },
+    "liege": {
+      "name": "Liège",
+      "at": [
+        5.57,
+        50.63
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "marne": {
+      "name": "The Marne",
+      "at": [
+        2.88,
+        48.96
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "tannenberg": {
+      "name": "Tannenberg",
+      "at": [
+        20.13,
+        53.5
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "marseille": {
+      "name": "Marseille",
+      "at": [
+        5.37,
+        43.3
+      ],
+      "glyph": "anchor",
+      "label": "bottom"
+    },
+    "ypres": {
+      "name": "Ypres",
+      "at": [
+        2.88,
+        50.85
+      ],
+      "glyph": "memorial",
+      "label": "left"
+    },
+    "alexandria": {
+      "name": "Alexandria",
+      "at": [
+        29.92,
+        31.2
+      ],
+      "glyph": "anchor",
+      "label": "bottom"
+    },
+    "gallipoli": {
+      "name": "Gallipoli",
+      "at": [
+        26.28,
+        40.24
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "verdun": {
+      "name": "Verdun",
+      "at": [
+        5.38,
+        49.16
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "somme": {
+      "name": "The Somme",
+      "at": [
+        2.69,
+        50.05
+      ],
+      "glyph": "mine",
+      "label": "right"
+    },
+    "basra": {
+      "name": "Basra",
+      "at": [
+        47.8,
+        30.5
+      ],
+      "hidden": true
+    },
+    "kut": {
+      "name": "Kut",
+      "at": [
+        45.82,
+        32.5
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "atlantic": {
+      "name": "Atlantic",
+      "at": [
+        -14,
+        46.5
+      ],
+      "hidden": true
+    },
+    "saint-nazaire": {
+      "name": "Saint-Nazaire",
+      "at": [
+        -2.2,
+        47.27
+      ],
+      "glyph": "anchor",
+      "label": "bottom"
+    },
+    "caporetto": {
+      "name": "Caporetto",
+      "at": [
+        13.55,
+        46.25
+      ],
+      "glyph": "mountain",
+      "label": "right"
+    },
+    "piave": {
+      "name": "The Piave",
+      "at": [
+        12.2,
+        45.82
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "petrograd": {
+      "name": "Petrograd",
+      "at": [
+        30.3,
+        59.9
+      ],
+      "hidden": true
+    },
+    "brest-litovsk": {
+      "name": "Brest-Litovsk",
+      "at": [
+        23.65,
+        52.08
+      ],
+      "glyph": "treaty",
+      "label": "bottom"
+    },
+    "amiens": {
+      "name": "Amiens",
+      "at": [
+        2.3,
+        49.89
+      ],
+      "glyph": "burst",
+      "label": "left"
+    },
+    "gaza": {
+      "name": "Gaza",
+      "at": [
+        34.45,
+        31.5
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "haifa": {
+      "name": "Haifa",
+      "at": [
+        34.99,
+        32.82
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "compiegne": {
+      "name": "Compiègne",
+      "at": [
+        2.91,
+        49.43
+      ],
+      "glyph": "treaty",
+      "label": "right"
+    },
+    "versailles": {
+      "name": "Versailles",
+      "at": [
+        2.12,
+        48.8
+      ],
+      "glyph": "palace",
+      "label": "left"
+    }
+  },
+  "steps": [
+    {
+      "place": "sarajevo",
+      "phase": "road",
+      "title": "Shots in Sarajevo",
+      "native": "Сарајевски атентат",
+      "lang": "sr",
+      "when": "28 June 1914",
+      "at": 3,
+      "camera": {
+        "at": [
+          18.4,
+          43.9
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "On 28 June 1914 Gavrilo Princip, a Bosnian Serb student, shot dead Archduke Franz Ferdinand, heir to Austria-Hungary, and his wife Sophie in Sarajevo. Austria-Hungary blamed Serbia and, with Germany’s backing, sent an ultimatum. By 4 August alliances had pulled in Russia, Germany, France and Britain. Historians still argue over how far each power was to blame.",
+      "today": "Sarajevo is the capital of Bosnia and Herzegovina; a museum stands on the corner by the Latin Bridge where the shots were fired."
+    },
+    {
+      "place": "liege",
+      "phase": "movement",
+      "title": "Through Belgium",
+      "when": "4–16 August 1914",
+      "at": 9,
+      "camera": {
+        "at": [
+          5.6,
+          50.4
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "Germany’s plan, made under Alfred von Schlieffen, was to beat France quickly by sweeping through neutral Belgium, then turn on Russia. German troops crossed into Belgium on 4 August, and huge siege guns broke the ring of forts round Liège within two weeks. Britain, a guarantor of Belgian neutrality, declared war that night. Belgian civilians were shot in reprisals.",
+      "today": "Liège is a city in eastern Belgium; some of its forts, such as Loncin, are kept as memorials."
+    },
+    {
+      "place": "tannenberg",
+      "phase": "movement",
+      "title": "Tannenberg",
+      "native": "Schlacht bei Tannenberg",
+      "lang": "de",
+      "when": "26–30 August 1914",
+      "at": 15,
+      "camera": {
+        "at": [
+          20.1,
+          53.3
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Russia mobilised faster than Germany expected and invaded East Prussia. Near Tannenberg, now Stębark in Poland, Paul von Hindenburg and Erich Ludendorff surrounded the Russian Second Army; its commander, Alexander Samsonov, shot himself. Some 90,000 Russians were captured. The battle made Hindenburg a hero, but the Russian attack had drawn German troops east just before the Marne.",
+      "today": "Stębark is a village in north-east Poland; the huge German Tannenberg memorial nearby was blown up in 1945."
+    },
+    {
+      "place": "marne",
+      "phase": "movement",
+      "title": "The Marne",
+      "when": "5–12 September 1914",
+      "at": 21,
+      "camera": {
+        "at": [
+          4.2,
+          49.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "liege",
+          "to": "marne",
+          "traveller": "german-army",
+          "style": "advance",
+          "bend": 0.12
+        }
+      ],
+      "text": "The German armies reached the Marne, about 50 kilometres from Paris. French and British forces under Joseph Joffre counter-attacked into a gap between two German armies, helped by reinforcements, some rushed from Paris in taxis. The Germans fell back to the Aisne and dug in. The quick victory had failed, and both sides raced north to the sea.",
+      "today": "Meaux, east of Paris on the Marne, holds the Museum of the Great War."
+    },
+    {
+      "place": "ypres",
+      "phase": "movement",
+      "title": "The Indian Corps at Ypres",
+      "when": "October 1914 – April 1915",
+      "at": 27,
+      "camera": {
+        "at": [
+          4.2,
+          47.1
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "marseille",
+          "to": "ypres",
+          "traveller": "indian-corps",
+          "style": "allied",
+          "bend": -0.05
+        }
+      ],
+      "text": "Two Indian divisions landed at Marseille in September 1914 and were rushed to Flanders, where the British line round Ypres was close to breaking. At Hollebeke on 31 October, Sepoy Khudadad Khan kept his machine gun firing after the rest of its crew were killed. In April 1915 the Germans released chlorine gas here, the first large gas attack.",
+      "today": "Ypres (Ieper) in Belgium was rebuilt after the war; the Last Post is sounded every evening at the Menin Gate."
+    },
+    {
+      "place": "gallipoli",
+      "phase": "stalemate",
+      "title": "Gallipoli",
+      "native": "Çanakkale Savaşı",
+      "lang": "tr",
+      "when": "April 1915 – January 1916",
+      "at": 33,
+      "camera": {
+        "at": [
+          28.0,
+          35.7
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "alexandria",
+          "to": "gallipoli",
+          "traveller": "troopships",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "To open a sea route to Russia, British and French warships failed to force the Dardanelles in March 1915. On 25 April troops from Britain, France, Australia, New Zealand and India landed at Gallipoli. Ottoman forces, with Mustafa Kemal among their commanders, held the heights. The Allies withdrew in January 1916. Deaths are disputed estimates, well over 100,000.",
+      "today": "The peninsula is a national historical park in Turkey; Anzac Day, 25 April, is marked in Australia and New Zealand."
+    },
+    {
+      "place": "verdun",
+      "phase": "stalemate",
+      "title": "Verdun",
+      "native": "Bataille de Verdun",
+      "lang": "fr",
+      "when": "February–December 1916",
+      "at": 40,
+      "camera": {
+        "at": [
+          5.4,
+          49.2
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "On 21 February 1916 Germany attacked the fortress city of Verdun, and Fort Douaumont fell within days. Under Philippe Pétain, French troops held on, supplied along a single road later called the Sacred Way (Voie Sacrée). The fighting lasted ten months and ended close to where it began. Together the two sides lost an estimated 700,000 dead, wounded and missing.",
+      "today": "The Douaumont Ossuary holds the bones of some 130,000 unidentified French and German soldiers."
+    },
+    {
+      "place": "somme",
+      "phase": "stalemate",
+      "title": "The Somme",
+      "native": "Bataille de la Somme",
+      "lang": "fr",
+      "when": "1 July – 18 November 1916",
+      "at": 46,
+      "camera": {
+        "at": [
+          2.9,
+          49.9
+        ],
+        "width": 7
+      },
+      "legs": [],
+      "text": "To relieve Verdun, British and French armies attacked astride the Somme on 1 July 1916, after a week of shelling and mines blown under the German line. The British Army had about 57,000 casualties that first day, nearly 20,000 of them killed, its worst ever. Tanks first fought here in September. By November the Allies had advanced about ten kilometres.",
+      "today": "The Thiepval Memorial lists more than 72,000 British and South African soldiers missing on the Somme."
+    },
+    {
+      "place": "kut",
+      "phase": "stalemate",
+      "title": "The siege of Kut",
+      "native": "حصار الكوت",
+      "lang": "ar",
+      "when": "December 1915 – April 1916",
+      "at": 52,
+      "camera": {
+        "at": [
+          45.0,
+          31.8
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "basra",
+          "to": "kut",
+          "traveller": "indian-army",
+          "style": "allied",
+          "bend": 0.1
+        }
+      ],
+      "text": "An Indian Army force took Basra in 1914 to guard British oil, then pushed up the Tigris towards Baghdad. Beaten at Ctesiphon, Charles Townshend’s division fell back to Kut and was besieged for almost five months. It surrendered on 29 April 1916; about 13,000 men were captured, and thousands died as prisoners. The British took Baghdad in March 1917.",
+      "today": "Kut al-Amara is a city on the Tigris in eastern Iraq."
+    },
+    {
+      "place": "saint-nazaire",
+      "phase": "turning",
+      "title": "America joins the war",
+      "when": "April–June 1917",
+      "at": 60,
+      "camera": {
+        "at": [
+          -6.0,
+          47.0
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "atlantic",
+          "to": "saint-nazaire",
+          "traveller": "us-transports",
+          "style": "sea",
+          "bend": 0.05
+        }
+      ],
+      "text": "German submarines (U-boats) sank merchant ships and, in 1915, the liner Lusitania. When Germany returned to unrestricted submarine warfare and offered Mexico an alliance in the Zimmermann telegram, the United States declared war in April 1917. The first American troops landed at Saint-Nazaire in June. By the armistice about two million had reached France.",
+      "today": "A monument on the seafront at Saint-Nazaire marks the American landing."
+    },
+    {
+      "place": "caporetto",
+      "phase": "turning",
+      "title": "Caporetto",
+      "native": "Battaglia di Caporetto",
+      "lang": "it",
+      "when": "24 October – November 1917",
+      "at": 67,
+      "camera": {
+        "at": [
+          12.9,
+          46.0
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "caporetto",
+          "to": "piave",
+          "traveller": "italian-army",
+          "style": "retreat",
+          "bend": 0.15
+        }
+      ],
+      "text": "Italy joined the Allies in May 1915 and fought eleven battles on the Isonzo river against Austria-Hungary. On 24 October 1917 Austro-Hungarian and German troops broke through at Caporetto, now Kobarid in Slovenia, using gas and infiltration tactics. The Italian army fell back more than 100 kilometres to the Piave river, losing some 265,000 men as prisoners, and held there.",
+      "today": "Kobarid, in Slovenia, has a museum of the Isonzo front; Ernest Hemingway set part of A Farewell to Arms in the retreat."
+    },
+    {
+      "place": "brest-litovsk",
+      "phase": "turning",
+      "title": "Revolution and Brest-Litovsk",
+      "native": "Брестский мир",
+      "lang": "ru",
+      "when": "1917 – 3 March 1918",
+      "at": 75,
+      "camera": {
+        "at": [
+          25.0,
+          53.6
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "petrograd",
+          "to": "brest-litovsk",
+          "traveller": "lenin-train",
+          "style": "rail",
+          "bend": 0.08
+        }
+      ],
+      "text": "Russia’s armies had lost millions of men, and in 1917 two revolutions overthrew the tsar and then brought Vladimir Lenin’s Bolsheviks to power. They made peace with the Central Powers at Brest-Litovsk on 3 March 1918, giving up Poland, the Baltic lands, Finland and Ukraine. Germany could now move dozens of divisions west. Russia slid into civil war.",
+      "today": "Brest, in Belarus, keeps the fortress where the treaty was signed."
+    },
+    {
+      "place": "amiens",
+      "phase": "victory",
+      "title": "Amiens and the Hundred Days",
+      "when": "March – August 1918",
+      "at": 82,
+      "camera": {
+        "at": [
+          2.4,
+          49.8
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "Germany’s spring offensives of 1918 broke through and reached the Marne again, but ran out of men and supplies. Under Ferdinand Foch, now supreme Allied commander, the counter-attack began. On 8 August British, Australian, Canadian and French troops with hundreds of tanks broke the line east of Amiens. Ludendorff called it the black day of the German army.",
+      "today": "Villers-Bretonneux, east of Amiens, has the Australian National Memorial."
+    },
+    {
+      "place": "haifa",
+      "phase": "victory",
+      "title": "Palestine and Haifa",
+      "when": "1917 – 23 September 1918",
+      "at": 88,
+      "camera": {
+        "at": [
+          34.7,
+          32.1
+        ],
+        "width": 6
+      },
+      "legs": [
+        {
+          "from": "gaza",
+          "to": "haifa",
+          "traveller": "lancers",
+          "style": "allied",
+          "bend": 0.1
+        }
+      ],
+      "text": "In Palestine, British, Indian, Australian and New Zealand forces under Edmund Allenby broke through at Gaza and Beersheba and took Jerusalem in December 1917. In September 1918 they won at Megiddo. On 23 September the Jodhpur and Mysore Lancers, cavalry of Indian princely states, charged Ottoman guns and took Haifa. The Ottomans signed an armistice on 30 October.",
+      "today": "India marks 23 September as Haifa Day, and the Teen Murti memorial in New Delhi honours the lancers."
+    },
+    {
+      "place": "compiegne",
+      "phase": "victory",
+      "title": "The armistice",
+      "native": "Armistice de 1918",
+      "lang": "fr",
+      "when": "11 November 1918",
+      "at": 93,
+      "camera": {
+        "at": [
+          3.2,
+          49.5
+        ],
+        "width": 6
+      },
+      "legs": [],
+      "text": "With its allies giving up and revolution at home, Germany asked for terms. Kaiser Wilhelm II abdicated and fled to the Netherlands. In Foch’s railway carriage near Compiègne, German delegates signed an armistice, and at 11 o’clock on 11 November 1918 the guns stopped. Some 9 to 10 million soldiers had died, and millions of civilians; all are estimates.",
+      "today": "The Glade of the Armistice has a replica carriage; Hitler had the original taken to Berlin in 1940."
+    },
+    {
+      "place": "versailles",
+      "phase": "peace",
+      "title": "The Treaty of Versailles",
+      "native": "Traité de Versailles",
+      "lang": "fr",
+      "when": "28 June 1919",
+      "at": 98,
+      "camera": {
+        "at": [
+          2.3,
+          49.0
+        ],
+        "width": 5
+      },
+      "legs": [],
+      "text": "Five years to the day after Sarajevo, Germany signed the Treaty of Versailles in the Hall of Mirrors. It lost land and its colonies, had to accept blame for the war and pay reparations. Austria-Hungary and the Ottoman Empire were broken up, and new states such as Poland, Czechoslovakia and Yugoslavia appeared. Many Germans saw it as a humiliation.",
+      "today": "The Hall of Mirrors is part of the Palace of Versailles, west of Paris."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "germany",
+        "name": "Germany",
+        "color": "#6b6f78",
+        "active": [
+          [
+            0,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Germany",
+          "at": [
+            10.0,
+            51.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  7.6,
+                  47.6
+                ],
+                [
+                  9.6,
+                  47.55
+                ],
+                [
+                  10.4,
+                  47.4
+                ],
+                [
+                  12.2,
+                  47.65
+                ],
+                [
+                  13.0,
+                  47.6
+                ],
+                [
+                  13.0,
+                  48.6
+                ],
+                [
+                  12.9,
+                  49.0
+                ],
+                [
+                  12.3,
+                  50.2
+                ],
+                [
+                  14.8,
+                  50.9
+                ],
+                [
+                  16.8,
+                  50.4
+                ],
+                [
+                  18.6,
+                  50.1
+                ],
+                [
+                  18.8,
+                  50.4
+                ],
+                [
+                  18.2,
+                  51.0
+                ],
+                [
+                  18.3,
+                  51.8
+                ],
+                [
+                  18.5,
+                  52.6
+                ],
+                [
+                  19.2,
+                  52.8
+                ],
+                [
+                  20.5,
+                  53.0
+                ],
+                [
+                  21.5,
+                  53.2
+                ],
+                [
+                  22.4,
+                  53.5
+                ],
+                [
+                  22.6,
+                  53.9
+                ],
+                [
+                  22.8,
+                  54.4
+                ],
+                [
+                  22.8,
+                  54.9
+                ],
+                [
+                  21.1,
+                  55.3
+                ],
+                [
+                  19.8,
+                  54.5
+                ],
+                [
+                  16.5,
+                  54.6
+                ],
+                [
+                  14.2,
+                  54.0
+                ],
+                [
+                  11.0,
+                  54.1
+                ],
+                [
+                  10.0,
+                  54.6
+                ],
+                [
+                  8.6,
+                  54.9
+                ],
+                [
+                  8.5,
+                  53.9
+                ],
+                [
+                  7.2,
+                  53.4
+                ],
+                [
+                  7.1,
+                  52.2
+                ],
+                [
+                  6.8,
+                  51.9
+                ],
+                [
+                  6.1,
+                  51.2
+                ],
+                [
+                  6.2,
+                  50.8
+                ],
+                [
+                  6.1,
+                  50.2
+                ],
+                [
+                  6.1,
+                  49.5
+                ],
+                [
+                  6.8,
+                  48.8
+                ],
+                [
+                  7.0,
+                  48.2
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Wilhelm II"
+          }
+        ],
+        "role": "Central Powers",
+        "ties": []
+      },
+      {
+        "id": "austria-hungary",
+        "name": "Austria-Hungary",
+        "color": "#b08a3e",
+        "active": [
+          [
+            0,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Austria-Hungary",
+          "at": [
+            17.0,
+            47.6
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                14
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  9.6,
+                  47.5
+                ],
+                [
+                  10.4,
+                  47.4
+                ],
+                [
+                  12.2,
+                  47.65
+                ],
+                [
+                  13.0,
+                  47.6
+                ],
+                [
+                  13.0,
+                  48.6
+                ],
+                [
+                  12.9,
+                  49.0
+                ],
+                [
+                  12.3,
+                  50.2
+                ],
+                [
+                  14.8,
+                  50.9
+                ],
+                [
+                  16.8,
+                  50.4
+                ],
+                [
+                  18.6,
+                  50.1
+                ],
+                [
+                  18.8,
+                  50.4
+                ],
+                [
+                  19.0,
+                  50.4
+                ],
+                [
+                  22.0,
+                  50.4
+                ],
+                [
+                  23.6,
+                  50.4
+                ],
+                [
+                  24.2,
+                  50.5
+                ],
+                [
+                  25.5,
+                  50.1
+                ],
+                [
+                  26.0,
+                  49.3
+                ],
+                [
+                  26.6,
+                  48.2
+                ],
+                [
+                  26.0,
+                  47.0
+                ],
+                [
+                  26.0,
+                  46.0
+                ],
+                [
+                  24.0,
+                  45.7
+                ],
+                [
+                  22.5,
+                  44.7
+                ],
+                [
+                  21.4,
+                  44.8
+                ],
+                [
+                  20.3,
+                  44.9
+                ],
+                [
+                  19.0,
+                  44.9
+                ],
+                [
+                  19.2,
+                  44.2
+                ],
+                [
+                  19.3,
+                  43.6
+                ],
+                [
+                  18.9,
+                  43.0
+                ],
+                [
+                  18.5,
+                  42.4
+                ],
+                [
+                  17.5,
+                  42.7
+                ],
+                [
+                  16.4,
+                  43.4
+                ],
+                [
+                  15.2,
+                  44.2
+                ],
+                [
+                  14.5,
+                  45.0
+                ],
+                [
+                  14.3,
+                  45.3
+                ],
+                [
+                  13.6,
+                  45.1
+                ],
+                [
+                  13.5,
+                  45.7
+                ],
+                [
+                  13.4,
+                  46.2
+                ],
+                [
+                  13.6,
+                  46.6
+                ],
+                [
+                  12.5,
+                  46.65
+                ],
+                [
+                  11.1,
+                  46.0
+                ],
+                [
+                  10.7,
+                  45.8
+                ],
+                [
+                  10.5,
+                  46.5
+                ],
+                [
+                  10.2,
+                  46.9
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Franz Joseph I"
+          },
+          {
+            "from": 9,
+            "text": "Karl I"
+          }
+        ],
+        "role": "Central Powers",
+        "ties": []
+      },
+      {
+        "id": "ottoman",
+        "name": "Ottoman Empire",
+        "color": "#c07a3a",
+        "active": [
+          [
+            0,
+            14
+          ]
+        ],
+        "label": {
+          "text": "Ottoman Empire",
+          "at": [
+            34.5,
+            39.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                12
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.1,
+                  40.7
+                ],
+                [
+                  26.3,
+                  41.8
+                ],
+                [
+                  28.1,
+                  41.6
+                ],
+                [
+                  29.0,
+                  41.2
+                ],
+                [
+                  31.0,
+                  41.2
+                ],
+                [
+                  33.0,
+                  42.0
+                ],
+                [
+                  35.0,
+                  42.0
+                ],
+                [
+                  36.5,
+                  41.3
+                ],
+                [
+                  38.0,
+                  41.0
+                ],
+                [
+                  40.0,
+                  41.0
+                ],
+                [
+                  41.5,
+                  41.5
+                ],
+                [
+                  43.2,
+                  41.2
+                ],
+                [
+                  43.5,
+                  40.0
+                ],
+                [
+                  44.2,
+                  39.5
+                ],
+                [
+                  44.0,
+                  38.5
+                ],
+                [
+                  44.6,
+                  37.2
+                ],
+                [
+                  45.4,
+                  36.2
+                ],
+                [
+                  45.7,
+                  35.0
+                ],
+                [
+                  46.0,
+                  33.8
+                ],
+                [
+                  46.5,
+                  33.0
+                ],
+                [
+                  47.6,
+                  31.8
+                ],
+                [
+                  48.0,
+                  30.2
+                ],
+                [
+                  44.0,
+                  29.2
+                ],
+                [
+                  39.0,
+                  29.0
+                ],
+                [
+                  36.0,
+                  29.3
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.2,
+                  31.3
+                ],
+                [
+                  34.7,
+                  32.0
+                ],
+                [
+                  35.1,
+                  33.0
+                ],
+                [
+                  35.5,
+                  33.9
+                ],
+                [
+                  35.9,
+                  35.0
+                ],
+                [
+                  36.0,
+                  36.0
+                ],
+                [
+                  36.1,
+                  36.6
+                ],
+                [
+                  34.6,
+                  36.7
+                ],
+                [
+                  32.8,
+                  36.1
+                ],
+                [
+                  30.7,
+                  36.8
+                ],
+                [
+                  29.0,
+                  36.6
+                ],
+                [
+                  27.3,
+                  36.9
+                ],
+                [
+                  27.0,
+                  38.3
+                ],
+                [
+                  26.3,
+                  39.3
+                ],
+                [
+                  26.2,
+                  40.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                13,
+                14
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.1,
+                  40.7
+                ],
+                [
+                  26.3,
+                  41.8
+                ],
+                [
+                  28.1,
+                  41.6
+                ],
+                [
+                  29.0,
+                  41.2
+                ],
+                [
+                  31.0,
+                  41.2
+                ],
+                [
+                  33.0,
+                  42.0
+                ],
+                [
+                  35.0,
+                  42.0
+                ],
+                [
+                  36.5,
+                  41.3
+                ],
+                [
+                  38.0,
+                  41.0
+                ],
+                [
+                  40.0,
+                  41.0
+                ],
+                [
+                  41.5,
+                  41.5
+                ],
+                [
+                  43.2,
+                  41.2
+                ],
+                [
+                  43.5,
+                  40.0
+                ],
+                [
+                  44.2,
+                  39.5
+                ],
+                [
+                  44.0,
+                  38.5
+                ],
+                [
+                  44.6,
+                  37.2
+                ],
+                [
+                  45.4,
+                  36.2
+                ],
+                [
+                  45.7,
+                  35.0
+                ],
+                [
+                  46.0,
+                  33.8
+                ],
+                [
+                  46.0,
+                  33.2
+                ],
+                [
+                  35.2,
+                  32.95
+                ],
+                [
+                  35.5,
+                  33.9
+                ],
+                [
+                  35.9,
+                  35.0
+                ],
+                [
+                  36.0,
+                  36.0
+                ],
+                [
+                  36.1,
+                  36.6
+                ],
+                [
+                  34.6,
+                  36.7
+                ],
+                [
+                  32.8,
+                  36.1
+                ],
+                [
+                  30.7,
+                  36.8
+                ],
+                [
+                  29.0,
+                  36.6
+                ],
+                [
+                  27.3,
+                  36.9
+                ],
+                [
+                  27.0,
+                  38.3
+                ],
+                [
+                  26.3,
+                  39.3
+                ],
+                [
+                  26.2,
+                  40.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Central Powers from November 1914",
+        "ties": []
+      },
+      {
+        "id": "occupied-west",
+        "name": "German-occupied Belgium and France",
+        "color": "#a9adb5",
+        "active": [
+          [
+            2,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Occupied",
+          "at": [
+            4.6,
+            50.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                2,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  3.0,
+                  51.1
+                ],
+                [
+                  3.0,
+                  50.75
+                ],
+                [
+                  2.9,
+                  50.5
+                ],
+                [
+                  2.65,
+                  50.0
+                ],
+                [
+                  3.0,
+                  49.58
+                ],
+                [
+                  3.7,
+                  49.5
+                ],
+                [
+                  4.1,
+                  49.3
+                ],
+                [
+                  4.9,
+                  49.25
+                ],
+                [
+                  5.2,
+                  49.45
+                ],
+                [
+                  6.1,
+                  49.5
+                ],
+                [
+                  6.1,
+                  50.2
+                ],
+                [
+                  6.2,
+                  50.8
+                ],
+                [
+                  5.9,
+                  51.05
+                ],
+                [
+                  5.0,
+                  51.45
+                ],
+                [
+                  4.2,
+                  51.4
+                ],
+                [
+                  3.4,
+                  51.4
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Occupied",
+        "ties": []
+      },
+      {
+        "id": "occupied-east",
+        "name": "German-occupied east",
+        "color": "#b9bcc3",
+        "active": [
+          [
+            6,
+            13
+          ]
+        ],
+        "label": {
+          "text": "Occupied east",
+          "at": [
+            24.0,
+            53.8
+          ],
+          "moves": [
+            {
+              "from": 11,
+              "at": [
+                31.0,
+                51.0
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  22.8,
+                  54.9
+                ],
+                [
+                  22.8,
+                  54.4
+                ],
+                [
+                  22.6,
+                  53.9
+                ],
+                [
+                  22.4,
+                  53.5
+                ],
+                [
+                  21.5,
+                  53.2
+                ],
+                [
+                  20.5,
+                  53.0
+                ],
+                [
+                  19.2,
+                  52.8
+                ],
+                [
+                  18.5,
+                  52.6
+                ],
+                [
+                  18.3,
+                  51.8
+                ],
+                [
+                  18.2,
+                  51.0
+                ],
+                [
+                  18.8,
+                  50.4
+                ],
+                [
+                  22.0,
+                  50.4
+                ],
+                [
+                  24.2,
+                  50.5
+                ],
+                [
+                  25.5,
+                  51.5
+                ],
+                [
+                  26.0,
+                  52.5
+                ],
+                [
+                  26.0,
+                  54.0
+                ],
+                [
+                  25.5,
+                  55.0
+                ],
+                [
+                  23.0,
+                  55.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                11,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  22.8,
+                  54.9
+                ],
+                [
+                  21.5,
+                  56.4
+                ],
+                [
+                  24.0,
+                  57.0
+                ],
+                [
+                  46.0,
+                  57.0
+                ],
+                [
+                  46.0,
+                  46.5
+                ],
+                [
+                  38.0,
+                  46.7
+                ],
+                [
+                  35.0,
+                  46.3
+                ],
+                [
+                  33.5,
+                  46.1
+                ],
+                [
+                  31.5,
+                  46.6
+                ],
+                [
+                  30.2,
+                  45.8
+                ],
+                [
+                  28.9,
+                  45.3
+                ],
+                [
+                  28.0,
+                  46.5
+                ],
+                [
+                  26.6,
+                  48.2
+                ],
+                [
+                  26.0,
+                  49.3
+                ],
+                [
+                  25.5,
+                  50.1
+                ],
+                [
+                  24.2,
+                  50.5
+                ],
+                [
+                  22.0,
+                  50.4
+                ],
+                [
+                  18.8,
+                  50.4
+                ],
+                [
+                  18.2,
+                  51.0
+                ],
+                [
+                  18.3,
+                  51.8
+                ],
+                [
+                  18.5,
+                  52.6
+                ],
+                [
+                  19.2,
+                  52.8
+                ],
+                [
+                  20.5,
+                  53.0
+                ],
+                [
+                  21.5,
+                  53.2
+                ],
+                [
+                  22.4,
+                  53.5
+                ],
+                [
+                  22.6,
+                  53.9
+                ],
+                [
+                  22.8,
+                  54.4
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Occupied",
+        "ties": []
+      },
+      {
+        "id": "entente",
+        "name": "France and Britain",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            0,
+            15
+          ]
+        ],
+        "label": {
+          "text": "France",
+          "at": [
+            1.8,
+            46.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                1
+              ],
+              [
+                14,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -5.7,
+                  50.1
+                ],
+                [
+                  -3.0,
+                  50.6
+                ],
+                [
+                  1.4,
+                  51.2
+                ],
+                [
+                  1.6,
+                  52.7
+                ],
+                [
+                  0.2,
+                  53.6
+                ],
+                [
+                  -0.3,
+                  54.5
+                ],
+                [
+                  -1.6,
+                  55.6
+                ],
+                [
+                  -1.8,
+                  57.0
+                ],
+                [
+                  -6.0,
+                  57.0
+                ],
+                [
+                  -6.0,
+                  56.0
+                ],
+                [
+                  -5.0,
+                  55.0
+                ],
+                [
+                  -3.3,
+                  54.8
+                ],
+                [
+                  -3.2,
+                  53.4
+                ],
+                [
+                  -4.7,
+                  53.3
+                ],
+                [
+                  -4.5,
+                  52.2
+                ],
+                [
+                  -5.2,
+                  51.8
+                ],
+                [
+                  -3.0,
+                  51.4
+                ],
+                [
+                  -4.2,
+                  51.1
+                ]
+              ],
+              [
+                [
+                  2.55,
+                  51.08
+                ],
+                [
+                  3.2,
+                  50.75
+                ],
+                [
+                  3.6,
+                  50.4
+                ],
+                [
+                  4.2,
+                  50.25
+                ],
+                [
+                  4.8,
+                  49.95
+                ],
+                [
+                  5.0,
+                  49.7
+                ],
+                [
+                  5.8,
+                  49.5
+                ],
+                [
+                  6.1,
+                  49.5
+                ],
+                [
+                  6.8,
+                  48.8
+                ],
+                [
+                  7.0,
+                  48.2
+                ],
+                [
+                  7.2,
+                  47.6
+                ],
+                [
+                  6.9,
+                  47.4
+                ],
+                [
+                  6.1,
+                  46.5
+                ],
+                [
+                  6.0,
+                  46.2
+                ],
+                [
+                  7.0,
+                  45.9
+                ],
+                [
+                  6.9,
+                  45.1
+                ],
+                [
+                  7.5,
+                  43.8
+                ],
+                [
+                  6.0,
+                  43.0
+                ],
+                [
+                  5.4,
+                  43.1
+                ],
+                [
+                  4.9,
+                  43.3
+                ],
+                [
+                  3.5,
+                  43.4
+                ],
+                [
+                  3.0,
+                  42.5
+                ],
+                [
+                  1.7,
+                  42.5
+                ],
+                [
+                  0.7,
+                  42.8
+                ],
+                [
+                  -1.7,
+                  43.3
+                ],
+                [
+                  -1.5,
+                  44.0
+                ],
+                [
+                  -1.3,
+                  45.5
+                ],
+                [
+                  -1.2,
+                  46.0
+                ],
+                [
+                  -2.0,
+                  46.7
+                ],
+                [
+                  -2.5,
+                  47.3
+                ],
+                [
+                  -3.5,
+                  47.7
+                ],
+                [
+                  -4.7,
+                  48.3
+                ],
+                [
+                  -3.0,
+                  48.8
+                ],
+                [
+                  -1.5,
+                  48.7
+                ],
+                [
+                  -1.4,
+                  49.5
+                ],
+                [
+                  0.2,
+                  49.6
+                ],
+                [
+                  1.5,
+                  50.2
+                ],
+                [
+                  1.85,
+                  51.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -5.7,
+                  50.1
+                ],
+                [
+                  -3.0,
+                  50.6
+                ],
+                [
+                  1.4,
+                  51.2
+                ],
+                [
+                  1.6,
+                  52.7
+                ],
+                [
+                  0.2,
+                  53.6
+                ],
+                [
+                  -0.3,
+                  54.5
+                ],
+                [
+                  -1.6,
+                  55.6
+                ],
+                [
+                  -1.8,
+                  57.0
+                ],
+                [
+                  -6.0,
+                  57.0
+                ],
+                [
+                  -6.0,
+                  56.0
+                ],
+                [
+                  -5.0,
+                  55.0
+                ],
+                [
+                  -3.3,
+                  54.8
+                ],
+                [
+                  -3.2,
+                  53.4
+                ],
+                [
+                  -4.7,
+                  53.3
+                ],
+                [
+                  -4.5,
+                  52.2
+                ],
+                [
+                  -5.2,
+                  51.8
+                ],
+                [
+                  -3.0,
+                  51.4
+                ],
+                [
+                  -4.2,
+                  51.1
+                ]
+              ],
+              [
+                [
+                  2.55,
+                  51.08
+                ],
+                [
+                  3.0,
+                  50.75
+                ],
+                [
+                  2.9,
+                  50.5
+                ],
+                [
+                  2.65,
+                  50.0
+                ],
+                [
+                  3.0,
+                  49.58
+                ],
+                [
+                  3.7,
+                  49.5
+                ],
+                [
+                  4.1,
+                  49.3
+                ],
+                [
+                  4.9,
+                  49.25
+                ],
+                [
+                  5.2,
+                  49.45
+                ],
+                [
+                  6.1,
+                  49.5
+                ],
+                [
+                  6.8,
+                  48.8
+                ],
+                [
+                  7.0,
+                  48.2
+                ],
+                [
+                  7.2,
+                  47.6
+                ],
+                [
+                  6.9,
+                  47.4
+                ],
+                [
+                  6.1,
+                  46.5
+                ],
+                [
+                  6.0,
+                  46.2
+                ],
+                [
+                  7.0,
+                  45.9
+                ],
+                [
+                  6.9,
+                  45.1
+                ],
+                [
+                  7.5,
+                  43.8
+                ],
+                [
+                  6.0,
+                  43.0
+                ],
+                [
+                  5.4,
+                  43.1
+                ],
+                [
+                  4.9,
+                  43.3
+                ],
+                [
+                  3.5,
+                  43.4
+                ],
+                [
+                  3.0,
+                  42.5
+                ],
+                [
+                  1.7,
+                  42.5
+                ],
+                [
+                  0.7,
+                  42.8
+                ],
+                [
+                  -1.7,
+                  43.3
+                ],
+                [
+                  -1.5,
+                  44.0
+                ],
+                [
+                  -1.3,
+                  45.5
+                ],
+                [
+                  -1.2,
+                  46.0
+                ],
+                [
+                  -2.0,
+                  46.7
+                ],
+                [
+                  -2.5,
+                  47.3
+                ],
+                [
+                  -3.5,
+                  47.7
+                ],
+                [
+                  -4.7,
+                  48.3
+                ],
+                [
+                  -3.0,
+                  48.8
+                ],
+                [
+                  -1.5,
+                  48.7
+                ],
+                [
+                  -1.4,
+                  49.5
+                ],
+                [
+                  0.2,
+                  49.6
+                ],
+                [
+                  1.5,
+                  50.2
+                ],
+                [
+                  1.85,
+                  51.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Allies",
+        "ties": []
+      },
+      {
+        "id": "russia",
+        "name": "Russian Empire",
+        "color": "#2f9e8f",
+        "active": [
+          [
+            0,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Russian Empire",
+          "at": [
+            34.0,
+            53.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  22.8,
+                  54.9
+                ],
+                [
+                  21.5,
+                  56.4
+                ],
+                [
+                  24.0,
+                  57.0
+                ],
+                [
+                  46.0,
+                  57.0
+                ],
+                [
+                  46.0,
+                  46.5
+                ],
+                [
+                  38.0,
+                  46.7
+                ],
+                [
+                  35.0,
+                  46.3
+                ],
+                [
+                  33.5,
+                  46.1
+                ],
+                [
+                  31.5,
+                  46.6
+                ],
+                [
+                  30.2,
+                  45.8
+                ],
+                [
+                  28.9,
+                  45.3
+                ],
+                [
+                  28.0,
+                  46.5
+                ],
+                [
+                  26.6,
+                  48.2
+                ],
+                [
+                  26.0,
+                  49.3
+                ],
+                [
+                  25.5,
+                  50.1
+                ],
+                [
+                  24.2,
+                  50.5
+                ],
+                [
+                  22.0,
+                  50.4
+                ],
+                [
+                  18.8,
+                  50.4
+                ],
+                [
+                  18.2,
+                  51.0
+                ],
+                [
+                  18.3,
+                  51.8
+                ],
+                [
+                  18.5,
+                  52.6
+                ],
+                [
+                  19.2,
+                  52.8
+                ],
+                [
+                  20.5,
+                  53.0
+                ],
+                [
+                  21.5,
+                  53.2
+                ],
+                [
+                  22.4,
+                  53.5
+                ],
+                [
+                  22.6,
+                  53.9
+                ],
+                [
+                  22.8,
+                  54.4
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  23.0,
+                  55.4
+                ],
+                [
+                  25.5,
+                  55.0
+                ],
+                [
+                  26.0,
+                  54.0
+                ],
+                [
+                  26.0,
+                  52.5
+                ],
+                [
+                  25.5,
+                  51.5
+                ],
+                [
+                  24.2,
+                  50.5
+                ],
+                [
+                  25.5,
+                  50.1
+                ],
+                [
+                  26.0,
+                  49.3
+                ],
+                [
+                  26.6,
+                  48.2
+                ],
+                [
+                  28.0,
+                  46.5
+                ],
+                [
+                  28.9,
+                  45.3
+                ],
+                [
+                  30.2,
+                  45.8
+                ],
+                [
+                  31.5,
+                  46.6
+                ],
+                [
+                  33.5,
+                  46.1
+                ],
+                [
+                  35.0,
+                  46.3
+                ],
+                [
+                  38.0,
+                  46.7
+                ],
+                [
+                  46.0,
+                  46.5
+                ],
+                [
+                  46.0,
+                  57.0
+                ],
+                [
+                  24.0,
+                  57.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Allies until 1918",
+        "ties": []
+      },
+      {
+        "id": "italy",
+        "name": "Italy",
+        "color": "#5aa35a",
+        "active": [
+          [
+            5,
+            15
+          ]
+        ],
+        "label": {
+          "text": "Italy",
+          "at": [
+            11.6,
+            43.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                5,
+                15
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  7.0,
+                  45.9
+                ],
+                [
+                  6.9,
+                  45.1
+                ],
+                [
+                  7.5,
+                  43.8
+                ],
+                [
+                  8.7,
+                  44.4
+                ],
+                [
+                  9.9,
+                  44.1
+                ],
+                [
+                  10.3,
+                  43.5
+                ],
+                [
+                  10.6,
+                  42.9
+                ],
+                [
+                  11.1,
+                  42.4
+                ],
+                [
+                  11.8,
+                  42.0
+                ],
+                [
+                  12.3,
+                  41.7
+                ],
+                [
+                  13.0,
+                  41.25
+                ],
+                [
+                  13.7,
+                  41.2
+                ],
+                [
+                  14.3,
+                  40.8
+                ],
+                [
+                  15.3,
+                  40.0
+                ],
+                [
+                  15.7,
+                  39.9
+                ],
+                [
+                  16.0,
+                  39.0
+                ],
+                [
+                  16.1,
+                  37.95
+                ],
+                [
+                  16.5,
+                  38.4
+                ],
+                [
+                  16.9,
+                  39.1
+                ],
+                [
+                  17.1,
+                  39.4
+                ],
+                [
+                  16.6,
+                  39.7
+                ],
+                [
+                  16.5,
+                  40.2
+                ],
+                [
+                  17.2,
+                  40.4
+                ],
+                [
+                  18.5,
+                  40.1
+                ],
+                [
+                  17.9,
+                  40.7
+                ],
+                [
+                  17.0,
+                  41.1
+                ],
+                [
+                  16.0,
+                  41.4
+                ],
+                [
+                  16.2,
+                  41.9
+                ],
+                [
+                  15.3,
+                  41.9
+                ],
+                [
+                  14.1,
+                  42.4
+                ],
+                [
+                  13.7,
+                  43.4
+                ],
+                [
+                  12.4,
+                  44.1
+                ],
+                [
+                  12.3,
+                  44.8
+                ],
+                [
+                  12.4,
+                  45.4
+                ],
+                [
+                  13.1,
+                  45.7
+                ],
+                [
+                  13.5,
+                  45.7
+                ],
+                [
+                  13.4,
+                  46.2
+                ],
+                [
+                  13.6,
+                  46.6
+                ],
+                [
+                  12.5,
+                  46.65
+                ],
+                [
+                  11.1,
+                  46.0
+                ],
+                [
+                  10.7,
+                  45.8
+                ],
+                [
+                  10.5,
+                  46.5
+                ],
+                [
+                  10.1,
+                  46.3
+                ],
+                [
+                  9.0,
+                  46.0
+                ],
+                [
+                  8.6,
+                  46.1
+                ],
+                [
+                  8.0,
+                  46.0
+                ]
+              ],
+              [
+                [
+                  12.4,
+                  38.1
+                ],
+                [
+                  13.4,
+                  38.2
+                ],
+                [
+                  15.6,
+                  38.3
+                ],
+                [
+                  15.2,
+                  37.3
+                ],
+                [
+                  15.0,
+                  36.7
+                ],
+                [
+                  14.3,
+                  36.8
+                ],
+                [
+                  13.3,
+                  37.5
+                ],
+                [
+                  12.5,
+                  37.6
+                ]
+              ],
+              [
+                [
+                  8.2,
+                  40.9
+                ],
+                [
+                  8.2,
+                  39.1
+                ],
+                [
+                  9.7,
+                  39.2
+                ],
+                [
+                  9.8,
+                  40.5
+                ],
+                [
+                  9.2,
+                  41.2
+                ],
+                [
+                  8.4,
+                  41.0
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Allies from May 1915",
+        "ties": []
+      }
+    ]
+  },
+  "people": {
+    "heading": "People",
+    "items": [
+      {
+        "id": "gavrilo-princip",
+        "name": "Gavrilo Princip",
+        "native": "Гаврило Принцип",
+        "lang": "sr",
+        "life": "1894–1918",
+        "role": "Killed Franz Ferdinand",
+        "steps": [
+          0
+        ],
+        "text": "A Bosnian Serb student and member of Young Bosnia, a group that wanted South Slavs free of Austria-Hungary. Armed with help from officers in Serbia’s secret Black Hand society, he shot Franz Ferdinand and Sophie in Sarajevo. At 19 he was too young to be hanged; sentenced to 20 years, he died of tuberculosis in prison in 1918."
+      },
+      {
+        "id": "wilhelm-ii",
+        "name": "Wilhelm II",
+        "native": "Wilhelm II.",
+        "lang": "de",
+        "life": "1859–1941",
+        "role": "German Emperor",
+        "steps": [
+          1,
+          14
+        ],
+        "text": "German Emperor and King of Prussia from 1888. He built a navy to rival Britain’s and in July 1914 gave Austria-Hungary unconditional backing, the so-called blank cheque. During the war generals Hindenburg and Ludendorff came to hold real power. He abdicated in November 1918 and lived in exile in the Netherlands until his death."
+      },
+      {
+        "id": "khudadad-khan",
+        "name": "Khudadad Khan",
+        "native": "خداداد خان",
+        "lang": "ur",
+        "life": "1888–1971",
+        "role": "Machine-gunner, 129th Baluchis",
+        "steps": [
+          4
+        ],
+        "text": "Born near Chakwal in the Punjab, now in Pakistan, he served as a machine-gunner in the 129th Duke of Connaught’s Own Baluchis. Badly wounded at Hollebeke near Ypres on 31 October 1914, he kept firing until the Germans overran the gun and was left for dead. He was one of the first two Indians awarded the Victoria Cross."
+      },
+      {
+        "id": "mustafa-kemal",
+        "name": "Mustafa Kemal",
+        "native": "Mustafa Kemal Atatürk",
+        "lang": "tr",
+        "life": "1881–1938",
+        "role": "Ottoman commander at Gallipoli",
+        "steps": [
+          5
+        ],
+        "text": "An Ottoman officer who commanded a division at Gallipoli and held the heights above Anzac Cove in April and August 1915. After the war he led the Turkish War of Independence against the planned partition of Anatolia, and in 1923 became the first president of the Republic of Turkey, later taking the surname Atatürk."
+      },
+      {
+        "id": "woodrow-wilson",
+        "name": "Woodrow Wilson",
+        "life": "1856–1924",
+        "role": "President of the United States",
+        "steps": [
+          9,
+          15
+        ],
+        "text": "President of the United States from 1913 to 1921. He kept the country neutral until 1917, then took it to war. His Fourteen Points of January 1918 called for open diplomacy and self-determination for peoples. At Paris in 1919 he pushed for a League of Nations, but the US Senate refused to ratify the treaty or join."
+      },
+      {
+        "id": "lenin",
+        "name": "Vladimir Lenin",
+        "native": "Владимир Ленин",
+        "lang": "ru",
+        "life": "1870–1924",
+        "role": "Bolshevik leader",
+        "steps": [
+          11
+        ],
+        "text": "A Russian Marxist revolutionary who spent years in exile. Germany let him travel home from Switzerland in April 1917, hoping he would weaken Russia’s war effort. His Bolsheviks seized power in Petrograd that November and made peace at Brest-Litovsk. He led Soviet Russia through the civil war that followed until his death in 1924."
+      },
+      {
+        "id": "ferdinand-foch",
+        "name": "Ferdinand Foch",
+        "life": "1851–1929",
+        "role": "Supreme Allied commander",
+        "steps": [
+          3,
+          12,
+          14
+        ],
+        "text": "A French general and teacher of strategy who fought at the Marne and round Ypres. In spring 1918, during the German offensives, he was made supreme commander of the Allied armies and directed the counter-attacks of the Hundred Days. He received Germany’s delegates and their signatures on the armistice in his railway carriage near Compiègne."
+      }
+    ]
+  }
+}
