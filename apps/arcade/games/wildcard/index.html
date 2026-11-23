@@ -208,6 +208,11 @@
     background: linear-gradient(90deg, var(--go), var(--go-2)); color: var(--go-ink); font-weight: 900; font-size: 13px; letter-spacing: 0.04em;
     padding: 8px 16px; border-radius: 999px; animation: glow 1.6s ease-in-out infinite; text-transform: uppercase; }
   #turn.wait { background: var(--chip); color: var(--text); border: 1px solid var(--chip-b); animation: none; text-transform: none; letter-spacing: 0; font-weight: 700; }
+  #backBtn { position: absolute; top: 422px; left: 50%; transform: translateX(-50%); z-index: 7; white-space: nowrap; min-height: 44px;
+    font: inherit; font-size: 13px; font-weight: 900; padding: 0 18px; border-radius: 999px; border: 2px solid var(--saffron);
+    background: var(--panel); color: var(--text); box-shadow: 0 6px 18px -4px var(--shadow); cursor: pointer; }
+  #backBtn:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+  #backBtn[hidden] { display: none; }
   @keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(34,184,160,0.12), 0 6px 26px rgba(34,184,160,0.55); } }
 
   /* ---------- your hand ---------- */
@@ -344,6 +349,7 @@
     <div class="under" id="colourLabel"><i></i><span id="colourName"></span></div>
 
     <div id="turn"></div>
+    <button id="backBtn" hidden>A bot is playing for you · I'm back</button>
     <div id="hand" role="group" aria-label="Your hand"></div>
 
     <div class="actions">
@@ -507,8 +513,10 @@
     const abs = (seat + online.seat) % state.players;
     const s = online.room.seats[abs] || { name: '?', bot: true };
     const face = s.bot ? (PEOPLE.find((p) => p.name === s.name) || PEOPLE[1]).em : ONLINE_FACES[abs];
-    return { name: s.name, em: face, bot: !!s.bot };
+    return { name: s.name, em: face, bot: !!s.bot, tag: seatTag(s) };
   }
+  // The small word after a name: a bot, someone away, or a bot sitting in for someone.
+  const seatTag = (s) => (s.bot ? 'bot' : s.away ? 'away' : s.auto ? 'bot playing' : '');
   const esc = (t) => String(t).replace(/[&<>"']/g, (c) => '&#' + c.charCodeAt(0) + ';');
   const nameOf = (seat) => esc(P(seat).name);
   const oppEl = (seat) => stage.querySelector('.opp.s' + posOf(seat));
@@ -610,7 +618,8 @@
       const cnt = el.querySelector('.count');
       cnt.textContent = cardsText(n);
       cnt.classList.toggle('low', n <= 2 && state.winner === null);
-      el.querySelector('.name').innerHTML = nameOf(s) + (P(s).bot ? ' <small>bot</small>' : '');
+      const tag = P(s).tag != null ? P(s).tag : P(s).bot ? 'bot' : '';
+      el.querySelector('.name').innerHTML = nameOf(s) + (tag ? ' <small>' + tag + '</small>' : '');
       el.classList.toggle('active', state.winner === null && state.turn === s);
       el.classList.toggle('last', n === 1 && state.winner === null);
       el.setAttribute('aria-label', P(s).name + ', ' + n + (n === 1 ? ' card' : ' cards'));
@@ -712,6 +721,10 @@
 
   function renderTurn() {
     const t = $('turn');
+    const mine = online && online.room && online.room.seats[online.seat];
+    $('backBtn').hidden = !(mine && mine.auto && !online.retrying && online.room.phase === 'playing' && state.winner === null);
+    t.hidden = !$('backBtn').hidden;
+    if (online && online.retrying) { t.className = 'wait'; t.textContent = 'Reconnecting…'; return; }
     if (state.winner !== null) { t.className = 'wait'; t.textContent = P(state.winner).name + (state.winner === 0 ? ' win!' : ' wins!'); return; }
     if (state.turn !== 0) { t.className = 'wait'; t.textContent = P(state.turn).name + ' is thinking…'; return; }
     t.className = '';
@@ -999,6 +1012,10 @@
     full: 'That table is full.', in_progress: 'That table is already playing.', gone: 'That table has closed.',
     need_two: 'Wait for at least one friend to join.', busy: 'Too many new tables just now. Try again in a minute.',
     origin: 'Online play only works on the Arcade site.', notfound: 'No table with that code.',
+    daily: "You've started 5 tables today. Join a friend's table, or start one tomorrow.",
+    full_today: 'Online tables are full for today. Try again tomorrow, or play the bots.',
+    slow_down: 'Too many messages too fast. Join the table again.',
+    replaced: 'You opened this table somewhere else.',
   };
   const ERR_MOVE = { not_your_turn: "It isn't your turn.", does_not_match: "That card doesn't match." };
 
@@ -1017,9 +1034,14 @@
   }
 
   function onlineMsg(id, text, bad) { $(id).textContent = text || ''; $(id).classList.toggle('bad', !!bad); }
-  function playerId() {
+  // Your id at a table is kept (wildcardTable: {code, id}) so a reload or a
+  // dropped connection takes you back to the same seat.
+  function playerId(code) {
+    try { const t = JSON.parse(store.get('wildcardTable', 'null')); if (t && t.code === code && /^[0-9a-f]{24}$/.test(t.id)) return t.id; } catch (e) {}
     const b = crypto.getRandomValues(new Uint8Array(12));
-    return [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+    const id = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+    store.set('wildcardTable', JSON.stringify({ code, id }));
+    return id;
   }
   function openOnline(code) {
     $('nameInput').value = store.get('wildcardName', '');
@@ -1054,23 +1076,39 @@
     connect(code);
   }
 
+  // A lost connection is retried RETRY_MS apart (about a minute in all)
+  // with the same id, and the server hands the seat back. Closes the server
+  // means (4xxx: gone, replaced, refused, too many messages) end it at once.
+  const RETRY_MS = [500, 1500, 3000, 5000, 10000, 15000, 20000];
   function connect(code) {
     if (online) online.leaving = true, online.ws.close();
-    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(proto + '//' + location.host + '/api/wildcard/rooms/' + code + '/ws');
-    const me = { ws, code, id: playerId(), seat: 0, room: null, queue: Promise.resolve(), from: null, leaving: false, joined: false, error: null };
+    const me = { ws: null, code, id: playerId(code), seat: 0, room: null, queue: Promise.resolve(), from: null, leaving: false, joined: false, error: null, retrying: 0, timer: null };
     online = me;
+    openSocket(me);
+  }
+  function openSocket(me) {
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(proto + '//' + location.host + '/api/wildcard/rooms/' + me.code + '/ws');
+    me.ws = ws;
     ws.onopen = () => ws.send(JSON.stringify({ t: 'hello', id: me.id, name: myName() }));
     ws.onmessage = (e) => {
-      if (online !== me) return;
+      if (online !== me || me.ws !== ws) return;
       let m; try { m = JSON.parse(e.data); } catch (err) { return; }
+      if (me.retrying) { me.retrying = 0; if (state) render(); }
       me.queue = me.queue.then(() => handle(m)).catch((err) => console.error(err));
     };
-    ws.onclose = () => {
-      if (online !== me || me.leaving) return;
-      const why = !me.joined ? (ONLINE_ERRORS[me.error] || ONLINE_ERRORS.notfound) : 'Lost the connection to the table.';
+    ws.onclose = (e) => {
+      if (online !== me || me.ws !== ws || me.leaving) return;
+      const final = e.code >= 4000 && e.code < 5000;
+      if (me.joined && !final && me.retrying < RETRY_MS.length) {
+        me.timer = setTimeout(() => { if (online === me && !me.leaving) openSocket(me); }, RETRY_MS[me.retrying++]);
+        if (state) render();
+        return;
+      }
+      const err = (e.code === 4409 ? 'replaced' : e.code === 4410 || e.code === 4404 ? 'gone' : null) || me.error;
+      const why = ONLINE_ERRORS[err] || (!me.joined ? ONLINE_ERRORS.notfound : 'Lost the connection to the table.');
       endOnline();
-      openOnline(code);
+      openOnline(me.code);
       onlineMsg('onlineMsg', why, true);
     };
   }
@@ -1078,6 +1116,7 @@
   function leaveTable() {
     if (!online) return;
     online.leaving = true;
+    clearTimeout(online.timer);
     try { online.ws.close(1000, 'left'); } catch (e) {}
     endOnline();
   }
@@ -1115,7 +1154,9 @@
         try { history.replaceState(null, '', location.pathname + '?room=' + m.code); } catch (e) {}
       }
       if (m.phase === 'lobby') { showLobby(); return; }
-      if (m.phase === 'playing') { $('lobby').hidden = true; if (state) render(); return; }
+      if (m.phase === 'playing') { online.resumed = false; $('lobby').hidden = true; if (state) render(); return; }
+      // Back at a finished game: the table came first (resume), so show it.
+      if (online.resumed) { online.resumed = false; showLobby(); return; }
       // over: let the last card land, then show who won
       await wait(900);
       if (online && online.room === m) { showLobby(); if (state.winner === 0) sfx.win(); else sfx.lose(); }
@@ -1126,9 +1167,9 @@
       discardLook.clear(); incoming.clear(); armed = false;
       online.seat = m.view.seat;
       const dealt = fromView(m.view);
-      if (m.resume) { state = dealt; busy = false; render(); }
+      if (m.resume) { state = dealt; busy = false; online.from = null; online.resumed = true; render(); }
       else await dealIn(dealt);
-      next();
+      if (!m.resume) next();
       return;
     }
     if (m.t === 'update') {
@@ -1155,7 +1196,7 @@
 
   // Your move goes to the server; the table changes when its update comes back.
   function sendMove(move) {
-    if (!online || busy) return;
+    if (!online || busy || online.ws.readyState !== 1) return;
     busy = true;
     online.from = null;
     if (move.type === 'play') {
@@ -1186,10 +1227,10 @@
       } else {
         const local = (abs - online.seat + r.seats.length) % r.seats.length;
         const face = seat.bot ? (PEOPLE.find((p) => p.name === seat.name) || PEOPLE[1]).em : (abs === online.seat ? '🙂' : ONLINE_FACES[abs]);
-        let right = abs === online.seat ? 'you' : seat.bot ? 'bot' : '';
+        let right = abs === online.seat ? 'you' : seatTag(seat);
         if (over) {
           const cnt = state.hands[local].length;
-          right = cnt === 0 ? 'Out! 🏆' : cardsText(cnt);
+          right = (cnt === 0 ? 'Out! 🏆' : cardsText(cnt)) + (seat.away ? ' · away' : '');
           if (cnt === 0) li.className = 'win';
         } else if (abs === r.hostSeat) right = (right ? right + ' · ' : '') + 'host';
         li.innerHTML = '<span>' + face + ' ' + esc(seat.name) + '</span><small>' + right + '</small>';
@@ -1229,10 +1270,13 @@
   $('codeInput').addEventListener('input', () => { $('codeInput').value = $('codeInput').value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
   $('shareBtn').addEventListener('click', shareLink);
   $('lobbyLeave').addEventListener('click', leaveTable);
+  $('backBtn').addEventListener('click', () => { audio(); sendRoom({ t: 'back' }); });
   $('lobbyStart').addEventListener('click', () => { audio(); sendRoom({ t: 'start' }); });
   $('sizeSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) sendRoom({ t: 'config', size: Number(b.dataset.size) }); });
   $('lobbyLevelSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) sendRoom({ t: 'config', level: b.dataset.level }); });
-  window.addEventListener('pagehide', () => { if (online) { online.leaving = true; try { online.ws.close(1000, 'left'); } catch (e) {} } });
+  window.addEventListener('pagehide', () => { if (online) { online.leaving = true; clearTimeout(online.timer); try { online.ws.close(1000, 'left'); } catch (e) {} } });
+  // Back from the browser's page cache: the old connection is gone, so sit down again.
+  window.addEventListener('pageshow', (e) => { if (e.persisted && online && online.joined) { online.leaving = false; online.retrying = 0; openSocket(online); } });
 
   // ---------- title, menu, theme ----------
   function setLevel(l) {

@@ -84,15 +84,110 @@ test('another player\'s drawn cards never reach you', () => {
   assert.deepEqual(theirs.cards, [null]);
 });
 
-test('leaving: the lobby frees the seat and passes on host; a game hands it to a bot', () => {
+test('leaving the lobby frees the seat and passes on host', () => {
   const room = table(['A', 'B', 'C']);
   R.leave(room, 'id-A');
   assert.deepEqual(room.seats.map((s) => s.name), ['B', 'C']);
   assert.equal(room.host, 'id-B');
-  R.start(room, 'id-B', rand);
-  R.leave(room, 'id-C');
-  assert.ok(room.seats[1].bot);
-  assert.equal(room.seats[1].name, 'C');
+});
+
+// A two-person game at time t, with seat `turn` to play.
+function game(t = 1000) {
+  const room = table(['A', 'B']);
+  R.configure(room, 'id-A', { size: 3 });
+  R.start(room, 'id-A', rand, t);
+  return room;
+}
+const idAt = (room, seat) => room.seats[seat].id;
+
+test('a dropped connection keeps the seat; coming back with the same id takes it back', () => {
+  const room = game();
+  R.leave(room, 'id-B', 2000);
+  assert.equal(room.seats[1].off, 2000);
+  assert.ok(!room.seats[1].bot && !room.seats[1].auto, 'no bot yet');
+  const msg = msgsTo(R.leave(room, 'id-A', 2000).out, 'id-B');
+  assert.equal(msg.length, 1, 'the away player still gets room messages if they are listening');
+  R.leave(room, 'id-A', 2000); // already away: nothing changes
+  const r = R.join(room, 'id-B', 'B', 3000);
+  assert.ok(r.ok);
+  assert.ok(!('off' in room.seats[1]));
+  const mine = msgsTo(r.out, 'id-B');
+  assert.equal(mine[0].t, 'deal', 'the table first, so the page can draw it');
+  assert.ok(mine[0].resume);
+  assert.equal(mine[1].t, 'room');
+  assert.equal(mine[1].you, 1);
+  assert.equal(R.join(room, 'id-new', 'C', 3000).error, 'in_progress', 'strangers still can\'t join a game');
+});
+
+test('the host role passes to someone connected, and back when the host returns to an empty host seat', () => {
+  const room = game();
+  R.leave(room, 'id-A', 2000);
+  assert.equal(room.host, 'id-B');
+  R.leave(room, 'id-B', 2000);
+  assert.equal(room.host, 'id-B', 'nobody connected to pass it to');
+  R.join(room, 'id-A', 'A', 3000);
+  assert.equal(room.host, 'id-A');
+});
+
+test('nothing is due while nobody is connected', () => {
+  const room = game();
+  assert.notEqual(R.dueAt(room), null);
+  R.leave(room, 'id-A', 2000);
+  R.leave(room, 'id-B', 2000);
+  assert.equal(R.dueAt(room), null);
+  assert.equal(R.tick(room, 1e12).ok, false);
+});
+
+test('a player gone on their turn gets GRACE_MS, then a bot plays their seat until they come back', () => {
+  const room = game(1000);
+  room.game.turn = 1; // B to play
+  R.leave(room, 'id-B', 5000);
+  assert.equal(R.dueAt(room), 5000 + R.GRACE_MS);
+  assert.equal(R.tick(room, 5000 + R.GRACE_MS - 1).ok, false);
+  const r = R.tick(room, 5000 + R.GRACE_MS);
+  assert.ok(r.ok);
+  assert.ok(room.seats[1].auto, 'a bot has the seat');
+  assert.ok(room.seats[1].off);
+  assert.ok(msgsTo(r.out, 'id-A').some((m) => m.t === 'room' && m.seats[1].away && m.seats[1].auto));
+  R.join(room, 'id-B', 'B', 99999);
+  assert.ok(!room.seats[1].auto && !room.seats[1].off);
+});
+
+test('choosing to leave hands the seat to a bot at once', () => {
+  const room = game(1000);
+  room.game.turn = 1;
+  R.leave(room, 'id-B', 5000, true);
+  assert.ok(room.seats[1].auto);
+  assert.equal(R.dueAt(room), 1000 + R.BOT_DELAY_MS);
+});
+
+test('a connected player who sits on their turn for TURN_MS gets a bot until they say they are back', () => {
+  const room = game(1000);
+  room.game.turn = 0;
+  assert.equal(R.dueAt(room), 1000 + R.TURN_MS);
+  assert.ok(R.tick(room, 1000 + R.TURN_MS).ok);
+  assert.ok(room.seats[0].auto && !room.seats[0].off);
+  assert.equal(room.turnAt, 1000 + R.TURN_MS);
+  const b = R.back(room, 'id-A', 70000);
+  assert.ok(b.ok && !room.seats[0].auto);
+  assert.ok(msgsTo(b.out, 'id-B').some((m) => m.t === 'room' && !m.seats[0].auto));
+  assert.equal(R.back(room, 'stranger', 70000).error, 'not_seated');
+});
+
+test('back on your own turn restarts your clock', () => {
+  const room = game(1000);
+  room.game.turn = 0;
+  room.seats[0].auto = true;
+  R.back(room, 'id-A', 50000);
+  assert.equal(R.dueAt(room), 50000 + R.TURN_MS);
+});
+
+test('dealing again gives anyone away a bot straight away', () => {
+  const room = game(1000);
+  room.phase = 'over';
+  R.leave(room, 'id-B', 2000);
+  R.start(room, 'id-A', rand, 3000);
+  assert.ok(room.seats[1].auto);
 });
 
 test('a whole game with bots plays out and can be dealt again', () => {
@@ -102,14 +197,15 @@ test('a whole game with bots plays out and can be dealt again', () => {
     R.start(room, 'id-A', rand);
     let guard = 0;
     while (room.phase === 'playing' && guard++ < 5000) {
-      if (R.botDue(room)) { assert.ok(R.botStep(room).ok); continue; }
       const seat = room.game.turn;
+      if (room.seats[seat].bot) { assert.ok(R.tick(room, R.dueAt(room)).ok); continue; }
       const id = room.seats[seat].id;
       const mv = E.botMove(room.game, seat, 'easy', rand);
       assert.ok(R.move(room, id, mv).ok);
     }
     assert.equal(room.phase, 'over');
-    assert.equal(R.botStep(room).ok, false);
+    assert.equal(R.dueAt(room), null);
+    assert.equal(R.tick(room, 1e15).ok, false);
     assert.equal(R.start(room, 'id-B', rand).error, 'not_host');
     assert.ok(R.start(room, 'id-A', rand).ok);
     assert.equal(room.seats.length, 4, 'the same seats play again');

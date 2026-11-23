@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "lint": "node scripts/check-tokens.mjs",
-    "test": "node --test scripts/tennis.test.js scripts/wildcard.test.js scripts/wildcard-room.test.mjs scripts/seo.test.mjs",
+    "test": "node --test scripts/tennis.test.js scripts/wildcard.test.js scripts/wildcard-room.test.mjs scripts/wildcard-limiter.test.mjs scripts/seo.test.mjs",
     "sync-tokens": "pnpm --filter @krishnabuilds/tokens build && node scripts/check-tokens.mjs --write"
   },
   "devDependencies": {

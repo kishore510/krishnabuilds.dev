@@ -11,11 +11,12 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         bots fill empty seats; each player is sent only `viewFor` their seat
         (1.76.0). Also in: idle tables expire, a bot takes over the seat of
         someone who leaves mid-game, 3 new tables per IP per minute
-  - [ ] Slice 3: limits and resilience: 5 new rooms per IP per day for
-        everyone (hashed with a daily salt, never stored raw), a site-wide
-        daily cap, reconnect to your seat (today a dropped connection hands
-        the seat to a bot for good), a bot takes over a seat that stays
-        connected but goes quiet, a per-socket message limit
+  - [x] Slice 3: limits and resilience (1.77.0): 5 new rooms per IP per
+        day for everyone (hashed with a daily salt, never stored raw), a
+        site-wide daily cap (100), reconnect to your seat, a bot takes over
+        a seat that is away 20 s or quiet 45 s on its turn ("I'm back"
+        hands it back), a per-socket message limit (30 per 10 s) and 12
+        sockets per table
   - [ ] Slice 4: polish: sound and animation pass, "your turn" cue
 
 - [x] Dojo Duel, built in small steps, one PR each (notes for maintainers in
