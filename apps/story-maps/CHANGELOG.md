@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.116.0
+
+- New story map in Wars and Campaigns: The Napoleonic Wars. From the siege of Toulon in 1793 through the army of Italy, Egypt and Acre, the coup of Brumaire, Marengo, the coronation, Trafalgar, Austerlitz, Jena, Tilsit, the rising in Madrid, Wagram, the Lines of Torres Vedras, the crossing of the Niemen, Borodino, Moscow and the Berezina, Leipzig, the abdication and Elba, the Hundred Days and Waterloo, to the Congress of Vienna, St Helena and the return of the ashes. 25 chapters on the `mediterranean` basemap, a Powers layer (France, the French client states, Britain, Spain, Austria, Prussia, Russia and the Ottoman Empire), 8 people cards, native names in French, Italian, Arabic, Spanish, Czech, German, Russian and Portuguese, no new glyphs.
+- Catalogue: a new Napoleonic Wars entry opens the story; the Napoleonic French Empire entry now opens it at chapter 7.
+
 ## 0.115.0
 
 - New story map in Wars and Campaigns: The Three Battles of Panipat. From Babur in Kabul through the first battle in 1526, Agra and Khanwa, Akbar’s coronation at Kalanaur, Hemu’s capture of Delhi and the second battle in 1556, to the Marathas at Attock, Barari Ghat, Bhau’s march north, the siege and the third battle in 1761, what followed, and Panipat today. 13 chapters on the `south-asia` basemap, a Powers layer (the Lodi Sultanate, the Mughal Empire, the Sur Empire, the Rajput confederacy, the Maratha Empire, the Durrani Empire, the Rohillas and Awadh), 8 people cards, native names in Hindi, Persian, Marathi and Pashto, no new glyphs.
