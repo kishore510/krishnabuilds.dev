@@ -85,6 +85,19 @@ One small PR each, in order.
 - [x] Stickyard and Sumyard join the shared `kb-theme` cookie, migrating an existing local choice once
 - [x] Arcade: drop Google Fonts for the system font stack; site-links bar uses the shared accent
 
+## Search and indexing
+
+Google Search Console (2026-11-23): every app's sitemap was read successfully, but only 5 pages were indexed: the Portal, twice (http and https), and 3 Arcade games. 47 pages, nearly all Arcade, are "Crawled – currently not indexed". Story Maps' 289 pages have been found in its sitemap but not crawled yet. One small PR each, in order; the visible ones need the owner's sign-off on screenshots before merging.
+
+- [x] Story Maps: the hidden text copy of each story has one `<h1>` per page and plain related links for crawlers (0.116.1, #175)
+- [x] Arcade: one address per page. Cards and back links point at folders, and `_redirects` sends `index.html` addresses there with a 301 (1.74.1, #176)
+- [ ] Portal: pre-render the pages at build time. Today the HTML is an empty `<div id="root">`, so Google sees no text or links and hides `/how` and `/stories/*` as copies of the homepage. Give each page its own title, description and content, list every page in the sitemap, add Organization or Person JSON-LD with `sameAs` (ask the owner which profile URLs to use) and a WebSite `alternateName` of "krishnabuilds.dev", and put "krishnabuilds.dev" in titles. The name krishnabuilds is shared with an unrelated site on another domain
+- [ ] Arcade: a short visible "How to play" for each game (aim, controls, modes). Game pages have about 20 words of HTML text, the likely reason Google left them out (visible change)
+- [ ] Story Maps: a visible "Read the whole story" text view, linked from the story page. The full text exists only in a visually hidden copy, which Google gives little weight (visible change)
+- [ ] Owner: turn on Always Use HTTPS in Cloudflare (SSL/TLS, Edge Certificates); `http://krishnabuilds.dev/` answers 200 and is indexed as a duplicate
+- [ ] Owner: in Search Console, choose Validate fix on "Crawled – currently not indexed" now that #176 is live, and Request indexing for the Story Maps front page and a few stories
+- [ ] Owner: a few real links from elsewhere (GitHub profile and README, a Show HN or a history or maps community post)
+
 ## Backlog
 
 The app list in `packages/ui` (`src/apps.ts`) is the single source for the site header nav and the Portal cards.
