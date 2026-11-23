@@ -6,7 +6,7 @@
 //   <script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
 //
 // Optional data attributes on the <script> tag:
-//   data-games-url  - where "All games" points (default: ../../index.html)
+//   data-games-url  - where "All games" points (default: ../../)
 //   data-coffee-url - the "get the guide" link (see CLAUDE.md "Adding a new
 //     game" - copy the URL above verbatim, don't invent a new one per game)
 //   data-fullscreen - set to "landscape" to opt a game into fullscreen mode:
@@ -46,7 +46,7 @@
 
 (function () {
   const script = document.currentScript;
-  const gamesUrl = (script && script.dataset.gamesUrl) || '../../index.html';
+  const gamesUrl = (script && script.dataset.gamesUrl) || '../../';
   const coffeeUrl = (script && script.dataset.coffeeUrl) || 'https://kishorecraft88.gumroad.com/l/abuoox';
   const fullscreenMode = !!(script && script.dataset.fullscreen === 'landscape');
 

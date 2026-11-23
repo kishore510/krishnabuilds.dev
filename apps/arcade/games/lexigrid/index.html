@@ -1067,7 +1067,7 @@ canvas.addEventListener('pointerdown', (e) => {
 
   if (resultAnim && !resultAnim.dismissed) {
     if (hitTest(RESULT_BUTTONS.viewGrid, x, y)) { resultAnim.dismissed = true; return; }
-    if (hitTest(RESULT_BUTTONS.backToArcade, x, y)) { location.href = '../../index.html'; return; }
+    if (hitTest(RESULT_BUTTONS.backToArcade, x, y)) { location.href = '../../'; return; }
     return; // swallow all other input while the result panel is up
   }
   if (resultAnim && resultAnim.dismissed) {

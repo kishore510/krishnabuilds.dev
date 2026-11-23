@@ -942,7 +942,7 @@
     const metaText = 'Published ' + formatPublished(g.published)
       + (n ? ' \u00b7 Played ' + n.toLocaleString() + (n === 1 ? ' time' : ' times') : '');
     return `
-      <a class="cartridge" href="${g.path}">
+      <a class="cartridge" href="games/${slug}/">
         <div class="label${g.art ? ' has-art' : ''}" style="background:${g.color}">
           <div class="notch"></div>
           ${g.art
@@ -1049,7 +1049,7 @@
   if (window.KB_VERSION) {
     document.getElementById('versionTag').innerHTML =
       'v' + window.KB_VERSION + (window.KB_UPDATED ? ' \u00b7 updated ' + window.KB_UPDATED : '') +
-      ' \u00b7 <a href="changelog.html">Changelog</a>';
+      ' \u00b7 <a href="changelog">Changelog</a>';
   }
 
   // Layout toggle: single column (default) or multi-column grid, remembered per browser

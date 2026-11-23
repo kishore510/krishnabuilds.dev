@@ -40,6 +40,7 @@ index.html                    — landing page; lists every game as a "cartridge
 assets/game-embed.js          — shared chrome every game page includes (nav bar, support link)
 assets/site-links.js          — link home + app switcher (bar on the landing page, pill via game-embed.js); app list must match packages/ui. Opt-in `kbSetChromeHidden(bool)` (game-embed.js) hides the guide link and pill; only Dojo Duel calls it
 assets/version.js             — single source of truth for the displayed version string
+_redirects                    — 301s so each page has one address for search engines (`/games/<slug>/index.html` → `/games/<slug>/`, `/index.html` → `/`); link to folders, never to `index.html`
 assets/art/<slug>.svg         — optional card pictures for the landing page (see "Card art")
 games/fin-dash/index.html     — Fin Dash (canvas, single-tap flap physics)
 games/burrow-bash/index.html  — Burrow Bash (DOM/CSS game, no canvas)
