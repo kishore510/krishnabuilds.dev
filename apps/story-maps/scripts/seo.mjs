@@ -60,12 +60,19 @@ export const ldScript = (data) => `<script type="application/ld+json">${JSON.str
 /**
  * The story's chapters as plain HTML, so the text is in the page itself and not only in the
  * script that draws the map. Visually hidden and out of the reading order of assistive tech:
- * the map already offers every chapter, this is a copy for crawlers.
+ * the map already offers every chapter, this is a copy for crawlers. Its title is an <h2>,
+ * since the player already has the page's one <h1>. `links` (related story maps and catalogue
+ * pages) are plain links a crawler can follow without running the page's scripts; they take
+ * tabindex="-1" so keyboard users never land on a link they cannot see.
  * @param {{ title: string, description: string, steps: { title: string, when?: string, text: string, today?: string }[] }} story
+ * @param {{ text: string, href: string }[]} [links]
  */
-export function storyText(story) {
+export function storyText(story, links = []) {
   const chapters = story.steps
-    .map((s, i) => `<section><h2>${i + 1}. ${escHtml(s.title)}${s.when ? ` (${escHtml(s.when)})` : ""}</h2><p>${escHtml(s.text)}</p>${s.today ? `<p>${escHtml(s.today)}</p>` : ""}</section>`)
+    .map((s, i) => `<section><h3>${i + 1}. ${escHtml(s.title)}${s.when ? ` (${escHtml(s.when)})` : ""}</h3><p>${escHtml(s.text)}</p>${s.today ? `<p>${escHtml(s.today)}</p>` : ""}</section>`)
     .join("");
-  return `<article class="sm-seo" aria-hidden="true"><h1>${escHtml(story.title)}</h1><p>${escHtml(story.description)}</p>${chapters}</article>`;
+  const nav = links.length
+    ? `<nav><h3>Related</h3><ul>${links.map((l) => `<li><a href="${escHtml(l.href)}" tabindex="-1">${escHtml(l.text)}</a></li>`).join("")}</ul></nav>`
+    : "";
+  return `<article class="sm-seo" aria-hidden="true"><h2>${escHtml(story.title)}</h2><p>${escHtml(story.description)}</p>${chapters}${nav}</article>`;
 }

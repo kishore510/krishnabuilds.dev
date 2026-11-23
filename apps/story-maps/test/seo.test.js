@@ -46,10 +46,17 @@ describe("structured data", () => {
 describe("storyText", () => {
   it("copies every chapter into the page, escaped", () => {
     const html = storyText({ title: "T & U", description: "Desc", steps: [{ title: "One", when: "c. 1 BCE", text: "A <b> text" }, { title: "Two", text: "More", today: "Today" }] });
-    expect(html).toContain("<h1>T &amp; U</h1>");
+    expect(html).toContain("<h2>T &amp; U</h2>");
+    expect(html).not.toContain("<h1");
     expect(html).toContain("1. One (c. 1 BCE)");
     expect(html).toContain("A &lt;b&gt; text");
     expect(html).toContain("2. Two");
     expect(html).toContain("<p>Today</p>");
+    expect(html).not.toContain("<nav");
+  });
+
+  it("adds related links that keyboard focus skips", () => {
+    const html = storyText({ title: "T", description: "D", steps: [] }, [{ text: "A & B", href: "/explore/a/" }]);
+    expect(html).toContain('<a href="/explore/a/" tabindex="-1">A &amp; B</a>');
   });
 });

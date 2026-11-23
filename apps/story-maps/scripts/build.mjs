@@ -193,6 +193,22 @@ function fill(template, vars, name) {
   });
 }
 
+/**
+ * Links for the crawler copy of a story: its subject page, its catalogue pages, the stories
+ * offered at its end and the related entries, each once.
+ * @param {Story} entry @param {ReturnType<typeof storyLinks>} more
+ */
+function seoLinks(entry, more) {
+  const section = manifest.sections.find((x) => x.id === entry.section);
+  /** @type {Map<string, string>} */
+  const links = new Map();
+  if (section) links.set(`/${section.id}/`, `All ${section.title} story maps`);
+  for (const e of catalogue.entries) if (e.story === entry.id) links.set(`/explore/${e.id}/`, e.name);
+  for (const s of more.next) links.set(s.href, s.title);
+  for (const r of more.related) links.set(r.href, r.name);
+  return [...links].map(([href, text]) => ({ href, text }));
+}
+
 /** @param {Story} entry */
 function storyPage(entry) {
   const data = { ...loadStoryData(entry), more: storyLinks(entry) };
@@ -209,7 +225,7 @@ function storyPage(entry) {
     },
     "engine/src/player.html",
   );
-  return `${page}\n${storyText(data.story)}\n<script>\n${progressJs}</script>\n<script>\n${statsJs}</script>\n<script>\n${tourJs}</script>`;
+  return `${page}\n${storyText(data.story, seoLinks(entry, data.more))}\n<script>\n${progressJs}</script>\n<script>\n${statsJs}</script>\n<script>\n${tourJs}</script>`;
 }
 
 // --- hub: timeline and Browse ------------------------------------------------
