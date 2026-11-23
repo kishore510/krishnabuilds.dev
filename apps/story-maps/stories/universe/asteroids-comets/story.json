@@ -1,0 +1,675 @@
+{
+  "id": "asteroids-comets",
+  "title": "Asteroids and Comets",
+  "description": "An illustrated map of the spacecraft sent to asteroids and comets, from Giotto at Halley’s Comet in 1986 through NEAR, Rosetta and Philae, Hayabusa, Dawn and OSIRIS-REx, to DART’s collision with Dimorphos and the missions still on their way.",
+  "canvas": "cosmic",
+  "basemap": "solar-system",
+  "source": "History",
+  "nativeLang": "en",
+  "mapLabel": "Illustrated diagram of the inner Solar System by distance, with the Sun on the left, Earth, the main asteroid belt and the comets and asteroids visited by spacecraft",
+  "note": "This map is a diagram of distance, not a picture of space. Distance from the Sun runs left to right on a logarithmic scale, and each body is drawn at about its distance from the Sun when it was visited. Up and down mean nothing: comets are drawn above the planets’ plane and near-Earth asteroids below it, only to keep them apart. Figures follow NASA, ESA and JAXA.",
+  "routes": "chapter",
+  "places": {
+    "earth": {
+      "name": "Earth",
+      "at": [
+        22,
+        45
+      ],
+      "glyph": "earth-moon",
+      "label": "top"
+    },
+    "halley": {
+      "name": "Halley’s Comet",
+      "at": [
+        19,
+        57
+      ],
+      "glyph": "comet",
+      "label": "right"
+    },
+    "ida": {
+      "name": "Ida and Dactyl",
+      "at": [
+        46,
+        42
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "eros": {
+      "name": "Eros",
+      "at": [
+        34.5,
+        49
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "wild2": {
+      "name": "Comet Wild 2",
+      "at": [
+        36,
+        59
+      ],
+      "glyph": "comet",
+      "label": "right"
+    },
+    "tempel1": {
+      "name": "Comet Tempel 1",
+      "at": [
+        31,
+        62
+      ],
+      "glyph": "comet",
+      "label": "right"
+    },
+    "itokawa": {
+      "name": "Itokawa",
+      "at": [
+        25,
+        33
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "vesta": {
+      "name": "Vesta",
+      "at": [
+        41.5,
+        38
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "ceres": {
+      "name": "Ceres",
+      "at": [
+        45,
+        50
+      ],
+      "glyph": "dwarf-planet",
+      "label": "right"
+    },
+    "c67p": {
+      "name": "Comet 67P",
+      "at": [
+        49,
+        58
+      ],
+      "glyph": "comet",
+      "label": "right"
+    },
+    "ryugu": {
+      "name": "Ryugu",
+      "at": [
+        27,
+        28
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "bennu": {
+      "name": "Bennu",
+      "at": [
+        18,
+        31
+      ],
+      "glyph": "rock",
+      "label": "left"
+    },
+    "dimorphos": {
+      "name": "Didymos and Dimorphos",
+      "at": [
+        23,
+        37
+      ],
+      "glyph": "burst",
+      "label": "bottom"
+    },
+    "trojans": {
+      "name": "Jupiter’s Trojans",
+      "at": [
+        57,
+        35
+      ],
+      "glyph": "rock",
+      "label": "top"
+    }
+  },
+  "travellers": {
+    "giotto": {
+      "name": "Giotto",
+      "icon": "probe"
+    },
+    "galileo": {
+      "name": "Galileo",
+      "icon": "probe"
+    },
+    "near": {
+      "name": "NEAR Shoemaker",
+      "icon": "probe"
+    },
+    "stardust": {
+      "name": "Stardust",
+      "icon": "probe"
+    },
+    "deepimpact": {
+      "name": "Deep Impact",
+      "icon": "probe"
+    },
+    "hayabusa": {
+      "name": "Hayabusa",
+      "icon": "probe"
+    },
+    "dawn": {
+      "name": "Dawn",
+      "icon": "probe"
+    },
+    "rosetta": {
+      "name": "Rosetta",
+      "icon": "probe"
+    },
+    "hayabusa2": {
+      "name": "Hayabusa2",
+      "icon": "probe"
+    },
+    "osirisrex": {
+      "name": "OSIRIS-REx",
+      "icon": "probe"
+    },
+    "dart": {
+      "name": "DART",
+      "icon": "probe"
+    },
+    "lucy": {
+      "name": "Lucy",
+      "icon": "probe"
+    }
+  },
+  "phases": {
+    "first": {
+      "name": "First looks",
+      "color": "#ff8a3a"
+    },
+    "samples": {
+      "name": "Dust and samples",
+      "color": "#a678e0"
+    },
+    "orbit": {
+      "name": "Orbiting and landing",
+      "color": "#4fc3b0"
+    },
+    "home": {
+      "name": "Bringing it home, pushing it aside",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {
+    "first": {
+      "color": "#ffb36b",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "samples": {
+      "color": "#c4a3f0",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "orbit": {
+      "color": "#6fe0cf",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "home": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "steps": [
+    {
+      "place": "halley",
+      "phase": "first",
+      "title": "Into Halley’s Comet",
+      "when": "13 to 14 March 1986",
+      "at": 3.0,
+      "camera": {
+        "at": [
+          20,
+          51
+        ],
+        "width": 30
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "halley",
+          "traveller": "giotto",
+          "style": "first",
+          "bend": 0.14
+        }
+      ],
+      "text": "On the night of 13 to 14 March 1986, Europe’s first deep-space probe, Giotto, flew about 600 kilometres from the heart of Halley’s Comet. Two Soviet Vega probes had passed first, and their positions helped aim it. Giotto’s camera showed a dark, potato-shaped nucleus about 15 kilometres long, blacker than coal, with jets of gas and dust.",
+      "today": "Giotto went on to pass a second comet, Grigg–Skjellerup, in 1992. Halley’s Comet returns in 2061."
+    },
+    {
+      "place": "ida",
+      "phase": "first",
+      "title": "An asteroid with a moon",
+      "when": "1991 to 1994",
+      "at": 10.2,
+      "camera": {
+        "at": [
+          34,
+          45
+        ],
+        "width": 40
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "ida",
+          "traveller": "galileo",
+          "style": "first",
+          "bend": 0.14
+        }
+      ],
+      "text": "On its way to Jupiter, NASA’s Galileo became the first spacecraft to fly past an asteroid, Gaspra, in October 1991. On 28 August 1993 it passed Ida, about 60 kilometres long. Pictures sent home months later showed a surprise: a tiny moon about 1.5 kilometres wide, later named Dactyl, the first known moon of an asteroid.",
+      "today": "Hundreds of asteroids are now known to have moons. DART’s target, Dimorphos, is one of them."
+    },
+    {
+      "place": "eros",
+      "phase": "first",
+      "title": "Orbiting Eros",
+      "when": "February 2000 to February 2001",
+      "at": 17.3,
+      "camera": {
+        "at": [
+          28,
+          47
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "eros",
+          "traveller": "near",
+          "style": "first",
+          "bend": 0.14
+        }
+      ],
+      "text": "NASA’s NEAR, renamed NEAR Shoemaker after a planetary scientist, missed its first try at orbit in 1998 when an engine burn failed. It came back and on 14 February 2000 began the first orbit of an asteroid, Eros, about 34 kilometres long. A year later, though never built to land, it touched down and kept sending data for 16 days.",
+      "today": "No spacecraft has been back to Eros. NEAR Shoemaker still sits on its surface."
+    },
+    {
+      "place": "wild2",
+      "phase": "samples",
+      "title": "Catching comet dust",
+      "when": "2004 to 2006",
+      "at": 24.5,
+      "camera": {
+        "at": [
+          29,
+          52
+        ],
+        "width": 34
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "wild2",
+          "traveller": "stardust",
+          "style": "samples",
+          "bend": 0.14
+        }
+      ],
+      "source": "Science",
+      "text": "NASA’s Stardust flew 237 kilometres from Comet Wild 2 on 2 January 2004, catching its dust in aerogel, a foam that is almost all air. The capsule parachuted into the Utah desert on 15 January 2006. The grains held a surprise: crystals formed in great heat near the young Sun, then carried out to where comets formed.",
+      "today": "In 2009 scientists found glycine, one of the building blocks of proteins, in the Stardust samples."
+    },
+    {
+      "place": "tempel1",
+      "phase": "samples",
+      "title": "Hitting a comet",
+      "when": "4 July 2005",
+      "at": 31.6,
+      "camera": {
+        "at": [
+          26,
+          53
+        ],
+        "width": 30
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "tempel1",
+          "traveller": "deepimpact",
+          "style": "samples",
+          "bend": -0.14
+        }
+      ],
+      "text": "On 4 July 2005, NASA’s Deep Impact fired a 370-kilogram copper block into the path of Comet Tempel 1. It struck at about 37,000 kilometres an hour while the mother craft watched from 500 kilometres away. The blast threw out a bright plume of fine powder, so much of it that the crater itself was hidden.",
+      "today": "Stardust flew past Tempel 1 in 2011 and found the crater, about 150 metres wide."
+    },
+    {
+      "place": "itokawa",
+      "phase": "samples",
+      "title": "Hayabusa limps home",
+      "native": "はやぶさ",
+      "lang": "ja",
+      "when": "2005 to 2010",
+      "at": 38.8,
+      "camera": {
+        "at": [
+          23.5,
+          39
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "itokawa",
+          "traveller": "hayabusa",
+          "style": "samples",
+          "bend": 0.14
+        }
+      ],
+      "text": "Japan’s Hayabusa (Peregrine Falcon) reached Itokawa, an asteroid only 535 metres long, in September 2005: a loose pile of rubble, not solid rock. It touched down twice, but its sample gun failed to fire. Fuel leaks, lost contact and failing engines followed, yet it limped home in June 2010. Its capsule held about 1,500 grains of dust.",
+      "today": "They were the first pieces of an asteroid brought to Earth, and they matched the commonest kind of meteorite."
+    },
+    {
+      "place": "vesta",
+      "phase": "orbit",
+      "title": "Vesta, almost a planet",
+      "when": "July 2011 to September 2012",
+      "at": 45.9,
+      "camera": {
+        "at": [
+          31,
+          41
+        ],
+        "width": 34
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "vesta",
+          "traveller": "dawn",
+          "style": "orbit",
+          "bend": -0.14
+        }
+      ],
+      "text": "NASA’s Dawn, pushed by ion engines, entered orbit around Vesta on 16 July 2011, the first craft to orbit a body in the main asteroid belt. Vesta, about 525 kilometres across, has a giant crater, Rheasilvia, at its south pole, its central peak more than twice as tall as Everest. Many meteorites on Earth were knocked out of it.",
+      "today": "Dawn showed that Vesta has a core, mantle and crust, like a small planet."
+    },
+    {
+      "place": "ceres",
+      "phase": "orbit",
+      "title": "The bright spots of Ceres",
+      "when": "March 2015 to November 2018",
+      "at": 53.1,
+      "camera": {
+        "at": [
+          43,
+          44
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "vesta",
+          "to": "ceres",
+          "traveller": "dawn",
+          "style": "orbit",
+          "bend": 0.14
+        }
+      ],
+      "source": "Science",
+      "text": "Ceres, about 940 kilometres across, was the first asteroid found, by Giuseppe Piazzi at Palermo on 1 January 1801. On 6 March 2015 Dawn entered orbit, the first craft to orbit a dwarf planet, and two worlds beyond Earth. The bright spots in Occator crater proved to be salts left by salty water welling up from below.",
+      "today": "Dawn ran out of fuel in 2018 and will circle Ceres, silent, for decades."
+    },
+    {
+      "place": "c67p",
+      "phase": "orbit",
+      "title": "Rosetta’s rubber duck",
+      "when": "6 August 2014",
+      "at": 60.2,
+      "camera": {
+        "at": [
+          35,
+          52
+        ],
+        "width": 40
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "c67p",
+          "traveller": "rosetta",
+          "style": "orbit",
+          "bend": 0.14
+        }
+      ],
+      "source": "Science",
+      "text": "Europe’s Rosetta launched in 2004 and spent ten years chasing Comet 67P/Churyumov–Gerasimenko, sleeping for 31 months on the way. On 6 August 2014 it became the first spacecraft to orbit a comet. The nucleus, about 4 kilometres long, was two lobes joined by a neck, like a rubber duck. Its water held more heavy hydrogen than Earth’s oceans.",
+      "today": "That heavy hydrogen made comets like 67P look less likely as the main source of Earth’s water."
+    },
+    {
+      "place": "c67p",
+      "phase": "orbit",
+      "title": "Philae lands, and bounces",
+      "when": "12 November 2014",
+      "at": 67.4,
+      "camera": {
+        "at": [
+          49,
+          56
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "text": "On 12 November 2014 Rosetta dropped its lander, Philae, the first to land on a comet. Its harpoons failed to fire and it bounced twice, coming to rest in shadow against a cliff. On its batteries for about 60 hours, it sent home measurements, including organic molecules, then fell silent. Rosetta found it in a picture in September 2016.",
+      "today": "Rosetta itself was steered down onto the comet on 30 September 2016, ending the mission."
+    },
+    {
+      "place": "ryugu",
+      "phase": "home",
+      "title": "Hayabusa2 at Ryugu",
+      "native": "はやぶさ2",
+      "lang": "ja",
+      "when": "2018 to 2020",
+      "at": 74.5,
+      "camera": {
+        "at": [
+          24,
+          37
+        ],
+        "width": 26
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "ryugu",
+          "traveller": "hayabusa2",
+          "style": "home",
+          "bend": 0.14
+        }
+      ],
+      "text": "Hayabusa2 reached Ryugu, a dark asteroid about 900 metres wide, shaped like a spinning top, in June 2018. It set down two small hopping rovers, the first on an asteroid, then fired a copper bullet to blast a crater and touched down to gather rock from beneath. Its capsule landed in Australia in December 2020 with 5.4 grams.",
+      "today": "The samples held amino acids and uracil, one of the letters of RNA. The craft is now bound for the small asteroid 1998 KY26, due in 2031."
+    },
+    {
+      "place": "bennu",
+      "phase": "home",
+      "title": "A grab at Bennu",
+      "when": "2018 to 2023",
+      "at": 81.7,
+      "camera": {
+        "at": [
+          20,
+          38
+        ],
+        "width": 26
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "bennu",
+          "traveller": "osirisrex",
+          "style": "home",
+          "bend": -0.14
+        }
+      ],
+      "text": "NASA’s OSIRIS-REx reached Bennu, a rubble-pile asteroid about 490 metres wide, in December 2018. On 20 October 2020 it touched the surface for about six seconds at a site called Nightingale. The ground gave way like a pit of plastic balls, and the sampler sank in. On 24 September 2023 its capsule landed in Utah with 121.6 grams.",
+      "today": "The samples held phosphates, salts and amino acids. The craft, renamed OSIRIS-APEX, meets the asteroid Apophis in 2029."
+    },
+    {
+      "place": "dimorphos",
+      "phase": "home",
+      "title": "Nudging an asteroid",
+      "when": "26 September 2022",
+      "at": 88.8,
+      "camera": {
+        "at": [
+          22.5,
+          41
+        ],
+        "width": 20
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "dimorphos",
+          "traveller": "dart",
+          "style": "home",
+          "bend": 0.14
+        }
+      ],
+      "text": "NASA’s DART tested a way to protect Earth. On 26 September 2022 it deliberately hit Dimorphos, a harmless moonlet about 160 metres wide circling the asteroid Didymos, at about 22,000 kilometres an hour. An Italian cubesat, LICIACube, photographed the plume. Dimorphos’s orbit, 11 hours 55 minutes long, shrank by about 32 minutes, far more than needed.",
+      "today": "Europe’s Hera, launched in 2024, is due at Didymos in late 2026 to measure what DART left behind."
+    },
+    {
+      "place": "trojans",
+      "phase": "home",
+      "title": "What comes next",
+      "when": "2021 to 2033",
+      "at": 96.0,
+      "camera": {
+        "at": [
+          40,
+          40
+        ],
+        "width": 50
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "trojans",
+          "traveller": "lucy",
+          "style": "home",
+          "bend": 0.14
+        }
+      ],
+      "text": "Lucy, launched in 2021, is the first mission to the Trojans, asteroids that share Jupiter’s orbit. It passed Dinkinesh in 2023, finding a moon made of two joined pieces, and Donaldjohanson in 2025, and reaches Eurybates in 2027. In 2029 NASA’s Psyche reaches a metal-rich asteroid, and Apophis passes Earth closer than many satellites.",
+      "today": "Lucy is to end its tour at the pair Patroclus and Menoetius in 2033."
+    }
+  ],
+  "timeline": {
+    "track": [
+      {
+        "until": 20.9,
+        "color": "rgba(255,138,58,.35)"
+      },
+      {
+        "until": 42.3,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 71.0,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3.0,
+        "text": "1986"
+      },
+      {
+        "at": 17.3,
+        "text": "2000"
+      },
+      {
+        "at": 45.9,
+        "text": "2011"
+      },
+      {
+        "at": 74.5,
+        "text": "2018"
+      },
+      {
+        "at": 96.0,
+        "text": "Now"
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "shoemaker",
+        "name": "Eugene Shoemaker",
+        "life": "1928 to 1997",
+        "role": "Planetary geologist",
+        "steps": [
+          2
+        ],
+        "text": "An American geologist who showed that Meteor Crater in Arizona was blasted out by an asteroid, and who trained the Apollo astronauts in geology. With Carolyn Shoemaker and David Levy he found Comet Shoemaker–Levy 9, which struck Jupiter in 1994. He died in a car crash in 1997, and NEAR was renamed for him in 2000."
+      },
+      {
+        "id": "kawaguchi",
+        "name": "Junichiro Kawaguchi",
+        "native": "川口淳一郎",
+        "lang": "ja",
+        "life": "born 1955",
+        "role": "Hayabusa project manager",
+        "steps": [
+          5
+        ],
+        "text": "A Japanese engineer who led the Hayabusa project at the Institute of Space and Astronautical Science. When fuel leaks sent the craft tumbling in December 2005 and contact was lost for seven weeks, his team found it again, nursed its failing ion engines and steered it home, three years late, in June 2010."
+      },
+      {
+        "id": "gerasimenko",
+        "name": "Svetlana Gerasimenko",
+        "life": "born 1945",
+        "role": "Astronomer, co-discoverer of Comet 67P",
+        "steps": [
+          8,
+          9
+        ],
+        "text": "An astronomer from Kyiv who in September 1969 photographed a comet from the observatory at Alma-Ata, in Kazakhstan. Back in Kyiv, Klim Churyumov studied her plates and found a faint smudge near the edge: a comet no one had seen before. It was named after them both. She later worked for decades in Dushanbe, Tajikistan."
+      },
+      {
+        "id": "lauretta",
+        "name": "Dante Lauretta",
+        "life": "born 1970",
+        "role": "OSIRIS-REx principal investigator",
+        "steps": [
+          11
+        ],
+        "text": "An American planetary scientist at the University of Arizona who led OSIRIS-REx from 2011, after its first leader, Michael Drake, died. His team chose Nightingale, a crater crowded with boulders, as the sample site. When the capsule was opened in 2023, so much dark dust lay outside the sample chamber that freeing the lid took months."
+      }
+    ]
+  }
+}

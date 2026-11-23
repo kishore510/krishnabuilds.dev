@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.111.0
+
+- New story map in Universe: Missions to Mercury. From Mariner 10’s swing past Venus and three flybys in 1974 and 1975, and the radar hunt for ice, through MESSENGER, the first craft to orbit the planet, to BepiColombo’s long road from Europe and Japan. 11 chapters on the `solar-system` basemap (Mercury drawn off scale, just outside the Sun), 2 people cards (Colombo, Solomon), no new glyphs (`rocky-planet` was added with Asteroids and Comets).
+- Catalogue: a new Missions to Mercury entry opens the story; new Mariner 10, MESSENGER and BepiColombo entries open it at chapters 2, 6 and 9.
+
+## 0.110.0
+
+- New story map in Universe: Pluto and the Kuiper Belt. From Clyde Tombaugh’s discovery in 1930 through Charon, the first Kuiper belt object and the 2006 vote that made Pluto a dwarf planet, to New Horizons’ launch, its swing past Jupiter, the flights past Pluto and Arrokoth and where it is today. 11 chapters on the `solar-system` basemap, 4 people cards (Tombaugh, Burney, Luu, Stern), no new glyphs (`dwarf-planet` was added with Asteroids and Comets).
+- Catalogue: a new Pluto and the Kuiper Belt entry opens the story; new New Horizons at Pluto and The Kuiper belt found entries open it at chapters 7 and 3.
+
+## 0.109.0
+
+- New story map in Universe: Asteroids and Comets. From Giotto at Halley’s Comet in 1986 through Galileo at Ida, NEAR at Eros, Stardust, Deep Impact, Hayabusa, Dawn at Vesta and Ceres and Rosetta and Philae, to Hayabusa2, OSIRIS-REx, DART’s hit on Dimorphos and the missions still on their way. 14 chapters on the `solar-system` basemap, 4 people cards (Shoemaker, Kawaguchi, Gerasimenko, Lauretta), native names in Japanese, new glyphs `comet`, `dwarf-planet` and `rocky-planet`.
+- Catalogue: a new Asteroids and Comets entry opens the story; new Rosetta and Philae, Hayabusa and DART entries open it at chapters 9, 6 and 13.
+
 ## 0.108.0
 
 - New story map in Chronicles: The Safavid Empire. From the Sufi shrine at Ardabil and Ismail’s crowning at Tabriz through Chaldiran, the Ardabil carpet and Humayun’s exile, to Shah Abbas’s Isfahan, the Armenians of New Julfa, Hormuz and Baghdad, the Afghan siege of 1722 and Nader Shah’s crowning on the Mughan plain. 14 chapters on the `near-east` basemap, a Powers layer (the Safavids, Aq Qoyunlu, the Ottomans, Portuguese Hormuz, the Hotaki Afghans, Russia, Nader’s Iran), 8 people cards, native names in Persian, no new glyphs.

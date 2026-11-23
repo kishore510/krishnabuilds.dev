@@ -1,0 +1,402 @@
+{
+  "id": "mercury-missions",
+  "title": "Missions to Mercury",
+  "description": "An illustrated map of the missions to Mercury, from Mariner 10’s three flybys in the 1970s and the radar hunt for ice through MESSENGER, the first craft to orbit the planet, to BepiColombo’s long road from Europe and Japan.",
+  "canvas": "cosmic",
+  "basemap": "solar-system",
+  "source": "History",
+  "nativeLang": "en",
+  "mapLabel": "Illustrated diagram of the inner Solar System by distance, with the Sun on the left, Mercury, Venus and Earth, and the paths of the probes from Earth by way of Venus to Mercury",
+  "note": "This map is a diagram of distance, not a picture of space. Distance from the Sun runs left to right on a logarithmic scale. On that scale Mercury would sit behind the Sun, so it alone is drawn off scale, just outside the Sun’s glow. Up and down mean nothing; Venus and Mercury are drawn apart only to keep their names clear. Figures follow NASA, ESA and JAXA.",
+  "routes": "chapter",
+  "overview": {
+    "at": [
+      16,
+      45
+    ],
+    "width": 40
+  },
+  "places": {
+    "earth": {
+      "name": "Earth",
+      "at": [
+        22,
+        45
+      ],
+      "glyph": "earth-moon",
+      "label": "right"
+    },
+    "venus": {
+      "name": "Venus",
+      "at": [
+        15.5,
+        53
+      ],
+      "glyph": "rocky-planet",
+      "label": "top"
+    },
+    "mercury": {
+      "name": "Mercury",
+      "at": [
+        13.5,
+        34
+      ],
+      "glyph": "rocky-planet",
+      "label": "bottom"
+    }
+  },
+  "travellers": {
+    "mariner10": {
+      "name": "Mariner 10",
+      "icon": "probe"
+    },
+    "messenger": {
+      "name": "MESSENGER",
+      "icon": "probe"
+    },
+    "bepi": {
+      "name": "BepiColombo",
+      "icon": "probe"
+    }
+  },
+  "phases": {
+    "mariner": {
+      "name": "Mariner 10",
+      "color": "#ff8a3a"
+    },
+    "messenger": {
+      "name": "Radar and MESSENGER",
+      "color": "#4fc3b0"
+    },
+    "bepi": {
+      "name": "BepiColombo",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "mariner10": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "messenger": {
+      "color": "#6fd3f0",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "bepi": {
+      "color": "#d9a8f5",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "steps": [
+    {
+      "place": "venus",
+      "phase": "mariner",
+      "title": "Braking for Mercury",
+      "when": "November 1973 to February 1974",
+      "at": 3.0,
+      "camera": {
+        "at": [
+          17,
+          47
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "venus",
+          "traveller": "mariner10",
+          "style": "mariner10",
+          "bend": 0.14
+        }
+      ],
+      "text": "Mercury is the hardest planet to reach: a probe falling towards the Sun picks up speed and must shed it to stop. NASA’s Mariner 10, launched in November 1973, solved part of the problem. On 5 February 1974 it swung past Venus, the first craft to use one planet’s pull to reach another, and photographed Venus’s clouds in ultraviolet light.",
+      "today": "Every probe to Mercury since has used Venus, and Mercury itself, to slow down."
+    },
+    {
+      "place": "mercury",
+      "phase": "mariner",
+      "title": "Three passes, half a planet",
+      "when": "March 1974 to March 1975",
+      "at": 12.3,
+      "camera": {
+        "at": [
+          14,
+          44
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "venus",
+          "to": "mercury",
+          "traveller": "mariner10",
+          "style": "mariner10",
+          "bend": 0.14
+        }
+      ],
+      "text": "Mariner 10 flew past Mercury three times, in March and September 1974 and March 1975, on an orbit Giuseppe Colombo showed would return it every two Mercury years. It found a cratered world like the Moon and, to general surprise, a magnetic field. The same side was lit each time, so it mapped under half the planet.",
+      "today": "Mariner 10 ran out of gas for steering soon after its last pass and still circles the Sun, silent."
+    },
+    {
+      "place": "earth",
+      "phase": "messenger",
+      "title": "Ice near the Sun?",
+      "when": "1991 to 1992",
+      "at": 21.6,
+      "camera": {
+        "at": [
+          17,
+          45
+        ],
+        "width": 28
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "In 1991 astronomers bounced radar off Mercury from the Goldstone dish in California, catching the echoes at the Very Large Array in New Mexico; Arecibo in Puerto Rico soon followed. Craters near the poles gave back unusually bright echoes, like those from ice. Could the planet nearest the Sun hold frozen water in craters that never see sunlight?",
+      "today": "Mercury’s axis is almost upright, so the floors of some polar craters stay in shadow all the time."
+    },
+    {
+      "place": "venus",
+      "phase": "messenger",
+      "title": "Six and a half years to orbit",
+      "when": "2004 to 2009",
+      "at": 30.9,
+      "camera": {
+        "at": [
+          17,
+          47
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "venus",
+          "traveller": "messenger",
+          "style": "messenger",
+          "bend": -0.14
+        }
+      ],
+      "text": "NASA’s MESSENGER left Florida on 3 August 2004 and took six and a half years and about 7.9 billion kilometres to reach orbit. It swung past Earth once, Venus twice and Mercury three times, each pass shedding speed. A sunshade of heat-proof ceramic cloth kept its instruments near room temperature in sunlight up to eleven times Earth’s.",
+      "today": "Its name stands for MErcury Surface, Space ENvironment, GEochemistry and Ranging."
+    },
+    {
+      "place": "mercury",
+      "phase": "messenger",
+      "title": "The Caloris basin and the Spider",
+      "when": "January 2008 to September 2009",
+      "at": 40.2,
+      "camera": {
+        "at": [
+          14,
+          44
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "venus",
+          "to": "mercury",
+          "traveller": "messenger",
+          "style": "messenger",
+          "bend": -0.14
+        }
+      ],
+      "text": "On 14 January 2008 MESSENGER made the first visit to Mercury in 33 years. Its three flybys showed most of the side Mariner 10 never saw, and all of the Caloris basin, an impact scar about 1,550 kilometres across. At its centre lay a starburst of troughs nicknamed the Spider, and around it wide plains of old lava.",
+      "today": "The Spider is officially Pantheon Fossae; Caloris means heat, as it faces the Sun when Mercury is closest to it."
+    },
+    {
+      "place": "mercury",
+      "phase": "messenger",
+      "title": "Ice confirmed",
+      "when": "March 2011 to November 2012",
+      "at": 49.5,
+      "camera": {
+        "at": [
+          14,
+          42
+        ],
+        "width": 26
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "On 18 March 2011 MESSENGER became the first craft to orbit Mercury. In November 2012 its team confirmed the radar hunch: shadowed craters near the poles hold water ice, perhaps 100 billion to 1 trillion tonnes, much of it under a dark layer thought to be rich in carbon. Whether comets or asteroids brought it is still argued.",
+      "today": "Later pictures, taken in the faint light reflected off crater walls, showed the ice’s sharp edges."
+    },
+    {
+      "place": "mercury",
+      "phase": "messenger",
+      "title": "A shrinking, steaming planet",
+      "when": "2011 to 2015",
+      "at": 58.8,
+      "camera": {
+        "at": [
+          14,
+          42
+        ],
+        "width": 26
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "MESSENGER found Mercury stranger than thought. Its surface holds more sulphur and potassium than theories of a scorched birth allowed. Bright, shallow pits called hollows seem to form where something in the rock turns to vapour, and long cliffs show that the whole planet shrank by up to 7 kilometres in radius as its huge iron core cooled.",
+      "today": "The iron core fills about 85 percent of Mercury’s radius; why it is so large is still a puzzle."
+    },
+    {
+      "place": "mercury",
+      "phase": "messenger",
+      "title": "The last fall",
+      "when": "30 April 2015",
+      "at": 68.1,
+      "camera": {
+        "at": [
+          14,
+          42
+        ],
+        "width": 26
+      },
+      "legs": [],
+      "text": "Out of fuel after four years in orbit, MESSENGER fell onto Mercury on 30 April 2015 at about 14,000 kilometres an hour, out of sight on the far side from Earth, probably leaving a crater about 16 metres wide. Its team had stretched its last weeks using the helium that pressurised its tanks. It had sent home over 250,000 pictures.",
+      "today": "BepiColombo may be able to spot the crater MESSENGER left."
+    },
+    {
+      "place": "earth",
+      "phase": "bepi",
+      "title": "Two orbiters in one",
+      "when": "20 October 2018",
+      "at": 77.4,
+      "camera": {
+        "at": [
+          17,
+          47
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "venus",
+          "traveller": "bepi",
+          "style": "bepi",
+          "bend": 0.14
+        }
+      ],
+      "text": "BepiColombo, a joint mission of Europe and Japan named after Giuseppe Colombo, left Kourou in French Guiana on 20 October 2018. It is two orbiters in one stack: Europe’s Mercury Planetary Orbiter, to map the surface and interior, and Japan’s Mio, to study the magnetic field and surrounding space, carried by a transfer module with ion engines.",
+      "today": "It passed Earth once and Venus twice on the way, in 2020 and 2021."
+    },
+    {
+      "place": "mercury",
+      "phase": "bepi",
+      "title": "Six flybys and a fault",
+      "when": "October 2021 to January 2025",
+      "at": 86.7,
+      "camera": {
+        "at": [
+          14,
+          44
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "venus",
+          "to": "mercury",
+          "traveller": "bepi",
+          "style": "bepi",
+          "bend": 0.14
+        }
+      ],
+      "text": "BepiColombo flew past Mercury six times between October 2021 and January 2025, about 200 kilometres up on the first pass. Its small monitoring cameras, never meant for science, caught volcanic plains and the shadowed craters near the north pole. In April 2024 a fault cut the thrust of its ion engines, and the planned arrival slipped by about eleven months.",
+      "today": "The arrival moved from December 2025 to November 2026."
+    },
+    {
+      "place": "mercury",
+      "phase": "bepi",
+      "title": "Into orbit",
+      "when": "From November 2026",
+      "at": 96.0,
+      "camera": {
+        "at": [
+          14,
+          42
+        ],
+        "width": 26
+      },
+      "legs": [],
+      "text": "BepiColombo was scheduled to be captured into orbit around Mercury in November 2026, after casting off its transfer module. The two orbiters then part: Mio into a long, looping orbit to sample the magnetic field and the solar wind, the European orbiter lower down to map the surface. Their science work is planned to begin in early 2027.",
+      "today": "Among its questions: why so small a planet has a magnetic field, and what makes the hollows."
+    }
+  ],
+  "timeline": {
+    "track": [
+      {
+        "until": 17.0,
+        "color": "rgba(255,138,58,.35)"
+      },
+      {
+        "until": 72.8,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3.0,
+        "text": "1974"
+      },
+      {
+        "at": 21.6,
+        "text": "1991"
+      },
+      {
+        "at": 49.5,
+        "text": "2011"
+      },
+      {
+        "at": 77.4,
+        "text": "2018"
+      },
+      {
+        "at": 96.0,
+        "text": "Now"
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "colombo",
+        "name": "Giuseppe Colombo",
+        "life": "1920 to 1984",
+        "role": "Mathematician and engineer",
+        "steps": [
+          1,
+          8
+        ],
+        "text": "An Italian mathematician and engineer at the University of Padua, known as Bepi. In 1965 he worked out why Mercury turns three times for every two trips round the Sun. In 1970, studying Mariner 10’s planned path, he saw that its orbit could be tuned to bring it back to Mercury again and again. He also championed tethered satellites."
+      },
+      {
+        "id": "solomon",
+        "name": "Sean Solomon",
+        "life": "born 1945",
+        "role": "MESSENGER principal investigator",
+        "steps": [
+          3,
+          5,
+          7
+        ],
+        "text": "An American geophysicist who led MESSENGER from its proposal in the 1990s to its end in 2015. He had worked on NASA’s Magellan radar mission to Venus, and from 2012 he directed Columbia University’s Lamont–Doherty Earth Observatory. He received the US National Medal of Science in 2014."
+      }
+    ]
+  }
+}
