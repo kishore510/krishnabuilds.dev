@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.114.0
+
+- New story map in Wars and Campaigns: The Second World War. From Japan’s war in China and the Munich crisis through the invasion of Poland, Dunkirk, the Battle of Britain, Barbarossa, Pearl Harbor, Singapore, Midway, El Alamein, Stalingrad, the Holocaust and the Bengal famine to Imphal and Kohima, D-Day, the fall of Berlin, Hiroshima and Nagasaki and the United Nations. 18 chapters on the `world` basemap, a Powers layer (Germany and occupied Europe, Italy, Japan and its conquests, the Soviet Union, Britain and its empire, the United States, China), 8 people cards, native names in Chinese, German, Polish, French, Russian, Japanese, Arabic and Bengali, no new glyphs.
+- Catalogue: a new Second World War entry opens the story; new Holocaust, Attack on Pearl Harbor, Battle of Stalingrad, Bengal famine of 1943 and Hiroshima and Nagasaki entries open it at chapters 12, 7, 11, 13 and 17.
+
+## 0.113.0
+
+- New story map in Wars and Campaigns: The First World War. From the shots in Sarajevo through Belgium, the Marne, Tannenberg, the Indian Corps at Ypres, Gallipoli, Verdun, the Somme and the siege of Kut, to America’s entry, Caporetto, Brest-Litovsk, Amiens, Palestine, the armistice at Compiègne and the Treaty of Versailles. 16 chapters on the `mediterranean` basemap, a Powers layer (Germany, Austria-Hungary, the Ottoman Empire, the occupied west and east, France and Britain, Russia, Italy), 7 people cards, native names in Serbian, German, Turkish, French, Arabic, Italian and Russian, no new glyphs.
+- Catalogue: a new First World War entry opens the story; new Gallipoli campaign and Treaty of Brest-Litovsk entries open it at chapters 6 and 12.
+
+## 0.112.0
+
+- New subject on the Humankind shelf: Wars and Campaigns, with its own page at `/wars/`. The Kalinga War moves there from Chronicles; its address (`/kalinga/`) does not change. The battles of Panipat stay chapters of The Mughal Empire and The Marathas.
+
 ## 0.111.0
 
 - New story map in Universe: Missions to Mercury. From Mariner 10’s swing past Venus and three flybys in 1974 and 1975, and the radar hunt for ice, through MESSENGER, the first craft to orbit the planet, to BepiColombo’s long road from Europe and Japan. 11 chapters on the `solar-system` basemap (Mercury drawn off scale, just outside the Sun), 2 people cards (Colombo, Solomon), no new glyphs (`rocky-planet` was added with Asteroids and Comets).

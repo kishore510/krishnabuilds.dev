@@ -1,0 +1,3 @@
+# Wars and Campaigns
+
+Wars, battles and campaigns, from the historical record: who fought, where and why, and what came after. A war that is one chapter of a dynasty's story stays in that story (the battles of Panipat are chapters of The Mughal Empire and The Marathas); a war gets its own story here when it is the subject. Cards are tagged **History**, or **Archaeology** for inscriptions and excavations, and **Tradition** for what is only remembered. Casualty figures are always given as estimates, with the range where sources disagree. Stories sit directly under this folder, with no collection.

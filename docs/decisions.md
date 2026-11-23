@@ -408,3 +408,7 @@ A ✓ anywhere (Browse tiles, timeline blocks, front-page cards) now means you h
 ## 2026-11-17 — Story Maps: a Mediterranean basemap at 40 units per degree
 
 Rome (the Republic, the Empire and the Holy Roman Empire) needs Britain, Iberia, North Africa, Egypt, Anatolia and Mesopotamia on one map, and the `europe` map stops at 35°N and 32°E, which would cut off Alexandria, Antioch and Carthage's hinterland. A new `mediterranean` basemap runs from 11°W to 46°E and 28°N to 57°N at the same 40 units per degree as `europe`, with a stretch of 1.35 for its middle latitude. Like `near-east`, its coastlines and lakes are Natural Earth data (1:10m land, 1:50m lakes, 1:10m rivers, all public domain), simplified once with a throwaway script that is not kept; from now on it is plain data. The Tiber is too short for the river data and is drawn by hand. `europe` and `near-east` stay as they are.
+
+## 2026-11-23 — Story Maps: a Wars and Campaigns subject
+
+Wars get their own subject on the Humankind shelf, after Chronicles: Wars and Campaigns (`wars`). A war goes there when it is the subject of its story (The Kalinga War, the two World Wars); a battle that is one chapter of a dynasty (the three battles of Panipat, in The Mughal Empire and The Marathas) stays in that dynasty's story rather than being copied out. The Kalinga War moves from Chronicles; story pages live at `/<id>/` whatever their subject, so its address and its reads and likes are unchanged. No collections yet: Ancient and Modern can be split out once there are enough stories to need it.
