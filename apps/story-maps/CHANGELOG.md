@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.119.0
+
+- New story map in Universe: Saturn and Titan. From Pioneer 11 and the Voyagers through Cassini’s 13 years in orbit, Huygens’ landing on Titan, the jets of Enceladus and the seas of Titan, to Cassini’s dives inside the rings and the Dragonfly drone planned for Titan. 14 chapters on a new `saturn-system` sky basemap (Saturn and its main rings to scale with the polar hexagon, the moons from Mimas to Phoebe on a logarithmic distance scale, the E ring, the magnetosphere’s edge and an enlarged Titan globe with its northern seas and dune fields), 3 people cards (Huygens, Cassini, Porco), no new glyphs. `CLAUDE.md` now lists `saturn-system.json`.
+- Catalogue: a new Saturn and Titan entry opens the story; new Cassini–Huygens, The Huygens landing, The jets of Enceladus, The seas of Titan and Dragonfly entries open it at chapters 4, 5, 6, 7 and 14, and new Christiaan Huygens and Giovanni Domenico Cassini person entries at chapters 5 and 4.
+- Backlog: Saturn and Titan moves to Built; Missions to the Sun is now first in the Exploring the Solar System series.
+
 ## 0.118.0
 
 - New story map in Universe: Missions to Jupiter. From the Pioneer and Voyager flybys and Io’s volcanoes through Galileo’s probe and Europa’s hidden ocean to Juno at the poles, and JUICE and Europa Clipper on their way to the icy moons. 14 chapters on a new `jupiter-system` sky basemap (Jupiter to scale with its bands and the Great Red Spot, rings, the Galilean moons, the Io torus, outer moons and the magnetosphere’s edge, on a logarithmic distance scale), 2 people cards (Morabito, Kivelson), no new glyphs.
