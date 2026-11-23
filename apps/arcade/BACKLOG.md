@@ -17,7 +17,13 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         a seat that is away 20 s or quiet 45 s on its turn ("I'm back"
         hands it back), a per-socket message limit (30 per 10 s) and 12
         sockets per table
-  - [ ] Slice 4: polish: sound and animation pass, "your turn" cue
+  - [ ] Slice 4 (optional; online works without it): polish. Sound and
+        animation pass; a stronger "your turn" cue (a chime and glowing
+        pill exist; vibrate on phones, a cue when the tab is hidden); a
+        warning in the last 10-15 s before a bot takes a quiet seat; the
+        log says "You played" when a bot plays for you; "<name> is back"
+        when someone returns; reconnect on `visibilitychange` so a phone
+        unlocked mid-game rejoins at once
 
 - [x] Dojo Duel, built in small steps, one PR each (notes for maintainers in
       CLAUDE.md, "Dojo Duel notes"):
