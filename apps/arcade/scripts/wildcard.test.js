@@ -207,6 +207,32 @@ test('viewFor hides other hands and the deck order', () => {
   assert.equal(s.hands[2].length, 7, 'the view is a copy');
 });
 
+test('eventsFor hides cards other seats drew, and who can play a drawn card', () => {
+  const hand = [find('coral', '3'), find('jade', '5')];
+  const s = rig({ players: 3, hands: [[find('coral', 'draw2'), find('jade', '1')], hand, [find('indigo', '9')]], top: find('coral', '7') });
+  const r = E.play(s, 0, find('coral', 'draw2'), { called: true });
+  const drew = r.events.find((e) => e.type === 'draw');
+  assert.equal(drew.seat, 1);
+  assert.equal(E.eventsFor(r.events, 1).find((e) => e.type === 'draw').cards.length, 2);
+  assert.deepEqual(E.eventsFor(r.events, 1).find((e) => e.type === 'draw').cards, drew.cards, 'the drawer sees its cards');
+  assert.deepEqual(E.eventsFor(r.events, 0).find((e) => e.type === 'draw').cards, [null, null], 'others see only how many');
+  assert.ok(drew.cards.every((id) => id !== null), 'the original events are untouched');
+
+  const t = rig({ players: 2, hands: [[find('jade', '1')], [find('indigo', '9')]], top: find('coral', '7') });
+  t.deck.push(find('coral', '4')); // the next draw matches
+  const d = E.draw(t, 0);
+  assert.ok(E.eventsFor(d.events, 0).some((e) => e.type === 'canPlayDrawn'));
+  assert.ok(!E.eventsFor(d.events, 1).some((e) => e.type === 'canPlayDrawn'));
+  assert.deepEqual(E.eventsFor(d.events, 1).find((e) => e.type === 'draw').cards, [null]);
+});
+
+test('viewFor shows the top four of the pile', () => {
+  const s = rig({ hands: [[1], [2], [3], [4]], top: find('coral', '7') });
+  s.discard = [10, 11, 12, 13, 14];
+  assert.deepEqual(E.viewFor(s, 0).pile, [11, 12, 13, 14]);
+  assert.equal(E.viewFor(s, 0).top, 14);
+});
+
 for (const level of ['easy', 'hard']) {
   test(`${level} bots only make legal moves and full games finish`, () => {
     for (let seed = 1; seed <= 300; seed++) {

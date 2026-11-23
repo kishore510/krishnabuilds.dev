@@ -234,6 +234,7 @@
       hand: state.hands[seat].slice(),
       counts: state.hands.map((h) => h.length),
       top: state.discard[state.discard.length - 1],
+      pile: state.discard.slice(-4), // the top four, for drawing the pile
       colour: state.colour,
       turn: state.turn,
       dir: state.dir,
@@ -241,6 +242,19 @@
       drawn: state.turn === seat ? state.drawn : null,
       winner: state.winner,
     };
+  }
+
+  // The events from a move as `seat` may see them: cards drawn by anyone else
+  // become nulls (the count still shows), and only the drawer learns that
+  // the card they drew can be played.
+  function eventsFor(events, seat) {
+    const out = [];
+    for (const ev of events) {
+      if ((ev.type === 'draw' || ev.type === 'penalty') && ev.seat !== seat) out.push(Object.assign({}, ev, { cards: ev.cards.map(() => null) }));
+      else if (ev.type === 'canPlayDrawn' && ev.seat !== seat) continue;
+      else out.push(Object.assign({}, ev));
+    }
+    return out;
   }
 
   // ----- bots ---------------------------------------------------------------
@@ -311,7 +325,7 @@
     COLOURS, HAND_SIZE, LAST_CARD_PENALTY, CARDS, BOT,
     card, cardName, isWild, isNumber,
     createGame, legalPlays, matches, topCard, nextSeat,
-    play, draw, pass, apply, viewFor, botMove,
+    play, draw, pass, apply, viewFor, eventsFor, botMove,
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.WildcardEngine = api;

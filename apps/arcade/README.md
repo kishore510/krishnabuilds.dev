@@ -3,7 +3,8 @@
 A small games hub at `arcade.krishnabuilds.dev`: 37 quick browser games,
 each one a single self-contained HTML file under `games/<slug>/`. Static
 site, no build step. The only backend is a small Cloudflare Worker
-(`src/worker.js`) for the "Played N times" counter.
+(`src/worker.js`) for the "Played N times" counter and Wildcard's online
+tables (a Durable Object per table, `src/wildcard-table.js`).
 
 **Maintainer guide:** [`CLAUDE.md`](CLAUDE.md) in this folder covers how to
 add a game, the shared nav-bar/layout contract, card art, versioning, and

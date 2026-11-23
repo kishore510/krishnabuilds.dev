@@ -6,13 +6,16 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
       "Wildcard notes"; decision in `docs/decisions.md`, 2026-11-23):
   - [x] Slice 1: rules engine with tests, single player vs 1, 2 or 3 bots
         (Easy / Hard), light and dark themes (1.75.0)
-  - [ ] Slice 2: a Durable Object table in the Arcade Worker running
+  - [x] Slice 2: a Durable Object table in the Arcade Worker running
         `engine.js`; create a room, share a 4-character code, 2-4 people,
         bots fill empty seats; each player is sent only `viewFor` their seat
+        (1.76.0). Also in: idle tables expire, a bot takes over the seat of
+        someone who leaves mid-game, 3 new tables per IP per minute
   - [ ] Slice 3: limits and resilience: 5 new rooms per IP per day for
         everyone (hashed with a daily salt, never stored raw), a site-wide
-        daily cap, idle rooms expire, reconnect to your seat, a bot takes
-        over a seat that goes quiet
+        daily cap, reconnect to your seat (today a dropped connection hands
+        the seat to a bot for good), a bot takes over a seat that stays
+        connected but goes quiet, a per-socket message limit
   - [ ] Slice 4: polish: sound and animation pass, "your turn" cue
 
 - [x] Dojo Duel, built in small steps, one PR each (notes for maintainers in

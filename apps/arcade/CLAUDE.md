@@ -4,7 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A static games hub — no build step, no backend, no package manager. Every
+A static games hub — no build step, no package manager, and a small Worker
+(`src/`) as the only backend. Every
 page is a single self-contained HTML file with inline `<style>`/`<script>`
 (one exception: a game whose logic needs headless tests may split it into a
 pure, DOM-free script next to its `index.html`; Tennis's and Wildcard's
@@ -16,9 +17,12 @@ squash merge; deploys run from GitHub Actions on merge to `main`.
 ## Commands
 
 There's no build step — it's plain HTML/CSS/JS. The test suites are
-Tennis's and Wildcard's engine tests (`node --test scripts/tennis.test.js
-scripts/wildcard.test.js` from `apps/arcade`, or `pnpm --filter
-@krishnabuilds/arcade test`), which CI runs.
+Tennis's and Wildcard's engine tests and Wildcard's online room tests
+(`pnpm --filter @krishnabuilds/arcade test`, or `node --test` on
+`scripts/*.test.*` from `apps/arcade`), which CI runs.
+Online Wildcard needs the Worker: `pnpm exec wrangler dev` from
+`apps/arcade` serves the whole site with the tables on
+`http://localhost:8787` (the plain `http.server` below has no API).
 To preview locally:
 
 ```
@@ -58,7 +62,10 @@ games/dojo-duel/index.html    — Dojo Duel (canvas, landscape fullscreen 1v1 fi
 games/tennis/index.html       — Tennis (canvas, landscape fullscreen like Dojo Duel: left-thumb stick, right-thumb swipes; World Tour, quick match, practice; page, rendering, sound and input)
 games/tennis/engine.js        — Tennis's pure logic (physics, swing, swipe gestures, rules, CPU, surfaces, tour; CONFIG tables at the top), tested by scripts/tennis.test.js
 games/wildcard/index.html     — Wildcard (DOM, portrait card game vs 3 bots; see "Wildcard notes" below)
-games/wildcard/engine.js      — Wildcard's pure rules, seeded deal and bots, tested by scripts/wildcard.test.js; written to run unchanged in a Worker later
+games/wildcard/engine.js      — Wildcard's pure rules, seeded deal and bots, tested by scripts/wildcard.test.js; also runs in the Worker for online tables
+src/worker.js                 — the Worker: static assets, play counts, Wildcard table routes
+src/wildcard-room.js          — Wildcard online room rules (seats, host, bots, who is sent what), tested by scripts/wildcard-room.test.mjs
+src/wildcard-table.js         — the WildcardTable Durable Object around wildcard-room.js (WebSockets, storage, alarms)
 games/<slug>/index.html       — next game goes here
 ```
 
@@ -507,7 +514,7 @@ are the current values in the tables below; check those before quoting.
 ## Wildcard notes
 
 A Crazy Eights family card game (`games/wildcard/`): you against 1, 2 or 3
-bots (title screen, saved as `wildcardBots`), portrait, DOM rather than canvas. Our own name and card art; it must not take
+bots (title screen, saved as `wildcardBots`), or friends online (below), portrait, DOM rather than canvas. Our own name and card art; it must not take
 the name, logo or look of any commercial card game.
 
 - **Rules** live in `engine.js` (top comment): 108 cards, 7 each, first discard
@@ -530,6 +537,9 @@ the name, logo or look of any commercial card game.
   `documentElement.clientWidth/Height`, because on phones a stage that was
   briefly too wide grows `innerWidth` with it). Cards fly between seats with
   the Web Animations API; `prefers-reduced-motion` cuts them to nothing.
+  Cards drawn into your hand sit in `incoming`, hidden in their slot, until
+  their flight lands there, so one draw never shows two cards. Every seat
+  has a `.count` pill ("6 cards", red at one or two).
 - **Contrast:** card numbers are dark ink on the white centre gem or white
   on a dark ink corner chip (7.8:1 or better for every colour; never white
   straight on a card colour, which is 1.75:1 on saffron). Unplayable cards
@@ -545,13 +555,41 @@ the name, logo or look of any commercial card game.
   top, Rio right), via `P(seat)`.
 - **Storage** (`localStorage`, all guarded): `wildcardTheme`, `wildcardBots`,
   `wildcardLevel`, `wildcardMuted`, `wildcardStats` (`{games, wins}`),
-  `wildcardHowtoSeen`.
-- **Test handle:** `window.wildcard` (`state`, `busy`, `E`, `newGame`,
-  `step`, `setTheme`). Nothing in the game uses it.
-- **Online play** (next slices, `BACKLOG.md`): room codes only, a Durable
-  Object per table running this same `engine.js`, bots in empty seats, and
-  5 new rooms per IP per day for everyone (no passcode); see
-  `docs/decisions.md`, 2026-11-23.
+  `wildcardHowtoSeen`, `wildcardName`.
+- **Test handle:** `window.wildcard` (`state`, `busy`, `online`, `E`,
+  `newGame`, `step`, `setTheme`). Nothing in the game uses it.
+- **Online play** (1.76.0; decision in `docs/decisions.md`, 2026-11-23;
+  what's left in `BACKLOG.md`). "Play friends online" on the title screen
+  starts a table or joins one by its 4-character code (no vowels or
+  look-alikes), and `?room=CODE` links open the join panel with the code
+  filled in. 2-4 people; the host (first to join) picks the table size and
+  bot skill, and bots fill empty seats when they deal (it takes two people;
+  solo play stays offline).
+  - **Worker** (`src/worker.js`): `POST /api/wildcard/rooms` makes a table
+    and returns its code (3 per IP per minute via `ROOM_LIMITER`);
+    `GET /api/wildcard/rooms/<code>/ws` is the table's WebSocket. Both need
+    an `Origin` equal to the site's own (wrangler dev rewrites both to the
+    route's host, so this works locally too).
+  - **Table** (`src/wildcard-table.js`, Durable Object `WildcardTable`,
+    SQLite-backed, WebSocket Hibernation): saves the room after every
+    change; one alarm runs the next bot move (900 ms) or deletes the table
+    after 10 minutes with nobody connected or 2 hours without a change.
+  - **Room rules** (`src/wildcard-room.js`, pure): the seat always comes
+    from the connection, never the message; players get only `viewFor`
+    their seat and `eventsFor` their seat (other players' drawn cards
+    become nulls). Leaving the lobby frees the seat (host passes on);
+    leaving a game hands the seat to a bot under the same name. There is no
+    reconnect yet: a dropped connection is a leave.
+  - **Messages**: client `hello {id, name}`, `config {size | level}`,
+    `start` (also deals again after a game), `move {move}`; server `room`
+    (seats, phase `lobby` / `playing` / `over`, `hostSeat`), `deal {view}`,
+    `update {events, view}`, `error {error}`.
+  - **Page**: `fromView` turns a view into an engine-shaped state rotated
+    so you are seat 0 (other hands and the deck are placeholders), so
+    `render()` and `animate()` work unchanged. `step()` sends your move
+    instead of applying it; server messages are handled one at a time in
+    order (`online.queue`). Online games don't count towards
+    `wildcardStats`. `wildcardName` stores your name.
 
 ## Mobile-first constraints learned the hard way
 
