@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.112.0
+
+- New subject on the Humankind shelf: Wars and Campaigns, with its own page at `/wars/`. The Kalinga War moves there from Chronicles; its address (`/kalinga/`) does not change. The battles of Panipat stay chapters of The Mughal Empire and The Marathas.
+
 ## 0.111.0
 
 - New story map in Universe: Missions to Mercury. From Mariner 10’s swing past Venus and three flybys in 1974 and 1975, and the radar hunt for ice, through MESSENGER, the first craft to orbit the planet, to BepiColombo’s long road from Europe and Japan. 11 chapters on the `solar-system` basemap (Mercury drawn off scale, just outside the Sun), 2 people cards (Colombo, Solomon), no new glyphs (`rocky-planet` was added with Asteroids and Comets).

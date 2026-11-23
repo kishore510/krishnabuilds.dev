@@ -6,6 +6,11 @@ To change the plan, edit **Next**: the order is the order to build in.
 
 ## Next
 
+### Wars and Campaigns
+
+1. The First World War (`mediterranean`: the Western Front to Gallipoli, Mesopotamia and Palestine)
+2. The Second World War (`world`)
+
 The Indian Chronicles are complete.
 
 One subject is still without a story: Invention. Lives to add: Einstein (`europe`).
