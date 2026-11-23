@@ -1,0 +1,425 @@
+{
+  "id": "pluto",
+  "title": "Pluto and the Kuiper Belt",
+  "description": "An illustrated map of Pluto and the Kuiper belt, from Clyde Tombaugh’s discovery in 1930 through Charon, the first Kuiper belt object and the vote that made Pluto a dwarf planet, to New Horizons’ flights past Pluto and Arrokoth and where it is today.",
+  "canvas": "cosmic",
+  "basemap": "solar-system",
+  "source": "History",
+  "nativeLang": "en",
+  "mapLabel": "Illustrated diagram of the Solar System by distance, with the Sun on the left, Jupiter, Pluto, the Kuiper belt and the path of New Horizons out to where it is today",
+  "note": "This map is a diagram of distance, not a picture of space. Distance from the Sun runs left to right on a logarithmic scale: each step along the bottom is ten times farther than the last. Up and down mean nothing; Pluto and Eris are drawn off the planets’ plane only as a reminder that their orbits are tilted. Figures follow NASA and the New Horizons team.",
+  "places": {
+    "earth": {
+      "name": "Earth",
+      "at": [
+        22,
+        45
+      ],
+      "glyph": "earth-moon",
+      "label": "top"
+    },
+    "jupiter": {
+      "name": "Jupiter",
+      "at": [
+        59.1,
+        41.3
+      ],
+      "glyph": "gas-giant",
+      "label": "bottom"
+    },
+    "albion": {
+      "name": "Albion",
+      "at": [
+        107,
+        39
+      ],
+      "glyph": "rock",
+      "label": "right"
+    },
+    "eris": {
+      "name": "Eris",
+      "at": [
+        125,
+        29
+      ],
+      "glyph": "dwarf-planet",
+      "label": "right"
+    },
+    "pluto": {
+      "name": "Pluto and Charon",
+      "at": [
+        101,
+        50
+      ],
+      "glyph": "dwarf-planet",
+      "label": "top"
+    },
+    "arrokoth": {
+      "name": "Arrokoth",
+      "at": [
+        107.5,
+        47
+      ],
+      "glyph": "rock",
+      "label": "bottom"
+    },
+    "nhnow": {
+      "name": "New Horizons today",
+      "at": [
+        116.5,
+        52
+      ],
+      "glyph": "light-waves",
+      "label": "top"
+    }
+  },
+  "travellers": {
+    "nh": {
+      "name": "New Horizons",
+      "icon": "probe"
+    }
+  },
+  "phases": {
+    "finding": {
+      "name": "Finding Pluto and its neighbours",
+      "color": "#ff8a3a"
+    },
+    "flight": {
+      "name": "The flight",
+      "color": "#a678e0"
+    },
+    "pluto": {
+      "name": "At Pluto",
+      "color": "#4fc3b0"
+    },
+    "beyond": {
+      "name": "Into the Kuiper belt",
+      "color": "#f2c14e"
+    }
+  },
+  "routeStyles": {
+    "nh": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "steps": [
+    {
+      "place": "earth",
+      "phase": "finding",
+      "title": "A dot that moved",
+      "when": "18 February 1930",
+      "at": 3.0,
+      "camera": {
+        "at": [
+          22,
+          45
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "On 18 February 1930 Clyde Tombaugh, a 24-year-old farm boy hired by Lowell Observatory in Flagstaff, Arizona, compared two photographs of the same patch of sky taken six days apart and saw a faint dot jump. It was a world beyond Neptune. Venetia Burney, an 11-year-old in Oxford, suggested the name Pluto, after the Roman god of the underworld.",
+      "today": "Some of Tombaugh’s ashes are aboard New Horizons, which flew past his discovery in 2015."
+    },
+    {
+      "place": "earth",
+      "phase": "finding",
+      "title": "Charon, and Pluto weighed",
+      "when": "22 June 1978",
+      "at": 12.3,
+      "camera": {
+        "at": [
+          22,
+          45
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "On 22 June 1978 James Christy, at the US Naval Observatory in Washington, noticed that pictures of Pluto showed a bump that came and went. It was a moon, Charon, more than half Pluto’s width. Charon’s orbit let astronomers weigh Pluto at last: about a sixth of our Moon’s mass, far too small to be the hidden planet once sought.",
+      "today": "Pluto is now known to have five moons; the other four, all small, were found with the Hubble telescope from 2005 to 2012."
+    },
+    {
+      "place": "albion",
+      "phase": "finding",
+      "title": "The Kuiper belt found",
+      "when": "30 August 1992",
+      "at": 21.6,
+      "camera": {
+        "at": [
+          105,
+          42
+        ],
+        "width": 30
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "Astronomers, among them Kenneth Edgeworth and Gerard Kuiper, had wondered whether Pluto had company. On 30 August 1992 David Jewitt and Jane Luu, after five years of searching with a telescope on Mauna Kea in Hawaii, found a faint body beyond Neptune, now named Albion. It was the first of a belt of icy worlds, the Kuiper belt.",
+      "today": "Thousands of Kuiper belt objects are now known; it is thought to hold far more that are too faint to see."
+    },
+    {
+      "place": "eris",
+      "phase": "finding",
+      "title": "Eris, and a vote",
+      "when": "2005 to 24 August 2006",
+      "at": 30.9,
+      "camera": {
+        "at": [
+          120,
+          34
+        ],
+        "width": 34
+      },
+      "legs": [],
+      "text": "In 2005 Mike Brown, Chad Trujillo and David Rabinowitz announced Eris, found in pictures from Palomar Observatory in California. Now about 96 times as far from the Sun as Earth, it has slightly more mass than Pluto. A tenth planet? On 24 August 2006, in Prague, the International Astronomical Union voted to call Pluto and Eris dwarf planets instead.",
+      "today": "The vote is still argued over; many planetary scientists, among them New Horizons’ leader Alan Stern, still call Pluto a planet."
+    },
+    {
+      "place": "earth",
+      "phase": "flight",
+      "title": "The fastest launch",
+      "when": "19 January 2006",
+      "at": 40.2,
+      "camera": {
+        "at": [
+          22,
+          45
+        ],
+        "width": 40
+      },
+      "legs": [],
+      "text": "New Horizons, a craft about the size of a grand piano, left Cape Canaveral on 19 January 2006, seven months before the vote in Prague. It was the fastest launch yet, passing the Moon’s orbit in about nine hours. Aboard were some of Clyde Tombaugh’s ashes. It slept for most of the nine-year trip, waking now and then for checks.",
+      "today": "Its power comes from a plutonium generator, as there is too little sunlight that far out for solar panels."
+    },
+    {
+      "place": "jupiter",
+      "phase": "flight",
+      "title": "A push from Jupiter",
+      "when": "28 February 2007",
+      "at": 49.5,
+      "camera": {
+        "at": [
+          41,
+          43
+        ],
+        "width": 50
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "jupiter",
+          "traveller": "nh",
+          "style": "nh",
+          "bend": 0.14
+        }
+      ],
+      "text": "On 28 February 2007 New Horizons swung past Jupiter, which flung it on faster, by about 14,000 kilometres an hour, and cut three years off the trip. Its cameras, tested on the way, caught a volcano on Jupiter’s moon Io, Tvashtar, throwing up a plume about 330 kilometres high. Then it slept for most of the next eight years.",
+      "today": "No probe has used Jupiter’s pull to go faster since; NASA’s Juno and Europe’s JUICE went there to stay."
+    },
+    {
+      "place": "pluto",
+      "phase": "pluto",
+      "title": "The heart of Pluto",
+      "when": "14 July 2015",
+      "at": 58.8,
+      "camera": {
+        "at": [
+          80,
+          46
+        ],
+        "width": 60
+      },
+      "legs": [
+        {
+          "from": "jupiter",
+          "to": "pluto",
+          "traveller": "nh",
+          "style": "nh",
+          "bend": 0.14
+        }
+      ],
+      "source": "Science",
+      "text": "On 14 July 2015 New Horizons passed 12,500 kilometres from Pluto, too busy taking pictures to call home for most of a day. They showed a huge pale heart, later named Tombaugh Regio. Its western lobe, Sputnik Planitia, is a smooth plain of frozen nitrogen with no craters, so it is young, with mountains of water ice along its edge.",
+      "today": "Sending all the data home, at about the speed of an old dial-up modem, took until October 2016."
+    },
+    {
+      "place": "pluto",
+      "phase": "pluto",
+      "title": "Blue haze and glaciers",
+      "when": "2015 to 2016",
+      "at": 68.1,
+      "camera": {
+        "at": [
+          101,
+          48
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "Looking back at Pluto against the Sun, New Horizons saw blue haze in layers above the surface, in a thin air mostly of nitrogen. Pluto, about 2,377 kilometres across, proved a busy world: glaciers of nitrogen ice flow into Sputnik Planitia, and there may be ice volcanoes. Whether a liquid ocean lies beneath the crust is still debated.",
+      "today": "Pluto’s thin air may freeze onto the ground as it moves farther from the Sun over the coming decades."
+    },
+    {
+      "place": "pluto",
+      "phase": "pluto",
+      "title": "Charon’s red cap",
+      "when": "July 2015",
+      "at": 77.4,
+      "camera": {
+        "at": [
+          101,
+          48
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "Charon, about 1,212 kilometres across, turned out to have a belt of cliffs and canyons around its middle and a dark red patch at its north pole, named Mordor Macula. Scientists think gas escaping from Pluto is caught by Charon’s cold pole, where sunlight slowly turns it into red, tar-like compounds called tholins. That is still a theory.",
+      "today": "Charon is so large compared with Pluto that the two circle a point in the space between them."
+    },
+    {
+      "place": "arrokoth",
+      "phase": "beyond",
+      "title": "Arrokoth",
+      "when": "1 January 2019",
+      "at": 86.7,
+      "camera": {
+        "at": [
+          104,
+          48
+        ],
+        "width": 26
+      },
+      "legs": [
+        {
+          "from": "pluto",
+          "to": "arrokoth",
+          "traveller": "nh",
+          "style": "nh",
+          "bend": -0.14
+        }
+      ],
+      "source": "Science",
+      "text": "On 1 January 2019 New Horizons flew 3,500 kilometres from Arrokoth, a small world found by the Hubble telescope only in 2014. It is the most distant object any spacecraft has visited, and one of the least changed: two flattened lobes, 36 kilometres long, that came together gently while the planets formed. Its name means sky in Powhatan.",
+      "today": "The name was given in 2019 with the consent of Powhatan elders; the object had been nicknamed Ultima Thule."
+    },
+    {
+      "place": "nhnow",
+      "phase": "beyond",
+      "title": "Still going",
+      "when": "November 2026",
+      "at": 96.0,
+      "camera": {
+        "at": [
+          113,
+          49
+        ],
+        "width": 30
+      },
+      "legs": [
+        {
+          "from": "arrokoth",
+          "to": "nhnow",
+          "traveller": "nh",
+          "style": "nh",
+          "bend": 0.14
+        }
+      ],
+      "text": "New Horizons is still working, about 65 times as far from the Sun as Earth and moving out about three times that Earth-to-Sun distance a year. Its dust counter keeps finding more dust than expected, a hint that the Kuiper belt reaches farther than was thought. It has power enough to keep working into the 2040s.",
+      "today": "It is the fifth probe on its way out of the Solar System, after Pioneer 10, Pioneer 11 and the two Voyagers."
+    }
+  ],
+  "timeline": {
+    "track": [
+      {
+        "until": 35.5,
+        "color": "rgba(255,138,58,.35)"
+      },
+      {
+        "until": 54.1,
+        "color": "rgba(166,120,224,.35)"
+      },
+      {
+        "until": 82.1,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(242,193,78,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3.0,
+        "text": "1930"
+      },
+      {
+        "at": 21.6,
+        "text": "1992"
+      },
+      {
+        "at": 40.2,
+        "text": "2006"
+      },
+      {
+        "at": 58.8,
+        "text": "2015"
+      },
+      {
+        "at": 96.0,
+        "text": "Now"
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "tombaugh",
+        "name": "Clyde Tombaugh",
+        "life": "1906 to 1997",
+        "role": "Astronomer who found Pluto",
+        "steps": [
+          0,
+          4
+        ],
+        "text": "A Kansas farm boy who built his own telescopes and sent drawings of Jupiter and Mars to Lowell Observatory, which hired him in 1929 to hunt for a planet beyond Neptune. After finding Pluto he searched the sky for another 13 years, studied astronomy at the University of Kansas, and later tracked rockets at White Sands, New Mexico."
+      },
+      {
+        "id": "burney",
+        "name": "Venetia Burney",
+        "life": "1918 to 2009",
+        "role": "The girl who named Pluto",
+        "steps": [
+          0,
+          10
+        ],
+        "text": "An Oxford schoolgirl who, hearing at breakfast in March 1930 about the new planet, suggested the name Pluto to her grandfather, Falconer Madan, once librarian of the Bodleian Library. He passed it to the astronomer Herbert Hall Turner, who sent it to Lowell Observatory, and the team chose it. New Horizons’ student-built dust counter is named after her."
+      },
+      {
+        "id": "luu",
+        "name": "Jane Luu",
+        "life": "born 1963",
+        "role": "Astronomer, co-discoverer of the Kuiper belt",
+        "steps": [
+          2
+        ],
+        "text": "Born in Saigon, she came to the United States as a refugee in 1975. As a graduate student working with David Jewitt, she spent five years searching for faint bodies beyond Neptune, and in 1992 they found the first of the Kuiper belt. In 2012 they shared the Kavli Prize in astrophysics with Michael Brown."
+      },
+      {
+        "id": "stern",
+        "name": "Alan Stern",
+        "life": "born 1957",
+        "role": "New Horizons principal investigator",
+        "steps": [
+          4,
+          6,
+          9
+        ],
+        "text": "An American planetary scientist at the Southwest Research Institute who has led New Horizons from the start. He pressed NASA for a Pluto mission for over a decade, through cancelled plans, before New Horizons was chosen in 2001. He argues that Pluto is a planet, and led the team on to Arrokoth."
+      }
+    ]
+  }
+}

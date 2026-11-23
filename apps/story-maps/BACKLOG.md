@@ -31,9 +31,6 @@ A series in the Universe subject, one story per world and the missions sent to i
 
 1. Jupiter and its moons: Pioneer, Galileo, Juno, JUICE, Europa Clipper (needs a Jupiter-system sky diagram; its own PR)
 2. Saturn and Titan: Pioneer 11, Cassini–Huygens, Dragonfly to come (a Saturn-system sky diagram)
-3. Asteroids and comets: Giotto, NEAR, Rosetta and Philae, Hayabusa and Hayabusa2, OSIRIS-REx, DART (`solar-system`)
-4. Pluto and the Kuiper belt: New Horizons and Arrokoth (`solar-system`)
-5. Mercury: Mariner 10, MESSENGER, BepiColombo (`solar-system`)
 
 Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. The Mars map came from MOLA heights on NASA's Mars Global Surveyor and the USGS gazetteer (see `README.md`). The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`).
 
@@ -41,6 +38,9 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- Missions to Mercury (`mercury-missions`), 2026-11-23
+- Pluto and the Kuiper Belt (`pluto`), 2026-11-23
+- Asteroids and Comets (`asteroids-comets`), 2026-11-23
 - The Safavid Empire (`safavid`), 2026-11-22
 - The First Caliphates (`caliphates`), 2026-11-22
 - The Sasanian Empire (`sasanian`), 2026-11-22
