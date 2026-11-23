@@ -66,15 +66,15 @@ The Mongol conquests are The Mongol Empire, above.
 
 A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. In this order:
 
-1. Saturn and Titan: Pioneer 11, Cassini–Huygens, Dragonfly to come (a Saturn-system sky diagram)
-2. Missions to the Sun: Helios, SOHO, Ulysses, Genesis, Parker Solar Probe, Solar Orbiter, Aditya-L1 (fits the `solar-system` map; no new basemap)
+1. Missions to the Sun: Helios, SOHO, Ulysses, Genesis, Parker Solar Probe, Solar Orbiter, Aditya-L1 (fits the `solar-system` map; no new basemap)
 
-Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. The Mars map came from MOLA heights on NASA's Mars Global Surveyor and the USGS gazetteer (see `README.md`). The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`). The Jupiter map is a hand-drawn distance diagram (`basemaps/jupiter-system.json`): Jupiter to scale, then a logarithmic scale out from its cloud tops.
+Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. The Mars map came from MOLA heights on NASA's Mars Global Surveyor and the USGS gazetteer (see `README.md`). The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`). The Jupiter map is a hand-drawn distance diagram (`basemaps/jupiter-system.json`): Jupiter to scale, then a logarithmic scale out from its cloud tops. The Saturn map is a hand-drawn distance diagram (`basemaps/saturn-system.json`) in the same style, with an enlarged Titan globe.
 
 ## Built
 
 Newest first.
 
+- Saturn and Titan (`saturn-titan`), 2026-11-23
 - Missions to Jupiter (`jupiter-missions`), 2026-11-23
 - The Napoleonic Wars (`napoleonic-wars`), 2026-11-23
 - The Three Battles of Panipat (`panipat`), 2026-11-23

@@ -1,0 +1,606 @@
+{
+ "id": "saturn-titan",
+ "title": "Saturn and Titan",
+ "description": "An illustrated map of the missions to Saturn, from Pioneer 11 and the Voyagers through Cassini’s 13 years in orbit, Huygens’ landing on Titan, the jets of Enceladus and the seas of Titan, to Cassini’s dives inside the rings and the Dragonfly drone planned for Titan.",
+ "canvas": "cosmic",
+ "basemap": "saturn-system",
+ "source": "History",
+ "nativeLang": "en",
+ "mapLabel": "Illustrated diagram of the Saturn system by distance, with Saturn, its rings and polar hexagon on the left, the moons from Mimas to Phoebe in a line, the edge of the magnetosphere, an enlarged globe of Titan with its northern seas, and the paths of probes arriving from Earth",
+ "note": "This map is a diagram of distance, not a picture of space. Saturn and its main rings are drawn to scale; beyond them, distance from the planet’s centre runs left to right on a logarithmic scale. The moons are drawn larger than scale and in a line, and Titan is shown again, enlarged, as a globe with north up. Figures follow NASA and ESA.",
+ "routes": "chapter",
+ "overview": {
+  "at": [
+   90,
+   45
+  ],
+  "width": 184
+ },
+ "places": {
+  "earth": {
+   "name": "Earth",
+   "at": [
+    178,
+    28
+   ],
+   "glyph": "earth-moon",
+   "label": "left",
+   "hidden": true
+  },
+  "f-ring": {
+   "name": "F ring",
+   "at": [
+    52.5,
+    45
+   ],
+   "glyph": "particles",
+   "label": "top"
+  },
+  "titan": {
+   "name": "Titan",
+   "at": [
+    99.3,
+    45
+   ],
+   "glyph": "gas-cloud",
+   "label": "bottom"
+  },
+  "rings": {
+   "name": "Saturn’s rings",
+   "at": [
+    40.1,
+    40.8
+   ],
+   "glyph": "ringed-planet",
+   "label": "bottom"
+  },
+  "phoebe": {
+   "name": "Phoebe",
+   "at": [
+    150.6,
+    45
+   ],
+   "glyph": "dwarf-planet",
+   "label": "bottom"
+  },
+  "huygens-site": {
+   "name": "Huygens landing site",
+   "at": [
+    149.3,
+    56.1
+   ],
+   "glyph": "lander",
+   "label": "right"
+  },
+  "enceladus": {
+   "name": "Enceladus",
+   "at": [
+    63.8,
+    45
+   ],
+   "glyph": "snowflake",
+   "label": "top"
+  },
+  "seas": {
+   "name": "Northern seas",
+   "at": [
+    144.7,
+    71.5
+   ],
+   "glyph": "wave",
+   "label": "top"
+  },
+  "hexagon": {
+   "name": "The hexagon",
+   "at": [
+    20,
+    55.6
+   ],
+   "glyph": "swell",
+   "label": "top"
+  },
+  "storm": {
+   "name": "Great white storm",
+   "at": [
+    24,
+    51.2
+   ],
+   "glyph": "burst",
+   "label": "right"
+  },
+  "ring-gap": {
+   "name": "Inside the rings",
+   "at": [
+    35.2,
+    45
+   ],
+   "glyph": "orbiter",
+   "label": "bottom"
+  },
+  "final-plunge": {
+   "name": "Cassini’s last plunge",
+   "at": [
+    26.5,
+    46.5
+   ],
+   "glyph": "orbiter",
+   "label": "top"
+  },
+  "selk": {
+   "name": "Selk crater",
+   "at": [
+    148.1,
+    58.5
+   ],
+   "glyph": "helicopter",
+   "label": "left"
+  }
+ },
+ "travellers": {
+  "pioneer11": {
+   "name": "Pioneer 11",
+   "icon": "probe"
+  },
+  "voyager1": {
+   "name": "Voyager 1",
+   "icon": "probe"
+  },
+  "voyager2": {
+   "name": "Voyager 2",
+   "icon": "probe"
+  },
+  "cassini": {
+   "name": "Cassini",
+   "icon": "probe"
+  },
+  "huygens": {
+   "name": "Huygens",
+   "icon": "probe"
+  },
+  "dragonfly": {
+   "name": "Dragonfly",
+   "icon": "probe"
+  }
+ },
+ "phases": {
+  "flybys": {
+   "name": "The first flybys",
+   "color": "#ff8a3a"
+  },
+  "cassini": {
+   "name": "Cassini–Huygens",
+   "color": "#4fc3b0"
+  },
+  "finale": {
+   "name": "The Grand Finale",
+   "color": "#a678e0"
+  },
+  "dragonfly": {
+   "name": "Back to Titan",
+   "color": "#6fa8ff"
+  }
+ },
+ "routeStyles": {
+  "pioneer11": {
+   "color": "#6fd3f0",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "voyager1": {
+   "color": "#d9a8f5",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "voyager2": {
+   "color": "#ffd166",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "cassini": {
+   "color": "#9be28f",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "huygens": {
+   "color": "#ff9f80",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  },
+  "dragonfly": {
+   "color": "#f2e08a",
+   "width": 3,
+   "dash": "3 5",
+   "cap": "round"
+  }
+ },
+ "timeline": {
+  "track": [
+   {
+    "until": 6,
+    "color": "rgba(255,138,58,.35)"
+   },
+   {
+    "until": 67,
+    "color": "rgba(79,195,176,.35)"
+   },
+   {
+    "until": 73,
+    "color": "rgba(166,120,224,.35)"
+   },
+   {
+    "until": 100,
+    "color": "rgba(111,168,255,.35)"
+   }
+  ],
+  "ticks": [
+   {
+    "at": 0,
+    "text": "1979"
+   },
+   {
+    "at": 32.7,
+    "text": "1997"
+   },
+   {
+    "at": 69.1,
+    "text": "2017"
+   },
+   {
+    "at": 85.5,
+    "text": "Now"
+   }
+  ]
+ },
+ "steps": [
+  {
+   "place": "f-ring",
+   "phase": "flybys",
+   "title": "Pioneer 11 reaches Saturn",
+   "when": "September 1979",
+   "at": 1.0,
+   "camera": {
+    "at": [
+     100,
+     40
+    ],
+    "width": 170
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "f-ring",
+     "traveller": "pioneer11",
+     "style": "pioneer11",
+     "bend": 0.12
+    }
+   ],
+   "text": "Pioneer 11, flung on from Jupiter, made the first visit to Saturn on 1 September 1979. It passed about 21,000 kilometres above the cloud tops and crossed the plane of the rings just outside them, testing a path for later craft. It found a narrow new ring, the F ring, and showed that Titan was far too cold for life.",
+   "today": "Pioneer 11’s last signal reached Earth in 1995; it is heading out of the Solar System towards the constellation Aquila."
+  },
+  {
+   "place": "titan",
+   "phase": "flybys",
+   "title": "Voyager 1 and Titan’s haze",
+   "when": "November 1980",
+   "at": 2.6,
+   "camera": {
+    "at": [
+     100,
+     40
+    ],
+    "width": 170
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "titan",
+     "traveller": "voyager1",
+     "style": "voyager1",
+     "bend": -0.12
+    }
+   ],
+   "text": "Voyager 1 arrived in November 1980 on a course chosen to pass close behind Titan, Saturn’s largest moon. Its cameras saw only an orange haze, but radio signals sent through the air on their way to Earth showed an atmosphere mostly of nitrogen, with a surface pressure about one and a half times Earth’s. No other moon has such air.",
+   "today": "Titan is bigger than the planet Mercury, though it has only about 40 percent of Mercury’s mass."
+  },
+  {
+   "place": "rings",
+   "phase": "flybys",
+   "title": "Voyager 2 and the rings",
+   "when": "August 1981",
+   "at": 4.5,
+   "camera": {
+    "at": [
+     100,
+     40
+    ],
+    "width": 170
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "rings",
+     "traveller": "voyager2",
+     "style": "voyager2",
+     "bend": 0.12
+    }
+   ],
+   "text": "Voyager 2 passed Saturn on 25 August 1981. The two Voyagers showed the broad rings split into thousands of narrow ringlets, crossed by dark spokes that came and went, and found the F ring twisted into strands. Soon after closest approach the platform that aimed Voyager 2’s cameras jammed, and some planned pictures were lost.",
+   "today": "The spokes are thought to be fine dust lifted by electric charge; Cassini saw them come and go with Saturn’s seasons."
+  },
+  {
+   "place": "phoebe",
+   "phase": "cassini",
+   "title": "The long road to Saturn",
+   "when": "October 1997 to June 2004",
+   "at": 37,
+   "camera": {
+    "at": [
+     164,
+     37
+    ],
+    "width": 60
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "phoebe",
+     "traveller": "cassini",
+     "style": "cassini",
+     "bend": -0.12
+    }
+   ],
+   "text": "Cassini–Huygens, built by NASA, the European Space Agency and the Italian Space Agency, launched on 15 October 1997. Too heavy to fly straight to Saturn, it swung twice past Venus, then past Earth and Jupiter. On 11 June 2004 it flew about 2,000 kilometres from Phoebe, a dark moon that circles Saturn backwards and was probably captured.",
+   "today": "Cassini entered orbit on 1 July 2004, firing its main engine for 96 minutes as it crossed the plane of the rings."
+  },
+  {
+   "place": "huygens-site",
+   "phase": "cassini",
+   "title": "Huygens lands on Titan",
+   "when": "January 2005",
+   "at": 47.4,
+   "camera": {
+    "at": [
+     128,
+     58
+    ],
+    "width": 75
+   },
+   "legs": [
+    {
+     "from": "titan",
+     "to": "huygens-site",
+     "traveller": "huygens",
+     "style": "huygens",
+     "bend": 0.12
+    }
+   ],
+   "text": "Released by Cassini on 25 December 2004, Europe’s Huygens probe fell on 14 January 2005 through Titan’s haze for about two and a half hours under parachutes, photographing river channels, and landed on a damp plain strewn with rounded pebbles of water ice. It sent data from the surface for over an hour: still the farthest landing ever made.",
+   "today": "A missing command left one of Huygens’ two radio channels unrecorded, and about half its pictures were lost."
+  },
+  {
+   "place": "enceladus",
+   "phase": "cassini",
+   "title": "The jets of Enceladus",
+   "when": "2005",
+   "at": 48.6,
+   "camera": {
+    "at": [
+     64,
+     45
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "Enceladus, a small, bright moon, bent Saturn’s magnetic field as Cassini passed it early in 2005, as if it had a thin atmosphere. A close flyby that July found water vapour above its south pole, and pictures in November showed jets of ice grains spraying from warm cracks nicknamed tiger stripes. The spray feeds Saturn’s wide, faint E ring.",
+   "today": "More than 100 separate jets have been traced along the tiger stripes."
+  },
+  {
+   "place": "seas",
+   "phase": "cassini",
+   "title": "Seas of methane",
+   "when": "2006 to 2014",
+   "at": 50.5,
+   "camera": {
+    "at": [
+     146,
+     64
+    ],
+    "width": 50
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "In July 2006 Cassini’s radar, which sees through Titan’s haze, found dark, smooth lakes near the north pole. They are liquid methane and ethane, refilled by rain: Titan is the only other world known with liquid on its surface. The largest, Kraken Mare, is bigger than the Caspian Sea, and radar sounded Ligeia Mare at about 160 metres deep.",
+   "today": "In 2009 Cassini caught sunlight glinting off a northern lake, proof that the lakes are liquid."
+  },
+  {
+   "place": "hexagon",
+   "phase": "cassini",
+   "title": "The hexagon",
+   "when": "1981 to 2017",
+   "at": 53,
+   "camera": {
+    "at": [
+     24,
+     48
+    ],
+    "width": 50
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "A six-sided jet stream circles Saturn’s north pole, first glimpsed in Voyager pictures. Cassini saw it in sunlight after northern spring began in 2009, measuring each side wider than Earth, with a vast hurricane at its centre. Between 2012 and 2016 it changed colour from blue to gold. Why it has six sides is still theory.",
+   "today": "Spinning tanks of fluid in laboratories make similar many-sided shapes; Saturn’s south pole has a vortex but no hexagon."
+  },
+  {
+   "place": "storm",
+   "phase": "cassini",
+   "title": "The great white storm",
+   "when": "December 2010 to August 2011",
+   "at": 57,
+   "camera": {
+    "at": [
+     24,
+     48
+    ],
+    "width": 50
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "In December 2010 a white storm erupted in Saturn’s northern hemisphere. Within weeks its tail had wrapped round the whole planet, and its head eventually ran into its own tail. Cassini’s radio receiver picked up lightning flashing as often as ten times a second, and the storm raged for about 200 days.",
+   "today": "Great white storms were seen from Earth in 1876, 1903, 1933, 1960 and 1990, roughly once every Saturn year of 29 Earth years."
+  },
+  {
+   "place": "enceladus",
+   "phase": "cassini",
+   "title": "An ocean under the ice",
+   "when": "2014 to 2023",
+   "at": 64,
+   "camera": {
+    "at": [
+     64,
+     45
+    ],
+    "width": 70
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "Tugs on Cassini and a wobble in Enceladus’s spin showed by 2015 that a global ocean lies beneath its ice. That October Cassini flew 49 kilometres above the south pole, through the plume, and found hydrogen, a sign that hot water may be reacting with rock on the sea floor. Later studies of its data found organic molecules and phosphates.",
+   "today": "Whether anything lives in that ocean is unknown; no mission has yet been launched to find out."
+  },
+  {
+   "place": "ring-gap",
+   "phase": "finale",
+   "title": "The Grand Finale",
+   "when": "April to September 2017",
+   "at": 69.5,
+   "camera": {
+    "at": [
+     58,
+     46
+    ],
+    "width": 100
+   },
+   "legs": [
+    {
+     "from": "titan",
+     "to": "ring-gap",
+     "traveller": "cassini",
+     "style": "cassini",
+     "bend": 0.12
+    }
+   ],
+   "text": "With its fuel almost gone, Cassini made a last close pass of Titan on 22 April 2017, whose pull bent its orbit into a gap about 2,000 kilometres wide between the rings and the clouds. It dived through that gap 22 times, the first craft to go there, weighing the rings and finding material from them raining into Saturn.",
+   "today": "Waves in the rings, measured by Cassini, later gave the length of Saturn’s day: 10 hours, 33 minutes and 38 seconds."
+  },
+  {
+   "place": "final-plunge",
+   "phase": "finale",
+   "title": "Cassini’s last plunge",
+   "when": "15 September 2017",
+   "at": 70.5,
+   "camera": {
+    "at": [
+     28,
+     46
+    ],
+    "width": 50
+   },
+   "legs": [
+    {
+     "from": "ring-gap",
+     "to": "final-plunge",
+     "traveller": "cassini",
+     "style": "cassini",
+     "bend": -0.12
+    }
+   ],
+   "text": "On 15 September 2017 Cassini dived into Saturn’s atmosphere on purpose, so that it could never crash into and contaminate Enceladus or Titan, worlds that might hold life. It turned its antenna to Earth and sent readings of the air until it lost control and burned up. Its last signal reached Earth about 83 minutes after it was sent.",
+   "today": "In 13 years at Saturn, Cassini made 294 orbits and found six named moons."
+  },
+  {
+   "place": "rings",
+   "phase": "finale",
+   "title": "How old are the rings?",
+   "when": "2019 to today",
+   "at": 77,
+   "camera": {
+    "at": [
+     28,
+     44
+    ],
+    "width": 55
+   },
+   "legs": [],
+   "source": "Science",
+   "text": "Weighed in the Grand Finale, the rings hold less than half the mass of the moon Mimas. With how little dark dust has fallen on them, that suggested young rings, a few hundred million years old. In 2024 other scientists argued that falling dust mostly vaporises instead of darkening the ice, so the rings could be as old as Saturn.",
+   "today": "The question is open. Material raining into Saturn suggests the rings may largely be gone in a few hundred million years."
+  },
+  {
+   "place": "selk",
+   "phase": "dragonfly",
+   "title": "Dragonfly",
+   "when": "Launch planned for July 2028",
+   "at": 91,
+   "camera": {
+    "at": [
+     160,
+     45
+    ],
+    "width": 70
+   },
+   "legs": [
+    {
+     "from": "earth",
+     "to": "selk",
+     "traveller": "dragonfly",
+     "style": "dragonfly",
+     "bend": 0.12
+    }
+   ],
+   "text": "NASA’s Dragonfly is a car-sized drone with eight rotors, powered by heat from plutonium, built to fly in Titan’s thick air and low gravity. Its launch was planned for July 2028 and its arrival for about 2034. It is to land among dunes near Selk crater, where an impact may once have mixed liquid water with Titan’s organic chemistry.",
+   "today": "Saturn has 274 known moons, more than any other planet, after 128 more were announced in March 2025."
+  }
+ ],
+ "people": {
+  "heading": "People in this chapter",
+  "items": [
+   {
+    "id": "huygens",
+    "name": "Christiaan Huygens",
+    "life": "1629 to 1695",
+    "role": "Astronomer and physicist",
+    "steps": [
+     4
+    ],
+    "text": "A Dutch scientist who, with his brother Constantijn, ground the lenses for his own telescopes. On 25 March 1655 he found Titan, the first moon seen round Saturn. In 1659 he explained Saturn’s strange ‘ears’ as a thin, flat ring that touches the planet nowhere. He also invented the pendulum clock and argued that light travels as waves."
+   },
+   {
+    "id": "cassini",
+    "name": "Giovanni Domenico Cassini",
+    "native": "Jean-Dominique Cassini",
+    "lang": "fr",
+    "life": "1625 to 1712",
+    "role": "Astronomer",
+    "steps": [
+     3
+    ],
+    "text": "An Italian astronomer, invited to France by Louis XIV, who became the first director of the Paris Observatory. He found four of Saturn’s moons: Iapetus in 1671, Rhea in 1672, and Tethys and Dione in 1684. In 1675 he saw the dark gap in the rings now called the Cassini Division. He also measured how fast Jupiter and Mars spin."
+   },
+   {
+    "id": "porco",
+    "name": "Carolyn Porco",
+    "life": "born 1953",
+    "role": "Planetary scientist",
+    "steps": [
+     5
+    ],
+    "text": "An American planetary scientist who worked on the Voyager imaging team and led Cassini’s imaging team from 1990. Her team’s pictures showed the jets of Enceladus and traced them to the tiger stripes. In July 2013 she arranged for Cassini to photograph Earth from beyond Saturn while people around the world waved: the Day the Earth Smiled."
+   }
+  ]
+ }
+}
