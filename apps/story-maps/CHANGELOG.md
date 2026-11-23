@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.115.0
+
+- New story map in Wars and Campaigns: The Three Battles of Panipat. From Babur in Kabul through the first battle in 1526, Agra and Khanwa, Akbar’s coronation at Kalanaur, Hemu’s capture of Delhi and the second battle in 1556, to the Marathas at Attock, Barari Ghat, Bhau’s march north, the siege and the third battle in 1761, what followed, and Panipat today. 13 chapters on the `south-asia` basemap, a Powers layer (the Lodi Sultanate, the Mughal Empire, the Sur Empire, the Rajput confederacy, the Maratha Empire, the Durrani Empire, the Rohillas and Awadh), 8 people cards, native names in Hindi, Persian, Marathi and Pashto, no new glyphs.
+- Catalogue: a new The Three Battles of Panipat entry opens the story and a new Second Battle of Panipat entry opens it at chapter 6. The First and Third Battle entries now open this story, at chapters 2 and 11, instead of The Mughal Empire and The Marathas.
+
 ## 0.114.0
 
 - New story map in Wars and Campaigns: The Second World War. From Japan’s war in China and the Munich crisis through the invasion of Poland, Dunkirk, the Battle of Britain, Barbarossa, Pearl Harbor, Singapore, Midway, El Alamein, Stalingrad, the Holocaust and the Bengal famine to Imphal and Kohima, D-Day, the fall of Berlin, Hiroshima and Nagasaki and the United Nations. 18 chapters on the `world` basemap, a Powers layer (Germany and occupied Europe, Italy, Japan and its conquests, the Soviet Union, Britain and its empire, the United States, China), 8 people cards, native names in Chinese, German, Polish, French, Russian, Japanese, Arabic and Bengali, no new glyphs.

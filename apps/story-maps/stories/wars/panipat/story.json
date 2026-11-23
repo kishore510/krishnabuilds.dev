@@ -1,0 +1,1586 @@
+{
+  "id": "panipat",
+  "title": "The Three Battles of Panipat",
+  "description": "Three battles on one plain north of Delhi: Babur against Ibrahim Lodi in 1526, Akbar’s army against Hemu in 1556, and Ahmad Shah Durrani against the Marathas in 1761, with the marches that led to each and what followed.",
+  "canvas": "geo",
+  "basemap": "south-asia",
+  "source": "History",
+  "nativeLang": "hi",
+  "routes": "journey",
+  "mapLabel": "North India, 1504–1772",
+  "note": "Kandahar lies beyond the map’s western edge; Durrani’s route arrives from there. Delhi, Barari Ghat and Panipat are less than a degree apart, so no chapter shows two of them in full.",
+  "travellers": {
+    "babur-army": {
+      "name": "Babur’s army",
+      "icon": "horse"
+    },
+    "mughal-army": {
+      "name": "The Mughal army",
+      "icon": "horse"
+    },
+    "durrani-army": {
+      "name": "Durrani’s army",
+      "icon": "horse"
+    },
+    "maratha-army": {
+      "name": "The Maratha army",
+      "icon": "horse"
+    }
+  },
+  "phases": {
+    "first": {
+      "name": "1526: Babur and Ibrahim Lodi",
+      "color": "#2fa39a"
+    },
+    "second": {
+      "name": "1556: Akbar and Hemu",
+      "color": "#d9a441"
+    },
+    "third": {
+      "name": "1761: the Marathas and Durrani",
+      "color": "#e0432a"
+    },
+    "memory": {
+      "name": "Remembering Panipat",
+      "color": "#8fcf8a"
+    }
+  },
+  "routeStyles": {
+    "mughal": {
+      "color": "#2f9e8f",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "afghan": {
+      "color": "#2b7fb4",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "maratha": {
+      "color": "#e0432a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 28,
+        "color": "rgba(47,163,154,.4)"
+      },
+      {
+        "until": 54,
+        "color": "rgba(217,164,65,.4)"
+      },
+      {
+        "until": 94,
+        "color": "rgba(224,67,42,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(143,207,138,.4)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2,
+        "text": "1504"
+      },
+      {
+        "at": 14,
+        "text": "1526"
+      },
+      {
+        "at": 40,
+        "text": "1556"
+      },
+      {
+        "at": 60,
+        "text": "1757"
+      },
+      {
+        "at": 80,
+        "text": "1760–61"
+      },
+      {
+        "at": 98,
+        "text": "Today"
+      }
+    ]
+  },
+  "places": {
+    "kabul": {
+      "name": "Kabul",
+      "at": [
+        69.17,
+        34.53
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "panipat": {
+      "name": "Panipat",
+      "at": [
+        76.97,
+        29.39
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "agra": {
+      "name": "Agra",
+      "at": [
+        78.02,
+        27.18
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "kalanaur": {
+      "name": "Kalanaur",
+      "at": [
+        75.15,
+        32.02
+      ],
+      "glyph": "crown",
+      "label": "left"
+    },
+    "delhi": {
+      "name": "Delhi",
+      "at": [
+        77.24,
+        28.61
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "attock": {
+      "name": "Attock",
+      "at": [
+        72.25,
+        33.89
+      ],
+      "glyph": "flag",
+      "label": "left"
+    },
+    "kandahar": {
+      "name": "Kandahar",
+      "at": [
+        65.7,
+        31.61
+      ],
+      "hidden": true
+    },
+    "barari-ghat": {
+      "name": "Barari Ghat",
+      "at": [
+        77.2,
+        28.76
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "pune": {
+      "name": "Pune",
+      "at": [
+        73.86,
+        18.52
+      ],
+      "glyph": "palace",
+      "label": "left"
+    }
+  },
+  "steps": [
+    {
+      "place": "kabul",
+      "phase": "first",
+      "title": "Babur in Kabul",
+      "native": "ظهیرالدین محمد بابر",
+      "lang": "fa",
+      "when": "1504–1525",
+      "at": 4,
+      "camera": {
+        "at": [
+          71.5,
+          33.0
+        ],
+        "width": 9
+      },
+      "legs": [],
+      "text": "Zahir-ud-din Muhammad Babur, a Timurid prince descended from Timur and, through his mother, from Genghis Khan, lost his homeland of Fergana and failed to hold Samarkand. In 1504 he took Kabul instead. From there he raided across the Indus. In his memoir, the Baburnama, he says he had long meant to take Hindustan, which Timur had invaded in 1398.",
+      "today": "Babur’s tomb stands in the Bagh-e Babur, the terraced garden in Kabul where he asked to be buried."
+    },
+    {
+      "place": "panipat",
+      "phase": "first",
+      "title": "The First Battle of Panipat",
+      "native": "पानीपत की पहली लड़ाई",
+      "when": "21 April 1526",
+      "at": 14,
+      "camera": {
+        "at": [
+          73.0,
+          32.0
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "kabul",
+          "to": "panipat",
+          "traveller": "babur-army",
+          "style": "mughal",
+          "bend": -0.1
+        }
+      ],
+      "text": "Babur marched from Kabul in late 1525 and met Ibrahim Lodi, the Delhi sultan, at Panipat. Lodi’s army was far larger, though the numbers are disputed. Babur chained carts together behind a ditch, with field guns and matchlocks between them, and sent horsemen round both flanks. Ibrahim Lodi was killed with thousands of his men, and the Delhi Sultanate ended.",
+      "today": "Ibrahim Lodi’s tomb, a plain platform restored by the British in 1866, stands in Panipat."
+    },
+    {
+      "place": "agra",
+      "phase": "first",
+      "title": "Agra and Khanwa",
+      "when": "1526–1530",
+      "at": 24,
+      "camera": {
+        "at": [
+          77.6,
+          28.4
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Babur sent his son Humayun to secure the treasury at Agra and made it his capital. In March 1527 he faced a greater threat: a confederacy of Rajput rulers led by Rana Sanga of Mewar. At Khanwa, west of Agra, the same carts and guns won again. Babur died in 1530, and Humayun inherited a young and unsettled empire.",
+      "today": "Khanwa is a village in Bharatpur district, Rajasthan; Babur’s first garden in Agra, the Ram Bagh, survives by the Yamuna."
+    },
+    {
+      "place": "kalanaur",
+      "phase": "second",
+      "title": "Akbar crowned at Kalanaur",
+      "native": "अकबर",
+      "when": "1540–1556",
+      "at": 36,
+      "camera": {
+        "at": [
+          76.0,
+          31.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Sher Shah Suri drove Humayun out of India in 1540, and Humayun spent fifteen years in exile. He retook Delhi in 1555 but died months later after falling on the stairs of his library. His son Akbar, aged thirteen, was crowned in a garden at Kalanaur in Punjab on 14 February 1556, with Bairam Khan as regent.",
+      "today": "The brick throne platform of Akbar’s coronation, the Takht-i-Akbari, still stands outside Kalanaur."
+    },
+    {
+      "place": "delhi",
+      "phase": "second",
+      "title": "Hemu takes Delhi",
+      "native": "हेमचंद्र विक्रमादित्य",
+      "when": "October 1556",
+      "at": 44,
+      "camera": {
+        "at": [
+          77.2,
+          29.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Hemu, a Hindu of modest birth, rose from supplying the army to become chief minister and general of Adil Shah Sur, and is said to have won many battles. After Humayun’s death he took Agra, and on 7 October 1556 beat the Mughal governor at Tughlaqabad outside Delhi. He took the city and the title Vikramaditya.",
+      "today": "The ruins of Tughlaqabad, a fort city of the Delhi sultans, stand on the southern edge of Delhi."
+    },
+    {
+      "place": "panipat",
+      "phase": "second",
+      "title": "The Second Battle of Panipat",
+      "native": "पानीपत की दूसरी लड़ाई",
+      "when": "5 November 1556",
+      "at": 50,
+      "camera": {
+        "at": [
+          76.2,
+          30.6
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "kalanaur",
+          "to": "panipat",
+          "traveller": "mughal-army",
+          "style": "mughal",
+          "bend": 0.1
+        }
+      ],
+      "text": "The Mughal army under Bairam Khan met Hemu at Panipat. Days earlier a Mughal detachment had captured Hemu’s artillery. Hemu, leading from an elephant, was close to winning when an arrow struck his eye and he fell unconscious. His army broke. He was taken to the young Akbar and beheaded; accounts disagree over whose hand struck the blow.",
+      "today": "Hemu’s memorial (samadhi) at Shodapur, on the edge of Panipat, marks where tradition says he was beheaded."
+    },
+    {
+      "place": "attock",
+      "phase": "third",
+      "title": "The Marathas at Attock",
+      "native": "अटकेपार",
+      "lang": "mr",
+      "when": "1757–1758",
+      "at": 60,
+      "camera": {
+        "at": [
+          73.5,
+          32.5
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "By the 1750s the Mughal emperors were weak, and the Marathas, governed from Pune by the Peshwas, collected tribute across much of India. In 1757 Ahmad Shah Durrani of Afghanistan sacked Delhi and Mathura. The next year a Maratha army under Raghunathrao drove the Afghans out of Punjab, took Lahore and reached Attock on the Indus.",
+      "today": "Attock Fort, built by Akbar in 1583, still guards the Indus crossing in Pakistan; Marathi keeps the phrase “beyond Attock” for a far-reaching triumph."
+    },
+    {
+      "place": "barari-ghat",
+      "phase": "third",
+      "title": "Barari Ghat",
+      "when": "January 1760",
+      "at": 66,
+      "camera": {
+        "at": [
+          73.5,
+          31.0
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "kandahar",
+          "to": "barari-ghat",
+          "traveller": "durrani-army",
+          "style": "afghan",
+          "bend": 0.1
+        }
+      ],
+      "text": "Ahmad Shah Durrani came back in late 1759 to retake Punjab and to help the Rohilla chief Najib ud-Daula, who had been fighting the Marathas. At Barari Ghat, a ford on the Yamuna just north of Delhi, the Afghans attacked a Maratha force in January 1760 and killed its commander, Dattaji Shinde. Durrani then wintered in the Ganga–Yamuna Doab.",
+      "today": "Burari is now a crowded neighbourhood of north Delhi beside the Yamuna."
+    },
+    {
+      "place": "pune",
+      "phase": "third",
+      "title": "Bhau marches north",
+      "native": "सदाशिवराव भाऊ",
+      "lang": "mr",
+      "when": "March–October 1760",
+      "at": 72,
+      "camera": {
+        "at": [
+          75.5,
+          23.5
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "pune",
+          "to": "delhi",
+          "traveller": "maratha-army",
+          "style": "maratha",
+          "bend": -0.1
+        }
+      ],
+      "text": "Peshwa Balaji Baji Rao sent a great army north under his cousin Sadashivrao Bhau, with his own son and heir, Vishwasrao. It brought Ibrahim Khan Gardi’s artillery and a crowd of pilgrims and camp followers. Bhau took Delhi in August 1760, and in October stormed the Afghan post at Kunjpura, north of Panipat. Durrani crossed the Yamuna behind him.",
+      "today": "Shaniwar Wada, the Peshwas’ palace in Pune, burned in 1828; its walls and gates still stand."
+    },
+    {
+      "place": "panipat",
+      "phase": "third",
+      "title": "The siege at Panipat",
+      "when": "November 1760 – January 1761",
+      "at": 78,
+      "camera": {
+        "at": [
+          77.0,
+          29.0
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Cut off from Delhi and the south, Bhau dug in round Panipat, and Durrani camped facing him. For two months each side raided the other’s supplies. Afghan patrols killed the Maratha supply officer Govind Pant Bundele, and food ran out in the crowded Maratha camp. By January men and horses were starving, and Bhau chose to fight his way out.",
+      "today": "Panipat sits on the old Grand Trunk Road, the route every army from the north-west took to Delhi."
+    },
+    {
+      "place": "panipat",
+      "phase": "third",
+      "title": "The Third Battle of Panipat",
+      "native": "पानिपतची तिसरी लढाई",
+      "lang": "mr",
+      "when": "14 January 1761",
+      "at": 84,
+      "camera": {
+        "at": [
+          77.0,
+          29.1
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "At dawn the Marathas attacked. Ibrahim Khan Gardi’s guns and infantry broke the Rohilla wing, but by afternoon Durrani’s reserves and swivel guns mounted on camels (zamburak) turned the battle. Vishwasrao was shot, and Bhau rode into the fight and was killed. The army collapsed, and captives were massacred next day. Deaths are disputed estimates, in the tens of thousands.",
+      "today": "In Marathi, “a Panipat” still means a crushing disaster."
+    },
+    {
+      "place": "pune",
+      "phase": "third",
+      "title": "After Panipat",
+      "when": "1761–1772",
+      "at": 92,
+      "camera": {
+        "at": [
+          74.5,
+          20.5
+        ],
+        "width": 11
+      },
+      "legs": [],
+      "text": "Peshwa Balaji Baji Rao, already ill, died in Pune in June 1761, tradition says of grief. Durrani, with unpaid troops and Sikh risings in Punjab, went home. Within ten years the Marathas were back: Mahadji Shinde, lamed at Panipat, escorted the emperor Shah Alam II to Delhi in 1772. Many see the British as the real gainers.",
+      "today": "Pune is a city of some seven million people, a centre of Maratha history and of India’s software industry."
+    },
+    {
+      "place": "panipat",
+      "phase": "memory",
+      "title": "Panipat remembered",
+      "when": "Today",
+      "at": 98,
+      "camera": {
+        "at": [
+          77.0,
+          29.2
+        ],
+        "width": 8
+      },
+      "legs": [],
+      "text": "Panipat keeps all three battles. Ibrahim Lodi’s tomb stands in the town, and Hemu’s memorial marks where, tradition says, he died. A black mango tree (Kala Amb) once marked where the fighting of 1761 was fiercest; a memorial stands there now, and a war memorial was added in Panipat in 2012. The Panipat Museum tells the story of all three.",
+      "today": "Panipat, in Haryana, about 90 kilometres north of Delhi, is now known for its textile mills."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "lodi",
+        "name": "Lodi Sultanate",
+        "color": "#b08a3e",
+        "active": [
+          [
+            0,
+            1
+          ]
+        ],
+        "label": {
+          "text": "Lodi Sultanate",
+          "at": [
+            81.5,
+            26.9
+          ]
+        },
+        "facts": {
+          "Ends": "21 April 1526"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Ibrahim Lodi"
+          }
+        ],
+        "role": "Delhi sultans",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.5,
+                  33
+                ],
+                [
+                  74.6,
+                  33
+                ],
+                [
+                  76.4,
+                  32.2
+                ],
+                [
+                  78.4,
+                  30.6
+                ],
+                [
+                  80.4,
+                  29.4
+                ],
+                [
+                  82.4,
+                  28
+                ],
+                [
+                  85,
+                  27.2
+                ],
+                [
+                  87,
+                  26.6
+                ],
+                [
+                  87.4,
+                  25
+                ],
+                [
+                  85.6,
+                  24.2
+                ],
+                [
+                  83.4,
+                  24.2
+                ],
+                [
+                  81.6,
+                  24.6
+                ],
+                [
+                  79.6,
+                  25.2
+                ],
+                [
+                  78,
+                  25.4
+                ],
+                [
+                  76.4,
+                  26
+                ],
+                [
+                  74.6,
+                  27.4
+                ],
+                [
+                  73.2,
+                  28.8
+                ],
+                [
+                  72.4,
+                  30.6
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "mughal",
+        "name": "Mughal Empire",
+        "color": "#2fa39a",
+        "active": [
+          [
+            1,
+            2
+          ],
+          [
+            5,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Mughal Empire",
+          "at": [
+            79.2,
+            25.5
+          ]
+        },
+        "facts": {
+          "Founded": "1526"
+        },
+        "rulers": [
+          {
+            "from": 1,
+            "text": "Babur"
+          },
+          {
+            "from": 5,
+            "text": "Akbar, with Bairam Khan as regent"
+          },
+          {
+            "from": 6,
+            "text": "Shah Alam II (nominal)"
+          }
+        ],
+        "role": "Founded by Babur",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                1
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  33.6
+                ],
+                [
+                  68,
+                  35.6
+                ],
+                [
+                  70.4,
+                  35.6
+                ],
+                [
+                  71.2,
+                  34.2
+                ],
+                [
+                  70.2,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.8,
+                  32.8
+                ],
+                [
+                  74.6,
+                  33
+                ],
+                [
+                  76.4,
+                  32.2
+                ],
+                [
+                  78.2,
+                  30.6
+                ],
+                [
+                  80,
+                  29.3
+                ],
+                [
+                  82.4,
+                  27.6
+                ],
+                [
+                  83.2,
+                  26.3
+                ],
+                [
+                  82.5,
+                  25.4
+                ],
+                [
+                  80.6,
+                  25.2
+                ],
+                [
+                  79,
+                  25.4
+                ],
+                [
+                  77.6,
+                  25.6
+                ],
+                [
+                  76.4,
+                  26.4
+                ],
+                [
+                  75,
+                  28
+                ],
+                [
+                  73.6,
+                  29.2
+                ],
+                [
+                  72.6,
+                  30.8
+                ]
+              ],
+              [
+                [
+                  68,
+                  33.6
+                ],
+                [
+                  68,
+                  35.6
+                ],
+                [
+                  70.4,
+                  35.6
+                ],
+                [
+                  71.2,
+                  34.2
+                ],
+                [
+                  70.2,
+                  33.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                5
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.8,
+                  32.6
+                ],
+                [
+                  74.6,
+                  33
+                ],
+                [
+                  76,
+                  32.2
+                ],
+                [
+                  77.4,
+                  30.4
+                ],
+                [
+                  78.4,
+                  28.4
+                ],
+                [
+                  78.6,
+                  27
+                ],
+                [
+                  77.6,
+                  26.6
+                ],
+                [
+                  76.4,
+                  27.2
+                ],
+                [
+                  75.4,
+                  28.4
+                ],
+                [
+                  74,
+                  29.6
+                ],
+                [
+                  73,
+                  31
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  76.7,
+                  29.1
+                ],
+                [
+                  77.7,
+                  29.2
+                ],
+                [
+                  77.9,
+                  28.3
+                ],
+                [
+                  77.2,
+                  28
+                ],
+                [
+                  76.6,
+                  28.3
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "sur",
+        "name": "Sur Empire",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            3,
+            4
+          ]
+        ],
+        "label": {
+          "text": "Sur Empire",
+          "at": [
+            85.5,
+            25.6
+          ]
+        },
+        "facts": {},
+        "rulers": [
+          {
+            "from": 3,
+            "text": "Adil Shah Sur, with Hemu as general"
+          }
+        ],
+        "role": "Afghan rivals of the Mughals",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                3,
+                4
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71.8,
+                  32.5
+                ],
+                [
+                  73.5,
+                  33.4
+                ],
+                [
+                  75.5,
+                  33
+                ],
+                [
+                  77.5,
+                  31
+                ],
+                [
+                  80,
+                  29.6
+                ],
+                [
+                  83,
+                  28
+                ],
+                [
+                  86,
+                  27.2
+                ],
+                [
+                  88.6,
+                  26.6
+                ],
+                [
+                  89.2,
+                  24.6
+                ],
+                [
+                  88.6,
+                  22.8
+                ],
+                [
+                  86.6,
+                  23.6
+                ],
+                [
+                  84.5,
+                  24
+                ],
+                [
+                  82,
+                  24.6
+                ],
+                [
+                  79.6,
+                  25.2
+                ],
+                [
+                  77.4,
+                  25.4
+                ],
+                [
+                  75.2,
+                  26.8
+                ],
+                [
+                  73.4,
+                  28.4
+                ],
+                [
+                  72.2,
+                  30.4
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "mewar",
+        "name": "Rajput confederacy",
+        "color": "#c07a3a",
+        "active": [
+          [
+            2,
+            2
+          ]
+        ],
+        "label": {
+          "text": "Rajputs",
+          "at": [
+            73.4,
+            25.2
+          ]
+        },
+        "facts": {},
+        "rulers": [
+          {
+            "from": 2,
+            "text": "Rana Sanga of Mewar"
+          }
+        ],
+        "role": "Led by Mewar",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                2,
+                2
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  71,
+                  25
+                ],
+                [
+                  72.2,
+                  26.6
+                ],
+                [
+                  73.2,
+                  27.6
+                ],
+                [
+                  74.6,
+                  27.2
+                ],
+                [
+                  75.8,
+                  26.4
+                ],
+                [
+                  76.6,
+                  25.4
+                ],
+                [
+                  76.4,
+                  24.4
+                ],
+                [
+                  75.4,
+                  23.8
+                ],
+                [
+                  74,
+                  23.6
+                ],
+                [
+                  72.6,
+                  23.9
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "maratha",
+        "name": "Maratha Empire",
+        "color": "#e0432a",
+        "active": [
+          [
+            6,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Maratha Empire",
+          "at": [
+            76.4,
+            19.4
+          ]
+        },
+        "facts": {
+          "Seat": "Pune"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Peshwa Balaji Baji Rao"
+          }
+        ],
+        "role": "Peshwas at Pune",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  73.2,
+                  16.4
+                ],
+                [
+                  74.6,
+                  16.6
+                ],
+                [
+                  76.4,
+                  17.4
+                ],
+                [
+                  78.4,
+                  18.4
+                ],
+                [
+                  80.4,
+                  19.6
+                ],
+                [
+                  80.6,
+                  21.4
+                ],
+                [
+                  79,
+                  21.8
+                ],
+                [
+                  77.2,
+                  22
+                ],
+                [
+                  75.4,
+                  21.8
+                ],
+                [
+                  73.8,
+                  21.4
+                ],
+                [
+                  73,
+                  19.6
+                ]
+              ],
+              [
+                [
+                  73.9,
+                  22
+                ],
+                [
+                  74.2,
+                  23.4
+                ],
+                [
+                  75,
+                  24.4
+                ],
+                [
+                  76.6,
+                  24.5
+                ],
+                [
+                  78,
+                  24.3
+                ],
+                [
+                  78,
+                  23
+                ],
+                [
+                  77.4,
+                  22.4
+                ],
+                [
+                  76.6,
+                  21.8
+                ],
+                [
+                  75.2,
+                  22
+                ]
+              ],
+              [
+                [
+                  73.2,
+                  21.9
+                ],
+                [
+                  72.9,
+                  22.6
+                ],
+                [
+                  72.4,
+                  23
+                ],
+                [
+                  72.2,
+                  23.6
+                ],
+                [
+                  72.9,
+                  24.2
+                ],
+                [
+                  73.6,
+                  24.2
+                ],
+                [
+                  74,
+                  23.4
+                ],
+                [
+                  73.7,
+                  22.4
+                ]
+              ],
+              [
+                [
+                  78,
+                  24.6
+                ],
+                [
+                  79.2,
+                  25.6
+                ],
+                [
+                  80.6,
+                  25.4
+                ],
+                [
+                  80.6,
+                  24.2
+                ],
+                [
+                  79.2,
+                  23.8
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                6
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.8,
+                  33.4
+                ],
+                [
+                  74.4,
+                  32.6
+                ],
+                [
+                  75.6,
+                  31.6
+                ],
+                [
+                  75,
+                  30.4
+                ],
+                [
+                  73.6,
+                  30.8
+                ],
+                [
+                  72.8,
+                  32
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "durrani",
+        "name": "Durrani Empire",
+        "color": "#2b7fb4",
+        "active": [
+          [
+            6,
+            11
+          ]
+        ],
+        "label": {
+          "text": "Durrani Empire",
+          "at": [
+            70.2,
+            34.6
+          ]
+        },
+        "facts": {
+          "Founded": "1747"
+        },
+        "rulers": [
+          {
+            "from": 6,
+            "text": "Ahmad Shah Durrani"
+          }
+        ],
+        "role": "Afghan kingdom",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                6,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  68,
+                  30.3
+                ],
+                [
+                  68,
+                  37
+                ],
+                [
+                  71.5,
+                  37
+                ],
+                [
+                  73,
+                  36.4
+                ],
+                [
+                  74.8,
+                  36.6
+                ],
+                [
+                  76.4,
+                  35.2
+                ],
+                [
+                  76.8,
+                  34
+                ],
+                [
+                  75.4,
+                  32.9
+                ],
+                [
+                  74.2,
+                  33.6
+                ],
+                [
+                  73,
+                  34.2
+                ],
+                [
+                  72.2,
+                  33.9
+                ],
+                [
+                  71.8,
+                  32.6
+                ],
+                [
+                  70.4,
+                  31.6
+                ],
+                [
+                  69.6,
+                  30.6
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  72.4,
+                  32.8
+                ],
+                [
+                  74.4,
+                  32.9
+                ],
+                [
+                  75.2,
+                  32.2
+                ],
+                [
+                  75,
+                  31
+                ],
+                [
+                  74,
+                  30.2
+                ],
+                [
+                  72.8,
+                  30.8
+                ],
+                [
+                  72.2,
+                  31.8
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rohilla-awadh",
+        "name": "Rohillas and Awadh",
+        "color": "#5aa35a",
+        "active": [
+          [
+            7,
+            10
+          ]
+        ],
+        "label": {
+          "text": "Rohilla and Awadh",
+          "at": [
+            82.2,
+            26.9
+          ]
+        },
+        "facts": {},
+        "rulers": [
+          {
+            "from": 7,
+            "text": "Najib ud-Daula (Rohilkhand), Shuja ud-Daula (Awadh)"
+          }
+        ],
+        "role": "Durrani’s allies in 1761",
+        "ties": [],
+        "pieces": [
+          {
+            "steps": [
+              [
+                7,
+                10
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  78.6,
+                  29.8
+                ],
+                [
+                  79.6,
+                  30
+                ],
+                [
+                  80.6,
+                  29
+                ],
+                [
+                  81.6,
+                  28.2
+                ],
+                [
+                  82.8,
+                  27.6
+                ],
+                [
+                  83.4,
+                  26.6
+                ],
+                [
+                  83,
+                  25.8
+                ],
+                [
+                  81.6,
+                  25.6
+                ],
+                [
+                  80.6,
+                  26.4
+                ],
+                [
+                  79.6,
+                  27.4
+                ],
+                [
+                  78.8,
+                  28.4
+                ]
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People",
+    "items": [
+      {
+        "id": "babur",
+        "name": "Babur",
+        "native": "ظهیرالدین محمد بابر",
+        "lang": "fa",
+        "life": "1483–1530",
+        "role": "Founder of the Mughal dynasty",
+        "steps": [
+          0,
+          1,
+          2
+        ],
+        "text": "Born in Fergana, in today’s Uzbekistan, and a soldier from boyhood, he lost two kingdoms before winning Kabul and then Hindustan. His memoir, the Baburnama, written in Chagatai Turkish, is frank about his defeats and his drinking, scornful of much of India and full of its plants and animals. He died at Agra in 1530."
+      },
+      {
+        "id": "ibrahim-lodi",
+        "name": "Ibrahim Lodi",
+        "native": "इब्राहिम लोदी",
+        "life": "died 1526",
+        "role": "Last sultan of Delhi",
+        "steps": [
+          1
+        ],
+        "text": "The last sultan of Delhi, of the Afghan Lodi dynasty, who came to the throne in 1517. His efforts to curb powerful Afghan nobles turned several against him; Daulat Khan Lodi, governor of Punjab, and his uncle Alam Khan are said to have invited Babur. He died fighting at Panipat with thousands of his men."
+      },
+      {
+        "id": "bairam-khan",
+        "name": "Bairam Khan",
+        "native": "بیرم خان",
+        "lang": "fa",
+        "life": "c. 1501–1561",
+        "role": "Akbar’s regent",
+        "steps": [
+          3,
+          5
+        ],
+        "text": "A Turkoman commander who stayed loyal to Humayun through exile and became Akbar’s guardian and regent. He commanded the Mughal army at Panipat in 1556. Akbar dismissed him in 1560 and sent him on pilgrimage to Mecca; on the way he was murdered at Patan in Gujarat. His son, Abdul Rahim Khan-i-Khanan, became a celebrated poet."
+      },
+      {
+        "id": "akbar",
+        "name": "Akbar",
+        "native": "جلال‌الدین محمد اکبر",
+        "lang": "fa",
+        "life": "1542–1605",
+        "role": "Mughal emperor",
+        "steps": [
+          3,
+          5
+        ],
+        "text": "Babur’s grandson, crowned at thirteen in the crisis of 1556. After ending Bairam Khan’s regency in 1560 he built the Mughal Empire across most of northern India, married into Rajput ruling houses, abolished the tax on non-Muslims (jizya) and held debates between faiths at Fatehpur Sikri. He reigned for almost fifty years."
+      },
+      {
+        "id": "hemu",
+        "name": "Hemu",
+        "native": "हेमचंद्र विक्रमादित्य",
+        "life": "c. 1501–1556",
+        "role": "General of Adil Shah Sur",
+        "steps": [
+          4,
+          5
+        ],
+        "text": "Hem Chandra, born probably near Rewari to a family of modest means, supplied the Sur armies before becoming Adil Shah Sur’s chief minister and general. In 1556 he took Delhi and ruled it for about a month as Vikramaditya, one of very few Hindu rulers of Delhi in the medieval period. He was beheaded after the battle at Panipat."
+      },
+      {
+        "id": "ahmad-shah-durrani",
+        "name": "Ahmad Shah Durrani",
+        "native": "احمد شاه دراني",
+        "lang": "ps",
+        "life": "c. 1722–1772",
+        "role": "Founder of the Durrani Empire",
+        "steps": [
+          6,
+          7,
+          10,
+          11
+        ],
+        "text": "An Afghan cavalry commander of Nader Shah of Persia who, after Nader’s murder in 1747, was chosen king near Kandahar and founded the Durrani Empire, the start of modern Afghanistan. He invaded India repeatedly, sacked Delhi in 1757 and won at Panipat in 1761. Afghans remember him as Ahmad Shah Baba, father of the nation."
+      },
+      {
+        "id": "sadashivrao-bhau",
+        "name": "Sadashivrao Bhau",
+        "native": "सदाशिवराव भाऊ",
+        "lang": "mr",
+        "life": "1730–1761",
+        "role": "Maratha commander at Panipat",
+        "steps": [
+          8,
+          9,
+          10
+        ],
+        "text": "Nephew of Peshwa Baji Rao I and cousin of Peshwa Balaji Baji Rao, he ran the Peshwas’ finances and beat the Nizam at Udgir in 1760. He led the great expedition north and was killed at Panipat. His headless body was found after the battle, yet for years men claiming to be the Bhau appeared in the Deccan."
+      },
+      {
+        "id": "ibrahim-khan-gardi",
+        "name": "Ibrahim Khan Gardi",
+        "native": "इब्राहिम खान गारदी",
+        "life": "died 1761",
+        "role": "Commander of the Maratha artillery",
+        "steps": [
+          8,
+          10
+        ],
+        "text": "A soldier who learned European drill and gunnery in the French service under Bussy in the Deccan, then commanded the Peshwa’s trained infantry and guns. His men broke the Rohilla wing at Panipat. Wounded and captured, he was put to death by the Afghans. The name Gardi is usually traced to the French garde, guard."
+      }
+    ]
+  }
+}
