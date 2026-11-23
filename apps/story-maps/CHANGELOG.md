@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.117.0
+
+- Every story now has a text page at `/<story>/read/`: the whole story, chapter by chapter, with each chapter's date, source, native name and a link to open it on the map, then the people cards, the story's note and related links. It is linked from the open story sheet (“Read the whole story as text”), the end card (“Read as text”) and the story's catalogue pages, and is listed in the sitemap.
+- Search: the hidden copy of each story on its map page is now shorter: the title, description, chapter titles, a link to the text page and the related links. The full text lives on the text page, so the two pages don't carry the same text.
+
 ## 0.116.1
 
 - Search: the hidden text copy of each story, for crawlers, now titles itself with an `<h2>` so each story page has one `<h1>`, and ends with plain links to the story’s subject page, its catalogue pages, the stories offered at its end and related entries, so crawlers find them without running scripts. The links skip keyboard focus. Nothing on screen changes.
