@@ -1,0 +1,5693 @@
+{
+  "id": "napoleonic-wars",
+  "title": "The Napoleonic Wars",
+  "description": "Napoleon’s wars across Europe, from the siege of Toulon in 1793 to Waterloo in 1815 and the exile on St Helena: Italy and Egypt, Austerlitz and Trafalgar, Spain, the march on Moscow, Leipzig, the Hundred Days and the Congress of Vienna.",
+  "canvas": "geo",
+  "basemap": "mediterranean",
+  "source": "History",
+  "nativeLang": "fr",
+  "routes": "chapter",
+  "mapLabel": "Europe, 1793–1815",
+  "note": "Dates follow the standard histories. Army sizes and casualty figures are estimates, often far apart. Powers are drawn as rough outlines of the lands each held, not exact borders. St Helena lies far off this map in the South Atlantic.",
+  "travellers": {
+    "napoleon": {
+      "name": "Bonaparte",
+      "icon": "horse"
+    },
+    "french-army": {
+      "name": "French army",
+      "icon": "soldier"
+    },
+    "french-fleet": {
+      "name": "French fleet",
+      "icon": "east-indiaman"
+    },
+    "combined-fleet": {
+      "name": "French and Spanish fleet",
+      "icon": "east-indiaman"
+    },
+    "british-warship": {
+      "name": "British warships",
+      "icon": "east-indiaman"
+    },
+    "belle-poule": {
+      "name": "The frigate Belle Poule",
+      "icon": "east-indiaman"
+    }
+  },
+  "phases": {
+    "rise": {
+      "name": "A general of the Revolution",
+      "color": "#8a6bd1"
+    },
+    "consul": {
+      "name": "First Consul",
+      "color": "#2f9e8f"
+    },
+    "empire": {
+      "name": "The empire at war",
+      "color": "#b3261e"
+    },
+    "russia": {
+      "name": "Russia, 1812",
+      "color": "#6b7f98"
+    },
+    "fall": {
+      "name": "The fall",
+      "color": "#d9a441"
+    },
+    "after": {
+      "name": "Afterwards",
+      "color": "#2b7fb4"
+    }
+  },
+  "routeStyles": {
+    "advance": {
+      "color": "#b3261e",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "sea": {
+      "color": "#2b7fb4",
+      "width": 3,
+      "dash": "9 5",
+      "cap": "butt"
+    },
+    "retreat": {
+      "color": "#c07a3a",
+      "width": 3.2,
+      "dash": "9 5",
+      "cap": "butt"
+    }
+  },
+  "timeline": {
+    "track": [
+      {
+        "until": 25,
+        "color": "rgba(138,107,209,.4)"
+      },
+      {
+        "until": 38,
+        "color": "rgba(47,158,143,.4)"
+      },
+      {
+        "until": 59,
+        "color": "rgba(179,38,30,.35)"
+      },
+      {
+        "until": 72,
+        "color": "rgba(107,127,152,.45)"
+      },
+      {
+        "until": 88,
+        "color": "rgba(217,164,65,.4)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(43,127,180,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 3,
+        "text": "1793"
+      },
+      {
+        "at": 12,
+        "text": "1796"
+      },
+      {
+        "at": 21,
+        "text": "1798"
+      },
+      {
+        "at": 30,
+        "text": "1800"
+      },
+      {
+        "at": 40,
+        "text": "1805"
+      },
+      {
+        "at": 50,
+        "text": "1808"
+      },
+      {
+        "at": 61,
+        "text": "1812"
+      },
+      {
+        "at": 72,
+        "text": "1813"
+      },
+      {
+        "at": 84,
+        "text": "1815"
+      },
+      {
+        "at": 97,
+        "text": "1840"
+      }
+    ]
+  },
+  "places": {
+    "toulon": {
+      "name": "Toulon",
+      "at": [
+        5.93,
+        43.12
+      ],
+      "glyph": "anchor",
+      "label": "bottom"
+    },
+    "arcole": {
+      "name": "Arcole",
+      "at": [
+        11.28,
+        45.36
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "pyramids": {
+      "name": "Pyramids",
+      "at": [
+        31.2,
+        30.07
+      ],
+      "glyph": "pyramid",
+      "label": "left"
+    },
+    "acre": {
+      "name": "Acre",
+      "at": [
+        35.07,
+        32.93
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "paris": {
+      "name": "Paris",
+      "at": [
+        2.35,
+        48.86
+      ],
+      "glyph": "palace",
+      "label": "right"
+    },
+    "marengo": {
+      "name": "Marengo",
+      "at": [
+        8.65,
+        44.89
+      ],
+      "glyph": "crossed-swords",
+      "label": "bottom"
+    },
+    "trafalgar": {
+      "name": "Cape Trafalgar",
+      "at": [
+        -6.03,
+        36.18
+      ],
+      "glyph": "lighthouse",
+      "label": "left"
+    },
+    "boulogne": {
+      "name": "Boulogne",
+      "at": [
+        1.61,
+        50.73
+      ],
+      "glyph": "fort",
+      "label": "left"
+    },
+    "austerlitz": {
+      "name": "Austerlitz",
+      "at": [
+        16.76,
+        49.13
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "jena": {
+      "name": "Jena",
+      "at": [
+        11.59,
+        50.93
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "tilsit": {
+      "name": "Tilsit",
+      "at": [
+        21.87,
+        55.08
+      ],
+      "glyph": "treaty",
+      "label": "left"
+    },
+    "madrid": {
+      "name": "Madrid",
+      "at": [
+        -3.7,
+        40.42
+      ],
+      "glyph": "flag",
+      "label": "right"
+    },
+    "wagram": {
+      "name": "Wagram",
+      "at": [
+        16.56,
+        48.3
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "torres-vedras": {
+      "name": "Torres Vedras",
+      "at": [
+        -9.26,
+        39.09
+      ],
+      "glyph": "fort",
+      "label": "right"
+    },
+    "kovno": {
+      "name": "Kovno",
+      "at": [
+        23.9,
+        54.9
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "borodino": {
+      "name": "Borodino",
+      "at": [
+        35.82,
+        55.52
+      ],
+      "glyph": "crossed-swords",
+      "label": "left"
+    },
+    "moscow": {
+      "name": "Moscow",
+      "at": [
+        37.62,
+        55.75
+      ],
+      "glyph": "house-fire",
+      "label": "right"
+    },
+    "berezina": {
+      "name": "Berezina",
+      "at": [
+        28.35,
+        54.33
+      ],
+      "glyph": "burst",
+      "label": "bottom"
+    },
+    "leipzig": {
+      "name": "Leipzig",
+      "at": [
+        12.37,
+        51.34
+      ],
+      "glyph": "memorial",
+      "label": "right"
+    },
+    "elba": {
+      "name": "Elba",
+      "at": [
+        10.33,
+        42.81
+      ],
+      "glyph": "crown",
+      "label": "bottom"
+    },
+    "golfe-juan": {
+      "name": "Golfe-Juan",
+      "at": [
+        7.07,
+        43.57
+      ],
+      "glyph": "boat",
+      "label": "right"
+    },
+    "waterloo": {
+      "name": "Waterloo",
+      "at": [
+        4.4,
+        50.68
+      ],
+      "glyph": "crossed-swords",
+      "label": "right"
+    },
+    "vienna": {
+      "name": "Vienna",
+      "at": [
+        16.37,
+        48.21
+      ],
+      "glyph": "treaty",
+      "label": "left"
+    },
+    "aix": {
+      "name": "Île d’Aix",
+      "at": [
+        -1.17,
+        46.01
+      ],
+      "glyph": "anchor",
+      "label": "right"
+    },
+    "malta": {
+      "name": "Malta",
+      "at": [
+        14.5,
+        35.9
+      ],
+      "hidden": true
+    },
+    "alexandria": {
+      "name": "Alexandria",
+      "at": [
+        29.9,
+        31.2
+      ],
+      "hidden": true
+    },
+    "frejus": {
+      "name": "Fréjus",
+      "at": [
+        6.74,
+        43.43
+      ],
+      "hidden": true
+    },
+    "great-st-bernard": {
+      "name": "Great St Bernard Pass",
+      "at": [
+        7.17,
+        45.87
+      ],
+      "hidden": true
+    },
+    "cadiz": {
+      "name": "Cádiz",
+      "at": [
+        -6.29,
+        36.53
+      ],
+      "hidden": true
+    },
+    "ulm": {
+      "name": "Ulm",
+      "at": [
+        9.99,
+        48.4
+      ],
+      "hidden": true
+    },
+    "friedland": {
+      "name": "Friedland",
+      "at": [
+        21.0,
+        54.43
+      ],
+      "hidden": true
+    },
+    "bayonne": {
+      "name": "Bayonne",
+      "at": [
+        -1.47,
+        43.49
+      ],
+      "hidden": true
+    },
+    "almeida": {
+      "name": "Almeida",
+      "at": [
+        -6.91,
+        40.73
+      ],
+      "hidden": true
+    },
+    "smolensk": {
+      "name": "Smolensk",
+      "at": [
+        32.05,
+        54.78
+      ],
+      "hidden": true
+    },
+    "grenoble": {
+      "name": "Grenoble",
+      "at": [
+        5.72,
+        45.19
+      ],
+      "hidden": true
+    },
+    "charleroi": {
+      "name": "Charleroi",
+      "at": [
+        4.44,
+        50.41
+      ],
+      "hidden": true
+    },
+    "plymouth": {
+      "name": "Plymouth",
+      "at": [
+        -4.14,
+        50.37
+      ],
+      "hidden": true
+    },
+    "st-helena": {
+      "name": "St Helena",
+      "at": [
+        -5.72,
+        -15.95
+      ],
+      "hidden": true
+    },
+    "cherbourg": {
+      "name": "Cherbourg",
+      "at": [
+        -1.62,
+        49.64
+      ],
+      "hidden": true
+    },
+    "ushant": {
+      "name": "Ushant",
+      "at": [
+        -5.7,
+        48.7
+      ],
+      "hidden": true
+    },
+    "finisterre": {
+      "name": "Cape Finisterre",
+      "at": [
+        -10.3,
+        43.0
+      ],
+      "hidden": true
+    },
+    "le-havre": {
+      "name": "Le Havre",
+      "at": [
+        0.1,
+        49.5
+      ],
+      "hidden": true
+    }
+  },
+  "steps": [
+    {
+      "place": "toulon",
+      "phase": "rise",
+      "title": "The siege of Toulon",
+      "native": "Siège de Toulon",
+      "when": "September to December 1793",
+      "at": 3,
+      "camera": {
+        "at": [
+          5.9,
+          43.1
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Revolutionary France had been at war with Austria and Prussia since 1792, and with Britain and Spain since 1793. Royalists in Toulon let a British and Spanish fleet into the port. A young Corsican artillery captain, Napoleone Buonaparte, born at Ajaccio in 1769, placed the guns that drove them out in December. He was made a brigadier general at 24.",
+      "today": "Toulon is still the main base of the French navy in the Mediterranean; Fort Balaguier, near the heights his guns took, is a naval museum."
+    },
+    {
+      "place": "arcole",
+      "phase": "rise",
+      "title": "The army of Italy",
+      "native": "Ponte di Arcole",
+      "lang": "it",
+      "when": "1796 to 1797",
+      "at": 12,
+      "camera": {
+        "at": [
+          7,
+          47
+        ],
+        "width": 13
+      },
+      "legs": [
+        {
+          "from": "paris",
+          "to": "arcole",
+          "traveller": "napoleon",
+          "style": "advance",
+          "bend": 0.08
+        }
+      ],
+      "text": "In March 1796, days after marrying Joséphine de Beauharnais, Bonaparte took command of the ragged French army of Italy. He knocked Piedmont out of the war, then beat Austrian army after army: at Lodi, at Arcole, where he led a charge at the bridge, and at Rivoli. At Campo Formio in 1797 Austria gave up Belgium and received Venice.",
+      "today": "Arcole is a village near Verona; an obelisk of 1810 marks the bridge over the Alpone."
+    },
+    {
+      "place": "pyramids",
+      "phase": "rise",
+      "title": "Egypt and the Nile",
+      "native": "معركة الأهرام",
+      "lang": "ar",
+      "when": "July and August 1798",
+      "at": 21,
+      "camera": {
+        "at": [
+          18,
+          36
+        ],
+        "width": 30
+      },
+      "legs": [
+        {
+          "from": "toulon",
+          "to": "malta",
+          "traveller": "french-fleet",
+          "style": "sea",
+          "bend": 0.3
+        },
+        {
+          "from": "malta",
+          "to": "alexandria",
+          "traveller": "french-fleet",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "alexandria",
+          "to": "pyramids",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Bonaparte sailed for Egypt, then ruled by Mamluk beys under the Ottomans, hoping to strike at Britain’s trade with India; he even wrote to Tipu Sultan. He took Malta and Alexandria and beat the Mamluk cavalry at the Battle of the Pyramids. Eleven days later Horatio Nelson destroyed his fleet in Aboukir Bay, trapping the army in Egypt.",
+      "today": "The battle was fought at Embaba on the west bank of the Nile, now part of Giza and Cairo, some 15 km from the pyramids it is named after."
+    },
+    {
+      "place": "acre",
+      "phase": "rise",
+      "title": "The siege of Acre",
+      "native": "حصار عكا",
+      "lang": "ar",
+      "when": "March to May 1799",
+      "at": 24,
+      "camera": {
+        "at": [
+          33,
+          31.5
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "pyramids",
+          "to": "acre",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": -0.1
+        }
+      ],
+      "text": "Bonaparte marched into Ottoman Syria. At Jaffa his troops shot several thousand prisoners, a figure still disputed, and plague spread through the army. Acre’s governor, Jezzar Pasha, helped by British ships under Sidney Smith, held the walls for two months. The French fell back to Egypt. In August Bonaparte slipped away to France, leaving the army behind.",
+      "today": "Acre (Akko), in northern Israel, keeps its Ottoman sea walls and Jezzar Pasha’s mosque; the old city is a UNESCO World Heritage Site."
+    },
+    {
+      "place": "paris",
+      "phase": "consul",
+      "title": "The coup of Brumaire",
+      "native": "Coup d’État du 18 Brumaire",
+      "when": "9 and 10 November 1799",
+      "at": 27,
+      "camera": {
+        "at": [
+          14,
+          40
+        ],
+        "width": 32
+      },
+      "legs": [
+        {
+          "from": "alexandria",
+          "to": "frejus",
+          "traveller": "napoleon",
+          "style": "sea",
+          "bend": -0.13
+        },
+        {
+          "from": "frejus",
+          "to": "paris",
+          "traveller": "napoleon",
+          "style": "advance",
+          "bend": 0.05
+        }
+      ],
+      "text": "France was tired of the Directory, its government of five, and of a war going badly again. With his brother Lucien and the politician Sieyès, Bonaparte overthrew it; at Saint-Cloud, outside Paris, soldiers cleared the councils from their hall. A new constitution made him First Consul, holding real power. A vote in 1800 approved it, with figures inflated.",
+      "today": "The château of Saint-Cloud, where the coup ended, burned in 1870; its park on the western edge of Paris remains."
+    },
+    {
+      "place": "marengo",
+      "phase": "consul",
+      "title": "Over the Alps to Marengo",
+      "native": "Battaglia di Marengo",
+      "lang": "it",
+      "when": "May and June 1800",
+      "at": 30,
+      "camera": {
+        "at": [
+          5.5,
+          46.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "paris",
+          "to": "great-st-bernard",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0.05
+        },
+        {
+          "from": "great-st-bernard",
+          "to": "marengo",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Austria had retaken northern Italy. In May 1800 Bonaparte led an army over the Great St Bernard Pass, still deep in snow. At Marengo on 14 June the Austrians nearly won, until General Desaix arrived with fresh troops and was killed leading the counter-attack. Austria made peace at Lunéville in 1801; Britain at Amiens in 1802.",
+      "today": "Marengo is a hamlet outside Alessandria in Piedmont, with a museum of the battle in the Villa Delavo."
+    },
+    {
+      "place": "paris",
+      "phase": "consul",
+      "title": "An emperor crowned",
+      "native": "Sacre de Napoléon",
+      "when": "2 December 1804",
+      "at": 36,
+      "camera": {
+        "at": [
+          2.4,
+          48.8
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Peace with Britain broke down in May 1803; the Napoleonic Wars proper are dated from then. In March 1804 Bonaparte’s Civil Code set out one law for all France, and the Duke of Enghien, a Bourbon prince, was seized and shot. In Notre-Dame that December, with the Pope present, Napoleon placed the imperial crown on his own head.",
+      "today": "Jacques-Louis David’s huge painting of the coronation hangs in the Louvre; the Civil Code is still the basis of French law."
+    },
+    {
+      "place": "trafalgar",
+      "phase": "empire",
+      "title": "Trafalgar",
+      "native": "Batalla de Trafalgar",
+      "lang": "es",
+      "when": "21 October 1805",
+      "at": 40,
+      "camera": {
+        "at": [
+          -6.1,
+          36.3
+        ],
+        "width": 8
+      },
+      "legs": [
+        {
+          "from": "cadiz",
+          "to": "trafalgar",
+          "traveller": "combined-fleet",
+          "style": "sea",
+          "bend": 0
+        }
+      ],
+      "text": "Napoleon gathered an army at Boulogne to invade Britain, but never won control of the Channel. A French and Spanish fleet left Cádiz and met Nelson’s fleet off Cape Trafalgar. Twenty-two of their 33 ships of the line were lost, and no British ship. Nelson was shot by a marksman and died as the battle ended.",
+      "today": "Cape Trafalgar, with its lighthouse, is on the Atlantic coast of Spain near Barbate; Nelson’s flagship Victory is preserved at Portsmouth."
+    },
+    {
+      "place": "austerlitz",
+      "phase": "empire",
+      "title": "Austerlitz",
+      "native": "Bitva u Slavkova",
+      "lang": "cs",
+      "when": "2 December 1805",
+      "at": 43,
+      "camera": {
+        "at": [
+          9,
+          49.5
+        ],
+        "width": 18
+      },
+      "legs": [
+        {
+          "from": "boulogne",
+          "to": "ulm",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0.05
+        },
+        {
+          "from": "ulm",
+          "to": "austerlitz",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "The army at Boulogne marched to the Danube, trapping an Austrian army at Ulm. On the first anniversary of his coronation, at Austerlitz in Moravia, Napoleon let the Russians and Austrians attack his weakened right, then broke their centre on the Pratzen heights. Austria made peace at Pressburg. In 1806 the Holy Roman Empire was dissolved.",
+      "today": "Austerlitz is Slavkov u Brna in the Czech Republic; the Cairn of Peace, a memorial of 1912, stands on the Pratzen heights."
+    },
+    {
+      "place": "jena",
+      "phase": "empire",
+      "title": "Jena and Auerstedt",
+      "native": "Schlacht bei Jena und Auerstedt",
+      "lang": "de",
+      "when": "14 October 1806",
+      "at": 46,
+      "camera": {
+        "at": [
+          11.6,
+          50.9
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Prussia, which had stayed out in 1805, went to war in 1806. On one day Napoleon beat one Prussian army at Jena while Marshal Davout, outnumbered, beat the larger one at Auerstedt. The French entered Berlin within two weeks. There Napoleon decreed the Continental System, closing Europe’s ports to British goods to ruin Britain’s trade.",
+      "today": "Jena is a university city in Thuringia, Germany; a museum at Cospeda, on the battlefield, tells the story of the day."
+    },
+    {
+      "place": "tilsit",
+      "phase": "empire",
+      "title": "Rafts on the Niemen",
+      "native": "Тильзитский мир",
+      "lang": "ru",
+      "when": "June and July 1807",
+      "at": 48,
+      "camera": {
+        "at": [
+          16.5,
+          53
+        ],
+        "width": 12
+      },
+      "legs": [
+        {
+          "from": "jena",
+          "to": "friedland",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0.05
+        },
+        {
+          "from": "friedland",
+          "to": "tilsit",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Russia fought on. After a bloody draw at Eylau in February 1807, Napoleon beat the Russians at Friedland in June. He and Tsar Alexander I met on a raft in the middle of the Niemen at Tilsit and became allies. Prussia lost about half its land; from its Polish part Napoleon made the Duchy of Warsaw.",
+      "today": "Tilsit is Sovetsk, in the Russian exclave of Kaliningrad; the Queen Louise Bridge across the Niemen leads to Lithuania."
+    },
+    {
+      "place": "madrid",
+      "phase": "empire",
+      "title": "Uprising in Madrid",
+      "native": "Dos de Mayo",
+      "lang": "es",
+      "when": "May to July 1808",
+      "at": 51,
+      "camera": {
+        "at": [
+          -2.5,
+          41.9
+        ],
+        "width": 10
+      },
+      "legs": [
+        {
+          "from": "bayonne",
+          "to": "madrid",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Napoleon lured Spain’s royal family to Bayonne, forced both king and heir to give up the crown and gave it to his brother Joseph. On 2 May 1808 Madrid rose against the French; next day prisoners were shot, as Goya later painted. In July a French army surrendered at Bailén. Spain’s war of guerrillas (guerrilla, ’little war’) had begun.",
+      "today": "Goya’s The Second of May 1808 and The Third of May 1808 hang in the Prado, Madrid; 2 May is a holiday in the region."
+    },
+    {
+      "place": "wagram",
+      "phase": "empire",
+      "title": "Wagram",
+      "native": "Schlacht bei Wagram",
+      "lang": "de",
+      "when": "5 and 6 July 1809",
+      "at": 54,
+      "camera": {
+        "at": [
+          16.5,
+          48.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Austria rose again in 1809 while Napoleon was busy in Spain. He took Vienna, but at Aspern-Essling in May the Austrians under Archduke Charles beat him back across the Danube, his first defeat in a great battle. Six weeks later he won at Wagram. Austria lost more land, and in 1810 the emperor’s daughter Marie-Louise married Napoleon.",
+      "today": "Deutsch-Wagram is a small town on the Marchfeld plain just north-east of Vienna, with a museum of the battle."
+    },
+    {
+      "place": "torres-vedras",
+      "phase": "empire",
+      "title": "The Lines of Torres Vedras",
+      "native": "Linhas de Torres Vedras",
+      "lang": "pt",
+      "when": "October 1810",
+      "at": 57,
+      "camera": {
+        "at": [
+          -8,
+          39.9
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "almeida",
+          "to": "torres-vedras",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "A British army under Arthur Wellesley, later Duke of Wellington, fought beside the Portuguese and Spanish. North of Lisbon he secretly built lines of forts across the hills. In October 1810 Marshal Masséna’s army found them and could not attack. Starving, it fell back into Spain the next spring. In 1813 Wellington won at Vitoria and crossed into France.",
+      "today": "Many forts of the lines survive in the hills north of Lisbon; an interpretation centre at Torres Vedras explains them."
+    },
+    {
+      "place": "kovno",
+      "phase": "russia",
+      "title": "Across the Niemen",
+      "native": "Passage du Niémen",
+      "when": "24 June 1812",
+      "at": 61,
+      "camera": {
+        "at": [
+          23.9,
+          54.9
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Alexander I had left the Continental System and opened his ports to British trade. Napoleon gathered the largest army Europe had seen, about 450,000 to 600,000 men by different counts, half of them not French: Germans, Poles, Italians and others. On 24 June 1812 it began crossing the Niemen near Kovno into Russia. The Russian armies fell back.",
+      "today": "Kovno is Kaunas, Lithuania’s second city; the crossing was a few kilometres upstream of the old town."
+    },
+    {
+      "place": "borodino",
+      "phase": "russia",
+      "title": "Borodino",
+      "native": "Бородинское сражение",
+      "lang": "ru",
+      "when": "7 September 1812",
+      "at": 64,
+      "camera": {
+        "at": [
+          29.9,
+          55.2
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "kovno",
+          "to": "smolensk",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0.05
+        },
+        {
+          "from": "smolensk",
+          "to": "borodino",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Heat, disease and desertion had already thinned the army badly. The Russians, now under Mikhail Kutuzov, stood at Borodino, about 120 km west of Moscow. In a day of frontal attacks on earthworks the two sides lost perhaps 70,000 men between them, estimates vary. The Russians withdrew in order; Moscow lay open.",
+      "today": "The battlefield is a museum-reserve; each September a re-enactment of the battle is staged there."
+    },
+    {
+      "place": "moscow",
+      "phase": "russia",
+      "title": "Moscow burns",
+      "native": "Пожар Москвы",
+      "lang": "ru",
+      "when": "14 September to 19 October 1812",
+      "at": 67,
+      "camera": {
+        "at": [
+          36.7,
+          55.6
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "borodino",
+          "to": "moscow",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Napoleon entered a nearly empty Moscow on 14 September. That night fires broke out and burned for days, destroying most of the city; the governor, Rostopchin, is usually blamed, though it is disputed. Napoleon waited five weeks for Alexander to ask for peace. No answer came. On 19 October, with winter near, the army began to retreat.",
+      "today": "The Kremlin, where Napoleon stayed, survived the fire; the Cathedral of Christ the Saviour was built in thanks for the victory."
+    },
+    {
+      "place": "berezina",
+      "phase": "russia",
+      "title": "Crossing the Berezina",
+      "native": "Переправа через Березину",
+      "lang": "ru",
+      "when": "26 to 29 November 1812",
+      "at": 70,
+      "camera": {
+        "at": [
+          30.7,
+          55
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "moscow",
+          "to": "smolensk",
+          "traveller": "french-army",
+          "style": "retreat",
+          "bend": 0.05
+        },
+        {
+          "from": "smolensk",
+          "to": "berezina",
+          "traveller": "french-army",
+          "style": "retreat",
+          "bend": 0
+        },
+        {
+          "from": "berezina",
+          "to": "kovno",
+          "traveller": "french-army",
+          "style": "retreat",
+          "bend": 0.05
+        }
+      ],
+      "text": "Cold, hunger and Cossack raids destroyed the retreating army. At the Berezina, with Russian armies closing in, Dutch engineers under General Eblé stood in the icy river to build two bridges. Most of the fighting troops crossed; thousands of stragglers were left behind when the bridges were burned. Only a small part of the army ever recrossed the Niemen.",
+      "today": "Near Studzianka in Belarus, where the bridges stood, memorials mark the crossing; in French, bérézina still means a disaster."
+    },
+    {
+      "place": "leipzig",
+      "phase": "fall",
+      "title": "The Battle of the Nations",
+      "native": "Völkerschlacht bei Leipzig",
+      "lang": "de",
+      "when": "16 to 19 October 1813",
+      "at": 74,
+      "camera": {
+        "at": [
+          12.4,
+          51.3
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Prussia, then Austria and Sweden, joined Russia and Britain against Napoleon. He raised a new, young army and won at Lützen and Dresden. At Leipzig the allies closed in from three sides: about 500,000 men fought, the largest battle in Europe before 1914. A bridge blown too early trapped his rearguard. He fell back across the Rhine.",
+      "today": "The Monument to the Battle of the Nations, finished in 1913 for the centenary, towers over the south-east of Leipzig."
+    },
+    {
+      "place": "elba",
+      "phase": "fall",
+      "title": "Abdication and Elba",
+      "native": "Abdication de Fontainebleau",
+      "when": "April and May 1814",
+      "at": 79,
+      "camera": {
+        "at": [
+          6,
+          46
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "paris",
+          "to": "frejus",
+          "traveller": "napoleon",
+          "style": "advance",
+          "bend": 0.05
+        },
+        {
+          "from": "frejus",
+          "to": "elba",
+          "traveller": "napoleon",
+          "style": "sea",
+          "bend": -0.1
+        }
+      ],
+      "text": "The allies invaded France in early 1814 and entered Paris on 31 March. His marshals refused to fight on, and at Fontainebleau on 6 April Napoleon abdicated. The allies made him ruler of Elba, a small island off Tuscany. Louis XVIII, brother of the guillotined Louis XVI, returned as king. In Vienna the victors met to redraw Europe.",
+      "today": "On Elba, Napoleon’s town house at Portoferraio and his summer villa at San Martino are museums."
+    },
+    {
+      "place": "golfe-juan",
+      "phase": "fall",
+      "title": "The Hundred Days",
+      "native": "Les Cent-Jours",
+      "when": "March 1815",
+      "at": 83,
+      "camera": {
+        "at": [
+          5.5,
+          46.2
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "elba",
+          "to": "golfe-juan",
+          "traveller": "napoleon",
+          "style": "sea",
+          "bend": 0.1
+        },
+        {
+          "from": "golfe-juan",
+          "to": "grenoble",
+          "traveller": "napoleon",
+          "style": "advance",
+          "bend": 0.05
+        },
+        {
+          "from": "grenoble",
+          "to": "paris",
+          "traveller": "napoleon",
+          "style": "advance",
+          "bend": 0.05
+        }
+      ],
+      "text": "On 1 March 1815 Napoleon landed at Golfe-Juan with about a thousand men. He took the mountain roads to Grenoble. Near Laffrey the troops sent to stop him went over to him. Louis XVIII fled, and on 20 March Napoleon was back in the Tuileries. The allies declared him an outlaw and gathered their armies again.",
+      "today": "His road through the Alps from Golfe-Juan to Grenoble is signposted the Route Napoléon, marked with eagles."
+    },
+    {
+      "place": "waterloo",
+      "phase": "fall",
+      "title": "Waterloo",
+      "native": "Bataille de Waterloo",
+      "when": "18 June 1815",
+      "at": 86,
+      "camera": {
+        "at": [
+          3.4,
+          49.8
+        ],
+        "width": 9
+      },
+      "legs": [
+        {
+          "from": "paris",
+          "to": "charleroi",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        },
+        {
+          "from": "charleroi",
+          "to": "waterloo",
+          "traveller": "french-army",
+          "style": "advance",
+          "bend": 0
+        }
+      ],
+      "text": "Napoleon struck into Belgium before the allies could join. He beat the Prussians under Blücher at Ligny, then attacked Wellington’s British, Dutch and German army at Waterloo. Wellington’s squares held all afternoon. In the evening the Prussians arrived on the French flank and the Imperial Guard was thrown back. Four days later Napoleon abdicated again.",
+      "today": "Waterloo is south of Brussels; the Lion’s Mound, raised in 1826, overlooks the battlefield and a memorial museum."
+    },
+    {
+      "place": "vienna",
+      "phase": "after",
+      "title": "The Congress of Vienna",
+      "native": "Wiener Kongress",
+      "lang": "de",
+      "when": "September 1814 to June 1815",
+      "at": 89,
+      "camera": {
+        "at": [
+          16.4,
+          48.2
+        ],
+        "width": 10
+      },
+      "legs": [],
+      "text": "Led by Austria’s Metternich, the victors redrew Europe. Russia gained most of Poland, Prussia gained the Rhineland and much of Saxony, Austria northern Italy, and Britain kept colonies such as the Cape and Malta. Thirty-nine German states formed a confederation. The great powers agreed to meet when trouble arose: the Concert of Europe kept a general peace for decades.",
+      "today": "The Congress sat in Vienna’s palaces, including the Hofburg; the Final Act was signed on 9 June 1815, nine days before Waterloo."
+    },
+    {
+      "place": "aix",
+      "phase": "after",
+      "title": "Exile to St Helena",
+      "native": "L’exil à Sainte-Hélène",
+      "when": "1815 to 1821",
+      "at": 93,
+      "camera": {
+        "at": [
+          -4,
+          46.5
+        ],
+        "width": 14
+      },
+      "legs": [
+        {
+          "from": "aix",
+          "to": "ushant",
+          "traveller": "british-warship",
+          "style": "sea",
+          "bend": -0.1
+        },
+        {
+          "from": "ushant",
+          "to": "plymouth",
+          "traveller": "british-warship",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "plymouth",
+          "to": "finisterre",
+          "traveller": "british-warship",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "finisterre",
+          "to": "st-helena",
+          "traveller": "british-warship",
+          "style": "sea",
+          "bend": 0
+        }
+      ],
+      "text": "Napoleon hoped to sail for America, but British ships blockaded the coast. On 15 July 1815 he gave himself up to Captain Maitland of HMS Bellerophon off the Île d’Aix. The British sent him to St Helena, a remote island in the South Atlantic. There he dictated his memoirs, shaping his own legend, and died on 5 May 1821.",
+      "today": "His house at Longwood on St Helena, a British territory, is owned by France and open to visitors; the Île d’Aix has a Napoleon museum."
+    },
+    {
+      "place": "paris",
+      "phase": "after",
+      "title": "The return of the ashes",
+      "native": "Retour des cendres",
+      "when": "15 December 1840",
+      "at": 98,
+      "camera": {
+        "at": [
+          -3.5,
+          46.2
+        ],
+        "width": 16
+      },
+      "legs": [
+        {
+          "from": "st-helena",
+          "to": "finisterre",
+          "traveller": "belle-poule",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "finisterre",
+          "to": "ushant",
+          "traveller": "belle-poule",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "ushant",
+          "to": "cherbourg",
+          "traveller": "belle-poule",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "cherbourg",
+          "to": "le-havre",
+          "traveller": "belle-poule",
+          "style": "sea",
+          "bend": 0
+        },
+        {
+          "from": "le-havre",
+          "to": "paris",
+          "traveller": "belle-poule",
+          "style": "sea",
+          "bend": 0.1
+        }
+      ],
+      "text": "In 1840 King Louis-Philippe had Napoleon’s body brought home, and huge crowds watched it carried to Les Invalides. The wars of 1793 to 1815 killed perhaps 3.5 to 7 million people, soldiers and civilians, estimates vary widely. They also spread the Civil Code across Europe and Latin America, ended the Holy Roman Empire and stirred nationalism from Spain to Germany.",
+      "today": "Napoleon’s tomb, of red quartzite, lies beneath the dome of Les Invalides in Paris, beside the Army Museum."
+    }
+  ],
+  "realms": {
+    "toggle": "Powers",
+    "mainHeading": "Powers at this point",
+    "minorHeading": "Also in play",
+    "items": [
+      {
+        "id": "france",
+        "name": "France",
+        "color": "#2b5fb4",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "France",
+          "at": [
+            2.0,
+            46.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  2.37,
+                  51.03
+                ],
+                [
+                  3.1,
+                  50.75
+                ],
+                [
+                  3.5,
+                  50.35
+                ],
+                [
+                  4.8,
+                  50.15
+                ],
+                [
+                  5.1,
+                  49.7
+                ],
+                [
+                  5.8,
+                  49.5
+                ],
+                [
+                  6.4,
+                  49.2
+                ],
+                [
+                  8.0,
+                  49.0
+                ],
+                [
+                  8.2,
+                  48.97
+                ],
+                [
+                  7.8,
+                  48.6
+                ],
+                [
+                  7.6,
+                  47.6
+                ],
+                [
+                  6.9,
+                  47.35
+                ],
+                [
+                  6.0,
+                  46.4
+                ],
+                [
+                  6.1,
+                  46.2
+                ],
+                [
+                  6.9,
+                  45.9
+                ],
+                [
+                  7.0,
+                  45.2
+                ],
+                [
+                  7.2,
+                  44.5
+                ],
+                [
+                  7.5,
+                  43.8
+                ],
+                [
+                  6.9,
+                  43.5
+                ],
+                [
+                  5.9,
+                  43.1
+                ],
+                [
+                  5.35,
+                  43.25
+                ],
+                [
+                  4.8,
+                  43.4
+                ],
+                [
+                  3.7,
+                  43.4
+                ],
+                [
+                  3.05,
+                  42.7
+                ],
+                [
+                  3.1,
+                  42.45
+                ],
+                [
+                  1.7,
+                  42.5
+                ],
+                [
+                  0.7,
+                  42.8
+                ],
+                [
+                  -0.3,
+                  42.85
+                ],
+                [
+                  -1.5,
+                  43.05
+                ],
+                [
+                  -1.78,
+                  43.37
+                ],
+                [
+                  -1.4,
+                  44.0
+                ],
+                [
+                  -1.2,
+                  44.7
+                ],
+                [
+                  -1.1,
+                  45.55
+                ],
+                [
+                  -1.15,
+                  46.15
+                ],
+                [
+                  -2.2,
+                  46.8
+                ],
+                [
+                  -2.2,
+                  47.3
+                ],
+                [
+                  -3.1,
+                  47.5
+                ],
+                [
+                  -4.3,
+                  47.8
+                ],
+                [
+                  -4.8,
+                  48.4
+                ],
+                [
+                  -3.5,
+                  48.8
+                ],
+                [
+                  -1.7,
+                  48.7
+                ],
+                [
+                  -1.6,
+                  49.7
+                ],
+                [
+                  -1.2,
+                  49.4
+                ],
+                [
+                  -0.2,
+                  49.3
+                ],
+                [
+                  0.1,
+                  49.5
+                ],
+                [
+                  1.1,
+                  49.95
+                ],
+                [
+                  1.5,
+                  50.2
+                ],
+                [
+                  1.6,
+                  50.75
+                ],
+                [
+                  1.85,
+                  51.0
+                ]
+              ],
+              [
+                [
+                  8.6,
+                  42.95
+                ],
+                [
+                  9.4,
+                  43.0
+                ],
+                [
+                  9.55,
+                  42.2
+                ],
+                [
+                  9.3,
+                  41.4
+                ],
+                [
+                  8.7,
+                  41.55
+                ],
+                [
+                  8.55,
+                  42.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                1,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  2.55,
+                  51.1
+                ],
+                [
+                  3.4,
+                  51.4
+                ],
+                [
+                  4.3,
+                  51.45
+                ],
+                [
+                  5.0,
+                  51.5
+                ],
+                [
+                  5.8,
+                  51.2
+                ],
+                [
+                  6.2,
+                  50.8
+                ],
+                [
+                  6.35,
+                  50.3
+                ],
+                [
+                  6.3,
+                  49.8
+                ],
+                [
+                  5.8,
+                  49.5
+                ],
+                [
+                  5.1,
+                  49.7
+                ],
+                [
+                  4.8,
+                  50.15
+                ],
+                [
+                  3.5,
+                  50.35
+                ],
+                [
+                  3.1,
+                  50.75
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  6.3,
+                  49.8
+                ],
+                [
+                  6.4,
+                  49.2
+                ],
+                [
+                  8.0,
+                  49.0
+                ],
+                [
+                  8.3,
+                  49.4
+                ],
+                [
+                  8.3,
+                  50.0
+                ],
+                [
+                  7.6,
+                  50.35
+                ],
+                [
+                  7.1,
+                  50.7
+                ],
+                [
+                  6.95,
+                  50.95
+                ],
+                [
+                  6.75,
+                  51.25
+                ],
+                [
+                  6.5,
+                  51.65
+                ],
+                [
+                  6.0,
+                  51.8
+                ],
+                [
+                  6.2,
+                  51.0
+                ],
+                [
+                  6.35,
+                  50.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                6,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  6.9,
+                  44.7
+                ],
+                [
+                  6.8,
+                  45.1
+                ],
+                [
+                  7.05,
+                  45.85
+                ],
+                [
+                  7.9,
+                  45.95
+                ],
+                [
+                  8.5,
+                  46.0
+                ],
+                [
+                  8.7,
+                  45.6
+                ],
+                [
+                  8.8,
+                  45.1
+                ],
+                [
+                  9.0,
+                  44.8
+                ],
+                [
+                  8.6,
+                  44.5
+                ],
+                [
+                  7.9,
+                  44.2
+                ],
+                [
+                  7.4,
+                  44.1
+                ],
+                [
+                  7.0,
+                  44.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                7,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  7.5,
+                  43.75
+                ],
+                [
+                  8.0,
+                  43.85
+                ],
+                [
+                  8.8,
+                  44.3
+                ],
+                [
+                  9.5,
+                  44.1
+                ],
+                [
+                  9.9,
+                  44.1
+                ],
+                [
+                  9.8,
+                  44.4
+                ],
+                [
+                  9.0,
+                  44.6
+                ],
+                [
+                  8.5,
+                  44.45
+                ],
+                [
+                  7.9,
+                  44.15
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  3.5,
+                  51.4
+                ],
+                [
+                  4.1,
+                  51.95
+                ],
+                [
+                  4.65,
+                  52.5
+                ],
+                [
+                  4.75,
+                  52.95
+                ],
+                [
+                  5.5,
+                  53.3
+                ],
+                [
+                  6.8,
+                  53.35
+                ],
+                [
+                  7.2,
+                  53.25
+                ],
+                [
+                  7.15,
+                  52.6
+                ],
+                [
+                  6.95,
+                  52.1
+                ],
+                [
+                  6.7,
+                  51.9
+                ],
+                [
+                  6.1,
+                  51.8
+                ],
+                [
+                  5.8,
+                  51.2
+                ],
+                [
+                  5.0,
+                  51.5
+                ],
+                [
+                  4.3,
+                  51.45
+                ]
+              ],
+              [
+                [
+                  7.2,
+                  53.3
+                ],
+                [
+                  8.1,
+                  53.55
+                ],
+                [
+                  8.7,
+                  53.95
+                ],
+                [
+                  9.4,
+                  53.85
+                ],
+                [
+                  10.0,
+                  54.0
+                ],
+                [
+                  10.6,
+                  54.05
+                ],
+                [
+                  10.9,
+                  53.9
+                ],
+                [
+                  10.8,
+                  53.4
+                ],
+                [
+                  10.2,
+                  53.1
+                ],
+                [
+                  9.3,
+                  52.9
+                ],
+                [
+                  8.6,
+                  52.7
+                ],
+                [
+                  7.9,
+                  52.4
+                ],
+                [
+                  7.2,
+                  52.6
+                ]
+              ],
+              [
+                [
+                  10.1,
+                  43.95
+                ],
+                [
+                  10.4,
+                  43.4
+                ],
+                [
+                  10.6,
+                  42.95
+                ],
+                [
+                  11.1,
+                  42.4
+                ],
+                [
+                  11.8,
+                  42.0
+                ],
+                [
+                  12.3,
+                  41.7
+                ],
+                [
+                  12.9,
+                  41.4
+                ],
+                [
+                  13.25,
+                  41.3
+                ],
+                [
+                  13.4,
+                  41.7
+                ],
+                [
+                  13.35,
+                  42.4
+                ],
+                [
+                  12.9,
+                  42.9
+                ],
+                [
+                  12.5,
+                  43.4
+                ],
+                [
+                  12.1,
+                  43.7
+                ],
+                [
+                  11.5,
+                  44.1
+                ],
+                [
+                  10.9,
+                  44.3
+                ],
+                [
+                  10.4,
+                  44.3
+                ]
+              ],
+              [
+                [
+                  13.6,
+                  46.1
+                ],
+                [
+                  14.0,
+                  46.5
+                ],
+                [
+                  14.8,
+                  46.3
+                ],
+                [
+                  15.3,
+                  45.8
+                ],
+                [
+                  16.2,
+                  45.2
+                ],
+                [
+                  16.5,
+                  44.7
+                ],
+                [
+                  15.6,
+                  44.6
+                ],
+                [
+                  14.9,
+                  44.9
+                ],
+                [
+                  14.5,
+                  45.2
+                ],
+                [
+                  13.7,
+                  45.65
+                ]
+              ],
+              [
+                [
+                  13.5,
+                  45.1
+                ],
+                [
+                  13.7,
+                  45.6
+                ],
+                [
+                  14.3,
+                  45.45
+                ],
+                [
+                  14.9,
+                  44.9
+                ],
+                [
+                  15.6,
+                  44.6
+                ],
+                [
+                  16.5,
+                  44.25
+                ],
+                [
+                  17.3,
+                  43.6
+                ],
+                [
+                  18.5,
+                  42.9
+                ],
+                [
+                  18.7,
+                  42.4
+                ],
+                [
+                  18.1,
+                  42.6
+                ],
+                [
+                  17.2,
+                  43.0
+                ],
+                [
+                  16.0,
+                  43.5
+                ],
+                [
+                  15.2,
+                  44.2
+                ],
+                [
+                  14.5,
+                  45.0
+                ],
+                [
+                  13.6,
+                  44.85
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Paris"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "The National Convention"
+          },
+          {
+            "from": 1,
+            "text": "The Directory"
+          },
+          {
+            "from": 4,
+            "text": "Bonaparte, First Consul"
+          },
+          {
+            "from": 6,
+            "text": "Napoleon I"
+          },
+          {
+            "from": 19,
+            "text": "Louis XVIII"
+          },
+          {
+            "from": 20,
+            "text": "Napoleon I (the Hundred Days)"
+          },
+          {
+            "from": 22,
+            "text": "Louis XVIII"
+          }
+        ],
+        "role": "The French Republic, then Empire",
+        "ties": [
+          {
+            "from": 1,
+            "text": "Annexes Belgium (the Austrian Netherlands), 1795"
+          },
+          {
+            "from": 2,
+            "text": "Annexes the left bank of the Rhine"
+          },
+          {
+            "from": 6,
+            "text": "Annexes Piedmont (1802); Liguria (Genoa) follows in 1805"
+          },
+          {
+            "from": 12,
+            "text": "At its height: also the Netherlands, the North Sea coast to Lübeck, Rome and the Papal States and the Illyrian Provinces"
+          },
+          {
+            "from": 19,
+            "text": "Back to roughly the borders of 1792, 1814"
+          }
+        ]
+      },
+      {
+        "id": "client-states",
+        "name": "French client states",
+        "color": "#7fa6d9",
+        "active": [
+          [
+            1,
+            18
+          ]
+        ],
+        "label": {
+          "text": "Client states",
+          "at": [
+            10.0,
+            45.2
+          ],
+          "moves": [
+            {
+              "from": 9,
+              "at": [
+                9.5,
+                50.0
+              ]
+            }
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                1,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  8.75,
+                  45.7
+                ],
+                [
+                  9.3,
+                  46.0
+                ],
+                [
+                  10.1,
+                  46.2
+                ],
+                [
+                  10.55,
+                  45.95
+                ],
+                [
+                  10.85,
+                  45.65
+                ],
+                [
+                  11.0,
+                  45.1
+                ],
+                [
+                  11.7,
+                  45.0
+                ],
+                [
+                  12.25,
+                  44.95
+                ],
+                [
+                  12.3,
+                  44.4
+                ],
+                [
+                  12.55,
+                  44.1
+                ],
+                [
+                  12.2,
+                  43.9
+                ],
+                [
+                  11.7,
+                  44.2
+                ],
+                [
+                  10.9,
+                  44.35
+                ],
+                [
+                  10.2,
+                  44.4
+                ],
+                [
+                  9.6,
+                  44.6
+                ],
+                [
+                  9.0,
+                  44.85
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                8,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  10.85,
+                  45.65
+                ],
+                [
+                  10.55,
+                  45.95
+                ],
+                [
+                  11.0,
+                  46.4
+                ],
+                [
+                  12.2,
+                  46.6
+                ],
+                [
+                  13.0,
+                  46.5
+                ],
+                [
+                  13.6,
+                  46.1
+                ],
+                [
+                  13.5,
+                  45.7
+                ],
+                [
+                  13.0,
+                  45.6
+                ],
+                [
+                  12.4,
+                  45.35
+                ],
+                [
+                  12.3,
+                  44.95
+                ],
+                [
+                  11.7,
+                  45.0
+                ],
+                [
+                  11.0,
+                  45.1
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  3.5,
+                  51.4
+                ],
+                [
+                  4.1,
+                  51.95
+                ],
+                [
+                  4.65,
+                  52.5
+                ],
+                [
+                  4.75,
+                  52.95
+                ],
+                [
+                  5.5,
+                  53.3
+                ],
+                [
+                  6.8,
+                  53.35
+                ],
+                [
+                  7.2,
+                  53.25
+                ],
+                [
+                  7.15,
+                  52.6
+                ],
+                [
+                  6.95,
+                  52.1
+                ],
+                [
+                  6.7,
+                  51.9
+                ],
+                [
+                  6.1,
+                  51.8
+                ],
+                [
+                  5.8,
+                  51.2
+                ],
+                [
+                  5.0,
+                  51.5
+                ],
+                [
+                  4.3,
+                  51.45
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  6.05,
+                  46.15
+                ],
+                [
+                  6.1,
+                  46.6
+                ],
+                [
+                  6.9,
+                  47.3
+                ],
+                [
+                  7.55,
+                  47.6
+                ],
+                [
+                  8.6,
+                  47.7
+                ],
+                [
+                  9.5,
+                  47.6
+                ],
+                [
+                  9.6,
+                  47.2
+                ],
+                [
+                  10.4,
+                  46.9
+                ],
+                [
+                  10.4,
+                  46.5
+                ],
+                [
+                  9.9,
+                  46.3
+                ],
+                [
+                  9.0,
+                  45.85
+                ],
+                [
+                  8.5,
+                  46.0
+                ],
+                [
+                  7.9,
+                  45.95
+                ],
+                [
+                  7.05,
+                  45.9
+                ],
+                [
+                  6.8,
+                  46.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                9,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  7.6,
+                  47.6
+                ],
+                [
+                  8.6,
+                  47.7
+                ],
+                [
+                  9.5,
+                  47.55
+                ],
+                [
+                  10.2,
+                  47.4
+                ],
+                [
+                  10.1,
+                  46.95
+                ],
+                [
+                  11.0,
+                  46.8
+                ],
+                [
+                  12.1,
+                  47.0
+                ],
+                [
+                  13.0,
+                  47.3
+                ],
+                [
+                  13.5,
+                  47.7
+                ],
+                [
+                  13.4,
+                  48.0
+                ],
+                [
+                  13.45,
+                  48.55
+                ],
+                [
+                  12.9,
+                  49.0
+                ],
+                [
+                  12.3,
+                  50.2
+                ],
+                [
+                  14.8,
+                  50.9
+                ],
+                [
+                  15.0,
+                  51.1
+                ],
+                [
+                  14.7,
+                  51.7
+                ],
+                [
+                  13.5,
+                  51.8
+                ],
+                [
+                  12.4,
+                  52.0
+                ],
+                [
+                  11.7,
+                  52.3
+                ],
+                [
+                  11.1,
+                  53.0
+                ],
+                [
+                  10.2,
+                  53.1
+                ],
+                [
+                  9.3,
+                  52.9
+                ],
+                [
+                  8.6,
+                  52.7
+                ],
+                [
+                  7.9,
+                  52.4
+                ],
+                [
+                  7.2,
+                  52.6
+                ],
+                [
+                  6.6,
+                  51.65
+                ],
+                [
+                  6.75,
+                  51.25
+                ],
+                [
+                  6.95,
+                  50.95
+                ],
+                [
+                  7.1,
+                  50.7
+                ],
+                [
+                  7.6,
+                  50.35
+                ],
+                [
+                  8.3,
+                  50.0
+                ],
+                [
+                  8.3,
+                  49.4
+                ],
+                [
+                  8.2,
+                  48.97
+                ],
+                [
+                  7.8,
+                  48.6
+                ]
+              ],
+              [
+                [
+                  13.25,
+                  41.3
+                ],
+                [
+                  13.57,
+                  41.2
+                ],
+                [
+                  14.2,
+                  40.8
+                ],
+                [
+                  14.9,
+                  40.2
+                ],
+                [
+                  15.6,
+                  39.9
+                ],
+                [
+                  16.0,
+                  39.5
+                ],
+                [
+                  16.1,
+                  38.9
+                ],
+                [
+                  15.7,
+                  38.0
+                ],
+                [
+                  16.5,
+                  38.4
+                ],
+                [
+                  17.1,
+                  39.0
+                ],
+                [
+                  16.6,
+                  39.7
+                ],
+                [
+                  17.2,
+                  40.5
+                ],
+                [
+                  18.5,
+                  40.1
+                ],
+                [
+                  17.9,
+                  40.7
+                ],
+                [
+                  16.9,
+                  41.1
+                ],
+                [
+                  16.1,
+                  41.5
+                ],
+                [
+                  15.9,
+                  41.95
+                ],
+                [
+                  15.2,
+                  41.9
+                ],
+                [
+                  14.3,
+                  42.0
+                ],
+                [
+                  14.1,
+                  42.5
+                ],
+                [
+                  13.9,
+                  42.9
+                ],
+                [
+                  13.4,
+                  42.6
+                ],
+                [
+                  13.4,
+                  41.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                11
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  16.8,
+                  52.0
+                ],
+                [
+                  16.6,
+                  52.6
+                ],
+                [
+                  17.0,
+                  53.1
+                ],
+                [
+                  18.0,
+                  53.3
+                ],
+                [
+                  19.0,
+                  53.2
+                ],
+                [
+                  20.4,
+                  53.0
+                ],
+                [
+                  21.6,
+                  52.9
+                ],
+                [
+                  22.8,
+                  52.7
+                ],
+                [
+                  22.4,
+                  52.0
+                ],
+                [
+                  21.8,
+                  51.5
+                ],
+                [
+                  20.5,
+                  51.2
+                ],
+                [
+                  19.5,
+                  51.0
+                ],
+                [
+                  18.5,
+                  51.0
+                ],
+                [
+                  17.6,
+                  51.3
+                ],
+                [
+                  16.9,
+                  51.7
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                12,
+                18
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  16.8,
+                  52.0
+                ],
+                [
+                  16.6,
+                  52.6
+                ],
+                [
+                  17.0,
+                  53.1
+                ],
+                [
+                  18.0,
+                  53.3
+                ],
+                [
+                  19.0,
+                  53.2
+                ],
+                [
+                  20.4,
+                  53.0
+                ],
+                [
+                  21.6,
+                  52.9
+                ],
+                [
+                  22.8,
+                  52.7
+                ],
+                [
+                  23.5,
+                  52.0
+                ],
+                [
+                  23.6,
+                  51.0
+                ],
+                [
+                  23.6,
+                  50.5
+                ],
+                [
+                  22.6,
+                  50.4
+                ],
+                [
+                  21.5,
+                  50.2
+                ],
+                [
+                  19.9,
+                  49.95
+                ],
+                [
+                  19.2,
+                  49.95
+                ],
+                [
+                  18.9,
+                  50.4
+                ],
+                [
+                  18.5,
+                  50.9
+                ],
+                [
+                  17.6,
+                  51.3
+                ],
+                [
+                  16.9,
+                  51.7
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {},
+        "rulers": [],
+        "role": "Ruled by Napoleon’s family or allies",
+        "ties": [
+          {
+            "from": 7,
+            "text": "Kingdom of Italy (Napoleon king, 1805)"
+          },
+          {
+            "from": 9,
+            "text": "Naples: Joseph Bonaparte, then Joachim Murat"
+          },
+          {
+            "from": 9,
+            "text": "Holland: Louis Bonaparte, to 1810"
+          },
+          {
+            "from": 10,
+            "text": "Westphalia: Jérôme Bonaparte"
+          }
+        ]
+      },
+      {
+        "id": "britain",
+        "name": "Britain",
+        "color": "#b3261e",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "Britain",
+          "at": [
+            -2.4,
+            53.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -5.7,
+                  50.05
+                ],
+                [
+                  -5.2,
+                  49.95
+                ],
+                [
+                  -4.1,
+                  50.35
+                ],
+                [
+                  -3.65,
+                  50.2
+                ],
+                [
+                  -2.45,
+                  50.55
+                ],
+                [
+                  -1.3,
+                  50.75
+                ],
+                [
+                  0.25,
+                  50.75
+                ],
+                [
+                  1.4,
+                  51.15
+                ],
+                [
+                  1.4,
+                  51.4
+                ],
+                [
+                  0.7,
+                  51.5
+                ],
+                [
+                  1.2,
+                  51.8
+                ],
+                [
+                  1.75,
+                  52.45
+                ],
+                [
+                  1.3,
+                  52.95
+                ],
+                [
+                  0.3,
+                  52.9
+                ],
+                [
+                  0.2,
+                  53.4
+                ],
+                [
+                  0.1,
+                  53.6
+                ],
+                [
+                  -0.1,
+                  54.1
+                ],
+                [
+                  -0.6,
+                  54.5
+                ],
+                [
+                  -1.4,
+                  55.0
+                ],
+                [
+                  -1.9,
+                  55.8
+                ],
+                [
+                  -2.6,
+                  56.0
+                ],
+                [
+                  -2.7,
+                  56.3
+                ],
+                [
+                  -2.4,
+                  56.7
+                ],
+                [
+                  -2.1,
+                  57.15
+                ],
+                [
+                  -1.8,
+                  57.5
+                ],
+                [
+                  -3.0,
+                  57.7
+                ],
+                [
+                  -3.8,
+                  57.8
+                ],
+                [
+                  -3.1,
+                  58.6
+                ],
+                [
+                  -5.0,
+                  58.6
+                ],
+                [
+                  -5.8,
+                  57.5
+                ],
+                [
+                  -5.7,
+                  56.7
+                ],
+                [
+                  -5.7,
+                  55.3
+                ],
+                [
+                  -4.6,
+                  55.5
+                ],
+                [
+                  -3.3,
+                  54.95
+                ],
+                [
+                  -3.65,
+                  54.5
+                ],
+                [
+                  -3.0,
+                  54.1
+                ],
+                [
+                  -3.0,
+                  53.4
+                ],
+                [
+                  -4.0,
+                  53.3
+                ],
+                [
+                  -4.6,
+                  53.3
+                ],
+                [
+                  -4.7,
+                  52.8
+                ],
+                [
+                  -4.1,
+                  52.3
+                ],
+                [
+                  -5.2,
+                  51.75
+                ],
+                [
+                  -4.2,
+                  51.6
+                ],
+                [
+                  -3.1,
+                  51.4
+                ],
+                [
+                  -3.4,
+                  51.2
+                ],
+                [
+                  -4.5,
+                  51.0
+                ],
+                [
+                  -5.1,
+                  50.5
+                ]
+              ],
+              [
+                [
+                  -6.0,
+                  55.2
+                ],
+                [
+                  -5.5,
+                  54.7
+                ],
+                [
+                  -5.5,
+                  54.2
+                ],
+                [
+                  -6.1,
+                  53.8
+                ],
+                [
+                  -6.0,
+                  53.3
+                ],
+                [
+                  -6.2,
+                  52.8
+                ],
+                [
+                  -6.4,
+                  52.2
+                ],
+                [
+                  -7.0,
+                  52.1
+                ],
+                [
+                  -8.3,
+                  51.8
+                ],
+                [
+                  -9.5,
+                  51.5
+                ],
+                [
+                  -10.3,
+                  51.8
+                ],
+                [
+                  -10.1,
+                  52.2
+                ],
+                [
+                  -9.5,
+                  52.6
+                ],
+                [
+                  -9.9,
+                  53.4
+                ],
+                [
+                  -10.0,
+                  54.1
+                ],
+                [
+                  -9.0,
+                  54.3
+                ],
+                [
+                  -8.4,
+                  54.5
+                ],
+                [
+                  -8.3,
+                  55.2
+                ],
+                [
+                  -7.4,
+                  55.4
+                ],
+                [
+                  -6.8,
+                  55.2
+                ]
+              ],
+              {
+                "at": [
+                  -5.35,
+                  36.14
+                ],
+                "radius": 0.3
+              }
+            ]
+          },
+          {
+            "steps": [
+              [
+                5,
+                24
+              ]
+            ],
+            "areas": [
+              {
+                "at": [
+                  14.5,
+                  35.9
+                ],
+                "radius": 0.4
+              }
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "London"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "George III"
+          },
+          {
+            "from": 14,
+            "text": "George III (Prince Regent from 1811)"
+          }
+        ],
+        "role": "At war with France almost throughout, 1793–1815",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Holds Gibraltar"
+          },
+          {
+            "from": 5,
+            "text": "Holds Malta"
+          }
+        ]
+      },
+      {
+        "id": "spain",
+        "name": "Spain",
+        "color": "#c07a3a",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "Spain",
+          "at": [
+            -3.8,
+            39.8
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  -7.4,
+                  37.2
+                ],
+                [
+                  -6.3,
+                  36.8
+                ],
+                [
+                  -6.3,
+                  36.5
+                ],
+                [
+                  -5.6,
+                  36.0
+                ],
+                [
+                  -5.35,
+                  36.15
+                ],
+                [
+                  -4.5,
+                  36.6
+                ],
+                [
+                  -3.0,
+                  36.7
+                ],
+                [
+                  -2.2,
+                  36.7
+                ],
+                [
+                  -1.6,
+                  37.3
+                ],
+                [
+                  -0.7,
+                  37.6
+                ],
+                [
+                  -0.4,
+                  38.3
+                ],
+                [
+                  0.2,
+                  38.7
+                ],
+                [
+                  -0.3,
+                  39.4
+                ],
+                [
+                  0.0,
+                  40.0
+                ],
+                [
+                  0.9,
+                  40.8
+                ],
+                [
+                  1.3,
+                  41.1
+                ],
+                [
+                  2.2,
+                  41.4
+                ],
+                [
+                  3.2,
+                  41.9
+                ],
+                [
+                  3.15,
+                  42.4
+                ],
+                [
+                  1.7,
+                  42.5
+                ],
+                [
+                  0.7,
+                  42.8
+                ],
+                [
+                  -0.3,
+                  42.85
+                ],
+                [
+                  -1.5,
+                  43.05
+                ],
+                [
+                  -1.8,
+                  43.35
+                ],
+                [
+                  -3.0,
+                  43.4
+                ],
+                [
+                  -5.0,
+                  43.5
+                ],
+                [
+                  -6.0,
+                  43.6
+                ],
+                [
+                  -7.0,
+                  43.6
+                ],
+                [
+                  -8.3,
+                  43.7
+                ],
+                [
+                  -9.3,
+                  43.0
+                ],
+                [
+                  -8.9,
+                  42.5
+                ],
+                [
+                  -8.85,
+                  41.9
+                ],
+                [
+                  -8.2,
+                  42.1
+                ],
+                [
+                  -6.8,
+                  41.95
+                ],
+                [
+                  -6.2,
+                  41.55
+                ],
+                [
+                  -6.9,
+                  41.0
+                ],
+                [
+                  -6.9,
+                  40.7
+                ],
+                [
+                  -7.0,
+                  40.2
+                ],
+                [
+                  -7.5,
+                  39.7
+                ],
+                [
+                  -7.0,
+                  39.1
+                ],
+                [
+                  -7.3,
+                  38.6
+                ],
+                [
+                  -7.5,
+                  38.2
+                ],
+                [
+                  -7.4,
+                  37.55
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Madrid"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Charles IV"
+          },
+          {
+            "from": 11,
+            "text": "Joseph Bonaparte (French); Ferdinand VII held in France"
+          },
+          {
+            "from": 19,
+            "text": "Ferdinand VII"
+          }
+        ],
+        "role": "Kingdom of Spain",
+        "ties": [
+          {
+            "from": 0,
+            "text": "At war with France"
+          },
+          {
+            "from": 1,
+            "text": "France’s ally from 1796"
+          },
+          {
+            "from": 11,
+            "text": "Risen against the French; Joseph Bonaparte king in Madrid"
+          },
+          {
+            "from": 18,
+            "text": "Free of the French; Ferdinand VII restored 1814"
+          }
+        ]
+      },
+      {
+        "id": "austria",
+        "name": "Austria",
+        "color": "#d9a441",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "Austria",
+          "at": [
+            19.8,
+            47.4
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  13.2,
+                  47.0
+                ],
+                [
+                  13.5,
+                  47.55
+                ],
+                [
+                  13.4,
+                  48.0
+                ],
+                [
+                  13.45,
+                  48.55
+                ],
+                [
+                  12.9,
+                  49.0
+                ],
+                [
+                  12.3,
+                  50.2
+                ],
+                [
+                  14.8,
+                  50.9
+                ],
+                [
+                  16.8,
+                  50.4
+                ],
+                [
+                  18.6,
+                  50.1
+                ],
+                [
+                  19.9,
+                  49.95
+                ],
+                [
+                  21.5,
+                  50.15
+                ],
+                [
+                  22.6,
+                  50.4
+                ],
+                [
+                  23.6,
+                  50.5
+                ],
+                [
+                  24.2,
+                  50.6
+                ],
+                [
+                  25.5,
+                  50.2
+                ],
+                [
+                  26.0,
+                  49.3
+                ],
+                [
+                  26.6,
+                  48.2
+                ],
+                [
+                  26.0,
+                  47.0
+                ],
+                [
+                  26.3,
+                  46.2
+                ],
+                [
+                  25.0,
+                  45.7
+                ],
+                [
+                  24.0,
+                  45.5
+                ],
+                [
+                  22.7,
+                  44.7
+                ],
+                [
+                  21.4,
+                  44.8
+                ],
+                [
+                  20.3,
+                  44.85
+                ],
+                [
+                  19.0,
+                  44.9
+                ],
+                [
+                  17.6,
+                  45.1
+                ],
+                [
+                  16.4,
+                  45.2
+                ],
+                [
+                  15.8,
+                  45.7
+                ],
+                [
+                  15.3,
+                  46.1
+                ],
+                [
+                  15.6,
+                  46.65
+                ],
+                [
+                  14.9,
+                  46.6
+                ],
+                [
+                  14.1,
+                  46.45
+                ],
+                [
+                  13.7,
+                  46.5
+                ],
+                [
+                  13.4,
+                  46.55
+                ],
+                [
+                  12.6,
+                  46.65
+                ],
+                [
+                  12.6,
+                  47.0
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                0
+              ],
+              [
+                22,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  8.75,
+                  45.7
+                ],
+                [
+                  9.3,
+                  46.0
+                ],
+                [
+                  10.1,
+                  46.2
+                ],
+                [
+                  10.55,
+                  45.95
+                ],
+                [
+                  10.85,
+                  45.65
+                ],
+                [
+                  11.0,
+                  45.1
+                ],
+                [
+                  10.0,
+                  44.95
+                ],
+                [
+                  9.2,
+                  45.05
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                0
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  2.55,
+                  51.1
+                ],
+                [
+                  3.4,
+                  51.4
+                ],
+                [
+                  4.3,
+                  51.45
+                ],
+                [
+                  5.0,
+                  51.5
+                ],
+                [
+                  5.8,
+                  51.2
+                ],
+                [
+                  6.2,
+                  50.8
+                ],
+                [
+                  6.35,
+                  50.3
+                ],
+                [
+                  6.3,
+                  49.8
+                ],
+                [
+                  5.8,
+                  49.5
+                ],
+                [
+                  5.1,
+                  49.7
+                ],
+                [
+                  4.8,
+                  50.15
+                ],
+                [
+                  3.5,
+                  50.35
+                ],
+                [
+                  3.1,
+                  50.75
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                7
+              ],
+              [
+                22,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  10.85,
+                  45.65
+                ],
+                [
+                  10.55,
+                  45.95
+                ],
+                [
+                  11.0,
+                  46.4
+                ],
+                [
+                  12.2,
+                  46.6
+                ],
+                [
+                  13.0,
+                  46.5
+                ],
+                [
+                  13.6,
+                  46.1
+                ],
+                [
+                  13.5,
+                  45.7
+                ],
+                [
+                  13.0,
+                  45.6
+                ],
+                [
+                  12.4,
+                  45.35
+                ],
+                [
+                  12.3,
+                  44.95
+                ],
+                [
+                  11.7,
+                  45.0
+                ],
+                [
+                  11.0,
+                  45.1
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                11
+              ],
+              [
+                19,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  12.1,
+                  47.4
+                ],
+                [
+                  12.9,
+                  47.7
+                ],
+                [
+                  13.1,
+                  47.9
+                ],
+                [
+                  13.5,
+                  47.6
+                ],
+                [
+                  13.4,
+                  47.1
+                ],
+                [
+                  12.4,
+                  47.0
+                ]
+              ],
+              [
+                [
+                  13.6,
+                  46.1
+                ],
+                [
+                  14.0,
+                  46.5
+                ],
+                [
+                  14.8,
+                  46.3
+                ],
+                [
+                  15.3,
+                  45.8
+                ],
+                [
+                  16.2,
+                  45.2
+                ],
+                [
+                  16.5,
+                  44.7
+                ],
+                [
+                  15.6,
+                  44.6
+                ],
+                [
+                  14.9,
+                  44.9
+                ],
+                [
+                  14.5,
+                  45.2
+                ],
+                [
+                  13.7,
+                  45.65
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                7
+              ],
+              [
+                19,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  9.55,
+                  47.5
+                ],
+                [
+                  10.4,
+                  47.55
+                ],
+                [
+                  11.4,
+                  47.55
+                ],
+                [
+                  12.2,
+                  47.65
+                ],
+                [
+                  12.5,
+                  47.2
+                ],
+                [
+                  12.4,
+                  46.7
+                ],
+                [
+                  12.1,
+                  46.6
+                ],
+                [
+                  11.7,
+                  46.2
+                ],
+                [
+                  11.2,
+                  45.95
+                ],
+                [
+                  10.8,
+                  45.8
+                ],
+                [
+                  10.5,
+                  46.2
+                ],
+                [
+                  10.4,
+                  46.6
+                ],
+                [
+                  10.1,
+                  46.9
+                ],
+                [
+                  9.55,
+                  47.1
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                2,
+                7
+              ],
+              [
+                19,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  13.5,
+                  45.1
+                ],
+                [
+                  13.7,
+                  45.6
+                ],
+                [
+                  14.3,
+                  45.45
+                ],
+                [
+                  14.9,
+                  44.9
+                ],
+                [
+                  15.6,
+                  44.6
+                ],
+                [
+                  16.5,
+                  44.25
+                ],
+                [
+                  17.3,
+                  43.6
+                ],
+                [
+                  18.5,
+                  42.9
+                ],
+                [
+                  18.7,
+                  42.4
+                ],
+                [
+                  18.1,
+                  42.6
+                ],
+                [
+                  17.2,
+                  43.0
+                ],
+                [
+                  16.0,
+                  43.5
+                ],
+                [
+                  15.2,
+                  44.2
+                ],
+                [
+                  14.5,
+                  45.0
+                ],
+                [
+                  13.6,
+                  44.85
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                11
+              ],
+              [
+                19,
+                21
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  19.0,
+                  50.0
+                ],
+                [
+                  19.2,
+                  50.5
+                ],
+                [
+                  19.8,
+                  51.0
+                ],
+                [
+                  20.7,
+                  51.4
+                ],
+                [
+                  22.0,
+                  51.5
+                ],
+                [
+                  23.4,
+                  51.5
+                ],
+                [
+                  23.6,
+                  50.8
+                ],
+                [
+                  22.9,
+                  50.4
+                ],
+                [
+                  22.0,
+                  50.1
+                ],
+                [
+                  20.8,
+                  50.0
+                ],
+                [
+                  19.9,
+                  49.95
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Vienna"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Francis II"
+          },
+          {
+            "from": 6,
+            "text": "Francis I (Francis II, Holy Roman Emperor, until 1806)"
+          }
+        ],
+        "role": "The Habsburg monarchy (Austrian Empire from 1804)",
+        "ties": [
+          {
+            "from": 0,
+            "text": "Holds Lombardy and the Austrian Netherlands"
+          },
+          {
+            "from": 2,
+            "text": "Gains Venice, Istria and Dalmatia at Campo Formio, 1797"
+          },
+          {
+            "from": 8,
+            "text": "Loses Tyrol, Venetia, Istria and Dalmatia at Pressburg, 1805"
+          },
+          {
+            "from": 12,
+            "text": "Loses Salzburg, the Illyrian coast and West Galicia, 1809"
+          },
+          {
+            "from": 22,
+            "text": "Gains Lombardy–Venetia, Tyrol, Salzburg and the Adriatic coast at Vienna, 1815"
+          }
+        ]
+      },
+      {
+        "id": "prussia",
+        "name": "Prussia",
+        "color": "#6b6f78",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "Prussia",
+          "at": [
+            15.0,
+            52.9
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  11.8,
+                  53.0
+                ],
+                [
+                  11.7,
+                  52.2
+                ],
+                [
+                  12.6,
+                  51.85
+                ],
+                [
+                  13.6,
+                  51.8
+                ],
+                [
+                  14.7,
+                  51.6
+                ],
+                [
+                  15.1,
+                  51.1
+                ],
+                [
+                  15.4,
+                  50.8
+                ],
+                [
+                  16.8,
+                  50.4
+                ],
+                [
+                  17.8,
+                  50.2
+                ],
+                [
+                  18.6,
+                  50.3
+                ],
+                [
+                  19.0,
+                  50.4
+                ],
+                [
+                  18.6,
+                  51.0
+                ],
+                [
+                  18.0,
+                  51.2
+                ],
+                [
+                  17.6,
+                  51.3
+                ],
+                [
+                  16.9,
+                  51.7
+                ],
+                [
+                  16.9,
+                  52.0
+                ],
+                [
+                  16.3,
+                  52.4
+                ],
+                [
+                  15.8,
+                  52.7
+                ],
+                [
+                  15.8,
+                  53.1
+                ],
+                [
+                  16.5,
+                  53.4
+                ],
+                [
+                  17.5,
+                  53.4
+                ],
+                [
+                  18.7,
+                  53.9
+                ],
+                [
+                  19.6,
+                  53.6
+                ],
+                [
+                  20.3,
+                  53.3
+                ],
+                [
+                  21.5,
+                  53.4
+                ],
+                [
+                  22.5,
+                  53.8
+                ],
+                [
+                  22.8,
+                  54.4
+                ],
+                [
+                  22.5,
+                  54.95
+                ],
+                [
+                  21.4,
+                  55.4
+                ],
+                [
+                  21.0,
+                  55.7
+                ],
+                [
+                  20.95,
+                  55.28
+                ],
+                [
+                  19.9,
+                  54.65
+                ],
+                [
+                  19.4,
+                  54.4
+                ],
+                [
+                  18.7,
+                  54.4
+                ],
+                [
+                  18.4,
+                  54.75
+                ],
+                [
+                  17.55,
+                  54.76
+                ],
+                [
+                  16.85,
+                  54.58
+                ],
+                [
+                  16.4,
+                  54.45
+                ],
+                [
+                  15.55,
+                  54.2
+                ],
+                [
+                  14.8,
+                  54.0
+                ],
+                [
+                  14.25,
+                  53.9
+                ],
+                [
+                  13.8,
+                  53.7
+                ],
+                [
+                  13.2,
+                  53.3
+                ],
+                [
+                  12.4,
+                  53.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                9
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  10.6,
+                  51.75
+                ],
+                [
+                  10.7,
+                  52.3
+                ],
+                [
+                  11.1,
+                  52.9
+                ],
+                [
+                  11.8,
+                  53.0
+                ],
+                [
+                  11.7,
+                  52.2
+                ],
+                [
+                  11.4,
+                  51.8
+                ],
+                [
+                  11.0,
+                  51.6
+                ]
+              ],
+              [
+                [
+                  7.0,
+                  51.8
+                ],
+                [
+                  7.2,
+                  52.2
+                ],
+                [
+                  8.0,
+                  52.4
+                ],
+                [
+                  9.0,
+                  52.5
+                ],
+                [
+                  9.3,
+                  52.1
+                ],
+                [
+                  9.0,
+                  51.6
+                ],
+                [
+                  8.3,
+                  51.5
+                ],
+                [
+                  7.6,
+                  51.5
+                ]
+              ],
+              [
+                [
+                  16.9,
+                  52.0
+                ],
+                [
+                  16.6,
+                  52.6
+                ],
+                [
+                  17.0,
+                  53.1
+                ],
+                [
+                  18.0,
+                  53.3
+                ],
+                [
+                  19.0,
+                  53.3
+                ],
+                [
+                  20.3,
+                  53.2
+                ],
+                [
+                  21.5,
+                  53.4
+                ],
+                [
+                  22.7,
+                  53.8
+                ],
+                [
+                  23.5,
+                  53.5
+                ],
+                [
+                  23.6,
+                  52.7
+                ],
+                [
+                  22.7,
+                  52.3
+                ],
+                [
+                  21.8,
+                  51.9
+                ],
+                [
+                  20.8,
+                  51.6
+                ],
+                [
+                  19.6,
+                  51.7
+                ],
+                [
+                  18.6,
+                  51.4
+                ],
+                [
+                  17.6,
+                  51.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                22,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  15.9,
+                  51.6
+                ],
+                [
+                  16.3,
+                  52.4
+                ],
+                [
+                  16.6,
+                  52.7
+                ],
+                [
+                  17.2,
+                  53.2
+                ],
+                [
+                  18.2,
+                  53.3
+                ],
+                [
+                  18.8,
+                  53.0
+                ],
+                [
+                  18.7,
+                  52.5
+                ],
+                [
+                  18.3,
+                  52.0
+                ],
+                [
+                  18.0,
+                  51.3
+                ],
+                [
+                  17.0,
+                  51.3
+                ]
+              ],
+              [
+                [
+                  11.3,
+                  51.0
+                ],
+                [
+                  12.3,
+                  51.1
+                ],
+                [
+                  13.1,
+                  51.2
+                ],
+                [
+                  13.6,
+                  51.5
+                ],
+                [
+                  13.6,
+                  51.8
+                ],
+                [
+                  12.6,
+                  51.85
+                ],
+                [
+                  11.7,
+                  52.2
+                ],
+                [
+                  11.1,
+                  52.0
+                ]
+              ],
+              [
+                [
+                  10.6,
+                  51.75
+                ],
+                [
+                  10.7,
+                  52.3
+                ],
+                [
+                  11.1,
+                  52.9
+                ],
+                [
+                  11.8,
+                  53.0
+                ],
+                [
+                  11.7,
+                  52.2
+                ],
+                [
+                  11.4,
+                  51.8
+                ],
+                [
+                  11.0,
+                  51.6
+                ]
+              ],
+              [
+                [
+                  6.9,
+                  49.1
+                ],
+                [
+                  6.4,
+                  49.5
+                ],
+                [
+                  6.2,
+                  50.1
+                ],
+                [
+                  6.0,
+                  50.7
+                ],
+                [
+                  6.2,
+                  51.2
+                ],
+                [
+                  6.1,
+                  51.8
+                ],
+                [
+                  6.9,
+                  52.1
+                ],
+                [
+                  7.7,
+                  52.4
+                ],
+                [
+                  8.5,
+                  52.4
+                ],
+                [
+                  9.2,
+                  52.3
+                ],
+                [
+                  9.3,
+                  51.7
+                ],
+                [
+                  8.8,
+                  51.3
+                ],
+                [
+                  8.3,
+                  51.0
+                ],
+                [
+                  7.9,
+                  50.6
+                ],
+                [
+                  7.7,
+                  50.3
+                ],
+                [
+                  7.9,
+                  49.95
+                ],
+                [
+                  7.4,
+                  49.7
+                ],
+                [
+                  7.2,
+                  49.3
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Berlin"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Frederick William II"
+          },
+          {
+            "from": 2,
+            "text": "Frederick William III"
+          }
+        ],
+        "role": "Kingdom of Prussia",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Loses about half its land at Tilsit, 1807"
+          },
+          {
+            "from": 22,
+            "text": "Gains Posen, northern Saxony, the Rhineland and Westphalia at Vienna, 1815"
+          }
+        ]
+      },
+      {
+        "id": "russia",
+        "name": "Russian Empire",
+        "color": "#2f7d5a",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "Russian Empire",
+          "at": [
+            31.5,
+            52.0
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  21.0,
+                  55.7
+                ],
+                [
+                  21.3,
+                  56.6
+                ],
+                [
+                  21.8,
+                  57.4
+                ],
+                [
+                  22.6,
+                  58.3
+                ],
+                [
+                  46.0,
+                  58.3
+                ],
+                [
+                  46.0,
+                  41.0
+                ],
+                [
+                  45.0,
+                  41.2
+                ],
+                [
+                  43.5,
+                  41.3
+                ],
+                [
+                  42.0,
+                  42.2
+                ],
+                [
+                  40.5,
+                  43.1
+                ],
+                [
+                  39.5,
+                  43.6
+                ],
+                [
+                  37.8,
+                  44.7
+                ],
+                [
+                  37.0,
+                  45.3
+                ],
+                [
+                  36.6,
+                  45.4
+                ],
+                [
+                  35.5,
+                  45.1
+                ],
+                [
+                  34.5,
+                  44.55
+                ],
+                [
+                  33.5,
+                  44.6
+                ],
+                [
+                  32.5,
+                  45.35
+                ],
+                [
+                  33.4,
+                  46.1
+                ],
+                [
+                  32.0,
+                  46.5
+                ],
+                [
+                  31.0,
+                  46.6
+                ],
+                [
+                  30.2,
+                  46.4
+                ],
+                [
+                  29.6,
+                  46.9
+                ],
+                [
+                  29.0,
+                  47.8
+                ],
+                [
+                  28.2,
+                  48.2
+                ],
+                [
+                  26.7,
+                  48.3
+                ],
+                [
+                  26.6,
+                  48.2
+                ],
+                [
+                  26.0,
+                  49.3
+                ],
+                [
+                  25.5,
+                  50.2
+                ],
+                [
+                  24.2,
+                  50.6
+                ],
+                [
+                  23.6,
+                  50.5
+                ],
+                [
+                  23.6,
+                  51.5
+                ],
+                [
+                  23.6,
+                  52.7
+                ],
+                [
+                  23.5,
+                  53.5
+                ],
+                [
+                  22.8,
+                  54.4
+                ],
+                [
+                  22.5,
+                  54.95
+                ],
+                [
+                  21.9,
+                  55.2
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                10,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  22.7,
+                  53.8
+                ],
+                [
+                  23.5,
+                  53.6
+                ],
+                [
+                  23.6,
+                  52.7
+                ],
+                [
+                  22.8,
+                  52.4
+                ],
+                [
+                  22.3,
+                  52.7
+                ],
+                [
+                  22.4,
+                  53.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                14,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.7,
+                  48.3
+                ],
+                [
+                  28.2,
+                  48.2
+                ],
+                [
+                  29.0,
+                  47.8
+                ],
+                [
+                  29.6,
+                  46.9
+                ],
+                [
+                  30.2,
+                  46.4
+                ],
+                [
+                  29.8,
+                  45.6
+                ],
+                [
+                  29.6,
+                  45.2
+                ],
+                [
+                  28.4,
+                  45.4
+                ],
+                [
+                  28.2,
+                  46.2
+                ],
+                [
+                  27.7,
+                  47.1
+                ],
+                [
+                  27.1,
+                  47.7
+                ],
+                [
+                  26.9,
+                  48.1
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                22,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  16.8,
+                  52.0
+                ],
+                [
+                  16.6,
+                  52.6
+                ],
+                [
+                  17.0,
+                  53.1
+                ],
+                [
+                  18.0,
+                  53.3
+                ],
+                [
+                  19.0,
+                  53.2
+                ],
+                [
+                  20.4,
+                  53.0
+                ],
+                [
+                  21.6,
+                  52.9
+                ],
+                [
+                  22.8,
+                  52.7
+                ],
+                [
+                  23.5,
+                  52.0
+                ],
+                [
+                  23.6,
+                  51.0
+                ],
+                [
+                  23.6,
+                  50.5
+                ],
+                [
+                  22.6,
+                  50.4
+                ],
+                [
+                  21.5,
+                  50.2
+                ],
+                [
+                  19.9,
+                  49.95
+                ],
+                [
+                  19.2,
+                  49.95
+                ],
+                [
+                  18.9,
+                  50.4
+                ],
+                [
+                  18.5,
+                  50.9
+                ],
+                [
+                  17.6,
+                  51.3
+                ],
+                [
+                  16.9,
+                  51.7
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "St Petersburg"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Catherine II"
+          },
+          {
+            "from": 2,
+            "text": "Paul I"
+          },
+          {
+            "from": 5,
+            "text": "Alexander I"
+          }
+        ],
+        "role": "Russian Empire",
+        "ties": [
+          {
+            "from": 10,
+            "text": "Gains Białystok from Prussia at Tilsit, 1807"
+          },
+          {
+            "from": 14,
+            "text": "Gains Bessarabia from the Ottomans, 1812"
+          },
+          {
+            "from": 22,
+            "text": "Gains most of Poland at Vienna, 1815"
+          }
+        ]
+      },
+      {
+        "id": "ottoman",
+        "name": "Ottoman Empire",
+        "color": "#8a6bd1",
+        "active": [
+          [
+            0,
+            24
+          ]
+        ],
+        "label": {
+          "text": "Ottoman Empire",
+          "at": [
+            34.0,
+            39.2
+          ]
+        },
+        "pieces": [
+          {
+            "steps": [
+              [
+                0,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  29.7,
+                  45.2
+                ],
+                [
+                  28.7,
+                  44.2
+                ],
+                [
+                  28.0,
+                  43.2
+                ],
+                [
+                  27.6,
+                  42.4
+                ],
+                [
+                  28.1,
+                  41.9
+                ],
+                [
+                  29.0,
+                  41.25
+                ],
+                [
+                  30.5,
+                  41.15
+                ],
+                [
+                  33.0,
+                  42.0
+                ],
+                [
+                  35.1,
+                  42.05
+                ],
+                [
+                  36.3,
+                  41.3
+                ],
+                [
+                  38.0,
+                  41.0
+                ],
+                [
+                  39.7,
+                  41.05
+                ],
+                [
+                  41.6,
+                  41.6
+                ],
+                [
+                  43.2,
+                  41.2
+                ],
+                [
+                  43.6,
+                  40.2
+                ],
+                [
+                  44.3,
+                  39.7
+                ],
+                [
+                  44.3,
+                  38.4
+                ],
+                [
+                  44.2,
+                  37.3
+                ],
+                [
+                  42.0,
+                  37.1
+                ],
+                [
+                  40.0,
+                  36.4
+                ],
+                [
+                  39.2,
+                  35.0
+                ],
+                [
+                  38.0,
+                  33.5
+                ],
+                [
+                  37.2,
+                  32.0
+                ],
+                [
+                  36.0,
+                  30.0
+                ],
+                [
+                  34.9,
+                  29.5
+                ],
+                [
+                  34.3,
+                  28.0
+                ],
+                [
+                  33.5,
+                  28.0
+                ],
+                [
+                  32.6,
+                  29.9
+                ],
+                [
+                  32.3,
+                  31.2
+                ],
+                [
+                  34.2,
+                  31.3
+                ],
+                [
+                  34.7,
+                  32.0
+                ],
+                [
+                  35.1,
+                  33.0
+                ],
+                [
+                  35.5,
+                  33.9
+                ],
+                [
+                  35.9,
+                  35.0
+                ],
+                [
+                  36.0,
+                  36.0
+                ],
+                [
+                  36.1,
+                  36.6
+                ],
+                [
+                  34.6,
+                  36.7
+                ],
+                [
+                  32.8,
+                  36.1
+                ],
+                [
+                  30.7,
+                  36.8
+                ],
+                [
+                  29.0,
+                  36.6
+                ],
+                [
+                  27.3,
+                  36.9
+                ],
+                [
+                  27.0,
+                  38.3
+                ],
+                [
+                  26.3,
+                  39.3
+                ],
+                [
+                  26.2,
+                  40.0
+                ],
+                [
+                  26.0,
+                  40.8
+                ],
+                [
+                  24.4,
+                  40.9
+                ],
+                [
+                  23.0,
+                  40.6
+                ],
+                [
+                  22.5,
+                  40.1
+                ],
+                [
+                  22.95,
+                  39.35
+                ],
+                [
+                  23.7,
+                  38.0
+                ],
+                [
+                  23.0,
+                  37.0
+                ],
+                [
+                  22.5,
+                  36.5
+                ],
+                [
+                  21.5,
+                  37.0
+                ],
+                [
+                  21.7,
+                  38.25
+                ],
+                [
+                  20.7,
+                  39.0
+                ],
+                [
+                  19.45,
+                  40.45
+                ],
+                [
+                  19.45,
+                  41.3
+                ],
+                [
+                  19.1,
+                  42.0
+                ],
+                [
+                  18.6,
+                  42.4
+                ],
+                [
+                  17.5,
+                  43.4
+                ],
+                [
+                  16.2,
+                  44.0
+                ],
+                [
+                  15.8,
+                  44.7
+                ],
+                [
+                  16.5,
+                  45.2
+                ],
+                [
+                  17.6,
+                  45.1
+                ],
+                [
+                  19.0,
+                  44.9
+                ],
+                [
+                  20.3,
+                  44.85
+                ],
+                [
+                  21.4,
+                  44.8
+                ],
+                [
+                  22.7,
+                  44.7
+                ],
+                [
+                  22.8,
+                  45.2
+                ],
+                [
+                  24.0,
+                  45.5
+                ],
+                [
+                  25.7,
+                  45.4
+                ],
+                [
+                  26.4,
+                  45.9
+                ],
+                [
+                  26.3,
+                  46.8
+                ],
+                [
+                  26.6,
+                  47.9
+                ],
+                [
+                  26.9,
+                  48.25
+                ],
+                [
+                  27.1,
+                  47.7
+                ],
+                [
+                  27.7,
+                  47.1
+                ],
+                [
+                  28.2,
+                  46.2
+                ],
+                [
+                  28.4,
+                  45.4
+                ],
+                [
+                  28.9,
+                  45.3
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                1
+              ],
+              [
+                5,
+                24
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  29.6,
+                  31.0
+                ],
+                [
+                  30.2,
+                  31.5
+                ],
+                [
+                  31.2,
+                  31.6
+                ],
+                [
+                  32.3,
+                  31.3
+                ],
+                [
+                  32.6,
+                  30.8
+                ],
+                [
+                  32.5,
+                  30.0
+                ],
+                [
+                  32.5,
+                  29.2
+                ],
+                [
+                  32.7,
+                  28.0
+                ],
+                [
+                  31.7,
+                  28.0
+                ],
+                [
+                  30.9,
+                  28.8
+                ],
+                [
+                  30.8,
+                  29.6
+                ],
+                [
+                  30.2,
+                  30.0
+                ],
+                [
+                  29.7,
+                  30.5
+                ]
+              ]
+            ]
+          },
+          {
+            "steps": [
+              [
+                0,
+                13
+              ]
+            ],
+            "areas": [
+              [
+                [
+                  26.7,
+                  48.3
+                ],
+                [
+                  28.2,
+                  48.2
+                ],
+                [
+                  29.0,
+                  47.8
+                ],
+                [
+                  29.6,
+                  46.9
+                ],
+                [
+                  30.2,
+                  46.4
+                ],
+                [
+                  29.8,
+                  45.6
+                ],
+                [
+                  29.6,
+                  45.2
+                ],
+                [
+                  28.4,
+                  45.4
+                ],
+                [
+                  28.2,
+                  46.2
+                ],
+                [
+                  27.7,
+                  47.1
+                ],
+                [
+                  27.1,
+                  47.7
+                ],
+                [
+                  26.9,
+                  48.1
+                ]
+              ]
+            ]
+          }
+        ],
+        "facts": {
+          "Capital": "Constantinople"
+        },
+        "rulers": [
+          {
+            "from": 0,
+            "text": "Selim III"
+          },
+          {
+            "from": 11,
+            "text": "Mahmud II"
+          }
+        ],
+        "role": "Ottoman Empire",
+        "ties": [
+          {
+            "from": 2,
+            "text": "Egypt under French occupation, 1798–1801"
+          },
+          {
+            "from": 14,
+            "text": "Cedes Bessarabia to Russia, 1812"
+          }
+        ]
+      }
+    ]
+  },
+  "people": {
+    "heading": "People",
+    "items": [
+      {
+        "id": "napoleon",
+        "name": "Napoleon Bonaparte",
+        "native": "Napoléon Bonaparte",
+        "lang": "fr",
+        "life": "1769–1821",
+        "role": "First Consul, then Emperor of the French",
+        "steps": [
+          0,
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          14,
+          19,
+          20,
+          21,
+          23
+        ],
+        "text": "Born at Ajaccio in Corsica a year after France bought the island, he trained as an artillery officer in France. The Revolution opened the way to his rise: general at 24, First Consul at 30, emperor at 35. He ruled France until 1814 and again for the Hundred Days in 1815, and died in exile on St Helena."
+      },
+      {
+        "id": "josephine",
+        "name": "Joséphine de Beauharnais",
+        "native": "Joséphine de Beauharnais",
+        "lang": "fr",
+        "life": "1763–1814",
+        "role": "Empress of the French",
+        "steps": [
+          1,
+          6
+        ],
+        "text": "Born on Martinique in the Caribbean, she was the widow of a general guillotined in 1794 when she married Bonaparte in 1796. She was crowned empress beside him in 1804. Because they had no children, he divorced her in 1809, though she kept her title. She died at her house of Malmaison, outside Paris, in May 1814."
+      },
+      {
+        "id": "nelson",
+        "name": "Horatio Nelson",
+        "life": "1758–1805",
+        "role": "British admiral",
+        "steps": [
+          2,
+          7
+        ],
+        "text": "A Norfolk parson’s son who went to sea at 12. He lost the sight of one eye at Calvi in Corsica and his right arm at Tenerife. He destroyed the French fleet at the Nile in 1798 and won at Copenhagen in 1801. Killed at Trafalgar, he was given a state funeral; his column stands in Trafalgar Square."
+      },
+      {
+        "id": "wellington",
+        "name": "Arthur Wellesley, Duke of Wellington",
+        "life": "1769–1852",
+        "role": "British general",
+        "steps": [
+          11,
+          13,
+          21
+        ],
+        "text": "Born in Dublin in the same year as Napoleon. He made his name in India, at Seringapatam against Tipu Sultan in 1799 and against the Marathas at Assaye in 1803. He led the British in Portugal and Spain from 1808 to 1814 and beat Napoleon at Waterloo. He was later prime minister from 1828 to 1830."
+      },
+      {
+        "id": "alexander-i",
+        "name": "Alexander I",
+        "native": "Александр I",
+        "lang": "ru",
+        "life": "1777–1825",
+        "role": "Emperor of Russia",
+        "steps": [
+          8,
+          10,
+          14,
+          16,
+          22
+        ],
+        "text": "Tsar from 1801, after his father Paul was murdered by officers with his knowledge. Beaten at Austerlitz and Friedland, he became Napoleon’s ally at Tilsit, then broke with him over trade. He refused to make peace after Moscow fell and rode into Paris with the allies in 1814. At Vienna he took most of Poland."
+      },
+      {
+        "id": "kutuzov",
+        "name": "Mikhail Kutuzov",
+        "native": "Михаил Кутузов",
+        "lang": "ru",
+        "life": "1745–1813",
+        "role": "Russian field marshal",
+        "steps": [
+          8,
+          15,
+          16,
+          17
+        ],
+        "text": "An old soldier who had lost an eye fighting the Ottomans. He commanded the Russian and Austrian army beaten at Austerlitz. Given command in August 1812, he fought at Borodino, gave up Moscow to save the army, then shadowed and harried the French retreat. He died in Silesia in April 1813 as the war moved west."
+      },
+      {
+        "id": "blucher",
+        "name": "Gebhard Leberecht von Blücher",
+        "native": "Gebhard Leberecht von Blücher",
+        "lang": "de",
+        "life": "1742–1819",
+        "role": "Prussian field marshal",
+        "steps": [
+          18,
+          21
+        ],
+        "text": "A cavalry officer who had served Sweden before Prussia, he surrendered after Jena in 1806. Back in command in 1813, over 70, he fought at Leipzig and drove into France. His soldiers called him Marshal Forwards. Beaten at Ligny in 1815, he was ridden over by cavalry, yet brought his army to Waterloo that evening."
+      },
+      {
+        "id": "metternich",
+        "name": "Klemens von Metternich",
+        "native": "Klemens von Metternich",
+        "lang": "de",
+        "life": "1773–1859",
+        "role": "Austrian foreign minister",
+        "steps": [
+          12,
+          18,
+          22
+        ],
+        "text": "Austria’s ambassador in Paris, then foreign minister from 1809. He arranged Marie-Louise’s marriage to Napoleon and kept Austria out of the war until 1813, when he took it over to the allies. He chaired the Congress of Vienna and for over 30 years worked to hold back revolution, until the uprisings of 1848 drove him out."
+      }
+    ]
+  }
+}
