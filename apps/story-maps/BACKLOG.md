@@ -25,6 +25,45 @@ These need a new map first, which is its own piece of work and its own PR:
 - The Khmer, Srivijaya and Majapahit (a Southeast Asia map)
 - Mali, Ghana and Songhai (a West Africa map)
 
+### Wars and Campaigns
+
+A war goes here when it is the subject of its story; a battle that is one chapter of a dynasty stays in that dynasty's story. In this order:
+
+1. The Three Battles of Panipat, 1526, 1556 and 1761 (`south-asia`)
+2. The Napoleonic Wars (`europe` or `mediterranean`; links the waiting `napoleonic-france` entry)
+3. The Crusades (`mediterranean` or `near-east`)
+4. The Seven Years' War (`world`: Plassey, Quebec, Europe)
+5. The Boer Wars (needs a southern Africa map first; its own PR. The map also serves the Zulu War and Great Zimbabwe)
+
+Then, on maps that already exist (one session each):
+
+- The Anglo-Mysore Wars (`south-asia`; check the overlap with Hyder Ali and Tipu Sultan first)
+- The Anglo-Sikh Wars (`south-asia`)
+- The Revolt of 1857 (`south-asia`; partly told in Company, Crown and Freedom)
+- The Indo-Pakistani Wars, 1947, 1965 and 1971 (`south-asia`)
+- The Peloponnesian War (`mediterranean`)
+- The Punic Wars and Hannibal (`mediterranean`; overlaps The Roman Republic)
+- The Hundred Years' War (`europe`)
+- The Thirty Years' War (`europe`)
+- The Crimean War (`mediterranean`)
+- The Spanish Civil War (`europe`)
+- The Arab–Israeli Wars (`near-east`; sensitive, source carefully)
+- The Iran–Iraq War (`near-east`)
+- The Gulf Wars, 1991 and 2003 (`near-east`)
+- The Cold War (`world`)
+
+And once their map exists:
+
+- The Vietnam War and the French Indochina War (Southeast Asia map)
+- The Korean War; the Opium Wars, Sino-Japanese Wars and Chinese Civil War (East Asia map)
+- The Zulu War and the Scramble for Africa (southern Africa or Africa map)
+- The American War of Independence and the American Civil War; the Mexican–American War (a North America map)
+- The Spanish conquest of the Inca (Andes map)
+- The Falklands War (a South Atlantic map, or try `world`)
+- The Russian Civil War and the Soviet–Afghan War (a Russia and Central Asia map)
+
+The Mongol conquests are The Mongol Empire, above.
+
 ### Exploring the Solar System (Universe)
 
 A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. In this order:
