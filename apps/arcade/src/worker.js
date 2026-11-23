@@ -12,7 +12,10 @@
 //
 // Wildcard online tables (one WildcardTable Durable Object per room code):
 //   POST /api/wildcard/rooms             -> { code } for a new, empty table;
-//                                           429 if this IP is over the limit
+//                                           429 { error } if this IP is over
+//                                           the per-minute ('busy') or daily
+//                                           ('daily') limit, or the site's
+//                                           daily cap is used up ('full_today')
 //   GET  /api/wildcard/rooms/<code>/ws   -> WebSocket to that table (404 if
 //                                           there is no such table)
 // Both need the request's Origin to be this site's own.
@@ -20,6 +23,8 @@
 // Anything else falls through to the static assets.
 
 export { WildcardTable } from './wildcard-table.js';
+export { WildcardLimiter } from './wildcard-limiter.js';
+import { LIMITER_NAME } from './wildcard-limiter.js';
 
 const COUNTS_KEY = 'counts';
 
@@ -114,6 +119,11 @@ async function handleRoomCreate(request, env) {
   if (!(await env.ROOM_LIMITER.limit({ key: ip })).success) {
     return json({ error: 'busy' }, 429, { 'retry-after': '60' });
   }
+  // The exact daily counts (src/wildcard-limiter.js). The per-minute limit
+  // above runs first, so a burst never reaches the one limiter object.
+  const limiter = env.WILDCARD_LIMITER.get(env.WILDCARD_LIMITER.idFromName(LIMITER_NAME));
+  const day = await (await limiter.fetch('https://limiter/admit', { method: 'POST', headers: { 'x-ip': ip } })).json();
+  if (!day.ok) return json({ error: day.error }, 429, { 'retry-after': String(day.retryAfter) });
   // A clash with a live table is unlikely (27^4 codes); try a few.
   for (let i = 0; i < 5; i++) {
     const code = newCode();

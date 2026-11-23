@@ -29,18 +29,25 @@
       "namespace_id": "1001",
       "simple": { "limit": 20, "period": 60 }
     },
-    // Wildcard: new online tables per IP (POST /api/wildcard/rooms). A
-    // per-day limit comes in a later slice; this stops bursts.
+    // Wildcard: new online tables per IP (POST /api/wildcard/rooms). This
+    // stops bursts; the daily limits are in the WildcardLimiter object.
     {
       "name": "ROOM_LIMITER",
       "namespace_id": "1002",
       "simple": { "limit": 3, "period": 60 }
     }
   ],
-  // Wildcard online tables: one Durable Object per room code (src/wildcard-table.js).
+  // Wildcard online tables: one Durable Object per room code (src/wildcard-table.js),
+  // and one that counts new tables per day (src/wildcard-limiter.js).
   "durable_objects": {
-    "bindings": [{ "name": "WILDCARD_TABLE", "class_name": "WildcardTable" }]
+    "bindings": [
+      { "name": "WILDCARD_TABLE", "class_name": "WildcardTable" },
+      { "name": "WILDCARD_LIMITER", "class_name": "WildcardLimiter" }
+    ]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["WildcardTable"] }],
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["WildcardTable"] },
+    { "tag": "v2", "new_sqlite_classes": ["WildcardLimiter"] }
+  ],
   "routes": [{ "pattern": "arcade.krishnabuilds.dev", "custom_domain": true }]
 }

@@ -17,7 +17,7 @@ squash merge; deploys run from GitHub Actions on merge to `main`.
 ## Commands
 
 There's no build step — it's plain HTML/CSS/JS. The test suites are
-Tennis's and Wildcard's engine tests and Wildcard's online room tests
+Tennis's and Wildcard's engine tests and Wildcard's online room and limiter tests
 (`pnpm --filter @krishnabuilds/arcade test`, or `node --test` on
 `scripts/*.test.*` from `apps/arcade`), which CI runs.
 Online Wildcard needs the Worker: `pnpm exec wrangler dev` from
@@ -66,6 +66,7 @@ games/wildcard/engine.js      — Wildcard's pure rules, seeded deal and bots, t
 src/worker.js                 — the Worker: static assets, play counts, Wildcard table routes
 src/wildcard-room.js          — Wildcard online room rules (seats, host, bots, who is sent what), tested by scripts/wildcard-room.test.mjs
 src/wildcard-table.js         — the WildcardTable Durable Object around wildcard-room.js (WebSockets, storage, alarms)
+src/wildcard-limiter.js       — the WildcardLimiter Durable Object: new tables per IP per day and site-wide, tested by scripts/wildcard-limiter.test.mjs
 games/<slug>/index.html       — next game goes here
 ```
 
@@ -555,10 +556,11 @@ the name, logo or look of any commercial card game.
   top, Rio right), via `P(seat)`.
 - **Storage** (`localStorage`, all guarded): `wildcardTheme`, `wildcardBots`,
   `wildcardLevel`, `wildcardMuted`, `wildcardStats` (`{games, wins}`),
-  `wildcardHowtoSeen`, `wildcardName`.
+  `wildcardHowtoSeen`, `wildcardName`, `wildcardTable` (`{code, id}`: your
+  id at the last table you joined, so you get your seat back).
 - **Test handle:** `window.wildcard` (`state`, `busy`, `online`, `E`,
   `newGame`, `step`, `setTheme`). Nothing in the game uses it.
-- **Online play** (1.76.0; decision in `docs/decisions.md`, 2026-11-23;
+- **Online play** (1.76.0, limits and reconnect 1.77.0; decision in `docs/decisions.md`, 2026-11-23;
   what's left in `BACKLOG.md`). "Play friends online" on the title screen
   starts a table or joins one by its 4-character code (no vowels or
   look-alikes), and `?room=CODE` links open the join panel with the code
@@ -566,30 +568,51 @@ the name, logo or look of any commercial card game.
   bot skill, and bots fill empty seats when they deal (it takes two people;
   solo play stays offline).
   - **Worker** (`src/worker.js`): `POST /api/wildcard/rooms` makes a table
-    and returns its code (3 per IP per minute via `ROOM_LIMITER`);
+    and returns its code. Limits, in order: 3 per IP per minute
+    (`ROOM_LIMITER`, error `busy`), then `WildcardLimiter`
+    (`src/wildcard-limiter.js`, one object named `global`): 5 per IP per
+    UTC day (`daily`) and 100 for the whole site (`full_today`), 429 with
+    `retry-after` to midnight. IPs are hashed with a salt made fresh each
+    day and dropped with that day's counts; no IP is stored or logged.
+    Joining is never limited;
     `GET /api/wildcard/rooms/<code>/ws` is the table's WebSocket. Both need
     an `Origin` equal to the site's own (wrangler dev rewrites both to the
     route's host, so this works locally too).
   - **Table** (`src/wildcard-table.js`, Durable Object `WildcardTable`,
     SQLite-backed, WebSocket Hibernation): saves the room after every
-    change; one alarm runs the next bot move (900 ms) or deletes the table
+    change; one alarm runs whatever `R.dueAt` says is next (a bot move
+    900 ms after the last, or a turn running out) or deletes the table
     after 10 minutes with nobody connected or 2 hours without a change.
+    Each socket may send 30 messages per 10 s (more closes it with 4429),
+    and a table takes 12 sockets at most.
   - **Room rules** (`src/wildcard-room.js`, pure): the seat always comes
     from the connection, never the message; players get only `viewFor`
     their seat and `eventsFor` their seat (other players' drawn cards
-    become nulls). Leaving the lobby frees the seat (host passes on);
-    leaving a game hands the seat to a bot under the same name. There is no
-    reconnect yet: a dropped connection is a leave.
+    become nulls). Leaving the lobby frees the seat (host passes on to
+    someone connected). In a game the seat stays yours: a dropped
+    connection marks it `off` (shown as "away"), and a bot plays it
+    (`auto`, "bot playing") once you've been away `GRACE_MS` (20 s) on
+    your turn, or at once if you left on purpose (the page closes with
+    1000 `left`). A connected player who sits on their turn for `TURN_MS`
+    (45 s) gets a bot too. `hello` with the same id, `back`, or playing a
+    card yourself hands the seat back and restarts your clock. Nothing is
+    due while nobody is connected, so bots don't play to an empty room.
   - **Messages**: client `hello {id, name}`, `config {size | level}`,
-    `start` (also deals again after a game), `move {move}`; server `room`
-    (seats, phase `lobby` / `playing` / `over`, `hostSeat`), `deal {view}`,
-    `update {events, view}`, `error {error}`.
+    `start` (also deals again after a game), `move {move}`, `back`; server
+    `room` (seats with `bot` / `away` / `auto`, phase `lobby` / `playing`
+    / `over`, `hostSeat`), `deal {view, resume}` (on a rejoin it comes
+    before `room`), `update {events, view}`, `error {error}`.
   - **Page**: `fromView` turns a view into an engine-shaped state rotated
     so you are seat 0 (other hands and the deck are placeholders), so
     `render()` and `animate()` work unchanged. `step()` sends your move
     instead of applying it; server messages are handled one at a time in
     order (`online.queue`). Online games don't count towards
-    `wildcardStats`. `wildcardName` stores your name.
+    `wildcardStats`. `wildcardName` stores your name. A lost connection
+    (any close but 4xxx, which the server uses for gone / replaced /
+    refused / too many messages) is retried with the same id over about a
+    minute (`RETRY_MS`), showing "Reconnecting…"; `pageshow` from the
+    back/forward cache reconnects too. `#backBtn` ("I'm back") replaces
+    the turn pill while a bot has your seat.
 
 ## Mobile-first constraints learned the hard way
 
