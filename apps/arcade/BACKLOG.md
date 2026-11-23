@@ -2,6 +2,19 @@
 
 Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
 
+- [ ] Wildcard online, room codes only, one PR per slice (notes in CLAUDE.md,
+      "Wildcard notes"; decision in `docs/decisions.md`, 2026-11-23):
+  - [x] Slice 1: rules engine with tests, single player vs 1, 2 or 3 bots
+        (Easy / Hard), light and dark themes (1.75.0)
+  - [ ] Slice 2: a Durable Object table in the Arcade Worker running
+        `engine.js`; create a room, share a 4-character code, 2-4 people,
+        bots fill empty seats; each player is sent only `viewFor` their seat
+  - [ ] Slice 3: limits and resilience: 5 new rooms per IP per day for
+        everyone (hashed with a daily salt, never stored raw), a site-wide
+        daily cap, idle rooms expire, reconnect to your seat, a bot takes
+        over a seat that goes quiet
+  - [ ] Slice 4: polish: sound and animation pass, "your turn" cue
+
 - [x] Dojo Duel, built in small steps, one PR each (notes for maintainers in
       CLAUDE.md, "Dojo Duel notes"):
   - [x] Step 1: arena and movement

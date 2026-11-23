@@ -1,6 +1,6 @@
 # Krishnabuilds Arcade
 
-A small games hub at `arcade.krishnabuilds.dev`: 36 quick browser games,
+A small games hub at `arcade.krishnabuilds.dev`: 37 quick browser games,
 each one a single self-contained HTML file under `games/<slug>/`. Static
 site, no build step. The only backend is a small Cloudflare Worker
 (`src/worker.js`) for the "Played N times" counter.
@@ -52,13 +52,14 @@ array is the source of truth. As of 1.67.0, by category, oldest first:
 - **Lexigrid** (`games/lexigrid/`, 2026-08-03): One word a day. Six guesses to find it.
 - **Word Circle** (`games/word-circle/`, 2026-08-04): Swipe the circle, spell every word.
 
-**Strategy** (5)
+**Strategy** (6)
 
 - **Plot Defender** (`games/plot-defender/`, 2026-07-09): Place, match, and upgrade defences to hold the veg patch through 10 waves. Easy or Hard.
 - **Losing the Plot** (`games/losing-the-plot/`, 2026-07-11): Grow it, sell it, restock — run a real farm economy. Easy or Hard.
 - **Trebuchet** (`games/trebuchet/`, 2026-07-11): Archers, cannons, catapults and trebuchets — build the right defence for each threat.
 - **Salvo** (`games/salvo/`, 2026-07-11): Freely rearrange your fleet, then the enemy board takes over the screen. A CPU that actually targets back.
 - **Castle Hold** (`games/castle-hold/`, 2026-07-12): A siege you never leave the walls for. Place archers, hold the gate, don’t let a single enemy through.
+- **Wildcard** (`games/wildcard/`, 2026-11-23): Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.
 
 **Sports** (3)
 

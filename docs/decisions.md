@@ -412,3 +412,11 @@ Rome (the Republic, the Empire and the Holy Roman Empire) needs Britain, Iberia,
 ## 2026-11-23 — Story Maps: a Wars and Campaigns subject
 
 Wars get their own subject on the Humankind shelf, after Chronicles: Wars and Campaigns (`wars`). A war goes there when it is the subject of its story (The Kalinga War, the two World Wars); a battle that is one chapter of a dynasty (the three battles of Panipat, in The Mughal Empire and The Marathas) stays in that dynasty's story rather than being copied out. The Kalinga War moves from Chronicles; story pages live at `/<id>/` whatever their subject, so its address and its reads and likes are unchanged. No collections yet: Ancient and Modern can be split out once there are enough stories to need it.
+
+## 2026-11-23 — Arcade: Wildcard, and how it goes online
+
+Wildcard is a Crazy Eights family card game with our own name and card art, not a copy of a commercial game. It ships first as single player against 1, 2 or 3 bots (Arcade 1.75.0), and that mode stays offline and unlimited once online tables arrive. Its rules are a pure `engine.js`, like Tennis's, so the same file can run in the browser and in a Worker.
+
+Online play follows Stickyard's pattern: one Durable Object per table, WebSocket Hibernation, the server as the only authority. Unlike Stickyard, players have hidden hands, so the server deals and shuffles and sends each player only `viewFor` their seat. It goes in the existing Arcade Worker rather than a new app.
+
+Tables are joined by room code only; there is no public lobby, which is simpler and safer. There is no passcode either: everyone, the owner included, gets the same limit of 5 new rooms per IP per day, and joining is unlimited. The count lives in one small Durable Object, as Stickyard's `Limiter` does, because a daily count needs to be exact (KV isn't, and its free tier allows only 1,000 writes a day), and the Rate Limiting binding only works per minute. IPs are hashed with a daily salt and never stored or logged raw. A site-wide daily cap and idle-room expiry keep it inside the free tier if someone gets round the per-IP limit with a VPN. People sharing one IP (home Wi-Fi, mobile networks) share the allowance; that is accepted.

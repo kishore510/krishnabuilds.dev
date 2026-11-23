@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wildcard · Arcade · krishnabuilds</title>
+<meta name="description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.">
+<link rel="canonical" href="https://arcade.krishnabuilds.dev/games/wildcard/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="krishnabuilds">
+<meta property="og:title" content="Wildcard · Arcade · krishnabuilds">
+<meta property="og:description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.">
+<meta property="og:url" content="https://arcade.krishnabuilds.dev/games/wildcard/">
+<meta property="og:image" content="https://krishnabuilds.dev/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Wildcard","description":"Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.","url":"https://arcade.krishnabuilds.dev/games/wildcard/","gamePlatform":"Web browser","playMode":"SinglePlayer","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"Arcade","url":"https://arcade.krishnabuilds.dev/"}}</script>
+<script>
+  // Apply a saved theme before first paint so there is no flash.
+  try { const t = localStorage.getItem('wildcardTheme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+<style>
+  /* ---------- theme tokens ----------
+     Card colours are the same in both themes. Every number or symbol on a
+     card is dark ink on white (the centre gem) or white on dark ink (the
+     corner chips): 7.8:1 or better for all four colours. */
+  :root {
+    color-scheme: light;
+    --coral: #ff5a5f;   --coral-d: #c9343a;   --coral-ink: #a3161c;
+    --saffron: #ffb703; --saffron-d: #d98a00; --saffron-ink: #7a4100;
+    --jade: #22b8a0;    --jade-d: #118571;    --jade-ink: #075548;
+    --indigo: #5b6cff;  --indigo-d: #3a45c9;  --indigo-ink: #2731a8;
+    --wild-face: #161e30;
+
+    --page: #0a0f1a; /* the page around the table stays dark in both themes, like the shared nav bar and guide link */
+    --felt-a: #f6fbf9; --felt-b: #d9ebe4; --felt-c: #c3dbd2;
+    --text: #122030; --muted: #4b5b6c;
+    --chip: rgba(10, 30, 50, 0.06); --chip-b: rgba(10, 30, 50, 0.14);
+    --panel: #ffffff; --panel-2: #eef2f6; --panel-b: rgba(10, 30, 50, 0.12);
+    --scrim: rgba(230, 236, 242, 0.72);
+    --shadow: rgba(20, 40, 60, 0.28);
+    --card-edge: rgba(10, 30, 50, 0.16);
+    --dim: saturate(0.55) brightness(0.9);
+    --danger: #b8282e; --danger-2: #9a1f25;
+    --go: #22b8a0; --go-2: #3bd4b9; --go-ink: #04201b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --felt-a: #17395a; --felt-b: #0d2033; --felt-c: #060d16;
+      --text: #eef2f5; --muted: #a3b0c2;
+      --chip: rgba(255, 255, 255, 0.07); --chip-b: rgba(255, 255, 255, 0.13);
+      --panel: #121a2a; --panel-2: #1a2640; --panel-b: rgba(255, 255, 255, 0.1);
+      --scrim: rgba(6, 10, 18, 0.72);
+      --shadow: rgba(0, 0, 0, 0.6);
+      --card-edge: rgba(0, 0, 0, 0);
+      --dim: saturate(0.6) brightness(0.74);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --felt-a: #17395a; --felt-b: #0d2033; --felt-c: #060d16;
+    --text: #eef2f5; --muted: #a3b0c2;
+    --chip: rgba(255, 255, 255, 0.07); --chip-b: rgba(255, 255, 255, 0.13);
+    --panel: #121a2a; --panel-2: #1a2640; --panel-b: rgba(255, 255, 255, 0.1);
+    --scrim: rgba(6, 10, 18, 0.72);
+    --shadow: rgba(0, 0, 0, 0.6);
+    --card-edge: rgba(0, 0, 0, 0);
+    --dim: saturate(0.6) brightness(0.74);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body {
+    background: var(--page);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    padding-top: var(--kb-navbar-h, 0px);
+    padding-bottom: var(--kb-bottom-reserve, 0px);
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
+
+  /* ---------- stage: fixed 380x700 logical size, scaled to fit ---------- */
+  #wrap { position: relative; }
+  #stage {
+    position: absolute; left: 0; top: 0; width: 380px; height: 700px;
+    transform-origin: 0 0; overflow: hidden; border-radius: 22px;
+    background: radial-gradient(ellipse 120% 72% at 50% 47%, var(--felt-a) 0%, var(--felt-b) 62%, var(--felt-c) 100%);
+    box-shadow: 0 20px 50px -20px var(--shadow);
+    --cur: var(--jade);
+  }
+  #stage::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(127, 127, 127, 0.09) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  .chip {
+    background: var(--chip); border: 1px solid var(--chip-b); border-radius: 999px;
+    padding: 0 12px; height: 34px; font-size: 12.5px; font-weight: 700;
+    display: inline-flex; gap: 6px; align-items: center; white-space: nowrap;
+  }
+  .iconbtn { width: 44px; height: 44px; border-radius: 50%; padding: 0; display: grid; place-items: center; font-size: 18px; }
+  .topbar { position: absolute; top: 10px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 6; }
+  #dirChip { color: var(--text); }
+  #dirChip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cur); box-shadow: 0 0 0 2px rgba(255,255,255,0.6); }
+
+  /* direction ring */
+  .ring { position: absolute; left: 50%; top: 330px; width: 270px; height: 270px; margin: -135px 0 0 -135px; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, color-mix(in srgb, var(--cur) 26%, transparent) 0%, color-mix(in srgb, var(--cur) 8%, transparent) 46%, transparent 70%);
+    transition: background 0.4s; }
+  .ring svg { position: absolute; inset: 0; animation: spin 20s linear infinite; color: var(--cur); transition: color 0.4s; }
+  .ring.ccw svg { animation-direction: reverse; }
+  .ring.ccw svg g { transform: scaleX(-1); transform-origin: 50% 50%; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- cards ---------- */
+  .card {
+    position: absolute; width: 72px; height: 104px; border-radius: 11px; padding: 4px;
+    background: #fff; border: 1px solid var(--card-edge);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 9px 18px -6px var(--shadow), 0 2px 4px rgba(0,0,0,0.18);
+    user-select: none; -webkit-user-select: none;
+  }
+  .face { width: 100%; height: 100%; border-radius: 7px; position: relative; overflow: hidden;
+    background: linear-gradient(155deg, var(--c) 0%, var(--cd) 100%); }
+  .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 42%); pointer-events: none; }
+  .gem { position: absolute; left: 50%; top: 50%; width: 58%; height: 46%; transform: translate(-50%, -50%) rotate(45deg);
+    border-radius: 11px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,0.22); }
+  .val { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 27px; line-height: 1;
+    color: var(--ink); display: grid; place-items: center; letter-spacing: -0.04em; z-index: 1; }
+  .val svg { width: 27px; height: 27px; }
+  .cn { position: absolute; min-width: 19px; height: 19px; padding: 0 4px; border-radius: 6px; background: var(--ink); color: #fff;
+    font-weight: 900; font-size: 13px; line-height: 19px; text-align: center; display: grid; place-items: center; z-index: 1; letter-spacing: -0.03em; }
+  .cn svg { width: 12px; height: 12px; }
+  .cn.tl { top: 3px; left: 3px; }
+  .cn.br { bottom: 3px; right: 3px; transform: rotate(180deg); }
+  .c-coral   { --c: var(--coral);   --cd: var(--coral-d);   --ink: var(--coral-ink); }
+  .c-saffron { --c: var(--saffron); --cd: var(--saffron-d); --ink: var(--saffron-ink); }
+  .c-jade    { --c: var(--jade);    --cd: var(--jade-d);    --ink: var(--jade-ink); }
+  .c-indigo  { --c: var(--indigo);  --cd: var(--indigo-d);  --ink: var(--indigo-ink); }
+  .c-wild    { --ink: #0b101c; }
+  .c-wild .face { background: var(--wild-face); }
+  .c-wild .gem { background: conic-gradient(var(--coral) 0 25%, var(--saffron) 0 50%, var(--jade) 0 75%, var(--indigo) 0); }
+  .c-wild .val { width: 34px; height: 34px; border-radius: 50%; background: #0b101c; color: #fff; font-size: 17px; box-shadow: 0 0 0 2px #fff; }
+  .c-wild .val svg { width: 18px; height: 18px; }
+  .c-wild .cn { background: #fff; color: #0b101c; }
+  .back { background: #1b2540; border-color: rgba(0,0,0,0.25); }
+  .back .face { background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 6px, transparent 6px 12px), linear-gradient(160deg, #24315a, #121a33); }
+  .back .face::before { content: ""; position: absolute; left: 50%; top: 50%; width: 46%; height: 34%; transform: translate(-50%, -50%) rotate(45deg);
+    border-radius: 8px; background: conic-gradient(var(--coral) 0 25%, var(--saffron) 0 50%, var(--jade) 0 75%, var(--indigo) 0);
+    box-shadow: 0 0 0 3px #121a33, 0 0 0 4px rgba(255,255,255,0.25); }
+  .card.mini { width: 26px; height: 37px; border-radius: 5px; padding: 2px; }
+  .card.mini .face { border-radius: 3px; }
+  .card.mini .face::before { border-radius: 3px; box-shadow: 0 0 0 1.5px #121a33; }
+
+  /* ---------- opponents ---------- */
+  .opp { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 3; width: 92px; }
+  .opp.s2 { top: 52px; left: 144px; }
+  .opp.s1 { top: 196px; left: 4px; }
+  .opp.s3 { top: 196px; right: 4px; }
+  .avatar { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 24px; position: relative;
+    background: var(--panel); border: 3px solid var(--chip-b); box-shadow: 0 6px 14px -4px var(--shadow); transition: box-shadow 0.3s, border-color 0.3s; }
+  .opp.active .avatar, .me.active .avatar { border-color: var(--cur); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cur) 30%, transparent), 0 0 20px color-mix(in srgb, var(--cur) 70%, transparent); }
+  .count { position: absolute; bottom: -5px; right: -9px; background: #fff; color: #0a0f1a; font-size: 11.5px; font-weight: 900;
+    min-width: 22px; height: 22px; border-radius: 11px; display: grid; place-items: center; padding: 0 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+  .name { font-size: 12.5px; font-weight: 700; }
+  .name small { color: var(--muted); font-weight: 600; }
+  .fan { position: relative; height: 40px; width: 92px; }
+  .fan .card { bottom: 0; left: 50%; margin-left: -13px; transform-origin: 50% 130%; }
+  .opp.s2 .fan { order: -1; }
+  .opp[hidden] { display: none; }
+  .thinking { position: absolute; top: -6px; left: -10px; display: none; gap: 3px; background: var(--panel); border: 1px solid var(--panel-b); border-radius: 10px; padding: 4px 6px; }
+  .opp.active .thinking { display: flex; }
+  .thinking i { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+  .thinking i:nth-child(2) { animation-delay: 0.15s; } .thinking i:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes blink { 50% { opacity: 0.25; transform: translateY(-2px); } }
+  .badge { font-size: 10px; font-weight: 900; letter-spacing: 0.07em; text-transform: uppercase; color: #fff; background: var(--danger);
+    padding: 3px 7px; border-radius: 6px; animation: pulse 1.2s ease-in-out infinite; display: none; }
+  .opp.last .badge { display: block; }
+  @keyframes pulse { 50% { transform: scale(1.08); box-shadow: 0 0 14px var(--coral); } }
+
+  /* ---------- centre ---------- */
+  #log { position: absolute; top: 166px; left: 50%; transform: translateX(-50%); font-size: 12.5px; font-weight: 600; z-index: 2;
+    background: var(--chip); border: 1px solid var(--chip-b); padding: 5px 12px; border-radius: 999px; white-space: nowrap; max-width: 340px; overflow: hidden; text-overflow: ellipsis; }
+  #log:empty { display: none; }
+  #log b { font-weight: 900; }
+  .pile { position: absolute; top: 272px; width: 80px; height: 116px; }
+  #deck { left: 99px; border: 0; padding: 0; background: none; border-radius: 12px; }
+  #deck .card, #discard .card { width: 80px; height: 116px; left: 0; top: 0; }
+  #deck.can::after { content: ""; position: absolute; inset: -6px; border-radius: 16px; border: 3px solid var(--cur); animation: glow 1.4s ease-in-out infinite; }
+  #discard { left: 201px; }
+  #discard::before { content: ""; position: absolute; inset: -12px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--cur) 55%, transparent), transparent 70%); transition: background 0.4s; }
+  .under { position: absolute; top: 398px; width: 110px; text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); }
+  #deckLabel { left: 84px; }
+  #colourLabel { left: 186px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  #colourLabel i { width: 12px; height: 12px; border-radius: 50%; background: var(--cur); box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(0,0,0,0.3); }
+
+  #turn { position: absolute; top: 428px; left: 50%; transform: translateX(-50%); z-index: 4; white-space: nowrap;
+    background: linear-gradient(90deg, var(--go), var(--go-2)); color: var(--go-ink); font-weight: 900; font-size: 13px; letter-spacing: 0.04em;
+    padding: 8px 16px; border-radius: 999px; animation: glow 1.6s ease-in-out infinite; text-transform: uppercase; }
+  #turn.wait { background: var(--chip); color: var(--text); border: 1px solid var(--chip-b); animation: none; text-transform: none; letter-spacing: 0; font-weight: 700; }
+  @keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(34,184,160,0.12), 0 6px 26px rgba(34,184,160,0.55); } }
+
+  /* ---------- your hand ---------- */
+  #hand { position: absolute; left: 0; right: 0; top: 470px; height: 170px; z-index: 5; }
+  #hand .card { padding: 4px; border: 1px solid var(--card-edge); transition: left 0.25s, top 0.25s, transform 0.18s, filter 0.2s, box-shadow 0.2s; }
+  #hand .card.dim { filter: var(--dim); }
+  #hand .card.ok { box-shadow: 0 0 0 2px #fff, 0 0 18px 2px color-mix(in srgb, var(--cur) 80%, transparent), 0 12px 22px -6px var(--shadow); }
+  #hand .card.ok:hover, #hand .card.ok:focus-visible { box-shadow: 0 0 0 3px var(--saffron), 0 0 24px 4px rgba(255,183,3,0.55), 0 16px 28px -6px var(--shadow); outline: none; }
+  #hand .card.drawn { box-shadow: 0 0 0 3px var(--saffron), 0 0 26px 6px rgba(255,183,3,0.6), 0 16px 28px -6px var(--shadow); }
+  #hand .card.shake { animation: shake 0.3s; }
+  @keyframes shake { 25% { margin-left: -6px; } 75% { margin-left: 6px; } }
+
+  .actions { position: absolute; bottom: 10px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 6; gap: 8px; }
+  .me { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
+  .me .avatar { width: 34px; height: 34px; font-size: 16px; border-width: 2px; }
+  .btn { border: 0; font-weight: 900; font-size: 13.5px; padding: 0 16px; border-radius: 12px; min-height: 44px; letter-spacing: 0.03em; }
+  .btn.last { color: #fff; background: linear-gradient(180deg, var(--danger), var(--danger-2)); box-shadow: 0 4px 0 #6e1418, 0 8px 18px rgba(201,52,58,0.35); }
+  .btn.last.armed { background: linear-gradient(180deg, var(--go-2), var(--go)); color: var(--go-ink); box-shadow: 0 4px 0 #0c6656, 0 8px 18px rgba(34,184,160,0.4); }
+  .btn.keep { background: var(--panel); border: 1px solid var(--panel-b); color: var(--text); box-shadow: 0 3px 0 var(--chip-b); }
+  .btn:active { transform: translateY(2px); }
+  .btn[hidden] { display: none; }
+
+  /* ---------- effects ---------- */
+  .flyer { position: absolute; left: 0; top: 0; z-index: 20; pointer-events: none; will-change: transform; }
+  .bubble { position: absolute; z-index: 21; pointer-events: none; transform: translate(-50%, -50%); white-space: nowrap;
+    font-weight: 900; font-size: 15px; padding: 6px 12px; border-radius: 12px; color: #fff; background: #0b101c;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35); animation: bubble 1.2s ease-out forwards; }
+  .bubble.bad { background: var(--danger); }
+  .bubble.good { background: var(--go-ink); color: #fff; }
+  @keyframes bubble { 0% { opacity: 0; transform: translate(-50%, -30%) scale(0.6); } 15% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+    25% { transform: translate(-50%, -50%) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -110%); } }
+  .burst { position: absolute; left: 241px; top: 330px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; z-index: 19; pointer-events: none;
+    border: 6px solid var(--cur); animation: burst 0.6s ease-out forwards; }
+  @keyframes burst { to { transform: scale(5); opacity: 0; border-width: 1px; } }
+
+  /* ---------- overlays ---------- */
+  .overlay { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--scrim); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 20px; }
+  .overlay[hidden], .sheet[hidden] { display: none; }
+  .panel { width: 100%; background: var(--panel); border: 1px solid var(--panel-b); border-radius: 22px; padding: 18px; box-shadow: 0 20px 40px -16px var(--shadow); }
+  .logo { display: flex; align-items: center; gap: 10px; justify-content: center; }
+  .logo .mark { width: 32px; height: 32px; transform: rotate(45deg); border-radius: 9px;
+    background: conic-gradient(var(--coral) 0 25%, var(--saffron) 0 50%, var(--jade) 0 75%, var(--indigo) 0); box-shadow: 0 6px 18px rgba(91,108,255,0.35); }
+  .logo h1 { margin: 0; font-size: 32px; font-weight: 900; letter-spacing: -0.02em; }
+  .tag { color: var(--muted); font-size: 13.5px; margin: 6px 0 0; text-align: center; font-weight: 600; }
+  #titleFan { position: relative; height: 118px; width: 100%; margin: 18px 0 40px; }
+  #titleFan .card { transform-origin: 50% 130%; scale: 0.85; }
+  #titleFan .card { left: 50%; bottom: 0; margin-left: -36px; transform-origin: 50% 130%; }
+  #resultBox { text-align: center; margin-bottom: 14px; }
+  #resultBox h2 { margin: 0 0 4px; font-size: 28px; font-weight: 900; }
+  #resultList { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; }
+  #resultList li { display: flex; justify-content: space-between; align-items: center; background: var(--panel-2); border-radius: 12px; padding: 8px 12px; font-weight: 700; font-size: 14px; }
+  #resultList li.win { box-shadow: inset 0 0 0 2px var(--go); }
+  .label { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 800; text-align: center; margin: 2px 0 8px; }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--panel-2); padding: 4px; border-radius: 14px; }
+  .seg button { border: 0; background: transparent; min-height: 44px; border-radius: 10px; font-weight: 800; font-size: 14px; color: var(--muted); }
+  .seg button small { display: block; font-size: 11px; font-weight: 600; }
+  .seg button[aria-pressed="true"] { background: var(--panel); color: var(--text); box-shadow: 0 2px 6px var(--shadow); }
+  .seg.three { grid-template-columns: 1fr 1fr 1fr; }
+  .big { width: 100%; margin-top: 14px; font-size: 17px; min-height: 54px; border-radius: 16px; color: var(--go-ink);
+    background: linear-gradient(180deg, var(--go-2), var(--go)); box-shadow: 0 5px 0 #0c6656, 0 12px 26px rgba(34,184,160,0.35); }
+  .links { display: flex; justify-content: center; gap: 4px; margin-top: 10px; }
+  .link { background: none; border: 0; color: var(--text); font-weight: 700; font-size: 13.5px; min-height: 44px; padding: 0 12px; text-decoration: underline; text-underline-offset: 3px; }
+  .stats { font-size: 12px; color: var(--muted); text-align: center; margin-top: 4px; font-weight: 600; }
+
+  .sheet { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 31; }
+  .sheet .panel { padding: 16px; }
+  .sheet h3 { margin: 0 0 12px; text-align: center; font-size: 17px; font-weight: 900; }
+  .colours { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .colours button { border: 1px solid var(--panel-b); background: var(--panel-2); border-radius: 16px; min-height: 64px; display: flex; align-items: center; gap: 12px; padding: 0 14px; font-weight: 800; font-size: 15px; }
+  .colours button i { width: 34px; height: 34px; border-radius: 10px; transform: rotate(45deg) scale(0.85); background: linear-gradient(155deg, var(--c), var(--cd)); box-shadow: 0 3px 8px rgba(0,0,0,0.25); }
+  .colours button small { display: block; color: var(--muted); font-weight: 600; font-size: 11.5px; }
+  .menu-list { display: grid; gap: 8px; }
+  .menu-list > button { min-height: 48px; border-radius: 14px; border: 1px solid var(--panel-b); background: var(--panel-2); font-weight: 800; font-size: 15px; }
+  .howto { text-align: left; font-size: 14px; line-height: 1.5; margin: 0; padding-left: 18px; }
+  .howto li { margin-bottom: 6px; }
+  .howto b { font-weight: 800; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <div class="topbar">
+      <div class="chip" id="modeChip">vs bots · Easy</div>
+      <div class="chip" id="dirChip"><span class="dot"></span><span id="dirText">Clockwise</span></div>
+      <button class="chip iconbtn" id="menuBtn" aria-label="Menu">☰</button>
+    </div>
+
+    <div class="ring" id="ring" aria-hidden="true"><svg viewBox="0 0 270 270" fill="none"><g>
+      <circle cx="135" cy="135" r="122" stroke="currentColor" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="4 10"/>
+      <path d="M135 13 l11 -6 v12z" fill="currentColor"/>
+      <path d="M135 257 l-11 6 v-12z" fill="currentColor"/>
+      <path d="M257 135 l6 11 h-12z" fill="currentColor"/>
+      <path d="M13 135 l-6 -11 h12z" fill="currentColor"/>
+    </g></svg></div>
+
+    <div class="opp s1" data-seat="1"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s2" data-seat="2"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s3" data-seat="3"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+
+    <div id="log" aria-live="polite"></div>
+
+    <button class="pile" id="deck" aria-label="Draw a card"></button>
+    <div class="pile" id="discard" aria-hidden="true"></div>
+    <div class="under" id="deckLabel">Tap to draw</div>
+    <div class="under" id="colourLabel"><i></i><span id="colourName"></span></div>
+
+    <div id="turn"></div>
+    <div id="hand" role="group" aria-label="Your hand"></div>
+
+    <div class="actions">
+      <div class="me" data-seat="0"><div class="avatar">🙂</div><span id="meText">You</span></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn keep" id="keepBtn" hidden>Keep it</button>
+        <button class="btn last" id="lastBtn" hidden aria-pressed="false">LAST CARD!</button>
+      </div>
+    </div>
+
+    <!-- title / result -->
+    <div class="overlay" id="title">
+      <div class="panel">
+        <div id="resultBox" hidden>
+          <h2 id="resultHead"></h2>
+          <div class="tag" id="resultSub"></div>
+          <ul id="resultList"></ul>
+        </div>
+        <div id="intro">
+          <div class="logo"><div class="mark"></div><h1>Wildcard</h1></div>
+          <p class="tag">Match the colour. Match the number. Empty your hand.</p>
+          <div id="titleFan" aria-hidden="true"></div>
+        </div>
+        <div class="label">Opponents</div>
+        <div class="seg three" id="botSeg" style="margin-bottom:12px">
+          <button data-bots="1" aria-pressed="false">1 bot<small>Head to head</small></button>
+          <button data-bots="2" aria-pressed="false">2 bots<small>Three-way</small></button>
+          <button data-bots="3" aria-pressed="true">3 bots<small>Full table</small></button>
+        </div>
+        <div class="label">Bot skill</div>
+        <div class="seg" id="levelSeg">
+          <button data-level="easy" aria-pressed="true">Easy<small>Relaxed</small></button>
+          <button data-level="hard" aria-pressed="false">Hard<small>Plays to win</small></button>
+        </div>
+        <button class="btn big" id="startBtn" data-kb-play>Deal the cards</button>
+        <div class="links"><button class="link" id="howBtn">How to play</button></div>
+        <div class="stats" id="stats"></div>
+      </div>
+    </div>
+
+    <!-- colour picker -->
+    <div class="sheet" id="picker" hidden>
+      <div class="panel">
+        <h3>Pick the next colour</h3>
+        <div class="colours" id="colours"></div>
+        <div class="links"><button class="link" id="pickCancel">Cancel</button></div>
+      </div>
+    </div>
+
+    <!-- menu -->
+    <div class="overlay" id="menu" hidden>
+      <div class="panel">
+        <div class="menu-list">
+          <button id="resumeBtn">Resume</button>
+          <button id="menuHow">How to play</button>
+          <div>
+            <div class="label" style="margin-top:6px">Theme</div>
+            <div class="seg three" id="themeSeg">
+              <button data-theme="auto">Auto</button><button data-theme="light">Light</button><button data-theme="dark">Dark</button>
+            </div>
+          </div>
+          <button id="soundBtn">Sound: on</button>
+          <button id="quitBtn">New game</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- how to play -->
+    <div class="overlay" id="how" hidden>
+      <div class="panel">
+        <h3 style="margin:0 0 10px;text-align:center;font-size:19px;font-weight:900">How to play</h3>
+        <ol class="howto">
+          <li>Play a card that matches the <b>colour</b> or the <b>number or symbol</b> on top of the pile.</li>
+          <li><b>Wild</b> cards go on anything. You pick the next colour.</li>
+          <li>Nothing to play? <b>Tap the deck</b> to draw. If the new card fits, play it or keep it.</li>
+          <li><b>Skip</b> (⊘) jumps the next player. <b>Reverse</b> (⇄) turns play around (against one bot it works like a Skip). <b>+2</b> and <b>+4</b> make the next player draw and miss a go.</li>
+          <li>Down to two cards? Tap <b>Last card!</b> before you play, or draw two.</li>
+          <li>First to empty their hand wins.</li>
+        </ol>
+        <button class="btn big" id="howClose">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script>
+(function () {
+  'use strict';
+  const E = window.WildcardEngine;
+  const W = 380, H = 700;
+  const $ = (id) => document.getElementById(id);
+  const stage = $('stage'), wrap = $('wrap');
+
+  // ---------- storage (every access guarded: private mode can throw) ----------
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  };
+
+  // ---------- table setup ----------
+  // People by table position: 0 you (bottom), 1 left, 2 top, 3 right.
+  // Engine seats run clockwise from you; with fewer bots some places stay empty.
+  const PEOPLE = [
+    { name: 'You', em: '🙂' },
+    { name: 'Pip', em: '🦊' },
+    { name: 'Bao', em: '🐼' },
+    { name: 'Rio', em: '🐯' },
+  ];
+  const POSITIONS = { 2: [0, 2], 3: [0, 1, 3], 4: [0, 1, 2, 3] };
+  const posOf = (seat) => POSITIONS[state.players][seat];
+  const P = (seat) => PEOPLE[posOf(seat)];
+  const oppEl = (seat) => stage.querySelector('.opp.s' + posOf(seat));
+  const COLOUR_NAME = { coral: 'Coral', saffron: 'Saffron', jade: 'Jade', indigo: 'Indigo' };
+  const VALUE_LABEL = { skip: 'Skip', rev: 'Reverse', draw2: '+2', wild: 'Wild', wild4: '+4' };
+  const ICON = {
+    skip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M6 18 18 6"/></svg>',
+    rev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13l-3.5-3.5M20 15H7l3.5 3.5"/></svg>',
+    wild: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6L2.5 9.3l6.6-.8z"/></svg>',
+  };
+
+  let state = null;
+  let level = store.get('wildcardLevel', 'easy') === 'hard' ? 'hard' : 'easy';
+  let bots = Math.min(3, Math.max(1, parseInt(store.get('wildcardBots', '3'), 10) || 3));
+  let busy = false, armed = false, paused = false, botTimer = null, previewing = true;
+  const discardLook = new Map(); // card id -> {rot, dx, dy}
+  let scale = 1;
+
+  // ---------- card markup ----------
+  function glyph(c) {
+    if (c.value === 'skip') return ICON.skip;
+    if (c.value === 'rev') return ICON.rev;
+    if (c.value === 'draw2') return '+2';
+    if (c.value === 'wild4') return '+4';
+    if (c.value === 'wild') return ICON.wild;
+    return c.value;
+  }
+  function cardHtml(id) {
+    const c = E.card(id), g = glyph(c);
+    return '<div class="face"><span class="cn tl">' + g + '</span><span class="gem"></span><span class="val">' + g + '</span><span class="cn br">' + g + '</span></div>';
+  }
+  function cardEl(id, tag, cls) {
+    const el = document.createElement(tag || 'div');
+    if (id == null) { el.className = 'card back ' + (cls || ''); el.innerHTML = '<div class="face"></div>'; return el; }
+    const c = E.card(id);
+    el.className = 'card c-' + (c.colour || 'wild') + ' ' + (cls || '');
+    el.innerHTML = cardHtml(id);
+    return el;
+  }
+  const label = (id) => E.cardName(id);
+  const valueText = (c) => VALUE_LABEL[c.value] || c.value;
+
+  // ---------- layout: fit the 380x700 stage into the space left by the chrome ----------
+  function fit() {
+    // clientWidth/Height, not innerWidth/Height: on phones a briefly too-wide
+    // stage widens the layout viewport, and innerWidth then grows with it.
+    const doc = document.documentElement;
+    const availW = Math.min(window.innerWidth, doc.clientWidth) - 8;
+    const availH = Math.min(window.innerHeight, doc.clientHeight) - (window.kbNavbarHeight || 0) - (window.kbBottomReserve || 0) - 8;
+    scale = Math.max(0.5, Math.min(availW / W, availH / H, 1.5));
+    wrap.style.width = W * scale + 'px';
+    wrap.style.height = H * scale + 'px';
+    wrap.style.setProperty('--game-scale', scale);
+    stage.style.transform = 'scale(' + scale + ')';
+  }
+  window.addEventListener('resize', fit);
+  window.addEventListener('kb-navbar-ready', fit);
+  fit();
+
+  // Centre of an element in stage coordinates.
+  function centre(el) {
+    const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect();
+    return { x: (r.left + r.width / 2 - s.left) / scale, y: (r.top + r.height / 2 - s.top) / scale };
+  }
+
+  // Where each card of an n-card hand sits: x/y centre and rotation.
+  function handLayout(n) {
+    const out = [];
+    const span = W - 44 - 72;
+    const gap = n > 1 ? Math.min(46, span / (n - 1)) : 0;
+    const tilt = Math.min(4.5, 32 / Math.max(n, 1));
+    for (let i = 0; i < n; i++) {
+      const t = i - (n - 1) / 2, x = W / 2 + t * gap;
+      const off = (x - W / 2) / (W / 2);
+      out.push({ x, y: 92 + off * off * 26, rot: t * tilt });
+    }
+    return out;
+  }
+
+  // ---------- rendering ----------
+  function curColour() { return state ? state.colour : 'jade'; }
+
+  function render() {
+    if (!state) return;
+    stage.style.setProperty('--cur', 'var(--' + curColour() + ')');
+    $('ring').classList.toggle('ccw', state.dir === -1);
+    $('dirText').textContent = state.dir === 1 ? 'Clockwise' : 'Anticlockwise';
+    const nb = state.players - 1;
+    $('modeChip').textContent = 'vs ' + nb + (nb === 1 ? ' bot' : ' bots') + ' · ' + (level === 'hard' ? 'Hard' : 'Easy');
+    $('colourName').textContent = COLOUR_NAME[curColour()];
+
+    // opponents
+    for (let pos = 1; pos <= 3; pos++) stage.querySelector('.opp.s' + pos).hidden = !POSITIONS[state.players].includes(pos);
+    for (let s = 1; s < state.players; s++) {
+      const el = oppEl(s);
+      const n = state.hands[s].length;
+      el.querySelector('.em').textContent = P(s).em;
+      el.querySelector('.count').textContent = n;
+      el.querySelector('.name').innerHTML = P(s).name + ' <small>bot</small>';
+      el.classList.toggle('active', state.winner === null && state.turn === s);
+      el.classList.toggle('last', n === 1 && state.winner === null);
+      el.setAttribute('aria-label', P(s).name + ', ' + n + (n === 1 ? ' card' : ' cards'));
+      const fan = el.querySelector('.fan');
+      fan.innerHTML = '';
+      const shown = Math.min(n, 9);
+      for (let i = 0; i < shown; i++) {
+        const a = (i - (shown - 1) / 2) * Math.min(12, 70 / Math.max(shown, 1));
+        const b = cardEl(null, 'div', 'mini');
+        b.style.transform = 'rotate(' + a + 'deg)';
+        fan.appendChild(b);
+      }
+    }
+    stage.querySelector('.me').classList.toggle('active', state.winner === null && state.turn === 0);
+
+    // deck
+    const deck = $('deck');
+    deck.innerHTML = '';
+    const layers = Math.min(4, Math.ceil(state.deck.length / 12));
+    for (let i = 0; i < layers; i++) {
+      const b = cardEl(null);
+      b.style.transform = 'translate(' + (-i * 1.5) + 'px,' + (-i * 1.5) + 'px)';
+      deck.appendChild(b);
+    }
+    const myTurn = state.winner === null && state.turn === 0 && !busy;
+    const canDraw = myTurn && state.drawn === null;
+    deck.classList.toggle('can', canDraw && E.legalPlays(state, 0).length === 0);
+    deck.disabled = !canDraw;
+    $('deckLabel').textContent = state.deck.length ? (canDraw ? 'Tap to draw' : state.deck.length + ' left') : 'Empty';
+
+    // discard: the top four cards, each with its own landing angle
+    const dis = $('discard');
+    dis.innerHTML = '';
+    for (const id of state.discard.slice(-4)) {
+      const look = lookFor(id);
+      const c = cardEl(id);
+      c.style.transform = 'translate(' + look.dx + 'px,' + look.dy + 'px) rotate(' + look.rot + 'deg)';
+      dis.appendChild(c);
+    }
+
+    renderHand();
+    renderTurn();
+  }
+
+  function lookFor(id) {
+    if (!discardLook.has(id)) discardLook.set(id, { rot: Math.random() * 30 - 15, dx: Math.random() * 6 - 3, dy: Math.random() * 6 - 3 });
+    return discardLook.get(id);
+  }
+
+  function renderHand() {
+    const hand = $('hand');
+    const ids = state.hands[0];
+    const legal = new Set(state.winner === null && state.turn === 0 && !busy ? E.legalPlays(state, 0) : []);
+    const myTurn = state.winner === null && state.turn === 0;
+    const pos = handLayout(ids.length);
+    // Reuse elements by card id so cards slide to their new places.
+    const old = new Map([...hand.children].map((el) => [Number(el.dataset.id), el]));
+    const keep = new Set();
+    ids.forEach((id, i) => {
+      let el = old.get(id);
+      if (!el) {
+        el = cardEl(id, 'button');
+        el.dataset.id = id;
+        el.addEventListener('click', () => onCard(id, el));
+      }
+      keep.add(id);
+      const p = pos[i];
+      const ok = legal.has(id);
+      el.classList.toggle('ok', ok);
+      el.classList.toggle('dim', myTurn && !busy && !ok);
+      el.classList.toggle('drawn', state.drawn === id);
+      el.style.left = (p.x - 36) + 'px';
+      el.style.top = (p.y - 52) + 'px';
+      el.style.zIndex = i + 1;
+      el.style.transform = 'rotate(' + p.rot + 'deg) translateY(' + (ok ? -14 : 0) + 'px)';
+      el.setAttribute('aria-label', label(id) + (ok ? ', playable' : ''));
+      el.tabIndex = myTurn ? 0 : -1;
+      hand.appendChild(el); // keeps DOM order = hand order
+    });
+    for (const [id, el] of old) if (!keep.has(id)) el.remove();
+
+    $('meText').textContent = 'You · ' + ids.length + (ids.length === 1 ? ' card' : ' cards');
+    const showLast = myTurn && !busy && ids.length === 2 && legal.size > 0;
+    if (!showLast && !(myTurn && armed)) armed = false;
+    $('lastBtn').hidden = !showLast;
+    $('lastBtn').classList.toggle('armed', armed);
+    $('lastBtn').setAttribute('aria-pressed', armed);
+    $('lastBtn').textContent = armed ? 'CALLED ✓' : 'LAST CARD!';
+    $('keepBtn').hidden = !(myTurn && !busy && state.drawn !== null);
+  }
+
+  function renderTurn() {
+    const t = $('turn');
+    if (state.winner !== null) { t.className = 'wait'; t.textContent = P(state.winner).name + (state.winner === 0 ? ' win!' : ' wins!'); return; }
+    if (state.turn !== 0) { t.className = 'wait'; t.textContent = P(state.turn).name + ' is thinking…'; return; }
+    t.className = '';
+    if (state.drawn !== null) { t.textContent = 'Play it or keep it'; return; }
+    const top = E.topCard(state);
+    if (E.legalPlays(state, 0).length === 0) { t.textContent = 'No match · draw a card'; return; }
+    const v = E.isWild(top) ? '' : ' or ' + valueText(top);
+    t.textContent = 'Your turn · ' + COLOUR_NAME[state.colour] + v;
+  }
+
+  function log(html) { $('log').innerHTML = html; }
+
+  // ---------- animation helpers ----------
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 60) : ms));
+
+  // Fly a card (face-up id, or null for a back) between two stage points.
+  function fly(id, from, to, ms, delay) {
+    const el = cardEl(id, 'div', 'flyer');
+    const tf = (p) => 'translate(' + (p.x - 36) + 'px,' + (p.y - 52) + 'px) rotate(' + (p.rot || 0) + 'deg) scale(' + (p.s || 1) + ')';
+    el.style.transform = tf(from);
+    stage.appendChild(el);
+    const dur = reduced ? 1 : ms;
+    const anim = el.animate([{ transform: tf(from) }, { transform: tf(to) }],
+      { duration: dur, delay: reduced ? 0 : (delay || 0), easing: 'cubic-bezier(.2,.8,.25,1)', fill: 'both' });
+    return anim.finished.then(() => el.remove(), () => el.remove());
+  }
+  function bubble(at, text, cls) {
+    const b = document.createElement('div');
+    b.className = 'bubble ' + (cls || '');
+    b.textContent = text;
+    b.style.left = at.x + 'px';
+    b.style.top = at.y + 'px';
+    stage.appendChild(b);
+    setTimeout(() => b.remove(), 1300);
+  }
+  function seatPoint(seat) {
+    if (seat === 0) return { x: W / 2, y: 470 + 92, s: 1 };
+    return Object.assign(centre(oppEl(seat).querySelector('.avatar')), { s: 0.36 });
+  }
+  const deckPoint = () => Object.assign(centre($('deck')), { s: 80 / 72 });
+  const pilePoint = () => Object.assign(centre($('discard')), { s: 80 / 72 });
+
+  // ---------- sound (synthesised; no files) ----------
+  let actx = null, muted = store.get('wildcardMuted', '0') === '1';
+  function audio() {
+    if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+  document.addEventListener('pointerdown', audio, { passive: true });
+  function tone(freq, dur, type, vol, to) {
+    if (muted) return;
+    const a = audio(); if (!a) return;
+    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+    o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t);
+    if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+    g.gain.setValueAtTime(vol || 0.08, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function swish(hi) {
+    if (muted) return;
+    const a = audio(); if (!a) return;
+    const n = Math.floor(a.sampleRate * 0.09), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+    src.buffer = buf; f.type = 'bandpass'; f.frequency.value = hi ? 3200 : 1800; g.gain.value = 0.18;
+    src.connect(f).connect(g).connect(a.destination); src.start();
+  }
+  const sfx = {
+    play: () => swish(false),
+    draw: () => swish(true),
+    turn: () => { tone(660, 0.12, 'sine', 0.06); setTimeout(() => tone(880, 0.16, 'sine', 0.06), 90); },
+    skip: () => tone(420, 0.2, 'triangle', 0.08, 220),
+    bad: () => tone(180, 0.3, 'sawtooth', 0.05, 110),
+    win: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.25, 'triangle', 0.08), i * 110)),
+    lose: () => [392, 330, 262].forEach((f, i) => setTimeout(() => tone(f, 0.3, 'triangle', 0.07), i * 150)),
+  };
+
+  // ---------- running a move ----------
+  async function step(seat, move) {
+    busy = true;
+    clearTimeout(botTimer);
+    // Where the card starts, measured before the hand re-renders.
+    let from = null;
+    if (move.type === 'play') {
+      const el = seat === 0 ? $('hand').querySelector('[data-id="' + move.card + '"]') : null;
+      from = el ? Object.assign(centre(el), { s: 1, rot: 0 }) : Object.assign(seatPoint(seat), { rot: -20 });
+      if (el) el.style.visibility = 'hidden';
+    }
+    const r = E.apply(state, seat, move);
+    if (!r.ok) { busy = false; render(); return r; }
+    renderHand(); // the played card leaves the hand straight away
+
+    for (const ev of r.events) await animate(ev, from);
+    busy = false;
+    render();
+    next();
+    return r;
+  }
+
+  async function animate(ev, from) {
+    const who = ev.seat == null ? '' : P(ev.seat).name;
+    if (ev.type === 'play') {
+      const look = lookFor(ev.card);
+      sfx.play();
+      await fly(ev.card, from, Object.assign(pilePoint(), { rot: look.rot }), 380);
+      render();
+      const c = E.card(ev.card);
+      if (E.isWild(c)) {
+        const b = document.createElement('div'); b.className = 'burst'; stage.appendChild(b); setTimeout(() => b.remove(), 700);
+        log((ev.seat === 0 ? 'You' : who) + ' played ' + valueText(c) + ' · now <b>' + COLOUR_NAME[ev.colour] + '</b>');
+      } else {
+        log((ev.seat === 0 ? 'You' : who) + ' played <b>' + label(ev.card) + '</b>');
+      }
+    } else if (ev.type === 'draw' || ev.type === 'penalty') {
+      if (ev.type === 'penalty') { sfx.bad(); bubble(labelPoint(ev.seat), (ev.seat === 0 ? 'Forgot to call! +' : 'Forgot! +') + ev.cards.length, 'bad'); await wait(500); }
+      else if (ev.forced) { sfx.bad(); bubble(labelPoint(ev.seat), '+' + ev.cards.length, 'bad'); }
+      const to = seatPoint(ev.seat);
+      const jobs = ev.cards.map((id, i) => {
+        setTimeout(sfx.draw, i * 120);
+        return fly(ev.seat === 0 ? id : null, deckPoint(), Object.assign({}, to, { rot: ev.seat === 0 ? 0 : 10 }), 360, i * 120);
+      });
+      await Promise.all(jobs);
+      if (!ev.forced && ev.type === 'draw') log((ev.seat === 0 ? 'You' : who) + ' drew a card');
+      if (ev.forced) log((ev.seat === 0 ? 'You' : who) + ' drew ' + ev.cards.length + ' and missed a go');
+      render();
+    } else if (ev.type === 'skip') {
+      sfx.skip(); bubble(labelPoint(ev.seat), 'Skipped!', 'bad'); await wait(350);
+    } else if (ev.type === 'reverse') {
+      sfx.skip(); bubble({ x: W / 2, y: 330 }, '⇄ Reversed'); $('ring').classList.toggle('ccw', ev.dir === -1); await wait(350);
+    } else if (ev.type === 'lastCard') {
+      bubble(labelPoint(ev.seat), 'Last card!', 'good'); await wait(300);
+    } else if (ev.type === 'reshuffle') {
+      bubble(deckPoint(), 'Reshuffled'); await wait(300);
+    } else if (ev.type === 'pass') {
+      log('You kept it');
+    }
+  }
+  function labelPoint(seat) {
+    if (seat === 0) return { x: W / 2, y: 470 };
+    const p = centre(oppEl(seat).querySelector('.avatar'));
+    return { x: Math.min(Math.max(p.x, 60), W - 60), y: p.y - 34 };
+  }
+
+  // Whose go is it next: a bot thinks for a moment; you get a chime.
+  function next() {
+    if (!$('title').hidden) return;
+    if (state.winner !== null) { setTimeout(showResult, 700); return; }
+    if (state.turn === 0) { if (state.drawn === null) sfx.turn(); return; }
+    if (paused) return;
+    botTimer = setTimeout(botTurn, 650 + Math.random() * 500);
+  }
+  function botTurn() {
+    if (paused || busy || !state || state.winner !== null || state.turn === 0) return;
+    const seat = state.turn;
+    step(seat, E.botMove(state, seat, level, Math.random));
+  }
+
+  // ---------- your input ----------
+  function onCard(id, el) {
+    if (busy || paused || !state || state.winner !== null || state.turn !== 0) return;
+    if (!E.legalPlays(state, 0).includes(id)) {
+      el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
+      return;
+    }
+    const called = armed;
+    if (E.isWild(E.card(id))) { openPicker(id, called); return; }
+    armed = false;
+    step(0, { type: 'play', card: id, called });
+  }
+  $('deck').addEventListener('click', () => {
+    if (busy || paused || !state || state.winner !== null || state.turn !== 0 || state.drawn !== null) return;
+    step(0, { type: 'draw' });
+  });
+  $('keepBtn').addEventListener('click', () => { if (!busy && state && state.turn === 0) step(0, { type: 'pass' }); });
+  $('lastBtn').addEventListener('click', () => { armed = !armed; if (armed) bubble({ x: W / 2, y: 470 }, 'Last card!', 'good'); renderHand(); });
+
+  // colour picker
+  let pickFor = null;
+  function openPicker(id, called) { buildPicker(); pickFor = { id, called }; $('picker').hidden = false; $('colours').querySelector('button').focus(); }
+  function buildPicker() {
+    const box = $('colours');
+    const counts = (c) => (state ? state.hands[0].filter((id) => E.card(id).colour === c).length : 0);
+    box.innerHTML = '';
+    for (const c of E.COLOURS) {
+      const b = document.createElement('button');
+      b.className = 'c-' + c;
+      b.innerHTML = '<i></i><span>' + COLOUR_NAME[c] + '<small>' + counts(c) + ' in your hand</small></span>';
+      b.addEventListener('click', () => {
+        $('picker').hidden = true;
+        const p = pickFor; pickFor = null; armed = false;
+        if (p) step(0, { type: 'play', card: p.id, colour: c, called: p.called });
+      });
+      box.appendChild(b);
+    }
+  }
+  $('pickCancel').addEventListener('click', () => { $('picker').hidden = true; pickFor = null; });
+
+  // ---------- game flow ----------
+  async function newGame() {
+    clearTimeout(botTimer);
+    previewing = false;
+    discardLook.clear();
+    armed = false;
+    const players = bots + 1;
+    state = E.createGame({ players, first: Math.floor(Math.random() * players) });
+    $('title').hidden = true;
+    log('');
+    // Deal: show an empty table, then fly the cards out round by round.
+    const hands = state.hands;
+    state.hands = hands.map(() => []);
+    busy = true;
+    render();
+    const jobs = [];
+    for (let r = 0; r < E.HAND_SIZE; r++) {
+      for (let s = 0; s < players; s++) {
+        const k = r * players + s;
+        setTimeout(sfx.draw, reduced ? 0 : k * 55);
+        jobs.push(fly(null, deckPoint(), Object.assign({}, seatPoint(s), { rot: s === 0 ? 0 : 12 }), 320, k * 55));
+      }
+    }
+    await Promise.all(jobs);
+    state.hands = hands;
+    busy = false;
+    render();
+    log(P(state.turn).name + (state.turn === 0 ? ' go' : ' goes') + ' first');
+    next();
+  }
+
+  function showResult() {
+    const won = state.winner === 0;
+    won ? sfx.win() : sfx.lose();
+    const st = stats();
+    st.games++; if (won) st.wins++;
+    store.set('wildcardStats', JSON.stringify(st));
+    $('resultHead').textContent = won ? 'You win! 🎉' : P(state.winner).name + ' wins';
+    $('resultSub').textContent = won ? 'Hand emptied. Nicely played.' : 'So close. Deal again?';
+    const list = $('resultList');
+    list.innerHTML = '';
+    const order = state.hands.map((_, i) => i).sort((a, b) => state.hands[a].length - state.hands[b].length);
+    for (const s of order) {
+      const li = document.createElement('li');
+      const n = state.hands[s].length;
+      li.className = s === state.winner ? 'win' : '';
+      li.innerHTML = '<span>' + P(s).em + ' ' + P(s).name + '</span><span>' + (n === 0 ? 'Out! 🏆' : n + (n === 1 ? ' card' : ' cards')) + '</span>';
+      list.appendChild(li);
+    }
+    $('resultBox').hidden = false;
+    $('intro').hidden = true;
+    $('startBtn').textContent = 'Play again';
+    showStats();
+    $('title').hidden = false;
+    $('startBtn').focus();
+  }
+
+  function stats() {
+    try { const s = JSON.parse(store.get('wildcardStats', '')); if (s && Number.isFinite(s.games) && Number.isFinite(s.wins)) return s; } catch (e) {}
+    return { games: 0, wins: 0 };
+  }
+  function showStats() {
+    const s = stats();
+    $('stats').textContent = s.games ? 'You have won ' + s.wins + ' of ' + s.games + (s.games === 1 ? ' game' : ' games') : '';
+  }
+
+  // ---------- title, menu, theme ----------
+  function setLevel(l) {
+    level = l;
+    store.set('wildcardLevel', l);
+    for (const b of $('levelSeg').children) b.setAttribute('aria-pressed', b.dataset.level === l);
+    if (state) render();
+  }
+  function setBots(n) {
+    bots = n;
+    store.set('wildcardBots', String(n));
+    for (const b of $('botSeg').children) b.setAttribute('aria-pressed', Number(b.dataset.bots) === n);
+    // Redeal the preview table behind the title so it shows the chosen size.
+    if (previewing) { state = E.createGame({ players: n + 1 }); render(); }
+  }
+  $('botSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setBots(Number(b.dataset.bots)); });
+  $('levelSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setLevel(b.dataset.level); });
+  $('startBtn').addEventListener('click', () => { audio(); if (!$('title').hidden) newGame(); });
+
+  function pause(on) {
+    paused = on;
+    if (on) clearTimeout(botTimer);
+    else if (state && !busy && state.winner === null && state.turn !== 0) next();
+  }
+  $('menuBtn').addEventListener('click', () => { pause(true); $('menu').hidden = false; $('resumeBtn').focus(); });
+  $('resumeBtn').addEventListener('click', () => { $('menu').hidden = true; pause(false); });
+  $('quitBtn').addEventListener('click', () => {
+    $('menu').hidden = true; clearTimeout(botTimer); paused = false;
+    $('resultBox').hidden = true; $('intro').hidden = false; $('startBtn').textContent = 'Deal the cards';
+    $('title').hidden = false;
+  });
+  function openHow() { $('how').hidden = false; $('howClose').focus(); }
+  $('howBtn').addEventListener('click', openHow);
+  $('menuHow').addEventListener('click', () => { $('menu').hidden = true; openHow(); });
+  $('howClose').addEventListener('click', () => {
+    $('how').hidden = true; store.set('wildcardHowtoSeen', '1');
+    if ($('title').hidden) pause(false);
+  });
+
+  function setTheme(t) {
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    else { delete document.documentElement.dataset.theme; t = 'auto'; }
+    store.set('wildcardTheme', t);
+    for (const b of $('themeSeg').children) b.setAttribute('aria-pressed', b.dataset.theme === t);
+  }
+  $('themeSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setTheme(b.dataset.theme); });
+  setTheme(store.get('wildcardTheme', 'auto'));
+
+  function showSound() { $('soundBtn').textContent = 'Sound: ' + (muted ? 'off' : 'on'); }
+  $('soundBtn').addEventListener('click', () => { muted = !muted; store.set('wildcardMuted', muted ? '1' : '0'); showSound(); });
+  showSound();
+
+  // Pause bots while the tab is hidden.
+  document.addEventListener('visibilitychange', () => { if (document.hidden) pause(true); else if ($('menu').hidden && $('how').hidden) pause(false); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (!$('picker').hidden) $('pickCancel').click();
+      else if (!$('how').hidden) $('howClose').click();
+      else if (!$('menu').hidden) $('resumeBtn').click();
+    }
+  });
+
+  // Title fan
+  (function () {
+    const fan = $('titleFan');
+    const pick = [['coral', '7'], ['saffron', 'skip'], [null, 'wild'], ['jade', 'rev'], ['indigo', 'draw2']];
+    pick.forEach(([c, v], i) => {
+      const id = E.CARDS.find((x) => x.colour === c && x.value === v).id;
+      const el = cardEl(id);
+      el.style.transform = 'rotate(' + (i - 2) * 13 + 'deg) translateY(' + Math.abs(i - 2) * 6 + 'px)';
+      fan.appendChild(el);
+    });
+  })();
+
+  // A dealt table sits behind the title screen; nothing on it can be played.
+  state = E.createGame({ players: bots + 1 });
+  busy = true;
+  setBots(bots);
+  setLevel(level);
+  render();
+  showStats();
+  if (store.get('wildcardHowtoSeen', '0') !== '1') openHow();
+
+  // Test handle for headless checks; nothing in the game uses it.
+  window.wildcard = {
+    get state() { return state; }, set state(s) { state = s; render(); },
+    get busy() { return busy; }, E, render, newGame, step, setTheme,
+  };
+})();
+</script>
+<script src="../../assets/version.js"></script>
+<script src="../../assets/game-embed.js" data-coffee-url="https://kishorecraft88.gumroad.com/l/abuoox"></script>
+</body>
+</html>
