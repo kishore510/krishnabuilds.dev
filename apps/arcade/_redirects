@@ -1,0 +1,6 @@
+# Permanent redirects so each page has one address for search engines: a folder's
+# index.html moves to the folder itself (the sitemap and canonical tags use those).
+/index.html / 301
+/games/:slug/index.html /games/:slug/ 301
+/games/:slug /games/:slug/ 301
+/changelog.html /changelog 301
