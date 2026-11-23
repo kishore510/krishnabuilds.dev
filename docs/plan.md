@@ -211,6 +211,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Asteroids and Comets, a Universe story on the solar-system map (0.109.0)
 - [x] Pluto and the Kuiper Belt, a Universe story on the solar-system map (0.110.0)
 - [x] Missions to Mercury, a Universe story on the solar-system map (0.111.0)
+- [x] Missions to Jupiter, a Universe story on the new jupiter-system map (0.118.0)
 - [x] The Seleucid Empire, a Chronicles story on the near-east map (0.104.0)
 - [x] The Parthian Empire, a Chronicles story on the near-east map (0.105.0)
 - [x] The Sasanian Empire, a Chronicles story on the near-east map (0.106.0)

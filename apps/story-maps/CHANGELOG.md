@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.118.0
+
+- New story map in Universe: Missions to Jupiter. From the Pioneer and Voyager flybys and Io’s volcanoes through Galileo’s probe and Europa’s hidden ocean to Juno at the poles, and JUICE and Europa Clipper on their way to the icy moons. 14 chapters on a new `jupiter-system` sky basemap (Jupiter to scale with its bands and the Great Red Spot, rings, the Galilean moons, the Io torus, outer moons and the magnetosphere’s edge, on a logarithmic distance scale), 2 people cards (Morabito, Kivelson), no new glyphs.
+- Catalogue: a new Missions to Jupiter entry opens the story; new Comet Shoemaker–Levy 9, Galileo at Jupiter, Juno, JUICE and Europa Clipper entries open it at chapters 4, 5, 10, 13 and 14.
+- Backlog: Missions to the Sun joins the Exploring the Solar System series, after Saturn and Titan.
+
 ## 0.117.0
 
 - Every story now has a text page at `/<story>/read/`: the whole story, chapter by chapter, with each chapter's date, source, native name and a link to open it on the map, then the people cards, the story's note and related links. It is linked from the open story sheet (“Read the whole story as text”), the end card (“Read as text”) and the story's catalogue pages, and is listed in the sitemap.
