@@ -29,11 +29,10 @@ These need a new map first, which is its own piece of work and its own PR:
 
 A war goes here when it is the subject of its story; a battle that is one chapter of a dynasty stays in that dynasty's story. In this order:
 
-1. The Three Battles of Panipat, 1526, 1556 and 1761 (`south-asia`)
-2. The Napoleonic Wars (`europe` or `mediterranean`; links the waiting `napoleonic-france` entry)
-3. The Crusades (`mediterranean` or `near-east`)
-4. The Seven Years' War (`world`: Plassey, Quebec, Europe)
-5. The Boer Wars (needs a southern Africa map first; its own PR. The map also serves the Zulu War and Great Zimbabwe)
+1. The Napoleonic Wars (`europe` or `mediterranean`; links the waiting `napoleonic-france` entry)
+2. The Crusades (`mediterranean` or `near-east`)
+3. The Seven Years' War (`world`: Plassey, Quebec, Europe)
+4. The Boer Wars (needs a southern Africa map first; its own PR. The map also serves the Zulu War and Great Zimbabwe)
 
 Then, on maps that already exist (one session each):
 
@@ -77,6 +76,7 @@ Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager 
 
 Newest first.
 
+- The Three Battles of Panipat (`panipat`), 2026-11-23
 - The Second World War (`second-world-war`), 2026-11-23
 - The First World War (`first-world-war`), 2026-11-23
 - Missions to Mercury (`mercury-missions`), 2026-11-23

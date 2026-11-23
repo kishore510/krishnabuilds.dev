@@ -138,6 +138,7 @@ The app list in `packages/ui` (`src/apps.ts`) is the single source for the site 
 - [x] Wars and Campaigns subject on the Humankind shelf; The Kalinga War moves into it (0.112.0)
 - [x] The First World War (0.113.0)
 - [x] The Second World War (0.114.0)
+- [x] The Three Battles of Panipat (0.115.0)
 - [x] The Kushan Empire (0.38.0)
 - [x] The Pallavas (0.39.0)
 - [x] The Vakataka Dynasty (0.40.0)

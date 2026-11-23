@@ -1,0 +1,9 @@
+# The Three Battles of Panipat
+
+Status: built. The three battles fought on one plain north of Delhi, and the marches that led to each: Babur in Kabul and the first battle in 1526, Agra and Khanwa, Akbar’s coronation at Kalanaur, Hemu’s capture of Delhi and the second battle in 1556, the Marathas at Attock, Barari Ghat, Bhau’s march north from Pune, the siege and the third battle in 1761, what followed, and Panipat today. 13 chapters, a **Powers** layer (the Lodi Sultanate, the Mughal Empire, the Sur Empire, the Rajput confederacy, the Maratha Empire, the Durrani Empire, and the Rohillas and Awadh) and 8 people cards.
+
+- `story.json`: the story data. It uses the `south-asia` basemap and the shared art library, with no additions. Routes stay on the map from chapter to chapter.
+- Source: every card is **History**.
+- Native names are in Hindi (`hi`, the default); steps and people set their own language where it differs (`fa` Persian, `mr` Marathi, `ps` Pashto).
+- Sources: Babur’s own memoir (the Baburnama), Abul Fazl’s Akbarnama and Badauni for 1556, Kashiraj Pandit’s eyewitness account of 1761 and the Marathi bakhars, and modern histories (Jadunath Sarkar, Fall of the Mughal Empire; T. S. Shejwalkar, Panipat 1761; Uday S. Kulkarni, Solstice at Panipat). Disputed: the size of every army, above all Ibrahim Lodi’s (the chronicles’ 100,000 is not credited); whether Babur was invited, and by whom; Hemu’s birthplace and the hand that beheaded him (Bairam Khan or Akbar); the dead at the third battle and in the massacre after it, given anywhere from tens of thousands to over 100,000; the cause of Peshwa Balaji Baji Rao’s death; and the exact site of the 1761 fighting (the Kala Amb memorial follows tradition).
+- Powers areas are loose regions, not borders. Kandahar lies beyond the map’s western edge; Durrani’s route arrives from there.
