@@ -165,8 +165,13 @@
   .avatar { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-size: 24px; position: relative;
     background: var(--panel); border: 3px solid var(--chip-b); box-shadow: 0 6px 14px -4px var(--shadow); transition: box-shadow 0.3s, border-color 0.3s; }
   .opp.active .avatar, .me.active .avatar { border-color: var(--cur); box-shadow: 0 0 0 4px color-mix(in srgb, var(--cur) 30%, transparent), 0 0 20px color-mix(in srgb, var(--cur) 70%, transparent); }
-  .count { position: absolute; bottom: -5px; right: -9px; background: #fff; color: #0a0f1a; font-size: 11.5px; font-weight: 900;
-    min-width: 22px; height: 22px; border-radius: 11px; display: grid; place-items: center; padding: 0 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.35); }
+  /* Cards left, for every player: dark ink on white (the hand size is
+     the score that matters), red when a player is down to one or two. */
+  .count { background: #fff; color: #0a0f1a; font-size: 11.5px; font-weight: 900; line-height: 1; white-space: nowrap;
+    padding: 4px 9px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+  .count.low { background: var(--danger); color: #fff; }
+  /* The top seat has no room under its name (the log sits there), so its count goes beside the avatar. */
+  .opp.s2 .count { position: absolute; top: 57px; left: 76px; }
   .name { font-size: 12.5px; font-weight: 700; }
   .name small { color: var(--muted); font-weight: 600; }
   .fan { position: relative; height: 40px; width: 92px; }
@@ -268,6 +273,29 @@
   .link { background: none; border: 0; color: var(--text); font-weight: 700; font-size: 13.5px; min-height: 44px; padding: 0 12px; text-decoration: underline; text-underline-offset: 3px; }
   .stats { font-size: 12px; color: var(--muted); text-align: center; margin-top: 4px; font-weight: 600; }
 
+  /* ---------- online: join panel and lobby ---------- */
+  .panel h3.head { margin: 0 0 12px; text-align: center; font-size: 19px; font-weight: 900; }
+  .field { width: 100%; min-height: 48px; border-radius: 12px; border: 1px solid var(--panel-b); background: var(--panel-2); color: var(--text);
+    font: inherit; font-size: 17px; font-weight: 700; padding: 0 14px; }
+  .field:focus-visible { outline: 3px solid var(--saffron); outline-offset: 1px; }
+  .joinrow { display: flex; gap: 8px; }
+  .joinrow .field { flex: 1; text-transform: uppercase; letter-spacing: 0.3em; text-align: center; font-weight: 900; }
+  .joinrow .field { min-width: 0; }
+  .btn.go { flex: none; min-width: 96px; min-height: 48px; font-size: 16px; color: var(--go-ink); background: linear-gradient(180deg, var(--go-2), var(--go)); box-shadow: 0 4px 0 #0c6656; }
+  .or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; font-weight: 800; margin: 16px 0 10px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--panel-b); }
+  .msg { min-height: 18px; font-size: 13px; font-weight: 700; text-align: center; margin-top: 10px; color: var(--text); }
+  .msg.bad { color: var(--danger); }
+  .code { font-size: 44px; font-weight: 900; letter-spacing: 0.22em; text-align: center; margin: -4px 0 0 0.22em; font-variant-numeric: tabular-nums; }
+  #lobbySeats { list-style: none; padding: 0; margin: 4px 0 14px; display: grid; gap: 6px; }
+  #lobbySeats li { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--panel-2); border-radius: 12px; padding: 8px 12px; font-weight: 700; font-size: 14px; min-height: 40px; }
+  #lobbySeats li small { color: var(--muted); font-weight: 600; font-size: 12px; }
+  #lobbySeats li.empty { background: transparent; border: 1px dashed var(--panel-b); color: var(--muted); }
+  #lobbySeats li.win { box-shadow: inset 0 0 0 2px var(--go); }
+  .seg button:disabled { opacity: 0.4; }
+  #lobbyResult { text-align: center; margin-bottom: 8px; }
+  #lobbyResult h2 { margin: 0; font-size: 26px; font-weight: 900; }
+
   .sheet { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 31; }
   .sheet .panel { padding: 16px; }
   .sheet h3 { margin: 0 0 12px; text-align: center; font-size: 17px; font-weight: 900; }
@@ -304,9 +332,9 @@
       <path d="M13 135 l-6 -11 h12z" fill="currentColor"/>
     </g></svg></div>
 
-    <div class="opp s1" data-seat="1"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
-    <div class="opp s2" data-seat="2"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
-    <div class="opp s3" data-seat="3"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span><span class="count"></span></div><div class="name"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s1" data-seat="1"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span></div><div class="name"></div><div class="count"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s2" data-seat="2"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span></div><div class="name"></div><div class="count"></div><div class="fan"></div><div class="badge">Last card!</div></div>
+    <div class="opp s3" data-seat="3"><div class="thinking"><i></i><i></i><i></i></div><div class="avatar"><span class="em"></span></div><div class="name"></div><div class="count"></div><div class="fan"></div><div class="badge">Last card!</div></div>
 
     <div id="log" aria-live="polite"></div>
 
@@ -319,7 +347,7 @@
     <div id="hand" role="group" aria-label="Your hand"></div>
 
     <div class="actions">
-      <div class="me" data-seat="0"><div class="avatar">🙂</div><span id="meText">You</span></div>
+      <div class="me" data-seat="0"><div class="avatar">🙂</div><span>You</span><span class="count" id="meCount"></span></div>
       <div style="display:flex;gap:8px">
         <button class="btn keep" id="keepBtn" hidden>Keep it</button>
         <button class="btn last" id="lastBtn" hidden aria-pressed="false">LAST CARD!</button>
@@ -351,7 +379,7 @@
           <button data-level="hard" aria-pressed="false">Hard<small>Plays to win</small></button>
         </div>
         <button class="btn big" id="startBtn" data-kb-play>Deal the cards</button>
-        <div class="links"><button class="link" id="howBtn">How to play</button></div>
+        <div class="links"><button class="link" id="howBtn">How to play</button><button class="link" id="onlineBtn">Play friends online</button></div>
         <div class="stats" id="stats"></div>
       </div>
     </div>
@@ -380,6 +408,49 @@
           <button id="soundBtn">Sound: on</button>
           <button id="quitBtn">New game</button>
         </div>
+      </div>
+    </div>
+
+    <!-- online: start or join a table -->
+    <div class="overlay" id="online" hidden>
+      <div class="panel">
+        <h3 class="head">Play friends online</h3>
+        <label class="label" for="nameInput">Your name</label>
+        <input class="field" id="nameInput" maxlength="14" autocomplete="nickname" spellcheck="false">
+        <button class="btn big" id="createBtn">Start a table</button>
+        <div class="or">or join one</div>
+        <div class="joinrow">
+          <input class="field" id="codeInput" maxlength="4" placeholder="CODE" aria-label="Table code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+          <button class="btn go" id="joinBtn">Join</button>
+        </div>
+        <div class="msg" id="onlineMsg" role="status"></div>
+        <div class="links"><button class="link" id="onlineBack">Back</button></div>
+      </div>
+    </div>
+
+    <!-- online: the table's lobby, and its result screen between games -->
+    <div class="overlay" id="lobby" hidden>
+      <div class="panel">
+        <div id="lobbyResult" hidden><h2 id="lobbyResultHead"></h2></div>
+        <div id="lobbyCodeBox">
+          <div class="label">Table code</div>
+          <div class="code" id="lobbyCode"></div>
+          <div class="links" style="margin-top:0"><button class="link" id="shareBtn">Share a link</button></div>
+        </div>
+        <ul id="lobbySeats"></ul>
+        <div id="hostOpts">
+          <div class="label">Players</div>
+          <div class="seg three" id="sizeSeg" style="margin-bottom:12px">
+            <button data-size="2">2</button><button data-size="3">3</button><button data-size="4">4</button>
+          </div>
+          <div class="label">Bots in empty seats</div>
+          <div class="seg" id="lobbyLevelSeg">
+            <button data-level="easy">Easy</button><button data-level="hard">Hard</button>
+          </div>
+        </div>
+        <button class="btn big" id="lobbyStart" data-kb-play>Deal the cards</button>
+        <div class="msg" id="lobbyMsg" role="status"></div>
+        <div class="links"><button class="link" id="lobbyLeave">Leave table</button></div>
       </div>
     </div>
 
@@ -427,7 +498,19 @@
   ];
   const POSITIONS = { 2: [0, 2], 3: [0, 1, 3], 4: [0, 1, 2, 3] };
   const posOf = (seat) => POSITIONS[state.players][seat];
-  const P = (seat) => PEOPLE[posOf(seat)];
+  // Online, seat 0 is still you: the server's seats are turned so yours is
+  // at the bottom (abs = (seat + online.seat) % players). Bots keep the
+  // faces they have offline; people get one each by server seat.
+  const ONLINE_FACES = ['🦉', '🐙', '🐸', '🦄'];
+  function P(seat) {
+    if (!online || !online.room || !online.room.seats.length || seat === 0) return Object.assign({ bot: seat !== 0 }, PEOPLE[seat === 0 ? 0 : posOf(seat)]);
+    const abs = (seat + online.seat) % state.players;
+    const s = online.room.seats[abs] || { name: '?', bot: true };
+    const face = s.bot ? (PEOPLE.find((p) => p.name === s.name) || PEOPLE[1]).em : ONLINE_FACES[abs];
+    return { name: s.name, em: face, bot: !!s.bot };
+  }
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => '&#' + c.charCodeAt(0) + ';');
+  const nameOf = (seat) => esc(P(seat).name);
   const oppEl = (seat) => stage.querySelector('.opp.s' + posOf(seat));
   const COLOUR_NAME = { coral: 'Coral', saffron: 'Saffron', jade: 'Jade', indigo: 'Indigo' };
   const VALUE_LABEL = { skip: 'Skip', rev: 'Reverse', draw2: '+2', wild: 'Wild', wild4: '+4' };
@@ -441,6 +524,7 @@
   let level = store.get('wildcardLevel', 'easy') === 'hard' ? 'hard' : 'easy';
   let bots = Math.min(3, Math.max(1, parseInt(store.get('wildcardBots', '3'), 10) || 3));
   let busy = false, armed = false, paused = false, botTimer = null, previewing = true;
+  let online = null; // { ws, code, id, seat, room, queue, from, leaving } while at an online table
   const discardLook = new Map(); // card id -> {rot, dx, dy}
   let scale = 1;
 
@@ -514,7 +598,7 @@
     $('ring').classList.toggle('ccw', state.dir === -1);
     $('dirText').textContent = state.dir === 1 ? 'Clockwise' : 'Anticlockwise';
     const nb = state.players - 1;
-    $('modeChip').textContent = 'vs ' + nb + (nb === 1 ? ' bot' : ' bots') + ' · ' + (level === 'hard' ? 'Hard' : 'Easy');
+    $('modeChip').textContent = online ? 'Table ' + online.code : 'vs ' + nb + (nb === 1 ? ' bot' : ' bots') + ' · ' + (level === 'hard' ? 'Hard' : 'Easy');
     $('colourName').textContent = COLOUR_NAME[curColour()];
 
     // opponents
@@ -523,8 +607,10 @@
       const el = oppEl(s);
       const n = state.hands[s].length;
       el.querySelector('.em').textContent = P(s).em;
-      el.querySelector('.count').textContent = n;
-      el.querySelector('.name').innerHTML = P(s).name + ' <small>bot</small>';
+      const cnt = el.querySelector('.count');
+      cnt.textContent = cardsText(n);
+      cnt.classList.toggle('low', n <= 2 && state.winner === null);
+      el.querySelector('.name').innerHTML = nameOf(s) + (P(s).bot ? ' <small>bot</small>' : '');
       el.classList.toggle('active', state.winner === null && state.turn === s);
       el.classList.toggle('last', n === 1 && state.winner === null);
       el.setAttribute('aria-label', P(s).name + ', ' + n + (n === 1 ? ' card' : ' cards'));
@@ -574,6 +660,11 @@
     return discardLook.get(id);
   }
 
+  const cardsText = (n) => n + (n === 1 ? ' card' : ' cards');
+  // Cards drawn into your hand that are still in the air: their slot stays
+  // hidden until the flying card lands on it, so one draw shows one card.
+  const incoming = new Set();
+
   function renderHand() {
     const hand = $('hand');
     const ids = state.hands[0];
@@ -602,11 +693,14 @@
       el.style.transform = 'rotate(' + p.rot + 'deg) translateY(' + (ok ? -14 : 0) + 'px)';
       el.setAttribute('aria-label', label(id) + (ok ? ', playable' : ''));
       el.tabIndex = myTurn ? 0 : -1;
+      el.style.visibility = incoming.has(id) ? 'hidden' : '';
       hand.appendChild(el); // keeps DOM order = hand order
     });
     for (const [id, el] of old) if (!keep.has(id)) el.remove();
 
-    $('meText').textContent = 'You · ' + ids.length + (ids.length === 1 ? ' card' : ' cards');
+    const mine = ids.length - incoming.size;
+    $('meCount').textContent = cardsText(mine);
+    $('meCount').classList.toggle('low', mine <= 2 && state.winner === null);
     const showLast = myTurn && !busy && ids.length === 2 && legal.size > 0;
     if (!showLast && !(myTurn && armed)) armed = false;
     $('lastBtn').hidden = !showLast;
@@ -699,6 +793,7 @@
 
   // ---------- running a move ----------
   async function step(seat, move) {
+    if (online) return sendMove(move);
     busy = true;
     clearTimeout(botTimer);
     // Where the card starts, measured before the hand re-renders.
@@ -710,7 +805,8 @@
     }
     const r = E.apply(state, seat, move);
     if (!r.ok) { busy = false; render(); return r; }
-    renderHand(); // the played card leaves the hand straight away
+    for (const ev of r.events) if (ev.seat === 0 && (ev.type === 'draw' || ev.type === 'penalty')) ev.cards.forEach((id) => incoming.add(id));
+    renderHand(); // the played card leaves the hand straight away; drawn ones wait for their flight
 
     for (const ev of r.events) await animate(ev, from);
     busy = false;
@@ -720,7 +816,7 @@
   }
 
   async function animate(ev, from) {
-    const who = ev.seat == null ? '' : P(ev.seat).name;
+    const who = ev.seat == null ? '' : nameOf(ev.seat);
     if (ev.type === 'play') {
       const look = lookFor(ev.card);
       sfx.play();
@@ -739,7 +835,11 @@
       const to = seatPoint(ev.seat);
       const jobs = ev.cards.map((id, i) => {
         setTimeout(sfx.draw, i * 120);
-        return fly(ev.seat === 0 ? id : null, deckPoint(), Object.assign({}, to, { rot: ev.seat === 0 ? 0 : 10 }), 360, i * 120);
+        if (ev.seat !== 0) return fly(null, deckPoint(), Object.assign({}, to, { rot: 10 }), 360, i * 120);
+        // Yours flies face up to its own slot, which appears as it lands.
+        const slot = $('hand').querySelector('[data-id="' + id + '"]');
+        const at = slot ? Object.assign(centre(slot), { s: 1, rot: handLayout(state.hands[0].length)[state.hands[0].indexOf(id)].rot }) : to;
+        return fly(id, deckPoint(), at, 360, i * 120).then(() => { incoming.delete(id); renderHand(); });
       });
       await Promise.all(jobs);
       if (!ev.forced && ev.type === 'draw') log((ev.seat === 0 ? 'You' : who) + ' drew a card');
@@ -765,6 +865,7 @@
 
   // Whose go is it next: a bot thinks for a moment; you get a chime.
   function next() {
+    if (online) { if (state.winner === null && state.turn === 0 && state.drawn === null) sfx.turn(); return; }
     if (!$('title').hidden) return;
     if (state.winner !== null) { setTimeout(showResult, 700); return; }
     if (state.turn === 0) { if (state.drawn === null) sfx.turn(); return; }
@@ -820,14 +921,21 @@
   // ---------- game flow ----------
   async function newGame() {
     clearTimeout(botTimer);
+    incoming.clear();
     previewing = false;
     discardLook.clear();
     armed = false;
     const players = bots + 1;
-    state = E.createGame({ players, first: Math.floor(Math.random() * players) });
     $('title').hidden = true;
+    await dealIn(E.createGame({ players, first: Math.floor(Math.random() * players) }));
+    next();
+  }
+
+  // Deal: show an empty table, then fly the cards out round by round.
+  async function dealIn(dealt) {
+    state = dealt;
     log('');
-    // Deal: show an empty table, then fly the cards out round by round.
+    const players = state.players;
     const hands = state.hands;
     state.hands = hands.map(() => []);
     busy = true;
@@ -844,8 +952,7 @@
     state.hands = hands;
     busy = false;
     render();
-    log(P(state.turn).name + (state.turn === 0 ? ' go' : ' goes') + ' first');
-    next();
+    log(nameOf(state.turn) + (state.turn === 0 ? ' go' : ' goes') + ' first');
   }
 
   function showResult() {
@@ -863,7 +970,7 @@
       const li = document.createElement('li');
       const n = state.hands[s].length;
       li.className = s === state.winner ? 'win' : '';
-      li.innerHTML = '<span>' + P(s).em + ' ' + P(s).name + '</span><span>' + (n === 0 ? 'Out! 🏆' : n + (n === 1 ? ' card' : ' cards')) + '</span>';
+      li.innerHTML = '<span>' + P(s).em + ' ' + nameOf(s) + '</span><span>' + (n === 0 ? 'Out! 🏆' : n + (n === 1 ? ' card' : ' cards')) + '</span>';
       list.appendChild(li);
     }
     $('resultBox').hidden = false;
@@ -882,6 +989,250 @@
     const s = stats();
     $('stats').textContent = s.games ? 'You have won ' + s.wins + ' of ' + s.games + (s.games === 1 ? ' game' : ' games') : '';
   }
+
+  // ---------- online tables ----------
+  // The server (src/wildcard-table.js) runs the game and sends this seat
+  // only its own view. Here a view becomes a state shaped like the
+  // engine's, turned so you are seat 0, and render() draws it as usual.
+  // Other hands and the deck are just the right number of placeholders.
+  const ONLINE_ERRORS = {
+    full: 'That table is full.', in_progress: 'That table is already playing.', gone: 'That table has closed.',
+    need_two: 'Wait for at least one friend to join.', busy: 'Too many new tables just now. Try again in a minute.',
+    origin: 'Online play only works on the Arcade site.', notfound: 'No table with that code.',
+  };
+  const ERR_MOVE = { not_your_turn: "It isn't your turn.", does_not_match: "That card doesn't match." };
+
+  function fromView(v) {
+    const n = v.players, turn = (abs) => (abs === null ? null : (abs - v.seat + n) % n);
+    const hands = [];
+    for (let s = 0; s < n; s++) hands.push(s === 0 ? v.hand.slice() : new Array(v.counts[(s + v.seat) % n]).fill(-1));
+    return {
+      players: n, hands, deck: new Array(v.deckSize).fill(-1), discard: v.pile.slice(),
+      colour: v.colour, turn: turn(v.turn), dir: v.dir, drawn: v.drawn, winner: turn(v.winner), rng: 0,
+    };
+  }
+  function turnEvent(ev) {
+    if (ev.seat == null) return ev;
+    return Object.assign({}, ev, { seat: (ev.seat - online.seat + state.players) % state.players });
+  }
+
+  function onlineMsg(id, text, bad) { $(id).textContent = text || ''; $(id).classList.toggle('bad', !!bad); }
+  function playerId() {
+    const b = crypto.getRandomValues(new Uint8Array(12));
+    return [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+  }
+  function openOnline(code) {
+    $('nameInput').value = store.get('wildcardName', '');
+    if (code) $('codeInput').value = code;
+    onlineMsg('onlineMsg', '');
+    $('online').hidden = false;
+    (($('nameInput').value && code) ? $('joinBtn') : $('nameInput')).focus();
+  }
+  function myName() {
+    const n = $('nameInput').value.trim().slice(0, 14);
+    if (n) store.set('wildcardName', n);
+    return n || 'Player';
+  }
+
+  async function createTable() {
+    audio();
+    onlineMsg('onlineMsg', 'Starting a table…');
+    try {
+      const res = await fetch('/api/wildcard/rooms', { method: 'POST' });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.code) { onlineMsg('onlineMsg', ONLINE_ERRORS[body.error] || 'Could not start a table. Try again.', true); return; }
+      connect(body.code);
+    } catch (e) {
+      onlineMsg('onlineMsg', 'Could not reach the server. Check your connection.', true);
+    }
+  }
+  function joinTable() {
+    audio();
+    const code = $('codeInput').value.trim().toUpperCase();
+    if (!/^[A-Z0-9]{4}$/.test(code)) { onlineMsg('onlineMsg', 'A table code is 4 letters and numbers.', true); return; }
+    onlineMsg('onlineMsg', 'Joining ' + code + '…');
+    connect(code);
+  }
+
+  function connect(code) {
+    if (online) online.leaving = true, online.ws.close();
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(proto + '//' + location.host + '/api/wildcard/rooms/' + code + '/ws');
+    const me = { ws, code, id: playerId(), seat: 0, room: null, queue: Promise.resolve(), from: null, leaving: false, joined: false, error: null };
+    online = me;
+    ws.onopen = () => ws.send(JSON.stringify({ t: 'hello', id: me.id, name: myName() }));
+    ws.onmessage = (e) => {
+      if (online !== me) return;
+      let m; try { m = JSON.parse(e.data); } catch (err) { return; }
+      me.queue = me.queue.then(() => handle(m)).catch((err) => console.error(err));
+    };
+    ws.onclose = () => {
+      if (online !== me || me.leaving) return;
+      const why = !me.joined ? (ONLINE_ERRORS[me.error] || ONLINE_ERRORS.notfound) : 'Lost the connection to the table.';
+      endOnline();
+      openOnline(code);
+      onlineMsg('onlineMsg', why, true);
+    };
+  }
+
+  function leaveTable() {
+    if (!online) return;
+    online.leaving = true;
+    try { online.ws.close(1000, 'left'); } catch (e) {}
+    endOnline();
+  }
+  // Back to the title screen with a fresh offline table behind it.
+  function endOnline() {
+    online = null;
+    busy = true; armed = false; incoming.clear(); discardLook.clear();
+    $('lobby').hidden = true; $('picker').hidden = true; $('menu').hidden = true;
+    previewing = true;
+    state = E.createGame({ players: bots + 1 });
+    log('');
+    render();
+    $('resultBox').hidden = true; $('intro').hidden = false; $('startBtn').textContent = 'Deal the cards';
+    $('title').hidden = false;
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  }
+
+  async function handle(m) {
+    if (m.t === 'error') {
+      online.error = m.error;
+      if (!online.joined) return; // the close that follows says why
+      if (online.from !== null || busy) { online.from = null; busy = false; render(); }
+      if (ONLINE_ERRORS[m.error]) onlineMsg('lobbyMsg', ONLINE_ERRORS[m.error], true);
+      else if (ERR_MOVE[m.error]) log(ERR_MOVE[m.error]);
+      return;
+    }
+    if (m.t === 'room') {
+      const first = !online.joined;
+      online.joined = true;
+      online.room = m;
+      online.seat = m.you;
+      if (first) {
+        $('online').hidden = true; $('title').hidden = true;
+        previewing = false;
+        try { history.replaceState(null, '', location.pathname + '?room=' + m.code); } catch (e) {}
+      }
+      if (m.phase === 'lobby') { showLobby(); return; }
+      if (m.phase === 'playing') { $('lobby').hidden = true; if (state) render(); return; }
+      // over: let the last card land, then show who won
+      await wait(900);
+      if (online && online.room === m) { showLobby(); if (state.winner === 0) sfx.win(); else sfx.lose(); }
+      return;
+    }
+    if (m.t === 'deal') {
+      $('lobby').hidden = true;
+      discardLook.clear(); incoming.clear(); armed = false;
+      online.seat = m.view.seat;
+      const dealt = fromView(m.view);
+      if (m.resume) { state = dealt; busy = false; render(); }
+      else await dealIn(dealt);
+      next();
+      return;
+    }
+    if (m.t === 'update') {
+      busy = true;
+      const events = m.events.map(turnEvent);
+      // Where each played card starts, measured before the hand changes.
+      const froms = events.map((ev) => {
+        if (ev.type !== 'play') return null;
+        if (ev.seat !== 0) return Object.assign(seatPoint(ev.seat), { rot: -20 });
+        if (online.from) return online.from;
+        const el = $('hand').querySelector('[data-id="' + ev.card + '"]');
+        return el ? Object.assign(centre(el), { s: 1, rot: 0 }) : Object.assign(seatPoint(0), { rot: 0 });
+      });
+      online.from = null;
+      state = fromView(m.view);
+      for (const ev of events) if (ev.seat === 0 && (ev.type === 'draw' || ev.type === 'penalty')) ev.cards.forEach((id) => incoming.add(id));
+      renderHand();
+      for (let i = 0; i < events.length; i++) await animate(events[i], froms[i]);
+      busy = false;
+      render();
+      next();
+    }
+  }
+
+  // Your move goes to the server; the table changes when its update comes back.
+  function sendMove(move) {
+    if (!online || busy) return;
+    busy = true;
+    online.from = null;
+    if (move.type === 'play') {
+      const el = $('hand').querySelector('[data-id="' + move.card + '"]');
+      if (el) online.from = Object.assign(centre(el), { s: 1, rot: 0 });
+    }
+    renderHand(); // stops the cards looking playable while the move is in flight
+    if (online.from) $('hand').querySelector('[data-id="' + move.card + '"]').style.visibility = 'hidden';
+    online.ws.send(JSON.stringify({ t: 'move', move }));
+  }
+
+  function showLobby() {
+    const r = online.room, over = r.phase === 'over';
+    const host = r.host;
+    $('lobbyResult').hidden = !over;
+    $('lobbyCodeBox').hidden = over;
+    $('lobbyCode').textContent = r.code;
+    if (over) $('lobbyResultHead').textContent = state.winner === 0 ? 'You win! 🎉' : P(state.winner).name + ' wins';
+    const list = $('lobbySeats');
+    list.innerHTML = '';
+    const n = over ? r.seats.length : r.size;
+    for (let abs = 0; abs < n; abs++) {
+      const seat = r.seats[abs];
+      const li = document.createElement('li');
+      if (!seat) {
+        li.className = 'empty';
+        li.innerHTML = '<span>Empty seat</span><small>a bot plays here</small>';
+      } else {
+        const local = (abs - online.seat + r.seats.length) % r.seats.length;
+        const face = seat.bot ? (PEOPLE.find((p) => p.name === seat.name) || PEOPLE[1]).em : (abs === online.seat ? '🙂' : ONLINE_FACES[abs]);
+        let right = abs === online.seat ? 'you' : seat.bot ? 'bot' : '';
+        if (over) {
+          const cnt = state.hands[local].length;
+          right = cnt === 0 ? 'Out! 🏆' : cardsText(cnt);
+          if (cnt === 0) li.className = 'win';
+        } else if (abs === r.hostSeat) right = (right ? right + ' · ' : '') + 'host';
+        li.innerHTML = '<span>' + face + ' ' + esc(seat.name) + '</span><small>' + right + '</small>';
+      }
+      list.appendChild(li);
+    }
+    $('hostOpts').hidden = !host || over;
+    for (const b of $('sizeSeg').children) {
+      b.setAttribute('aria-pressed', Number(b.dataset.size) === r.size);
+      b.disabled = Number(b.dataset.size) < r.seats.length;
+    }
+    for (const b of $('lobbyLevelSeg').children) b.setAttribute('aria-pressed', b.dataset.level === r.level);
+    const people = r.seats.filter((x) => !x.bot).length;
+    $('lobbyStart').hidden = !host;
+    $('lobbyStart').textContent = over ? 'Deal again' : 'Deal the cards';
+    $('lobbyStart').disabled = !over && people < 2;
+    if (host) onlineMsg('lobbyMsg', !over && people < 2 ? 'Share the code. You can deal once a friend joins.' : '');
+    else onlineMsg('lobbyMsg', 'Waiting for the host to deal' + (over ? ' again' : '') + '…');
+    $('lobby').hidden = false;
+  }
+
+  function shareLink() {
+    const url = location.origin + location.pathname + '?room=' + online.code;
+    const text = 'Join my Wildcard table: ' + online.code;
+    if (navigator.share) { navigator.share({ title: 'Wildcard', text, url }).catch(() => {}); return; }
+    const done = () => onlineMsg('lobbyMsg', 'Link copied');
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, () => onlineMsg('lobbyMsg', url));
+    else onlineMsg('lobbyMsg', url);
+  }
+
+  const sendRoom = (msg) => { if (online && online.ws.readyState === 1) online.ws.send(JSON.stringify(msg)); };
+  $('onlineBtn').addEventListener('click', () => openOnline(''));
+  $('onlineBack').addEventListener('click', () => { $('online').hidden = true; $('startBtn').focus(); });
+  $('createBtn').addEventListener('click', createTable);
+  $('joinBtn').addEventListener('click', joinTable);
+  $('codeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') joinTable(); });
+  $('codeInput').addEventListener('input', () => { $('codeInput').value = $('codeInput').value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
+  $('shareBtn').addEventListener('click', shareLink);
+  $('lobbyLeave').addEventListener('click', leaveTable);
+  $('lobbyStart').addEventListener('click', () => { audio(); sendRoom({ t: 'start' }); });
+  $('sizeSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) sendRoom({ t: 'config', size: Number(b.dataset.size) }); });
+  $('lobbyLevelSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) sendRoom({ t: 'config', level: b.dataset.level }); });
+  window.addEventListener('pagehide', () => { if (online) { online.leaving = true; try { online.ws.close(1000, 'left'); } catch (e) {} } });
 
   // ---------- title, menu, theme ----------
   function setLevel(l) {
@@ -906,9 +1257,14 @@
     if (on) clearTimeout(botTimer);
     else if (state && !busy && state.winner === null && state.turn !== 0) next();
   }
-  $('menuBtn').addEventListener('click', () => { pause(true); $('menu').hidden = false; $('resumeBtn').focus(); });
+  $('menuBtn').addEventListener('click', () => {
+    pause(true);
+    $('quitBtn').textContent = online ? 'Leave table' : 'New game';
+    $('menu').hidden = false; $('resumeBtn').focus();
+  });
   $('resumeBtn').addEventListener('click', () => { $('menu').hidden = true; pause(false); });
   $('quitBtn').addEventListener('click', () => {
+    if (online) { $('menu').hidden = true; paused = false; leaveTable(); return; }
     $('menu').hidden = true; clearTimeout(botTimer); paused = false;
     $('resultBox').hidden = true; $('intro').hidden = false; $('startBtn').textContent = 'Deal the cards';
     $('title').hidden = false;
@@ -939,6 +1295,7 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (!$('picker').hidden) $('pickCancel').click();
+      else if (!$('online').hidden) $('onlineBack').click();
       else if (!$('how').hidden) $('howClose').click();
       else if (!$('menu').hidden) $('resumeBtn').click();
     }
@@ -964,11 +1321,13 @@
   render();
   showStats();
   if (store.get('wildcardHowtoSeen', '0') !== '1') openHow();
+  const linked = (new URLSearchParams(location.search).get('room') || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+  if (linked.length === 4) openOnline(linked);
 
   // Test handle for headless checks; nothing in the game uses it.
   window.wildcard = {
     get state() { return state; }, set state(s) { state = s; render(); },
-    get busy() { return busy; }, E, render, newGame, step, setTheme,
+    get busy() { return busy; }, get online() { return online; }, E, render, newGame, step, setTheme,
   };
 })();
 </script>
