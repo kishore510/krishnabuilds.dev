@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.116.1
+
+- Search: the hidden text copy of each story, for crawlers, now titles itself with an `<h2>` so each story page has one `<h1>`, and ends with plain links to the story’s subject page, its catalogue pages, the stories offered at its end and related entries, so crawlers find them without running scripts. The links skip keyboard focus. Nothing on screen changes.
+
 ## 0.116.0
 
 - New story map in Wars and Campaigns: The Napoleonic Wars. From the siege of Toulon in 1793 through the army of Italy, Egypt and Acre, the coup of Brumaire, Marengo, the coronation, Trafalgar, Austerlitz, Jena, Tilsit, the rising in Madrid, Wagram, the Lines of Torres Vedras, the crossing of the Niemen, Borodino, Moscow and the Berezina, Leipzig, the abdication and Elba, the Hundred Days and Waterloo, to the Congress of Vienna, St Helena and the return of the ashes. 25 chapters on the `mediterranean` basemap, a Powers layer (France, the French client states, Britain, Spain, Austria, Prussia, Russia and the Ottoman Empire), 8 people cards, native names in French, Italian, Arabic, Spanish, Czech, German, Russian and Portuguese, no new glyphs.
