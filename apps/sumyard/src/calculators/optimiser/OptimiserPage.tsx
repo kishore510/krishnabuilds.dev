@@ -1,7 +1,9 @@
-import { Plus } from 'lucide-react'
-import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Banknote, Plus, Share2 } from 'lucide-react'
+import { Fragment, lazy, type ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { AssumptionsPanel } from '@/components/AssumptionsPanel'
 import { Chart } from '@/components/Chart/Chart'
+import { Donut } from '@/components/Donut'
+import { IconTile, type Swatch } from '@/components/IconTile'
 import { CurrencyInput } from '@/components/inputs/CurrencyInput'
 import { NumberInput } from '@/components/inputs/NumberInput'
 import { PercentInput } from '@/components/inputs/PercentInput'
@@ -14,14 +16,13 @@ import { RefusalNotice } from '@/components/RefusalNotice'
 import { ResultCard, StatRow } from '@/components/ResultCard'
 import { ScenarioBar } from '@/components/ScenarioBar'
 import { Section } from '@/components/Section'
-import { SplitBar } from '@/components/SplitBar'
 import { StickyResult } from '@/components/StickyResult'
 import { InlineNotice } from '@/components/states'
 import { Button } from '@/components/ui/button'
 import { VerifiedBadge } from '@/components/VerifiedBadge'
 import { listTaxYears, taxYearLabel } from '@/config/tax/index'
 import { useItemKeys } from '@/hooks/useItemKeys'
-import { formatGBP, formatGBPChange, formatGBPCompact, formatPence } from '@/lib/format'
+import { formatGBP, formatGBPChange, formatGBPCompact, formatPence, formatPercent } from '@/lib/format'
 import { add, compare, fromPence, type Money, mulRound, type Ratio, ratio, subtract, subtractRatio, toPence, ZERO } from '@/lib/money'
 import type { Parsed } from '@/lib/parse'
 import { useStore } from '@/lib/store'
@@ -66,8 +67,10 @@ import { calculateOptimise, carryForwardYears, type OptimiserPageResult, toOptim
 import { annualAmount, annualBenefit, type BenefitItem, CONTRIBUTION_MODES, ITEM_PERIODS, type ListItem } from './pageInputs'
 import { parseTaxCode } from './paye'
 import { CHILDCARE_NOT_CHECKED, childcareRuns, currentPoint, ONE_POUND, THRESHOLD_NAMES, thresholdWords, warningRuns } from './reading'
-import { payslipNet, splitSegments } from './results'
+import { payslipNet, type SplitSegmentId, splitSegments } from './results'
 import { NEEDS_FIXING, SECTION_IDS, SECTION_TITLES, type SectionId, sectionForField, sectionSummary, sectionsSet } from './sections'
+import type { TakeHomeShare } from './share'
+import { PAY_SWATCHES, SECTION_SWATCHES } from './style'
 import { changeSentence, clampTarget, defaultTarget, milestoneWords, runWords, warningSplit } from './targetWords'
 import {
   BENEFIT_PAYMENTS,
@@ -100,8 +103,12 @@ import {
 
 const session = sessionFor(optimiserCalculator)
 
+const ShareTakeHome = lazy(() => import('./ShareTakeHome'))
+
 const TAX_YEARS = listTaxYears().map((y) => ({ value: y.id as string, label: taxYearLabel(y.id) }))
-const REGION_OPTIONS = REGIONS.map((value) => ({ value, label: value === 'rUK' ? 'England, Wales, NI' : REGION_LABELS[value] }))
+/** Where you live, short: the region choice's labels and the shared copy's. */
+const REGION_SHORT: Record<(typeof REGIONS)[number], string> = { rUK: 'England, Wales, NI', scotland: REGION_LABELS.scotland }
+const REGION_OPTIONS = REGIONS.map((value) => ({ value, label: REGION_SHORT[value] }))
 const METHOD_OPTIONS = PENSION_METHODS.map((value) => ({ value, label: METHOD_LABELS[value] }))
 const PAYMENT_OPTIONS = CHILD_BENEFIT_PAYMENTS.map((value) => ({ value, label: value === 'claimed' ? 'Claimed' : 'Opted out' }))
 const MODE_OPTIONS = CONTRIBUTION_MODES.map((value) => ({ value, label: value === 'amount' ? MODE_LABELS.amount : 'Percentage' }))
@@ -199,18 +206,45 @@ export default function OptimiserPage() {
     setPicked({ revision: state.revision, amount }),
   )
   const style = amounts
+  const [sharing, setSharing] = useState(false)
+  const share: TakeHomeShare | null = useMemo(
+    () =>
+      ok
+        ? {
+            year: breakdown(ok.annual, 'year'),
+            month: breakdown(ok.annual, 'month'),
+            period,
+            taxYear: taxYearLabel(ok.taxYear),
+            region: REGION_SHORT[inputs.region],
+          }
+        : null,
+    [ok, period, inputs.region],
+  )
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
-          {optimiserCalculator.name}
-        </h1>
-        <p className="text-text-muted">{optimiserCalculator.summary}</p>
-        {/* On a phone the badge is in the sticky bar instead. */}
-        <div className="hidden md:flex">
-          <VerifiedBadge config={config} />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-2">
+          <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
+            {optimiserCalculator.name}
+          </h1>
+          <p className="text-text-muted">{optimiserCalculator.summary}</p>
+          {/* On a phone the badge is in the sticky bar instead. */}
+          <div className="hidden md:flex">
+            <VerifiedBadge config={config} />
+          </div>
         </div>
+        <Button
+          id="opt-share"
+          variant="primary"
+          disabled={!share}
+          aria-haspopup="dialog"
+          onClick={() => setSharing(true)}
+          className="h-auto min-h-touch py-2"
+        >
+          <Share2 />
+          Share
+        </Button>
       </div>
 
       <StickyResult
@@ -275,6 +309,18 @@ export default function OptimiserPage() {
         )}
         <p className="text-text-muted">Illustrative only, not financial advice. {DISCLAIMER}</p>
       </AssumptionsPanel>
+
+      {sharing && share && (
+        <Suspense fallback={null}>
+          <ShareTakeHome
+            share={share}
+            onClose={() => {
+              setSharing(false)
+              document.getElementById('opt-share')?.focus()
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }
@@ -318,6 +364,7 @@ function Inputs({
     <Section
       id={`opt-section-${id}`}
       title={SECTION_TITLES[id]}
+      icon={<IconTile swatch={SECTION_SWATCHES[id]} />}
       summary={invalidFields.some((f) => sectionForField(f) === id) ? NEEDS_FIXING : sectionSummary(id, inputs, resolved, gbp)}
       defaultOpen={openOnMount.has(id)}
     >
@@ -919,6 +966,26 @@ const ROW_LABELS = {
 
 const OPTIONAL_ROWS = new Set<keyof typeof ROW_LABELS>(['benefitSacrifice', 'benefitPayments'])
 
+/** Each breakdown row's part of pay, for its colour and icon (TH3). */
+const ROW_PARTS: Record<keyof typeof ROW_LABELS, SplitSegmentId> = {
+  benefitSacrifice: 'benefits',
+  incomeTax: 'incomeTax',
+  nationalInsurance: 'nationalInsurance',
+  studentLoan: 'studentLoan',
+  pension: 'pension',
+  hicbc: 'hicbc',
+  benefitPayments: 'benefits',
+  postTaxDeductions: 'postTaxDeductions',
+}
+
+/** Gross pay in the breakdown: the accent, not a part. */
+const GROSS_SWATCH: Swatch = { icon: Banknote, text: 'text-accent', fill: 'bg-accent', stroke: 'stroke-accent', tint: 'bg-accent-subtle' }
+
+/** A part of gross pay as a share of it, in words; nothing without pay. */
+function grossShare(part: Money, gross: Money, words: string): string | undefined {
+  return compare(gross, ZERO) > 0 ? `${formatPercent(ratio(toPence(part), toPence(gross)), 1)} ${words}` : undefined
+}
+
 /** The pennies a month's take-home moves from an even division of the year's, in words. */
 function pennyNote(month: Breakdown, gbp: Gbp): string | undefined {
   const moved = compare(month.difference, ZERO)
@@ -968,7 +1035,29 @@ function Results({
       {compareState && <PensionCompare state={compareState} inputs={inputs} resolved={resolved} gbp={gbp} style={style} />}
 
       <div className="flex flex-col gap-3" data-headline>
-        <ResultCard title="Take-home pay" headlineLabel={PERIOD_LABELS_HEADLINE[period]} headline={gbp(shown.takeHome)}>
+        <ResultCard
+          title="Take-home pay"
+          headlineLabel={PERIOD_LABELS_HEADLINE[period]}
+          headline={gbp(shown.takeHome)}
+          emphasis
+          sentence={grossShare(annual.net, annual.gross, 'of your gross pay, after tax and everything taken off')}
+          footer={
+            <dl data-periods className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  ['Year', gbp(annual.net), annual.label],
+                  ['Month', gbp(month.takeHome), 'Each yearly row divided by the months in a year, to the nearest penny, then added up'],
+                  ['Week', gbp(weekly.net), weekly.label],
+                ] as const
+              ).map(([label, value, detail]) => (
+                <div key={label} title={detail} className="min-w-0 rounded-md bg-surface-muted px-3 py-2">
+                  <dt className="text-xs text-text-muted">{label}</dt>
+                  <dd className="text-base font-semibold text-text tabular-nums [overflow-wrap:anywhere]">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          }
+        >
           {paye?.ok && (
             <>
               <StatRow
@@ -983,13 +1072,6 @@ function Results({
               />
             </>
           )}
-          <StatRow label="Year" value={gbp(annual.net)} detail={annual.label} />
-          <StatRow
-            label="Month"
-            value={gbp(month.takeHome)}
-            detail="Each yearly row divided by the months in a year, to the nearest penny, then added up"
-          />
-          <StatRow label="Week" value={gbp(weekly.net)} detail={weekly.label} />
         </ResultCard>
         {paye?.ok && (
           <p data-net-pay-note className="text-xs text-text-muted">
@@ -1006,13 +1088,31 @@ function Results({
       </div>
 
       <section data-split aria-label="Where your gross pay goes" className="rounded-lg border border-border bg-surface p-5 shadow-sm">
-        <SplitBar
+        <Donut
           title={`Where your gross pay goes, ${periodWords}`}
-          segments={splitSegments(shown).map((s) => ({ id: s.id, label: s.label, value: s.amount }))}
-          total={shown.gross}
-          totalLabel="Gross pay"
-          formatValue={(pence) => gbp(pence as Money)}
-          highlight="takeHome"
+          parts={splitSegments(shown).map((s) => ({
+            id: s.id,
+            label: s.label,
+            value: toPence(s.amount),
+            stroke: PAY_SWATCHES[s.id].stroke,
+            key: <IconTile swatch={PAY_SWATCHES[s.id]} size="sm" />,
+          }))}
+          total={toPence(shown.gross)}
+          centre={
+            <>
+              <span className="text-xs text-text-muted">Gross pay</span>
+              <span data-gross className="text-lg font-bold text-text tabular-nums">
+                {gbp(shown.gross)}
+              </span>
+              <span className="text-xs text-text-muted">{periodWords}</span>
+            </>
+          }
+          formatValue={(pence) => gbp(fromPence(pence))}
+          emptyText={
+            compare(shown.takeHome, ZERO) < 0
+              ? 'Take-home is below nothing, so the ring can’t be drawn. The table has every figure.'
+              : 'Nothing to show yet: enter your pay.'
+          }
         />
       </section>
       {sweep && <CostChart sweep={sweep} state={compareState} inputs={inputs} resolved={resolved} gbp={gbp} style={style} />}
@@ -1026,7 +1126,12 @@ function Results({
           onChange={setPeriod}
         />
         <ResultCard title="Breakdown">
-          <StatRow label="Gross pay" value={gbp(shown.gross)} detail="Salary plus bonus" />
+          <StatRow
+            label="Gross pay"
+            value={gbp(shown.gross)}
+            detail="Salary plus bonus"
+            icon={<IconTile swatch={GROSS_SWATCH} size="sm" />}
+          />
           {(Object.keys(ROW_LABELS) as (keyof typeof ROW_LABELS)[])
             .filter((row) => !OPTIONAL_ROWS.has(row) || compare(annual[row], ZERO) !== 0)
             .map((row) => (
@@ -1035,10 +1140,12 @@ function Results({
                 label={ROW_LABELS[row]}
                 value={gbp(shown.rows[row])}
                 detail={row === 'pension' && result.pension ? METHOD_LABELS[result.pension.method] : undefined}
+                icon={<IconTile swatch={PAY_SWATCHES[ROW_PARTS[row]]} size="sm" />}
               />
             ))}
           <StatRow
             label="Take-home"
+            icon={<IconTile swatch={PAY_SWATCHES.takeHome} size="sm" />}
             value={gbp(shown.takeHome)}
             detail={period === 'year' ? 'Gross pay less every row above' : (pennyNote(shown, gbp) ?? 'Gross pay less every row above')}
           />
@@ -1336,6 +1443,7 @@ function TargetWarnings({ state, gbp }: { state: PensionCompareState; gbp: Gbp }
       <Section
         id="opt-other-warnings"
         title="Warnings at other contributions"
+        icon={<IconTile swatch={PAY_SWATCHES.pension} />}
         summary={elsewhere.length === 0 ? 'None elsewhere in the range' : `${count(elsewhere.length, 'warning')} elsewhere in the range`}
       >
         {elsewhere.length === 0 ? (
@@ -1493,6 +1601,7 @@ function CostDetail({ state, gbp }: { state: PensionCompareState; gbp: Gbp }) {
     <Section
       id="opt-cost-detail"
       title="Cost detail"
+      icon={<IconTile swatch={PAY_SWATCHES.pension} />}
       summary={
         c.costPerPound === null
           ? 'No change in what goes in between now and your target'
@@ -1536,6 +1645,7 @@ function MilestoneDetail({ sweep, gbp }: { sweep: OptimiseResult; gbp: Gbp }) {
     <Section
       id="opt-milestone-detail"
       title="Milestones in detail"
+      icon={<IconTile swatch={PAY_SWATCHES.pension} />}
       summary={`${count(sweep.thresholds.length, 'threshold')}, each limit and what it is measured on, from your contribution now`}
     >
       <ul data-thresholds className="flex flex-col">
@@ -1571,7 +1681,12 @@ function SpendableDetail({ state, gbp, style }: { state: PensionCompareState; gb
     { label: 'Spendable', pick: (p) => p.spendable },
   ]
   return (
-    <Section id="opt-spendable" title="Spendable income" summary={`Spendable at your target: ${gbp(next.spendable)} a year`}>
+    <Section
+      id="opt-spendable"
+      title="Spendable income"
+      icon={<IconTile swatch={PAY_SWATCHES.pension} />}
+      summary={`Spendable at your target: ${gbp(next.spendable)} a year`}
+    >
       <div data-spendable>
         <ResultCard title="Spendable: take-home with Child Benefit, less any annual allowance charge">
           {rows.map((row) => (

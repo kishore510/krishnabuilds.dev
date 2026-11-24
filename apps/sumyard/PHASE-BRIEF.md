@@ -1,6 +1,6 @@
 # PHASE-BRIEF: Take-home page redesign
 
-Status: **T0 (brief, docs only)** this PR; **T1 (shared sharing, internal)** Not started; **T2 (the page)** Not started, after the owner approves a mock-up. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner". Finished briefs are in `docs/history/phase-brief-archive.md`.
+Status: **T0 (brief)**, **T1 (shared sharing)** and **T2 (the page)** Done (0.36.0, PR #190), in one PR at the owner's request; waiting on the owner's sign-off from screenshots (TH7) and merge. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner". Finished briefs are in `docs/history/phase-brief-archive.md`.
 
 ## Docs rule
 
@@ -27,7 +27,7 @@ Bring `#/c/optimiser` (take-home pay and the pension compare) into the look of t
 - **Pension compare** (1b-iii): visual alignment only (icon tiles on its sections, the same card styles); the picker, chart, milestones and warnings behave as now.
 - **Share** beside the scenario bar, hidden on a refusal or invalid inputs: the image card (headline, ring, the parts), PDF (print), CSV of the breakdown, and text; an **amounts** toggle (off: every part as a share of gross pay, no £ figure anywhere, TH4). No names toggle (no user-named lines are shared, TH5). Made on the device; nothing uploaded; no storage key.
 
-### Decisions for the owner (proposed)
+### Decisions (TH1 to TH8 approved by the owner as proposed, 24 November 2026; TH7 changed: screenshots of the built page instead of a mock-up)
 
 - **TH1.** The ring (`Donut`) replaces the split bar on the take-home page only; the split bar stays a shared component (the car and next pound pages use it).
 - **TH2.** Colours for the parts of pay: new semantic tokens `--sy-pay-tax`, `-ni`, `-student-loan`, `-pension`, `-hicbc`, `-benefits`, `-deductions`, mapped to existing palette steps (no new raw colours), with take-home in the budget's neutral left-over colour. The alternative is reusing the budget's group tokens (pension as saving green, and so on), which ties two meanings to one colour. A new token is a design-rule flag either way.
@@ -87,12 +87,11 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 24 November 2026 (docs only): the owner closed the mortgage overpayment and next pound slices (Done in `PLAN.md`; the next pound brief moved to `docs/history/phase-brief-archive.md`; their open checks kept as follow-ups above) and chose the take-home page as the first calculator redesign. This brief, with TH1 to TH8 proposed.
-- Before that: 0.35.0 (PR #189) the home page redesign; 0.34.0 and 0.33.0 the budget redesign. Not done for any: Safari, a real phone, a screen reader.
+- 24 November 2026 (0.36.0, PR #190): closed the mortgage and next pound slices (checks kept as follow-ups) and built the take-home redesign in one PR: T1 moved the budget's sharing to `src/components/share/` (budget output and tests unchanged, one test reads `tiles`); T2 the page (`pay-*` tokens, `style.ts`, the ring, the emphasised headline, icons on sections and breakdown rows, Share via `share.ts`). Full test, lint, typecheck and build pass; Chromium screenshots and axe at 360 and 1280 px, light and dark. Not done: Safari, a real phone, a screen reader.
 
 ## Next
 
-- Owner: answer TH1 to TH8 ("as proposed" or a change to each).
-- T1: shared sharing in `src/components/share/`, the budget unchanged. Then the T2 mock-up for approval, then the page.
+- Owner: sign off from the screenshots in the PR, then merge #190.
+- Next redesign: mortgage overpayment, then compound interest; next pound and car decision lightly (the next pound's open checks are revisited then).
 
 Full history (progress logs, finished part scopes, slice archives): `docs/history/` (grep it, don't read it whole).

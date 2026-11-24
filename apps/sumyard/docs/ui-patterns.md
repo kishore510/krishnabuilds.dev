@@ -228,3 +228,25 @@ Every input is in a section (the brief's list: your mortgage, fixed rate, overpa
 ### U44. Answer first, one return per period
 
 The sticky figure is interest saved and the time to clear, overpaying against not ("£X saved; cleared in 16 years 8 months instead of 19 years 4 months"; interest-only: what is owed at the end): time from now is easier to take in than a date or a difference (owner, 0.27.1). The answer card follows the warnings: interest saved, "Mortgage cleared in" (the time saved and the last payment dates under it), total paid, the charge paid, and with a charge the net saving and break-even (a date, with its payment number). The returns card has one row per rate period, each with its dates and what it is measured against; nothing blends them. The what-if (U40, U41) is a single slider for the monthly overpayment. The payments card leads with what you pay each month now (payment and overpayment together), then the contractual payment with a prompt to check it against a statement, since a term left read from an app's estimate that already counts overpayments gives a payment too high (owner's use, 0.27.1).
+
+## Take-home redesign (0.36.0)
+
+Owner decisions TH1 to TH8 (24 November 2026, all as proposed in the brief). UI only: no engine, config, inputs, storage or scenario change.
+
+### TH1 to TH3. The ring, colours and icons
+
+- The shared `Donut` replaces U7's split bar on the take-home page only (the car and next pound pages keep `SplitBar`); its parts are still `splitSegments`, adding up to gross pay. Gross pay is in its centre. A take-home below nothing cannot be drawn: the ring says so and keeps the table.
+- Each part of pay has a `pay-*` colour token (`docs/design-tokens.md`) and a Lucide icon (`src/calculators/optimiser/style.ts`); take-home uses the budget's neutral left-over colour. The same icon marks the input section and the breakdown row for that part (`StatRow` `icon`); the pension compare's sections take the pension icon. Colour is never the only cue.
+
+### The headline
+
+`ResultCard` `emphasis`: the headline larger and in `positive`, with a sentence (take-home's share of gross pay for the year) and Year, Month and Week tiles under it. U8's two payslip lines are unchanged. The phone bar (U4) is unchanged.
+
+### TH4, TH5. Share
+
+**Share** beside the page title, off while the inputs need fixing or the engine refuses. The shared dialog (`src/components/share/`, extracted from the budget's BD16 dialog with the budget's output unchanged) offers an image, PDF (print), CSV and text, with **Show amounts** on by default (off: every figure a share of gross pay, no pound figure anywhere). No line names switch. Shared: the headline, the ring's parts and the breakdown for the chosen period, gross pay and what is taken off, the tax year and region. Not shared: item names, the tax code, the pension compare. Nothing is stored; no new storage key.
+
+### TH6 to TH8
+
+No what-if sliders (the pension compare is the what-if). The owner approved building without a separate mock-up and will sign off from screenshots of the built page (TH7, changed from the brief). The home card's figure is unchanged.
+

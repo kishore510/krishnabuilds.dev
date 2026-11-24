@@ -1,6 +1,6 @@
 # Phase plan: Sumyard
 
-Last updated: 24 November 2026 (mortgage overpayment and next pound decision closed by the owner, Done; take-home page redesign In progress, T0 brief; home page redesign Done, 0.35.0, PR #189; budget: what others put in Done, 0.34.0, PR #188; budget accounts and sharing Done, 0.33.0, PR #187; shared krishnabuilds.dev theme cookie Done, 0.32.0; remaining not-started rows parked, `docs/backlog.md`; household budget Done, 0.25.0; slices 1 to 3 Done; open owner checks are listed in `PHASE-BRIEF.md`)
+Last updated: 24 November 2026 (take-home page redesign Done, 0.36.0, PR #190; mortgage overpayment and next pound decision closed by the owner, Done; home page redesign Done, 0.35.0, PR #189; budget: what others put in Done, 0.34.0, PR #188; budget accounts and sharing Done, 0.33.0, PR #187; shared krishnabuilds.dev theme cookie Done, 0.32.0; remaining not-started rows parked, `docs/backlog.md`; household budget Done, 0.25.0; slices 1 to 3 Done; open owner checks are listed in `PHASE-BRIEF.md`)
 
 Sumyard is a set of personal UK finance calculators in one clean, ad-free web app, for the owner's own use. Constraints: client-side only, a static site on GitHub Pages, UK rules from versioned per-tax-year config, illustrative not advice.
 
@@ -52,10 +52,10 @@ Rules for this file: add a row when scope is added; update the Status cell when 
 | Budget accounts and sharing | The household budget redesigned: groups (BD10), accounts with transfers from main and what is left in each (BD11 to BD13), needs, wants and saving (BD14), the v1 migration (BD15), and sharing as an image, PDF, CSV or text (BD16) | Done (0.33.0, PR #187, 24 November 2026) |
 | Budget: what others put in | A partner's contribution into a joint account, not counted as income (BD17), inputs version 3 | Done (0.34.0, PR #188, 24 November 2026) |
 | Home page redesign | Calculators in groups with icon tiles and short lines; each card shows a figure from its latest saved scenario (`homeFigure`), never a winner (G13) | Done (0.35.0, PR #189, 24 November 2026) |
-| Take-home page redesign | `#/c/optimiser` in the budget and home page look: icon tiles on sections, headline first, a ring of where gross pay goes, compact coloured rows, Share (image, PDF, CSV, text); UI only (no engine, config, inputs or storage change). Built in the parts below | In progress |
-| T0 Take-home redesign brief | The brief and decisions TH1 to TH8 for the owner (docs only) | In progress |
-| T1 Shared sharing | The budget's share dialog, card and CSV helpers moved to `src/components/share/` on a page-neutral model, the budget's output unchanged (internal) | Not started |
-| T2 Take-home page | The page as in the brief, after the owner approves a mock-up | Not started |
+| Take-home page redesign | `#/c/optimiser` in the budget and home page look: icon tiles on sections, headline first, a ring of where gross pay goes, compact coloured rows, Share (image, PDF, CSV, text); UI only (no engine, config, inputs or storage change). Built in the parts below | Done (0.36.0, PR #190, 24 November 2026) |
+| T0 Take-home redesign brief | The brief and decisions TH1 to TH8 for the owner (docs only) | Done (0.36.0, PR #190, 24 November 2026) |
+| T1 Shared sharing | The budget's share dialog, card and CSV helpers moved to `src/components/share/` on a page-neutral model, the budget's output unchanged (internal) | Done (0.36.0, PR #190, 24 November 2026) |
+| T2 Take-home page | The page as in the brief; the owner chose to sign off from screenshots of the built page instead of a mock-up (TH7) | Done (0.36.0, PR #190, 24 November 2026) |
 | Loan / APR | Verify the APR definition against official guidance | Parked |
 | ISA vs pension vs mortgage | Builds on 1b and the overpayment calculator | Parked |
 | Bonus and salary sacrifice | Largely an input mode of 1b; may fold into it | Parked |

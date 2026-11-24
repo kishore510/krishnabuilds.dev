@@ -7,7 +7,7 @@ At `#/c/budget` (0.25.0; accounts, groups and sharing 0.33.0). Income after tax 
 - `calc.ts`, `types.ts`: the pure engine, `budget(inputs)`: totals by group, each account's money in, paid, transfers out, left, saved (a savings pot) and short, the top-up, left over across accounts (may be below nothing), needs, wants and saving, shares of income as exact Ratios (null with no income), the savings rate, each line's year and month, the penny drift, warnings and assumptions; a typed refusal by line or account for anything outside the input limits, an account id that is not plain, or a line paid from an account that is not there.
 - `definition.ts`: inputs version 3 (`pay`, `payPeriod`, `income`, `accounts` with `othersIn`, `outgoings`), the v1 and v2 migrations (BD15, BD17), the default template lines, validation (hostile keys, fresh objects, names tidied and cut), `toEngineInputs` (Your pay first), `withWhatIf` (transfers too), account templates, removal and new ids, `coveringMonthly` (the shortfall fix), section summaries, compare rows.
 - `BudgetPage.tsx` and `page/`: the page (`Results.tsx`, `Accounts.tsx`, `LineEditor.tsx`, `style.tsx` for group colours and icons).
-- `share/`: `summary.ts` (what a shared budget says, as text and CSV, with the formula guard), `card.ts` (the image card on a canvas), `ShareDialog.tsx` (the dialog and the print page).
+- `share/`: `summary.ts` (what a shared budget says: the shared model and the CSV), `ShareDialog.tsx` (the shared dialog with the budget's wording). The dialog, image card, print page, text and CSV helpers are shared in `src/components/share/` since 0.36.0.
 
 ## Assumptions
 

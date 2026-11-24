@@ -833,7 +833,7 @@ describe('Optimiser page layout (0.12.0): results', () => {
     for (const el of order) expect(el.closest('[data-results]')).not.toBeNull()
   })
 
-  it('the split bar shows where gross pay goes for the period, adding up to gross pay', () => {
+  it('the ring shows where gross pay goes for the period, adding up to gross pay (TH1)', () => {
     type(box('opt-salary'), '70,000')
     click($('#opt-loan-plan2'))
     type(box('opt-employee'), '3,000')
@@ -841,9 +841,9 @@ describe('Optimiser page layout (0.12.0): results', () => {
     for (const period of ['year', 'month'] as const) {
       choose('opt-period', period)
       const shown = breakdown(engine().annual, period)
-      const drawn = [...$('[data-split]')!.querySelectorAll('[data-segment]')]
+      const drawn = [...$('[data-split]')!.querySelectorAll('[data-part]')]
       const values: Record<string, number> = Object.fromEntries(
-        drawn.map((el) => [el.getAttribute('data-segment'), Number(el.getAttribute('data-value'))]),
+        drawn.map((el) => [el.getAttribute('data-part'), Number(el.getAttribute('data-value'))]),
       )
       const expected = Object.fromEntries(
         splitSegments(shown)
@@ -855,7 +855,7 @@ describe('Optimiser page layout (0.12.0): results', () => {
         Object.values(values).reduce((a, b) => a + b, 0),
         period,
       ).toBe(shown.gross)
-      expect($('[data-split] figcaption')!.textContent).toContain(money(shown.gross))
+      expect($('[data-split] [data-gross]')!.textContent).toBe(money(shown.gross))
       expect($('[data-split] table')).not.toBeNull()
     }
   })
