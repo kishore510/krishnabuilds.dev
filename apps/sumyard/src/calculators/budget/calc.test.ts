@@ -254,6 +254,61 @@ describe('accounts, transfers and what is left in each (BD11, BD12, BD13)', () =
   })
 })
 
+describe('what others put in (BD17)', () => {
+  // A joint account: your share 300 from main, a partner's 300 straight in, paying the full joint costs of 538.
+  const joint = inputs(
+    [pay(3_000)],
+    [
+      out(1_000, 'home', 'monthly', 'Mortgage'),
+      out(138, 'home', 'monthly', 'Cleaner', 'j', false),
+      out(250, 'food', 'monthly', 'Groceries', 'j'),
+      out(150, 'food', 'monthly', 'Takeaways', 'j', false),
+    ],
+    [acc('j', 300, 'joint', 'monthly', 'Joint', 300)],
+  )
+
+  it('is money into the account, never the person’s income', () => {
+    const r = run(joint)
+    expect(pounds(r.income.month)).toBe(3_000)
+    expect(pounds(r.fromOthers.month)).toBe(300)
+    const j = account(r, 'j')
+    expect(pounds(j.moneyIn.month)).toBe(600)
+    expect(pounds(j.fromOthers.month)).toBe(300)
+    expect(pounds(j.left.month)).toBe(62)
+  })
+
+  it('leaves main as it was: only the person’s own transfer goes out of main', () => {
+    const main = account(run(joint), 'main')
+    expect(pounds(main.transfersOut.month)).toBe(300)
+    expect(pounds(main.left.month)).toBe(1_700)
+  })
+
+  it('counts in left over across accounts, and shares stay of the person’s income', () => {
+    const r = run(joint)
+    expect(pounds(r.outgoings.month)).toBe(1_538)
+    expect(pounds(r.leftover.month)).toBe(1_762)
+    expect(r.leftover.share).toEqual(ratio(p(fromPounds(1_762 * 12)), p(fromPounds(3_000 * 12))))
+    expect(p(r.income.year) + p(r.fromOthers.year)).toBe(p(r.outgoings.year) + p(r.leftover.year))
+  })
+
+  it('a partner’s share stops a joint account looking short', () => {
+    const alone = run({ ...joint, accounts: [acc('j', 300, 'joint')] })
+    expect(pounds(account(alone, 'j').short.month)).toBe(238)
+    expect(run(joint).warnings).toEqual([])
+  })
+
+  it('is refused below nothing or past the limit', () => {
+    expect(budget(inputs([], [], [acc('j', 1, 'joint', 'monthly', 'J', -1)]))).toEqual({
+      ok: false,
+      problems: [{ field: 'accounts', index: 0, reason: 'below-minimum' }],
+    })
+    expect(budget(inputs([], [], [{ ...acc('j', 1, 'joint'), othersIn: fromPence(p(MAX_INPUT_AMOUNT) + 1) }]))).toMatchObject({
+      ok: false,
+      problems: [{ reason: 'above-maximum' }],
+    })
+  })
+})
+
 describe('blank, zero and negative leftover (BD4, BD5)', () => {
   it('a blank amount is nothing, with no warning', () => {
     const r = run(inputs([pay(1_000)], [out(0, 'food'), out(0, 'saving', 'weekly')], [acc('a', 0)]))

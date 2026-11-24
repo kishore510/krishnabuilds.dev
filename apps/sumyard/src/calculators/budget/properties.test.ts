@@ -60,10 +60,11 @@ describe('properties', () => {
       }
     }))
 
-  it('leftover is income less outgoings, and the sum of every account’s left less what pots put aside, exactly', () =>
+  it('leftover is income and what others put in less outgoings, and the sum of every account’s left less what pots put aside, exactly', () =>
     each(3, (c) => {
       const r = run(c)
-      expect(p(r.leftover.year)).toBe(p(r.income.year) - p(r.outgoings.year))
+      expect(p(r.leftover.year)).toBe(p(r.income.year) + p(r.fromOthers.year) - p(r.outgoings.year))
+      expect(r.accounts.reduce((sum, a) => sum + p(a.fromOthers.year), 0)).toBe(p(r.fromOthers.year))
       expect(r.accounts.reduce((sum, a) => sum + p(a.left.year) - p(a.saved.year), 0)).toBe(p(r.leftover.year))
     }))
 
@@ -79,9 +80,9 @@ describe('properties', () => {
       }
     }))
 
-  it('the outgoings share and the leftover share add up to one exactly (or both are n/a with no income)', () =>
+  it('with nothing from others, the outgoings share and the leftover share add up to one exactly (or both are n/a with no income)', () =>
     each(5, (c) => {
-      const r = run(c)
+      const r = run({ ...c, accounts: c.accounts.map((a) => ({ ...a, othersIn: fromPence(0) })) })
       if (p(r.income.year) === 0) {
         expect(r.outgoings.share).toBeNull()
         expect(r.leftover.share).toBeNull()
@@ -132,7 +133,8 @@ describe('properties', () => {
     each(10, (c) => {
       const r = run(c)
       const figures = [r.income, r.outgoings, r.leftover, r.topUp, r.potSaved, ...r.perGroup, ...r.outgoingLines]
-      for (const a of r.accounts) figures.push(a.moneyIn, a.paid, a.transfersOut, a.left, a.saved, a.short)
+      figures.push(r.fromOthers)
+      for (const a of r.accounts) figures.push(a.moneyIn, a.fromOthers, a.paid, a.transfersOut, a.left, a.saved, a.short)
       for (const x of figures)
         expect(Math.abs(p(x.month) * PERIODS_PER_YEAR.monthly - p(x.year)) * 2).toBeLessThanOrEqual(PERIODS_PER_YEAR.monthly)
     }))
