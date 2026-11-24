@@ -1,0 +1,543 @@
+{
+  "id": "sun-missions",
+  "title": "Missions to the Sun",
+  "description": "An illustrated map of the missions to the Sun, from the Helios probes and Ulysses’s flight over the Sun’s poles through SOHO and Genesis at the point between Sun and Earth to Parker Solar Probe’s dives through the corona, Solar Orbiter and India’s Aditya-L1.",
+  "canvas": "cosmic",
+  "basemap": "solar-system",
+  "source": "History",
+  "nativeLang": "en",
+  "mapLabel": "Illustrated diagram of the inner Solar System by distance, with the Sun on the left, Venus, Earth and Jupiter, the first Lagrange point and the paths of the probes sent to study the Sun",
+  "note": "This map is a diagram of distance, not a picture of space. Distance from the Sun runs left to right on a logarithmic scale. On that scale the closest passes of Helios and Parker would fall off the map and the Lagrange point L1 on top of Earth, so they are drawn off scale. Up and down mean nothing, except directly above the Sun, which stands for its poles. Figures follow NASA, ESA and ISRO.",
+  "routes": "chapter",
+  "overview": {
+    "at": [
+      33,
+      45
+    ],
+    "width": 66
+  },
+  "places": {
+    "earth": {
+      "name": "Earth",
+      "at": [
+        22,
+        45
+      ],
+      "glyph": "earth-moon",
+      "label": "right"
+    },
+    "venus": {
+      "name": "Venus",
+      "at": [
+        15.5,
+        53
+      ],
+      "glyph": "rocky-planet",
+      "label": "top"
+    },
+    "jupiter": {
+      "name": "Jupiter",
+      "at": [
+        59.1,
+        41.3
+      ],
+      "glyph": "gas-giant",
+      "label": "top"
+    },
+    "l1": {
+      "name": "Lagrange point L1",
+      "at": [
+        18.5,
+        39
+      ],
+      "glyph": "orbiter",
+      "label": "left"
+    },
+    "helios-perihelion": {
+      "name": "Helios’s closest pass",
+      "at": [
+        12.5,
+        38
+      ],
+      "glyph": "speed-up",
+      "label": "bottom"
+    },
+    "corona": {
+      "name": "The corona",
+      "at": [
+        10,
+        48
+      ],
+      "glyph": "sun",
+      "label": "bottom"
+    },
+    "sun-poles": {
+      "name": "Above the Sun’s poles",
+      "at": [
+        6,
+        63
+      ],
+      "glyph": "orbiter",
+      "label": "right"
+    }
+  },
+  "travellers": {
+    "helios": {
+      "name": "Helios 1 and 2",
+      "icon": "probe"
+    },
+    "ulysses": {
+      "name": "Ulysses",
+      "icon": "probe"
+    },
+    "soho": {
+      "name": "SOHO",
+      "icon": "probe"
+    },
+    "genesis": {
+      "name": "Genesis",
+      "icon": "probe"
+    },
+    "parker": {
+      "name": "Parker Solar Probe",
+      "icon": "probe"
+    },
+    "solar-orbiter": {
+      "name": "Solar Orbiter",
+      "icon": "probe"
+    },
+    "aditya": {
+      "name": "Aditya-L1",
+      "icon": "probe"
+    }
+  },
+  "phases": {
+    "close-looks": {
+      "name": "Helios and Ulysses",
+      "color": "#ff8a3a"
+    },
+    "l1": {
+      "name": "SOHO and Genesis",
+      "color": "#4fc3b0"
+    },
+    "new-era": {
+      "name": "Parker, Solar Orbiter and Aditya-L1",
+      "color": "#a678e0"
+    }
+  },
+  "routeStyles": {
+    "helios": {
+      "color": "#ffd166",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "ulysses": {
+      "color": "#6fd3f0",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "soho": {
+      "color": "#d9a8f5",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "genesis": {
+      "color": "#ff9f7a",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "parker": {
+      "color": "#ff6b6b",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "solar-orbiter": {
+      "color": "#8fe388",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    },
+    "aditya": {
+      "color": "#f7b3d9",
+      "width": 3,
+      "dash": "3 5",
+      "cap": "round"
+    }
+  },
+  "steps": [
+    {
+      "place": "helios-perihelion",
+      "phase": "close-looks",
+      "title": "Inside Mercury’s orbit",
+      "when": "December 1974 to April 1976",
+      "at": 2.0,
+      "camera": {
+        "at": [
+          17,
+          42
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "helios-perihelion",
+          "traveller": "helios",
+          "style": "helios",
+          "bend": 0.14
+        }
+      ],
+      "text": "The first probes to fly inside Mercury’s orbit were built in West Germany and launched by NASA: Helios 1 in December 1974 and Helios 2 in January 1976. On 17 April 1976 Helios 2 passed 43 million kilometres from the Sun at about 250,000 kilometres an hour, records that stood for 42 years. Both measured the solar wind and dust.",
+      "today": "Both still circle the Sun, silent since contact ended in the 1980s."
+    },
+    {
+      "place": "jupiter",
+      "phase": "close-looks",
+      "title": "Out of the planets’ plane",
+      "when": "October 1990 to February 1992",
+      "at": 13.0,
+      "camera": {
+        "at": [
+          40,
+          43
+        ],
+        "width": 56
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "jupiter",
+          "traveller": "ulysses",
+          "style": "ulysses",
+          "bend": 0.14
+        }
+      ],
+      "text": "Every planet circles the Sun near one plane, so no craft had seen the Sun from above or below. No rocket of the day could get there directly, so Ulysses, from Europe and NASA, used Jupiter. Launched from a Space Shuttle in October 1990, it swung past Jupiter on 8 February 1992 and was flung out of the planets’ plane.",
+      "today": "Its name is from Dante’s Inferno, where Ulysses longs to see the unpeopled world behind the Sun."
+    },
+    {
+      "place": "sun-poles",
+      "phase": "close-looks",
+      "title": "Over the Sun’s poles",
+      "when": "1994 to 2009",
+      "at": 20.0,
+      "camera": {
+        "at": [
+          33,
+          52
+        ],
+        "width": 64
+      },
+      "legs": [
+        {
+          "from": "jupiter",
+          "to": "sun-poles",
+          "traveller": "ulysses",
+          "style": "ulysses",
+          "bend": 0.14
+        }
+      ],
+      "source": "Science",
+      "text": "Ulysses passed over the Sun’s south pole in 1994 and its north pole in 1995, when the Sun was quiet. It found a fast solar wind, about 750 kilometres a second, streaming from holes in the corona over the poles, twice as fast as near the equator. At the stormy peak of 2000 and 2001, winds were jumbled everywhere.",
+      "today": "Ulysses worked for over 18 years, nearly four times as long as planned, until 30 June 2009."
+    },
+    {
+      "place": "l1",
+      "phase": "l1",
+      "title": "A watchpost between Sun and Earth",
+      "when": "December 1995 to February 1996",
+      "at": 27.0,
+      "camera": {
+        "at": [
+          19,
+          42
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "l1",
+          "traveller": "soho",
+          "style": "soho",
+          "bend": 0.14
+        }
+      ],
+      "text": "About 1.5 million kilometres from Earth towards the Sun, the pulls of the two balance so that a craft can keep pace with Earth and see the Sun without a break. This is the first Lagrange point (L1). The Solar and Heliospheric Observatory (SOHO), from Europe and NASA, was launched on 2 December 1995 and arrived in February 1996.",
+      "today": "Its coronagraph, a disc that blots out the Sun, has watched thousands of storms of solar gas leave the Sun."
+    },
+    {
+      "place": "l1",
+      "phase": "l1",
+      "title": "Lost and found",
+      "when": "June 1998 to February 1999",
+      "at": 34.0,
+      "camera": {
+        "at": [
+          16,
+          41
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "text": "On 25 June 1998 a chain of mistakes sent SOHO spinning, its panels turned from the Sun. For a month it was lost. Then the Arecibo radar dish in Puerto Rico found its echo, and engineers slowly thawed its frozen fuel and brought it back. When its last gyroscope failed in December, they learned to fly it without any.",
+      "today": "From February 1999 SOHO held steady with no gyroscopes at all, using new software."
+    },
+    {
+      "place": "l1",
+      "phase": "l1",
+      "title": "Comets and a ringing Sun",
+      "when": "1996 to 2024",
+      "at": 41.0,
+      "camera": {
+        "at": [
+          16,
+          41
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "source": "Science",
+      "text": "SOHO became the greatest finder of comets in history. Its coronagraph images, posted online, let amateurs spot faint comets diving at the Sun; by March 2024 the count reached 5,000, most thought to be fragments of one great comet that broke up long ago. Meanwhile it listened to sound waves ringing inside the Sun, mapping how its interior turns.",
+      "today": "Most of these comets do not survive their dive; the family is named after the astronomer Heinrich Kreutz."
+    },
+    {
+      "place": "l1",
+      "phase": "l1",
+      "title": "A piece of the Sun",
+      "when": "August 2001 to April 2004",
+      "at": 48.0,
+      "camera": {
+        "at": [
+          19,
+          42
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "l1",
+          "traveller": "genesis",
+          "style": "genesis",
+          "bend": -0.14
+        }
+      ],
+      "text": "NASA’s Genesis left on 8 August 2001 to bring home a piece of the Sun. At L1 it opened trays of ultra-pure silicon, sapphire, gold and diamond, and let the solar wind bury atoms in them for about 850 days. The Sun holds over 99 percent of the Solar System’s mass, so it records the cloud the planets formed from.",
+      "today": "It was the first craft to bring samples back from beyond the Moon."
+    },
+    {
+      "place": "earth",
+      "phase": "l1",
+      "title": "The parachute that never opened",
+      "when": "8 September 2004",
+      "at": 55.0,
+      "camera": {
+        "at": [
+          19,
+          42
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "l1",
+          "to": "earth",
+          "traveller": "genesis",
+          "style": "genesis",
+          "bend": -0.14
+        }
+      ],
+      "text": "On 8 September 2004 Genesis dropped its capsule over Utah, where stunt pilots in helicopters waited to snag its parachute in midair. The parachute never opened: a switch meant to sense braking had been fitted upside down. The capsule hit the desert at about 310 kilometres an hour. Scientists sifted the shattered wafers and still found what they came for.",
+      "today": "In 2011 they reported that the Sun holds more of the lightest form of oxygen than Earth does, a puzzle about how the planets formed."
+    },
+    {
+      "place": "venus",
+      "phase": "new-era",
+      "title": "Seven passes of Venus",
+      "when": "August 2018 to November 2024",
+      "at": 62.0,
+      "camera": {
+        "at": [
+          18,
+          49
+        ],
+        "width": 26
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "venus",
+          "traveller": "parker",
+          "style": "parker",
+          "bend": 0.14
+        }
+      ],
+      "text": "Getting close to the Sun means shedding most of the speed Earth gives a craft. NASA’s Parker Solar Probe, launched on 12 August 2018, used seven passes of Venus to do it. Its shield, 11.4 centimetres of carbon foam between carbon sheets, faces the Sun. On 29 October 2018 it broke both of Helios 2’s records.",
+      "today": "It is named after Eugene Parker, the first NASA craft named after someone still living; he watched it launch."
+    },
+    {
+      "place": "corona",
+      "phase": "new-era",
+      "title": "Touching the Sun",
+      "when": "28 April 2021",
+      "at": 70.0,
+      "camera": {
+        "at": [
+          13,
+          50
+        ],
+        "width": 24
+      },
+      "legs": [
+        {
+          "from": "venus",
+          "to": "corona",
+          "traveller": "parker",
+          "style": "parker",
+          "bend": 0.14
+        }
+      ],
+      "source": "Science",
+      "text": "On 28 April 2021 Parker crossed the Alfvén critical surface, the boundary where the Sun’s magnetic grip lets go and the solar wind breaks free, about 13 million kilometres above the surface. For about five hours it flew through the corona, the Sun’s outer atmosphere. Earlier passes had found switchbacks, sudden S-shaped kinks in the magnetic field of the wind.",
+      "today": "NASA announced in December 2021 that Parker had touched the Sun, the first craft to do so."
+    },
+    {
+      "place": "sun-poles",
+      "phase": "new-era",
+      "title": "Solar Orbiter looks at the poles",
+      "when": "February 2020 to June 2025",
+      "at": 78.0,
+      "camera": {
+        "at": [
+          14,
+          54
+        ],
+        "width": 44
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "sun-poles",
+          "traveller": "solar-orbiter",
+          "style": "solar-orbiter",
+          "bend": 0.14
+        }
+      ],
+      "text": "Europe’s Solar Orbiter, launched with NASA on 10 February 2020, carries telescopes to look at the Sun and instruments to sample the wind. Its first close pictures showed tiny flares, nicknamed campfires, across the Sun. Venus is tilting its orbit, and in 2025 it sent the first pictures of the Sun’s south pole, a jumble of north and south magnetism.",
+      "today": "More passes of Venus are planned to tilt its orbit further, to about 33 degrees by 2029."
+    },
+    {
+      "place": "l1",
+      "phase": "new-era",
+      "title": "India’s Aditya-L1",
+      "native": "आदित्य-एल1",
+      "lang": "hi",
+      "when": "September 2023 to January 2024",
+      "at": 86.0,
+      "camera": {
+        "at": [
+          19,
+          42
+        ],
+        "width": 28
+      },
+      "legs": [
+        {
+          "from": "earth",
+          "to": "l1",
+          "traveller": "aditya",
+          "style": "aditya",
+          "bend": 0.14
+        }
+      ],
+      "text": "India’s first mission to study the Sun, Aditya-L1, rose from Sriharikota on 2 September 2023 aboard a PSLV rocket. On 6 January 2024 it settled into a looping orbit around L1. Of its seven instruments, four look at the Sun, including a coronagraph that blocks the disc to study the corona, and three sample the wind and fields around it.",
+      "today": "Aditya is a Sanskrit name for the Sun; from L1 it watched the great solar storms of May 2024."
+    },
+    {
+      "place": "corona",
+      "phase": "new-era",
+      "title": "Closest ever",
+      "when": "24 December 2024 to June 2025",
+      "at": 95.0,
+      "camera": {
+        "at": [
+          13,
+          50
+        ],
+        "width": 24
+      },
+      "legs": [],
+      "text": "On 24 December 2024 Parker passed 6.1 million kilometres above the Sun’s surface, travelling at about 692,000 kilometres an hour, the fastest any human-made object has gone. Out of contact while so near the Sun, it sent a beacon two days later to say it had survived. It repeated the dive in March and June 2025.",
+      "today": "On each pass its Sun-facing shield heats to roughly 1,000°C while the instruments behind it stay near room temperature."
+    }
+  ],
+  "timeline": {
+    "track": [
+      {
+        "until": 23.5,
+        "color": "rgba(255,138,58,.35)"
+      },
+      {
+        "until": 58.5,
+        "color": "rgba(79,195,176,.35)"
+      },
+      {
+        "until": 100,
+        "color": "rgba(166,120,224,.35)"
+      }
+    ],
+    "ticks": [
+      {
+        "at": 2.0,
+        "text": "1974"
+      },
+      {
+        "at": 13.0,
+        "text": "1990"
+      },
+      {
+        "at": 27.0,
+        "text": "1995"
+      },
+      {
+        "at": 48.0,
+        "text": "2001"
+      },
+      {
+        "at": 62.0,
+        "text": "2018"
+      },
+      {
+        "at": 86.0,
+        "text": "2023"
+      },
+      {
+        "at": 95.0,
+        "text": "Now"
+      }
+    ]
+  },
+  "people": {
+    "heading": "People in this chapter",
+    "items": [
+      {
+        "id": "eugene-parker",
+        "name": "Eugene Parker",
+        "life": "1927 to 2022",
+        "role": "Physicist who predicted the solar wind",
+        "steps": [
+          8,
+          9,
+          12
+        ],
+        "text": "An American astrophysicist at the University of Chicago who in 1958 argued that the Sun’s corona must stream outwards as a supersonic wind. Reviewers rejected the paper, but the journal’s editor, Subrahmanyan Chandrasekhar, published it, and Mariner 2 measured the wind in 1962. In 2018, at 91, he watched the probe named after him launch. He died in 2022."
+      }
+    ]
+  }
+}

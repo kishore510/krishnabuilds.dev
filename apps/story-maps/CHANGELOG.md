@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.120.0
+
+- New story map in Universe: Missions to the Sun. From the Helios probes inside Mercury’s orbit and Ulysses over the Sun’s poles through SOHO and Genesis at L1, to Parker Solar Probe’s Venus passes and dives through the corona, Solar Orbiter at the poles and India’s Aditya-L1. 13 chapters on the `solar-system` sky basemap (the closest passes and L1 drawn off scale, and a spot above the Sun standing for its poles), 1 people card (Parker), no new glyphs.
+- Catalogue: a new Missions to the Sun entry opens the story; new Ulysses, SOHO, Parker Solar Probe and Aditya-L1 entries open it at chapters 2, 4, 9 and 12.
+- Backlog: the Exploring the Solar System series is complete; Missions to the Sun moves to Built.
+
 ## 0.119.0
 
 - New story map in Universe: Saturn and Titan. From Pioneer 11 and the Voyagers through Cassini’s 13 years in orbit, Huygens’ landing on Titan, the jets of Enceladus and the seas of Titan, to Cassini’s dives inside the rings and the Dragonfly drone planned for Titan. 14 chapters on a new `saturn-system` sky basemap (Saturn and its main rings to scale with the polar hexagon, the moons from Mimas to Phoebe on a logarithmic distance scale, the E ring, the magnetosphere’s edge and an enlarged Titan globe with its northern seas and dune fields), 3 people cards (Huygens, Cassini, Porco), no new glyphs. `CLAUDE.md` now lists `saturn-system.json`.

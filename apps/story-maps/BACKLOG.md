@@ -64,14 +64,13 @@ The Mongol conquests are The Mongol Empire, above.
 
 ### Exploring the Solar System (Universe)
 
-A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. In this order:
-
-1. Missions to the Sun: Helios, SOHO, Ulysses, Genesis, Parker Solar Probe, Solar Orbiter, Aditya-L1 (fits the `solar-system` map; no new basemap)
+A series in the Universe subject, one story per world and the missions sent to it, following The Voyager Probes. The series is complete with Missions to the Sun.
 
 Uranus and Neptune have had one visitor, Voyager 2, so they stay in The Voyager Probes. The Mars map came from MOLA heights on NASA's Mars Global Surveyor and the USGS gazetteer (see `README.md`). The Moon's came from NASA LRO's LROC mare boundaries and the USGS gazetteer (see `README.md`). The Jupiter map is a hand-drawn distance diagram (`basemaps/jupiter-system.json`): Jupiter to scale, then a logarithmic scale out from its cloud tops. The Saturn map is a hand-drawn distance diagram (`basemaps/saturn-system.json`) in the same style, with an enlarged Titan globe.
 
 ## Built
 
+- Missions to the Sun (`sun-missions`), 2026-11-24
 Newest first.
 
 - Saturn and Titan (`saturn-titan`), 2026-11-23
