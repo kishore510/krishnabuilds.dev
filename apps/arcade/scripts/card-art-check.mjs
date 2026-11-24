@@ -89,7 +89,7 @@ for (const width of [360, 1280]) {
 
     let arts = 0;
     for (const g of games) {
-      const label = page.locator(`.cartridge[href="${g.path}"] .label`);
+      const label = page.locator(`.cartridge[href="${g.path.replace(/index\.html$/, "")}"] .label`);
       if (await label.count() !== 1) { problems.push(`${where}: no single card for ${g.name}`); continue; }
       const img = label.locator('img.art');
       const span = label.locator(':scope > span');
@@ -115,7 +115,7 @@ for (const width of [360, 1280]) {
       GAMES.push({ name: 'Fallback Check', tagline: 't', emoji: '\u{1F3AE}', color: '#333', category: 'arcade',
         tags: ['t'], path: 'games/zz-fallback-check/index.html', published: '2000-01-01' });
       renderCards();
-      const label = document.querySelector('.cartridge[href="games/zz-fallback-check/index.html"] .label');
+      const label = document.querySelector('.cartridge[href="games/zz-fallback-check/"] .label');
       const out = label ? { img: label.querySelectorAll('img').length, span: (label.querySelector(':scope > span') || {}).textContent } : null;
       GAMES.pop(); renderCards();
       return out;

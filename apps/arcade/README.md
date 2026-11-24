@@ -60,7 +60,7 @@ array is the source of truth. As of 1.67.0, by category, oldest first:
 - **Trebuchet** (`games/trebuchet/`, 2026-07-11): Archers, cannons, catapults and trebuchets — build the right defence for each threat.
 - **Salvo** (`games/salvo/`, 2026-07-11): Freely rearrange your fleet, then the enemy board takes over the screen. A CPU that actually targets back.
 - **Castle Hold** (`games/castle-hold/`, 2026-07-12): A siege you never leave the walls for. Place archers, hold the gate, don’t let a single enemy through.
-- **Wildcard** (`games/wildcard/`, 2026-11-23): Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.
+- **Wildcard** (`games/wildcard/`, 2026-11-23): Match the colour or the number, then empty your hand first. Play 1, 2 or 3 bots, or friends online.
 
 **Sports** (3)
 

@@ -99,6 +99,9 @@ of truth, and `README.md` lists all 37 with their folders and taglines.
    The card on the landing page is generated entirely from this array.
    Optionally add `art: 'assets/art/<slug>.svg'` for a card picture instead
    of the emoji (cards without it keep the emoji); see "Card art" below.
+   Add `multiplayer: true` if people can play it together: it also shows
+   under the Multiplayer filter tile (whatever its `category`) and its
+   page's JSON-LD says `MultiPlayer`.
 4. Add a bare `data-kb-play` attribute to whichever button actually begins
    a play — the button that's initially labelled "Start"/"Play" and gets
    relabelled "Play Again"/"Retry" for replays (every game follows this
@@ -560,7 +563,7 @@ the name, logo or look of any commercial card game.
   id at the last table you joined, so you get your seat back).
 - **Test handle:** `window.wildcard` (`state`, `busy`, `online`, `E`,
   `newGame`, `step`, `setTheme`). Nothing in the game uses it.
-- **Online play** (1.76.0, limits and reconnect 1.77.0; decision in `docs/decisions.md`, 2026-11-23;
+- **Online play** (1.76.0, limits and reconnect 1.77.0, polish 1.78.0; decision in `docs/decisions.md`, 2026-11-23;
   what's left in `BACKLOG.md`). "Play friends online" on the title screen
   starts a table or joins one by its 4-character code (no vowels or
   look-alikes), and `?room=CODE` links open the join panel with the code
@@ -598,10 +601,14 @@ the name, logo or look of any commercial card game.
     card yourself hands the seat back and restarts your clock. Nothing is
     due while nobody is connected, so bots don't play to an empty room.
   - **Messages**: client `hello {id, name}`, `config {size | level}`,
-    `start` (also deals again after a game), `move {move}`, `back`; server
-    `room` (seats with `bot` / `away` / `auto`, phase `lobby` / `playing`
-    / `over`, `hostSeat`), `deal {view, resume}` (on a rejoin it comes
-    before `room`), `update {events, view}`, `error {error}`.
+    `start` (also deals again after a game), `move {move}`, `back`,
+    `ping`; server `room` (seats with `bot` / `away` / `auto`, phase
+    `lobby` / `playing` / `over`, `hostSeat`), `deal {view, resume}` (on a
+    rejoin it comes before `room`), `update {events, view}`, `error
+    {error}`, `pong`. `room`, `deal` and `update` carry `turnLeft`
+    (`R.turnLeft`): ms before a bot takes the current turn, or null when
+    no person's clock is running. A duration, not a time, so clocks don't
+    need to agree.
   - **Page**: `fromView` turns a view into an engine-shaped state rotated
     so you are seat 0 (other hands and the deck are placeholders), so
     `render()` and `animate()` work unchanged. `step()` sends your move
@@ -611,8 +618,23 @@ the name, logo or look of any commercial card game.
     (any close but 4xxx, which the server uses for gone / replaced /
     refused / too many messages) is retried with the same id over about a
     minute (`RETRY_MS`), showing "Reconnecting…"; `pageshow` from the
-    back/forward cache reconnects too. `#backBtn` ("I'm back") replaces
-    the turn pill while a bot has your seat.
+    back/forward cache reconnects too, and so does `visibilitychange`
+    back to visible (`wake()`): a closed socket reopens at once, an open
+    one is sent `ping` and replaced if no message comes in `PING_MS` (3 s).
+    `#backBtn` ("I'm back") replaces the turn pill while a bot has your
+    seat.
+  - **Cues** (1.78.0): `online.deadline` is `turnLeft` added to when the
+    message arrived (`performance.now()`, stamped before the queue). In
+    the last `WARN_MS` (15 s) of your turn the pill goes red (`#turn.warn`)
+    and counts down, ticking and buzzing at 10, 5, 3, 2, 1. Your turn
+    buzzes (`navigator.vibrate`, not on iOS) and, in a hidden tab, puts
+    "● Your turn" in front of the tab's title (`tabCue`). Muting (the
+    top bar's 🔊 `#muteBtn` or the menu's Sound item, one setting) stops
+    the buzz too. The log's `subject(seat)` says "Your bot" / "Bot
+    for <name>" while a bot has a person's seat; `comings()` logs "<name>
+    lost connection" and bubbles "<name> is back" from `room` changes.
+    The table's `webSocketClose` closes its side too, so a page's own
+    close completes at once.
 
 ## Mobile-first constraints learned the hard way
 
