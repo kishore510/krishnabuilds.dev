@@ -106,6 +106,7 @@
   }
   .iconbtn { width: 44px; height: 44px; border-radius: 50%; padding: 0; display: grid; place-items: center; font-size: 18px; }
   .topbar { position: absolute; top: 10px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: center; z-index: 6; }
+  .topbar .btns { display: flex; gap: 8px; }
   #dirChip { color: var(--text); }
   #dirChip .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cur); box-shadow: 0 0 0 2px rgba(255,255,255,0.6); }
 
@@ -328,7 +329,10 @@
     <div class="topbar">
       <div class="chip" id="modeChip">vs bots · Easy</div>
       <div class="chip" id="dirChip"><span class="dot"></span><span id="dirText">Clockwise</span></div>
-      <button class="chip iconbtn" id="menuBtn" aria-label="Menu">☰</button>
+      <div class="btns">
+        <button class="chip iconbtn" id="muteBtn" type="button" aria-label="Sound on" aria-pressed="false">🔊</button>
+        <button class="chip iconbtn" id="menuBtn" aria-label="Menu">☰</button>
+      </div>
     </div>
 
     <div class="ring" id="ring" aria-hidden="true"><svg viewBox="0 0 270 270" fill="none"><g>
@@ -838,7 +842,7 @@
     lose: () => [392, 330, 262].forEach((f, i) => setTimeout(() => tone(f, 0.3, 'triangle', 0.07), i * 150)),
   };
 
-  // A short buzz on phones that have one (not iOS Safari). "Sound: off" stops it too.
+  // A short buzz on phones that have one (not iOS Safari). Muting stops it too.
   function buzz(pattern) { if (!muted && navigator.vibrate) try { navigator.vibrate(pattern); } catch (e) {} }
 
   // The card that just landed on the pile settles with a small bounce.
@@ -1440,8 +1444,17 @@
   $('themeSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setTheme(b.dataset.theme); });
   setTheme(store.get('wildcardTheme', 'auto'));
 
-  function showSound() { $('soundBtn').textContent = 'Sound: ' + (muted ? 'off' : 'on'); }
-  $('soundBtn').addEventListener('click', () => { muted = !muted; store.set('wildcardMuted', muted ? '1' : '0'); showSound(); });
+  // Sound: the 🔊 button on the table and the menu's Sound item are the
+  // same setting, and muting stops the phone buzz too.
+  function showSound() {
+    $('soundBtn').textContent = 'Sound: ' + (muted ? 'off' : 'on');
+    $('muteBtn').textContent = muted ? '🔇' : '🔊';
+    $('muteBtn').setAttribute('aria-label', muted ? 'Sound off' : 'Sound on');
+    $('muteBtn').setAttribute('aria-pressed', muted);
+  }
+  function toggleSound() { muted = !muted; store.set('wildcardMuted', muted ? '1' : '0'); showSound(); }
+  $('soundBtn').addEventListener('click', toggleSound);
+  $('muteBtn').addEventListener('click', toggleSound);
   showSound();
 
   // Pause bots while the tab is hidden.

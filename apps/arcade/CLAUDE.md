@@ -628,8 +628,9 @@ the name, logo or look of any commercial card game.
     the last `WARN_MS` (15 s) of your turn the pill goes red (`#turn.warn`)
     and counts down, ticking and buzzing at 10, 5, 3, 2, 1. Your turn
     buzzes (`navigator.vibrate`, not on iOS) and, in a hidden tab, puts
-    "● Your turn" in front of the tab's title (`tabCue`). "Sound: off"
-    stops the buzz too. The log's `subject(seat)` says "Your bot" / "Bot
+    "● Your turn" in front of the tab's title (`tabCue`). Muting (the
+    top bar's 🔊 `#muteBtn` or the menu's Sound item, one setting) stops
+    the buzz too. The log's `subject(seat)` says "Your bot" / "Bot
     for <name>" while a bot has a person's seat; `comings()` logs "<name>
     lost connection" and bubbles "<name> is back" from `room` changes.
     The table's `webSocketClose` closes its side too, so a page's own
