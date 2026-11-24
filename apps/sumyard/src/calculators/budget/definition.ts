@@ -1,5 +1,5 @@
 import { MAX_ACCOUNT_ID_LENGTH, MAX_BUDGET_ACCOUNTS, MAX_BUDGET_LINES, MAX_INPUT_AMOUNT, MAX_ITEM_NAME_LENGTH } from '@/lib/inputLimits'
-import { fromPence, type Money, mulRound, type Ratio, ratio, ZERO } from '@/lib/money'
+import { compare, fromPence, type Money, mulRound, type Ratio, ratio, subtract, ZERO } from '@/lib/money'
 import { MONTHS_PER_YEAR } from '@/lib/periods'
 import { canonicalJson, checkUntrustedJson, cleanText, isRecord } from '@/lib/validate'
 import { type CalculatorDefinition, defineCalculator, type InputRefusal, type SummaryRow } from '../registry'
@@ -96,7 +96,7 @@ export const ACCOUNT_KIND_LABELS: Record<AccountKind, string> = {
 /** What each kind of account is for, in a line under its name. */
 export const ACCOUNT_KIND_HINTS: Record<AccountKind, string> = {
   spending: 'Gets a transfer from main; what is left is yours to spend',
-  joint: 'Your share of what goes in and what it pays for',
+  joint: 'Your share goes in from main; add what others put in beside it',
   savings: 'Gets a transfer from main; what is left is counted as saved',
 }
 
@@ -155,7 +155,15 @@ function readAccount(raw: unknown): Account | string {
   if (!isOneOf(ACCOUNT_KINDS, raw.kind)) return 'must be a spending account, a joint account or a savings pot.'
   if (!isAmount(raw.amount)) return `transfer ${AMOUNT_RULE}`
   if (!isOneOf(PERIODS, raw.period)) return PERIOD_RULE
-  return { id: raw.id, name: cleanText(raw.name, MAX_ITEM_NAME_LENGTH), kind: raw.kind, amount: fromPence(raw.amount), period: raw.period }
+  if (!isAmount(raw.othersIn)) return `money from others ${AMOUNT_RULE}`
+  return {
+    id: raw.id,
+    name: cleanText(raw.name, MAX_ITEM_NAME_LENGTH),
+    kind: raw.kind,
+    amount: fromPence(raw.amount),
+    period: raw.period,
+    othersIn: fromPence(raw.othersIn),
+  }
 }
 
 function readOutgoing(raw: unknown, ids: ReadonlySet<string>): OutgoingLine | string {
@@ -254,6 +262,27 @@ function migrateFromVersion1(old: unknown): unknown {
   return { ...old, accounts, outgoings }
 }
 
+/**
+ * Version 2 to 3 (decision BD17): every account gets nothing from others. Untrusted: hostile keys refuse it; a broken
+ * account is passed on as it is, for validation to reject; the result is validated after.
+ */
+function migrateFromVersion2(old: unknown): unknown {
+  if (!isRecord(old)) throw new Error('Version 2 inputs are not an object')
+  const hostile = checkUntrustedJson(old)
+  if (hostile) throw new Error(`Version 2 inputs are not safe to read: ${hostile}`)
+  if (!Array.isArray(old.accounts)) return old
+  return { ...old, accounts: (old.accounts as unknown[]).map((a) => (isRecord(a) && !Array.isArray(a) ? { ...a, othersIn: 0 } : a)) }
+}
+
+const MIGRATIONS = [migrateFromVersion1, migrateFromVersion2] as const
+
+/** Older inputs, one version at a time, up to the current one. */
+function migrate(from: number, old: unknown): unknown {
+  if (!Number.isSafeInteger(from) || from < 1 || from > MIGRATIONS.length)
+    throw new Error(`The household budget has no inputs version ${from} to migrate from`)
+  return MIGRATIONS.slice(from - 1).reduce((inputs, step) => step(inputs), old)
+}
+
 /** The engine's inputs: Your pay first among the income lines (BD3). */
 export function toEngineInputs(inputs: BudgetPageInputs): BudgetInputs {
   return {
@@ -349,6 +378,7 @@ export const newAccount = (inputs: BudgetPageInputs, kind: AccountKind): Account
   kind,
   amount: ZERO,
   period: 'monthly',
+  othersIn: ZERO,
 })
 
 /** The inputs without these accounts; their lines are paid from main instead. */
@@ -399,6 +429,12 @@ export function applyTemplate(inputs: BudgetPageInputs, id: TemplateId): BudgetP
 /** A monthly transfer that covers a yearly amount: the year divided by the months, rounded up to the penny, so never short. */
 export const coveringMonthly = (year: Money): Money => mulRound(year, ratio(1, MONTHS_PER_YEAR), 'up')
 
+/** The monthly transfer from main that covers what an account pays, after what others put in (BD12, BD17). */
+export const coveringTransfer = (a: { paid: { year: Money }; fromOthers: { year: Money } }): Money => {
+  const needed = subtract(a.paid.year, a.fromOthers.year)
+  return coveringMonthly(compare(needed, ZERO) > 0 ? needed : ZERO)
+}
+
 export const NOT_APPLICABLE = 'n/a'
 
 const money = (label: string, amount: Money): SummaryRow => ({ label, value: { kind: 'money', amount } })
@@ -412,13 +448,10 @@ export const budgetCalculator: CalculatorDefinition<BudgetPageInputs> = defineCa
   name: 'Household budget',
   summary: 'Where your money goes each month, account by account, and what’s left.',
   taxRules: 'none',
-  inputsVersion: 2,
+  inputsVersion: MIGRATIONS.length + 1,
   defaultInputs: () => ({ pay: ZERO, payPeriod: 'monthly', income: [], accounts: [], outgoings: DEFAULT_LINES.map((l) => ({ ...l })) }),
   validateInputs: validate,
-  migrateInputs(from, old) {
-    if (from === 1) return migrateFromVersion1(old)
-    throw new Error(`The household budget has no inputs version ${from} to migrate from`)
-  },
+  migrateInputs: migrate,
   summarise(inputs) {
     const rows: SummaryRow[] = [
       money(PAY_LABEL, inputs.pay),
@@ -439,6 +472,7 @@ export const budgetCalculator: CalculatorDefinition<BudgetPageInputs> = defineCa
           money('Outgoings a year', r.outgoings.year),
           money('Left over a year', r.leftover.year),
           money('Left in main account a year', r.accounts[0]!.left.year),
+          money('Put in by others a year', r.fromOthers.year),
           money('Top-up needed a year', r.topUp.year),
           ...r.perGroup.map((t) => money(`${GROUP_LABELS[t.group]} a year`, t.year)),
           share('Savings rate', r.savingsRate),

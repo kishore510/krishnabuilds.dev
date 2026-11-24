@@ -83,8 +83,8 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 24 November 2026 (0.33.0): the household budget redesign, from a mock-up iterated with the owner. Decisions BD10 to BD16 (`docs/modelling-decisions.md`); inputs version 2 with a v1 migration that keeps left over; accounts, transfers, left in each account and the shortfall fix; groups, the donut, biggest outgoings and the 50/30/20 check; share as an image, PDF, CSV or text. Eleven new colour tokens (flagged in `docs/design-tokens.md`). One PR at the owner's request, not split by part.
-- Not done: what-if quick chips from the mock-up (sliders cover it); Safari, a real phone and a screen reader; a native share sheet was only checked for presence.
+- 24 November 2026 (0.34.0): BD17, what others put in. A joint account takes a partner's contribution, not counted as income; the account can pay the full joint costs; left over across accounts includes it; shares stay of the person's income. Inputs version 3 (migrations now a list, as the optimiser's). Tests first; mutation checks in the PR.
+- Earlier the same day (0.33.0, PR #187): the budget redesign with accounts and sharing. Not done: Safari, a real phone, a screen reader.
 
 ## Next
 

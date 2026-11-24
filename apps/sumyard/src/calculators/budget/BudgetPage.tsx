@@ -29,7 +29,7 @@ import {
   type BudgetPageInputs,
   budgetCalculator,
   calculate,
-  coveringMonthly,
+  coveringTransfer,
   GROUP_ESSENTIAL,
   GROUP_LABELS,
   inputRefusal,
@@ -217,7 +217,7 @@ export default function BudgetPage() {
   const fix = (id: string) => {
     const account = result?.accounts.find((a) => a.id === id)
     if (!account) return
-    const amount = coveringMonthly(account.paid.year)
+    const amount = coveringTransfer(account)
     replaceWithUndo(
       { ...inputs, accounts: inputs.accounts.map((a) => (a.id === id ? { ...a, amount, period: 'monthly' } : a)) },
       `${account.name} now gets ${gbp(amount)} a month.`,
@@ -481,7 +481,7 @@ function Inputs({
   const removeAccount = (id: string) => {
     const account = inputs.accounts.find((a) => a.id === id)!
     const name = account.name || ACCOUNT_KIND_LABELS[account.kind]
-    forget(accountField(id, 'name'), accountField(id, 'amount'))
+    forget(accountField(id, 'name'), accountField(id, 'amount'), accountField(id, 'others'))
     replaceWithUndo(withoutAccounts(inputs, new Set([id])), `Deleted “${name}”. Its lines are now paid from main.`, `Restored “${name}”.`)
     setFocus('bd-by')
   }
@@ -494,7 +494,8 @@ function Inputs({
     const next = applyTemplate(inputs, id)
     if (canonicalJson(next) === canonicalJson(inputs)) return
     for (const a of inputs.accounts)
-      if (!next.accounts.some((b) => b.id === a.id)) forget(accountField(a.id, 'name'), accountField(a.id, 'amount'))
+      if (!next.accounts.some((b) => b.id === a.id))
+        forget(accountField(a.id, 'name'), accountField(a.id, 'amount'), accountField(a.id, 'others'))
     replaceWithUndo(
       next,
       'Set up your accounts. Lines from any removed account are now paid from main.',

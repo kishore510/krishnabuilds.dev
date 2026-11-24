@@ -13,7 +13,7 @@ const inputs: BudgetPageInputs = {
   pay: fromPounds(3_000),
   payPeriod: 'monthly',
   income: [],
-  accounts: [{ id: 'a1', name: 'Personal', kind: 'spending', amount: fromPounds(200), period: 'monthly' }],
+  accounts: [{ id: 'a1', name: 'Personal', kind: 'spending', amount: fromPounds(200), period: 'monthly', othersIn: fromPounds(0) }],
   outgoings: [
     { name: 'Rent', amount: fromPounds(1_000), period: 'monthly', group: 'home', account: 'main', essential: true },
     { name: 'Fuel', amount: fromPounds(150), period: 'monthly', group: 'transport', account: 'a1', essential: true },

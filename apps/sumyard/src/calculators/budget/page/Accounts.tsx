@@ -200,7 +200,10 @@ export function Accounts({
                     label="Kind"
                     value={a.kind}
                     options={KIND_OPTIONS}
-                    onChange={(kind) => onAccount(a.id, { kind })}
+                    onChange={(kind) => {
+                      if (kind !== 'joint') onValidity(`${id}-others`, true)
+                      onAccount(a.id, kind === 'joint' ? { kind } : { kind, othersIn: ZERO })
+                    }}
                   />
                   <CurrencyInput
                     id={`${id}-amount`}
@@ -220,6 +223,20 @@ export function Accounts({
                     options={PERIOD_OPTIONS}
                     onChange={(period) => onAccount(a.id, { period })}
                   />
+                  {a.kind === 'joint' && (
+                    <CurrencyInput
+                      id={`${id}-others`}
+                      label="Others put in"
+                      hint="A partner’s share, for example, at the same how often. Not counted as your income."
+                      value={a.othersIn}
+                      emptyValue={ZERO}
+                      placeholder="0.00"
+                      min={ZERO}
+                      max={MAX_INPUT_AMOUNT}
+                      onChange={(othersIn) => onAccount(a.id, { othersIn })}
+                      onValidityChange={(ok) => onValidity(`${id}-others`, ok)}
+                    />
+                  )}
                 </div>
                 {f && figure && (
                   <div className="flex flex-col gap-1.5">

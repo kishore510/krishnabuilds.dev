@@ -84,7 +84,7 @@ const withAccount = () => {
   const d = budgetCalculator.defaultInputs()
   set({
     pay: fromPounds(3_000),
-    accounts: [{ id: 'a1', name: 'Personal', kind: 'spending', amount: fromPounds(230), period: 'monthly' }],
+    accounts: [{ id: 'a1', name: 'Personal', kind: 'spending', amount: fromPounds(230), period: 'monthly', othersIn: fromPounds(0) }],
     outgoings: [
       { name: 'Rent', amount: fromPounds(1_000), period: 'monthly', group: 'home', account: 'main', essential: true },
       { name: 'Fuel', amount: fromPounds(120), period: 'monthly', group: 'transport', account: 'a1', essential: true },
@@ -358,6 +358,38 @@ describe('accounts (BD11, BD12)', () => {
     expect($('#bd-template-all')?.getAttribute('aria-pressed')).toBe('true')
     click($('#bd-template-one'))
     expect(session.get().inputs.accounts).toEqual([])
+  })
+
+  it('a joint account takes what others put in: not your take-home, and it covers the joint costs (BD17)', () => {
+    set({
+      pay: fromPounds(3_000),
+      accounts: [{ id: 'j', name: 'Monzo joint', kind: 'joint', amount: fromPounds(300), period: 'monthly', othersIn: fromPounds(0) }],
+      outgoings: [
+        { name: 'Groceries', amount: fromPounds(400), period: 'monthly', group: 'food', account: 'j', essential: true },
+        { name: 'Cleaner', amount: fromPounds(138), period: 'monthly', group: 'home', account: 'j', essential: false },
+      ],
+    })
+    showBy('where')
+    expect($('[data-short="j"]')?.textContent).toMatch(new RegExp(`runs ${money(fromPounds(238)).replace('.', '\\.')} short`))
+    type(box('bd-acc-j-others'), '300')
+    expect(session.get().inputs.accounts[0]!.othersIn).toBe(fromPounds(300))
+    expect($('[data-short="j"]')).toBeNull()
+    expect(stat('Take-home')).toBe(money(fromPounds(3_000)))
+    expect($('[data-account="j"]')?.textContent).toMatch(money(fromPounds(62)))
+    expect($('[data-budget-card]')?.textContent).toMatch(`Includes ${money(fromPounds(300))} a month others put in`)
+    choose($('#bd-acc-j-kind'), 'spending')
+    expect(session.get().inputs.accounts[0]!.othersIn).toBe(fromPounds(0))
+    expect($('#bd-acc-j-others')).toBeNull()
+  })
+
+  it('the fix for a short joint account allows for what others put in', () => {
+    set({
+      pay: fromPounds(3_000),
+      accounts: [{ id: 'j', name: 'Joint', kind: 'joint', amount: fromPounds(100), period: 'monthly', othersIn: fromPounds(300) }],
+      outgoings: [{ name: 'Groceries', amount: fromPounds(600), period: 'monthly', group: 'food', account: 'j', essential: true }],
+    })
+    click([...$('[data-short="j"]')!.querySelectorAll('button')].find((b) => /Move/.test(b.textContent ?? '')))
+    expect(session.get().inputs.accounts[0]!.amount).toBe(fromPounds(300))
   })
 
   it('renaming an account changes it everywhere', () => {

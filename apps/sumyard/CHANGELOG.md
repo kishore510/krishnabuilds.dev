@@ -4,6 +4,12 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.34.0] - 2026-11-24
+
+### Added
+- **Household budget: what others put in.** A joint account now has an **Others put in** box: say what a partner pays into it beside your share. It isn't counted as your income, so take-home and every percentage stay yours, but the joint account can now pay the full costs (groceries, cleaner, takeaways) without looking short. The headline says how much others put in, and the image, PDF, spreadsheet and text you share include it.
+- The **Move £… a month** fix for a joint account allows for what others put in.
+
 ## [0.33.0] - 2026-11-24
 
 ### Added

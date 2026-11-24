@@ -11,8 +11,8 @@ const inputs: BudgetPageInputs = {
   payPeriod: 'monthly',
   income: [],
   accounts: [
-    { id: 'p', name: 'Personal', kind: 'spending', amount: fromPounds(230), period: 'monthly' },
-    { id: 'e', name: 'Rainy day', kind: 'savings', amount: fromPounds(50), period: 'monthly' },
+    { id: 'p', name: 'Personal', kind: 'spending', amount: fromPounds(230), period: 'monthly', othersIn: fromPounds(0) },
+    { id: 'e', name: 'Rainy day', kind: 'savings', amount: fromPounds(50), period: 'monthly', othersIn: fromPounds(0) },
   ],
   outgoings: [
     { name: 'Mortgage contribution', amount: fromPounds(1_100), period: 'monthly', group: 'home', account: 'main', essential: true },
@@ -67,6 +67,22 @@ describe('the shared summary', () => {
     const text = shareText(model(true, true))
     expect(text).toMatch(/• Personal: -£90 \(short, topped up from main\)/)
     expect(text.trim().split('\n').at(-1)).toBe('Illustrative only, not financial advice. Made with Sumyard.')
+  })
+})
+
+describe('what others put in (BD17)', () => {
+  it('shows as its own figure and row, never as take-home', () => {
+    const shared = {
+      ...inputs,
+      accounts: inputs.accounts.map((a) => (a.id === 'p' ? { ...a, kind: 'joint' as const, othersIn: fromPounds(100) } : a)),
+    }
+    const outcome = calculate(shared)
+    if (!outcome.ok) throw new Error('refused')
+    const m = shareModel(shared, outcome.result, { amounts: true, names: true }, 'pounds', now)
+    expect(m.stats.map((s) => [s.label, s.value])).toContainEqual(['Put in by others', '£100'])
+    expect(m.stats.find((s) => s.label === 'Take-home')?.value).toBe('£3,400')
+    expect(m.parts.reduce((t, p) => t + p.year, 0)).toBe(m.total)
+    expect(shareCsv(shared, outcome.result, { amounts: true, names: true })).toMatch(/"Put in by others","","",100\.00,1200\.00,/)
   })
 })
 

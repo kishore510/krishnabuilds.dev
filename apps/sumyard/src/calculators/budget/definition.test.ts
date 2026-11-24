@@ -41,8 +41,8 @@ const example: BudgetPageInputs = {
   payPeriod: 'monthly',
   income: [{ name: 'Rent from lodger', amount: fromPounds(300), period: 'monthly' }],
   accounts: [
-    { id: 'a1', name: 'Personal', kind: 'spending', amount: fromPounds(200), period: 'monthly' },
-    { id: 'a2', name: 'Joint', kind: 'joint', amount: fromPounds(700), period: 'monthly' },
+    { id: 'a1', name: 'Personal', kind: 'spending', amount: fromPounds(200), period: 'monthly', othersIn: ZERO },
+    { id: 'a2', name: 'Joint', kind: 'joint', amount: fromPounds(700), period: 'monthly', othersIn: ZERO },
   ],
   outgoings: [
     { name: 'Groceries', amount: fromPounds(400), period: 'monthly', group: 'food', account: 'a2', essential: true },
@@ -53,9 +53,9 @@ const example: BudgetPageInputs = {
 }
 
 describe('registration', () => {
-  it('is registered as budget, inputs version 2, with no tax rules', () => {
+  it('is registered as budget, inputs version 3, with no tax rules', () => {
     expect(CALCULATORS.get('budget')).toBe(budgetCalculator)
-    expect(budgetCalculator.inputsVersion).toBe(2)
+    expect(budgetCalculator.inputsVersion).toBe(3)
     expect(budgetCalculator.taxRules).toBe('none')
     expect(budgetCalculator.name).toBe('Household budget')
   })
@@ -67,7 +67,7 @@ describe('registration', () => {
       calculatorId: 'budget',
       name: 'Mine',
       inputs: example,
-      inputsVersion: 2,
+      inputsVersion: 3,
       createdAt: '2026-11-24T00:00:00Z',
       updatedAt: '2026-11-24T00:00:00Z',
     }
@@ -107,7 +107,7 @@ describe('the version 1 migration (BD15)', () => {
     updatedAt: '2026-10-23T00:00:00Z',
   }
 
-  it('reads a version 1 scenario as version 2', () => {
+  it('reads a version 1 scenario as the current version', () => {
     const read = readScenario(scenario, CALCULATORS)
     expect(read.ok).toBe(true)
     if (!read.ok) return
@@ -148,6 +148,31 @@ describe('the version 1 migration (BD15)', () => {
     expect(() => budgetCalculator.migrateInputs(1, null)).toThrow()
     const migrated = budgetCalculator.migrateInputs(1, { ...v1, outgoings: [null] })
     expect(check(migrated).ok).toBe(false)
+  })
+})
+
+describe('the version 2 migration (BD17)', () => {
+  it('gives every account nothing from others, and keeps the totals', () => {
+    const v2 = JSON.parse(JSON.stringify({ ...example, accounts: example.accounts.map(({ othersIn: _, ...a }) => a) }))
+    const read = readScenario(
+      {
+        id: 'v2',
+        calculatorId: 'budget',
+        name: 'V2',
+        inputs: v2,
+        inputsVersion: 2,
+        createdAt: '2026-11-24T00:00:00Z',
+        updatedAt: '2026-11-24T00:00:00Z',
+      },
+      CALCULATORS,
+    )
+    expect(read.ok && read.scenario.inputs).toEqual(example)
+    expect(() => budgetCalculator.migrateInputs(2, JSON.parse('{"accounts":[],"__proto__":{"x":1}}'))).toThrow(/not safe/)
+  })
+
+  it('a joint account with money from others reads back as it was', () => {
+    const shared = { ...example, accounts: example.accounts.map((a) => (a.kind === 'joint' ? { ...a, othersIn: fromPounds(300) } : a)) }
+    expect(check(shared)).toEqual({ ok: true, inputs: shared })
   })
 })
 
@@ -264,6 +289,8 @@ describe('validateInputs', () => {
     ['an unknown kind', { kind: 'pension' }],
     ['a negative transfer', { amount: -1 }],
     ['a daily transfer', { period: 'daily' }],
+    ['money from others below nothing', { othersIn: -1 }],
+    ['no money from others', { othersIn: undefined }],
     ['no name', { name: undefined }],
   ])('refuses an account with %s', (_, patch) => {
     const account = JSON.parse(JSON.stringify({ ...example.accounts[0], ...patch }))
@@ -367,7 +394,7 @@ describe('accounts: ids, removal and templates (BD11)', () => {
   it('a new account from a template is blank, a month', () => {
     const next = applyTemplate(example, 'all')
     const pot = next.accounts.find((a) => a.kind === 'savings')!
-    expect(pot).toEqual({ id: 'a3', name: 'Savings pot', kind: 'savings', amount: ZERO, period: 'monthly' })
+    expect(pot).toEqual({ id: 'a3', name: 'Savings pot', kind: 'savings', amount: ZERO, period: 'monthly', othersIn: ZERO })
   })
 })
 
@@ -388,6 +415,7 @@ describe('summarise (compare)', () => {
       'Outgoings a year',
       'Left over a year',
       'Left in main account a year',
+      'Put in by others a year',
       'Top-up needed a year',
       'Home a year',
       'Bills a year',
@@ -403,7 +431,7 @@ describe('summarise (compare)', () => {
     expect(summary.results.rows[2]!.value).toEqual({ kind: 'money', amount: fromPence(income - toPence(fromPounds(1_000 * 12))) })
     // Main: 2,800 in, 450 paid, 900 transferred: 1,450 a month. The personal account has 50 left and the joint 300: nothing short.
     expect(summary.results.rows[3]!.value).toEqual({ kind: 'money', amount: fromPounds(1_450 * 12) })
-    expect(summary.results.rows[4]!.value).toEqual({ kind: 'money', amount: fromPounds(0) })
+    expect(summary.results.rows[5]!.value).toEqual({ kind: 'money', amount: fromPounds(0) })
     expect(summary.results.rows.at(-1)!.value).toEqual({ kind: 'ratio', ratio: ratio(toPence(fromPounds(250 * 12)), income) })
   })
 
