@@ -131,6 +131,7 @@ export function shareModel(inputs: BudgetPageInputs, r: BudgetResult, options: S
     stats: options.amounts
       ? [
           { label: 'Take-home', value: gbp(r.income.month) },
+          ...(toPence(r.fromOthers.year) > 0 ? [{ label: 'Put in by others', value: gbp(r.fromOthers.month) }] : []),
           { label: 'Going out', value: gbp(r.outgoings.month) },
           { label: 'Saving rate', value: r.savingsRate ? formatPercent(r.savingsRate, 1) : 'n/a' },
         ]
@@ -139,7 +140,7 @@ export function shareModel(inputs: BudgetPageInputs, r: BudgetResult, options: S
           { label: 'Saving rate', value: r.savingsRate ? formatPercent(r.savingsRate, 1) : 'n/a' },
         ],
     parts,
-    total: toPence(negative ? r.outgoings.year : r.income.year),
+    total: toPence(negative ? r.outgoings.year : r.income.year) + (negative ? 0 : toPence(r.fromOthers.year)),
     accounts,
     biggest,
     footer: SHARE_FOOTER,
@@ -208,6 +209,7 @@ export function shareCsv(inputs: BudgetPageInputs, r: BudgetResult, options: Sha
   rows.push(row(['Outgoings', ...pad], [...money(r.outgoings), shareCell(r.outgoings.year, r.income.year)]))
   rows.push(row(['Left over', ...pad], [...money(r.leftover), shareCell(r.leftover.year, r.income.year)]))
   rows.push(row(['Income', ...pad], [...money(r.income), shareCell(r.income.year, r.income.year)]))
+  if (toPence(r.fromOthers.year) > 0) rows.push(row(['Put in by others', ...pad], [...money(r.fromOthers), '']))
   if (r.accounts.length > 1) {
     rows.push('')
     const flows = options.amounts ? ['In a month', 'Paid a month', 'Left a month'] : ['Left, of income']

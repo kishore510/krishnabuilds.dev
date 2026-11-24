@@ -4,10 +4,10 @@ import { Segmented } from '@/components/inputs/Segmented'
 import { InlineNotice } from '@/components/states'
 import { Button } from '@/components/ui/button'
 import { formatGBPChange, formatPercent, formatPointsChange } from '@/lib/format'
-import { fromPence, type Money, mulRound, type Ratio, ratio, subtract, subtractRatio, toPence, ZERO } from '@/lib/money'
+import { add, fromPence, type Money, mulRound, type Ratio, ratio, subtract, subtractRatio, toPence, ZERO } from '@/lib/money'
 import { MONTHS_PER_YEAR } from '@/lib/periods'
 import { cn } from '@/lib/utils'
-import { coveringMonthly, GROUP_LABELS, NOT_APPLICABLE } from '../definition'
+import { coveringTransfer, GROUP_LABELS, NOT_APPLICABLE } from '../definition'
 import { type AccountResult, type BudgetResult, MAIN_ACCOUNT, SAVING_GROUP, type YearAndMonth } from '../types'
 import { accountSwatch, GROUP_SWATCHES, Key, LEFTOVER_SWATCH, MAIN_SWATCH, POT_SWATCH, SHORT_ICON } from './style'
 
@@ -122,6 +122,7 @@ export function Results({
             {r.leftover.share === null
               ? 'Enter your pay to see the share of your income each part takes.'
               : `${shareText(r.leftover.share)} of your income, after everything you spend and save.`}
+            {toPence(r.fromOthers.year) > 0 && ` Includes ${gbp(pick(r.fromOthers, view))} ${per} others put in.`}
           </span>
         </p>
         <dl className="grid grid-cols-3 gap-2">
@@ -194,12 +195,13 @@ export function Results({
               <strong>
                 {a.name} runs {gbp(pick(a.short, view))} short {per}
               </strong>
-              , so you’re topping it up from your main account. Moving {gbp(pick(a.paid, view))} {per} instead of{' '}
-              {gbp(pick(a.moneyIn, view))} would cover what it pays for.
+              , so you’re topping it up from your main account. Moving {gbp(coveringTransfer(a))} a month instead of{' '}
+              {gbp(subtract(a.moneyIn.month, a.fromOthers.month))} would cover what it pays for
+              {toPence(a.fromOthers.year) > 0 ? `, with the ${gbp(a.fromOthers.month)} others put in` : ''}.
             </p>
             {!whatIf && (
               <Button variant="danger" onClick={() => onFix(a.id)} className="h-auto min-h-touch py-1.5 whitespace-normal">
-                Move {gbp(coveringMonthly(a.paid.year))} a month
+                Move {gbp(coveringTransfer(a))} a month
               </Button>
             )}
           </div>
@@ -291,10 +293,17 @@ export function WhereItGoes({ result: r, view, gbp }: { result: BudgetResult; vi
           },
         ]),
   ]
-  const total = negative ? r.outgoings.year : r.income.year
+  const others = toPence(r.fromOthers.year) > 0
+  const total = negative ? r.outgoings.year : add(r.income.year, r.fromOthers.year)
   return (
     <Donut
-      title={negative ? `Where your outgoings go, ${IN_VIEW[view]}` : `Where your income goes, ${IN_VIEW[view]}`}
+      title={
+        negative
+          ? `Where your outgoings go, ${IN_VIEW[view]}`
+          : others
+            ? `Where your income and money from others goes, ${IN_VIEW[view]}`
+            : `Where your income goes, ${IN_VIEW[view]}`
+      }
       parts={parts}
       total={toPence(total)}
       centre={

@@ -1,11 +1,11 @@
 # Household budget
 
-At `#/c/budget` (0.25.0; accounts, groups and sharing 0.33.0). Income after tax lands in a main account; outgoings are lines in groups, each paid from main or from another account (a spending account, a joint account or a savings pot) that gets a transfer from main. It shows what is left across accounts and in each, any account that runs short with a fix, where income goes, the biggest outgoings and a 50/30/20 check, a month or a year, with what-if sliders, and shares the result as an image, PDF, CSV or text. Uses no tax rules (`taxRules: 'none'`): no tax year, no config, no `requireVerified`. Decisions BD1 to BD16 in `docs/modelling-decisions.md` (BD10 to BD16 replace BD1 and BD6); page patterns U40 and U41 in `docs/ui-patterns.md`.
+At `#/c/budget` (0.25.0; accounts, groups and sharing 0.33.0). Income after tax lands in a main account; outgoings are lines in groups, each paid from main or from another account (a spending account, a joint account or a savings pot) that gets a transfer from main. It shows what is left across accounts and in each, any account that runs short with a fix, where income goes, the biggest outgoings and a 50/30/20 check, a month or a year, with what-if sliders, and shares the result as an image, PDF, CSV or text. Uses no tax rules (`taxRules: 'none'`): no tax year, no config, no `requireVerified`. Decisions BD1 to BD17 in `docs/modelling-decisions.md` (BD10 to BD16 replace BD1 and BD6); page patterns U40 and U41 in `docs/ui-patterns.md`.
 
 ## Files
 
 - `calc.ts`, `types.ts`: the pure engine, `budget(inputs)`: totals by group, each account's money in, paid, transfers out, left, saved (a savings pot) and short, the top-up, left over across accounts (may be below nothing), needs, wants and saving, shares of income as exact Ratios (null with no income), the savings rate, each line's year and month, the penny drift, warnings and assumptions; a typed refusal by line or account for anything outside the input limits, an account id that is not plain, or a line paid from an account that is not there.
-- `definition.ts`: inputs version 2 (`pay`, `payPeriod`, `income`, `accounts`, `outgoings`), the v1 migration (BD15), the default template lines, validation (hostile keys, fresh objects, names tidied and cut), `toEngineInputs` (Your pay first), `withWhatIf` (transfers too), account templates, removal and new ids, `coveringMonthly` (the shortfall fix), section summaries, compare rows.
+- `definition.ts`: inputs version 3 (`pay`, `payPeriod`, `income`, `accounts` with `othersIn`, `outgoings`), the v1 and v2 migrations (BD15, BD17), the default template lines, validation (hostile keys, fresh objects, names tidied and cut), `toEngineInputs` (Your pay first), `withWhatIf` (transfers too), account templates, removal and new ids, `coveringMonthly` (the shortfall fix), section summaries, compare rows.
 - `BudgetPage.tsx` and `page/`: the page (`Results.tsx`, `Accounts.tsx`, `LineEditor.tsx`, `style.tsx` for group colours and icons).
 - `share/`: `summary.ts` (what a shared budget says, as text and CSV, with the formula guard), `card.ts` (the image card on a canvas), `ShareDialog.tsx` (the dialog and the print page).
 
@@ -30,6 +30,7 @@ At `#/c/budget` (0.25.0; accounts, groups and sharing 0.33.0). Income after tax 
 | The owner's setup: main 955, a spending account 230 short, a joint account at nothing, a pot putting 50 aside, 725 left across accounts; the fix clears the shortfall | `calc.test.ts` accounts, `BudgetPage.test.tsx` |
 | A savings pot short; main below nothing while left over is positive | `calc.test.ts` |
 | The v1 migration keeps left over, outgoings and the savings rate | `definition.test.ts`, `BudgetPage.test.tsx` |
+| What others put in: into the account, not income; main unchanged; counts in left over; clears a joint shortfall; the fix allows for it | `calc.test.ts`, `BudgetPage.test.tsx`, `share/summary.test.ts` |
 | Templates, account removal (lines to main) and new ids | `definition.test.ts`, `BudgetPage.test.tsx` |
 | Share: no pound figure without amounts, no line names without names, a formula cell written as text, pounds from whole pence | `share/summary.test.ts`, `share/ShareDialog.test.tsx` |
 | Hostile keys and bad shapes on import | `definition.test.ts` |

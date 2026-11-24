@@ -40,6 +40,8 @@ export interface Account {
   readonly kind: AccountKind
   readonly amount: Money
   readonly period: BudgetPeriod
+  /** What others (a partner) put into it, in the same period (BD17). Not the person's income. */
+  readonly othersIn: Money
 }
 
 /** A line of outgoings (BD2, BD10, BD11, BD14). */
@@ -81,8 +83,10 @@ export interface AccountResult {
   readonly id: string
   readonly name: string
   readonly kind: AccountKind | 'main'
-  /** Main: income. Others: the transfer from main. */
+  /** Main: income. Others: the transfer from main plus what others put in. */
   readonly moneyIn: YearAndMonth
+  /** What others put in (BD17); nothing for main. */
+  readonly fromOthers: YearAndMonth
   /** The lines paid from this account. */
   readonly paid: YearAndMonth
   /** Main: every transfer out. Others: nothing. */
@@ -106,7 +110,7 @@ export interface PennyDrift {
   readonly groups: Money
   /** Each group's lines' month figures less the group's month total. */
   readonly lines: Readonly<Record<BudgetGroup, Money>>
-  /** Income less outgoings, each a month, less what is left a month. */
+  /** Income and what others put in less outgoings, each a month, less what is left a month. */
   readonly leftover: Money
 }
 
@@ -124,8 +128,10 @@ export interface BudgetResult {
   readonly income: YearAndMonth
   /** Every line plus what savings pots put aside (BD12). Transfers are not outgoings. */
   readonly outgoings: WithShare
-  /** Income less outgoings, across accounts; may be below nothing (BD5, BD12). */
+  /** Income and what others put in, less outgoings, across accounts; may be below nothing (BD5, BD12, BD17). */
   readonly leftover: WithShare
+  /** What others put into the person's accounts, together (BD17). Not income: shares stay of income. */
+  readonly fromOthers: WithShare
   /** Every group, in BUDGET_GROUPS order, including those with nothing. */
   readonly perGroup: readonly GroupTotal[]
   /** What savings pots put aside, together (BD12). */

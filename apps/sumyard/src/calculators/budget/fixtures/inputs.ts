@@ -44,7 +44,8 @@ export const acc = (
   kind: AccountKind = 'spending',
   period: BudgetPeriod = 'monthly',
   name = `Account ${id}`,
-): Account => ({ id, name, kind, amount: fromPounds(pounds), period })
+  others: number | string = 0,
+): Account => ({ id, name, kind, amount: fromPounds(pounds), period, othersIn: fromPounds(others) })
 
 export const inputs = (
   income: readonly IncomeLine[] = [],
@@ -83,6 +84,7 @@ export function randomInputs(random: () => number): BudgetInputs {
     kind: pick(random, ACCOUNT_KINDS),
     amount: amount(random),
     period: pick(random, PERIODS),
+    othersIn: random() < 0.6 ? fromPence(0) : amount(random),
   }))
   const ids = [MAIN_ACCOUNT, ...accounts.map((a) => a.id)]
   const outgoings = Array.from({ length: between(random, 0, 12) }, (_, i) => ({
