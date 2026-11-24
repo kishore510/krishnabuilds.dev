@@ -29,3 +29,21 @@ export async function readFileText(file: File, maxChars: number): Promise<{ ok: 
     return { ok: false, error: 'This file couldn’t be read.' }
   }
 }
+
+/** Saves a Blob the app made (an image) the same way as downloadText. */
+export function downloadBlob(fileName: string, blob: Blob): boolean {
+  try {
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = fileName
+    link.rel = 'noopener'
+    document.body.append(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 0)
+    return true
+  } catch {
+    return false
+  }
+}

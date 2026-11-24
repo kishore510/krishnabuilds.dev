@@ -79,3 +79,34 @@
     animation-name: sy-sheet-left;
   }
 }
+
+/*
+ * Print or save as PDF (the household budget's share dialog, BD16): only the
+ * print root is printed; on screen it is never shown.
+ */
+@media screen {
+  #sy-print-root {
+    display: none;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  body > *:not(#sy-print-root),
+  dialog {
+    /* biome-ignore lint/complexity/noImportantStyles: everything but the print root must be hidden, whatever its own display. */
+    display: none !important;
+  }
+
+  #sy-print-root {
+    display: block;
+    background: var(--sy-surface);
+    color: var(--sy-text);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

@@ -1,5 +1,5 @@
-import { Plus, RotateCcw } from 'lucide-react'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Plus, RotateCcw, Share2 } from 'lucide-react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { AssumptionsPanel } from '@/components/AssumptionsPanel'
 import { CurrencyInput } from '@/components/inputs/CurrencyInput'
 import { Segmented } from '@/components/inputs/Segmented'
@@ -8,18 +8,15 @@ import { SliderInput } from '@/components/inputs/SliderInput'
 import { TextInput } from '@/components/inputs/TextInput'
 import { NoTaxRulesBadge } from '@/components/NoTaxRulesBadge'
 import { RefusalNotice } from '@/components/RefusalNotice'
-import { ResultCard, StatRow } from '@/components/ResultCard'
 import { ScenarioBar } from '@/components/ScenarioBar'
 import { Section } from '@/components/Section'
-import { SplitBar, type SplitBarSegment } from '@/components/SplitBar'
 import { StickyResult } from '@/components/StickyResult'
 import { InlineNotice } from '@/components/states'
 import { Button } from '@/components/ui/button'
 import { useItemKeys } from '@/hooks/useItemKeys'
-import { formatGBP, formatGBPChange, formatPercent, formatPointsChange } from '@/lib/format'
+import { formatGBP } from '@/lib/format'
 import { MAX_BUDGET_LINES, MAX_INPUT_AMOUNT, MAX_ITEM_NAME_LENGTH } from '@/lib/inputLimits'
-import { compare, fromPence, type Money, mulRound, type Ratio, ratio, subtract, subtractRatio, toPence, ZERO } from '@/lib/money'
-import { MONTHS_PER_YEAR } from '@/lib/periods'
+import { compare, type Money, subtract, toPence, ZERO } from '@/lib/money'
 import { useStore } from '@/lib/store'
 import { canonicalJson } from '@/lib/validate'
 import { settingsStore } from '@/settings/settings'
@@ -27,12 +24,16 @@ import { DISCLAIMER } from '@/sheets/parts'
 import { toasts } from '@/toast/toasts'
 import { sessionFor } from '../session'
 import {
+  ACCOUNT_KIND_LABELS,
+  applyTemplate,
   type BudgetPageInputs,
   budgetCalculator,
   calculate,
+  coveringMonthly,
+  GROUP_ESSENTIAL,
+  GROUP_LABELS,
   inputRefusal,
-  KIND_LABELS,
-  NOT_APPLICABLE,
+  newAccount,
   PAY_LABEL,
   PAY_PERIODS,
   PERIOD_LABELS,
@@ -40,79 +41,82 @@ import {
   PERIODS,
   type SectionId,
   sectionSet,
+  type TemplateId,
   type WhatIf,
+  withoutAccounts,
   withWhatIf,
 } from './definition'
-import { BUDGET_KINDS, type BudgetKind, type BudgetResult, type IncomeLine, type OutgoingLine, type YearAndMonth } from './types'
+import { Accounts } from './page/Accounts'
+import { AddLines, LineEditor, mainOption } from './page/LineEditor'
+import { type Gbp, IN_VIEW, pick, Results, shareText, type View } from './page/Results'
+import { GROUP_SWATCHES, IconTile } from './page/style'
+import { type Account, BUDGET_GROUPS, type BudgetGroup, type BudgetResult, type IncomeLine, MAIN_ACCOUNT, type OutgoingLine } from './types'
 
 /*
  * The household budget page at #/c/budget, laid out as docs/ui-patterns.md:
- * Your pay always visible, extra income, each kind of outgoing (BD1) and
- * What if in sections with live summaries, results always in view
- * (StickyResult): what is left with its share of your income, outgoings, the
- * savings rate, where income goes (SplitBar) and a table by kind, a month or
- * a year. What-ifs (BD7) are page state only, keyed to each line, never
- * stored. Uses no tax rules. Every figure is the engine's (./calc.ts); the
- * page only picks the month or year figure it gives.
+ * Your pay always visible, extra income in a section, then "Your money" in
+ * two views: what each line is for (a section per group, BD10) or where it is
+ * paid from (accounts and transfers, BD11), and What if (BD7). Results are
+ * always in view (StickyResult): left over across accounts, what is left in
+ * each, a fix for an account that runs short, where income goes, the biggest
+ * outgoings and the 50/30/20 check (BD12 to BD14). Share opens the sharing
+ * dialog (BD16). What-ifs and every open/closed state are page state only,
+ * never stored. Uses no tax rules. Every figure is the engine's.
  */
+
+const ShareDialog = lazy(() => import('./share/ShareDialog'))
 
 const session = sessionFor(budgetCalculator)
 
-type Gbp = (amount: Money) => string
-type View = 'month' | 'year'
-type ListId = 'income' | 'outgoings'
-
+type By = 'what' | 'where'
+const BY_OPTIONS: readonly { value: By; label: string }[] = [
+  { value: 'what', label: 'What it’s for' },
+  { value: 'where', label: 'Where it’s paid from' },
+]
+const PAY_PERIOD_OPTIONS = PAY_PERIODS.map((value) => ({ value, label: PERIOD_LABELS[value] }))
+const PERIOD_OPTIONS = PERIODS.map((value) => ({ value, label: PERIOD_LABELS[value] }))
 const VIEW_OPTIONS: readonly { value: View; label: string }[] = [
   { value: 'month', label: 'Month' },
   { value: 'year', label: 'Year' },
 ]
-const PAY_PERIOD_OPTIONS = PAY_PERIODS.map((value) => ({ value, label: PERIOD_LABELS[value] }))
-const PERIOD_OPTIONS = PERIODS.map((value) => ({ value, label: PERIOD_LABELS[value] }))
-const IN_VIEW: Record<View, string> = { month: 'a month', year: 'a year' }
-const LIST_PREFIX: Record<ListId, string> = { income: 'bd-in', outgoings: 'bd-out' }
 
-const SECTION_TITLES: Record<SectionId | 'whatif', string> = {
-  income: 'Income extras',
-  spending: 'Spending',
-  joint: 'Joint account',
-  debt: 'Debt',
-  savings: 'Savings and investing',
-  whatif: 'What if',
-}
-
-const DOUBLE_COUNTING = 'Enter the card payment or the spending on that card, not both, or it is counted twice.'
-
-const SECTION_HINTS: Record<SectionId, string> = {
-  income: 'Money coming in besides your pay, after any tax: rent from a lodger, side work, benefits.',
-  spending: 'Day-to-day and regular bills from this account. A blank amount counts as nothing.',
-  joint: 'What you move to a joint account counts as going out from this one. Don’t enter what is spent from the joint account again.',
-  debt: `Card and loan payments. ${DOUBLE_COUNTING}`,
-  savings: 'Cash savings, ISAs, a fixed saver, stocks and shares: name each line for what it is.',
+/** Quick-add names per group: a template, not advice. */
+const PRESETS: Record<BudgetGroup, readonly string[]> = {
+  home: ['Home insurance', 'Service charge', 'Cleaner'],
+  bills: ['Water', 'TV licence', 'Streaming'],
+  food: ['Takeaways', 'Coffee'],
+  transport: ['Parking', 'Train or bus', 'Car service'],
+  personal: ['Gym', 'Haircuts', 'Gifts'],
+  debt: ['Car loan', 'Personal loan'],
+  saving: ['Pension top-up', 'Emergency fund'],
+  other: ['Charity', 'Pets'],
 }
 
 /** What the page adds to the engine's assumptions. No figures. */
 const PAGE_ASSUMPTIONS = [
   'Uses no tax rules: enter your pay as it reaches your account, after tax and anything else your employer takes.',
   'What-ifs are tried out on this page only and never saved; Apply puts them into your inputs, which a scenario can then save.',
-  'The bar of where your income goes is drawn from the exact yearly figures; with outgoings over your income it shows where your outgoings go instead.',
+  'The 50/30/20 check compares your needs, wants and saving with a common rule of thumb; it is not advice.',
   'Illustrative only: a budget of what you enter, not a forecast or advice.',
 ]
 
 const NOT_SET = 'Not set'
 const NEEDS_FIXING = 'Fix the highlighted input'
+const FULL_TEXT = `That’s the most lines Sumyard holds (${MAX_BUDGET_LINES}). Combine lines to add more.`
 
-/** What-ifs by line key, tied to the inputs' revision: a load or a fresh start drops them (BD7). */
+/** What-ifs by line key or account id, tied to the inputs' revision: a load or a fresh start drops them (BD7). */
 interface Overlay {
   readonly revision: number
   readonly pay?: Money
   readonly income: ReadonlyMap<number, Money>
   readonly outgoings: ReadonlyMap<number, Money>
+  readonly accounts: ReadonlyMap<string, Money>
 }
 
-const emptyOverlay = (revision: number): Overlay => ({ revision, income: new Map(), outgoings: new Map() })
+const emptyOverlay = (revision: number): Overlay => ({ revision, income: new Map(), outgoings: new Map(), accounts: new Map() })
 
 /** Line keys to places in the lists, for withWhatIf; keys no longer there are dropped. */
-function byIndex(amounts: ReadonlyMap<number, Money>, keys: readonly number[]): Map<number, Money> {
+function byIndex<K>(amounts: ReadonlyMap<K, Money>, keys: readonly K[]): Map<number, Money> {
   const out = new Map<number, Money>()
   for (const [key, amount] of amounts) {
     const index = keys.indexOf(key)
@@ -121,13 +125,31 @@ function byIndex(amounts: ReadonlyMap<number, Money>, keys: readonly number[]): 
   return out
 }
 
-const pick = (figure: YearAndMonth, view: View) => (view === 'month' ? figure.month : figure.year)
-const shareText = (share: Ratio | null) => (share === null ? NOT_APPLICABLE : formatPercent(share))
-const capitalised = (text: string) => text.replace(/^./, (c) => c.toUpperCase())
-const lineLabel = (line: IncomeLine, list: ListId, kind: BudgetKind | undefined, number: number) =>
-  line.name || `${list === 'income' ? 'Income' : KIND_LABELS[kind!]} line ${number}`
+const set = (patch: Partial<BudgetPageInputs>) => session.setInputs(patch)
+const forget = (...fields: string[]) => {
+  for (const field of fields) session.setFieldValid(field, true)
+}
 
-type Keys = ReturnType<typeof useItemKeys>
+/** Replaces the inputs, with Undo while nothing else has changed them. */
+function replaceWithUndo(next: BudgetPageInputs, message: string, done: string) {
+  const before = session.get().inputs
+  const revision = session.get().revision
+  set(next)
+  const after = session.get().inputs
+  toasts.show({
+    message,
+    undo: {
+      blocked: () =>
+        session.get().revision !== revision
+          ? 'Couldn’t undo: other inputs have been loaded since.'
+          : canonicalJson(session.get().inputs) !== canonicalJson(after)
+            ? 'Couldn’t undo: your inputs have changed since.'
+            : undefined,
+      run: () => set(before),
+      done,
+    },
+  })
+}
 
 export default function BudgetPage() {
   const state = useStore(session)
@@ -137,12 +159,17 @@ export default function BudgetPage() {
   const incomeKeys = useItemKeys(inputs.income.length)
   const outgoingKeys = useItemKeys(inputs.outgoings.length)
   const [view, setView] = useState<View>('month')
+  const [sharing, setSharing] = useState(false)
   const [stored, setOverlay] = useState(() => emptyOverlay(state.revision))
   const overlay = stored.revision === state.revision ? stored : emptyOverlay(state.revision)
   const whatIf: WhatIf = {
     ...(overlay.pay !== undefined && { pay: overlay.pay }),
     income: byIndex(overlay.income, incomeKeys.keys),
     outgoings: byIndex(overlay.outgoings, outgoingKeys.keys),
+    accounts: byIndex(
+      overlay.accounts,
+      inputs.accounts.map((a) => a.id),
+    ),
   }
   const whatIfInputs = withWhatIf(inputs, whatIf)
   const active = canonicalJson(whatIfInputs) !== canonicalJson(inputs)
@@ -155,13 +182,27 @@ export default function BudgetPage() {
   const result = !invalid && baseline.ok ? baseline.result : null
   const whatIfResult = result && alternative?.ok ? alternative.result : null
   const shown = whatIfResult ?? result
-  const label = `Left over${whatIfResult ? ' with your what-ifs,' : ''} ${IN_VIEW[view]}`
-  const value = shown ? `${gbp(pick(shown.leftover, view))} (${shareText(shown.leftover.share)} of your income)` : null
+  const many = inputs.accounts.length > 0
+  const label = `Left over${many ? ' across accounts' : ''}${whatIfResult ? ' with your what-ifs,' : ''} ${IN_VIEW[view]}`
+  const shortNote = shown
+    ? shown.accounts
+        .filter((a) => toPence(a.short.year) > 0)
+        .map((a) => `${a.name} is ${gbp(pick(a.short, view))} short`)
+        .join('; ')
+    : ''
+  const value = shown
+    ? `${gbp(pick(shown.leftover, view))} (${shareText(shown.leftover.share)} of your income)${shortNote ? `\n${shortNote}` : ''}`
+    : null
 
   const apply = () => {
     const before = inputs
     const revision = state.revision
-    session.setInputs({ pay: whatIfInputs.pay, income: whatIfInputs.income, outgoings: whatIfInputs.outgoings })
+    session.setInputs({
+      pay: whatIfInputs.pay,
+      income: whatIfInputs.income,
+      accounts: whatIfInputs.accounts,
+      outgoings: whatIfInputs.outgoings,
+    })
     setOverlay(emptyOverlay(revision))
     toasts.show({
       message: 'Applied your what-ifs to your inputs.',
@@ -173,17 +214,41 @@ export default function BudgetPage() {
     })
   }
 
+  const fix = (id: string) => {
+    const account = result?.accounts.find((a) => a.id === id)
+    if (!account) return
+    const amount = coveringMonthly(account.paid.year)
+    replaceWithUndo(
+      { ...inputs, accounts: inputs.accounts.map((a) => (a.id === id ? { ...a, amount, period: 'monthly' } : a)) },
+      `${account.name} now gets ${gbp(amount)} a month.`,
+      `${account.name}’s transfer is back as it was.`,
+    )
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
-          {budgetCalculator.name}
-        </h1>
-        <p className="text-text-muted">{budgetCalculator.summary}</p>
-        {/* On a phone the badge is in the sticky bar instead. */}
-        <div className="hidden md:flex">
-          <NoTaxRulesBadge />
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-2">
+          <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
+            {budgetCalculator.name}
+          </h1>
+          <p className="text-text-muted">{budgetCalculator.summary}</p>
+          {/* On a phone the badge is in the sticky bar instead. */}
+          <div className="hidden md:flex">
+            <NoTaxRulesBadge />
+          </div>
         </div>
+        <Button
+          id="bd-share"
+          variant="primary"
+          disabled={!result}
+          aria-haspopup="dialog"
+          onClick={() => setSharing(true)}
+          className="h-auto min-h-touch py-2"
+        >
+          <Share2 />
+          Share
+        </Button>
       </div>
 
       <StickyResult
@@ -205,7 +270,7 @@ export default function BudgetPage() {
               <p>Fix the highlighted inputs to see results.</p>
             </InlineNotice>
           ) : baseline.ok ? (
-            <Results result={baseline.result} whatIf={whatIfResult} view={view} setView={setView} gbp={gbp} />
+            <Results result={baseline.result} whatIf={whatIfResult} view={view} setView={setView} gbp={gbp} onFix={fix} />
           ) : (
             <RefusalNotice refusal={inputRefusal(baseline.problems)} />
           )
@@ -224,6 +289,7 @@ export default function BudgetPage() {
           setOverlay={setOverlay}
           whatIfActive={active}
           apply={apply}
+          view={view}
           gbp={gbp}
         />
       </StickyResult>
@@ -231,18 +297,28 @@ export default function BudgetPage() {
       <AssumptionsPanel items={[...(result ? result.assumptions : []), ...PAGE_ASSUMPTIONS]}>
         <p className="text-text-muted">Illustrative only, not financial advice. {DISCLAIMER}</p>
       </AssumptionsPanel>
+
+      {sharing && result && (
+        <Suspense fallback={null}>
+          <ShareDialog
+            inputs={inputs}
+            result={result}
+            onClose={() => {
+              setSharing(false)
+              document.getElementById('bd-share')?.focus()
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }
 
-const set = (patch: Partial<BudgetPageInputs>) => session.setInputs(patch)
-const forget = (...fields: string[]) => {
-  for (const field of fields) session.setFieldValid(field, true)
-}
+type Keys = ReturnType<typeof useItemKeys>
 
 /**
- * The inputs: Your pay always visible, then a section each (U1 to U3), open on mount when its lines differ from a fresh
- * page's. Remounted (by key) on a load or a fresh start; never stored.
+ * The inputs: Your pay always visible, then extra income, "Your money" and What if. Remounted (by key) on a load or a
+ * fresh start; which sections and lines are open is never stored.
  */
 function Inputs({
   inputs,
@@ -254,6 +330,7 @@ function Inputs({
   setOverlay,
   whatIfActive,
   apply,
+  view,
   gbp,
 }: {
   inputs: BudgetPageInputs
@@ -265,12 +342,15 @@ function Inputs({
   setOverlay: (overlay: Overlay) => void
   whatIfActive: boolean
   apply: () => void
+  view: View
   gbp: Gbp
 }) {
   const [openOnMount] = useState(() =>
-    Object.fromEntries((['income', ...BUDGET_KINDS] as SectionId[]).map((id) => [id, sectionSet(id, inputs)])),
+    Object.fromEntries((['income', 'accounts', ...BUDGET_GROUPS] as SectionId[]).map((id) => [id, sectionSet(id, inputs)])),
   )
-  // What takes focus after the next render: a new line's name, a restored line's name, or Add after a removal.
+  const [by, setBy] = useState<By>(() => (inputs.accounts.length > 0 ? 'where' : 'what'))
+  const [openLines, setOpenLines] = useState<ReadonlySet<number>>(() => new Set())
+  // What takes focus after the next render: a new line's name, a restored line, or Add after a removal.
   const [focus, setFocus] = useState<string | null>(null)
   useEffect(() => {
     if (focus === null) return
@@ -280,27 +360,33 @@ function Inputs({
   const latest = useRef({ incomeKeys, outgoingKeys, setFocus })
   latest.current = { incomeKeys, outgoingKeys, setFocus }
 
-  const lists = { income: inputs.income, outgoings: inputs.outgoings } as const
-  const keysOf = (list: ListId) => (list === 'income' ? incomeKeys : outgoingKeys)
-  const fieldName = (list: ListId, key: number, part: string) => `${LIST_PREFIX[list]}-${key}-${part}`
+  const accountOptions = [mainOption, ...inputs.accounts.map((a) => ({ value: a.id, label: a.name || ACCOUNT_KIND_LABELS[a.kind] }))]
+  const per = IN_VIEW[view]
 
-  const update = (list: ListId, index: number, patch: Partial<OutgoingLine>) =>
-    set({ [list]: lists[list].map((l, i) => (i === index ? { ...l, ...patch } : l)) })
-
-  const add = (list: ListId, kind?: BudgetKind) => {
-    const lines = lists[list]
-    const key = keysOf(list).inserted(lines.length)
-    const blank: IncomeLine = { name: '', amount: ZERO, period: 'monthly' }
-    set({ [list]: [...lines, kind ? { ...blank, kind } : blank] })
-    setFocus(`${LIST_PREFIX[list]}-${key}-name`)
+  /* ── Outgoing lines ─────────────────────────────────────────── */
+  const outField = (key: number, part: string) => `bd-out-${key}-${part}`
+  const updateLine = (index: number, patch: Partial<OutgoingLine>) =>
+    set({ outgoings: inputs.outgoings.map((l, i) => (i === index ? { ...l, ...patch } : l)) })
+  const toggleLine = (key: number, open: boolean) =>
+    setOpenLines((s) => {
+      const next = new Set(s)
+      if (open) next.add(key)
+      else next.delete(key)
+      return next
+    })
+  const addLine = (group: BudgetGroup, name: string) => {
+    const key = outgoingKeys.inserted(inputs.outgoings.length)
+    const line: OutgoingLine = { name, amount: ZERO, period: 'monthly', group, account: MAIN_ACCOUNT, essential: GROUP_ESSENTIAL[group] }
+    set({ outgoings: [...inputs.outgoings, line] })
+    toggleLine(key, true)
+    setFocus(outField(key, name ? 'amount' : 'name'))
   }
-
-  const remove = (list: ListId, index: number, key: number, label: string, addId: string) => {
-    const line = lists[list][index]!
+  const removeLine = (index: number, key: number, label: string, addId: string) => {
+    const line = inputs.outgoings[index]!
     const revision = session.get().revision
-    forget(fieldName(list, key, 'name'), fieldName(list, key, 'amount'))
-    keysOf(list).removed(index)
-    set({ [list]: lists[list].filter((_, i) => i !== index) })
+    forget(outField(key, 'name'), outField(key, 'amount'))
+    outgoingKeys.removed(index)
+    set({ outgoings: inputs.outgoings.filter((_, i) => i !== index) })
     setFocus(addId)
     toasts.show({
       message: `Removed “${label}”.`,
@@ -308,131 +394,115 @@ function Inputs({
         blocked: () =>
           session.get().revision !== revision
             ? 'Couldn’t undo: other inputs have been loaded since.'
-            : session.get().inputs[list].length >= MAX_BUDGET_LINES
+            : session.get().inputs.outgoings.length >= MAX_BUDGET_LINES
               ? 'Couldn’t undo: the list is full.'
               : undefined,
         run: () => {
-          const now = session.get().inputs[list]
-          const at = Math.min(index, now.length)
-          const keys = list === 'income' ? latest.current.incomeKeys : latest.current.outgoingKeys
-          const restored = keys.inserted(at)
-          set({ [list]: [...now.slice(0, at), line, ...now.slice(at)] })
-          latest.current.setFocus(`${LIST_PREFIX[list]}-${restored}-name`)
+          const now = session.get().inputs
+          const at = Math.min(index, now.outgoings.length)
+          const restored = latest.current.outgoingKeys.inserted(at)
+          const account = now.accounts.some((a) => a.id === line.account) ? line.account : MAIN_ACCOUNT
+          set({ outgoings: [...now.outgoings.slice(0, at), { ...line, account }, ...now.outgoings.slice(at)] })
+          latest.current.setFocus(`bd-out-${restored}-row`)
         },
         done: `Restored “${label}”.`,
       },
     })
   }
 
-  const sectionInvalid = (id: SectionId) => {
-    const list: ListId = id === 'income' ? 'income' : 'outgoings'
-    const keys = keysOf(list).keys
-    return lists[list].some(
-      (l, i) =>
-        (id === 'income' || (l as OutgoingLine).kind === id) && invalidFields.some((f) => f.startsWith(`${LIST_PREFIX[list]}-${keys[i]}-`)),
-    )
-  }
-
-  const summary = (id: SectionId): string => {
-    if (sectionInvalid(id)) return NEEDS_FIXING
-    if (!sectionSet(id, inputs)) return NOT_SET
-    const lines = id === 'income' ? inputs.income : inputs.outgoings.filter((l) => l.kind === id)
+  const groupSummary = (group: BudgetGroup) => {
+    const keys = outgoingKeys.keys
+    const lines = inputs.outgoings.filter((l) => l.group === group)
+    if (inputs.outgoings.some((l, i) => l.group === group && invalidFields.some((f) => f.startsWith(`bd-out-${keys[i]}-`))))
+      return NEEDS_FIXING
+    if (!sectionSet(group, inputs)) return NOT_SET
     const count = `${lines.length} ${lines.length === 1 ? 'line' : 'lines'}`
-    if (!result) return count
-    const month =
-      id === 'income' ? subtract(result.income.month, result.incomeLines[0]!.month) : result.perKind.find((t) => t.kind === id)!.month
-    return `${count}, ${gbp(month)} a month`
+    const total = result?.perGroup.find((g) => g.group === group)
+    return total ? `${count}, ${gbp(pick(total, view))} ${per}` : count
   }
 
-  const lineList = (list: ListId, kind?: BudgetKind) => {
-    const keys = keysOf(list).keys
-    const addId = kind ? `bd-add-${kind}` : 'bd-add-income'
-    const full = lists[list].length >= MAX_BUDGET_LINES
-    const resolved = list === 'income' ? result?.incomeLines.slice(1) : result?.outgoingLines
-    let number = 0
-    return (
-      <>
-        {lists[list].map((line, index) => {
-          if (kind && (line as OutgoingLine).kind !== kind) return null
-          number++
-          const key = keys[index] ?? index
-          const lineId = `${LIST_PREFIX[list]}-${key}`
-          const label = lineLabel(line, list, kind, number)
-          const figures = resolved?.[index]
-          return (
-            <fieldset key={key} id={lineId} data-line className="flex min-w-0 flex-col gap-3 rounded-md border border-border p-3">
-              <legend className="sr-only">{label}</legend>
-              <TextInput
-                id={`${lineId}-name`}
-                label="Name"
-                value={line.name}
-                maxLength={MAX_ITEM_NAME_LENGTH}
-                onChange={(name) => update(list, index, { name })}
-                onValidityChange={(ok) => session.setFieldValid(fieldName(list, key, 'name'), ok)}
-              />
-              <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-                <CurrencyInput
-                  id={`${lineId}-amount`}
-                  label="Amount"
-                  value={line.amount}
-                  emptyValue={ZERO}
-                  placeholder="0.00"
-                  min={ZERO}
-                  max={MAX_INPUT_AMOUNT}
-                  onChange={(amount) => update(list, index, { amount })}
-                  onValidityChange={(ok) => session.setFieldValid(fieldName(list, key, 'amount'), ok)}
-                />
-                <Select
-                  id={`${lineId}-period`}
-                  label="How often"
-                  value={line.period}
-                  options={PERIOD_OPTIONS}
-                  onChange={(period) => update(list, index, { period })}
-                />
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-xs text-text-muted tabular-nums">
-                  {figures ? `${gbp(figures.month)} a month, ${gbp(figures.year)} a year` : ' '}
-                </p>
-                <Button
-                  id={`${lineId}-remove`}
-                  variant="ghost"
-                  aria-label={`Remove ${label}`}
-                  onClick={() => remove(list, index, key, label, addId)}
-                >
-                  Remove
-                </Button>
-              </div>
-            </fieldset>
-          )
-        })}
-        <div className="flex flex-col gap-1.5">
-          <Button
-            id={addId}
-            disabled={full}
-            aria-describedby={full ? `${addId}-full` : undefined}
-            onClick={() => add(list, kind)}
-            className="h-auto min-h-touch max-w-full self-start py-2 text-left whitespace-normal"
+  const full = inputs.outgoings.length >= MAX_BUDGET_LINES
+  const groups = (
+    <div className="flex flex-col gap-3">
+      {BUDGET_GROUPS.map((group) => {
+        const keys = outgoingKeys.keys
+        let number = 0
+        return (
+          <Section
+            key={group}
+            id={`bd-section-${group}`}
+            title={GROUP_LABELS[group]}
+            summary={groupSummary(group)}
+            defaultOpen={openOnMount[group]}
+            icon={<IconTile swatch={GROUP_SWATCHES[group]} />}
           >
-            <Plus />
-            Add a line
-          </Button>
-          {full && (
-            <p id={`${addId}-full`} className="text-xs text-text-muted">
-              That’s the most this list holds ({MAX_BUDGET_LINES}). Combine lines to add more.
-            </p>
-          )}
-        </div>
-      </>
+            <ul className="flex flex-col">
+              {inputs.outgoings.map((line, index) => {
+                if (line.group !== group) return null
+                number++
+                const key = keys[index] ?? index
+                const lineLabel = line.name || `${GROUP_LABELS[group]} line ${number}`
+                const figures = result?.outgoingLines[index]
+                return (
+                  <LineEditor
+                    key={key}
+                    lineId={`bd-out-${key}`}
+                    line={line}
+                    label={lineLabel}
+                    open={openLines.has(key)}
+                    onOpenChange={(open) => toggleLine(key, open)}
+                    figure={figures ? `${gbp(pick(figures, view))}` : ''}
+                    accounts={accountOptions}
+                    invalid={invalidFields.some((f) => f.startsWith(`bd-out-${key}-`))}
+                    onChange={(patch) => updateLine(index, patch)}
+                    onValidity={(part, ok) => session.setFieldValid(outField(key, part), ok)}
+                    onRemove={() => removeLine(index, key, lineLabel, `bd-add-${group}`)}
+                  />
+                )
+              })}
+            </ul>
+            <AddLines
+              id={`bd-add-${group}`}
+              presets={PRESETS[group]}
+              full={full}
+              fullText={FULL_TEXT}
+              onAdd={(name) => addLine(group, name)}
+            />
+          </Section>
+        )
+      })}
+    </div>
+  )
+
+  /* ── Accounts ───────────────────────────────────────────────── */
+  const accountField = (id: string, part: string) => `bd-acc-${id}-${part}`
+  const updateAccount = (id: string, patch: Partial<Account>) =>
+    set({ accounts: inputs.accounts.map((a) => (a.id === id ? { ...a, ...patch } : a)) })
+  const removeAccount = (id: string) => {
+    const account = inputs.accounts.find((a) => a.id === id)!
+    const name = account.name || ACCOUNT_KIND_LABELS[account.kind]
+    forget(accountField(id, 'name'), accountField(id, 'amount'))
+    replaceWithUndo(withoutAccounts(inputs, new Set([id])), `Deleted “${name}”. Its lines are now paid from main.`, `Restored “${name}”.`)
+    setFocus('bd-by')
+  }
+  const addAccount = (kind: Account['kind']) => {
+    const account = newAccount(inputs, kind)
+    set({ accounts: [...inputs.accounts, account] })
+    setFocus(accountField(account.id, 'name'))
+  }
+  const template = (id: TemplateId) => {
+    const next = applyTemplate(inputs, id)
+    if (canonicalJson(next) === canonicalJson(inputs)) return
+    for (const a of inputs.accounts)
+      if (!next.accounts.some((b) => b.id === a.id)) forget(accountField(a.id, 'name'), accountField(a.id, 'amount'))
+    replaceWithUndo(
+      next,
+      'Set up your accounts. Lines from any removed account are now paid from main.',
+      'Your accounts are back as they were.',
     )
   }
 
-  const section = (id: SectionId, children: ReactNode) => (
-    <Section id={`bd-section-${id}`} title={SECTION_TITLES[id]} summary={summary(id)} defaultOpen={openOnMount[id]}>
-      <p className="-mt-1 text-xs text-text-muted">{SECTION_HINTS[id]}</p>
-      {children}
-    </Section>
-  )
+  const accountsInvalid = invalidFields.some((f) => f.startsWith('bd-acc-'))
 
   return (
     <>
@@ -446,7 +516,7 @@ function Inputs({
         <CurrencyInput
           id="bd-pay"
           label="Pay after tax"
-          hint="What reaches your account, after tax, National Insurance, pension and anything else taken from your pay."
+          hint="What reaches your main account, after tax, National Insurance, pension and anything else taken from your pay."
           value={inputs.pay}
           emptyValue={ZERO}
           placeholder="0.00"
@@ -463,12 +533,50 @@ function Inputs({
           onChange={(payPeriod) => set({ payPeriod })}
         />
       </section>
-      {section('income', lineList('income'))}
-      {BUDGET_KINDS.map((kind) => (
-        <div key={kind} className="contents">
-          {section(kind, lineList('outgoings', kind))}
+
+      <IncomeSection
+        inputs={inputs}
+        result={result}
+        keys={incomeKeys}
+        invalidFields={invalidFields}
+        defaultOpen={openOnMount.income!}
+        gbp={gbp}
+        setFocus={setFocus}
+        latest={latest}
+      />
+
+      <section
+        aria-labelledby="bd-money-title"
+        className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm"
+      >
+        <div className="flex flex-col gap-1">
+          <h2 id="bd-money-title" className="text-base font-semibold">
+            Your money
+          </h2>
+          <p className="text-xs text-text-muted">
+            {inputs.outgoings.length} {inputs.outgoings.length === 1 ? 'line' : 'lines'} · {inputs.accounts.length + 1}{' '}
+            {inputs.accounts.length === 0 ? 'account' : 'accounts'}
+            {accountsInvalid ? ` · ${NEEDS_FIXING.toLowerCase()} under Where it’s paid from` : ''}
+          </p>
         </div>
-      ))}
+        <Segmented id="bd-by" label="Show by" value={by} options={BY_OPTIONS} onChange={setBy} />
+        <div hidden={by !== 'what'}>{groups}</div>
+        <div hidden={by !== 'where'}>
+          <Accounts
+            inputs={inputs}
+            result={result}
+            view={view}
+            gbp={gbp}
+            invalidFields={invalidFields}
+            onAccount={updateAccount}
+            onValidity={(field, ok) => session.setFieldValid(field, ok)}
+            onRemove={removeAccount}
+            onAdd={addAccount}
+            onTemplate={template}
+          />
+        </div>
+      </section>
+
       <WhatIfSection
         inputs={inputs}
         incomeKeys={incomeKeys.keys}
@@ -483,7 +591,138 @@ function Inputs({
   )
 }
 
-/** One slider per line, Your pay first (BD7): page state only. Reset what-ifs and Apply (with Undo). */
+/** Extra income lines (BD3), each a full line editor, in a section. */
+function IncomeSection({
+  inputs,
+  result,
+  keys,
+  invalidFields,
+  defaultOpen,
+  gbp,
+  setFocus,
+  latest,
+}: {
+  inputs: BudgetPageInputs
+  result: BudgetResult | null
+  keys: Keys
+  invalidFields: readonly string[]
+  defaultOpen: boolean
+  gbp: Gbp
+  setFocus: (id: string) => void
+  latest: React.RefObject<{ incomeKeys: Keys; setFocus: (id: string | null) => void }>
+}) {
+  const field = (key: number, part: string) => `bd-in-${key}-${part}`
+  const update = (index: number, patch: Partial<IncomeLine>) =>
+    set({ income: inputs.income.map((l, i) => (i === index ? { ...l, ...patch } : l)) })
+  const add = () => {
+    const key = keys.inserted(inputs.income.length)
+    set({ income: [...inputs.income, { name: '', amount: ZERO, period: 'monthly' }] })
+    setFocus(field(key, 'name'))
+  }
+  const remove = (index: number, key: number, label: string) => {
+    const line = inputs.income[index]!
+    const revision = session.get().revision
+    forget(field(key, 'name'), field(key, 'amount'))
+    keys.removed(index)
+    set({ income: inputs.income.filter((_, i) => i !== index) })
+    setFocus('bd-add-income')
+    toasts.show({
+      message: `Removed “${label}”.`,
+      undo: {
+        blocked: () =>
+          session.get().revision !== revision
+            ? 'Couldn’t undo: other inputs have been loaded since.'
+            : session.get().inputs.income.length >= MAX_BUDGET_LINES
+              ? 'Couldn’t undo: the list is full.'
+              : undefined,
+        run: () => {
+          const now = session.get().inputs.income
+          const at = Math.min(index, now.length)
+          const restored = latest.current.incomeKeys.inserted(at)
+          set({ income: [...now.slice(0, at), line, ...now.slice(at)] })
+          latest.current.setFocus(field(restored, 'name'))
+        },
+        done: `Restored “${label}”.`,
+      },
+    })
+  }
+  const invalid = inputs.income.some((_, i) => invalidFields.some((f) => f.startsWith(`bd-in-${keys.keys[i]}-`)))
+  const extra = result ? subtract(result.income.month, result.incomeLines[0]!.month) : ZERO
+  const summary = invalid
+    ? NEEDS_FIXING
+    : inputs.income.length === 0
+      ? NOT_SET
+      : `${inputs.income.length} ${inputs.income.length === 1 ? 'line' : 'lines'}${result ? `, ${gbp(extra)} a month` : ''}`
+  const full = inputs.income.length >= MAX_BUDGET_LINES
+  return (
+    <Section id="bd-section-income" title="Income extras" summary={summary} defaultOpen={defaultOpen}>
+      <p className="-mt-1 text-xs text-text-muted">
+        Money coming in besides your pay, after any tax: rent from a lodger, side work, benefits.
+      </p>
+      {inputs.income.map((line, index) => {
+        const key = keys.keys[index] ?? index
+        const id = `bd-in-${key}`
+        const label = line.name || `Income line ${index + 1}`
+        const figures = result?.incomeLines[index + 1]
+        return (
+          <fieldset key={key} id={id} data-line className="flex min-w-0 flex-col gap-3 rounded-md border border-border p-3">
+            <legend className="sr-only">{label}</legend>
+            <TextInput
+              id={`${id}-name`}
+              label="Name"
+              value={line.name}
+              maxLength={MAX_ITEM_NAME_LENGTH}
+              onChange={(name) => update(index, { name })}
+              onValidityChange={(ok) => session.setFieldValid(field(key, 'name'), ok)}
+            />
+            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+              <CurrencyInput
+                id={`${id}-amount`}
+                label="Amount"
+                value={line.amount}
+                emptyValue={ZERO}
+                placeholder="0.00"
+                min={ZERO}
+                max={MAX_INPUT_AMOUNT}
+                onChange={(amount) => update(index, { amount })}
+                onValidityChange={(ok) => session.setFieldValid(field(key, 'amount'), ok)}
+              />
+              <Select
+                id={`${id}-period`}
+                label="How often"
+                value={line.period}
+                options={PERIOD_OPTIONS}
+                onChange={(period) => update(index, { period })}
+              />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-text-muted tabular-nums">
+                {figures ? `${gbp(figures.month)} a month, ${gbp(figures.year)} a year` : ' '}
+              </p>
+              <Button id={`${id}-remove`} variant="ghost" aria-label={`Remove ${label}`} onClick={() => remove(index, key, label)}>
+                Remove
+              </Button>
+            </div>
+          </fieldset>
+        )
+      })}
+      <div className="flex flex-col gap-1.5">
+        <Button
+          id="bd-add-income"
+          disabled={full}
+          onClick={add}
+          className="h-auto min-h-touch max-w-full self-start py-2 text-left whitespace-normal"
+        >
+          <Plus />
+          Add a line
+        </Button>
+        {full && <p className="text-xs text-text-muted">{FULL_TEXT}</p>}
+      </div>
+    </Section>
+  )
+}
+
+/** One slider per amount, Your pay first, then transfers and lines (BD7): page state only. Reset what-ifs and Apply (with Undo). */
 function WhatIfSection({
   inputs,
   incomeKeys,
@@ -512,73 +751,72 @@ function WhatIfSection({
       else next.add(id)
       return next
     })
-  const changed = (list: ListId, key: number, amount: Money) => {
-    const next = new Map(overlay[list])
+  const differs = (map: ReadonlyMap<unknown, Money>, key: unknown, amount: Money) => map.has(key) && compare(map.get(key)!, amount) !== 0
+  const count = [
+    overlay.pay !== undefined && compare(overlay.pay, inputs.pay) !== 0,
+    ...inputs.income.map((l, i) => differs(overlay.income, incomeKeys[i], l.amount)),
+    ...inputs.accounts.map((a) => differs(overlay.accounts, a.id, a.amount)),
+    ...inputs.outgoings.map((l, i) => differs(overlay.outgoings, outgoingKeys[i], l.amount)),
+  ].filter(Boolean).length
+  const slider = (
+    id: string,
+    label: string,
+    line: { amount: Money; period: IncomeLine['period'] },
+    value: Money | undefined,
+    onChange: (amount: Money) => void,
+  ) => (
+    <SliderInput
+      key={id}
+      id={id}
+      label={label}
+      unit={PERIOD_UNITS[line.period]}
+      value={value ?? line.amount}
+      scaleFrom={line.amount}
+      max={MAX_INPUT_AMOUNT}
+      onChange={onChange}
+      onValidityChange={validity(id)}
+      hint={`${PERIOD_LABELS[line.period]}; your inputs say ${gbp(line.amount)}.`}
+    />
+  )
+  const put = <K,>(field: 'income' | 'outgoings' | 'accounts', key: K, amount: Money) => {
+    const next = new Map(overlay[field] as ReadonlyMap<K, Money>)
     next.set(key, amount)
-    setOverlay({ ...overlay, [list]: next })
-  }
-  const count = [overlay.pay !== undefined && compare(overlay.pay, inputs.pay) !== 0]
-    .concat(
-      inputs.income.map((l, i) => overlay.income.has(incomeKeys[i]!) && compare(overlay.income.get(incomeKeys[i]!)!, l.amount) !== 0),
-      inputs.outgoings.map(
-        (l, i) => overlay.outgoings.has(outgoingKeys[i]!) && compare(overlay.outgoings.get(outgoingKeys[i]!)!, l.amount) !== 0,
-      ),
-    )
-    .filter(Boolean).length
-  const slider = (list: ListId, line: IncomeLine, key: number, label: string) => {
-    const id = `bd-wi-${list === 'income' ? 'in' : 'out'}-${key}`
-    return (
-      <SliderInput
-        key={id}
-        id={id}
-        label={label}
-        unit={PERIOD_UNITS[line.period]}
-        value={overlay[list].get(key) ?? line.amount}
-        scaleFrom={line.amount}
-        max={MAX_INPUT_AMOUNT}
-        onChange={(amount) => changed(list, key, amount)}
-        onValidityChange={validity(id)}
-        hint={`${PERIOD_LABELS[line.period]}; your inputs say ${gbp(line.amount)}.`}
-      />
-    )
-  }
-  const numbers: Record<string, number> = {}
-  const next = (group: string) => {
-    numbers[group] = (numbers[group] ?? 0) + 1
-    return numbers[group]
+    setOverlay({ ...overlay, [field]: next })
   }
 
   return (
     <Section
       id="bd-section-whatif"
-      title={SECTION_TITLES.whatif}
+      title="What if"
       summary={count === 0 ? NOT_SET : `${count} what-if${count === 1 ? '' : 's'}, not saved`}
     >
       <p className="-mt-1 text-xs text-text-muted">
         Try other amounts: the results show your inputs and the what-ifs side by side. What-ifs are never saved; Apply puts them into your
         inputs.
       </p>
-      <SliderInput
-        id="bd-wi-pay"
-        label={PAY_LABEL}
-        unit={PERIOD_UNITS[inputs.payPeriod]}
-        value={overlay.pay ?? inputs.pay}
-        scaleFrom={inputs.pay}
-        max={MAX_INPUT_AMOUNT}
-        onChange={(pay) => setOverlay({ ...overlay, pay })}
-        onValidityChange={validity('bd-wi-pay')}
-        hint={`${PERIOD_LABELS[inputs.payPeriod]}, after tax; your inputs say ${gbp(inputs.pay)}.`}
-      />
-      {inputs.income.map((line, i) => slider('income', line, incomeKeys[i] ?? i, lineLabel(line, 'income', undefined, next('income'))))}
-      {BUDGET_KINDS.flatMap((kind) =>
+      {slider('bd-wi-pay', PAY_LABEL, { amount: inputs.pay, period: inputs.payPeriod }, overlay.pay, (pay) =>
+        setOverlay({ ...overlay, pay }),
+      )}
+      {inputs.income.map((line, i) =>
+        slider(`bd-wi-in-${incomeKeys[i] ?? i}`, line.name || `Income line ${i + 1}`, line, overlay.income.get(incomeKeys[i]!), (amount) =>
+          put('income', incomeKeys[i]!, amount),
+        ),
+      )}
+      {inputs.accounts.map((a) =>
+        slider(`bd-wi-acc-${a.id}`, `Transfer to ${a.name || ACCOUNT_KIND_LABELS[a.kind]}`, a, overlay.accounts.get(a.id), (amount) =>
+          put('accounts', a.id, amount),
+        ),
+      )}
+      {BUDGET_GROUPS.flatMap((group) =>
         inputs.outgoings.flatMap((line, i) =>
-          line.kind === kind
+          line.group === group
             ? [
                 slider(
-                  'outgoings',
+                  `bd-wi-out-${outgoingKeys[i] ?? i}`,
+                  `${line.name || `${GROUP_LABELS[group]} line`} (${GROUP_LABELS[group].toLowerCase()})`,
                   line,
-                  outgoingKeys[i] ?? i,
-                  `${lineLabel(line, 'outgoings', kind, next(kind))} (${KIND_LABELS[kind].toLowerCase()})`,
+                  overlay.outgoings.get(outgoingKeys[i]!),
+                  (amount) => put('outgoings', outgoingKeys[i]!, amount),
                 ),
               ]
             : [],
@@ -610,237 +848,5 @@ function WhatIfSection({
         </Button>
       </div>
     </Section>
-  )
-}
-
-/** A month or year figure from the engine's exact year (BD2): the same rounding the engine uses for its month figures. */
-const yearInView = (year: Money, view: View): Money => (view === 'year' ? year : mulRound(year, ratio(1, MONTHS_PER_YEAR), 'nearest'))
-
-/** The results column (U6): the view switch, warnings, the budget card, what-ifs beside it, where income goes, by kind. */
-function Results({
-  result,
-  whatIf,
-  view,
-  setView,
-  gbp,
-}: {
-  result: BudgetResult
-  whatIf: BudgetResult | null
-  view: View
-  setView: (view: View) => void
-  gbp: Gbp
-}) {
-  const r = whatIf ?? result
-  const per = IN_VIEW[view]
-  const negative = r.warnings.includes('negative-leftover')
-  const drift = r.pennyDrift
-  const drifts =
-    view === 'month' && [drift.income, drift.kinds, drift.leftover, ...Object.values(drift.lines)].some((amount) => toPence(amount) !== 0)
-
-  const segments: SplitBarSegment[] = [
-    ...r.perKind.map((t) => ({ id: t.kind, label: KIND_LABELS[t.kind], value: toPence(t.year) })),
-    ...(negative ? [] : [{ id: 'leftover', label: 'Left over', value: toPence(r.leftover.year) }]),
-  ]
-
-  return (
-    <>
-      <div className="flex flex-col gap-3">
-        <Segmented id="bd-view" label="Show amounts" value={view} options={VIEW_OPTIONS} onChange={setView} />
-        {negative && (
-          <div data-warning="negative-leftover">
-            <InlineNotice tone="warning" title="More going out than coming in">
-              <p>
-                Your outgoings are {gbp(subtract(ZERO, pick(r.leftover, view)))} {per} more than your income
-                {whatIf ? ' with your what-ifs' : ''}. It is shown as it is, not capped at nothing.
-              </p>
-            </InlineNotice>
-          </div>
-        )}
-        {r.warnings.includes('no-income') && (
-          <div data-warning="no-income">
-            <InlineNotice tone="info">
-              <p>Enter your pay to see the share of your income each part takes. Until then shares are {NOT_APPLICABLE}.</p>
-            </InlineNotice>
-          </div>
-        )}
-        <ResultCard
-          data-budget-card
-          title={`Your budget, ${per}${whatIf ? ', with your what-ifs' : ''}`}
-          headline={gbp(pick(r.leftover, view))}
-          headlineLabel={`Left over, ${shareText(r.leftover.share)} of your income`}
-        >
-          <StatRow label="Income" value={gbp(pick(r.income, view))} detail="Your pay and any extra income" />
-          <StatRow label="Outgoings" value={gbp(pick(r.outgoings, view))} detail={`${shareText(r.outgoings.share)} of your income`} />
-          <StatRow label="Left over" value={gbp(pick(r.leftover, view))} detail={`${shareText(r.leftover.share)} of your income`} />
-          <StatRow label="Savings rate" value={shareText(r.savingsRate)} detail="Savings and investing, of your income" />
-        </ResultCard>
-      </div>
-
-      {whatIf && <WhatIfResults result={result} whatIf={whatIf} view={view} gbp={gbp} />}
-
-      <div className="rounded-lg border border-border bg-surface p-4 shadow-sm">
-        <SplitBar
-          title={negative ? `Where your outgoings go, ${per}` : `Where your income goes, ${per}`}
-          segments={segments}
-          total={toPence(negative ? r.outgoings.year : r.income.year)}
-          totalLabel={negative ? 'Outgoings' : 'Income'}
-          formatValue={(v) => gbp(yearInView(fromPence(v), view))}
-          highlight="leftover"
-          emptyText="Nothing to show yet: enter your pay and outgoings."
-        />
-      </div>
-
-      <KindTable result={r} view={view} gbp={gbp} drifts={drifts} whatIf={whatIf !== null} />
-    </>
-  )
-}
-
-/** Your inputs beside the what-ifs, with the change (BD7). */
-function WhatIfResults({ result, whatIf, view, gbp }: { result: BudgetResult; whatIf: BudgetResult; view: View; gbp: Gbp }) {
-  const rows: { label: string; base: string; next: string; change: string }[] = [
-    ...(
-      [
-        ['Income', result.income, whatIf.income],
-        ['Outgoings', result.outgoings, whatIf.outgoings],
-        ['Left over', result.leftover, whatIf.leftover],
-      ] as const
-    ).map(([label, a, b]) => ({
-      label,
-      base: gbp(pick(a, view)),
-      next: gbp(pick(b, view)),
-      change: formatGBPChange(subtract(pick(b, view), pick(a, view)), 'pence'),
-    })),
-    {
-      label: 'Savings rate',
-      base: shareText(result.savingsRate),
-      next: shareText(whatIf.savingsRate),
-      change:
-        result.savingsRate && whatIf.savingsRate
-          ? formatPointsChange(subtractRatio(whatIf.savingsRate, result.savingsRate))
-          : NOT_APPLICABLE,
-    },
-  ]
-  const cell = 'px-3 py-2 text-right tabular-nums'
-  return (
-    <section
-      data-what-if-results
-      aria-labelledby="bd-what-if-title"
-      className="flex min-w-0 flex-col gap-2 rounded-lg border border-border bg-surface p-4 shadow-sm"
-    >
-      <h2 id="bd-what-if-title" className="text-base font-semibold text-text">
-        Your inputs and your what-ifs, {IN_VIEW[view]}
-      </h2>
-      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-focusable (axe scrollable-region-focusable). */}
-      <section tabIndex={0} aria-label="Your inputs and your what-ifs, as a table" className="overflow-x-auto">
-        <table className="w-full text-sm text-text">
-          <thead>
-            <tr className="text-text-muted">
-              <th scope="col" className="px-3 py-2 text-left font-medium">
-                <span className="sr-only">Figure</span>
-              </th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">
-                Your inputs
-              </th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">
-                What if
-              </th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">
-                Change
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.label} className="border-t border-border">
-                <th scope="row" className="px-3 py-2 text-left font-normal">
-                  {row.label}
-                </th>
-                <td className={cell}>{row.base}</td>
-                <td className={cell}>{row.next}</td>
-                <td className={`${cell} font-medium`}>{row.change}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-    </section>
-  )
-}
-
-/** Each kind with its share of your income, then outgoings, left over and income; the penny note in the month view (BD2). */
-function KindTable({
-  result,
-  view,
-  gbp,
-  drifts,
-  whatIf,
-}: {
-  result: BudgetResult
-  view: View
-  gbp: Gbp
-  drifts: boolean
-  whatIf: boolean
-}) {
-  const cell = 'px-3 py-2 text-right tabular-nums whitespace-nowrap'
-  const total = (label: string, figure: YearAndMonth & { share?: Ratio | null }) => (
-    <tr className="border-t border-border-strong font-medium">
-      <th scope="row" className="px-3 py-2 text-left">
-        {label}
-      </th>
-      <td className={cell}>{gbp(pick(figure, view))}</td>
-      <td className={cell}>{figure.share === undefined ? '' : shareText(figure.share)}</td>
-    </tr>
-  )
-  return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <h2 id="bd-kinds-title" className="text-base font-semibold text-text">
-        By kind, {IN_VIEW[view]}
-        {whatIf ? ', with your what-ifs' : ''}
-      </h2>
-      <section
-        aria-labelledby="bd-kinds-title"
-        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-focusable (axe scrollable-region-focusable).
-        tabIndex={0}
-        className="overflow-x-auto rounded-lg border border-border bg-surface shadow-sm"
-      >
-        <table data-kind-table className="w-full border-collapse text-sm text-text">
-          <thead>
-            <tr className="text-text-muted">
-              <th scope="col" className="px-3 py-2 text-left font-medium">
-                Kind
-              </th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">
-                {capitalised(IN_VIEW[view])}
-              </th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">
-                Of your income
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.perKind.map((t) => (
-              <tr key={t.kind} className="border-t border-border">
-                <th scope="row" className="px-3 py-2 text-left font-normal">
-                  {KIND_LABELS[t.kind]}
-                </th>
-                <td className={cell}>{gbp(pick(t, view))}</td>
-                <td className={cell}>{shareText(t.share)}</td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            {total('Outgoings', result.outgoings)}
-            {total('Left over', result.leftover)}
-            {total('Income', result.income)}
-          </tfoot>
-        </table>
-      </section>
-      {drifts && (
-        <p data-penny-note className="text-xs text-text-muted">
-          Each month figure is its yearly figure divided by the months, to the nearest penny, so the rows here and in the lines can differ
-          from their total by a penny or two. The yearly figures add up exactly.
-        </p>
-      )}
-    </div>
   )
 }

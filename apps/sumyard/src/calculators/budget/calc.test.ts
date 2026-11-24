@@ -320,9 +320,7 @@ describe('the penny drift between month rows and month totals (BD2)', () => {
   })
 
   it('is what the rows add up to less the total, for groups and leftover too', () => {
-    const r = run(
-      inputs([pay(10, 'weekly')], [out(10, 'food', 'weekly'), out(10, 'debt', 'weekly')], [acc('e', 10, 'savings', 'weekly')]),
-    )
+    const r = run(inputs([pay(10, 'weekly')], [out(10, 'food', 'weekly'), out(10, 'debt', 'weekly')], [acc('e', 10, 'savings', 'weekly')]))
     const rows = r.perGroup.reduce((sum, t) => sum + p(t.month), 0) + p(r.potSaved.month)
     expect(p(r.pennyDrift.groups)).toBe(rows - p(r.outgoings.month))
     expect(p(r.pennyDrift.leftover)).toBe(p(r.income.month) - p(r.outgoings.month) - p(r.leftover.month))
@@ -349,7 +347,11 @@ describe('refusals (BD9, BD11)', () => {
     const ids = Array.from({ length: MAX_BUDGET_ACCOUNTS }, (_, i) => `a${i}`)
     const full = inputs(
       Array.from({ length: MAX_BUDGET_LINES }, () => ({ ...pay(1, 'weekly'), amount: MAX_INPUT_AMOUNT })),
-      Array.from({ length: MAX_BUDGET_LINES }, (_, i) => ({ ...out(1, 'saving', 'weekly'), amount: MAX_INPUT_AMOUNT, account: ids[i % ids.length]! })),
+      Array.from({ length: MAX_BUDGET_LINES }, (_, i) => ({
+        ...out(1, 'saving', 'weekly'),
+        amount: MAX_INPUT_AMOUNT,
+        account: ids[i % ids.length]!,
+      })),
       ids.map((id) => ({ ...acc(id, 1, 'savings', 'weekly'), amount: MAX_INPUT_AMOUNT })),
     )
     const r = run(full)
@@ -358,7 +360,10 @@ describe('refusals (BD9, BD11)', () => {
 
   it('refuses a negative amount', () => {
     expect(budget(inputs([pay(-1)]))).toEqual({ ok: false, problems: [{ field: 'income', index: 0, reason: 'below-minimum' }] })
-    expect(budget(inputs([], [], [acc('a', -1)]))).toEqual({ ok: false, problems: [{ field: 'accounts', index: 0, reason: 'below-minimum' }] })
+    expect(budget(inputs([], [], [acc('a', -1)]))).toEqual({
+      ok: false,
+      problems: [{ field: 'accounts', index: 0, reason: 'below-minimum' }],
+    })
   })
 
   it('refuses an unknown period, group, account kind or essential flag', () => {
@@ -406,7 +411,14 @@ describe('refusals (BD9, BD11)', () => {
   it('refuses more than the most lines a list holds (MAX_BUDGET_LINES)', () => {
     const many = Array.from({ length: MAX_BUDGET_LINES + 1 }, () => out(1))
     expect(budget(inputs([], many))).toEqual({ ok: false, problems: [{ field: 'outgoings', reason: 'too-many-lines' }] })
-    expect(budget(inputs(Array.from({ length: MAX_BUDGET_LINES + 1 }, () => pay(1)), []))).toEqual({
+    expect(
+      budget(
+        inputs(
+          Array.from({ length: MAX_BUDGET_LINES + 1 }, () => pay(1)),
+          [],
+        ),
+      ),
+    ).toEqual({
       ok: false,
       problems: [{ field: 'income', reason: 'too-many-lines' }],
     })

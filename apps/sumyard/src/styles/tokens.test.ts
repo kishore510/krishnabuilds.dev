@@ -89,8 +89,8 @@ const PAIRS: [foreground: string, background: string, min: number][] = [
   ['positive', 'bg', TEXT],
   ['positive', 'surface-muted', TEXT],
   // Budget groups: chart parts and icons (graphics); their names are drawn in text.
-  ...['home', 'bills', 'food', 'transport', 'personal', 'debt', 'saving', 'other'].flatMap(
-    (g) => (['surface', 'bg', 'surface-muted'] as const).map((bg) => [`group-${g}`, bg, UI] as [string, string, number]),
+  ...['home', 'bills', 'food', 'transport', 'personal', 'debt', 'saving', 'other'].flatMap((g) =>
+    (['surface', 'bg', 'surface-muted'] as const).map((bg) => [`group-${g}`, bg, UI] as [string, string, number]),
   ),
 ]
 

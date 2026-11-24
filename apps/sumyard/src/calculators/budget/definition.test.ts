@@ -374,7 +374,13 @@ describe('accounts: ids, removal and templates (BD11)', () => {
 describe('summarise (compare)', () => {
   it('gives the inputs and the year’s results as rows', () => {
     const summary = budgetCalculator.summarise(example, taxYear)
-    expect(summary.inputs.map((r) => r.label)).toEqual(['Your pay', 'Pay entered', 'Extra income lines', 'Accounts besides main', 'Outgoing lines'])
+    expect(summary.inputs.map((r) => r.label)).toEqual([
+      'Your pay',
+      'Pay entered',
+      'Extra income lines',
+      'Accounts besides main',
+      'Outgoing lines',
+    ])
     expect(summary.results.ok).toBe(true)
     if (!summary.results.ok) return
     expect(summary.results.rows.map((r) => r.label)).toEqual([

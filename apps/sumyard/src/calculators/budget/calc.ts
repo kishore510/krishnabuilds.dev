@@ -181,7 +181,12 @@ function calculate(inputs: BudgetInputs): BudgetResult {
   const potSaved = withShare(potSavedYear)
 
   // Needs, wants and saving (BD14).
-  const saving = withShare(add(yearsOf((l) => l.group === SAVING_GROUP), potSavedYear))
+  const saving = withShare(
+    add(
+      yearsOf((l) => l.group === SAVING_GROUP),
+      potSavedYear,
+    ),
+  )
   const needs = withShare(yearsOf((l) => l.group !== SAVING_GROUP && l.essential))
   const wants = withShare(yearsOf((l) => l.group !== SAVING_GROUP && !l.essential))
 

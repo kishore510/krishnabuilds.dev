@@ -1,5 +1,6 @@
 import { MAX_ACCOUNT_ID_LENGTH, MAX_BUDGET_ACCOUNTS, MAX_BUDGET_LINES, MAX_INPUT_AMOUNT, MAX_ITEM_NAME_LENGTH } from '@/lib/inputLimits'
-import { fromPence, type Money, type Ratio, ZERO } from '@/lib/money'
+import { fromPence, type Money, mulRound, type Ratio, ratio, ZERO } from '@/lib/money'
+import { MONTHS_PER_YEAR } from '@/lib/periods'
 import { canonicalJson, checkUntrustedJson, cleanText, isRecord } from '@/lib/validate'
 import { type CalculatorDefinition, defineCalculator, type InputRefusal, type SummaryRow } from '../registry'
 import { budget } from './calc'
@@ -278,7 +279,12 @@ export const PROBLEM_MESSAGES: Record<BudgetProblemReason, string> = {
   'unknown-account': 'Choose which account pays this line.',
 }
 
-const FIELD_NAMES: Record<BudgetProblem['field'], string> = { income: 'Income', accounts: 'Accounts', outgoings: 'Outgoings', result: 'Result' }
+const FIELD_NAMES: Record<BudgetProblem['field'], string> = {
+  income: 'Income',
+  accounts: 'Accounts',
+  outgoings: 'Outgoings',
+  result: 'Result',
+}
 
 /** The engine's refusal as an InputRefusal, for RefusalNotice and compare. */
 export function inputRefusal(problems: readonly BudgetProblem[]): InputRefusal {
@@ -317,12 +323,14 @@ export function withWhatIf(inputs: BudgetPageInputs, whatIf: WhatIf): BudgetPage
 
 export type SectionId = 'income' | 'accounts' | BudgetGroup
 
-/** A section differs from a fresh page's (an amount, a name, a line or account added or removed), so it opens on load. */
+/** A section differs from a fresh page's (an amount, a name, a line or account added or removed), so it opens on load; an empty group does not. */
 export function sectionSet(id: SectionId, inputs: BudgetPageInputs): boolean {
   if (id === 'income') return inputs.income.length > 0
   if (id === 'accounts') return inputs.accounts.length > 0
   const ofGroup = (lines: readonly OutgoingLine[]) => lines.filter((l) => l.group === id)
-  return canonicalJson(ofGroup(inputs.outgoings)) !== canonicalJson(ofGroup(DEFAULT_LINES))
+  const lines = ofGroup(inputs.outgoings)
+  // A group with no lines has nothing to show, so it stays closed.
+  return lines.length > 0 && canonicalJson(lines) !== canonicalJson(ofGroup(DEFAULT_LINES))
 }
 
 /* ── Accounts: add, remove, templates (BD11) ─────────────────────────── */
@@ -387,6 +395,9 @@ export function applyTemplate(inputs: BudgetPageInputs, id: TemplateId): BudgetP
   }
   return next
 }
+
+/** A monthly transfer that covers a yearly amount: the year divided by the months, rounded up to the penny, so never short. */
+export const coveringMonthly = (year: Money): Money => mulRound(year, ratio(1, MONTHS_PER_YEAR), 'up')
 
 export const NOT_APPLICABLE = 'n/a'
 

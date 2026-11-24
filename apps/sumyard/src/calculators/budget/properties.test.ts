@@ -110,7 +110,9 @@ describe('properties', () => {
     each(8, (c, random) => {
       const spenders = [MAIN_ACCOUNT, ...c.accounts.filter((a) => a.kind !== 'savings').map((a) => a.id)]
       if (c.outgoings.length === 0) return
-      const moved = c.outgoings.map((l) => (l.account === MAIN_ACCOUNT || spenders.includes(l.account) ? { ...l, account: pick(random, spenders) } : l))
+      const moved = c.outgoings.map((l) =>
+        l.account === MAIN_ACCOUNT || spenders.includes(l.account) ? { ...l, account: pick(random, spenders) } : l,
+      )
       expect(run({ ...c, outgoings: moved }).leftover).toEqual(run(c).leftover)
     }))
 
@@ -131,6 +133,7 @@ describe('properties', () => {
       const r = run(c)
       const figures = [r.income, r.outgoings, r.leftover, r.topUp, r.potSaved, ...r.perGroup, ...r.outgoingLines]
       for (const a of r.accounts) figures.push(a.moneyIn, a.paid, a.transfersOut, a.left, a.saved, a.short)
-      for (const x of figures) expect(Math.abs(p(x.month) * PERIODS_PER_YEAR.monthly - p(x.year)) * 2).toBeLessThanOrEqual(PERIODS_PER_YEAR.monthly)
+      for (const x of figures)
+        expect(Math.abs(p(x.month) * PERIODS_PER_YEAR.monthly - p(x.year)) * 2).toBeLessThanOrEqual(PERIODS_PER_YEAR.monthly)
     }))
 })
