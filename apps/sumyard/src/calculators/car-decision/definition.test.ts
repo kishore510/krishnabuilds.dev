@@ -73,6 +73,12 @@ const errorsOf = (raw: unknown) => {
 }
 
 const example = inputs([keep(), loan()])
+
+/** What the version 3 to 4 migration makes of inputs whose options each have their own mileage (CD11). */
+const onSharedMileage = (i: CarDecisionInputs): CarDecisionInputs => {
+  const shared = i.options.find((o) => o.annualMileage !== null)?.annualMileage ?? null
+  return { ...i, annualMileage: shared, options: i.options.map((o) => ({ ...o, ownMileage: o.annualMileage !== shared })) }
+}
 const withOption = (patch: Record<string, unknown>) => ({ ...example, options: [{ ...example.options[0], ...patch }, example.options[1]] })
 
 /** A Ratio as canonical text: a percentage ("-50") or a plain decimal ("20"). */
@@ -354,7 +360,7 @@ describe('migrateInputs', () => {
   it('a complete version 1 scenario migrates to the same inputs, so every figure is identical', () => {
     const old = v1([keep(), loan(), hp(), pcp()], { valueCase: 'low' })
     const migrated = carDecisionCalculator.migrateInputs(1, old)
-    expect(migrated).toEqual(old)
+    expect(migrated).toEqual(onSharedMileage(old as CarDecisionInputs))
     const read = CALCULATORS.readInputs('car-decision', 1, old)
     expect(read).toMatchObject({ ok: true })
     expect(read.ok && calculate(read.inputs as CarDecisionInputs)).toEqual(calculate(old as CarDecisionInputs))
@@ -373,11 +379,11 @@ describe('migrateInputs', () => {
     for (const raw of [null, 'x', { ...example, options: 'none' }, { ...example, options: [null] }]) {
       expect(check(carDecisionCalculator.migrateInputs(1, raw)).ok).toBe(false)
     }
-    for (const from of [0, 3, 4]) expect(() => carDecisionCalculator.migrateInputs(from, example)).toThrow()
+    for (const from of [0, 4, 5]) expect(() => carDecisionCalculator.migrateInputs(from, example)).toThrow()
   })
 
   it('inputs from a newer version are refused, not guessed', () => {
-    expect(CALCULATORS.readInputs('car-decision', 4, example)).toMatchObject({ ok: false, reason: 'newer-inputs' })
+    expect(CALCULATORS.readInputs('car-decision', 5, example)).toMatchObject({ ok: false, reason: 'newer-inputs' })
   })
 })
 
@@ -385,9 +391,7 @@ describe('missingFields', () => {
   it('a blank option needs the car and its fuel figures; optional running costs read as 0; cash adds nothing', () => {
     expect(missingFields(blank('cash'))).toEqual([
       'value',
-      'endLow',
       'endExpected',
-      'endHigh',
       'annualMileage',
       'milesPerGallon',
       'pencePerLitre',
@@ -569,6 +573,7 @@ describe('summarise (compare)', () => {
       'End-value case',
       'Savings return (after tax, a year)',
       'Yearly increase in running costs',
+      'Annual mileage',
       'Keep the old car',
       'Personal loan',
     ])
@@ -614,7 +619,7 @@ describe('finance still owed on a kept car (3e, F43 to F51)', () => {
 
   it('version 2 to 3: the switch off, the amounts empty, the final payment 0; every other field kept', () => {
     const old: V2Inputs = { ...example, options: [asV2(keep()), asV2(loan())] }
-    expect(carDecisionCalculator.migrateInputs(2, old)).toEqual(example)
+    expect(carDecisionCalculator.migrateInputs(2, old)).toEqual(onSharedMileage(example))
     expect(carDecisionCalculator.migrateInputs(2, { ...example, options: [asV2(blank('keep'))] })).toEqual({
       ...example,
       options: [blank('keep')],
@@ -627,7 +632,7 @@ describe('finance still owed on a kept car (3e, F43 to F51)', () => {
     const read = CALCULATORS.readInputs('car-decision', 2, old)
     expect(read).toMatchObject({ ok: true, migrated: true })
     if (!read.ok) return
-    expect(read.inputs).toEqual(v3)
+    expect(read.inputs).toEqual(onSharedMileage(v3))
     const before = compareOptions(
       v3.options.map((o) => toEngineOption(o, increase)),
       { horizonMonths: 48, savingsReturn: percentRatio('4') },
@@ -719,6 +724,7 @@ describe('finance still owed on a kept car (3e, F43 to F51)', () => {
       'End-value case',
       'Savings return (after tax, a year)',
       'Yearly increase in running costs',
+      'Annual mileage',
       'Keep, still paying',
       'Keep, still paying: settlement figure',
       'Keep, still paying: monthly payment',
@@ -726,7 +732,7 @@ describe('finance still owed on a kept car (3e, F43 to F51)', () => {
       'Keep, still paying: final payment',
       'Buy outright',
     ])
-    expect(summary.inputs[7]).toEqual({ label: 'Keep, still paying: payments left', value: { kind: 'count', count: 24 } })
+    expect(summary.inputs[8]).toEqual({ label: 'Keep, still paying: payments left', value: { kind: 'count', count: 24 } })
     const rows = summary.results.ok ? summary.results.rows : []
     const rate = rows.find((r) => r.label === 'Keep, still paying: implied rate')
     expect(rate?.value.kind).toBe('ratio')
@@ -747,7 +753,7 @@ describe('inputs version 4: an optional range and one shared mileage (CD10, CD11
 
   it('validates the shared mileage (whole miles, nothing to the most, or empty) and the switch', () => {
     for (const ok of [null, 0, 12_000, MAX_ANNUAL_MILEAGE]) expect(check({ ...example, annualMileage: ok }).ok).toBe(true)
-    for (const bad of [-1, MAX_ANNUAL_MILEAGE + 1, 1.5, '8000', undefined]) {
+    for (const bad of [-1, MAX_ANNUAL_MILEAGE + 1, 1.5, '8000']) {
       expect(errorsOf({ ...example, annualMileage: bad })).toEqual([
         expect.stringContaining(SHARED_LABELS.annualMileage),
       ])
@@ -844,8 +850,11 @@ describe('inputs version 4: an optional range and one shared mileage (CD10, CD11
     if (outcome.kind !== 'ok' || !outcome.comparison) throw new Error('no comparison')
     const status = outcome.statuses[0]!
     if (status.kind !== 'ok') throw new Error('not costed')
-    expect(status.result.cases.low).toEqual(status.result.cases.expected)
-    expect(status.result.cases.high).toEqual(status.result.cases.expected)
+    const { valueCase: _l, ...low } = status.result.cases.low
+    const { valueCase: _e, ...expected } = status.result.cases.expected
+    const { valueCase: _h, ...high } = status.result.cases.high
+    expect(low).toEqual(expected)
+    expect(high).toEqual(expected)
   })
 
   it('summarise lists the shared mileage', () => {

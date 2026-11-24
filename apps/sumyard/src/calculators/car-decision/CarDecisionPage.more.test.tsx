@@ -84,7 +84,7 @@ describe('scenarios', () => {
     click(byText(view.host, 'button', 'Save'))
     click(byText(view.host, 'form button', 'Save'))
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.scenarios.key)!)
-    expect(stored.scenarios[0]).toMatchObject({ calculatorId: 'car-decision', inputsVersion: 3, inputs: example })
+    expect(stored.scenarios[0]).toMatchObject({ calculatorId: 'car-decision', inputsVersion: 4, inputs: example })
     expect(Object.hasOwn(stored.scenarios[0], 'taxYear')).toBe(false)
     act(() => session.startNew())
     expect(session.get().inputs).toEqual(carDecisionCalculator.defaultInputs())

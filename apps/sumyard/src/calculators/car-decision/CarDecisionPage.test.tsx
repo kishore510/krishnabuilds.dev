@@ -338,7 +338,8 @@ describe('refusals and input errors', () => {
     set(inputs([cash(), blank('cash')]))
     expect(text($('[data-card-missing]', card(1)))).toMatch(/Price/)
     const lines = $$('[data-card-missing] li', card(1)).map(text)
-    expect(lines).toHaveLength(8)
+    // Low and high end values are optional since inputs version 4 (CD10).
+    expect(lines).toHaveLength(6)
     expect(lines[0]).toMatch(/^Price: needed/)
     expect($('[data-headline]', card(0))).not.toBeNull()
   })
@@ -487,7 +488,8 @@ describe('empty optional boxes (3c-2)', () => {
     act(() => scenarioStore.reload())
     act(() => session.startNew())
     act(() => session.load(scenarioStore.get().scenarios[0]!))
-    expect(session.get().inputs).toEqual(example)
+    // Version 4 shares the first entered mileage (CD11); every option drove the same, so none keeps its own.
+    expect(session.get().inputs).toEqual({ ...example, annualMileage: 8_000, options: example.options.map((o) => ({ ...o, ownMileage: false })) })
     for (const [i, option] of engine(example).options.entries()) expectCard(i, option, 'expected')
     expect(blankV1('cash').insurance).toBeNull()
   })
