@@ -72,18 +72,23 @@ describe('content/help', () => {
       expect(text).toMatch(word)
   })
 
-  it('the budget topic covers income, the kinds, periods, shares, double counting, what if and what is not modelled', () => {
+  it('the budget topic covers income, groups, accounts, periods, shares, double counting, what if, sharing and what is not modelled', () => {
     const text = JSON.stringify(topicById('budget')!.blocks)
     for (const word of [
       /your pay/i,
       /after tax/i,
-      /spending/i,
+      /spending account/i,
       /joint account/i,
+      /savings pot/i,
       /debt/i,
-      /savings and investing/i,
+      /saving and investing/i,
+      /runs short/i,
       /weekly/i,
       /of your income/i,
-      /savings rate/i,
+      /saving rate/i,
+      /50\/30\/20/i,
+      /nothing is uploaded/i,
+      /show amounts/i,
       /not both/i,
       /what if/i,
       /apply/i,

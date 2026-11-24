@@ -83,8 +83,8 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 18 November 2026 (no version bump, nothing user-visible): search visibility. `index.html` gets a canonical link and JSON-LD; `public/` gets `robots.txt` and a one-page `sitemap.xml`. The external-URL scan now allows a canonical link's href and two inert identifiers (`https://schema.org` in `.html`, the sitemap `xmlns` in `.xml`); recorded in `docs/privacy.md`. The owner decided Sumyard should be found in search.
-- Not done: calculators sit behind `#/c/<id>` hash routes, so search engines see one page; separate pages would need path routes and per-page metadata.
+- 24 November 2026 (0.33.0): the household budget redesign, from a mock-up iterated with the owner. Decisions BD10 to BD16 (`docs/modelling-decisions.md`); inputs version 2 with a v1 migration that keeps left over; accounts, transfers, left in each account and the shortfall fix; groups, the donut, biggest outgoings and the 50/30/20 check; share as an image, PDF, CSV or text. Eleven new colour tokens (flagged in `docs/design-tokens.md`). One PR at the owner's request, not split by part.
+- Not done: what-if quick chips from the mock-up (sliders cover it); Safari, a real phone and a screen reader; a native share sheet was only checked for presence.
 
 ## Next
 

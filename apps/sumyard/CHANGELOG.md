@@ -4,6 +4,19 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-11-24
+
+### Added
+- **Household budget: accounts.** Pay lands in your main account; add a spending account, a joint account (your share) or a savings pot, each with what you move into it, and choose which account pays each line. **Start from** sets up a common arrangement in one go.
+- **Left in each account.** The headline is what is left across your accounts, with a tile for each account. An account that pays out more than you move into it is flagged as short, by how much, with **Move £… a month** to fix it in one tap (and Undo). On a phone the shortfall is in the bar at the top.
+- **Share.** Make a copy of your budget to send: an image card, a PDF (print to PDF), a spreadsheet (CSV) or text to paste. Turn amounts off to share percentages only, and line names off to share groups only. Made on your device; nothing is uploaded.
+- A ring chart of where your income goes, your three biggest outgoings, and a 50/30/20 check of needs, wants and saving (a rule of thumb, not advice).
+
+### Changed
+- **The household budget has a new look.** Lines are grouped by what they're for (Home, Bills, Food, Transport, Personal spending, Debt, Saving and investing, Other), each with an icon and colour, as compact rows you tap to edit, with quick-add buttons for common lines. Mark a line essential or not.
+- Budgets you saved before open with the same left over: lines go into groups and each joint account line becomes a joint account. Help explains how.
+- What if has a slider for each transfer too.
+
 ## [0.32.0] - 2026-11-05
 
 ### Added
