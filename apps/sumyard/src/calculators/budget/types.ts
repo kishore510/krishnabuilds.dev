@@ -3,32 +3,57 @@ import type { ContributionFrequency } from '@/lib/periods'
 
 /*
  * Types for the household budget engine. The decisions behind these shapes
- * are BD1 to BD9 in docs/modelling-decisions.md.
+ * are BD2 to BD5, BD7, BD9 and BD10 to BD14 in docs/modelling-decisions.md.
  */
 
-/** What an outgoing is (BD1): a fixed list. */
-export type BudgetKind = 'spending' | 'joint' | 'debt' | 'savings'
+/** What an outgoing is for (BD10): a fixed list. */
+export type BudgetGroup = 'home' | 'bills' | 'food' | 'transport' | 'personal' | 'debt' | 'saving' | 'other'
 
-export const BUDGET_KINDS: readonly BudgetKind[] = ['spending', 'joint', 'debt', 'savings']
+export const BUDGET_GROUPS: readonly BudgetGroup[] = ['home', 'bills', 'food', 'transport', 'personal', 'debt', 'saving', 'other']
+
+/** The group the savings rate counts (BD13). */
+export const SAVING_GROUP: BudgetGroup = 'saving'
+
+/** What an account besides main is (BD11). */
+export type AccountKind = 'spending' | 'joint' | 'savings'
+
+export const ACCOUNT_KINDS: readonly AccountKind[] = ['spending', 'joint', 'savings']
+
+/** The account pay lands in (BD11). Every other account's id differs from it. */
+export const MAIN_ACCOUNT = 'main'
 
 /** How often a line's amount is paid (BD2): weekly, monthly, quarterly or yearly. */
 export type BudgetPeriod = ContributionFrequency
 
-/** A line of income (BD3): its amount is after tax. */
+/** A line of income (BD3): its amount is after tax, and it lands in main. */
 export interface IncomeLine {
   readonly name: string
   readonly amount: Money
   readonly period: BudgetPeriod
 }
 
-/** A line of outgoings (BD2). */
-export interface OutgoingLine extends IncomeLine {
-  readonly kind: BudgetKind
+/** An account besides main, with its regular transfer from main (BD11). For a joint account, the person's own share. */
+export interface Account {
+  /** Stable within a scenario; never MAIN_ACCOUNT. */
+  readonly id: string
+  readonly name: string
+  readonly kind: AccountKind
+  readonly amount: Money
+  readonly period: BudgetPeriod
 }
 
-/** What the engine takes: income lines (your pay among them) and outgoing lines. Amounts are whole pence; a blank is nothing (BD4). */
+/** A line of outgoings (BD2, BD10, BD11, BD14). */
+export interface OutgoingLine extends IncomeLine {
+  readonly group: BudgetGroup
+  /** MAIN_ACCOUNT or an account's id. */
+  readonly account: string
+  readonly essential: boolean
+}
+
+/** What the engine takes. Amounts are whole pence; a blank is nothing (BD4). */
 export interface BudgetInputs {
   readonly income: readonly IncomeLine[]
+  readonly accounts: readonly Account[]
   readonly outgoings: readonly OutgoingLine[]
 }
 
@@ -38,15 +63,36 @@ export interface YearAndMonth {
   readonly month: Money
 }
 
-/** A line as entered, with its yearly and month figures. */
+export type WithShare = YearAndMonth & { readonly share: Ratio | null }
+
+/** A line or transfer as entered, with its yearly and month figures. */
 export interface ResolvedLine<L extends IncomeLine = IncomeLine> extends YearAndMonth {
   readonly line: L
 }
 
-/** A kind's total and its share of income; the share is null with no income (BD5). */
-export interface KindTotal extends YearAndMonth {
-  readonly kind: BudgetKind
-  readonly share: Ratio | null
+/** A group's total and its share of income; the share is null with no income (BD5). */
+export interface GroupTotal extends WithShare {
+  readonly group: BudgetGroup
+}
+
+/** One account's figures (BD12). Main comes first. */
+export interface AccountResult {
+  /** MAIN_ACCOUNT or the account's id. */
+  readonly id: string
+  readonly name: string
+  readonly kind: AccountKind | 'main'
+  /** Main: income. Others: the transfer from main. */
+  readonly moneyIn: YearAndMonth
+  /** The lines paid from this account. */
+  readonly paid: YearAndMonth
+  /** Main: every transfer out. Others: nothing. */
+  readonly transfersOut: YearAndMonth
+  /** In less paid less transfers out; may be below nothing. */
+  readonly left: YearAndMonth
+  /** A savings pot's left above nothing: put aside, counted as saving (BD12, BD13). Nothing for others. */
+  readonly saved: YearAndMonth
+  /** Left below nothing, as a positive amount: the top-up it needs. Nothing for main. */
+  readonly short: YearAndMonth
 }
 
 /**
@@ -56,10 +102,10 @@ export interface KindTotal extends YearAndMonth {
 export interface PennyDrift {
   /** The income lines' month figures less income's. */
   readonly income: Money
-  /** The kinds' month totals less outgoings'. */
-  readonly kinds: Money
-  /** Each kind's lines' month figures less the kind's month total. */
-  readonly lines: Readonly<Record<BudgetKind, Money>>
+  /** The groups' month totals and the pots' saved figures less outgoings'. */
+  readonly groups: Money
+  /** Each group's lines' month figures less the group's month total. */
+  readonly lines: Readonly<Record<BudgetGroup, Money>>
   /** Income less outgoings, each a month, less what is left a month. */
   readonly leftover: Money
 }
@@ -69,16 +115,31 @@ export type BudgetWarning =
   | 'negative-leftover'
   /** There is no income, so no share can be worked out (BD5). */
   | 'no-income'
+  /** An account besides main pays out more than goes in (BD12). */
+  | 'account-short'
+  /** Main pays out and transfers more than comes in (BD12). */
+  | 'main-short'
 
 export interface BudgetResult {
   readonly income: YearAndMonth
-  readonly outgoings: YearAndMonth & { readonly share: Ratio | null }
-  /** Income less outgoings; may be below nothing (BD5). */
-  readonly leftover: YearAndMonth & { readonly share: Ratio | null }
-  /** Every kind, in BUDGET_KINDS order, including those with nothing. */
-  readonly perKind: readonly KindTotal[]
-  /** The savings kind's share of income (BD8); null with no income. */
+  /** Every line plus what savings pots put aside (BD12). Transfers are not outgoings. */
+  readonly outgoings: WithShare
+  /** Income less outgoings, across accounts; may be below nothing (BD5, BD12). */
+  readonly leftover: WithShare
+  /** Every group, in BUDGET_GROUPS order, including those with nothing. */
+  readonly perGroup: readonly GroupTotal[]
+  /** What savings pots put aside, together (BD12). */
+  readonly potSaved: WithShare
+  /** Needs, wants and saving (BD14); they add up to outgoings. */
+  readonly needs: WithShare
+  readonly wants: WithShare
+  readonly saving: WithShare
+  /** The saving share of income (BD13); null with no income. */
   readonly savingsRate: Ratio | null
+  /** Main first, then each account in the order given. */
+  readonly accounts: readonly AccountResult[]
+  /** Every account's shortfall, together: the top-up from main (BD12). */
+  readonly topUp: YearAndMonth
   readonly incomeLines: readonly ResolvedLine[]
   readonly outgoingLines: readonly ResolvedLine<OutgoingLine>[]
   readonly pennyDrift: PennyDrift
@@ -87,7 +148,7 @@ export interface BudgetResult {
   readonly assumptions: readonly string[]
 }
 
-/** Why an input or the result is refused (BD9). */
+/** Why an input or the result is refused (BD9, BD11). */
 export type BudgetProblemReason =
   | 'not-a-list'
   | 'too-many-lines'
@@ -96,10 +157,13 @@ export type BudgetProblemReason =
   | 'above-maximum'
   | 'not-a-choice'
   | 'too-large'
+  | 'too-many-accounts'
+  | 'bad-account-id'
+  | 'unknown-account'
 
 export interface BudgetProblem {
-  readonly field: 'income' | 'outgoings' | 'result'
-  /** The line, from nothing, when the problem is in one. */
+  readonly field: 'income' | 'accounts' | 'outgoings' | 'result'
+  /** The line or account, from nothing, when the problem is in one. */
   readonly index?: number
   readonly reason: BudgetProblemReason
 }

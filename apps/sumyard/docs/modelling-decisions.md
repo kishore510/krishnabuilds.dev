@@ -312,6 +312,42 @@ The savings rate is the savings kind's yearly total over yearly income. What is 
 
 Each amount is from nothing up to `MAX_INPUT_AMOUNT`; each list (extra income, outgoings) holds at most `MAX_BUDGET_LINES` (`src/lib/inputLimits.ts`). Within these every sum is a safe whole number of pence; the engine refuses anything outside them, by field, rather than throw, and refuses a result past the safe range the same way.
 
+## Household budget, accounts and groups (0.33.0)
+
+Owner decisions from the redesign session on 24 November 2026 (a mock-up iterated with the owner's own setup: a main account, a personal spending account, a joint account and a savings pot). They replace BD1 and BD6 and extend BD8; BD2 to BD5, BD7 and BD9 stand. Inputs version 2.
+
+### BD10. Groups replace kinds (owner; supersedes BD1)
+
+Every outgoing line has a **group**: home, bills, food, transport, personal spending, debt, saving and investing, or other. A fixed list; what a line is goes in its name. The saving group is what the savings rate counts (BD8).
+
+### BD11. Accounts and transfers (owner; supersedes BD6)
+
+Pay and extra income land in the **main account**. The person may add up to `MAX_BUDGET_ACCOUNTS` other accounts, each a **spending account**, a **joint account** (the amount is the person's own share of what goes in) or a **savings pot**, with a regular transfer from main (an amount and a period, as a line). Every outgoing line is **paid from** one account; a line naming an account that is not there is an input error. A transfer is not spending: it moves money between the person's own accounts, so it is never counted as an outgoing.
+
+### BD12. What is left, account by account (owner)
+
+- Main: income less the lines paid from main less every transfer out.
+- A spending or joint account: its transfer less the lines paid from it. Above nothing it is money left in that account (for anything else); below nothing the account is **short** and the shortfall is a top-up from main.
+- A savings pot: its transfer less the lines paid from it. Above nothing it is **put aside** and counts as saving, not as left over; below nothing it is short, as above.
+- Left over across accounts is income less every line less what savings pots put aside, which equals the sum of the accounts' figures (pots counting only a shortfall). It may be below nothing (BD5).
+- The top-up is the sum of every account's shortfall; main's figure less the top-up is what is really left in main.
+
+### BD13. Savings rate with pots (owner; extends BD8)
+
+The savings rate is the saving group's lines plus what savings pots put aside, over income. What is left in main or a spending account is still not counted as saved.
+
+### BD14. Needs, wants and saving (owner)
+
+Each line is marked essential or not; a new line takes its group's default (home, bills, food, transport and debt essential; personal spending and other not). Needs are the essential lines outside the saving group, wants the rest outside it, saving as BD13; the three add up to the outgoings. The page compares their shares of income with the 50/30/20 rule of thumb, labelled as a rule of thumb and not advice. It is a comparison only: no figure in the engine.
+
+### BD15. The version 1 migration (session)
+
+A version 1 scenario becomes version 2 with the same left over: spending lines take the group their default name implies (Groceries: food; Car insurance: transport; Mobile: bills) or other, essential; debt lines the debt group, essential; savings lines the saving group. Each joint line becomes a joint account with that transfer and one essential line, "Spending from this account", in the other group, for the same amount and period, so nothing is counted twice and the totals do not move. Every other line is paid from main.
+
+### BD16. Sharing a result (owner)
+
+A budget can be shared as an image card, a PDF (the browser's print to PDF), a spreadsheet (CSV) or text to paste. Each is made on the device; nothing is uploaded, and no new storage key is used. The person chooses whether amounts show (else shares of income only) and whether line names show (else groups only). A CSV cell that starts with a character a spreadsheet would read as a formula is written as text.
+
 ## Mortgage overpayment (session M0)
 
 Proposed in session M0 and **confirmed by the owner on 23 October 2026**, with changes to MO6 and MO9 and the shared helpers (MO15); built as the engine in M1 (0.26.0) and the page in M2 (0.27.0), which adds MO16 (allowance alignment). The calculator uses no tax rules (`taxRules: 'none'`). Sources and what could not be found: `docs/verification-log.md`, "Mortgage overpayment (session M0)" (MR-1 to MR-10). MR-1, MR-2 and MR-4 stay **OPEN** until the owner's statement is added (`docs/mortgage-cross-checks.json`); the decisions below stand in for them and are named in the result's assumptions. Rounding: `docs/money.md`, "Mortgage overpayment (session M0)". Engine: `src/calculators/mortgage/calc.ts` (M1); how each decision is carried out, and M1's readings of MO7 (allowance years of twelve payment dates) and MO8 (the last month's order), are in its `README.md`.
