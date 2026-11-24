@@ -6,7 +6,7 @@ import { add, compare, fromPence, type Money, type Ratio, ratio, ZERO } from '@/
 import { isCanonicalPercent, percentRatio } from '@/lib/parse'
 import { MONTHS_PER_YEAR } from '@/lib/periods'
 import { checkUntrustedJson, isRecord } from '@/lib/validate'
-import { type CalculatorDefinition, defineCalculator, type InputRefusal, type SummaryRow } from '../registry'
+import { type CalculatorDefinition, defineCalculator, figureFromSummary, type InputRefusal, type SummaryRow } from '../registry'
 import { overpay } from './calc'
 import type {
   DayCount,
@@ -619,6 +619,9 @@ export const mortgageCalculator: CalculatorDefinition<MortgagePageInputs> = defi
   migrateInputs(from) {
     // Version 1 is the first: there is nothing older to migrate from.
     throw new Error(`The mortgage overpayment calculator has no inputs version ${from} to migrate from`)
+  },
+  homeFigure(inputs, config) {
+    return figureFromSummary(this.summarise(inputs, config), 'Interest saved', 'interest saved')
   },
   summarise(inputs) {
     const rows = inputRows(inputs)

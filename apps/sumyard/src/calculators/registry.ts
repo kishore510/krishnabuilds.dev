@@ -49,6 +49,22 @@ export interface Summary {
   readonly results: { readonly ok: true; readonly rows: readonly SummaryRow[] } | Refusal | InputRefusal
 }
 
+/**
+ * One figure for a calculator's card on the home page, from a saved scenario: the value and a short caption after it
+ * ("a month"). Never names a best option (G13).
+ */
+export interface HomeFigure {
+  readonly value: RowValue
+  readonly caption: string
+}
+
+/** A summary's result row by label as a home figure, or null when the results are refused or the row is missing. */
+export function figureFromSummary(summary: Summary, label: string, caption: string): HomeFigure | null {
+  if (!summary.results.ok) return null
+  const row = summary.results.rows.find((r) => r.label === label)
+  return row ? { value: row.value, caption } : null
+}
+
 export interface CalculatorDefinition<I = unknown> {
   /** Lower-case kebab-case; the page is #/c/<id>. */
   readonly id: string
@@ -71,6 +87,8 @@ export interface CalculatorDefinition<I = unknown> {
   /** Upgrades inputs saved at version `from` (below inputsVersion) to the current shape, or throws. Validated after. */
   migrateInputs(from: number, old: unknown): unknown
   summarise(inputs: I, config: TaxYearConfig): Summary
+  /** The home page card's figure for a saved scenario's inputs; null when there is no result to show. */
+  homeFigure?(inputs: I, config: TaxYearConfig): HomeFigure | null
   /** Applies the Settings defaults (region) to fresh inputs. Optional; the tax year comes from Settings for every calculator. */
   applySettings?(inputs: I, settings: { readonly region: 'ruk' | 'scotland' }): I
 }

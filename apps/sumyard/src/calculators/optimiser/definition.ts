@@ -12,7 +12,7 @@ import {
 import { add, compare, fromPence, type Money, ratio, ZERO } from '@/lib/money'
 import { isCanonicalPercent, percentRatio } from '@/lib/parse'
 import { checkUntrustedJson, cleanText, isRecord } from '@/lib/validate'
-import { type CalculatorDefinition, defineCalculator, type SummaryRow } from '../registry'
+import { type CalculatorDefinition, defineCalculator, figureFromSummary, type SummaryRow } from '../registry'
 import { benefitTotals, EngineInputError, takeHome } from './calc'
 import {
   annualBenefit,
@@ -550,6 +550,9 @@ export const optimiserCalculator: CalculatorDefinition<OptimiserPageInputs> = de
   applySettings: (inputs, settings) => ({ ...inputs, region: settings.region === 'scotland' ? 'scotland' : 'rUK' }),
   validateInputs: validate,
   migrateInputs: migrate,
+  homeFigure(inputs, config) {
+    return figureFromSummary(this.summarise(inputs, config), 'Take-home (month)', 'take-home a month')
+  },
   summarise(inputs, config) {
     const result = calculateTakeHome(inputs, config)
     const resolved = resolveInputs(inputs)

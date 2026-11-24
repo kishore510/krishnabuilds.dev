@@ -765,6 +765,11 @@ export const nextPoundCalculator: CalculatorDefinition<NextPoundPageInputs> = de
     if (from === 1) return fromVersion1(old)
     throw new Error(`The next pound calculator has no inputs version ${from} to migrate from`)
   },
+  /* The lump sum and horizon, not a leg: naming one would call it best (G13). */
+  homeFigure: (inputs) => ({
+    value: { kind: 'money', amount: inputs.lumpSum },
+    caption: `over ${inputs.horizonYears} year${inputs.horizonYears === 1 ? '' : 's'}`,
+  }),
   summarise(inputs, config) {
     const rows = inputRows(inputs)
     const outcome = calculate(inputs, config)

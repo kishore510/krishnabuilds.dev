@@ -2,7 +2,7 @@ import { MAX_ACCOUNT_ID_LENGTH, MAX_BUDGET_ACCOUNTS, MAX_BUDGET_LINES, MAX_INPUT
 import { compare, fromPence, type Money, mulRound, type Ratio, ratio, subtract, ZERO } from '@/lib/money'
 import { MONTHS_PER_YEAR } from '@/lib/periods'
 import { canonicalJson, checkUntrustedJson, cleanText, isRecord } from '@/lib/validate'
-import { type CalculatorDefinition, defineCalculator, type InputRefusal, type SummaryRow } from '../registry'
+import { type CalculatorDefinition, defineCalculator, figureFromSummary, type InputRefusal, type SummaryRow } from '../registry'
 import { budget } from './calc'
 import {
   ACCOUNT_KINDS,
@@ -452,6 +452,9 @@ export const budgetCalculator: CalculatorDefinition<BudgetPageInputs> = defineCa
   defaultInputs: () => ({ pay: ZERO, payPeriod: 'monthly', income: [], accounts: [], outgoings: DEFAULT_LINES.map((l) => ({ ...l })) }),
   validateInputs: validate,
   migrateInputs: migrate,
+  homeFigure(inputs, config) {
+    return figureFromSummary(this.summarise(inputs, config), 'Left over a year', 'left over a year')
+  },
   summarise(inputs) {
     const rows: SummaryRow[] = [
       money(PAY_LABEL, inputs.pay),
