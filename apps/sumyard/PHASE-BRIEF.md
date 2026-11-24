@@ -1,28 +1,35 @@
-# PHASE-BRIEF: Mortgage page redesign
+# PHASE-BRIEF: Car decision redesign
 
-Status: **Mortgage page redesign** built (0.37.0), waiting on the owner's sign-off from screenshots (MD5) and merge. The take-home redesign (0.36.0, PR #190) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
+Status: **Car decision redesign** in progress (0.38.0). The mortgage redesign (0.37.0, PR #191) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
 
 ## Docs rule
 
 Close out every session with the tiered checklist in `CLAUDE.md` ("Session close-out checklist").
 
-## Mortgage page redesign
+## Car decision redesign
 
 ### Goal
 
-Bring `#/c/mortgage` into the look of the budget (0.33.0) and take-home (0.36.0) pages. UI only: no engine, `inputsVersion`, storage key or saved scenario change; every input and result from 0.36.0 stays. The page still shows "Uses no tax rules" and calls nothing best (G13). Built in one PR (0.37.0); the owner approved the proposal in chat on 24 November 2026.
+Bring `#/c/car-decision` in line with the budget (0.33.0), take-home (0.36.0) and mortgage (0.37.0) pages, and make it quicker to fill in and read: not only a new look but usability and features, as the budget's redesign was. The owner approved the proposal (CD1 to CD12) in chat on 24 November 2026, with the input changes in the same PR (0.38.0), sign-off from screenshots, and shares with amounts off as a percentage above the lowest. This replaces "car decision lightly" under Next. Every result stays the engines'; the page still calls nothing best (U29).
 
-### Decisions (MD1 to MD5, approved by the owner as proposed, 24 November 2026; detail in `docs/ui-patterns.md`)
+### Why (the 0.37.0 page, three options filled)
 
-- **MD1.** Three new tokens `mortgage-capital`, `-interest`, `-charge` on existing palette steps (not the take-home's); Lucide icons on sections and result rows.
-- **MD2.** Interest saved as the emphasised headline, the warnings after it (changes U44's order), in full.
-- **The ring.** The shared `Donut` of the total paid with overpaying: amount borrowed paid off, interest, the charge. Interest-only: what is still owed is said beside it, not drawn.
-- **MD3.** Share (image, PDF, CSV, text), amounts on by default; amounts off is shares and times only, no pound figure.
-- **MD4.** The what-if stays one monthly overpayment slider. **MD5.** Sign-off from screenshots of the built page.
+About 13,200 px tall on a laptop and 18,900 px on a phone: every option's editor open in full with long hints; the results split between the verdict (top right) and the cards, chart and thresholds below every editor; three end values and a mileage typed for every car; each figure in four places (cards, side-by-side table, bottom line, month readout) and each card's breakdown as a sentence, a bar, a key and a table, all in grey hatching; engine words on the cards ("Equity at the horizon", "Opportunity cost", "Coverage", "Order").
 
-### Differs from the proposal
+### Decisions (CD1 to CD12, approved by the owner as proposed, 24 November 2026; detail in `docs/ui-patterns.md` and `docs/modelling-decisions-car.md`)
 
-- No row of three small figure tiles under the headline: they would repeat the rows that follow (cleared in, total paid, the charge). The headline's sentence gives the interest with and without overpaying instead.
+- **CD1.** A colour per option (`car-1` to `car-4`, existing palette steps) on its row, bars, chart line and tables; an icon for how the car is got. Colour never the only cue.
+- **CD2.** Options as compact rows (icon, name, a one-line summary, its cost a month), tap to edit; one editor open at a time; shorter hints.
+- **CD3.** Start from: Keep or replace, Cash or finance, Compare finance offers; sets the kinds and names only, no figures; Undo.
+- **CD4.** Copy the car from another option: price, end values, mileage, fuel and running costs; not the name or finance.
+- **CD5.** The answer as the headline (the verdict's gap a month, the total under it) and one coloured bar per option, ranked, with a table.
+- **CD6.** One breakdown comparison: a stacked bar per option by cost part (`car-part-*` tokens, icons), a table fallback; slim cards (cost a month, total, three largest parts, money in and out).
+- **CD7.** Plain labels: Yours at the end; Interest your cash could have earned; coverage only when short; no Order row; a rate under a tenth of a percent said with its fees.
+- **CD8.** Results in sections with live summaries: the answer (always), where the money goes, month by month (net cost or cash paid so far), what changes the answer, how sure this is (three cases, sensitivity).
+- **CD9.** Share on the shared dialog (image, PDF, CSV, text); amounts off: each option as a percentage above the lowest and parts as shares; a Show option names switch; nothing stored.
+- **CD10.** Only the expected end value is required; low and high optional (empty reads as expected); the three cases show once any option has a range. Inputs version 4.
+- **CD11.** One shared annual mileage, with a per-option "Drives a different distance" switch. Inputs version 4; version 3 migrates with the first entered mileage shared and options that differ keeping their own, identical figures.
+- **CD12.** Sign-off from screenshots of the built page at 360 and 1280 px, light and dark.
 
 ## Still with the owner (follow-ups; none blocks the current part)
 

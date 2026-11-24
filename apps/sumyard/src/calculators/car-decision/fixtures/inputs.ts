@@ -7,11 +7,14 @@ import type { CarDecisionInputs, OptionInputs } from '../definition'
  * market, tax or VED figure.
  */
 
+/** An option as inputs version 3 stored it: no shared mileage switch (CD11). */
+export type V3Option = Omit<OptionInputs, 'ownMileage'>
+
 /** The fields inputs version 3 added (3e): finance still owed on a kept car. */
 export type V3Field = 'owesFinance' | 'settlement' | 'owedPayment' | 'paymentsLeft' | 'owedFinalPayment'
 
 /** An option as inputs version 2 stored it: no finance on a kept car. */
-export type V2Option = Omit<OptionInputs, V3Field>
+export type V2Option = Omit<V3Option, V3Field>
 
 /** An option as inputs version 1 stored it: optional costs and fees could be empty (null). */
 export type V1Option = Omit<
@@ -30,8 +33,14 @@ export type V1Option = Omit<
   readonly excessPerMile: number | null
 }
 
-/** A fresh option (inputs version 3): as version 2, the switch off, the settlement, payment and payments left empty, no final payment. */
+/** A fresh option (inputs version 4): as version 3, on the shared mileage (CD11). */
 export const blank = (acquisition: OptionInputs['acquisition'] = 'cash'): OptionInputs => ({
+  ...blankV3(acquisition),
+  ownMileage: false,
+})
+
+/** A fresh option as inputs version 3 stored it: as version 2, the switch off, the settlement, payment and payments left empty, no final payment. */
+export const blankV3 = (acquisition: OptionInputs['acquisition'] = 'cash'): V3Option => ({
   ...blankV2(acquisition),
   owesFinance: false,
   settlement: null,
@@ -104,6 +113,8 @@ export const car = (patch: Partial<OptionInputs> = {}): OptionInputs => ({
   endExpected: fromPounds(9_500),
   endHigh: fromPounds(11_000),
   annualMileage: 8_000,
+  // Its own mileage, as every option had before inputs version 4 (CD11).
+  ownMileage: true,
   milesPerGallon: '45.5',
   pencePerLitre: '149.9',
   fuelPriceChange: '2',
@@ -144,8 +155,14 @@ export const keepOwing = (patch: Partial<OptionInputs> = {}) =>
   })
 
 /** An option as version 2 stored it: the version 3 fields dropped. */
+export function asV3(option: OptionInputs): V3Option {
+  const { ownMileage: _m, ...rest } = option
+  return rest
+}
+
+/** An option as version 2 stored it: the version 3 and 4 fields dropped. */
 export function asV2(option: OptionInputs): V2Option {
-  const { owesFinance: _a, settlement: _b, owedPayment: _c, paymentsLeft: _d, owedFinalPayment: _e, ...rest } = option
+  const { ownMileage: _m, owesFinance: _a, settlement: _b, owedPayment: _c, paymentsLeft: _d, owedFinalPayment: _e, ...rest } = option
   return rest
 }
 
@@ -210,9 +227,13 @@ export const inputs = (options: OptionInputs[], patch: Partial<CarDecisionInputs
   valueCase: 'expected',
   savingsReturn: '4',
   generalIncrease: '3',
+  annualMileage: null,
   options,
   ...patch,
 })
+
+/** Inputs as version 3 stored them: no shared mileage. */
+export type V3Inputs = Omit<CarDecisionInputs, 'options' | 'annualMileage'> & { readonly options: readonly V3Option[] }
 
 /** Inputs as version 2 stored them. */
 export type V2Inputs = Omit<CarDecisionInputs, 'options'> & { readonly options: readonly V2Option[] }

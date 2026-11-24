@@ -27,10 +27,12 @@ import {
   calculate,
   carDecisionCalculator,
   FIELD_LABELS,
+  hasRange,
   missingFields,
   OPTIONAL_FIELDS,
   type OptionInputs,
   optionName,
+  resolveOption,
   SHARED_LABELS,
   toEngineOption,
 } from './definition'
@@ -47,8 +49,11 @@ import {
   loan,
   pcp,
   perMile,
+  asV3,
+  blankV3,
   type V1Inputs,
   type V2Inputs,
+  type V3Inputs,
 } from './fixtures/inputs'
 import { sensitivityOf } from './sensitivity'
 
@@ -79,9 +84,9 @@ const pastPct = (r: Ratio, direction: 1 | -1) => ratio(r.numerator * 10_000 + di
 const pastDec = (r: Ratio, direction: 1 | -1) => ratio(r.numerator * 100 + direction * r.denominator, r.denominator * 100)
 
 describe('registration', () => {
-  it('is registered as car-decision, inputs version 3, no tax rules, after compound interest', () => {
+  it('is registered as car-decision, inputs version 4, no tax rules, after compound interest', () => {
     expect(CALCULATORS.get('car-decision')).toBe(carDecisionCalculator)
-    expect(carDecisionCalculator.inputsVersion).toBe(3)
+    expect(carDecisionCalculator.inputsVersion).toBe(4)
     expect(carDecisionCalculator.taxRules).toBe('none')
     expect(CALCULATORS.list().map((c) => c.id)).toEqual([
       'optimiser',
@@ -726,5 +731,125 @@ describe('finance still owed on a kept car (3e, F43 to F51)', () => {
     const rate = rows.find((r) => r.label === 'Keep, still paying: implied rate')
     expect(rate?.value.kind).toBe('ratio')
     expect(rows.filter((r) => r.label.startsWith('Buy outright')).map((r) => r.label)).not.toContain('Buy outright: implied rate')
+  })
+})
+
+describe('inputs version 4: an optional range and one shared mileage (CD10, CD11)', () => {
+  const v3 = (options: V3Inputs['options'], patch: Partial<V3Inputs> = {}): V3Inputs => {
+    const { annualMileage: _shared, ...rest } = example
+    return { ...rest, options, ...patch }
+  }
+
+  it('defaults: no shared mileage yet, and every option on it', () => {
+    expect(defaults().annualMileage).toBeNull()
+    for (const option of defaults().options) expect(option.ownMileage).toBe(false)
+  })
+
+  it('validates the shared mileage (whole miles, nothing to the most, or empty) and the switch', () => {
+    for (const ok of [null, 0, 12_000, MAX_ANNUAL_MILEAGE]) expect(check({ ...example, annualMileage: ok }).ok).toBe(true)
+    for (const bad of [-1, MAX_ANNUAL_MILEAGE + 1, 1.5, '8000', undefined]) {
+      expect(errorsOf({ ...example, annualMileage: bad })).toEqual([
+        expect.stringContaining(SHARED_LABELS.annualMileage),
+      ])
+    }
+    expect(errorsOf(withOption({ ownMileage: 'yes' }))).toEqual([expect.stringContaining(FIELD_LABELS.ownMileage)])
+    const read = check({ ...example, annualMileage: 9_000 })
+    expect(read.ok && read.inputs.annualMileage).toBe(9_000)
+  })
+
+  it('version 3 to 4: the shared mileage is the first option’s that is entered; options that differ keep their own', () => {
+    const same = carDecisionCalculator.migrateInputs(3, v3([asV3(keep()), asV3(loan())])) as CarDecisionInputs
+    expect(same.annualMileage).toBe(8_000)
+    expect(same.options.map((o) => [o.ownMileage, o.annualMileage])).toEqual([
+      [false, 8_000],
+      [false, 8_000],
+    ])
+    const differ = carDecisionCalculator.migrateInputs(
+      3,
+      v3([asV3(keep({ annualMileage: null })), asV3(loan({ annualMileage: 9_000 })), asV3(pcp({ annualMileage: 12_000 }))]),
+    ) as CarDecisionInputs
+    expect(differ.annualMileage).toBe(9_000)
+    expect(differ.options.map((o) => [o.ownMileage, o.annualMileage])).toEqual([
+      [true, null],
+      [false, 9_000],
+      [true, 12_000],
+    ])
+    const none = carDecisionCalculator.migrateInputs(3, v3([blankV3('keep'), blankV3('cash')])) as CarDecisionInputs
+    expect(none).toEqual({ ...example, options: [blank('keep'), blank('cash')] })
+    expect(check(differ).ok).toBe(true)
+  })
+
+  it('a version 3 scenario read through storage gives identical results, a missing mileage still missing', () => {
+    const old = v3(
+      [asV3(keep()), asV3(loan({ annualMileage: 9_000 })), asV3(pcp({ annualMileage: null })), asV3(hp())],
+      { valueCase: 'high' },
+    )
+    const read = CALCULATORS.readInputs('car-decision', 3, old)
+    if (!read.ok) throw new Error(read.message)
+    const before = inputs(
+      [keep(), loan({ annualMileage: 9_000 }), pcp({ annualMileage: null }), hp()],
+      { valueCase: 'high' },
+    )
+    expect(calculate(read.inputs as CarDecisionInputs)).toEqual(calculate(before))
+  })
+
+  it('versions 1 and 2 migrate through 3 to 4', () => {
+    const fromTwo = CALCULATORS.readInputs('car-decision', 2, { ...v3([]), options: [asV2(keep()), asV2(loan())] })
+    expect(fromTwo).toMatchObject({ ok: true })
+    expect(fromTwo.ok && (fromTwo.inputs as CarDecisionInputs).annualMileage).toBe(8_000)
+    const fromOne = CALCULATORS.readInputs('car-decision', 1, { ...v3([]), options: [blankV1('keep')] })
+    expect(fromOne.ok && fromOne.inputs).toEqual({ ...example, options: [blank('keep')] })
+  })
+
+  it('has nothing to migrate from version 4 or later', () => {
+    for (const from of [0, 4, 5]) expect(() => carDecisionCalculator.migrateInputs(from, example)).toThrow()
+    expect(CALCULATORS.readInputs('car-decision', 5, example)).toMatchObject({ ok: false, reason: 'newer-inputs' })
+  })
+
+  it('resolveOption: the shared mileage unless the option has its own; an empty low or high reads as the expected value', () => {
+    const shared = { ...cash(), ownMileage: false, annualMileage: 3_000 }
+    expect(resolveOption(shared, 11_000).annualMileage).toBe(11_000)
+    expect(resolveOption(shared, null).annualMileage).toBeNull()
+    expect(resolveOption({ ...shared, ownMileage: true }, 11_000).annualMileage).toBe(3_000)
+    const noRange = resolveOption({ ...cash(), endLow: null, endHigh: null }, null)
+    expect([noRange.endLow, noRange.endExpected, noRange.endHigh]).toEqual([fromPounds(9_500), fromPounds(9_500), fromPounds(9_500)])
+    const lowOnly = resolveOption({ ...cash(), endHigh: null }, null)
+    expect([lowOnly.endLow, lowOnly.endHigh]).toEqual([fromPounds(8_000), fromPounds(9_500)])
+    const empty = resolveOption(blank('cash'), null)
+    expect([empty.endLow, empty.endHigh]).toEqual([null, null])
+  })
+
+  it('hasRange: a low or a high end value entered', () => {
+    expect(hasRange(cash())).toBe(true)
+    expect(hasRange({ ...cash(), endLow: null })).toBe(true)
+    expect(hasRange({ ...cash(), endLow: null, endHigh: null })).toBe(false)
+  })
+
+  it('missingFields: low and high are never needed; the mileage only while neither the option nor the shared box has one', () => {
+    expect(missingFields(blank('cash'))).toEqual(['value', 'endExpected', 'annualMileage', 'milesPerGallon', 'pencePerLitre', 'fuelPriceChange'])
+    expect(missingFields(resolveOption(blank('cash'), 8_000))).not.toContain('annualMileage')
+    expect(missingFields({ ...cash(), endLow: null, endHigh: null })).toEqual([])
+  })
+
+  it('calculate: options on the shared mileage use it; without it they wait, naming the mileage', () => {
+    const onShared = (patch: Partial<OptionInputs> = {}) => ({ ...cash(), ownMileage: false, annualMileage: null, ...patch })
+    const withShared = calculate(inputs([onShared(), loan({ annualMileage: 6_000 })], { annualMileage: 8_000 }))
+    expect(withShared).toEqual(calculate(inputs([cash({ annualMileage: 8_000 }), loan({ annualMileage: 6_000 })])))
+    const without = calculate(inputs([onShared(), loan()]))
+    expect(without.kind === 'ok' && without.statuses[0]).toEqual({ kind: 'missing', missing: ['annualMileage'] })
+  })
+
+  it('calculate: with no range, the low, expected and high cases are the same', () => {
+    const outcome = calculate(inputs([cash({ endLow: null, endHigh: null }), loan()]))
+    if (outcome.kind !== 'ok' || !outcome.comparison) throw new Error('no comparison')
+    const status = outcome.statuses[0]!
+    if (status.kind !== 'ok') throw new Error('not costed')
+    expect(status.result.cases.low).toEqual(status.result.cases.expected)
+    expect(status.result.cases.high).toEqual(status.result.cases.expected)
+  })
+
+  it('summarise lists the shared mileage', () => {
+    const labels = carDecisionCalculator.summarise({ ...example, annualMileage: 9_000 }, taxYear).inputs.map((r) => r.label)
+    expect(labels).toContain(SHARED_LABELS.annualMileage)
   })
 })
