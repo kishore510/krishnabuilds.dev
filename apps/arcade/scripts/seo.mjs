@@ -47,7 +47,7 @@ export const gameTitle = (slug, game) => `${game.name}${SUFFIX}`;
 /** @param {{ name: string, tagline: string }} game */
 export const gameDescription = (game) => `Play ${game.name} free in your browser. ${game.tagline}`;
 
-/** @param {string} slug @param {{ name: string, tagline: string }} game */
+/** @param {string} slug @param {{ name: string, tagline: string, multiplayer?: boolean }} game */
 export function gameHead(slug, game) {
   const title = gameTitle(slug, game);
   const description = gameDescription(game);
@@ -59,7 +59,7 @@ export function gameHead(slug, game) {
     description,
     url,
     gamePlatform: 'Web browser',
-    playMode: 'SinglePlayer',
+    playMode: game.multiplayer ? ['SinglePlayer', 'MultiPlayer'] : 'SinglePlayer',
     isAccessibleForFree: true,
     isPartOf: { '@type': 'WebSite', name: 'Arcade', url: `${ORIGIN}/` },
   };

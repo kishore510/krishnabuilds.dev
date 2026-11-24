@@ -84,6 +84,8 @@ export class WildcardTable {
       return this.commit(r.out);
     }
     if (!me.id) return;
+    // A page coming back to the front checks its connection is still alive.
+    if (m.t === 'ping') { this.send(ws, { t: 'pong' }); return; }
     let r;
     const now = Date.now();
     if (m.t === 'config') r = R.configure(this.room, me.id, { size: m.size, level: m.level });
@@ -97,7 +99,12 @@ export class WildcardTable {
 
   // The page closes with 1000 'left' when you leave the table on purpose;
   // anything else is a lost connection, which you may come back from.
-  async webSocketClose(ws, code, reason) { await this.gone(ws, code === 1000 && reason === 'left'); }
+  // Closing our side too completes the close, so the page sees it closed
+  // straight away (harmless where the runtime already replies itself).
+  async webSocketClose(ws, code, reason) {
+    try { ws.close(code >= 3000 && code < 5000 ? code : 1000, 'bye'); } catch (e) {}
+    await this.gone(ws, code === 1000 && reason === 'left');
+  }
   async webSocketError(ws) { await this.gone(ws, false); }
 
   async gone(ws, left) {

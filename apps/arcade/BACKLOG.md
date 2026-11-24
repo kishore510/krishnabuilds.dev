@@ -2,7 +2,7 @@
 
 Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
 
-- [ ] Wildcard online, room codes only, one PR per slice (notes in CLAUDE.md,
+- [x] Wildcard online, room codes only, one PR per slice (notes in CLAUDE.md,
       "Wildcard notes"; decision in `docs/decisions.md`, 2026-11-23):
   - [x] Slice 1: rules engine with tests, single player vs 1, 2 or 3 bots
         (Easy / Hard), light and dark themes (1.75.0)
@@ -17,13 +17,13 @@ Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
         a seat that is away 20 s or quiet 45 s on its turn ("I'm back"
         hands it back), a per-socket message limit (30 per 10 s) and 12
         sockets per table
-  - [ ] Slice 4 (optional; online works without it): polish. Sound and
-        animation pass; a stronger "your turn" cue (a chime and glowing
-        pill exist; vibrate on phones, a cue when the tab is hidden); a
-        warning in the last 10-15 s before a bot takes a quiet seat; the
-        log says "You played" when a bot plays for you; "<name> is back"
-        when someone returns; reconnect on `visibilitychange` so a phone
-        unlocked mid-game rejoins at once
+  - [x] Slice 4: polish (1.78.0): sounds for Reverse, wilds, Last card
+        and reshuffles, and a bounce as a card lands; your turn buzzes on
+        phones and marks the tab's title while it's hidden; the last 15 s
+        before a bot takes a quiet seat count down (server sends
+        `turnLeft`); the log says "Your bot played" / "Bot for <name>";
+        "<name> lost connection" and "<name> is back"; coming back to the
+        tab checks the connection (`ping` / `pong`) and rejoins at once
 
 - [x] Dojo Duel, built in small steps, one PR each (notes for maintainers in
       CLAUDE.md, "Dojo Duel notes"):

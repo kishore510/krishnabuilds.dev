@@ -44,7 +44,18 @@ const seatOf = (room, id) => room.seats.findIndex((s) => !s.bot && s.id === id);
 const humans = (room) => room.seats.filter((s) => !s.bot);
 const connected = (room) => humans(room).filter((s) => !s.off);
 
-function roomMsg(room, id) {
+// How long the person whose turn it is has left before a bot plays for
+// them (TURN_MS from the start of the turn). null when it's a bot's turn,
+// a bot already has the seat, they are away, or no game is on. Sent as a
+// duration rather than a time, so the players' clocks don't matter.
+export function turnLeft(room, now = Date.now()) {
+  if (room.phase !== 'playing' || !room.game || room.game.winner !== null) return null;
+  const s = room.seats[room.game.turn];
+  if (!s || s.bot || s.auto || s.off) return null;
+  return Math.max(0, (room.turnAt || 0) + TURN_MS - now);
+}
+
+function roomMsg(room, id, now) {
   return {
     t: 'room',
     code: room.code,
@@ -55,10 +66,11 @@ function roomMsg(room, id) {
     host: room.host === id,
     hostSeat: room.host === null ? -1 : seatOf(room, room.host),
     seats: room.seats.map((s) => ({ name: s.name, bot: !!s.bot, away: !!s.off, auto: !!s.auto })),
+    turnLeft: turnLeft(room, now),
   };
 }
 const toAll = (room, make) => humans(room).map((s) => ({ to: s.id, msg: make(s.id, seatOf(room, s.id)) }));
-const roomForAll = (room) => toAll(room, (id) => roomMsg(room, id));
+const roomForAll = (room, now = Date.now()) => toAll(room, (id) => roomMsg(room, id, now));
 
 // Someone opens a connection with { name, id }. The same id again (a new
 // tab, a reload, a dropped connection) takes back the same seat.
@@ -68,7 +80,7 @@ export function join(room, id, rawName, now = Date.now()) {
     reclaim(room, at, now);
     const h = seatOf(room, room.host);
     if (h < 0 || room.seats[h].off) room.host = id; // a host who is away hands over
-    return { ok: true, out: [...stateFor(room, id), ...roomForAll(room)] }; // the table, then the seats
+    return { ok: true, out: [...stateFor(room, id, now), ...roomForAll(room, now)] }; // the table, then the seats
   }
   if (room.phase !== 'lobby') return { ok: false, error: 'in_progress' };
   if (room.seats.length >= MAX_SEATS) return { ok: false, error: 'full' };
@@ -78,7 +90,7 @@ export function join(room, id, rawName, now = Date.now()) {
   room.seats.push({ id, name });
   if (room.host === null) room.host = id;
   if (room.size < room.seats.length) room.size = room.seats.length;
-  return { ok: true, out: roomForAll(room) };
+  return { ok: true, out: roomForAll(room, now) };
 }
 
 // A seat goes back to its person: no longer away, no bot playing it. On
@@ -103,7 +115,7 @@ export function leave(room, id, now = Date.now(), left = false) {
     if (left) room.seats[at].auto = true;
   }
   if (room.host === id) room.host = connected(room).length ? connected(room)[0].id : room.phase === 'lobby' ? null : id;
-  return { out: roomForAll(room) };
+  return { out: roomForAll(room, now) };
 }
 
 // "I'm back": a connected player whose seat a bot took over plays again.
@@ -112,7 +124,7 @@ export function back(room, id, now = Date.now()) {
   if (at < 0) return { ok: false, error: 'not_seated' };
   if (!room.seats[at].auto) return { ok: true, out: [] };
   reclaim(room, at, now);
-  return { ok: true, out: roomForAll(room) };
+  return { ok: true, out: roomForAll(room, now) };
 }
 
 // The host sets the table size (2-4) or bot skill while in the lobby.
@@ -148,14 +160,16 @@ export function start(room, id, random, now = Date.now()) {
   room.turnAt = now;
   // Anyone away when the cards are dealt gets a bot straight away.
   for (const s of humans(room)) if (s.off) s.auto = true;
-  return { ok: true, out: [...roomForAll(room), ...toAll(room, (pid, seat) => ({ t: 'deal', view: E.viewFor(room.game, seat) }))] };
+  const left = turnLeft(room, now);
+  return { ok: true, out: [...roomForAll(room, now), ...toAll(room, (pid, seat) => ({ t: 'deal', view: E.viewFor(room.game, seat), turnLeft: left }))] };
 }
 
 function afterMove(room, events, now) {
   room.turnAt = now;
   if (room.game.winner !== null) room.phase = 'over';
-  const out = toAll(room, (pid, seat) => ({ t: 'update', events: E.eventsFor(events, seat), view: E.viewFor(room.game, seat) }));
-  if (room.phase === 'over') out.push(...roomForAll(room));
+  const left = turnLeft(room, now);
+  const out = toAll(room, (pid, seat) => ({ t: 'update', events: E.eventsFor(events, seat), view: E.viewFor(room.game, seat), turnLeft: left }));
+  if (room.phase === 'over') out.push(...roomForAll(room, now));
   return out;
 }
 
@@ -169,7 +183,7 @@ export function move(room, id, mv, now = Date.now()) {
   const r = E.apply(room.game, seat, clean);
   if (!r.ok) return { ok: false, error: r.error };
   // Playing your own card while a bot had your seat takes it back.
-  const out = room.seats[seat].auto ? (delete room.seats[seat].auto, roomForAll(room)) : [];
+  const out = room.seats[seat].auto ? (delete room.seats[seat].auto, roomForAll(room, now)) : [];
   return { ok: true, out: [...out, ...afterMove(room, r.events, now)] };
 }
 
@@ -194,15 +208,15 @@ export function tick(room, now = Date.now()) {
   const seat = room.game.turn;
   const s = room.seats[seat];
   const out = [];
-  if (!s.bot && !s.auto) { s.auto = true; out.push(...roomForAll(room)); }
+  if (!s.bot && !s.auto) { s.auto = true; out.push(...roomForAll(room, now)); }
   const r = E.apply(room.game, seat, E.botMove(room.game, seat, room.level));
   if (!r.ok) throw new Error('bot made an illegal move: ' + r.error);
   return { ok: true, out: [...out, ...afterMove(room, r.events, now)] };
 }
 
 // What a (re)joining player needs to pick up a game in progress.
-function stateFor(room, id) {
+function stateFor(room, id, now) {
   const seat = seatOf(room, id);
   if (seat < 0 || !room.game) return [];
-  return [{ to: id, msg: { t: 'deal', view: E.viewFor(room.game, seat), resume: true } }];
+  return [{ to: id, msg: { t: 'deal', view: E.viewFor(room.game, seat), resume: true, turnLeft: turnLeft(room, now) } }];
 }

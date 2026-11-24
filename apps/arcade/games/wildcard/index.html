@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wildcard · Arcade · krishnabuilds</title>
-<meta name="description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.">
+<meta name="description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand first. Play 1, 2 or 3 bots, or friends online.">
 <link rel="canonical" href="https://arcade.krishnabuilds.dev/games/wildcard/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="krishnabuilds">
 <meta property="og:title" content="Wildcard · Arcade · krishnabuilds">
-<meta property="og:description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.">
+<meta property="og:description" content="Play Wildcard free in your browser. Match the colour or the number, then empty your hand first. Play 1, 2 or 3 bots, or friends online.">
 <meta property="og:url" content="https://arcade.krishnabuilds.dev/games/wildcard/">
 <meta property="og:image" content="https://krishnabuilds.dev/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Wildcard","description":"Play Wildcard free in your browser. Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.","url":"https://arcade.krishnabuilds.dev/games/wildcard/","gamePlatform":"Web browser","playMode":"SinglePlayer","isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"Arcade","url":"https://arcade.krishnabuilds.dev/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Wildcard","description":"Play Wildcard free in your browser. Match the colour or the number, then empty your hand first. Play 1, 2 or 3 bots, or friends online.","url":"https://arcade.krishnabuilds.dev/games/wildcard/","gamePlatform":"Web browser","playMode":["SinglePlayer","MultiPlayer"],"isAccessibleForFree":true,"isPartOf":{"@type":"WebSite","name":"Arcade","url":"https://arcade.krishnabuilds.dev/"}}</script>
 <script>
   // Apply a saved theme before first paint so there is no flash.
   try { const t = localStorage.getItem('wildcardTheme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
@@ -213,6 +213,8 @@
     background: var(--panel); color: var(--text); box-shadow: 0 6px 18px -4px var(--shadow); cursor: pointer; }
   #backBtn:focus-visible { outline: 3px solid var(--saffron); outline-offset: 2px; }
   #backBtn[hidden] { display: none; }
+  #turn.warn { background: var(--danger); color: #fff; animation: warn 0.9s ease-in-out infinite; }
+  @keyframes warn { 50% { box-shadow: 0 0 0 6px rgba(184,40,46,0.2), 0 6px 26px rgba(184,40,46,0.6); } }
   @keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(34,184,160,0.12), 0 6px 26px rgba(34,184,160,0.55); } }
 
   /* ---------- your hand ---------- */
@@ -519,6 +521,13 @@
   const seatTag = (s) => (s.bot ? 'bot' : s.away ? 'away' : s.auto ? 'bot playing' : '');
   const esc = (t) => String(t).replace(/[&<>"']/g, (c) => '&#' + c.charCodeAt(0) + ';');
   const nameOf = (seat) => esc(P(seat).name);
+  // Who the log says made a move. Online, a bot sitting in for a person says so.
+  function subject(seat) {
+    const sat = online && online.room && online.room.seats[(seat + online.seat) % state.players];
+    const auto = sat && !sat.bot && sat.auto;
+    if (seat === 0) return auto ? 'Your bot' : 'You';
+    return auto ? 'Bot for ' + nameOf(seat) : nameOf(seat);
+  }
   const oppEl = (seat) => stage.querySelector('.opp.s' + posOf(seat));
   const COLOUR_NAME = { coral: 'Coral', saffron: 'Saffron', jade: 'Jade', indigo: 'Indigo' };
   const VALUE_LABEL = { skip: 'Skip', rev: 'Reverse', draw2: '+2', wild: 'Wild', wild4: '+4' };
@@ -728,12 +737,33 @@
     if (state.winner !== null) { t.className = 'wait'; t.textContent = P(state.winner).name + (state.winner === 0 ? ' win!' : ' wins!'); return; }
     if (state.turn !== 0) { t.className = 'wait'; t.textContent = P(state.turn).name + ' is thinking…'; return; }
     t.className = '';
+    const left = secondsLeft();
+    if (left !== null) { t.className = 'warn'; t.textContent = left + 's left · then a bot plays for you'; return; }
     if (state.drawn !== null) { t.textContent = 'Play it or keep it'; return; }
     const top = E.topCard(state);
     if (E.legalPlays(state, 0).length === 0) { t.textContent = 'No match · draw a card'; return; }
     const v = E.isWild(top) ? '' : ' or ' + valueText(top);
     t.textContent = 'Your turn · ' + COLOUR_NAME[state.colour] + v;
   }
+
+  // Online, the server says how long your turn has before a bot plays it
+  // (turnLeft, stamped with when it arrived). In the last WARN_MS the turn
+  // pill counts down, with a tick and a buzz at 10, 5 and the last 3 seconds.
+  const WARN_MS = 15000;
+  function secondsLeft() {
+    if (!online || online.deadline == null || !state || state.winner !== null || state.turn !== 0) return null;
+    const ms = online.deadline - performance.now();
+    return ms > WARN_MS ? null : Math.max(0, Math.ceil(ms / 1000));
+  }
+  let lastWarn = null;
+  setInterval(() => {
+    const left = secondsLeft();
+    if (left === null) { if (lastWarn !== null) { lastWarn = null; if (state) renderTurn(); } return; }
+    if (left === lastWarn) return;
+    lastWarn = left;
+    renderTurn();
+    if (left === 10 || left === 5 || (left > 0 && left <= 3)) { sfx.tick(); buzz(40); }
+  }, 250);
 
   function log(html) { $('log').innerHTML = html; }
 
@@ -799,10 +829,33 @@
     draw: () => swish(true),
     turn: () => { tone(660, 0.12, 'sine', 0.06); setTimeout(() => tone(880, 0.16, 'sine', 0.06), 90); },
     skip: () => tone(420, 0.2, 'triangle', 0.08, 220),
+    reverse: () => { tone(300, 0.14, 'triangle', 0.07, 520); setTimeout(() => tone(520, 0.14, 'triangle', 0.07, 300), 120); },
+    wild: () => [440, 554, 659, 880].forEach((f, i) => setTimeout(() => tone(f, 0.12, 'sine', 0.05), i * 55)),
+    last: () => { tone(988, 0.1, 'square', 0.035); setTimeout(() => tone(1319, 0.18, 'square', 0.035), 80); },
+    tick: () => tone(1200, 0.05, 'square', 0.04),
     bad: () => tone(180, 0.3, 'sawtooth', 0.05, 110),
     win: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.25, 'triangle', 0.08), i * 110)),
     lose: () => [392, 330, 262].forEach((f, i) => setTimeout(() => tone(f, 0.3, 'triangle', 0.07), i * 150)),
   };
+
+  // A short buzz on phones that have one (not iOS Safari). "Sound: off" stops it too.
+  function buzz(pattern) { if (!muted && navigator.vibrate) try { navigator.vibrate(pattern); } catch (e) {} }
+
+  // The card that just landed on the pile settles with a small bounce.
+  function land() {
+    const top = $('discard').lastElementChild;
+    if (!top || reduced || !top.animate) return;
+    const base = top.style.transform;
+    top.animate([{ transform: base + ' scale(1.12)' }, { transform: base }], { duration: 220, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+  }
+
+  // Your turn while the tab is in the background: the tab's title says so
+  // until you look at it again or the turn moves on.
+  const TITLE = document.title;
+  function tabCue(on) {
+    const t = on ? '● Your turn · ' + TITLE : TITLE;
+    if (document.title !== t) document.title = t;
+  }
 
   // ---------- running a move ----------
   async function step(seat, move) {
@@ -829,18 +882,19 @@
   }
 
   async function animate(ev, from) {
-    const who = ev.seat == null ? '' : nameOf(ev.seat);
     if (ev.type === 'play') {
       const look = lookFor(ev.card);
       sfx.play();
       await fly(ev.card, from, Object.assign(pilePoint(), { rot: look.rot }), 380);
       render();
+      land();
       const c = E.card(ev.card);
       if (E.isWild(c)) {
         const b = document.createElement('div'); b.className = 'burst'; stage.appendChild(b); setTimeout(() => b.remove(), 700);
-        log((ev.seat === 0 ? 'You' : who) + ' played ' + valueText(c) + ' · now <b>' + COLOUR_NAME[ev.colour] + '</b>');
+        sfx.wild();
+        log(subject(ev.seat) + ' played ' + valueText(c) + ' · now <b>' + COLOUR_NAME[ev.colour] + '</b>');
       } else {
-        log((ev.seat === 0 ? 'You' : who) + ' played <b>' + label(ev.card) + '</b>');
+        log(subject(ev.seat) + ' played <b>' + label(ev.card) + '</b>');
       }
     } else if (ev.type === 'draw' || ev.type === 'penalty') {
       if (ev.type === 'penalty') { sfx.bad(); bubble(labelPoint(ev.seat), (ev.seat === 0 ? 'Forgot to call! +' : 'Forgot! +') + ev.cards.length, 'bad'); await wait(500); }
@@ -855,19 +909,19 @@
         return fly(id, deckPoint(), at, 360, i * 120).then(() => { incoming.delete(id); renderHand(); });
       });
       await Promise.all(jobs);
-      if (!ev.forced && ev.type === 'draw') log((ev.seat === 0 ? 'You' : who) + ' drew a card');
-      if (ev.forced) log((ev.seat === 0 ? 'You' : who) + ' drew ' + ev.cards.length + ' and missed a go');
+      if (!ev.forced && ev.type === 'draw') log(subject(ev.seat) + ' drew a card');
+      if (ev.forced) log(subject(ev.seat) + ' drew ' + ev.cards.length + ' and missed a go');
       render();
     } else if (ev.type === 'skip') {
       sfx.skip(); bubble(labelPoint(ev.seat), 'Skipped!', 'bad'); await wait(350);
     } else if (ev.type === 'reverse') {
-      sfx.skip(); bubble({ x: W / 2, y: 330 }, '⇄ Reversed'); $('ring').classList.toggle('ccw', ev.dir === -1); await wait(350);
+      sfx.reverse(); bubble({ x: W / 2, y: 330 }, '⇄ Reversed'); $('ring').classList.toggle('ccw', ev.dir === -1); await wait(350);
     } else if (ev.type === 'lastCard') {
-      bubble(labelPoint(ev.seat), 'Last card!', 'good'); await wait(300);
+      sfx.last(); bubble(labelPoint(ev.seat), 'Last card!', 'good'); await wait(300);
     } else if (ev.type === 'reshuffle') {
-      bubble(deckPoint(), 'Reshuffled'); await wait(300);
+      [0, 90, 180].forEach((ms) => setTimeout(sfx.draw, ms)); bubble(deckPoint(), 'Reshuffled'); await wait(300);
     } else if (ev.type === 'pass') {
-      log('You kept it');
+      log(subject(ev.seat) + ' kept it');
     }
   }
   function labelPoint(seat) {
@@ -878,7 +932,13 @@
 
   // Whose go is it next: a bot thinks for a moment; you get a chime.
   function next() {
-    if (online) { if (state.winner === null && state.turn === 0 && state.drawn === null) sfx.turn(); return; }
+    if (online) {
+      const mine = online.room && online.room.seats[online.seat];
+      const myGo = state.winner === null && state.turn === 0 && !(mine && mine.auto);
+      if (myGo && state.drawn === null) { sfx.turn(); buzz([70, 50, 70]); }
+      tabCue(myGo && document.hidden);
+      return;
+    }
     if (!$('title').hidden) return;
     if (state.winner !== null) { setTimeout(showResult, 700); return; }
     if (state.turn === 0) { if (state.drawn === null) sfx.turn(); return; }
@@ -1094,7 +1154,10 @@
     ws.onmessage = (e) => {
       if (online !== me || me.ws !== ws) return;
       let m; try { m = JSON.parse(e.data); } catch (err) { return; }
+      clearTimeout(me.pingTimer);
       if (me.retrying) { me.retrying = 0; if (state) render(); }
+      if (m.t === 'pong') return;
+      if ('turnLeft' in m) m.got = performance.now(); // when the clock was read, before the queue delays it
       me.queue = me.queue.then(() => handle(m)).catch((err) => console.error(err));
     };
     ws.onclose = (e) => {
@@ -1143,10 +1206,13 @@
       else if (ERR_MOVE[m.error]) log(ERR_MOVE[m.error]);
       return;
     }
+    if ('got' in m) online.deadline = m.turnLeft == null ? null : m.got + m.turnLeft;
     if (m.t === 'room') {
       const first = !online.joined;
       online.joined = true;
+      const before = online.room;
       online.room = m;
+      if (before && before.phase === 'playing' && m.phase === 'playing' && state) comings(before, m);
       online.seat = m.you;
       if (first) {
         $('online').hidden = true; $('title').hidden = true;
@@ -1192,6 +1258,18 @@
       render();
       next();
     }
+  }
+
+  // Someone at the table comes back, or drops out: say so by their seat.
+  function comings(before, now) {
+    now.seats.forEach((s, abs) => {
+      const was = before.seats[abs];
+      if (abs === now.you || !was || s.bot || was.bot) return;
+      const local = (abs - now.you + now.seats.length) % now.seats.length;
+      const name = esc(s.name);
+      if ((was.away || was.auto) && !s.away && !s.auto) { bubble(labelPoint(local), s.name + ' is back', 'good'); log(name + ' is back'); }
+      else if (!was.away && s.away) log(name + ' lost connection');
+    });
   }
 
   // Your move goes to the server; the table changes when its update comes back.
@@ -1275,6 +1353,38 @@
   $('sizeSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && !b.disabled) sendRoom({ t: 'config', size: Number(b.dataset.size) }); });
   $('lobbyLevelSeg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) sendRoom({ t: 'config', level: b.dataset.level }); });
   window.addEventListener('pagehide', () => { if (online) { online.leaving = true; clearTimeout(online.timer); try { online.ws.close(1000, 'left'); } catch (e) {} } });
+  // Back to the front (a phone unlocked, a tab switched to): check the
+  // connection at once rather than waiting for the browser to notice it
+  // died. A closed one reopens now; an open one gets a ping, and if no
+  // answer comes in PING_MS it is dropped for a fresh one. The server
+  // hands the seat back either way.
+  const PING_MS = 3000;
+  function wake() {
+    const me = online;
+    if (!me || !me.joined || me.leaving) return;
+    if (me.ws.readyState === 0) return;
+    if (me.ws.readyState === 1) {
+      me.ws.send(JSON.stringify({ t: 'ping' }));
+      clearTimeout(me.pingTimer);
+      me.pingTimer = setTimeout(() => { if (online === me && !me.leaving) reopen(me); }, PING_MS);
+      return;
+    }
+    reopen(me);
+  }
+  function reopen(me) {
+    clearTimeout(me.timer);
+    const old = me.ws;
+    me.retrying = Math.max(me.retrying, 1); // shows "Reconnecting…" until the table answers
+    openSocket(me);
+    try { old.close(3000, 'stale'); } catch (e) {}
+    if (state) render();
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    tabCue(false);
+    wake();
+  });
+
   // Back from the browser's page cache: the old connection is gone, so sit down again.
   window.addEventListener('pageshow', (e) => { if (e.persisted && online && online.joined) { online.leaving = false; online.retrying = 0; openSocket(online); } });
 

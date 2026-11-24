@@ -897,11 +897,12 @@
     },
     {
       name: 'Wildcard',
-      tagline: 'Match the colour or the number, then empty your hand before the bots do. Play 1, 2 or 3 bots.',
+      tagline: 'Match the colour or the number, then empty your hand first. Play 1, 2 or 3 bots, or friends online.',
       emoji: '🃏',
       color: 'linear-gradient(135deg, #17395a, #3a45c9)',
       category: 'strategy',
-      tags: ['cards', 'vs bots', '5 min'],
+      tags: ['cards', 'vs bots', 'online', '5 min'],
+      multiplayer: true,
       art: 'assets/art/wildcard.svg',
       path: 'games/wildcard/index.html',
       published: '2026-11-23'
@@ -914,6 +915,7 @@
     //   color: 'linear-gradient(135deg, #hex1, #hex2)',
     //   category: 'arcade', // one of CATEGORIES below - drives the filter tiles
     //   tags: ['genre', 'length'],
+    //   multiplayer: true, // optional - can be played with other people; shows under the Multiplayer tile too
     //   art: 'assets/art/game-slug.svg', // optional - card picture; without it the card shows `emoji`
     //   path: 'games/game-slug/index.html',
     //   published: 'YYYY-MM-DD'
@@ -922,14 +924,21 @@
 
   // Every game's `category` above must be one of these ids - the filter
   // tiles are generated from this list, not hand-written per category.
+  // A tile with `match` is a cross-cut instead of a genre: it shows every
+  // game the test picks, whatever its category (Multiplayer: `multiplayer: true`).
   const CATEGORIES = [
     { id: 'arcade', label: 'Arcade', emoji: '🕹️' },
     { id: 'racing', label: 'Racing', emoji: '🏁' },
     { id: 'puzzle', label: 'Puzzle', emoji: '🧩' },
     { id: 'strategy', label: 'Strategy', emoji: '🛡️' },
     { id: 'sports', label: 'Sports', emoji: '🏒' },
-    { id: 'trivia', label: 'Trivia', emoji: '🌍' }
+    { id: 'trivia', label: 'Trivia', emoji: '🌍' },
+    { id: 'multiplayer', label: 'Multiplayer', emoji: '👥', match: g => g.multiplayer === true }
   ];
+  const inCategory = (g, id) => {
+    const c = CATEGORIES.find(x => x.id === id);
+    return id === 'all' || (c && c.match ? c.match(g) : g.category === id);
+  };
 
   const container = document.getElementById('cartridges');
   const slugOf = g => g.path.split('/')[1]; // 'games/<slug>/index.html' -> '<slug>'
@@ -988,7 +997,7 @@
 
   function renderCategoryFilter() {
     const counts = {};
-    GAMES.forEach(g => { counts[g.category] = (counts[g.category] || 0) + 1; });
+    CATEGORIES.forEach(c => { counts[c.id] = GAMES.filter(g => inCategory(g, c.id)).length; });
     const tiles = [{ id: 'all', label: 'All', emoji: '\ud83c\udfae' }, ...CATEGORIES.filter(c => counts[c.id])];
     categoryFilterEl.innerHTML = tiles.map(c => `
       <button type="button" class="cat-btn${c.id === categoryFilter ? ' active' : ''}" data-cat="${c.id}">
@@ -1014,7 +1023,7 @@
   let sortMode = localStorage.getItem(SORT_KEY) || 'newest';
 
   function sortedGames() {
-    const list = GAMES.filter(g => categoryFilter === 'all' || g.category === categoryFilter);
+    const list = GAMES.filter(g => inCategory(g, categoryFilter));
     if (sortMode === 'popular') {
       list.sort((a, b) => (playCounts[slugOf(b)] || 0) - (playCounts[slugOf(a)] || 0));
     } else {

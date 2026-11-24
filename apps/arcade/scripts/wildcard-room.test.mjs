@@ -211,3 +211,36 @@ test('a whole game with bots plays out and can be dealt again', () => {
     assert.equal(room.seats.length, 4, 'the same seats play again');
   }
 });
+
+test('players are told how long the current turn has before a bot takes it', () => {
+  const room = game(1000);
+  room.game.turn = 0;
+  room.turnAt = 1000;
+  assert.equal(R.turnLeft(room, 1000), R.TURN_MS);
+  assert.equal(R.turnLeft(room, 1000 + R.TURN_MS + 5), 0);
+  const seen = msgsTo(R.back(room, 'id-A', 11000).out, 'id-A');
+  assert.equal(seen.length, 0, 'back with no bot playing sends nothing');
+  room.seats[0].auto = true;
+  assert.equal(R.turnLeft(room, 2000), null, 'no clock while a bot has the seat');
+  const back = msgsTo(R.back(room, 'id-A', 20000).out, 'id-A');
+  assert.equal(back[0].turnLeft, R.TURN_MS, 'I\'m back restarts the clock');
+  room.seats[0].off = 20000;
+  assert.equal(R.turnLeft(room, 21000), null, 'no clock while they are away');
+  delete room.seats[0].off;
+  // A move restarts the clock for whoever is next, and every update says so.
+  const seat = room.game.turn, id = room.seats[seat].id;
+  const ups = msgsTo(R.move(room, id, E.botMove(room.game, seat, 'easy', rand), 30000).out, 'id-B').filter((m) => m.t === 'update');
+  assert.equal(ups.length, 1);
+  const next = room.seats[room.game.turn];
+  assert.equal(ups[0].turnLeft, next.bot ? null : R.TURN_MS);
+});
+
+test('a rejoining player gets the time left on the turn with the table', () => {
+  const room = game(1000);
+  room.game.turn = 1;
+  room.turnAt = 5000;
+  R.leave(room, 'id-A', 6000);
+  const deal = msgsTo(R.join(room, 'id-A', 'A', 15000).out, 'id-A')[0];
+  assert.equal(deal.t, 'deal');
+  assert.equal(deal.turnLeft, 5000 + R.TURN_MS - 15000);
+});
