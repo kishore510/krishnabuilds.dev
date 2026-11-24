@@ -10,7 +10,8 @@ import { cn } from '@/lib/utils'
  * opens sections whose inputs differ from the defaults). The panel stays
  * mounted while closed, so typed text and invalid-input state survive.
  * `onOpenChange` tells the page when it opens or closes (work that only an
- * open section shows can wait for it).
+ * open section shows can wait for it). `icon` is drawn before the title,
+ * hidden from screen readers (the household budget's group icons).
  * No motion, so reduced motion needs nothing more. The open state is the
  * page's only, never stored: remount (a new key) to reset it.
  */
@@ -20,6 +21,7 @@ export function Section({
   summary,
   defaultOpen = false,
   onOpenChange,
+  icon,
   children,
 }: {
   id: string
@@ -28,6 +30,8 @@ export function Section({
   summary: string
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
+  /** Decoration before the title; aria-hidden. */
+  icon?: ReactNode
   children: ReactNode
 }) {
   const [open, setOpen] = useState(defaultOpen)
@@ -45,6 +49,11 @@ export function Section({
           }}
           className="flex min-h-touch w-full items-center gap-3 rounded-lg px-4 py-2 text-left hover:bg-surface-muted"
         >
+          {icon && (
+            <span aria-hidden="true" className="flex shrink-0">
+              {icon}
+            </span>
+          )}
           <span className="flex min-w-0 flex-1 flex-col">
             <span id={`${id}-title`} className="text-sm font-semibold text-text">
               {title}

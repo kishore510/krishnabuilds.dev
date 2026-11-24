@@ -84,6 +84,14 @@ const PAIRS: [foreground: string, background: string, min: number][] = [
   ['swatch-teal', 'surface', UI],
   ['swatch-teal', 'bg', UI],
   ['swatch-teal', 'surface-muted', UI],
+  // Positive figures (money left) are text.
+  ['positive', 'surface', TEXT],
+  ['positive', 'bg', TEXT],
+  ['positive', 'surface-muted', TEXT],
+  // Budget groups: chart parts and icons (graphics); their names are drawn in text.
+  ...['home', 'bills', 'food', 'transport', 'personal', 'debt', 'saving', 'other'].flatMap((g) =>
+    (['surface', 'bg', 'surface-muted'] as const).map((bg) => [`group-${g}`, bg, UI] as [string, string, number]),
+  ),
 ]
 
 /** Translucent colours, blended over what they sit on first. */
@@ -92,6 +100,13 @@ const COMPOSITES: [foreground: string, overlay: string, base: string, min: numbe
   ['accent', 'accent-subtle', 'surface', UI],
   ['text', 'accent-subtle', 'surface', TEXT],
   ['text-muted', 'accent-subtle', 'surface', TEXT],
+  // Account tiles: money left on the positive fill, a shortfall on the danger fill.
+  ['positive', 'positive-subtle', 'surface', TEXT],
+  ['text', 'positive-subtle', 'surface', TEXT],
+  ['text-muted', 'positive-subtle', 'surface', TEXT],
+  ['danger', 'danger-subtle', 'surface', TEXT],
+  ['text', 'danger-subtle', 'surface', TEXT],
+  ['text-muted', 'danger-subtle', 'surface', TEXT],
 ]
 
 it('maps the accent to the shared token', () => {
