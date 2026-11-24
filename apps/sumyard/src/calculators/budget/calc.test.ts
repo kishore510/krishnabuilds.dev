@@ -182,7 +182,7 @@ describe('accounts, transfers and what is left in each (BD11, BD12, BD13)', () =
     expect(pounds(pot.left.month)).toBe(50)
     expect(pounds(pot.saved.month)).toBe(50)
     expect(pounds(r.potSaved.month)).toBe(50)
-    expect(r.savingsRate).toEqual(ratio(45_000, 340_000))
+    expect(r.savingsRate).toEqual(ratio(p(fromPounds(450 * 12)), p(fromPounds(3_400 * 12))))
   })
 
   it('left over across accounts: income less every line less what pots put aside, and the sum of the accounts', () => {
