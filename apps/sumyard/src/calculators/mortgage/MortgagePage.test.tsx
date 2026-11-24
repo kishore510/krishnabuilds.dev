@@ -142,10 +142,11 @@ describe('results, answer first', () => {
     ).toHaveLength(1)
   })
 
-  it('the answer card: interest saved, term cut, new payoff date, total paid, charge paid', () => {
+  it('the answer card: interest saved as the headline, term cut, new payoff date, total paid, charge paid', () => {
     const r = engine()
     const card = $('[data-answer]')!
-    expect(row('Interest saved', card)).toBe(money(r.interestSaved))
+    expect(card.querySelector('[data-headline]')?.textContent).toBe(money(r.interestSaved))
+    expect(card.textContent).toContain(`Interest of ${money(r.overpaying.totalInterest)} instead of ${money(r.baseline.totalInterest)}`)
     expect(row('Mortgage cleared in', card)).toBe(yearsAndMonths(r.overpaying.payoffMonth!))
     const cleared = [...card.querySelectorAll('dt')].find((dt) => dt.textContent === 'Mortgage cleared in')!.nextElementSibling!.textContent
     expect(cleared).toContain(`Instead of ${yearsAndMonths(r.baseline.payoffMonth!)}: ${yearsAndMonths(r.monthsSaved)} sooner`)

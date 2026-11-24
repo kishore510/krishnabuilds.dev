@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { fromPounds, percent, toPence } from '@/lib/money'
+import { fromPence, fromPounds, percent, toPence } from '@/lib/money'
 import { overpay } from './calc'
 import { inputs } from './fixtures/inputs'
-import { chartData, drifts, fixedRateNote, overAllowance, returnLines, unusedOverpayments } from './results'
+import { chartData, drifts, fixedRateNote, overAllowance, paidParts, returnLines, unusedOverpayments } from './results'
 import type { MortgageInputs, MortgageResult } from './types'
 
 /*
@@ -111,5 +111,31 @@ describe('returnLines', () => {
   it('daily interest names its day count', () => {
     const { i, r } = run({ policy: { interestMethod: 'daily', dayCount: 'actual/actual' } })
     expect(returnLines(r, i)[0]!.against).toMatch(/charged daily, actual\/actual/)
+  })
+})
+
+describe('paidParts (the ring, the mortgage redesign)', () => {
+  it('capital paid off, interest and the charge add up to the total paid, overpaying and not', () => {
+    const { i, r } = run({
+      regular: { amount: fromPounds(300), fromMonth: 1, toMonth: 300 },
+      lumpSums: [{ month: 3, amount: fromPounds(40_000) }],
+      erc: { rate: percent('3'), endMonth: 24, allowance: { kind: 'rate', rate: percent('10') } },
+    })
+    for (const schedule of ['baseline', 'overpaying'] as const) {
+      const parts = paidParts(r, i, schedule)
+      expect(parts.map((p) => p.id)).toEqual(['capital', 'interest', 'charge'])
+      expect(parts.reduce((t, p) => t + toPence(p.amount), 0)).toBe(toPence(r[schedule].totalPaid))
+      expect(parts[0]!.amount).toEqual(fromPence(toPence(i.balance) - toPence(r[schedule].owedAtEnd)))
+      expect(parts[1]!.amount).toEqual(r[schedule].totalInterest)
+      expect(parts[2]!.amount).toEqual(r[schedule].totalErc)
+    }
+    expect(toPence(paidParts(r, i, 'overpaying')[2]!.amount)).toBeGreaterThan(0)
+  })
+
+  it('interest-only: the capital part is only what was overpaid; what is still owed is not a part', () => {
+    const { i, r } = run({ repaymentType: 'interest-only', regular: { amount: fromPounds(100), fromMonth: 1, toMonth: 300 } })
+    const [capital] = paidParts(r, i, 'overpaying')
+    expect(capital!.amount).toEqual(r.overpaying.totalOverpaid)
+    expect(toPence(paidParts(r, i, 'baseline')[0]!.amount)).toBe(0)
   })
 })

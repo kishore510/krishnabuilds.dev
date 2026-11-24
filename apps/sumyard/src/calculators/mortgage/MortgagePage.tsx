@@ -1,7 +1,9 @@
-import { Plus, RotateCcw, Trash2 } from 'lucide-react'
-import { type ReactNode, useMemo, useState } from 'react'
+import { Plus, RotateCcw, Share2, Trash2 } from 'lucide-react'
+import { lazy, type ReactNode, Suspense, useMemo, useState } from 'react'
 import { AssumptionsPanel } from '@/components/AssumptionsPanel'
 import { Chart } from '@/components/Chart/Chart'
+import { Donut } from '@/components/Donut'
+import { IconTile } from '@/components/IconTile'
 import { CurrencyInput } from '@/components/inputs/CurrencyInput'
 import { DateInput, dateInWords } from '@/components/inputs/DateInput'
 import { NumberInput } from '@/components/inputs/NumberInput'
@@ -22,7 +24,7 @@ import { useItemKeys } from '@/hooks/useItemKeys'
 import { addMonths } from '@/lib/calendar'
 import { formatGBP, formatGBPChange, formatGBPCompact, formatIsoDate, formatPercent } from '@/lib/format'
 import { MAX_LIST_ITEMS } from '@/lib/inputLimits'
-import { add, compare, fromPence, type Money, subtract, ZERO } from '@/lib/money'
+import { add, compare, fromPence, type Money, ratio, subtract, toPence, ZERO } from '@/lib/money'
 import { useStore } from '@/lib/store'
 import { settingsStore } from '@/settings/settings'
 import { DISCLAIMER } from '@/sheets/parts'
@@ -60,23 +62,39 @@ import {
   YEAR_LIMITS,
   yearsAndMonths,
 } from './definition'
-import { chartData, drifts, fixedRateNote, overAllowance, type ReturnLine, returnLines, START_LABEL, unusedOverpayments } from './results'
+import {
+  chartData,
+  drifts,
+  fixedRateNote,
+  overAllowance,
+  paidParts,
+  type ReturnLine,
+  returnLines,
+  START_LABEL,
+  unusedOverpayments,
+} from './results'
+import type { MortgageShare } from './share'
+import { AFTER_FIXED_SWATCH, FIXED_SWATCH, OVERPAY_SWATCH, PART_SWATCHES, PAYMENT_SWATCH, SECTION_SWATCHES } from './style'
 import type { MortgageInputs, MortgageResult } from './types'
 
 /*
  * The mortgage overpayment page (M2) at #/c/mortgage, on the M1 engine, laid
  * out as docs/ui-patterns.md: inputs in sections with live summaries (open
  * on load when set or when they hold a box the results need), results first
- * (StickyResult) and answer first: interest saved, the term cut, the new
- * payoff date, total paid and any early repayment charge, with the net saving
- * and break-even when a charge is paid; then warnings, never hidden; one
- * return per rate period with what it is measured against; the balance
- * chart; a yearly table below the columns. A what-if slider tries another
+ * (StickyResult) and answer first: interest saved as the headline, then the
+ * term cut, the new payoff date, total paid and any early repayment charge,
+ * with the net saving and break-even when a charge is paid; then warnings,
+ * never hidden; a ring of where the payments go; one return per rate period
+ * with what it is measured against; the balance chart; a yearly table below
+ * the columns. Icons and colours per section and part, and Share, as the
+ * budget and take-home pages (the mortgage redesign). A what-if slider tries another
  * monthly overpayment beside the inputs (U40, U41). Uses no tax rules. Every
  * figure is the engine's (./calc.ts) through ./definition.ts and ./results.ts.
  */
 
 const session = sessionFor(mortgageCalculator)
+
+const ShareMortgage = lazy(() => import('./ShareMortgage'))
 
 type Gbp = (amount: Money) => string
 
@@ -174,6 +192,12 @@ export default function MortgagePage() {
   const shown = whatIf ?? base
   const label = `Overpaying${whatIf ? ', with your what-if' : ''}`
   const value = shown ? stickyValue(shown.inputs, shown.result, gbp) : null
+  const [sharing, setSharing] = useState(false)
+  // What is shown is what is shared, the what-if included (said in the shared title).
+  const share: MortgageShare | null = useMemo(
+    () => (shown ? { result: shown.result, inputs: shown.inputs, whatIf: whatIf !== null } : null),
+    [shown, whatIf],
+  )
 
   const apply = () => {
     const before = inputs
@@ -192,15 +216,28 @@ export default function MortgagePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
-          {mortgageCalculator.name}
-        </h1>
-        <p className="text-text-muted">{mortgageCalculator.summary}</p>
-        {/* On a phone the badge is in the sticky bar instead. */}
-        <div className="hidden md:flex">
-          <NoTaxRulesBadge />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-2">
+          <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
+            {mortgageCalculator.name}
+          </h1>
+          <p className="text-text-muted">{mortgageCalculator.summary}</p>
+          {/* On a phone the badge is in the sticky bar instead. */}
+          <div className="hidden md:flex">
+            <NoTaxRulesBadge />
+          </div>
         </div>
+        <Button
+          id="mo-share"
+          variant="primary"
+          disabled={!share}
+          aria-haspopup="dialog"
+          onClick={() => setSharing(true)}
+          className="h-auto min-h-touch py-2"
+        >
+          <Share2 />
+          Share
+        </Button>
       </div>
 
       <StickyResult
@@ -260,6 +297,18 @@ export default function MortgagePage() {
       <AssumptionsPanel items={[...new Set([...(shown ? shown.result.assumptions : []), ...PAGE_ASSUMPTIONS])]}>
         <p className="text-text-muted">Illustrative only, not financial advice. {DISCLAIMER}</p>
       </AssumptionsPanel>
+
+      {sharing && share && (
+        <Suspense fallback={null}>
+          <ShareMortgage
+            share={share}
+            onClose={() => {
+              setSharing(false)
+              document.getElementById('mo-share')?.focus()
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   )
 }
@@ -299,6 +348,7 @@ function Inputs({
     <Section
       id={`mo-section-${id}`}
       title={SECTION_TITLES[id]}
+      icon={<IconTile swatch={SECTION_SWATCHES[id]} />}
       summary={sectionSummary(id, inputs, invalidFields)}
       defaultOpen={openOnMount[id]}
     >
@@ -636,7 +686,12 @@ function WhatIfSection({
 }) {
   const [bad, setBad] = useState(false)
   return (
-    <Section id="mo-section-whatif" title={SECTION_TITLES.whatif} summary={active ? 'One what-if, not saved' : NOT_SET}>
+    <Section
+      id="mo-section-whatif"
+      title={SECTION_TITLES.whatif}
+      icon={<IconTile swatch={SECTION_SWATCHES.whatif} />}
+      summary={active ? 'One what-if, not saved' : NOT_SET}
+    >
       <p className="-mt-1 text-xs text-text-muted">
         Try another monthly overpayment: the results show it beside your inputs. What-ifs are never saved; Apply puts it into your inputs.
       </p>
@@ -700,35 +755,51 @@ function Results({
   const suffix = whatIf ? ', with your what-if' : ''
   // The first payment at the rate after the fixed rate, with what is overpaid that month.
   const afterFixed = engine.fixedEndMonth > 0 ? overpaying.rows[engine.fixedEndMonth] : undefined
+  const saved = compare(result.interestSaved, ZERO) > 0
   return (
     <>
-      <Warnings shown={shown} fixed={pageInputs.fixed} gbp={gbp} />
-
       <div data-answer>
-        <ResultCard title={`What overpaying does${suffix}`}>
-          <StatRow
-            label="Interest saved"
-            value={gbp(result.interestSaved)}
-            detail="Interest without overpaying, less interest with it, the rate after the fixed rate assumed to the end."
-          />
+        <ResultCard
+          title={`What overpaying does${suffix}`}
+          headlineLabel="Interest saved"
+          headline={gbp(result.interestSaved)}
+          emphasis={saved}
+          sentence={interestSentence(result, gbp)}
+        >
           {repayment ? (
             <StatRow
               label="Mortgage cleared in"
               value={overpaying.payoffMonth === null ? 'Not within the term' : yearsAndMonths(overpaying.payoffMonth)}
               detail={clearedDetail(result)}
+              icon={<IconTile swatch={OVERPAY_SWATCH} size="sm" />}
             />
           ) : (
-            <StatRow label="Owed at the end" value={gbp(overpaying.owedAtEnd)} detail={`Without overpaying: ${gbp(baseline.owedAtEnd)}`} />
+            <StatRow
+              label="Owed at the end"
+              value={gbp(overpaying.owedAtEnd)}
+              detail={`Without overpaying: ${gbp(baseline.owedAtEnd)}`}
+              icon={<IconTile swatch={PART_SWATCHES.capital} size="sm" />}
+            />
           )}
           <StatRow
             label="Total paid"
             value={gbp(overpaying.totalPaid)}
             detail={`Payments, overpayments and charges. Without overpaying: ${gbp(baseline.totalPaid)}${repayment ? '' : ', with the amount borrowed still owed'}.`}
+            icon={<IconTile swatch={PAYMENT_SWATCH} size="sm" />}
           />
-          <StatRow label="Early repayment charge paid" value={gbp(overpaying.totalErc)} />
+          <StatRow
+            label="Early repayment charge paid"
+            value={gbp(overpaying.totalErc)}
+            icon={<IconTile swatch={PART_SWATCHES.charge} size="sm" />}
+          />
           {result.charge && (
             <>
-              <StatRow label="Net saving" value={gbp(result.charge.netSaving)} detail="Interest saved less the charge, in pounds." />
+              <StatRow
+                label="Net saving"
+                value={gbp(result.charge.netSaving)}
+                detail="Interest saved less the charge, in pounds."
+                icon={<IconTile swatch={OVERPAY_SWATCH} size="sm" />}
+              />
               <StatRow
                 label="Break-even"
                 value={result.charge.breakEvenMonth === null ? 'Not within the term' : dateOf(engine, result.charge.breakEvenMonth)}
@@ -737,13 +808,18 @@ function Results({
                     ? 'The interest saved never catches up with the charge before the term ends.'
                     : `Payment ${result.charge.breakEvenMonth}: from then on, the interest saved so far stays at least the charge paid so far.`
                 }
+                icon={<IconTile swatch={AFTER_FIXED_SWATCH} size="sm" />}
               />
             </>
           )}
         </ResultCard>
       </div>
 
+      <Warnings shown={shown} fixed={pageInputs.fixed} gbp={gbp} />
+
       {whatIf && <WhatIfResults base={base.result} whatIf={whatIf.result} repayment={repayment} gbp={gbp} />}
+
+      <PaidRing result={result} engine={engine} gbp={gbp} />
 
       <ResultCard title={`Payments and balance${suffix}`}>
         {repayment && (
@@ -751,18 +827,21 @@ function Results({
             label="You pay each month now"
             value={gbp(add(overpaying.rows[0]!.payment, overpaying.rows[0]!.overpayment))}
             detail={`${gbp(overpaying.rows[0]!.payment)} payment and ${gbp(overpaying.rows[0]!.overpayment)} overpayment.`}
+            icon={<IconTile swatch={PAYMENT_SWATCH} size="sm" />}
           />
         )}
         <StatRow
           label="Contractual payment now"
           value={gbp(baseline.paymentNow)}
           detail="Worked out from the balance, the rate and the term left: check it against your statement. Far off? The term left may be an estimate that already counts your overpayments."
+          icon={<IconTile swatch={FIXED_SWATCH} size="sm" />}
         />
         {repayment && overpaying.paymentAfterFixedEnd !== null && afterFixed && (
           <StatRow
             label="You pay each month after the fixed rate"
             value={gbp(add(afterFixed.payment, afterFixed.overpayment))}
             detail={`${gbp(afterFixed.payment)} payment and ${gbp(afterFixed.overpayment)} overpayment, if you keep overpaying.`}
+            icon={<IconTile swatch={AFTER_FIXED_SWATCH} size="sm" />}
           />
         )}
         {baseline.paymentAfterFixedEnd !== null && (
@@ -770,6 +849,7 @@ function Results({
             label="Contractual payment after the fixed rate"
             value={gbp(overpaying.paymentAfterFixedEnd ?? ZERO)}
             detail={`Not counting overpayments. Had you never overpaid: ${gbp(baseline.paymentAfterFixedEnd)}.${overpaying.paymentAfterFixedEnd === null ? ' Overpaying clears the mortgage before then.' : ''}`}
+            icon={<IconTile swatch={AFTER_FIXED_SWATCH} size="sm" />}
           />
         )}
         {overpaying.balanceAtFixedEnd !== null && baseline.balanceAtFixedEnd !== null && (
@@ -777,6 +857,7 @@ function Results({
             label="Balance when the fixed rate ends"
             value={gbp(overpaying.balanceAtFixedEnd)}
             detail={`Without overpaying: ${gbp(baseline.balanceAtFixedEnd)}`}
+            icon={<IconTile swatch={PART_SWATCHES.capital} size="sm" />}
           />
         )}
         {result.interestSavedToFixedEnd !== null && (
@@ -784,6 +865,7 @@ function Results({
             label="Interest saved while fixed"
             value={gbp(result.interestSavedToFixedEnd)}
             detail="Does not rest on the rate after the fixed rate."
+            icon={<IconTile swatch={PART_SWATCHES.interest} size="sm" />}
           />
         )}
       </ResultCard>
@@ -792,6 +874,52 @@ function Results({
 
       <BalanceChart result={result} engine={engine} gbp={gbp} />
     </>
+  )
+}
+
+/** Under the headline: interest without and with overpaying, and the share saved. */
+function interestSentence({ baseline, overpaying, interestSaved }: MortgageResult, gbp: Gbp): string {
+  const share =
+    compare(baseline.totalInterest, ZERO) > 0 && compare(interestSaved, ZERO) > 0
+      ? `, ${formatPercent(ratio(toPence(interestSaved), toPence(baseline.totalInterest)), 1)} less`
+      : ''
+  return `Interest of ${gbp(overpaying.totalInterest)} instead of ${gbp(baseline.totalInterest)}${share}. The rate after the fixed rate is assumed to the end.`
+}
+
+/** Where the payments go with overpaying (the mortgage redesign's ring): the amount borrowed paid off, interest and charges. */
+function PaidRing({ result, engine, gbp }: { result: MortgageResult; engine: MortgageInputs; gbp: Gbp }) {
+  const { overpaying } = result
+  const owed = compare(overpaying.owedAtEnd, ZERO) > 0
+  return (
+    <section data-ring aria-label="Where your payments go" className="rounded-lg border border-border bg-surface p-5 shadow-sm">
+      <Donut
+        title="Where your payments go, with overpaying"
+        parts={paidParts(result, engine, 'overpaying').map((p) => ({
+          id: p.id,
+          label: p.label,
+          value: toPence(p.amount),
+          stroke: PART_SWATCHES[p.id].stroke,
+          key: <IconTile swatch={PART_SWATCHES[p.id]} size="sm" />,
+        }))}
+        total={toPence(overpaying.totalPaid)}
+        centre={
+          <>
+            <span className="text-xs text-text-muted">Total paid</span>
+            <span data-total-paid className="text-lg font-bold text-text tabular-nums">
+              {gbp(overpaying.totalPaid)}
+            </span>
+            <span className="text-xs text-text-muted">over the term</span>
+          </>
+        }
+        formatValue={(pence) => gbp(fromPence(pence))}
+        emptyText="Nothing paid over the term, so there is no ring to draw."
+      />
+      {owed && (
+        <p data-owed-note className="mt-3 text-sm text-text-muted">
+          Still owed at the end, not paid in these figures: {gbp(overpaying.owedAtEnd)}.
+        </p>
+      )}
+    </section>
   )
 }
 
@@ -956,6 +1084,7 @@ function Returns({ lines }: { lines: readonly ReturnLine[] }) {
             label={line.period === 'fixed' ? 'While fixed' : 'After the fixed rate'}
             value={formatPercent(line.effective)}
             detail={`A year, effective; ${formatIsoDate(line.from)} to ${formatIsoDate(line.to)}. Measured against ${line.against.charAt(0).toLowerCase()}${line.against.slice(1)}`}
+            icon={<IconTile swatch={line.period === 'fixed' ? FIXED_SWATCH : AFTER_FIXED_SWATCH} size="sm" />}
           />
         ))}
       </ResultCard>

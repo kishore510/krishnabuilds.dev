@@ -4,6 +4,14 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-11-24
+
+### Added
+- **Share your mortgage overpayment.** The mortgage page has a **Share** button, as the budget and take-home pages do: an image card, a PDF (print to PDF), a spreadsheet (CSV) or text to paste. It shows interest saved, how much sooner the mortgage is cleared (or what is owed at the end), where your payments go, what you pay each month and the guaranteed return; not your dates, lump sums or the yearly table. Turn **Show amounts** off to share percentages and times only, with no pound figure, so your balance stays private. Made on your device; nothing is uploaded.
+
+### Changed
+- **The mortgage page has a new look**, in line with the budget and take-home pages. Interest saved leads, larger, with the interest with and without overpaying under it, and the warnings now follow it. A ring shows where your payments go with overpaying: the amount borrowed paid off, interest and any early repayment charge, each in its own colour and icon; on an interest-only mortgage what is still owed at the end is said beside it. Icons mark the input sections and the result rows. Every figure and input is as before.
+
 ## [0.36.0] - 2026-11-24
 
 ### Added

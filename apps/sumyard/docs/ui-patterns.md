@@ -250,3 +250,27 @@ Owner decisions TH1 to TH8 (24 November 2026, all as proposed in the brief). UI 
 
 No what-if sliders (the pension compare is the what-if). The owner approved building without a separate mock-up and will sign off from screenshots of the built page (TH7, changed from the brief). The home card's figure is unchanged.
 
+
+## Mortgage redesign (0.37.0)
+
+Owner decisions MD1 to MD5 (24 November 2026, as proposed). UI only: no engine, inputs, storage or scenario change. U44 is changed by MD2.
+
+### MD1. Colours and icons
+
+Three new semantic tokens for the parts of what is paid, `mortgage-capital`, `-interest` and `-charge` (`docs/design-tokens.md`), on palette steps already in use, rather than reusing the take-home's (one colour, one meaning; TH2). Icons from Lucide (`src/calculators/mortgage/style.ts`): the amount borrowed `House`, interest `Percent`, the charge `BadgeAlert`; sections: your mortgage `House`, fixed rate `Lock`, overpaying `TrendingDown`, what if `SlidersHorizontal`, early repayment charge `BadgeAlert`, interest method `Calculator`. Result rows take the icon of what they measure (`StatRow` `icon`); payments `Wallet`, figures after the fixed rate `CalendarClock`. Colour is never the only cue.
+
+### MD2. The headline before the warnings
+
+`ResultCard` `emphasis`: interest saved, larger and in `positive` (plain when nothing is saved), with a sentence of the interest with and without overpaying and the share saved. The rows under it (cleared in or owed at the end, total paid, the charge, net saving, break-even) are as before. The warnings follow the card, still in full and never collapsed. The sticky figure (U44) is unchanged.
+
+### The ring
+
+The shared `Donut` of the total paid with overpaying: the amount borrowed paid off (the balance less what is owed at the end), interest and charges (`paidParts`, `results.ts`), adding up to the engine's total paid; total paid in its centre; the table fallback. On an interest-only mortgage what is still owed is not paid, so it is not a part: a line beside the ring says it. Placed after the what-if table, before the payments card.
+
+### MD3. Share
+
+**Share** beside the page title, off while the inputs need fixing or there are no results. The shared dialog (`src/components/share/`) with **Show amounts** on by default; no line names switch. Shared: interest saved, the time saved (or what is owed at the end), the ring's parts, total paid, the charge and net saving, what you pay each month now and after the fixed rate (repayment), and the return per rate period. Not shared: dates, lump sums, the yearly table, the interest method's settings. What is shown is shared, a what-if included, and the title says so. Amounts off: interest saved as a share of the interest without overpaying, the parts as shares of the total paid, owed at the end as a share of the amount borrowed, times and returns as they are; no pound figure anywhere. Nothing stored; no new storage key.
+
+### MD4, MD5
+
+The what-if stays a single monthly overpayment slider (MD4). The owner signs off from screenshots of the built page (MD5). The home card's figure is unchanged.
