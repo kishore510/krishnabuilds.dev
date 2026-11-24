@@ -50,7 +50,22 @@
   --sy-palette-teal-300: #5fd0c2;
   --sy-palette-teal-700: #0f766e;
 
+  /* Groups (budget): one hue each for charts and icons, light then dark (0.33.0, flagged in docs/design-tokens.md). */
+  --sy-palette-orange-700: #c2410c;
+  --sy-palette-orange-300: #fdba74;
+  --sy-palette-violet-600: #7c3aed;
+  --sy-palette-violet-300: #c4b5fd;
+  --sy-palette-pink-700: #be185d;
+  --sy-palette-pink-300: #f9a8d4;
+  --sy-palette-green-800: #166534;
+  --sy-palette-green-700: #15803d;
+  --sy-palette-green-300: #86efac;
+
   /* Translucent: subtle fills, shadows and overlays (suffix is the alpha in %). */
+  --sy-palette-green-700-a12: #15803d1f;
+  --sy-palette-green-300-a15: #86efac26;
+  --sy-palette-red-700-a12: #b3261e1f;
+  --sy-palette-red-300-a15: #f2877d26;
   --sy-palette-blue-600-a12: #1f6aa51f;
   --sy-palette-blue-300-a15: #7cc0e626;
   --sy-palette-slate-850-a10: #1d23271a;
@@ -85,6 +100,19 @@
 
   --sy-swatch-teal: var(--sy-palette-teal-700);
 
+  --sy-positive: var(--sy-palette-green-800);
+  --sy-positive-subtle: var(--sy-palette-green-700-a12);
+  --sy-danger-subtle: var(--sy-palette-red-700-a12);
+
+  --sy-group-home: var(--sy-palette-blue-600);
+  --sy-group-bills: var(--sy-palette-teal-700);
+  --sy-group-food: var(--sy-palette-orange-700);
+  --sy-group-transport: var(--sy-palette-violet-600);
+  --sy-group-personal: var(--sy-palette-pink-700);
+  --sy-group-debt: var(--sy-palette-red-700);
+  --sy-group-saving: var(--sy-palette-green-700);
+  --sy-group-other: var(--sy-palette-slate-500);
+
   --sy-shadow-color: var(--sy-palette-slate-850-a10);
   --sy-shadow-color-strong: var(--sy-palette-slate-850-a16);
   --sy-overlay: var(--sy-palette-slate-850-a40);
@@ -112,6 +140,19 @@
   --sy-on-danger: var(--sy-palette-red-950);
 
   --sy-swatch-teal: var(--sy-palette-teal-300);
+
+  --sy-positive: var(--sy-palette-green-300);
+  --sy-positive-subtle: var(--sy-palette-green-300-a15);
+  --sy-danger-subtle: var(--sy-palette-red-300-a15);
+
+  --sy-group-home: var(--sy-palette-blue-300);
+  --sy-group-bills: var(--sy-palette-teal-300);
+  --sy-group-food: var(--sy-palette-orange-300);
+  --sy-group-transport: var(--sy-palette-violet-300);
+  --sy-group-personal: var(--sy-palette-pink-300);
+  --sy-group-debt: var(--sy-palette-red-300);
+  --sy-group-saving: var(--sy-palette-green-300);
+  --sy-group-other: var(--sy-palette-slate-200);
 
   --sy-shadow-color: var(--sy-palette-black-a35);
   --sy-shadow-color-strong: var(--sy-palette-black-a50);
@@ -178,6 +219,17 @@
   --color-danger: var(--sy-danger);
   --color-on-danger: var(--sy-on-danger);
   --color-swatch-teal: var(--sy-swatch-teal);
+  --color-positive: var(--sy-positive);
+  --color-positive-subtle: var(--sy-positive-subtle);
+  --color-danger-subtle: var(--sy-danger-subtle);
+  --color-group-home: var(--sy-group-home);
+  --color-group-bills: var(--sy-group-bills);
+  --color-group-food: var(--sy-group-food);
+  --color-group-transport: var(--sy-group-transport);
+  --color-group-personal: var(--sy-group-personal);
+  --color-group-debt: var(--sy-group-debt);
+  --color-group-saving: var(--sy-group-saving);
+  --color-group-other: var(--sy-group-other);
   --color-overlay: var(--sy-overlay);
   --color-transparent: transparent;
   --color-current: currentColor;
