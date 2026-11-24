@@ -1,6 +1,6 @@
 # PHASE-BRIEF: Car decision redesign
 
-Status: **Car decision redesign** built (0.38.0), waiting on the owner's sign-off from screenshots (CD12) and merge. The mortgage redesign (0.37.0, PR #191) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
+Status: **Car decision redesign** Done (0.38.0, PR #192), signed off and merged by the owner on 24 November 2026. The mortgage redesign (0.37.0, PR #191) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
 
 ## Docs rule
 
@@ -66,7 +66,7 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Next
 
-- Owner: sign off from the screenshots in the PR, then merge.
+- Car decision redesign merged; its open checks (Safari, a real phone, a screen reader) stay with the owner.
 - Next redesign: compound interest; next pound lightly (its open checks are revisited then).
 
 Full history (progress logs, finished part scopes, slice archives): `docs/history/` (grep it, don't read it whole).
