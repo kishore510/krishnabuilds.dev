@@ -1,4 +1,3 @@
-import { Copy, Trash2 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 import { CurrencyInput } from '@/components/inputs/CurrencyInput'
 import { DecimalInput } from '@/components/inputs/DecimalInput'
@@ -9,7 +8,6 @@ import { TextInput } from '@/components/inputs/TextInput'
 import { Toggle } from '@/components/inputs/Toggle'
 import { Section } from '@/components/Section'
 import { InlineNotice } from '@/components/states'
-import { Button } from '@/components/ui/button'
 import { formatPence, formatPercent } from '@/lib/format'
 import { MAX_ITEM_NAME_LENGTH } from '@/lib/inputLimits'
 import { type Money, ZERO } from '@/lib/money'
@@ -27,12 +25,12 @@ import {
   fieldList,
   fuelCost,
   hasFinanceSection,
+  hasRange,
   LIMITS,
   OPTIONAL_FIELDS,
   type OptionField,
   type OptionInputs,
   type OptionStatus,
-  optionName,
   PCP_ENDS,
   PRICING_MODES,
   type SectionId,
@@ -57,9 +55,9 @@ type Bounded = Exclude<OptionField, 'name'>
 
 /** The convention behind each input, in words. No figures. */
 const HINTS: Partial<Record<OptionField, string>> = {
-  endLow: 'What the car could be worth at the end of the horizon if things go badly.',
-  endExpected: 'What you expect it to be worth then. The value falls by the same percentage each year between now and then.',
-  endHigh: 'What it could be worth then if things go well. It may be more than today’s value, within a limit.',
+  endLow: 'If things go badly.',
+  endExpected: 'What you expect it to be worth at the end of the horizon.',
+  endHigh: 'If things go well. It may be more than today’s value, within a limit.',
   annualMileage: 'Whole miles a year, the same every year.',
   loanAmount: 'The amount borrowed. Any part of the price it doesn’t cover is paid in cash at the start.',
   deposit: 'Paid at the start; the rest of the price is financed.',
@@ -77,10 +75,10 @@ const HINTS: Partial<Record<OptionField, string>> = {
   pcpEnd: 'Hand it back: no final payment, any excess mileage charged, and no car for the rest of the horizon.',
   mileageAllowance: 'Miles a year the agreement allows. It matters only if you hand the car back.',
   excessPerMile: 'Pence for each mile over the allowance, charged only if you hand the car back.',
-  insurance: 'A year, for the first year. It rises each year by the shared yearly increase.',
-  maintenance: 'Servicing, tyres and repairs a year, for the first year. It rises by the shared yearly increase.',
-  ved: 'Vehicle excise duty a year, as you enter it. Check the rate for this car on GOV.UK: Sumyard holds no VED figures.',
-  other: 'Anything else a year, such as parking or breakdown cover. It rises by the shared yearly increase.',
+  insurance: 'A year, for the first year.',
+  maintenance: 'Servicing, tyres and repairs, a year.',
+  ved: 'Vehicle tax a year. Check this car’s rate on GOV.UK: Sumyard holds no VED figures.',
+  other: 'A year: parking, breakdown cover and the like.',
   milesPerGallon: 'Miles per UK gallon. Sumyard converts to litres with the litres in an imperial gallon.',
   pencePerLitre: 'The pump price, in pence a litre.',
   milesPerKwh: 'Miles for each kWh of charging.',
@@ -88,7 +86,7 @@ const HINTS: Partial<Record<OptionField, string>> = {
   homePencePerKwh: 'Your home tariff, in pence a kWh.',
   publicPencePerKwh: 'What public charging costs you, in pence a kWh.',
   pencePerMile: 'Your own figure for fuel or energy, in pence a mile.',
-  fuelPriceChange: 'Its own yearly change, apart from the shared increase. It can be negative.',
+  fuelPriceChange: 'A year, apart from the shared increase. It can be negative.',
   owesFinance: 'Turn on if a loan, HP or PCP on this car isn’t paid off yet. The rate is worked out from your figures.',
   settlement:
     'Use the lender’s current settlement quote, from your account or by asking them. Sumyard doesn’t work out early settlement charges.',
@@ -107,9 +105,14 @@ const QUESTIONS: Partial<Record<OptionField, string>> = {
 }
 
 const VALUE_HINTS = {
-  keep: 'What the car would sell for today. Keeping it counts this as a sale given up at the start.',
+  keep: 'What it would sell for today: keeping it gives up that sale.',
   other: 'The cash price. Finance is on this price.',
 } as const
+
+/** The range switch (CD10) and the mileage switch (CD11). */
+const RANGE_LABEL = 'Add a low and high end value'
+const RANGE_HINT = 'Optional. Left off, every case uses the expected value.'
+const OWN_MILEAGE_HINT = 'Off: it drives the shared annual mileage.'
 
 const SUFFIXES: Partial<Record<OptionField, string>> = {
   annualMileage: 'miles',
@@ -163,6 +166,7 @@ export const ID_SUFFIXES: Record<OptionField, string> = {
   pcpEnd: 'pcp-end',
   mileageAllowance: 'allowance',
   excessPerMile: 'excess',
+  ownMileage: 'own-mileage',
   owesFinance: 'owes-finance',
   settlement: 'settlement',
   owedPayment: 'owed-payment',
@@ -205,7 +209,7 @@ function perMileCost(option: OptionInputs): string | null {
 
 /** A section header's one-line summary (U2), built from the stored inputs and the engine's cost per mile. */
 export function sectionSummary(id: SectionId, option: OptionInputs, invalid: readonly OptionField[], gbp: Gbp): string {
-  const fields = sectionFields(id, option)
+  const fields = sectionFields(id, option).filter((f) => f !== 'annualMileage' || option.ownMileage)
   if (fields.some((f) => invalid.includes(f))) return NEEDS_FIXING
   if (id === 'finance' && option.acquisition === 'keep' && !option.owesFinance) return NO_FINANCE
   if (entered(option, fields).length === 0) return NOT_SET
@@ -216,9 +220,12 @@ export function sectionSummary(id: SectionId, option: OptionInputs, invalid: rea
   }
   if (id === 'car') {
     money('value', valueLabel(option.acquisition))
-    const ends = (['endLow', 'endExpected', 'endHigh'] as const).map((f) => option[f])
-    if (ends.some((v) => v !== null)) parts.push(`ends ${ends.map((v) => (v === null ? '…' : gbp(v))).join(' / ')}`)
-    if (option.annualMileage !== null) parts.push(`${new Intl.NumberFormat('en-GB').format(option.annualMileage)} miles a year`)
+    if (hasRange(option)) {
+      const ends = (['endLow', 'endExpected', 'endHigh'] as const).map((f) => option[f] ?? option.endExpected)
+      parts.push(`ends ${ends.map((v) => (v === null ? '…' : gbp(v))).join(' / ')}`)
+    } else if (option.endExpected !== null) parts.push(`ends ${gbp(option.endExpected)}`)
+    if (option.ownMileage && option.annualMileage !== null)
+      parts.push(`${new Intl.NumberFormat('en-GB').format(option.annualMileage)} miles a year`)
   } else if (id === 'running') {
     for (const field of ['insurance', 'maintenance', 'ved', 'other'] as const) money(field, FIELD_LABELS[field])
     const perMile = perMileCost(option)
@@ -241,7 +248,7 @@ export function sectionSummary(id: SectionId, option: OptionInputs, invalid: rea
     }
     if (option.acquisition === 'hire-purchase') money('balloon', 'balloon')
   }
-  const missing = fields.filter((f) => option[f] === null)
+  const missing = fields.filter((f) => option[f] === null && f !== 'endLow' && f !== 'endHigh')
   const needs = missing.length > 0 ? `; needs ${fieldList(missing, option.acquisition).toLowerCase()}` : ''
   return `${parts.join('; ')}${needs}`
 }
@@ -252,30 +259,17 @@ export interface EditorProps {
   readonly optionKey: number
   readonly status: OptionStatus | null
   readonly invalid: readonly OptionField[]
-  readonly full: boolean
-  readonly only: boolean
+  /** The shared annual mileage (CD11), said beside the switch. */
+  readonly sharedMileage: number | null
   readonly gbp: Gbp
   readonly update: (patch: Partial<OptionInputs>) => void
   readonly setValid: (field: OptionField, ok: boolean) => void
-  readonly duplicate: () => void
-  readonly remove: () => void
+  /** After the sections: Copy the car, Duplicate and Remove (the option list's). */
+  readonly actions?: ReactNode
 }
 
 /** One option's editor. Remounted (by key) on a load or a fresh start, so the open sections follow the inputs; never stored. */
-export function OptionEditor({
-  option,
-  index,
-  optionKey,
-  status,
-  invalid,
-  full,
-  only,
-  gbp,
-  update,
-  setValid,
-  duplicate,
-  remove,
-}: EditorProps) {
+export function OptionEditor({ option, index, optionKey, status, invalid, sharedMileage, gbp, update, setValid, actions }: EditorProps) {
   const base = `cd-o${optionKey}`
   const id = (field: OptionField) => `${base}-${ID_SUFFIXES[field]}`
   const [openOnMount] = useState(() => ({
@@ -283,7 +277,9 @@ export function OptionEditor({
     finance: entered(option, sectionFields('finance', option)).length > 0 || (option.acquisition === 'keep' && option.owesFinance),
     running: entered(option, sectionFields('running', option)).length > 0,
   }))
-  const name = optionName(option, index)
+  // On while switched on here or while the option has a low or high value (a load, Copy the car or Duplicate can bring one).
+  const [rangeSwitched, setRangeOn] = useState(false)
+  const rangeOn = rangeSwitched || hasRange(option)
   const hintOf = (field: OptionField, hint = HINTS[field]) => (isOptional(field) ? `${hint ?? ''} ${EMPTY_AS_NOTHING}`.trim() : hint)
   const common = (field: OptionField) => ({
     id: id(field),
@@ -379,24 +375,11 @@ export function OptionEditor({
   const finance = hasFinanceSection(option.acquisition)
 
   return (
-    <fieldset id={base} data-option-editor className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface-muted p-3">
+    <fieldset id={base} data-option-editor className="flex min-w-0 flex-col gap-4 rounded-md border border-border bg-surface-muted p-3">
       <legend className="sr-only">{`Option ${index + 1}`}</legend>
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <h2 className="min-w-0 flex-1 basis-40 text-base font-semibold text-text [overflow-wrap:anywhere]">{name}</h2>
-        <div className="flex flex-wrap gap-1">
-          <Button id={`${base}-duplicate`} variant="ghost" disabled={full} onClick={duplicate}>
-            <Copy aria-hidden="true" />
-            Duplicate<span className="sr-only"> {name}</span>
-          </Button>
-          <Button id={`${base}-remove`} variant="ghost" disabled={only} onClick={remove}>
-            <Trash2 aria-hidden="true" />
-            Remove<span className="sr-only"> {name}</span>
-          </Button>
-        </div>
-      </div>
       <TextInput
         {...common('name')}
-        hint="Shown on its card and in compare. Optional."
+        hint="Optional, such as the car or the dealer."
         value={option.name}
         maxLength={MAX_ITEM_NAME_LENGTH}
         onChange={(value) => update({ name: value })}
@@ -425,10 +408,47 @@ export function OptionEditor({
         'car',
         <>
           {money('value', valueLabel(option.acquisition), option.acquisition === 'keep' ? VALUE_HINTS.keep : VALUE_HINTS.other)}
-          {money('endLow')}
           {money('endExpected')}
-          {money('endHigh')}
-          {whole('annualMileage')}
+          <Toggle
+            id={`${base}-range`}
+            label={RANGE_LABEL}
+            hint={RANGE_HINT}
+            checked={rangeOn}
+            onChange={(on) => {
+              setRangeOn(on)
+              // Off: the range is cleared, so every case is the expected value again (CD10).
+              if (!on) {
+                setValid('endLow', true)
+                setValid('endHigh', true)
+                update({ endLow: null, endHigh: null })
+              }
+            }}
+          />
+          {rangeOn && (
+            <>
+              {money('endLow')}
+              {money('endHigh')}
+            </>
+          )}
+          <Toggle
+            id={id('ownMileage')}
+            label={FIELD_LABELS.ownMileage}
+            hint={OWN_MILEAGE_HINT}
+            checked={option.ownMileage}
+            onChange={(ownMileage) => {
+              if (!ownMileage) setValid('annualMileage', true)
+              update({ ownMileage })
+            }}
+          />
+          {option.ownMileage ? (
+            whole('annualMileage')
+          ) : (
+            <p data-shared-mileage className="text-sm text-text">
+              {sharedMileage === null
+                ? 'Uses the shared annual mileage, once it is entered.'
+                : `Uses the shared ${new Intl.NumberFormat('en-GB').format(sharedMileage)} miles a year.`}
+            </p>
+          )}
         </>,
       )}
       {finance &&
@@ -524,6 +544,7 @@ export function OptionEditor({
           {rate('fuelPriceChange')}
         </>,
       )}
+      {actions}
     </fieldset>
   )
 }

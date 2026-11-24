@@ -99,6 +99,19 @@ const PAIRS: [foreground: string, background: string, min: number][] = [
   ...['mortgage-capital', 'mortgage-interest', 'mortgage-charge'].flatMap((t) =>
     (['surface', 'bg', 'surface-muted'] as const).map((bg) => [t, bg, UI] as [string, string, number]),
   ),
+  // Car decision options and cost parts: lines, bars and icons (graphics); their names are drawn in text.
+  ...[
+    'car-1',
+    'car-2',
+    'car-3',
+    'car-4',
+    'car-part-depreciation',
+    'car-part-finance',
+    'car-part-fuel',
+    'car-part-running',
+    'car-part-lost-interest',
+    'car-part-handed-back',
+  ].flatMap((t) => (['surface', 'bg', 'surface-muted'] as const).map((bg) => [t, bg, UI] as [string, string, number])),
 ]
 
 /** Translucent colours, blended over what they sit on first. */

@@ -39,6 +39,8 @@ export interface ShareDialogProps {
   readonly amountsHint: string
   /** The line names switch's hint; no switch without one. */
   readonly namesHint?: string
+  /** The names switch's label, when a page's names are not lines (the car decision's options). */
+  readonly namesLabel?: string
   /** The model and the CSV for the chosen options. */
   readonly build: (options: ShareOptions, style: AmountStyle, now: Date) => { readonly model: ShareModel; readonly csv: string }
   readonly onClose: () => void
@@ -75,7 +77,16 @@ const canShareFiles = (file: File) =>
   typeof navigator !== 'undefined' && typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })
 const canShareText = () => typeof navigator !== 'undefined' && typeof navigator.share === 'function'
 
-export default function ShareDialog({ heading, fileStem, csvHint, amountsHint, namesHint, build, onClose }: ShareDialogProps) {
+export default function ShareDialog({
+  heading,
+  fileStem,
+  csvHint,
+  amountsHint,
+  namesHint,
+  namesLabel = 'Include line names',
+  build,
+  onClose,
+}: ShareDialogProps) {
   const dialog = useRef<HTMLDialogElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
   const id = useId()
@@ -253,7 +264,7 @@ export default function ShareDialog({ heading, fileStem, csvHint, amountsHint, n
               {namesHint && (
                 <Toggle
                   id={`${id}-names`}
-                  label="Include line names"
+                  label={namesLabel}
                   hint={namesHint}
                   checked={options.names}
                   onChange={(names) => setOptions({ ...options, names })}

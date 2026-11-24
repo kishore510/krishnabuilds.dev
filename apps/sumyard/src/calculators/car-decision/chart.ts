@@ -3,6 +3,7 @@ import { toPence } from '@/lib/money'
 import type { CarOption, MonthPoint } from '../car-ownership/types'
 import { type CarDecisionInputs, type OptionStatus, type PageOutcome, uniqueNames } from './definition'
 import { cardOrder } from './results'
+import { OPTION_CHART_COLOURS } from './style'
 
 /*
  * The car decision's crossover chart and the readout at a month (slice
@@ -46,8 +47,11 @@ export interface Crossover {
   readonly markers: readonly ChartMarker[]
 }
 
+/** What the chart's lines measure: the net cost so far, or the cash paid so far (CD8). */
+export type ChartMeasure = 'net' | 'cash'
+
 /** The chart's months, lines and markers for the case shown; null when no option has results. */
-export function crossover(outcome: Ok, inputs: CarDecisionInputs): Crossover | null {
+export function crossover(outcome: Ok, inputs: CarDecisionInputs, measure: ChartMeasure = 'net'): Crossover | null {
   const costed = costedInOrder(outcome, inputs)
   if (costed.length === 0) return null
   const horizon = inputs.horizonMonths
@@ -60,8 +64,13 @@ export function crossover(outcome: Ok, inputs: CarDecisionInputs): Crossover | n
       label: names[index]!,
       kind: 'line',
       style: SERIES_STYLES[index % SERIES_STYLES.length],
+      // The option's own colour (CD1); the style's dash and marker stay.
+      colour: OPTION_CHART_COLOURS[index % OPTION_CHART_COLOURS.length],
       // Months after the coverage ends have no point: the line stops there.
-      values: xValues.map((month) => (months[month] ? toPence(months[month]!.netCost) : null)),
+      values: xValues.map((month) => {
+        const point = months[month]
+        return point ? toPence(measure === 'net' ? point.netCost : point.cashOut) : null
+      }),
     }
   })
   const ends = costed.flatMap(([index, status]): ChartMarker[] => {

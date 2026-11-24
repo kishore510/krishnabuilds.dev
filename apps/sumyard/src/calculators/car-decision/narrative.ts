@@ -33,7 +33,7 @@ import { breakdownParts, lowest, type Part } from './results'
 
 type Gbp = (amount: Money) => string
 
-const list = (names: readonly string[], joiner = 'and') =>
+export const list = (names: readonly string[], joiner = 'and') =>
   names.length < 2 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} ${joiner} ${names.at(-1)}`
 
 const abs = (amount: Money) => (compare(amount, ZERO) < 0 ? subtract(ZERO, amount) : amount)
@@ -60,7 +60,7 @@ export function engineNames(statuses: readonly OptionStatus[], names: readonly s
 const net = (comparison: Comparison, option: number, valueCase: ValueCase) => comparison.options[option]!.cases[valueCase].netCost
 
 /** The savings return used, and when it is nothing, what that means for the comparison. */
-function savingsSentence(savingsReturn: Ratio): string {
+export function savingsSentence(savingsReturn: Ratio): string {
   const shown = `It uses a savings return of ${formatPercent(savingsReturn)} a year`
   return compareRatio(savingsReturn, ratio(0, 1)) === 0
     ? `${shown}, so tying up cash costs nothing in this comparison.`

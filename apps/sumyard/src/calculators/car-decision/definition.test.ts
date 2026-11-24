@@ -38,8 +38,10 @@ import {
 } from './definition'
 import {
   asV2,
+  asV3,
   blank,
   blankV1,
+  blankV3,
   cash,
   electric,
   hp,
@@ -49,8 +51,6 @@ import {
   loan,
   pcp,
   perMile,
-  asV3,
-  blankV3,
   type V1Inputs,
   type V2Inputs,
   type V3Inputs,
@@ -754,9 +754,7 @@ describe('inputs version 4: an optional range and one shared mileage (CD10, CD11
   it('validates the shared mileage (whole miles, nothing to the most, or empty) and the switch', () => {
     for (const ok of [null, 0, 12_000, MAX_ANNUAL_MILEAGE]) expect(check({ ...example, annualMileage: ok }).ok).toBe(true)
     for (const bad of [-1, MAX_ANNUAL_MILEAGE + 1, 1.5, '8000']) {
-      expect(errorsOf({ ...example, annualMileage: bad })).toEqual([
-        expect.stringContaining(SHARED_LABELS.annualMileage),
-      ])
+      expect(errorsOf({ ...example, annualMileage: bad })).toEqual([expect.stringContaining(SHARED_LABELS.annualMileage)])
     }
     expect(errorsOf(withOption({ ownMileage: 'yes' }))).toEqual([expect.stringContaining(FIELD_LABELS.ownMileage)])
     const read = check({ ...example, annualMileage: 9_000 })
@@ -786,16 +784,12 @@ describe('inputs version 4: an optional range and one shared mileage (CD10, CD11
   })
 
   it('a version 3 scenario read through storage gives identical results, a missing mileage still missing', () => {
-    const old = v3(
-      [asV3(keep()), asV3(loan({ annualMileage: 9_000 })), asV3(pcp({ annualMileage: null })), asV3(hp())],
-      { valueCase: 'high' },
-    )
+    const old = v3([asV3(keep()), asV3(loan({ annualMileage: 9_000 })), asV3(pcp({ annualMileage: null })), asV3(hp())], {
+      valueCase: 'high',
+    })
     const read = CALCULATORS.readInputs('car-decision', 3, old)
     if (!read.ok) throw new Error(read.message)
-    const before = inputs(
-      [keep(), loan({ annualMileage: 9_000 }), pcp({ annualMileage: null }), hp()],
-      { valueCase: 'high' },
-    )
+    const before = inputs([keep(), loan({ annualMileage: 9_000 }), pcp({ annualMileage: null }), hp()], { valueCase: 'high' })
     expect(calculate(read.inputs as CarDecisionInputs)).toEqual(calculate(before))
   })
 
@@ -832,7 +826,14 @@ describe('inputs version 4: an optional range and one shared mileage (CD10, CD11
   })
 
   it('missingFields: low and high are never needed; the mileage only while neither the option nor the shared box has one', () => {
-    expect(missingFields(blank('cash'))).toEqual(['value', 'endExpected', 'annualMileage', 'milesPerGallon', 'pencePerLitre', 'fuelPriceChange'])
+    expect(missingFields(blank('cash'))).toEqual([
+      'value',
+      'endExpected',
+      'annualMileage',
+      'milesPerGallon',
+      'pencePerLitre',
+      'fuelPriceChange',
+    ])
     expect(missingFields(resolveOption(blank('cash'), 8_000))).not.toContain('annualMileage')
     expect(missingFields({ ...cash(), endLow: null, endHigh: null })).toEqual([])
   })

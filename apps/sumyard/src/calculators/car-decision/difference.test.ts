@@ -135,7 +135,9 @@ describe('where the difference comes from, in words (F55)', () => {
       'expected',
       gbp,
     )
-    expect(said.largest).toBe('The largest part is opportunity cost: £120.00 a month less for A, on the other side from the total.')
+    expect(said.largest).toBe(
+      'The largest part is interest your cash could have earned: £120.00 a month less for A, on the other side from the total.',
+    )
   })
 
   it('the largest part, less than half of the total', () => {
@@ -194,7 +196,7 @@ describe('where the difference comes from, in words (F55)', () => {
       'Maintenance',
       'VED',
       'Other',
-      'Opportunity cost',
+      'Interest your cash could have earned',
     ])
     expect(toPence(rows.find((r) => r.id === 'ved')!.value)).toBe(1_234)
   })

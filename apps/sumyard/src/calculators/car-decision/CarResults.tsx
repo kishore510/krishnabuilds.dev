@@ -1,47 +1,28 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
+import { IconTile } from '@/components/IconTile'
 import { RefusalNotice } from '@/components/RefusalNotice'
 import { ResultCard, StatRow } from '@/components/ResultCard'
-import { SplitBar } from '@/components/SplitBar'
 import { InlineNotice } from '@/components/states'
 import { Button } from '@/components/ui/button'
 import { formatPercent, formatPercentFixed } from '@/lib/format'
-import { APR_DISPLAY_DIGITS, compare, type ExactPence, fromPence, type Money, toPence, ZERO } from '@/lib/money'
+import { CARD_LARGEST_PARTS } from '@/lib/inputLimits'
+import { APR_DISPLAY_DIGITS, compare, type ExactPence, type Money, toPence, ZERO } from '@/lib/money'
 import { cn } from '@/lib/utils'
-import type { AcquisitionKind, Comparison, Flip, FlipPoints, FuelCost, ValueCase } from '../car-ownership/types'
-import {
-  ACQUISITION_LABELS,
-  CASE_LABELS,
-  type CarDecisionInputs,
-  coverageText,
-  fieldList,
-  type OptionInputs,
-  type OptionStatus,
-} from './definition'
-import { emptyRunningCosts, emptyRunningText, largestCost, moneyFlows } from './narrative'
+import type { AcquisitionKind, Flip, FlipPoints, FuelCost, ValueCase } from '../car-ownership/types'
+import { CASE_LABELS, type CarDecisionInputs, coverageText, fieldList, type OptionInputs, type OptionStatus } from './definition'
+import { emptyRunningCosts, emptyRunningText, moneyFlows } from './narrative'
 import { type RateShown, rateShown } from './rates'
-import {
-  breakdownParts,
-  equityAtHorizon,
-  type FlipSentence,
-  flipSentences,
-  fuelSentence,
-  isNegative,
-  orderingRule,
-  pageIndexes,
-  pairNames,
-  tiesText,
-} from './results'
+import { equityAtHorizon, type FlipSentence, flipSentences, fuelSentence, isNegative, pairNames } from './results'
+import { COST_PART_LABELS, type CostPart, costParts } from './setup'
+import { type CostPartId, optionSwatch, PART_SWATCHES } from './style'
 
 /*
- * The car decision's results (slice 3c-1), every figure the engine's:
+ * The car decision's results (slice 3c-1; the redesign's CD6 and CD7), every figure the engine's:
  *
- * - the order under these assumptions (the engine's ranking, the rule and
- *   ties in words), in the sticky results column;
- * - "What changes the answer": the flip points between the two lowest
- *   options as threshold sentences;
- * - a card per option in the order, in columns from md and a row that
- *   scrolls sideways (snapping) on a phone, focusable by keyboard;
- * - the comparison table below, the same figures as an accessible table.
+ * - "Where the money goes": a bar per option split into its cost parts, each part in its own colour and icon, with a
+ *   table of every part; then a slim card per option (cost a month, the total, its largest parts, money in and out);
+ * - the side-by-side table, behind "Show as a table" under the answer's bars;
+ * - "What changes the answer": the flip points between a pair of options as threshold sentences.
  *
  * The words are "lowest net cost under these assumptions": no option is
  * called anything stronger, and nothing tells anyone what to do.
@@ -72,7 +53,7 @@ function measures(status: Ok, valueCase: ValueCase, gbp: Gbp) {
     perMonth: gbp(c.netCostPerCoverageMonth),
     total: gbp(c.netCost),
     coverage: coverageText(result),
-    equity: equity === null ? 'None: handed back' : gbp(equity),
+    equity: equity === null ? 'Nothing: handed back' : gbp(equity),
     cashOut: gbp(c.cashOut),
     opportunity: gbp(c.breakdown.opportunityCost),
   }
@@ -125,26 +106,14 @@ function Rate({ shown }: { shown: RateShown }) {
  * largest part of it, the total, coverage, equity, cash out, opportunity cost, the breakdown, then the money that changes
  * hands, apart from the cost (3d-1).
  */
-function OptionCard({
-  card,
-  valueCase,
-  position,
-  gbp,
-}: {
-  card: CardData
-  valueCase: ValueCase
-  /** Its place in the order, or why it has none. */
-  position: string
-  gbp: Gbp
-}) {
+function OptionCard({ card, valueCase, gbp }: { card: CardData; valueCase: ValueCase; gbp: Gbp }) {
   const { status, name, index } = card
   const props = {
     title: name,
     heading: 'h3' as const,
-    tabIndex: 0,
     'data-option-card': '',
     'data-option-index': index,
-    className: 'relative min-w-0 shrink-0 basis-11/12 snap-start p-4 sm:basis-2/3 md:basis-auto',
+    className: 'relative min-w-0 p-4',
   }
   if (status.kind !== 'ok') {
     return (
@@ -173,26 +142,28 @@ function OptionCard({
             <RefusalNotice refusal={status.refusal} heading="h3" />
           )
         }
-      >
-        <StatRow label="Order" value={position} />
-      </ResultCard>
+      ></ResultCard>
     )
   }
-  return <OkCard status={status} inputs={card.inputs} valueCase={valueCase} position={position} gbp={gbp} props={props} />
+  return <OkCard status={status} index={index} inputs={card.inputs} valueCase={valueCase} gbp={gbp} props={props} />
 }
+
+/** An option's parts above nothing, largest first. */
+const largestParts = (parts: readonly CostPart[]) =>
+  parts.filter((p) => compare(p.value, ZERO) > 0).sort((a, b) => compare(b.value, a.value))
 
 function OkCard({
   status,
+  index,
   inputs,
   valueCase,
-  position,
   gbp,
   props,
 }: {
   status: Ok
+  index: number
   inputs: OptionInputs
   valueCase: ValueCase
-  position: string
   gbp: Gbp
   props: Record<string, unknown> & { title: string; heading: 'h3' }
 }) {
@@ -200,8 +171,7 @@ function OkCard({
   const c = result.cases[valueCase]
   const equity = equityAtHorizon(result, valueCase)
   const shown = rateFor(status)
-  const parts = breakdownParts(c.breakdown)
-  const largest = largestCost(c.breakdown, c.netCost, gbp)
+  const largest = largestParts(costParts(c.breakdown)).slice(0, CARD_LARGEST_PARTS)
   const empty = emptyRunningText(emptyRunningCosts(inputs))
   const shownAs = measures(status, valueCase, gbp)
   return (
@@ -209,6 +179,9 @@ function OkCard({
       {...props}
       headline={shownAs.perMonth}
       headlineLabel="Average cost per month owned"
+      sentence={
+        <span className={cn('inline-block h-1 w-10 rounded-full', optionSwatch(index, result.acquisition).fill)} aria-hidden="true" />
+      }
       footer={
         <>
           {!result.fullCoverage && (
@@ -238,44 +211,32 @@ function OkCard({
               </InlineNotice>
             </div>
           )}
-          {largest && (
-            <p data-largest className="text-sm text-text">
-              {largest.text}
-            </p>
-          )}
           {empty && (
             <p data-empty-costs className="text-sm text-text">
               {empty}
             </p>
           )}
           {shown && <Rate shown={shown} />}
-          <SplitBar
-            title="Where the net cost goes"
-            segments={parts.map((p) => ({ id: p.id, label: p.label, value: toPence(p.value) }))}
-            total={toPence(c.netCost)}
-            totalLabel="Net cost"
-            formatValue={(v) => gbp(fromPence(v))}
-            emptyText="The net cost is nothing or below, so there is nothing to split. The figures are below."
-          />
-          <MoneyFlowRows status={status} gbp={gbp} />
+          <MoneyFlowRows status={status} valueCase={valueCase} gbp={gbp} />
         </>
       }
     >
-      <StatRow label="Order" value={position} />
-      <StatRow label="Total net cost" value={shownAs.total} marker="total" />
-      <StatRow label="Coverage" value={shownAs.coverage} marker="coverage" />
+      <StatRow label="Total net cost" value={shownAs.total} detail={`Over ${result.horizonMonths} months`} marker="total" />
+      {!result.fullCoverage && <StatRow label="Covers" value={shownAs.coverage} marker="coverage" />}
+      {largest.map((part) => (
+        <StatRow
+          key={part.id}
+          label={part.label}
+          value={gbp(part.value)}
+          marker={`part-${part.id}`}
+          icon={<IconTile swatch={PART_SWATCHES[part.id]} size="sm" />}
+        />
+      ))}
       <StatRow
-        label="Equity at the horizon"
+        label="Yours at the end"
         value={shownAs.equity}
-        detail="What the car is worth less anything still owed on it"
+        detail="What the car is worth then, less anything still owed on it"
         marker="equity"
-      />
-      <StatRow label="Cash out" value={shownAs.cashOut} detail="Everything paid over the months covered" marker="cash-out" />
-      <StatRow
-        label="Opportunity cost"
-        value={shownAs.opportunity}
-        detail="What that cash could have earned at your savings return"
-        marker="opportunity"
       />
     </ResultCard>
   )
@@ -292,7 +253,7 @@ const UPFRONT_DETAIL: Record<AcquisitionKind, string> = {
 const UPFRONT_OWING = 'None: what a sale would leave after clearing the finance counts as a sale given up, not cash'
 
 /** The money that changes hands (3d-1), apart from the net cost: upfront, monthly and at the end. */
-function MoneyFlowRows({ status, gbp }: { status: Ok; gbp: Gbp }) {
+function MoneyFlowRows({ status, valueCase, gbp }: { status: Ok; valueCase: ValueCase; gbp: Gbp }) {
   const { result } = status
   const flows = moneyFlows(status.option, result)
   const kind = result.acquisition
@@ -318,8 +279,14 @@ function MoneyFlowRows({ status, gbp }: { status: Ok; gbp: Gbp }) {
   return (
     <div data-money-flows className="flex flex-col gap-1 border-t border-border pt-3">
       <h4 className="text-sm font-semibold text-text">Money in and out</h4>
-      <p className="text-xs text-text-muted">The cash that changes hands, apart from the net cost above.</p>
+      <p className="text-xs text-text-muted">The cash that changes hands, apart from the cost above.</p>
       <dl className="flex flex-col">
+        <StatRow
+          label="Cash paid out"
+          value={gbp(result.cases[valueCase].cashOut)}
+          detail="Everything paid over the months covered"
+          marker="cash-out"
+        />
         <StatRow label="Upfront cash" value={gbp(flows.upfront)} detail={owing ? UPFRONT_OWING : UPFRONT_DETAIL[kind]} marker="upfront" />
         {monthly && <StatRow label="Monthly payment" value={`${gbp(monthly.amount)} a month`} detail={monthlyDetail} marker="monthly" />}
         {final && <StatRow label="Final payment due at the end" value={gbp(final.amount)} detail={finalDetail} marker="final" />}
@@ -328,76 +295,150 @@ function MoneyFlowRows({ status, gbp }: { status: Ok; gbp: Gbp }) {
   )
 }
 
-const ordinalPosition = (pos: number, count: number) => `${pos} of ${count} under these assumptions`
-
-/** Each card's place in the order, in words: ranked, not ordered (partial coverage), or no results. */
-export function positions(comparison: Comparison | null, statuses: readonly OptionStatus[], valueCase: ValueCase): Map<number, string> {
-  const out = new Map<number, string>()
-  statuses.forEach((status, index) => {
-    if (status.kind === 'missing') out.set(index, 'Not ordered: inputs missing')
-    if (status.kind === 'held') out.set(index, 'Not ordered: an input to fix')
-    if (status.kind === 'refused') out.set(index, 'Not ordered: no results')
-  })
-  if (!comparison) return out
-  const byEngine = pageIndexes(statuses)
-  const ranking = comparison.ranking[valueCase]
-  let place = 0
-  ranking.full.forEach((entry, k) => {
-    if (!entry.tiedWithPrevious) place = k + 1
-    out.set(byEngine[entry.option]!, ordinalPosition(place, ranking.full.length) + (entry.tiedWithPrevious ? ', tied' : ''))
-  })
-  for (const entry of ranking.partial) out.set(byEngine[entry.option]!, 'Not ordered: covers less than the horizon')
-  return out
-}
-
-/** The card row's id: "Go to the cards" moves focus to it. */
-const CARDS_ID = 'cd-cards'
-
 /** The grid's columns from md for one to four cards, by count. */
 const GRID_COLUMNS = ['', 'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-2 lg:grid-cols-3', 'md:grid-cols-2 xl:grid-cols-4']
 
-/** The option cards in order (U16): columns from md, a row that snaps as it scrolls sideways on a phone, reachable by keyboard. */
-export function OptionCards({
-  cards,
-  valueCase,
-  positions: places,
-  gbp,
-}: {
-  cards: readonly CardData[]
-  valueCase: ValueCase
-  positions: Map<number, string>
-  gbp: Gbp
-}) {
+/**
+ * "Where the money goes" (CD6): a bar per costed option, its parts above nothing side by side in their colours, scaled to
+ * the largest so bars compare; parts below nothing said under it; a key of the parts shown; every part as a table; then
+ * a slim card per option, in the cards' order.
+ */
+export function CostSection({ cards, valueCase, gbp }: { cards: readonly CardData[]; valueCase: ValueCase; gbp: Gbp }) {
+  const [tableOpen, setTableOpen] = useState(false)
+  const costed = cards.flatMap((card) => (card.status.kind === 'ok' ? [{ card, status: card.status }] : []))
+  const rows = costed.map(({ card, status }) => ({ card, status, parts: costParts(status.result.cases[valueCase].breakdown) }))
+  const above = (parts: readonly CostPart[]) => parts.filter((p) => compare(p.value, ZERO) > 0)
+  const sum = (parts: readonly CostPart[]) => parts.reduce((t, p) => t + toPence(p.value), 0)
+  const widest = Math.max(0, ...rows.map((r) => sum(above(r.parts))))
+  const used = (Object.keys(COST_PART_LABELS) as CostPartId[]).filter((id) =>
+    rows.some((r) => compare(r.parts.find((p) => p.id === id)!.value, ZERO) !== 0),
+  )
+  const caseWord = CASE_LABELS[valueCase].toLowerCase()
   return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <h2 id="cd-cards-title" className="text-base font-semibold text-text">
-        Each option, {CASE_LABELS[valueCase].toLowerCase()} end value
-      </h2>
-      {cards.length > 1 && (
-        <p data-scroll-hint className="text-xs text-text-muted md:hidden">
-          Scroll sideways, or move with Tab, to see all {cards.length} options.
-        </p>
+    <div data-cost-section className="flex min-w-0 flex-col gap-4">
+      {rows.length > 0 && (
+        <div data-cost-bars className="flex min-w-0 flex-col gap-3">
+          <p className="text-sm text-text-muted">
+            Each option’s total net cost over the horizon, {caseWord} end value, split into its parts.
+          </p>
+          <ul className="flex flex-col gap-3">
+            {rows.map(({ card, status, parts }) => {
+              const below = parts.filter((p) => compare(p.value, ZERO) < 0)
+              return (
+                <li key={card.index} data-cost-bar={card.index} className="flex min-w-0 flex-col gap-1">
+                  <span className="flex items-center gap-2 text-sm">
+                    <IconTile swatch={optionSwatch(card.index, card.kind)} size="sm" />
+                    <span className="min-w-0 flex-1 text-text [overflow-wrap:anywhere]">{card.name}</span>
+                    <span className="font-semibold text-text tabular-nums">{gbp(status.result.cases[valueCase].netCost)}</span>
+                  </span>
+                  <span aria-hidden="true" className="flex h-4 w-full overflow-hidden rounded-sm bg-surface-muted">
+                    {above(parts).map((p) => (
+                      <span
+                        key={p.id}
+                        className={cn('h-4 border-r-2 border-surface last:border-r-0', PART_SWATCHES[p.id].fill)}
+                        style={{ width: `${widest > 0 ? (toPence(p.value) * 100) / widest : 0}%` }}
+                      />
+                    ))}
+                  </span>
+                  {below.length > 0 && (
+                    <span className="text-xs text-text-muted">
+                      Less {below.map((p) => `${p.label.toLowerCase()} ${gbp(p.value)}`).join(', ')}
+                    </span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+          <ul aria-label="Key" className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-text">
+            {used.map((id) => (
+              <li key={id} className="flex items-center gap-2">
+                <IconTile swatch={PART_SWATCHES[id]} size="sm" />
+                {COST_PART_LABELS[id]}
+              </li>
+            ))}
+          </ul>
+          <Button
+            variant="ghost"
+            aria-expanded={tableOpen}
+            aria-controls="cd-parts-table"
+            onClick={() => setTableOpen(!tableOpen)}
+            className="self-start px-0 text-accent"
+          >
+            {tableOpen ? 'Hide the table' : 'Show as a table'}
+          </Button>
+          <div id="cd-parts-table" hidden={!tableOpen}>
+            <section
+              aria-label="Each option’s cost parts, as a table"
+              // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-focusable (axe scrollable-region-focusable).
+              tabIndex={0}
+              className="relative overflow-x-auto rounded-lg border border-border"
+            >
+              <table data-parts-table className="w-full border-collapse text-sm text-text">
+                <caption className="sr-only">Each option’s cost parts over the horizon, {caseWord} end value</caption>
+                <thead>
+                  <tr className="text-text-muted">
+                    <th scope="col" className={`${FIRST_COLUMN} font-medium`}>
+                      Part
+                    </th>
+                    {rows.map(({ card }) => (
+                      <th
+                        key={card.index}
+                        scope="col"
+                        className="min-w-28 max-w-48 px-3 py-2 text-right font-medium [overflow-wrap:anywhere]"
+                      >
+                        {card.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {(Object.keys(COST_PART_LABELS) as CostPartId[]).map((id) => (
+                    <tr key={id} className="border-t border-border">
+                      <th scope="row" className={`${FIRST_COLUMN} font-normal`}>
+                        {COST_PART_LABELS[id]}
+                      </th>
+                      {rows.map(({ card, parts }) => (
+                        <td key={card.index} className={CELL}>
+                          {gbp(parts.find((p) => p.id === id)!.value)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr className="border-t border-border font-semibold">
+                    <th scope="row" className={FIRST_COLUMN}>
+                      Total net cost
+                    </th>
+                    {rows.map(({ card, status }) => (
+                      <td key={card.index} className={CELL}>
+                        {gbp(status.result.cases[valueCase].netCost)}
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+            <p className="mt-2 text-xs text-text-muted">Running costs are insurance, maintenance, VED and other costs together.</p>
+          </div>
+        </div>
       )}
-      <section
-        id={CARDS_ID}
-        data-cards
-        aria-labelledby="cd-cards-title"
-        // biome-ignore lint/a11y/noNoninteractiveTabindex: a region that scrolls sideways on a phone must be keyboard-focusable (axe scrollable-region-focusable).
-        tabIndex={0}
-        className={cn(
-          // Relative: screen-reader-only text in a card off to the side stays inside the row instead of widening the page.
-          // Items start: a short card keeps its own height instead of stretching to the tallest (3d-1 fix).
-          'relative flex items-start snap-x snap-mandatory gap-3 overflow-x-auto rounded-lg pb-2 outline-offset-2 md:grid md:overflow-visible md:pb-0',
-          GRID_COLUMNS[cards.length],
-        )}
-      >
-        {cards.map((card) => (
-          <OptionCard key={card.index} card={card} valueCase={valueCase} position={places.get(card.index) ?? ''} gbp={gbp} />
-        ))}
-      </section>
+      <div className="flex min-w-0 flex-col gap-2">
+        <h3 id="cd-cards-title" className="text-sm font-semibold text-text">
+          Each option
+        </h3>
+        <div data-cards className={cn('grid items-start gap-3', GRID_COLUMNS[cards.length])}>
+          {cards.map((card) => (
+            <OptionCard key={card.index} card={card} valueCase={valueCase} gbp={gbp} />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
+
+/** A table's figure cell, one line, a minimum width (U36). */
+const CELL = 'min-w-28 px-3 py-2 text-right tabular-nums whitespace-nowrap'
+/** A table's first column, opaque over the figures scrolling under it, narrow, its labels wrapping (U36). */
+const FIRST_COLUMN = 'sticky left-0 z-10 w-32 min-w-32 bg-surface px-3 py-2 text-left'
 
 /** The cards' figures as a table (U17), the accessible equivalent: a column per option in the cards' order. */
 export function CompareTable({ cards, valueCase, gbp }: { cards: readonly CardData[]; valueCase: ValueCase; gbp: Gbp }) {
@@ -417,9 +458,9 @@ export function CompareTable({ cards, valueCase, gbp }: { cards: readonly CardDa
     ['Average cost per month owned', shown('perMonth')],
     ['Total net cost', shown('total')],
     ['Coverage', shown('coverage')],
-    ['Equity at the horizon', shown('equity')],
-    ['Cash out', shown('cashOut')],
-    ['Opportunity cost', shown('opportunity')],
+    ['Yours at the end', shown('equity')],
+    ['Cash paid out', shown('cashOut')],
+    ['Interest your cash could have earned', shown('opportunity')],
     [
       'Rate',
       (card) => {
@@ -437,18 +478,15 @@ export function CompareTable({ cards, valueCase, gbp }: { cards: readonly CardDa
   ]
   return (
     <div className="flex min-w-0 flex-col gap-2">
-      <h2 id="cd-table-title" className="text-base font-semibold text-text">
-        The options side by side
-      </h2>
       <section
-        aria-labelledby="cd-table-title"
+        aria-label="The options side by side"
         // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-focusable (axe scrollable-region-focusable).
         tabIndex={0}
-        className="relative overflow-x-auto rounded-lg border border-border bg-surface shadow-sm"
+        className="relative overflow-x-auto rounded-lg border border-border bg-surface"
       >
         <table data-compare-table className="w-full border-collapse text-sm text-text">
           <caption className="sr-only">
-            Each option’s figures in the {CASE_LABELS[valueCase].toLowerCase()} case, in the cards’ order
+            Each option’s figures in the {CASE_LABELS[valueCase].toLowerCase()} case, in the engine’s order
           </caption>
           <thead>
             <tr className="text-text-muted">
@@ -482,84 +520,6 @@ export function CompareTable({ cards, valueCase, gbp }: { cards: readonly CardDa
   )
 }
 
-/** The order under these assumptions (F27), for the results column: the rule and ties in words, each option in order. */
-export function OrderSummary({
-  comparison,
-  cards,
-  valueCase,
-  gbp,
-}: {
-  comparison: Comparison | null
-  cards: readonly CardData[]
-  valueCase: ValueCase
-  gbp: Gbp
-}) {
-  const engineNames = (statuses: readonly CardData[]) => {
-    const out: string[] = []
-    for (const card of statuses) if (card.status.kind === 'ok') out[card.status.engineIndex] = card.name
-    return out
-  }
-  const ties = comparison ? tiesText(comparison, valueCase, engineNames(cards)) : []
-  const shown = (card: CardData) => (card.status.kind === 'ok' ? card.status : null)
-  return (
-    <section
-      data-order-summary
-      aria-labelledby="cd-order-title"
-      className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5 shadow-sm"
-    >
-      <h2 id="cd-order-title" className="text-base font-semibold text-text">
-        Order under these assumptions
-      </h2>
-      {comparison ? (
-        <p data-ordering-rule className="text-sm text-text-muted">
-          {orderingRule(comparison, valueCase)}
-        </p>
-      ) : (
-        <p className="text-sm text-text-muted">No option has results yet: each card says what it needs.</p>
-      )}
-      <ol className="flex flex-col">
-        {cards.map((card) => {
-          const status = shown(card)
-          return (
-            <li
-              key={card.index}
-              className="flex flex-wrap items-baseline justify-between gap-x-4 border-t border-border py-2 text-sm first:border-t-0"
-            >
-              <span className="min-w-0 text-text [overflow-wrap:anywhere]">
-                {card.name} <span className="text-text-muted">({ACQUISITION_LABELS[card.kind]})</span>
-              </span>
-              <span className="text-right font-medium text-text tabular-nums">
-                {status
-                  ? `${gbp(status.result.cases[valueCase].netCostPerCoverageMonth)} a month${status.result.fullCoverage ? '' : `, over ${status.result.coverageMonths} months: not ordered`}`
-                  : card.status.kind === 'refused'
-                    ? 'No results'
-                    : card.status.kind === 'held'
-                      ? 'Input to fix'
-                      : 'Inputs missing'}
-              </span>
-            </li>
-          )
-        })}
-      </ol>
-      {ties.length > 0 && (
-        <p data-ties className="text-sm text-text">
-          {ties.join(' ')}
-        </p>
-      )}
-      {cards.length > 0 && (
-        <Button
-          variant="secondary"
-          className="self-start"
-          onClick={() => document.getElementById(CARDS_ID)?.focus()}
-          aria-describedby="cd-order-title"
-        >
-          Go to the cards
-        </Button>
-      )}
-    </section>
-  )
-}
-
 export type FlipState =
   | { readonly kind: 'no-pair' }
   | { readonly kind: 'same' }
@@ -582,7 +542,7 @@ export type FlipState =
 export function WhatChanges({ state, inputs, gbp, picker }: { state: FlipState; inputs: CarDecisionInputs; gbp: Gbp; picker?: ReactNode }) {
   let body: ReactNode
   if (state.kind === 'no-pair')
-    body = <p>Thresholds need two options that cover the whole horizon with results. Each card says what its option needs.</p>
+    body = <p>Thresholds need two options that cover the whole horizon with results. Each option says what it still needs.</p>
   else if (state.kind === 'same') body = <p>Choose two different options to see the thresholds between them.</p>
   else if (state.kind === 'pending') body = <p>Working out the thresholds once the inputs settle…</p>
   else if (state.kind === 'refused') body = <p>The thresholds can’t be worked out for these inputs.</p>
@@ -616,11 +576,11 @@ export function WhatChanges({ state, inputs, gbp, picker }: { state: FlipState; 
       data-flips
       aria-labelledby="cd-flips-title"
       // A long unbroken option name wraps instead of widening the page.
-      className="flex min-w-0 flex-col gap-3 rounded-lg border border-border bg-surface p-5 text-sm text-text shadow-sm [overflow-wrap:anywhere]"
+      className="flex min-w-0 flex-col gap-3 text-sm text-text [overflow-wrap:anywhere]"
     >
-      <h2 id="cd-flips-title" className="text-base font-semibold">
-        What changes the answer
-      </h2>
+      <h3 id="cd-flips-title" className="text-sm font-semibold">
+        Thresholds
+      </h3>
       {picker}
       {state.kind !== 'no-pair' && (
         <p data-flips-measured className="text-text-muted">

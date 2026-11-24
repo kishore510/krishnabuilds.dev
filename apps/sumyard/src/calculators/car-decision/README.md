@@ -8,6 +8,8 @@ Finance still owed on a kept car (**3e, 0.23.0**): a switch and four boxes in th
 
 Thresholds and the cost bridge (**3d-2, 0.24.0**): a threshold search carries on past a band where the two are level and names the option lower on each side (F53, closes OQ-flip-tie); the first option's fuel or energy price threshold (F54); "Where the difference comes from" under the verdict, the pair's difference in average cost per month owned split by part, with `BridgeBar` (F55, F56, U38); the sensitivity table readable on a phone (U39).
 
+The redesign (**0.38.0**, CD1 to CD12, `docs/ui-patterns.md`): options as coloured rows (`CarOptions.tsx`) with Start from and Copy the car (`setup.ts`); one shared annual mileage and an optional low and high end value (inputs version 4, CD10 and CD11, `docs/modelling-decisions-car.md`; `resolveOption` feeds the engine); the answer card (the verdict's gap as the headline, a bar per option); where the money goes (`costParts`: cost bars by part, slim cards); results in sections; the chart's net cost or cash paid so far; Share (`share.ts`, `ShareCar.tsx`); colours and icons in `style.ts`. The bottom line and the order summary were dropped (CD5). Tests: `setup.test.ts`, `share.test.ts`, `CarDecisionPage.redesign.test.tsx`, and the version 4 block in `definition.test.ts`.
+
 Decisions: F1 to F31 (the engines), the page's F32 to F42, 3e's F43 to F52 and 3d-2's F53 to F56 in `docs/modelling-decisions-car.md`; layout patterns U16 to U22, U29 to U33, U37 and U38 to U39 in `docs/ui-patterns.md`. The page holds no figure. Every result is the engines'; the only arithmetic (`narrative.ts`) is differences and sums of the engine's whole-penny amounts, and a total over the months owned rounded once to the nearest penny.
 
 ## Files

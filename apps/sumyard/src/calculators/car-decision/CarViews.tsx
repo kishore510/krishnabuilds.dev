@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ChangeBar } from '@/components/ChangeBar'
 import { Chart } from '@/components/Chart/Chart'
-import { StatRow } from '@/components/ResultCard'
+import { Segmented } from '@/components/inputs/Segmented'
 import { Section } from '@/components/Section'
 import { SETTLE_MS } from '@/components/StickyResult'
 import { formatGBPCompact, formatGBPDelta } from '@/lib/format'
@@ -10,7 +10,7 @@ import { fromPence, type Money, toPence, ZERO } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import type { AmountStyle } from '@/settings/settings'
 import type { ValueCase } from '../car-ownership/types'
-import { crossover, type ReadoutRow, readout } from './chart'
+import { type ChartMeasure, crossover, type ReadoutRow, readout } from './chart'
 import { CASE_LABELS, type CarDecisionInputs, type PageOutcome, toEngineShared, uniqueNames } from './definition'
 import { cardOrder } from './results'
 import { byEffect, type Cell, DRIVERS, type Driver, type DriverRow, driverRow } from './sensitivity'
@@ -36,7 +36,20 @@ type Gbp = (amount: Money) => string
 
 const caseWord = (valueCase: ValueCase) => CASE_LABELS[valueCase].toLowerCase()
 
-/** The crossover chart and the readout at the selected month. */
+/** The sticky first column, opaque and narrow, its labels wrapping (U36). */
+const FIRST = 'sticky left-0 z-10 w-32 min-w-32 bg-surface px-3 py-2 text-left'
+
+const MEASURES: { value: ChartMeasure; label: string }[] = [
+  { value: 'net', label: 'Net cost so far' },
+  { value: 'cash', label: 'Cash paid so far' },
+]
+
+const MEASURE_HELP: Record<ChartMeasure, string> = {
+  net: 'Each line is an option’s net cost so far: cash paid, plus any sale given up, less what the car is worth after anything owed, plus the interest your cash could have earned. Where two lines cross, their running totals swap over.',
+  cash: 'Each line is the cash an option has paid out so far: deposits, payments, fuel and running costs. It leaves out what the car is still worth, so it is not the cost.',
+}
+
+/** The crossover chart (net cost or cash paid so far, CD8) and the readout at the selected month, inside its section. */
 export function CrossoverView({
   outcome,
   inputs,
@@ -51,29 +64,22 @@ export function CrossoverView({
   onMonth: (month: number) => void
   gbp: Gbp
 }) {
-  const data = crossover(outcome, inputs)
+  const [measure, setMeasure] = useState<ChartMeasure>('net')
+  const data = crossover(outcome, inputs, measure)
   if (!data) return null
+  const what = measure === 'net' ? 'Cumulative net cost' : 'Cash paid so far'
   return (
-    <section
-      data-crossover
-      aria-labelledby="cd-crossover-title"
-      className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm"
-    >
-      <h2 id="cd-crossover-title" className="text-base font-semibold text-text">
-        Month by month
-      </h2>
-      <p className="text-sm text-text-muted">
-        Each line is an option’s net cost so far: cash out, plus any sale given up, less the equity in the car, plus the opportunity cost.
-        Where two lines cross, their running totals swap over. Tap the chart, or use the arrow keys on it, to pick a month.
-      </p>
+    <div data-crossover data-measure={measure} className="flex min-w-0 flex-col gap-4">
+      <Segmented id="cd-chart-measure" label="Show" value={measure} options={MEASURES} onChange={setMeasure} />
+      <p className="text-sm text-text-muted">{MEASURE_HELP[measure]} Tap the chart, or use the arrow keys on it, to pick a month.</p>
       <Chart
-        title={`Cumulative net cost by month, ${caseWord(inputs.valueCase)} end value`}
+        title={`${what} by month, ${caseWord(inputs.valueCase)} end value`}
         categories={data.categories}
         xValues={data.xValues}
         series={data.series}
         markers={data.markers}
         xLabel="Month"
-        yLabel="Net cost so far"
+        yLabel={measure === 'net' ? 'Net cost so far' : 'Cash paid so far'}
         formatTick={(v) => formatGBPCompact(fromPence(v))}
         formatValue={(v) => gbp(fromPence(v))}
         integer
@@ -85,46 +91,73 @@ export function CrossoverView({
         selectLabel="Month on the chart"
       />
       <Readout rows={readout(outcome, inputs, month)} month={month} valueCase={inputs.valueCase} gbp={gbp} />
-    </section>
+    </div>
   )
 }
 
+/** The readout table's figure columns: net cost, cash paid and what is yours then. */
+const READOUT_FIGURES = ['net', 'cash', 'equity'].length
+
+/** Each option at the selected month, as one small table (CD8). */
 function Readout({ rows, month, valueCase, gbp }: { rows: readonly ReadoutRow[]; month: number; valueCase: ValueCase; gbp: Gbp }) {
+  const cell = 'min-w-24 px-3 py-2 text-right tabular-nums whitespace-nowrap'
   return (
-    <div data-readout className="flex min-w-0 flex-col gap-3">
-      <h3 className="text-base font-semibold text-text">Each option at month {month}</h3>
-      <p data-readout-held className="text-sm text-text-muted">
-        Everything else as entered, in the {caseWord(valueCase)} end value; only the month changes. Figures are from the start to the end of
-        that month.
+    <div data-readout className="flex min-w-0 flex-col gap-2">
+      <h3 className="text-sm font-semibold text-text">Each option at month {month}</h3>
+      <p data-readout-held className="text-xs text-text-muted">
+        From the start to the end of that month, {caseWord(valueCase)} end value; everything else as entered.
       </p>
-      {/* Plain blocks, not regions: the option cards above are the regions named by each option. */}
-      <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {rows.map((row) => (
-          <li
-            key={row.index}
-            data-readout-row={row.index}
-            className="flex min-w-0 flex-col gap-2 rounded-md border border-border bg-surface-muted p-3"
-          >
-            <p className="text-sm font-semibold text-text [overflow-wrap:anywhere]">{row.name}</p>
-            <dl className="flex flex-col">
-              {row.point ? (
-                <>
-                  <StatRow label="Net cost so far" value={gbp(row.point.netCost)} marker="readout-net" />
-                  <StatRow
-                    label="Equity"
-                    value={gbp(row.point.equity)}
-                    detail="What the car is worth less anything still owed"
-                    marker="readout-equity"
-                  />
-                  <StatRow label="Cash out so far" value={gbp(row.point.cashOut)} marker="readout-cash" />
-                </>
-              ) : (
-                <StatRow label="Coverage" value={`Handed back at month ${row.handedBackAt}`} detail="No car, and no figures, after that" />
-              )}
-            </dl>
-          </li>
-        ))}
-      </ul>
+      <section
+        aria-label={`Each option at month ${month}`}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be keyboard-focusable (axe scrollable-region-focusable).
+        tabIndex={0}
+        className="relative overflow-x-auto rounded-md border border-border"
+      >
+        <table className="w-full border-collapse text-sm text-text">
+          <thead>
+            <tr className="text-text-muted">
+              <th scope="col" className={`${FIRST} font-medium`}>
+                Option
+              </th>
+              <th scope="col" className={`${cell} font-medium`}>
+                Net cost so far
+              </th>
+              <th scope="col" className={`${cell} font-medium`}>
+                Cash paid so far
+              </th>
+              <th scope="col" className={`${cell} font-medium`}>
+                Yours then
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.index} data-readout-row={row.index} className="border-t border-border">
+                <th scope="row" className={`${FIRST} font-normal [overflow-wrap:anywhere]`}>
+                  {row.name}
+                </th>
+                {row.point ? (
+                  <>
+                    <td className={cell}>
+                      <span data-readout-net>{gbp(row.point.netCost)}</span>
+                    </td>
+                    <td className={cell}>
+                      <span data-readout-cash>{gbp(row.point.cashOut)}</span>
+                    </td>
+                    <td className={cell}>
+                      <span data-readout-equity>{gbp(row.point.equity)}</span>
+                    </td>
+                  </>
+                ) : (
+                  <td colSpan={READOUT_FIGURES} className="px-3 py-2 text-xs text-text-muted">
+                    Handed back at month {row.handedBackAt}: no car, and no figures, after that
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
     </div>
   )
 }
@@ -142,9 +175,6 @@ const driverLabel = (driver: Driver, valueCase: ValueCase) =>
   driver === 'endValue' ? `${DRIVER_LABELS.endValue} (${caseWord(valueCase)} case)` : DRIVER_LABELS[driver]
 
 const shiftLabel = (shift: number) => `${shift > 0 ? '+' : '−'}${Math.abs(shift)}%`
-
-/** The sticky first column, opaque and narrow, its labels wrapping (U36). */
-const FIRST = 'sticky left-0 z-10 w-32 min-w-32 bg-surface px-3 py-2 text-left'
 
 /** A cell's change in whole pence, for the drawn bar; null without a figure. */
 const pence = (cell: Cell | undefined) => (cell && cell.change !== null ? toPence(cell.change) : null)
@@ -246,12 +276,12 @@ export function SensitivityView({
           : state.options.map((o) => `${names[o.index]}: ${driverLabel(o.rows[0]!.driver, inputs.valueCase).toLowerCase()} most`).join('; ')
   return (
     <div data-sensitivity data-sensitivity-ms={state.kind === 'ready' ? state.ms : undefined} className="min-w-0">
-      <Section id="cd-section-sensitivity" title="Sensitivity: what moves the answer most" summary={summary} onOpenChange={onOpenChange}>
+      <Section id="cd-section-sensitivity" title="What moves each option’s cost most" summary={summary} onOpenChange={onOpenChange}>
         <p className="text-sm text-text-muted">
           Each row moves one input by the percentage shown, one at a time, with every other input held at its current value. Each figure is
-          the change in that option’s average cost per month owned against its card, from the same engine. The changes are constant
-          percentages of today’s inputs, illustrative only, not a forecast and not advice. Rows are sorted with the largest change first.
-          “Outside the range” means the move takes the input past what Sumyard models.
+          the change in that option’s average cost per month owned, from the same engine. The changes are constant percentages of today’s
+          inputs, illustrative only, not a forecast and not advice. Rows are sorted with the largest change first. “Outside the range” means
+          the move takes the input past what Sumyard models.
         </p>
         {state.kind === 'none' && <p className="text-sm text-text">Each card says what its option needs first.</p>}
         {state.kind === 'updating' && (

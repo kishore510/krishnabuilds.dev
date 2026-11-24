@@ -14,6 +14,11 @@ export interface ChartSeries {
   readonly values: readonly (number | null)[]
   /** Its look; by default the series' place in the list picks one. */
   readonly style?: ChartStyle
+  /**
+   * A token colour in place of the style's (the car decision's option colours, CD1), written out whole so Tailwind finds
+   * them. The style's dash and marker stay, so lines still differ by more than colour. Never the danger colour.
+   */
+  readonly colour?: { readonly stroke: string; readonly fill: string }
 }
 
 /** A horizontal reference line (a threshold), labelled. */

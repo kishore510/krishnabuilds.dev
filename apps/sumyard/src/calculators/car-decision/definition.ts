@@ -488,7 +488,9 @@ function fromVersion2(old: unknown): unknown {
  */
 function fromVersion3(old: unknown): unknown {
   if (!isRecord(old) || Array.isArray(old) || !Array.isArray(old.options)) return old
-  const entered = old.options.find((option: unknown) => isRecord(option) && option.annualMileage !== null && option.annualMileage !== undefined)
+  const entered = old.options.find(
+    (option: unknown) => isRecord(option) && option.annualMileage !== null && option.annualMileage !== undefined,
+  )
   const shared = isRecord(entered) ? entered.annualMileage : null
   return {
     ...old,
@@ -778,9 +780,7 @@ export function calculate(inputs: CarDecisionInputs, held: ReadonlySet<number> =
     const missing = missingFields(option)
     return missing.length > 0 ? { kind: 'missing', missing } : null
   })
-  const built = new Map(
-    resolved.flatMap((option, index) => (statuses[index] ? [] : [[index, toEngineOption(option, increase)] as const])),
-  )
+  const built = new Map(resolved.flatMap((option, index) => (statuses[index] ? [] : [[index, toEngineOption(option, increase)] as const])))
   const refuse = (index: number, problems: readonly OwnershipProblem[]) => {
     statuses[index] = { kind: 'refused', refusal: inputRefusal(problems, inputs.options[index]!.acquisition) }
     built.delete(index)

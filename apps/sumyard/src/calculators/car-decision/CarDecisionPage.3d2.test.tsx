@@ -71,18 +71,16 @@ describe('where the difference comes from (3d-2, F55, F56)', () => {
     return costBridge(comparison.options[pair[0]]!, comparison.options[pair[1]]!, i.valueCase)!
   }
 
-  it('sits in the results under the verdict: the two lowest by default, a row per part equal to the engine’s bridge', () => {
+  it('sits in “What changes the answer” before the thresholds: the two lowest by default, a row per part equal to the engine’s bridge', () => {
     set(four)
     const section = $('[data-bridge]')!
-    expect(section.closest('[data-results]')).not.toBeNull()
-    const verdict = $('[data-verdict-panel]')!
-    expect(verdict.compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(section.closest('[data-section="cd-section-changes"]')).not.toBeNull()
+    expect(section.compareDocumentPosition($('[data-flips]')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     const ranking = engine(four).ranking.expected.full
     const pair: [number, number] = [ranking[0]!.option, ranking[1]!.option]
-    expect([
-      Number(($('#cd-bridge-first') as HTMLSelectElement).value),
-      Number(($('#cd-bridge-second') as HTMLSelectElement).value),
-    ]).toEqual(pair)
+    expect([Number(($('#cd-pair-first') as HTMLSelectElement).value), Number(($('#cd-pair-second') as HTMLSelectElement).value)]).toEqual(
+      pair,
+    )
     const b = bridgeOf(four, pair)
     const cells = $$('[data-bridge-table] tbody tr', section)
     expect(cells.map((tr) => text(tr.querySelector('td')))).toEqual(b.parts.map((p) => formatGBPDelta(p.shown, 'pence')))
@@ -94,18 +92,17 @@ describe('where the difference comes from (3d-2, F55, F56)', () => {
     for (const row of $$('[data-bridge-row]', section)) expect(Number(row.getAttribute('data-value'))).not.toBe(0)
   })
 
-  it('shares its pair with “What changes the answer”: choosing in either moves both', () => {
+  it('shares one pair picker with the thresholds (CD8): choosing moves both', () => {
     vi.useFakeTimers()
     set(four)
     act(() => vi.advanceTimersByTime(SETTLE_MS))
-    pick('#cd-bridge-first', '0')
-    pick('#cd-bridge-second', '2')
-    expect(($('#cd-pair-first') as HTMLSelectElement).value).toBe('0')
-    expect(($('#cd-pair-second') as HTMLSelectElement).value).toBe('2')
+    expect($$('[data-pair-picker]')).toHaveLength(1)
+    pick('#cd-pair-first', '0')
+    pick('#cd-pair-second', '2')
     const said = bridgeSentences(bridgeOf(four, [0, 2]), ['Newer car', 'Loan car'], 'expected', money)
     expect(text($('[data-bridge-largest]'))).toBe(said.largest)
-    pick('#cd-pair-second', '1')
-    expect(($('#cd-bridge-second') as HTMLSelectElement).value).toBe('1')
+    act(() => vi.advanceTimersByTime(SETTLE_MS))
+    expect(text($('[data-flips]'))).toContain('Between Newer car and Loan car')
   })
 
   it('hidden, with the reason, when fewer than two options cover the whole horizon with results', () => {
@@ -129,8 +126,8 @@ describe('where the difference comes from (3d-2, F55, F56)', () => {
 
   it('the same option twice is not a pair', () => {
     set(four)
-    pick('#cd-bridge-first', '1')
-    pick('#cd-bridge-second', '1')
+    pick('#cd-pair-first', '1')
+    pick('#cd-pair-second', '1')
     expect(text($('[data-bridge]'))).toMatch(/two different options/i)
     expect($('[data-bridge-table]')).toBeNull()
   })

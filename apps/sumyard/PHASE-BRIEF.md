@@ -1,6 +1,6 @@
 # PHASE-BRIEF: Car decision redesign
 
-Status: **Car decision redesign** in progress (0.38.0). The mortgage redesign (0.37.0, PR #191) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
+Status: **Car decision redesign** built (0.38.0), waiting on the owner's sign-off from screenshots (CD12) and merge. The mortgage redesign (0.37.0, PR #191) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
 
 ## Docs rule
 
@@ -62,11 +62,11 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 24 November 2026 (0.37.0): mortgage page redesign (MD1 to MD5): `mortgage-*` tokens, `style.ts`, section and row icons, interest saved as the headline before the warnings, the payments ring (`paidParts`), Share via `share.ts` on the shared dialog. Full test, lint, typecheck and build pass; Chromium screenshots and axe at 360 and 1280 px, light and dark. Not done: Safari, a real phone, a screen reader.
+- 24 November 2026 (0.38.0): car decision redesign (CD1 to CD12): inputs version 4 (optional range, shared mileage; tests first), `car-*` tokens, `style.ts`, `setup.ts` (Start from, Copy the car, row summaries, cost parts), option rows (`CarOptions.tsx`), the answer card, cost bars and slim cards, results in sections, the chart's cash view, Share (`share.ts`). Page height with three options: about 13,200 to 3,300 px on a laptop. Not done: Safari, a real phone, a screen reader.
 
 ## Next
 
 - Owner: sign off from the screenshots in the PR, then merge.
-- Next redesign: compound interest; next pound and car decision lightly (the next pound's open checks are revisited then).
+- Next redesign: compound interest; next pound lightly (its open checks are revisited then).
 
 Full history (progress logs, finished part scopes, slice archives): `docs/history/` (grep it, don't read it whole).
