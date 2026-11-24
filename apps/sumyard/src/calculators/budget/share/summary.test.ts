@@ -37,7 +37,7 @@ describe('the shared summary', () => {
     // 3,400 − (1,100 + 100 + 120 + 200 + 250) − 50 put aside = 1,580.
     expect(m.headline).toBe('£1,580')
     expect(m.when).toBe('November 2026')
-    expect(m.accounts.map((a) => [a.name, a.value, a.short])).toEqual([
+    expect(m.tiles.map((a) => [a.name, a.value, a.short])).toEqual([
       ['Main account', '£1,670', false],
       ['Personal', '-£90', true],
       ['Rainy day', '£50', false],

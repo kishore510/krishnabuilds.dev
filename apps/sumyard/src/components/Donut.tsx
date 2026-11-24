@@ -85,6 +85,8 @@ export function Donut({
               {arcs.map((a) => (
                 <circle
                   key={a.id}
+                  data-part={a.id}
+                  data-value={a.value}
                   cx={SIZE / 2}
                   cy={SIZE / 2}
                   r={R}

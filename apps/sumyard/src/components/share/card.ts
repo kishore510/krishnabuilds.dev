@@ -1,7 +1,7 @@
-import type { ShareModel, SharePart } from './summary'
+import type { ShareModel } from './model'
 
 /*
- * The image card (BD16): the shared summary drawn on a canvas, a 4:5
+ * The image card (BD16; shared since the take-home redesign): a page's share model drawn on a canvas, a 4:5
  * portrait that suits messages and social posts. Colours come from the
  * design tokens (read by the dialog, always the light theme so a card looks
  * the same to whoever receives it); the font is the app's own Inter. Layout
@@ -23,8 +23,8 @@ export interface CardColours {
   readonly dangerSubtle: string
   readonly accent: string
   readonly onAccent: string
-  /** By part id: each group, 'pots' and 'leftover'. */
-  readonly parts: Readonly<Record<SharePart['id'], string>>
+  /** A part's colour from its token name (`ShareModel` part `colour`). */
+  readonly part: (token: string) => string
 }
 
 const FONT = "'Inter Variable', ui-sans-serif, system-ui, sans-serif"
@@ -105,7 +105,7 @@ export function drawCard(ctx: CanvasRenderingContext2D, m: ShareModel, c: CardCo
     const sweep = (p.year / m.total) * Math.PI * 2
     ctx.beginPath()
     ctx.arc(cx, cy, radius, angle + gap / 2, angle + Math.max(sweep - gap / 2, gap / 2))
-    ctx.strokeStyle = c.parts[p.id]
+    ctx.strokeStyle = c.part(p.colour)
     ctx.lineWidth = thick
     ctx.stroke()
     angle += sweep
@@ -116,7 +116,7 @@ export function drawCard(ctx: CanvasRenderingContext2D, m: ShareModel, c: CardCo
   let ly = cy - (rows.length * rowHeight) / 2 + rowHeight * 0.7
   for (const p of rows) {
     roundRect(ctx, legendX, ly - 22, 24, 24, 6)
-    ctx.fillStyle = c.parts[p.id]
+    ctx.fillStyle = c.part(p.colour)
     ctx.fill()
     ctx.fillStyle = c.text
     ctx.font = font(500, 30)
@@ -129,13 +129,13 @@ export function drawCard(ctx: CanvasRenderingContext2D, m: ShareModel, c: CardCo
   }
   y = cy + radius + thick / 2 + 48
 
-  // Accounts.
-  if (m.accounts.length > 0) {
+  // Tiles (the budget's accounts).
+  if (m.tiles.length > 0) {
     ctx.fillStyle = c.muted
     ctx.font = font(600, 28)
-    ctx.fillText('Left in each account', PAD, y)
+    ctx.fillText(m.tilesTitle, PAD, y)
     y += 20
-    const shown = m.accounts.slice(0, 4)
+    const shown = m.tiles.slice(0, 4)
     const cols = shown.length <= 2 ? shown.length : 2
     const tileW = (W - 2 * PAD - (cols - 1) * 20) / cols
     const tileH = 104
@@ -160,14 +160,14 @@ export function drawCard(ctx: CanvasRenderingContext2D, m: ShareModel, c: CardCo
     y += Math.ceil(shown.length / cols) * (tileH + 16) + 20
   }
 
-  // Biggest outgoings.
+  // Biggest lines.
   if (m.biggest.length > 0 && y < CARD_HEIGHT - 200) {
     roundRect(ctx, PAD, y, W - 2 * PAD, 96, 18)
     ctx.fillStyle = c.surfaceMuted
     ctx.fill()
     ctx.fillStyle = c.text
     ctx.font = font(700, 26)
-    ctx.fillText('Biggest outgoings', PAD + 24, y + 38)
+    ctx.fillText(m.biggestTitle, PAD + 24, y + 38)
     ctx.font = font(500, 26)
     fitText(ctx, m.biggest.join('  ·  '), PAD + 24, y + 76, W - 2 * PAD - 48)
   }

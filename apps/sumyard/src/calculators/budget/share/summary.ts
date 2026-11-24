@@ -1,3 +1,15 @@
+import {
+  csvText,
+  plainPounds,
+  SHARE_FOOTER,
+  type ShareModel,
+  type ShareOptions,
+  type SharePart,
+  type ShareTile,
+  shareText,
+  shareWhen,
+  shareFileName as stemFileName,
+} from '@/components/share/model'
 import { formatGBP, formatPercent } from '@/lib/format'
 import { type Money, type Ratio, ratio, subtract, toPence, ZERO } from '@/lib/money'
 import type { AmountStyle } from '@/settings/settings'
@@ -10,56 +22,26 @@ import { type BudgetGroup, type BudgetResult, MAIN_ACCOUNT, SAVING_GROUP, type Y
  * an image card. The person chooses whether amounts show (else each figure
  * as a share of income) and whether line names show (else groups only).
  * Everything here is made on the device; nothing is sent anywhere. Figures
- * are the engine's, formatted; nothing is worked out again.
+ * are the engine's, formatted; nothing is worked out again. The model, text,
+ * CSV helpers, card and dialog are shared (`src/components/share/`).
  */
 
-export interface ShareOptions {
-  /** Show amounts; off: every figure as a share of income. */
-  readonly amounts: boolean
-  /** Show line names; off: groups only. */
-  readonly names: boolean
-}
+export type { ShareModel, ShareOptions }
+export { csvText, plainPounds, SHARE_FOOTER, shareText }
 
-export interface SharePart {
-  /** A group, or 'pots' or 'leftover'. */
-  readonly id: BudgetGroup | 'pots' | 'leftover'
-  readonly label: string
-  /** Pence a year, for drawing; never shown when amounts are off. */
-  readonly year: number
-  /** A month, as the options say: an amount or a share. */
-  readonly value: string
-  /** Each line, keyed by its place among the outgoings. */
-  readonly lines: readonly { readonly key: number; readonly name: string; readonly value: string; readonly paidFrom: string }[]
+/** Each part's colour token: a group's own, pots in the saving colour, what is left neutral. */
+const PART_COLOURS: Record<BudgetGroup | 'pots' | 'leftover', string> = {
+  home: 'group-home',
+  bills: 'group-bills',
+  food: 'group-food',
+  transport: 'group-transport',
+  personal: 'group-personal',
+  debt: 'group-debt',
+  saving: 'group-saving',
+  other: 'group-other',
+  pots: 'group-saving',
+  leftover: 'border-strong',
 }
-
-export interface ShareAccount {
-  readonly name: string
-  readonly value: string
-  readonly note: string
-  readonly short: boolean
-}
-
-export interface ShareModel {
-  readonly title: string
-  /** "November 2026". */
-  readonly when: string
-  readonly headlineLabel: string
-  readonly headline: string
-  readonly negative: boolean
-  readonly sentence: string
-  readonly stats: readonly { readonly label: string; readonly value: string }[]
-  /** Groups with something in them, then what pots put aside, then what is left (when above nothing). */
-  readonly parts: readonly SharePart[]
-  /** Pence a year the parts add up to: income, or outgoings when they are more. */
-  readonly total: number
-  /** Each account, main first; empty with only main. */
-  readonly accounts: readonly ShareAccount[]
-  /** The three biggest lines outside saving, as text, when names show. */
-  readonly biggest: readonly string[]
-  readonly footer: string
-}
-
-export const SHARE_FOOTER = 'Illustrative only, not financial advice. Made with Sumyard.'
 
 const share = (part: Money, income: Money): string =>
   toPence(income) === 0 ? 'n/a' : formatPercent(ratio(toPence(part), toPence(income)), 0)
@@ -75,6 +57,7 @@ export function shareModel(inputs: BudgetPageInputs, r: BudgetResult, options: S
     .filter((g) => toPence(g.year) > 0)
     .map((g) => ({
       id: g.group,
+      colour: PART_COLOURS[g.group],
       label: GROUP_LABELS[g.group],
       year: toPence(g.year),
       value: value(g),
@@ -85,15 +68,30 @@ export function shareModel(inputs: BudgetPageInputs, r: BudgetResult, options: S
               key: r.outgoingLines.indexOf(l),
               name: l.line.name || GROUP_LABELS[g.group],
               value: value(l),
-              paidFrom: accountName(l.line.account),
+              note: accountName(l.line.account),
             }))
         : [],
     }))
   if (toPence(r.potSaved.year) > 0)
-    parts.push({ id: 'pots', label: 'Savings pots', year: toPence(r.potSaved.year), value: value(r.potSaved), lines: [] })
-  if (!negative) parts.push({ id: 'leftover', label: 'Left over', year: toPence(r.leftover.year), value: value(r.leftover), lines: [] })
+    parts.push({
+      id: 'pots',
+      colour: PART_COLOURS.pots,
+      label: 'Savings pots',
+      year: toPence(r.potSaved.year),
+      value: value(r.potSaved),
+      lines: [],
+    })
+  if (!negative)
+    parts.push({
+      id: 'leftover',
+      colour: PART_COLOURS.leftover,
+      label: 'Left over',
+      year: toPence(r.leftover.year),
+      value: value(r.leftover),
+      lines: [],
+    })
 
-  const accounts: ShareAccount[] = many
+  const accounts: ShareTile[] = many
     ? r.accounts.map((a) => {
         const short = toPence(a.short.year) > 0
         const shown: YearAndMonth = short
@@ -121,7 +119,8 @@ export function shareModel(inputs: BudgetPageInputs, r: BudgetResult, options: S
 
   return {
     title: 'Household budget',
-    when: new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(now),
+    when: shareWhen(now),
+    period: 'a month',
     headlineLabel: `Left over${many ? ' across accounts' : ''} each month`,
     headline: options.amounts ? gbp(r.leftover.month) : share(r.leftover.year, r.income.year),
     negative,
@@ -139,48 +138,19 @@ export function shareModel(inputs: BudgetPageInputs, r: BudgetResult, options: S
           { label: 'Going out', value: share(r.outgoings.year, r.income.year) },
           { label: 'Saving rate', value: r.savingsRate ? formatPercent(r.savingsRate, 1) : 'n/a' },
         ],
+    partsTitle: 'Where it goes',
     parts,
     total: toPence(negative ? r.outgoings.year : r.income.year) + (negative ? 0 : toPence(r.fromOthers.year)),
-    accounts,
+    tilesTitle: 'Left in each account',
+    tiles: accounts,
+    biggestTitle: 'Biggest outgoings',
     biggest,
     footer: SHARE_FOOTER,
+    printNote: 'Amounts as entered; a year is twelve months. Uses no tax rules.',
   }
-}
-
-/* ── Text ─────────────────────────────────────────────────────────── */
-
-/** A short summary to paste into a message. */
-export function shareText(m: ShareModel): string {
-  const lines = [`${m.title}, ${m.when} (a month)`, '']
-  for (const s of m.stats) lines.push(`${s.label}: ${s.value}`)
-  lines.push(`${m.headlineLabel}: ${m.headline}`)
-  if (m.accounts.length > 0) {
-    lines.push('', 'Left in each account:')
-    for (const a of m.accounts) lines.push(`• ${a.name}: ${a.value} (${a.note})`)
-  }
-  lines.push('', 'Where it goes:')
-  for (const p of m.parts) {
-    lines.push(`• ${p.label}: ${p.value}`)
-    for (const l of p.lines) lines.push(`   – ${l.name}: ${l.value}`)
-  }
-  lines.push('', m.footer)
-  return lines.join('\n')
 }
 
 /* ── CSV ──────────────────────────────────────────────────────────── */
-
-/** Characters a spreadsheet reads as the start of a formula (BD16). */
-const FORMULA = /^[=+\-@\t\r]/
-
-/** A text cell: quoted, quotes doubled, and a leading formula character made plain with an apostrophe. */
-export const csvText = (text: string) => `"${(FORMULA.test(text) ? `'${text}` : text).replaceAll('"', '""')}"`
-
-/** Pence as plain pounds and pence for a spreadsheet ("-230.00"), from whole pence, never a float. */
-export function plainPounds(amount: Money): string {
-  const pence = BigInt(toPence(amount))
-  const size = pence < 0n ? -pence : pence
-  return `${pence < 0n ? '-' : ''}${size / 100n}.${String(size % 100n).padStart(2, '0')}`
-}
 
 const shareCell = (part: Money, income: Money) => (toPence(income) === 0 ? '' : formatPercent(ratio(toPence(part), toPence(income)), 1))
 
@@ -231,10 +201,7 @@ export function shareCsv(inputs: BudgetPageInputs, r: BudgetResult, options: Sha
 }
 
 /** A file name with the month: sumyard-budget-2026-11. */
-export function shareFileName(now: Date, extension: string): string {
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  return `sumyard-budget-${now.getFullYear()}-${month}.${extension}`
-}
+export const shareFileName = (now: Date, extension: string) => stemFileName('sumyard-budget', now, extension)
 
 /** For tests and the card: a share of the parts' total. */
 export const partShare = (part: number, total: number): Ratio | null => (total > 0 ? ratio(part, total) : null)

@@ -4,6 +4,14 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.36.0] - 2026-11-24
+
+### Added
+- **Share your take-home.** The take-home page has a **Share** button, as the household budget does: an image card, a PDF (print to PDF), a spreadsheet (CSV) or text to paste, for the year or a month as you've chosen. It shows your take-home, where your gross pay goes and the tax year and where you live; not your tax code, the names of your benefits and deductions, or the pension compare. Turn **Show amounts** off to share percentages of your gross pay only. Made on your device; nothing is uploaded.
+
+### Changed
+- **The take-home page has a new look**, in line with the household budget. Take-home leads, larger, with its share of your gross pay and the year, month and week beside it. A ring shows where your gross pay goes, with each part (income tax, National Insurance, student loan, pension, the Child Benefit charge, benefits, deductions and take-home) in its own colour and icon; the same icons mark the breakdown's rows and the input sections. Every figure and input is as before.
+
 ## [0.35.0] - 2026-11-24
 
 ### Changed
