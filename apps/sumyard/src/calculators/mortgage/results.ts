@@ -119,3 +119,32 @@ export function returnLines(result: MortgageResult, inputs: MortgageInputs): rea
     return { period, rate, effective, from, to, against }
   })
 }
+
+export type PaidPartId = 'capital' | 'interest' | 'charge'
+
+export const PAID_PART_LABELS: Record<PaidPartId, string> = {
+  capital: 'Amount borrowed, paid off',
+  interest: 'Interest',
+  charge: 'Early repayment charge',
+}
+
+export interface PaidPart {
+  readonly id: PaidPartId
+  readonly label: string
+  readonly amount: Money
+}
+
+/**
+ * Where a schedule's payments go (the mortgage redesign's ring): the amount borrowed it pays off, the interest and the
+ * charges, adding up to its total paid (payments, overpayments and charges). What is still owed at the end is not paid,
+ * so it is not a part. Every figure is the engine's.
+ */
+export function paidParts(result: MortgageResult, inputs: MortgageInputs, schedule: 'baseline' | 'overpaying'): readonly PaidPart[] {
+  const s = result[schedule]
+  const amounts: Record<PaidPartId, Money> = {
+    capital: subtract(inputs.balance, s.owedAtEnd),
+    interest: s.totalInterest,
+    charge: s.totalErc,
+  }
+  return (['capital', 'interest', 'charge'] as const).map((id) => ({ id, label: PAID_PART_LABELS[id], amount: amounts[id] }))
+}

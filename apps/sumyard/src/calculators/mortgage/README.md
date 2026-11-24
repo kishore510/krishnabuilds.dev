@@ -18,6 +18,7 @@ Decisions: MO1 to MO15 in `docs/modelling-decisions.md` (confirmed by the owner 
 - `definition.ts`: `MortgagePageInputs` (inputs version 1; contract boxes start empty), `validateInputs` (fresh objects; hostile keys, bad shapes and bounds refused by field), `toEngineInputs` (dates to payment months: the fixed rate and the charge cover the payments on or before their end dates; a lump sum goes with the first payment on or after its date; what is still needed, by field), `calculate`, `summarise` (typed rows for compare), section summaries.
 - `results.ts`: the chart's yearly points and fixed-rate marker, the data behind each warning (over the allowance with the charge; lump sums not needed; the fixed rate against the term; daily drift past `MORTGAGE_DRIFT_SHARE`), one return line per rate period with what it is measured against.
 - `MortgagePage.tsx`: sections (U42), `StickyResult`, the answer card, a what-if slider (U40, U41), warnings never hidden, payments and balance, returns, the shared `Chart` with its table, a yearly table, `AssumptionsPanel` (the engine's assumptions and the page's: dates to payment dates, the regular overpayment's run, lender terms vary), `NoTaxRulesBadge`, the disclaimer. Help: `content/help/mortgage.md`.
+- The redesign (0.37.0, MD1 to MD5 in `docs/ui-patterns.md`): `style.ts` (colours and icons), `paidParts` in `results.ts` (the ring), `share.ts` and `ShareMortgage.tsx` (Share on the shared dialog).
 - Page readings for the owner: `docs/open-questions.md`, "Mortgage page readings (M2)".
 
 ## How it works

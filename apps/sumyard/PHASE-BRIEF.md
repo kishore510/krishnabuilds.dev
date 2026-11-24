@@ -1,60 +1,28 @@
-# PHASE-BRIEF: Take-home page redesign
+# PHASE-BRIEF: Mortgage page redesign
 
-Status: **T0 (brief)**, **T1 (shared sharing)** and **T2 (the page)** Done (0.36.0, PR #190), in one PR at the owner's request; waiting on the owner's sign-off from screenshots (TH7) and merge. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner". Finished briefs are in `docs/history/phase-brief-archive.md`.
+Status: **Mortgage page redesign** built (0.37.0), waiting on the owner's sign-off from screenshots (MD5) and merge. The take-home redesign (0.36.0, PR #190) is merged; its brief is in `docs/history/phase-brief-archive.md`. The mortgage overpayment and next pound slices were closed by the owner on 24 November 2026; their open checks are below under "Still with the owner".
 
 ## Docs rule
 
 Close out every session with the tiered checklist in `CLAUDE.md` ("Session close-out checklist").
 
-## Take-home page redesign
+## Mortgage page redesign
 
 ### Goal
 
-Bring `#/c/optimiser` (take-home pay and the pension compare) into the look of the household budget (0.33.0) and the home page (0.35.0): icon tiles and colours per part, a headline first, a ring of where gross pay goes, compact grouped rows, and **Share** as an image, PDF, CSV or text. It is the first of the calculator redesigns, chosen because the budget, the next pound page and the home figure all read take-home scenarios. UI only: no engine, tax config, `inputsVersion`, storage key or saved scenario change; every input and result from 0.35.0 stays. The page still shows `VerifiedBadge`, refuses with the unverified values named, and calls nothing best (G13).
+Bring `#/c/mortgage` into the look of the budget (0.33.0) and take-home (0.36.0) pages. UI only: no engine, `inputsVersion`, storage key or saved scenario change; every input and result from 0.36.0 stays. The page still shows "Uses no tax rules" and calls nothing best (G13). Built in one PR (0.37.0); the owner approved the proposal in chat on 24 November 2026.
 
-### Parts
+### Decisions (MD1 to MD5, approved by the owner as proposed, 24 November 2026; detail in `docs/ui-patterns.md`)
 
-- **T0, brief (docs only, this PR):** this brief and decisions TH1 to TH8 for the owner.
-- **T1, shared sharing (internal, no visible change):** the budget's share dialog becomes its second user's shared component, as `CLAUDE.md` asks (extract once two pages need it). `src/components/share/`: the dialog (formats, amounts toggle, print page, downloads), the canvas card drawn from a page-neutral model (title, when, headline, sentence, stats, coloured parts, footer), the CSV formula guard and `plainPounds`, the file name. What a budget says stays in `src/calculators/budget/share/summary.ts`, now building that model. The budget's text, CSV and card come out the same (its tests unchanged, plus one that the card draws the same model). Patch version, an "Internal only" changelog line.
-- **T2, the page (after the mock-up is approved):** see "The page" below. Browser matrix and axe once, at 360 and 1280 px, light and dark. Help topic and `docs/ui-patterns.md` updated. Minor version.
+- **MD1.** Three new tokens `mortgage-capital`, `-interest`, `-charge` on existing palette steps (not the take-home's); Lucide icons on sections and result rows.
+- **MD2.** Interest saved as the emphasised headline, the warnings after it (changes U44's order), in full.
+- **The ring.** The shared `Donut` of the total paid with overpaying: amount borrowed paid off, interest, the charge. Interest-only: what is still owed is said beside it, not drawn.
+- **MD3.** Share (image, PDF, CSV, text), amounts on by default; amounts off is shares and times only, no pound figure.
+- **MD4.** The what-if stays one monthly overpayment slider. **MD5.** Sign-off from screenshots of the built page.
 
-### The page (T2, as proposed)
+### Differs from the proposal
 
-- **Your pay** stays visible at the top; each section (Pension, Pension allowances, Benefits and deductions, Student loans, Child Benefit, Tax code) gets an `IconTile` beside its title, as the budget's groups do. Live summaries, open-when-set and the item cards (U1 to U3, U9) are unchanged.
-- **Headline first:** take-home for the chosen period, large, with the other periods under it, and the two payslip lines with a tax code (U8). The phone sticky bar (U4) stays as it is.
-- **Where your gross pay goes:** the shared `Donut` in place of the `SplitBar` on this page (TH1), each part with its colour and icon, and its share of gross pay beside it; the table fallback stays. A take-home below nothing keeps today's "can't be drawn" path with the summary and table.
-- **Breakdown** as compact rows in the same colours and icons (gross, each deduction, take-home), the Year / Month choice unchanged; the PAYE card and "Alongside your pay" restyled, not changed.
-- **Pension compare** (1b-iii): visual alignment only (icon tiles on its sections, the same card styles); the picker, chart, milestones and warnings behave as now.
-- **Share** beside the scenario bar, hidden on a refusal or invalid inputs: the image card (headline, ring, the parts), PDF (print), CSV of the breakdown, and text; an **amounts** toggle (off: every part as a share of gross pay, no £ figure anywhere, TH4). No names toggle (no user-named lines are shared, TH5). Made on the device; nothing uploaded; no storage key.
-
-### Decisions (TH1 to TH8 approved by the owner as proposed, 24 November 2026; TH7 changed: screenshots of the built page instead of a mock-up)
-
-- **TH1.** The ring (`Donut`) replaces the split bar on the take-home page only; the split bar stays a shared component (the car and next pound pages use it).
-- **TH2.** Colours for the parts of pay: new semantic tokens `--sy-pay-tax`, `-ni`, `-student-loan`, `-pension`, `-hicbc`, `-benefits`, `-deductions`, mapped to existing palette steps (no new raw colours), with take-home in the budget's neutral left-over colour. The alternative is reusing the budget's group tokens (pension as saving green, and so on), which ties two meanings to one colour. A new token is a design-rule flag either way.
-- **TH3.** Icons from Lucide, already a dependency: income tax `Landmark` (also the budget's savings pot, on another page), National Insurance `ShieldCheck`, student loan `GraduationCap`, pension `PiggyBank`, Child Benefit charge `Baby`, benefits `Gift`, deductions `Receipt`, take-home `Wallet`. Colour is never the only cue: each is named beside it.
-- **TH4.** Share defaults to amounts **on**, as the budget does. Salary is the most sensitive figure here, so the alternative is off by default. Owner's call.
-- **TH5.** What is shared: the headline, the ring and the breakdown for the chosen period, the tax year and region, and the footer. Not shared: benefit and deduction item names, the tax code, the pension compare.
-- **TH6.** No what-if sliders on this page: the pension compare already is the what-if for the one input people change most.
-- **TH7.** A mock-up (phone and laptop, light and dark) for the owner's approval at the start of T2, as for the home page.
-- **TH8.** No change to the home card's figure (`homeFigure`, take-home a month).
-
-### Out of scope
-
-Engine, tax config, inputs and storage changes; a per-pay-period payroll view, choosing a contribution by tapping the chart, and the other backlog items for this page (`docs/backlog.md`); the other calculators' redesigns (mortgage, compound interest, next pound, car), each its own slice later.
-
-### Edge cases to test (T1, T2)
-
-| Case | Expect |
-|---|---|
-| Budget share after T1 | Text, CSV and card model identical to 0.35.0 for the budget's fixtures |
-| Ring parts | Add up to gross pay for the chosen period; shares of gross from exact Ratios; no part drawn at nothing |
-| Take-home below nothing | No ring; summary and table say why, as today's split bar does |
-| Refusal or invalid inputs | No Share button; the refusal names the unverified values |
-| Share with amounts off | No £ figure in the text, CSV, card or print page; percentages of gross only |
-| CSV | Formula cells written as text; pounds from whole pence |
-| With a tax code | Both payslip lines in the headline; the shared copy says which take-home it shows |
-| Scottish region, a Child Benefit charge, salary sacrifice benefits | Each part appears with its own colour and label, in the ring, rows and share |
-| Period | Year and Month give the same ring proportions within rounding; the sticky bar and breakdown share one choice (U4) |
+- No row of three small figure tiles under the headline: they would repeat the rows that follow (cleared in, total paid, the charge). The headline's sentence gives the interest with and without overpaying instead.
 
 ## Still with the owner (follow-ups; none blocks the current part)
 
@@ -87,11 +55,11 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 24 November 2026 (0.36.0, PR #190): closed the mortgage and next pound slices (checks kept as follow-ups) and built the take-home redesign in one PR: T1 moved the budget's sharing to `src/components/share/` (budget output and tests unchanged, one test reads `tiles`); T2 the page (`pay-*` tokens, `style.ts`, the ring, the emphasised headline, icons on sections and breakdown rows, Share via `share.ts`). Full test, lint, typecheck and build pass; Chromium screenshots and axe at 360 and 1280 px, light and dark. Not done: Safari, a real phone, a screen reader.
+- 24 November 2026 (0.37.0): mortgage page redesign (MD1 to MD5): `mortgage-*` tokens, `style.ts`, section and row icons, interest saved as the headline before the warnings, the payments ring (`paidParts`), Share via `share.ts` on the shared dialog. Full test, lint, typecheck and build pass; Chromium screenshots and axe at 360 and 1280 px, light and dark. Not done: Safari, a real phone, a screen reader.
 
 ## Next
 
-- Owner: sign off from the screenshots in the PR, then merge #190.
-- Next redesign: mortgage overpayment, then compound interest; next pound and car decision lightly (the next pound's open checks are revisited then).
+- Owner: sign off from the screenshots in the PR, then merge.
+- Next redesign: compound interest; next pound and car decision lightly (the next pound's open checks are revisited then).
 
 Full history (progress logs, finished part scopes, slice archives): `docs/history/` (grep it, don't read it whole).

@@ -913,3 +913,53 @@ CP10: the Lifetime ISA, the State Pension, a partner, offset mortgages, cash sav
 
 - **Independent reference (C1):** `next-pound/fixtures/reference.ts` in exact rational arithmetic (BigInt fractions): a lump sum grown at a rate less a fee by its own closed form, the tax split, the deflator, and the break-even by its own bisection; the pension cost from two calls of the optimiser's own reference (`optimiser/fixtures/reference.ts`), the mortgage leg from a closed-form balance after k months (as `mortgage/fixtures/reference.ts`). Seeded cases, as the other engines.
 - **Documents (owner to supply):** `docs/next-pound-cross-checks.json` holds eight todo cases, each naming the engine cross-check it reproduces (`docs/hmrc-cross-checks.json`, `docs/mortgage-cross-checks.json`, `docs/compound-cross-checks.json`). The repository is public: figures only, no identifiers.
+
+## Take-home page redesign brief (0.36.0, PR #190; moved here 24 November 2026)
+
+#### Goal
+
+Bring `#/c/optimiser` (take-home pay and the pension compare) into the look of the household budget (0.33.0) and the home page (0.35.0): icon tiles and colours per part, a headline first, a ring of where gross pay goes, compact grouped rows, and **Share** as an image, PDF, CSV or text. It is the first of the calculator redesigns, chosen because the budget, the next pound page and the home figure all read take-home scenarios. UI only: no engine, tax config, `inputsVersion`, storage key or saved scenario change; every input and result from 0.35.0 stays. The page still shows `VerifiedBadge`, refuses with the unverified values named, and calls nothing best (G13).
+
+#### Parts
+
+- **T0, brief (docs only, this PR):** this brief and decisions TH1 to TH8 for the owner.
+- **T1, shared sharing (internal, no visible change):** the budget's share dialog becomes its second user's shared component, as `CLAUDE.md` asks (extract once two pages need it). `src/components/share/`: the dialog (formats, amounts toggle, print page, downloads), the canvas card drawn from a page-neutral model (title, when, headline, sentence, stats, coloured parts, footer), the CSV formula guard and `plainPounds`, the file name. What a budget says stays in `src/calculators/budget/share/summary.ts`, now building that model. The budget's text, CSV and card come out the same (its tests unchanged, plus one that the card draws the same model). Patch version, an "Internal only" changelog line.
+- **T2, the page (after the mock-up is approved):** see "The page" below. Browser matrix and axe once, at 360 and 1280 px, light and dark. Help topic and `docs/ui-patterns.md` updated. Minor version.
+
+#### The page (T2, as proposed)
+
+- **Your pay** stays visible at the top; each section (Pension, Pension allowances, Benefits and deductions, Student loans, Child Benefit, Tax code) gets an `IconTile` beside its title, as the budget's groups do. Live summaries, open-when-set and the item cards (U1 to U3, U9) are unchanged.
+- **Headline first:** take-home for the chosen period, large, with the other periods under it, and the two payslip lines with a tax code (U8). The phone sticky bar (U4) stays as it is.
+- **Where your gross pay goes:** the shared `Donut` in place of the `SplitBar` on this page (TH1), each part with its colour and icon, and its share of gross pay beside it; the table fallback stays. A take-home below nothing keeps today's "can't be drawn" path with the summary and table.
+- **Breakdown** as compact rows in the same colours and icons (gross, each deduction, take-home), the Year / Month choice unchanged; the PAYE card and "Alongside your pay" restyled, not changed.
+- **Pension compare** (1b-iii): visual alignment only (icon tiles on its sections, the same card styles); the picker, chart, milestones and warnings behave as now.
+- **Share** beside the scenario bar, hidden on a refusal or invalid inputs: the image card (headline, ring, the parts), PDF (print), CSV of the breakdown, and text; an **amounts** toggle (off: every part as a share of gross pay, no £ figure anywhere, TH4). No names toggle (no user-named lines are shared, TH5). Made on the device; nothing uploaded; no storage key.
+
+#### Decisions (TH1 to TH8 approved by the owner as proposed, 24 November 2026; TH7 changed: screenshots of the built page instead of a mock-up)
+
+- **TH1.** The ring (`Donut`) replaces the split bar on the take-home page only; the split bar stays a shared component (the car and next pound pages use it).
+- **TH2.** Colours for the parts of pay: new semantic tokens `--sy-pay-tax`, `-ni`, `-student-loan`, `-pension`, `-hicbc`, `-benefits`, `-deductions`, mapped to existing palette steps (no new raw colours), with take-home in the budget's neutral left-over colour. The alternative is reusing the budget's group tokens (pension as saving green, and so on), which ties two meanings to one colour. A new token is a design-rule flag either way.
+- **TH3.** Icons from Lucide, already a dependency: income tax `Landmark` (also the budget's savings pot, on another page), National Insurance `ShieldCheck`, student loan `GraduationCap`, pension `PiggyBank`, Child Benefit charge `Baby`, benefits `Gift`, deductions `Receipt`, take-home `Wallet`. Colour is never the only cue: each is named beside it.
+- **TH4.** Share defaults to amounts **on**, as the budget does. Salary is the most sensitive figure here, so the alternative is off by default. Owner's call.
+- **TH5.** What is shared: the headline, the ring and the breakdown for the chosen period, the tax year and region, and the footer. Not shared: benefit and deduction item names, the tax code, the pension compare.
+- **TH6.** No what-if sliders on this page: the pension compare already is the what-if for the one input people change most.
+- **TH7.** A mock-up (phone and laptop, light and dark) for the owner's approval at the start of T2, as for the home page.
+- **TH8.** No change to the home card's figure (`homeFigure`, take-home a month).
+
+#### Out of scope
+
+Engine, tax config, inputs and storage changes; a per-pay-period payroll view, choosing a contribution by tapping the chart, and the other backlog items for this page (`docs/backlog.md`); the other calculators' redesigns (mortgage, compound interest, next pound, car), each its own slice later.
+
+#### Edge cases to test (T1, T2)
+
+| Case | Expect |
+|---|---|
+| Budget share after T1 | Text, CSV and card model identical to 0.35.0 for the budget's fixtures |
+| Ring parts | Add up to gross pay for the chosen period; shares of gross from exact Ratios; no part drawn at nothing |
+| Take-home below nothing | No ring; summary and table say why, as today's split bar does |
+| Refusal or invalid inputs | No Share button; the refusal names the unverified values |
+| Share with amounts off | No £ figure in the text, CSV, card or print page; percentages of gross only |
+| CSV | Formula cells written as text; pounds from whole pence |
+| With a tax code | Both payslip lines in the headline; the shared copy says which take-home it shows |
+| Scottish region, a Child Benefit charge, salary sacrifice benefits | Each part appears with its own colour and label, in the ring, rows and share |
+| Period | Year and Month give the same ring proportions within rounding; the sticky bar and breakdown share one choice (U4) |

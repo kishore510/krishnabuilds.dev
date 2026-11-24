@@ -92,6 +92,13 @@ const PAIRS: [foreground: string, background: string, min: number][] = [
   ...['home', 'bills', 'food', 'transport', 'personal', 'debt', 'saving', 'other'].flatMap((g) =>
     (['surface', 'bg', 'surface-muted'] as const).map((bg) => [`group-${g}`, bg, UI] as [string, string, number]),
   ),
+  // Parts of pay and of a mortgage's payments: ring parts and icons (graphics); their names are drawn in text.
+  ...['pay-tax', 'pay-ni', 'pay-student-loan', 'pay-pension', 'pay-hicbc', 'pay-benefits', 'pay-deductions'].flatMap((t) =>
+    (['surface', 'bg', 'surface-muted'] as const).map((bg) => [t, bg, UI] as [string, string, number]),
+  ),
+  ...['mortgage-capital', 'mortgage-interest', 'mortgage-charge'].flatMap((t) =>
+    (['surface', 'bg', 'surface-muted'] as const).map((bg) => [t, bg, UI] as [string, string, number]),
+  ),
 ]
 
 /** Translucent colours, blended over what they sit on first. */

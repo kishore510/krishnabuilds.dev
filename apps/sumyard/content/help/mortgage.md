@@ -5,6 +5,10 @@ summary: How the mortgage overpayment page works: your mortgage and its fixed ra
 ---
 The **Mortgage overpayment** page shows what overpaying a mortgage does: the interest saved, the time cut from the term or a lower payment, the balance over time, and, with an early repayment charge, the net saving in pounds and when the interest saved catches up with the charge. It is an illustration of what you enter, not advice. It **uses no tax rules**, so it has no tax year and shows "Uses no tax rules" where other pages show when their tax figures were last verified.
 
+## Sharing
+
+**Share** (beside the page title) makes an image card, a PDF (your browser's print to PDF), a spreadsheet (CSV) or text to paste, on your device: nothing is uploaded. It shows interest saved, how much sooner the mortgage is cleared (or what is owed at the end), where your payments go, what you pay each month now and after the fixed rate, and the guaranteed return for each rate period. It leaves out your dates, lump sums and the yearly table. With a what-if set, it shares the what-if and says so. Turn **Show amounts** off to share percentages and times only, with no pound figure anywhere. Share is off until there are results.
+
 ## What you enter
 
 - **Your mortgage**: the **start date** (the day the balance is owed, such as your last statement date; payments fall on that day each month, or a shorter month's last day), the **balance owed**, the **term left** in years and months (your contractual term from your statement or offer, not an estimated end date that already counts your overpayments), and **repayment** or **interest-only**. Dates can be typed as day/month/year or year-month-day.
@@ -18,7 +22,8 @@ Boxes the results need start empty: the page uses no made-up figures, and lists 
 ## The results
 
 - **Interest saved**, and how long the mortgage takes to clear with overpaying against without ("cleared in 16 years 8 months instead of 19 years 4 months"), is always in view: on a phone in the bar at the top.
-- **What overpaying does**: interest saved over the term, how long until the **mortgage is cleared** with overpaying and without, with the time saved and the last payment dates (or, interest-only, what is owed at the end), **total paid** (payments, overpayments and charges) and the **early repayment charge paid**. With a charge, the **net saving** (interest saved less the charge) and the **break-even** date: the first payment from which the interest saved so far stays at least the charge paid so far, or "Not within the term".
+- **What overpaying does**: **interest saved** over the term, large, with the interest with and without overpaying under it; then how long until the **mortgage is cleared** with overpaying and without, with the time saved and the last payment dates (or, interest-only, what is owed at the end), **total paid** (payments, overpayments and charges) and the **early repayment charge paid**. With a charge, the **net saving** (interest saved less the charge) and the **break-even** date: the first payment from which the interest saved so far stays at least the charge paid so far, or "Not within the term".
+- **Where your payments go**: a ring of the total paid with overpaying, split into the amount borrowed paid off, interest and any early repayment charge, each with its colour, icon and share, and a table. On an interest-only mortgage what is still owed at the end is not paid, so it is said beside the ring rather than drawn in it.
 - **Payments and balance**: **what you pay each month now** (your payment and your overpayment together), the **contractual payment** worked out from the balance, rate and term left (check it against your statement: if it is far off, the term left may be an estimate that already counts your overpayments), **what you pay each month after the fixed rate** (payment and overpayment, if you keep overpaying) and the contractual payment then, not counting overpayments, the balance when the fixed rate ends and the interest saved while fixed, which does not rest on your guess of the rate after it.
 - **Guaranteed return of a pound overpaid**: one return for each rate period, as an effective rate a year, each saying what it is measured against. The one after the fixed rate rests on your guess. There is no blended figure, and no comparison with savings.
 - A **chart** of the balance by year without and with overpaying, with the fixed-rate end marked and a table under it, and a **yearly table** below.
@@ -29,7 +34,7 @@ In **What if**, a slider and a box try another monthly overpayment. The results 
 
 ## Warnings
 
-Warnings are always shown, never hidden: overpaying **over the penalty-free limit**, with the charge for each allowance year (overpayments are never capped at the limit); an overpayment **capped at the balance** (the part not needed is left out); a fixed rate that ends **past the term** or **before the first payment**; and, with daily interest, a schedule whose last payment is far from the regular one: **this schedule drifts under daily interest, so treat the figures as approximate**.
+Warnings are always shown, never hidden, straight after the headline: overpaying **over the penalty-free limit**, with the charge for each allowance year (overpayments are never capped at the limit); an overpayment **capped at the balance** (the part not needed is left out); a fixed rate that ends **past the term** or **before the first payment**; and, with daily interest, a schedule whose last payment is far from the regular one: **this schedule drifts under daily interest, so treat the figures as approximate**.
 
 ## Not modelled
 
