@@ -56,7 +56,7 @@ const ASSUMPTIONS: readonly string[] = [
   'A blank amount counts as nothing.',
   'A card or loan payment is an outgoing in its own right: enter the card payment or the spending on that card, not both.',
   'A transfer between your own accounts is not spending: what each account pays for is counted once, from the account that pays it.',
-  'For a joint account, enter your own share of what goes in and of what it pays for.',
+  'For a joint account, enter your own share of what goes in, and what others put in beside it; it can then pay the full costs. What others put in is not your income, so every share is still of your own income.',
   'Money left in a savings pot is counted as saved; money left in any other account is counted as left over.',
   'An account that pays out more than goes in is short, and the shortfall is shown as a top-up from your main account.',
   'The savings rate is the saving group and what savings pots put aside, as a share of your income; what is left over is not counted as saved.',
@@ -90,11 +90,12 @@ function accountProblems(accounts: unknown): { problems: BudgetProblem[]; ids: R
   if (!Array.isArray(accounts)) return { problems: [{ field: 'accounts', reason: 'not-a-list' }], ids }
   if (accounts.length > MAX_BUDGET_ACCOUNTS) return { problems: [{ field: 'accounts', reason: 'too-many-accounts' }], ids }
   const problems = accounts.flatMap((raw, index) => {
-    const { id, kind, amount, period } = (raw ?? {}) as Partial<Account>
+    const { id, kind, amount, period, othersIn } = (raw ?? {}) as Partial<Account>
     const plain = typeof id === 'string' && id.length <= MAX_ACCOUNT_ID_LENGTH && ACCOUNT_ID.test(id)
     if (!plain || ids.has(id)) return [{ field: 'accounts' as const, index, reason: 'bad-account-id' as const }]
     ids.add(id)
-    const reason = amountProblem(amount, period) ?? (isOneOf(ACCOUNT_KINDS, kind) ? undefined : 'not-a-choice')
+    const reason =
+      amountProblem(amount, period) ?? amountProblem(othersIn, period) ?? (isOneOf(ACCOUNT_KINDS, kind) ? undefined : 'not-a-choice')
     return reason ? [{ field: 'accounts' as const, index, reason }] : []
   })
   return { problems, ids }
@@ -140,7 +141,9 @@ function calculate(inputs: BudgetInputs): BudgetResult {
 
   // Accounts besides main (BD11, BD12).
   const others: AccountResult[] = inputs.accounts.map((a) => {
-    const moneyIn = yearOf(a)
+    const transfer = yearOf(a)
+    const fromOthers = yearOf({ amount: a.othersIn, period: a.period })
+    const moneyIn = add(transfer, fromOthers)
     const paid = yearsOf((l) => l.account === a.id)
     const left = subtract(moneyIn, paid)
     const saved = a.kind === 'savings' ? positive(left) : ZERO
@@ -149,6 +152,7 @@ function calculate(inputs: BudgetInputs): BudgetResult {
       name: a.name,
       kind: a.kind,
       moneyIn: both(moneyIn),
+      fromOthers: both(fromOthers),
       paid: both(paid),
       transfersOut: both(ZERO),
       left: both(left),
@@ -156,7 +160,8 @@ function calculate(inputs: BudgetInputs): BudgetResult {
       short: both(positive(subtract(ZERO, left))),
     }
   })
-  const transfersOut = sum(others.map((a) => a.moneyIn.year))
+  const transfersOut = sum(inputs.accounts.map(yearOf))
+  const fromOthersYear = sum(others.map((a) => a.fromOthers.year))
   const mainPaid = yearsOf((l) => l.account === MAIN_ACCOUNT)
   const mainLeft = subtract(subtract(income.year, mainPaid), transfersOut)
   const main: AccountResult = {
@@ -164,6 +169,7 @@ function calculate(inputs: BudgetInputs): BudgetResult {
     name: MAIN_ACCOUNT_NAME,
     kind: 'main',
     moneyIn: income,
+    fromOthers: both(ZERO),
     paid: both(mainPaid),
     transfersOut: both(transfersOut),
     left: both(mainLeft),
@@ -177,7 +183,8 @@ function calculate(inputs: BudgetInputs): BudgetResult {
   const potSavedYear = sum(others.map((a) => a.saved.year))
   const outgoingsYear = add(sum(perGroup.map((g) => g.year)), potSavedYear)
   const outgoings = withShare(outgoingsYear)
-  const leftover = withShare(subtract(income.year, outgoingsYear))
+  const fromOthers = withShare(fromOthersYear)
+  const leftover = withShare(subtract(add(income.year, fromOthersYear), outgoingsYear))
   const potSaved = withShare(potSavedYear)
 
   // Needs, wants and saving (BD14).
@@ -204,6 +211,7 @@ function calculate(inputs: BudgetInputs): BudgetResult {
     income,
     outgoings,
     leftover,
+    fromOthers,
     perGroup,
     potSaved,
     needs,
@@ -218,7 +226,7 @@ function calculate(inputs: BudgetInputs): BudgetResult {
       income: subtract(sum(incomeLines.map((l) => l.month)), income.month),
       groups: subtract(add(sum(perGroup.map((g) => g.month)), potSaved.month), outgoings.month),
       lines: groupLines,
-      leftover: subtract(subtract(income.month, outgoings.month), leftover.month),
+      leftover: subtract(subtract(add(income.month, fromOthers.month), outgoings.month), leftover.month),
     },
     warnings,
     assumptions: ASSUMPTIONS,
