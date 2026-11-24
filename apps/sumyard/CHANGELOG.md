@@ -4,6 +4,8 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.35.0] - 2026-11-24
+
 ### Changed
 - **A new home page.** Calculators are grouped (Pay and budget; Save, invest and repay; Cars), each with an icon and one short line. Each card shows a figure from the scenario you saved most recently there, such as take-home a month or interest saved, with how many more you've saved. Where does the next £X go? shows the lump sum and years, and Car decision how many options, rather than picking one.
 

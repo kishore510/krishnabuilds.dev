@@ -1,6 +1,6 @@
 # Phase plan: Sumyard
 
-Last updated: 24 November 2026 (budget: what others put in Done, 0.34.0, PR #188; budget accounts and sharing Done, 0.33.0, PR #187; shared krishnabuilds.dev theme cookie Done, 0.32.0; next pound decision: C0 brief and decisions Done, C0.5 config values Done, 0.28.0, C1 composer Done, 0.29.0, C2 page Done, 0.30.0, C2.1 page rebuild Done, 0.31.0, the slice In progress until the owner's checks (`PHASE-BRIEF.md`); remaining not-started rows parked, `docs/backlog.md`; mortgage overpayment: M0 to M2 Done, owner checks open; household budget Done, 0.25.0; slices 1 to 3 Done, owner confirmations still open are listed in `PHASE-BRIEF.md`)
+Last updated: 24 November 2026 (home page redesign Done, 0.35.0, PR #189; budget: what others put in Done, 0.34.0, PR #188; budget accounts and sharing Done, 0.33.0, PR #187; shared krishnabuilds.dev theme cookie Done, 0.32.0; next pound decision: C0 brief and decisions Done, C0.5 config values Done, 0.28.0, C1 composer Done, 0.29.0, C2 page Done, 0.30.0, C2.1 page rebuild Done, 0.31.0, the slice In progress until the owner's checks (`PHASE-BRIEF.md`); remaining not-started rows parked, `docs/backlog.md`; mortgage overpayment: M0 to M2 Done, owner checks open; household budget Done, 0.25.0; slices 1 to 3 Done, owner confirmations still open are listed in `PHASE-BRIEF.md`)
 
 Sumyard is a set of personal UK finance calculators in one clean, ad-free web app, for the owner's own use. Constraints: client-side only, a static site on GitHub Pages, UK rules from versioned per-tax-year config, illustrative not advice.
 
@@ -51,6 +51,7 @@ Rules for this file: add a row when scope is added; update the Status cell when 
 | Shared theme | The theme moves to the shared krishnabuilds.dev `kb-theme` cookie through `@krishnabuilds/ui`, a local choice moved once; Clear all data leaves it (monorepo change, not a slice) | Done (0.32.0, PR #52, 5 November 2026) |
 | Budget accounts and sharing | The household budget redesigned: groups (BD10), accounts with transfers from main and what is left in each (BD11 to BD13), needs, wants and saving (BD14), the v1 migration (BD15), and sharing as an image, PDF, CSV or text (BD16) | Done (0.33.0, PR #187, 24 November 2026) |
 | Budget: what others put in | A partner's contribution into a joint account, not counted as income (BD17), inputs version 3 | Done (0.34.0, PR #188, 24 November 2026) |
+| Home page redesign | Calculators in groups with icon tiles and short lines; each card shows a figure from its latest saved scenario (`homeFigure`), never a winner (G13) | Done (0.35.0, PR #189, 24 November 2026) |
 | Loan / APR | Verify the APR definition against official guidance | Parked |
 | ISA vs pension vs mortgage | Builds on 1b and the overpayment calculator | Parked |
 | Bonus and salary sacrifice | Largely an input mode of 1b; may fold into it | Parked |

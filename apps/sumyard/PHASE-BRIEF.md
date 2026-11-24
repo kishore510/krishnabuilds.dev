@@ -83,7 +83,7 @@ Compare redesign (1b-iii): confirm U24's maximum (the engine's, pay-bounded) and
 
 ## Last session
 
-- 24 November 2026 (Unreleased): the home page redesign, from a mock-up the owner approved. Groups, icon tiles and short lines in `src/pages/homeCatalogue.ts` (each `summary` stays the page intro); `IconTile` moved to `src/components/`; an optional `homeFigure` per calculator (`registry.ts`); next pound and car show inputs, not a winner (G13). Browser matrix and axe at 360 and 1280 px, light and dark: no violations.
+- 24 November 2026 (0.35.0, PR #189): the home page redesign, from a mock-up the owner approved. Groups, icon tiles and short lines in `src/pages/homeCatalogue.ts` (each `summary` stays the page intro); `IconTile` moved to `src/components/`; an optional `homeFigure` per calculator (`registry.ts`); next pound and car show inputs, not a winner (G13). Browser matrix and axe at 360 and 1280 px, light and dark: no violations.
 - Earlier the same day: 0.34.0 (BD17, what others put in) and 0.33.0 (budget redesign). Not done for any: Safari, a real phone, a screen reader.
 
 ## Next
