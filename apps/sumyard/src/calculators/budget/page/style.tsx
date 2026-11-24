@@ -1,17 +1,5 @@
-import {
-  Car,
-  CircleAlert,
-  CreditCard,
-  Ellipsis,
-  House,
-  Landmark,
-  type LucideIcon,
-  ShoppingBag,
-  ShoppingCart,
-  TrendingUp,
-  Wallet,
-  Zap,
-} from 'lucide-react'
+import { Car, CircleAlert, CreditCard, Ellipsis, House, Landmark, ShoppingBag, ShoppingCart, TrendingUp, Wallet, Zap } from 'lucide-react'
+import type { Swatch } from '@/components/IconTile'
 import { cn } from '@/lib/utils'
 import type { BudgetGroup } from '../types'
 
@@ -22,17 +10,7 @@ import type { BudgetGroup } from '../types'
  * is named beside its colour.
  */
 
-export interface Swatch {
-  readonly icon: LucideIcon
-  /** Text and icon colour. */
-  readonly text: string
-  /** A solid fill (bars, legend keys). */
-  readonly fill: string
-  /** An SVG stroke (the donut). */
-  readonly stroke: string
-  /** A light tint behind the icon. */
-  readonly tint: string
-}
+export { IconTile, type Swatch } from '@/components/IconTile'
 
 export const GROUP_SWATCHES: Record<BudgetGroup, Swatch> = {
   home: { icon: House, text: 'text-group-home', fill: 'bg-group-home', stroke: 'stroke-group-home', tint: 'bg-group-home/15' },
@@ -89,19 +67,6 @@ const ACCOUNT_CYCLE: readonly Swatch[] = [
 export const MAIN_SWATCH: Swatch = { ...LEFTOVER_SWATCH, text: 'text-text', fill: 'bg-text-muted', icon: Landmark }
 
 export const accountSwatch = (index: number): Swatch => ({ ...ACCOUNT_CYCLE[index % ACCOUNT_CYCLE.length]!, icon: Landmark })
-
-/** An icon on its tint, the size of a touch target's content. */
-export function IconTile({ swatch, size = 'md' }: { swatch: Swatch; size?: 'sm' | 'md' }) {
-  const Icon = swatch.icon
-  return (
-    <span
-      aria-hidden="true"
-      className={cn('inline-flex shrink-0 items-center justify-center rounded-md', swatch.tint, size === 'md' ? 'size-9' : 'size-7')}
-    >
-      <Icon className={cn(swatch.text, size === 'md' ? 'size-5' : 'size-4')} />
-    </span>
-  )
-}
 
 /** A small square key for a legend. */
 export const Key = ({ swatch }: { swatch: Swatch }) => (

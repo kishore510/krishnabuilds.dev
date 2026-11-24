@@ -12,7 +12,7 @@ import { fromPence, type Money, type Ratio, ratio, ZERO } from '@/lib/money'
 import { isCanonicalPercent, percentRatio } from '@/lib/parse'
 import type { ContributionFrequency, Frequency } from '@/lib/periods'
 import { checkUntrustedJson, isRecord } from '@/lib/validate'
-import { type CalculatorDefinition, defineCalculator, type InputRefusal, type SummaryRow } from '../registry'
+import { type CalculatorDefinition, defineCalculator, figureFromSummary, type InputRefusal, type SummaryRow } from '../registry'
 import { project } from './calc'
 import { paidIn } from './results'
 import type { CompoundField, CompoundInputs, CompoundOutcome, CompoundProblem, CompoundProblemReason, Timing } from './types'
@@ -250,6 +250,9 @@ export const compoundCalculator: CalculatorDefinition<CompoundPageInputs> = defi
   migrateInputs(from) {
     // Version 1 is the first: there is nothing older to migrate from.
     throw new Error(`The compound interest calculator has no inputs version ${from} to migrate from`)
+  },
+  homeFigure(inputs, config) {
+    return figureFromSummary(this.summarise(inputs, config), 'Final balance', 'final balance')
   },
   summarise(inputs) {
     const rows: SummaryRow[] = [

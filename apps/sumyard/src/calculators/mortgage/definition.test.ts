@@ -302,6 +302,13 @@ describe('the engine’s inputs', () => {
 })
 
 describe('summarise (scenarios and compare)', () => {
+  it('gives the home page the interest saved, and nothing while the inputs are refused', () => {
+    const summary = mortgageCalculator.summarise(example, taxYear)
+    const saved = summary.results.ok ? summary.results.rows[0]!.value : null
+    expect(mortgageCalculator.homeFigure!(example, taxYear)).toEqual({ value: saved, caption: 'interest saved' })
+    expect(mortgageCalculator.homeFigure!(mortgageCalculator.defaultInputs(), taxYear)).toBeNull()
+  })
+
   it('lists the inputs and the answers, typed so compare can show changes', () => {
     const { inputs, results } = mortgageCalculator.summarise(example, taxYear)
     expect(inputs.map((r) => r.label)).toEqual([

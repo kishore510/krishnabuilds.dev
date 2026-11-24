@@ -809,6 +809,11 @@ export const carDecisionCalculator: CalculatorDefinition<CarDecisionInputs> = de
       throw new Error(`The car decision calculator has no inputs version ${from} to migrate from`)
     return MIGRATIONS.slice(from - 1).reduce((inputs, step) => step(inputs), old)
   },
+  /* How many options over what horizon; none is singled out (G13). */
+  homeFigure: (inputs) => ({
+    value: { kind: 'text', text: `${inputs.options.length} option${inputs.options.length === 1 ? '' : 's'}` },
+    caption: `over ${inputs.horizonMonths} month${inputs.horizonMonths === 1 ? '' : 's'}`,
+  }),
   summarise(inputs) {
     const names = uniqueNames(inputs.options)
     const rows: SummaryRow[] = [
