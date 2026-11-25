@@ -1004,7 +1004,9 @@ describe("the palette (md up)", () => {
       "Sprint planning", "2x2 Impact and Effort", "Lean coffee", "Kanban", "MoSCoW", "Now Next Later", "Eisenhower matrix",
       "Check-in", "Brainstorm", "Parking lot", "Meeting agenda and actions", "OKRs", "Quarterly planning",
       "SWOT", "TIME", "Migration strategy", "Technology radar", "RAID", "Architecture decision",
+      "C4 context", "Build vs buy", "Options appraisal", "Dependency map", "Incident post-mortem",
       "Empathy map", "Persona", "PESTLE", "Five whys", "Stakeholder map", "Risk heatmap",
+      "Business Model Canvas", "Lean Canvas", "Value proposition canvas", "Customer journey map", "User story map", "Fishbone",
     ]);
     expect(tiles()[1]?.querySelector('[data-preview]')?.className).toContain("bg-note-pink");
     expect(tiles()[1]?.textContent).toContain("Pink");

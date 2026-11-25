@@ -88,6 +88,53 @@ const TWO_BY_TWO_W = 2 * QUADRANT_W + GAP;
 const BANNER_H = 200;
 const UNDER_BANNER = BANNER_H + GAP;
 const banner = (title: string, color: FrameColor, w: number, y = 0): TemplateFrame => ({ title, color, x: 0, y, w, h: BANNER_H, style: BANNER });
+/**
+ * The canvas layout (Business Model Canvas, Lean Canvas): five columns, `CANVAS_COL_W` wide. The
+ * first, middle and last are tall; the second and fourth hold two frames each, one above the
+ * other. Under them, two frames side by side split the full width. Nine frames, more than the
+ * seven frame colours, so colours repeat, but never on frames that touch (test/templates.test.ts).
+ */
+const CANVAS_COL_W = 440;
+const CANVAS_HALF_H = 360;
+const CANVAS_TALL_H = 2 * CANVAS_HALF_H + GAP;
+const CANVAS_W = 5 * CANVAS_COL_W + 4 * GAP;
+const CANVAS_BOTTOM_W = (CANVAS_W - GAP) / 2;
+type Cell = readonly [title: string, color: FrameColor];
+const canvas = (
+  tall1: Cell,
+  [top2, bottom2]: readonly [Cell, Cell],
+  tall3: Cell,
+  [top4, bottom4]: readonly [Cell, Cell],
+  tall5: Cell,
+  [left, right]: readonly [Cell, Cell],
+): TemplateFrame[] => {
+  const x = (col: number) => col * (CANVAS_COL_W + GAP);
+  const below = CANVAS_TALL_H + GAP;
+  const frame = ([title, color]: Cell, fx: number, fy: number, w: number, h: number): TemplateFrame => ({ title, color, x: fx, y: fy, w, h, style: HEADING });
+  return [
+    frame(tall1, x(0), 0, CANVAS_COL_W, CANVAS_TALL_H),
+    frame(top2, x(1), 0, CANVAS_COL_W, CANVAS_HALF_H),
+    frame(bottom2, x(1), CANVAS_HALF_H + GAP, CANVAS_COL_W, CANVAS_HALF_H),
+    frame(tall3, x(2), 0, CANVAS_COL_W, CANVAS_TALL_H),
+    frame(top4, x(3), 0, CANVAS_COL_W, CANVAS_HALF_H),
+    frame(bottom4, x(3), CANVAS_HALF_H + GAP, CANVAS_COL_W, CANVAS_HALF_H),
+    frame(tall5, x(4), 0, CANVAS_COL_W, CANVAS_TALL_H),
+    frame(left, 0, below, CANVAS_BOTTOM_W, CANVAS_HALF_H),
+    frame(right, CANVAS_BOTTOM_W + GAP, below, CANVAS_BOTTOM_W, CANVAS_HALF_H),
+  ];
+};
+/** Five narrower columns (Five whys, Customer journey map), `QUADRANT_H` tall, at `y`. */
+const fiveColumns = (y: number, cols: readonly Cell[]): TemplateFrame[] =>
+  cols.map(([title, color], i) => ({ title, color, x: i * (WHY_W + GAP), y, w: WHY_W, h: QUADRANT_H, style: HEADING }));
+/** Value proposition canvas: two stacks of three, a wider gap between the two sides. */
+const VPC_H = 360;
+const VPC_SPLIT = 160;
+/** A stack of `QUADRANT_W`-wide frames, `VPC_H` tall, one above the other, at `x`. */
+const stack = (x: number, cells: readonly Cell[]): TemplateFrame[] =>
+  cells.map(([title, color], i) => ({ title, color, x, y: i * (VPC_H + GAP), w: QUADRANT_W, h: VPC_H, style: HEADING }));
+/** A full-width band (User story map): `FIVE_W` wide, `h` tall, at `y`. */
+const band = (title: string, color: FrameColor, y: number, h: number): TemplateFrame => ({ title, color, x: 0, y, w: FIVE_W, h, style: HEADING });
+
 /** A row of `cols` column-wide frames, `QUADRANT_H` tall, at `y`, shifted right by `x`. */
 const row = (x: number, y: number, cols: readonly [title: string, color: FrameColor][]): TemplateFrame[] =>
   cols.map(([title, color], i) => ({ title, color, x: x + i * (COLUMN_W + GAP), y, w: COLUMN_W, h: QUADRANT_H, style: HEADING }));
@@ -485,6 +532,83 @@ export const TEMPLATES: readonly Template[] = [
       ["Consequences", "orange"],
     ]),
   },
+  {
+    id: "c4-context",
+    group: "Architecture and analysis",
+    label: "C4 context",
+    keywords: ["c4", "context", "system context", "diagram", "users", "external systems", "integrations", "boundary", "scope"],
+    // People on top, the system in the middle with what it talks to either side, the links below.
+    frames: [
+      { title: "People: users and roles", color: "blue", x: 0, y: 0, w: THREE_W, h: 280, style: HEADING },
+      ...row(0, 280 + GAP, [
+        ["Systems that send to it", "purple"],
+        ["The system (in scope)", "yellow"],
+        ["Systems it sends to", "orange"],
+      ]),
+      banner("Key relationships and data", "green", THREE_W, 280 + GAP + QUADRANT_H + GAP),
+    ],
+  },
+  {
+    id: "build-vs-buy",
+    group: "Architecture and analysis",
+    label: "Build vs buy",
+    keywords: ["build", "buy", "build vs buy", "make or buy", "reuse", "partner", "vendor", "product", "sourcing", "decision"],
+    frames: [
+      banner("What we need", "yellow", THREE_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Build: in house", "blue"],
+        ["Buy: off the shelf", "purple"],
+        ["Reuse or partner", "orange"],
+      ]),
+      banner("Decision and why", "green", THREE_W, UNDER_BANNER + 560 + GAP),
+    ],
+  },
+  {
+    id: "options-appraisal",
+    group: "Architecture and analysis",
+    label: "Options appraisal",
+    keywords: ["options", "appraisal", "option", "criteria", "compare", "comparison", "business case", "recommendation", "do nothing", "decision"],
+    frames: [
+      banner("Objectives and criteria", "yellow", FOUR_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Option 1: do nothing", "neutral"],
+        ["Option 2", "blue"],
+        ["Option 3", "purple"],
+        ["Option 4", "orange"],
+      ]),
+      banner("Recommendation", "green", FOUR_W, UNDER_BANNER + 560 + GAP),
+    ],
+  },
+  {
+    id: "dependency-map",
+    group: "Architecture and analysis",
+    label: "Dependency map",
+    keywords: ["dependency", "dependencies", "depends", "upstream", "downstream", "blocked", "teams", "map"],
+    frames: [
+      ...columns(0, 560, [
+        ["Upstream: we depend on", "purple"],
+        ["Our team or system", "yellow"],
+        ["Downstream: depends on us", "blue"],
+      ]),
+      banner("At risk: blocked or late, with owners", "pink", THREE_W, 560 + GAP),
+    ],
+  },
+  {
+    id: "post-mortem",
+    group: "Architecture and analysis",
+    label: "Incident post-mortem",
+    keywords: ["incident", "post-mortem", "postmortem", "post mortem", "blameless", "outage", "timeline", "root cause", "lessons", "actions"],
+    frames: [
+      banner("Summary and who was affected", "yellow", FOUR_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Timeline", "neutral"],
+        ["What went well", "green"],
+        ["What went wrong", "pink"],
+        ["Root causes", "orange"],
+      ]),
+      banner("Actions (who, by when)", "blue", FOUR_W, UNDER_BANNER + 560 + GAP),
+    ],
+  },
   /* ── Strategy and product ── */
   {
     id: "empathy-map",
@@ -547,15 +671,13 @@ export const TEMPLATES: readonly Template[] = [
     keywords: ["five whys", "5 whys", "why", "root cause", "problem", "analysis", "incident"],
     frames: [
       banner("Problem", "yellow", FIVE_W),
-      ...(
-        [
-          ["Why? 1", "neutral"],
-          ["Why? 2", "blue"],
-          ["Why? 3", "purple"],
-          ["Why? 4", "orange"],
-          ["Why? 5", "pink"],
-        ] as const
-      ).map(([title, color], i): TemplateFrame => ({ title, color, x: i * (WHY_W + GAP), y: UNDER_BANNER, w: WHY_W, h: QUADRANT_H, style: HEADING })),
+      ...fiveColumns(UNDER_BANNER, [
+        ["Why? 1", "neutral"],
+        ["Why? 2", "blue"],
+        ["Why? 3", "purple"],
+        ["Why? 4", "orange"],
+        ["Why? 5", "pink"],
+      ]),
       banner("Root cause and fix", "green", FIVE_W, UNDER_BANNER + QUADRANT_H + GAP),
     ],
   },
@@ -584,5 +706,121 @@ export const TEMPLATES: readonly Template[] = [
       ["Accept: unlikely, low impact", "green"],
       ["Plan for: unlikely, high impact", "orange"],
     ]),
+  },
+  {
+    id: "business-model-canvas",
+    group: "Strategy and product",
+    label: "Business Model Canvas",
+    keywords: ["business model", "canvas", "bmc", "partners", "activities", "resources", "value proposition", "channels", "customer segments", "cost", "revenue", "strategy"],
+    frames: canvas(
+      ["Key partners", "purple"],
+      [
+        ["Key activities", "blue"],
+        ["Key resources", "green"],
+      ],
+      ["Value propositions", "yellow"],
+      [
+        ["Customer relationships", "pink"],
+        ["Channels", "orange"],
+      ],
+      ["Customer segments", "neutral"],
+      [
+        ["Cost structure", "pink"],
+        ["Revenue streams", "blue"],
+      ],
+    ),
+  },
+  {
+    id: "lean-canvas",
+    group: "Strategy and product",
+    label: "Lean Canvas",
+    keywords: ["lean canvas", "canvas", "startup", "problem", "solution", "key metrics", "unique value proposition", "unfair advantage", "channels", "customer segments", "cost", "revenue"],
+    frames: canvas(
+      ["Problem", "pink"],
+      [
+        ["Solution", "green"],
+        ["Key metrics", "blue"],
+      ],
+      ["Unique value proposition", "yellow"],
+      [
+        ["Unfair advantage", "purple"],
+        ["Channels", "orange"],
+      ],
+      ["Customer segments", "neutral"],
+      [
+        ["Cost structure", "purple"],
+        ["Revenue streams", "green"],
+      ],
+    ),
+  },
+  {
+    id: "value-proposition-canvas",
+    group: "Strategy and product",
+    label: "Value proposition canvas",
+    keywords: ["value proposition", "canvas", "value map", "customer profile", "jobs", "gains", "pains", "gain creators", "pain relievers", "products", "services", "fit"],
+    // The value map on the left, the customer profile on the right, each row facing its match.
+    frames: [
+      ...stack(0, [
+        ["Gain creators", "green"],
+        ["Products and services", "blue"],
+        ["Pain relievers", "orange"],
+      ]),
+      ...stack(QUADRANT_W + VPC_SPLIT, [
+        ["Gains", "yellow"],
+        ["Customer jobs", "purple"],
+        ["Pains", "pink"],
+      ]),
+    ],
+  },
+  {
+    id: "customer-journey-map",
+    group: "Strategy and product",
+    label: "Customer journey map",
+    keywords: ["customer journey", "journey", "user journey", "experience", "stages", "touchpoints", "awareness", "purchase", "loyalty", "pain points", "opportunities", "map"],
+    frames: [
+      banner("Who they are and what they want", "yellow", FIVE_W),
+      ...fiveColumns(UNDER_BANNER, [
+        ["Awareness", "neutral"],
+        ["Consideration", "blue"],
+        ["Purchase", "purple"],
+        ["Use", "orange"],
+        ["Loyalty", "green"],
+      ]),
+      banner("Pain points and opportunities", "pink", FIVE_W, UNDER_BANNER + QUADRANT_H + GAP),
+    ],
+  },
+  {
+    id: "user-story-map",
+    group: "Strategy and product",
+    label: "User story map",
+    keywords: ["user story", "story map", "stories", "backlog", "backbone", "activities", "release", "mvp", "slices", "agile", "map"],
+    // Read across for the order people do things, down for what ships first.
+    frames: [
+      band("User goal", "yellow", 0, BANNER_H),
+      band("Activities, in order (the backbone)", "blue", UNDER_BANNER, 280),
+      band("Release 1: the smallest useful version", "green", UNDER_BANNER + 280 + GAP, QUADRANT_H),
+      band("Release 2", "purple", UNDER_BANNER + 280 + GAP + QUADRANT_H + GAP, QUADRANT_H),
+      band("Later", "neutral", UNDER_BANNER + 280 + 2 * (GAP + QUADRANT_H) + GAP, QUADRANT_H),
+    ],
+  },
+  {
+    id: "fishbone",
+    group: "Strategy and product",
+    label: "Fishbone",
+    keywords: ["fishbone", "ishikawa", "cause and effect", "causes", "root cause", "problem", "people", "process", "analysis"],
+    // Three causes above and three below, the problem (the fish's head) on the right.
+    frames: [
+      ...row(0, 0, [
+        ["People", "yellow"],
+        ["Process", "blue"],
+        ["Tools and technology", "green"],
+      ]),
+      ...row(0, QUADRANT_H + GAP, [
+        ["Environment", "orange"],
+        ["Measurement", "purple"],
+        ["Materials and inputs", "neutral"],
+      ]),
+      { title: "Problem (the effect)", color: "pink", x: THREE_W + GAP, y: 0, w: COLUMN_W, h: 2 * QUADRANT_H + GAP, style: HEADING },
+    ],
   },
 ];

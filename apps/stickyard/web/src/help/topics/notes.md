@@ -2,7 +2,7 @@
 title: Notes
 order: 3
 summary: Add notes from the palette, export the board as a picture, a Markdown file or a board file, import a board file or text, duplicate them, undo and redo your changes, clear the board, edit, colour, style and resize them in Properties, bring them to the front or send them to the back, group them in frames, start from a template, select several notes and frames to move, arrange or delete together; pan, zoom and fit the board, zoom to the selection and use the overview map.
-keywords: export, import, paste, upload, text, lines, download, png, picture, image, markdown, json, board file, share, save, file, undo, redo, history, duplicate, copy, clear, clear board, empty, restore, ctrl+z, ctrl+y, ctrl+d, tick, outline, template, templates, retro, retrospective, start stop continue, mad sad glad, 4ls, starfish, sailboat, rose thorn bud, kalm, daki, hot air balloon, speedcar, three little pigs, lean coffee, kanban, moscow, must have, now next later, roadmap, eisenhower, urgent, important, check-in, icebreaker, brainstorm, parking lot, meeting, agenda, okr, okrs, objective, key results, quarterly, empathy map, persona, pestle, five whys, root cause, stakeholder, power, interest, risk heatmap, likelihood, strategy, product, swot, time, tolerate, invest, migrate, eliminate, rationalisation, migration, rehost, replatform, refactor, repurchase, retire, retain, technology radar, radar, raid, risks, assumptions, issues, dependencies, architecture decision, adr, axes, 2x2, matrix, impact, effort, sprint, planning, kanban, frame, frames, area, section, title, carry, front, back, order, stack, overlap, behind, top, bottom, inline, place, double-click, marquee, multi, several, many, group, arrange, align, distribute, grid, columns, rows, tidy, layout, match, right-click, middle, note, notes, sticky, board, add, edit, move, drag, delete, colour, color, text, title, body, size, width, height, bigger, smaller, handle, corner, font, bold, italic, align, alignment, left, centre, center, right, style, palette, tile, properties, panel, select, selection, collapse, resize, pan, hand, zoom, pinch, wheel, fit, overview, map, minimap, zoom to selection, out of view, show all, cluster, navigate, shortcut, full, saved
+keywords: export, import, paste, upload, text, lines, download, png, picture, image, markdown, json, board file, share, save, file, undo, redo, history, duplicate, copy, clear, clear board, empty, restore, ctrl+z, ctrl+y, ctrl+d, tick, outline, template, templates, business model canvas, lean canvas, value proposition, canvas, customer journey, user story map, story map, fishbone, ishikawa, c4, context, build vs buy, options appraisal, dependency map, post-mortem, postmortem, incident, retro, retrospective, start stop continue, mad sad glad, 4ls, starfish, sailboat, rose thorn bud, kalm, daki, hot air balloon, speedcar, three little pigs, lean coffee, kanban, moscow, must have, now next later, roadmap, eisenhower, urgent, important, check-in, icebreaker, brainstorm, parking lot, meeting, agenda, okr, okrs, objective, key results, quarterly, empathy map, persona, pestle, five whys, root cause, stakeholder, power, interest, risk heatmap, likelihood, strategy, product, swot, time, tolerate, invest, migrate, eliminate, rationalisation, migration, rehost, replatform, refactor, repurchase, retire, retain, technology radar, radar, raid, risks, assumptions, issues, dependencies, architecture decision, adr, axes, 2x2, matrix, impact, effort, sprint, planning, kanban, frame, frames, area, section, title, carry, front, back, order, stack, overlap, behind, top, bottom, inline, place, double-click, marquee, multi, several, many, group, arrange, align, distribute, grid, columns, rows, tidy, layout, match, right-click, middle, note, notes, sticky, board, add, edit, move, drag, delete, colour, color, text, title, body, size, width, height, bigger, smaller, handle, corner, font, bold, italic, align, alignment, left, centre, center, right, style, palette, tile, properties, panel, select, selection, collapse, resize, pan, hand, zoom, pinch, wheel, fit, overview, map, minimap, zoom to selection, out of view, show all, cluster, navigate, shortcut, full, saved
 ---
 Every session has one shared **board**. Everyone in the session sees the same notes, and changes show up for everyone as they happen. The board fills the screen; its edge is the outline around the dotted area, and notes always stay inside it.
 
@@ -131,7 +131,7 @@ A frame is a named, coloured area that sits behind the notes, for example Start,
 
 ## Templates
 
-A template adds a ready-made set of frames, with their titles, colours and sizes. There are fifteen, in three groups.
+A template adds a ready-made set of frames, with their titles, colours and sizes. There are forty-eight, in four groups.
 
 **Retros**
 
@@ -172,6 +172,11 @@ A template adds a ready-made set of frames, with their titles, colours and sizes
 - **Technology radar**: four columns, Adopt, Trial, Assess and Hold.
 - **RAID**: four columns, Risks, Assumptions, Issues and Dependencies.
 - **Architecture decision**: four columns, Context, Options, Decision and Consequences.
+- **C4 context**: a wide People frame on top, then three frames, Systems that send to it, The system (in scope) and Systems it sends to, and a wide Key relationships and data frame at the bottom.
+- **Build vs buy**: a wide What we need frame on top, then Build, Buy, and Reuse or partner, and a wide Decision and why frame at the bottom.
+- **Options appraisal**: a wide Objectives and criteria frame on top, then four options (the first is do nothing), and a wide Recommendation frame at the bottom.
+- **Dependency map**: three columns, Upstream (what we depend on), Our team or system, and Downstream (what depends on us), with a wide At risk frame below for what's blocked or late, with owners.
+- **Incident post-mortem**: a wide Summary frame on top, then Timeline, What went well, What went wrong and Root causes, and a wide Actions (who, by when) frame at the bottom.
 
 **Strategy and product**
 
@@ -181,6 +186,14 @@ A template adds a ready-made set of frames, with their titles, colours and sizes
 - **Five whys**: a wide Problem frame on top, five Why? columns to ask why in turn, and a wide Root cause and fix frame at the bottom.
 - **Stakeholder map**: four squares, Keep satisfied, Manage closely, Monitor and Keep informed.
 - **Risk heatmap**: four squares, Watch, Act now, Accept and Plan for.
+- **Business Model Canvas**: nine frames laid out like the canvas: Key partners, Key activities and Key resources, Value propositions in the middle, Customer relationships and Channels, Customer segments, and Cost structure and Revenue streams along the bottom.
+- **Lean Canvas**: nine frames in the same layout: Problem, Solution and Key metrics, Unique value proposition in the middle, Unfair advantage and Channels, Customer segments, and Cost structure and Revenue streams along the bottom.
+- **Value proposition canvas**: what you offer on the left (Gain creators, Products and services, Pain relievers) facing the customer on the right (Gains, Customer jobs, Pains), each row beside its match.
+- **Customer journey map**: a wide frame on top for who the customer is and what they want, five stages (Awareness, Consideration, Purchase, Use and Loyalty), and a wide Pain points and opportunities frame at the bottom.
+- **User story map**: wide rows, one above the other: User goal, Activities in order (the backbone), Release 1 (the smallest useful version), Release 2 and Later. Read across for the order people do things, down for what ships first.
+- **Fishbone**: six frames for the causes (People, Process, Tools and technology, Environment, Measurement, and Materials and inputs), with the Problem on the right as the fish's head.
+
+The Business Model Canvas and the Lean Canvas have more frames than there are frame colours, so a colour can appear twice, but never on frames next to each other.
 
 ### Reading the 2 x 2 templates
 
@@ -197,7 +210,7 @@ Each square's title names it and says where it sits on the two axes.
 
 - On a wider screen, find them in the palette under their group's heading: **Retros**, **Planning and facilitation**, **Architecture and analysis** and **Strategy and product**. Search finds them across all groups (for example "template", "retro", "matrix" or "radar"); a group with nothing matching hides its heading. Click a template to place it in the middle of the part of the board you can see, or drag it onto the board to centre it where you let go. It always lands fully on the board.
 - Nothing already on the board is moved, resized or deleted, so there's nothing to confirm. When it's done, the view fits the new frames and the first one is selected.
-- A template needs one free frame slot per frame (a board holds up to 30 frames; the largest template, Five whys, has seven). If there aren't enough, nothing is added and the board says how many it needs and how many are free.
+- A template needs one free frame slot per frame (a board holds up to 30 frames; the largest templates, Business Model Canvas and Lean Canvas, have nine). If there aren't enough, nothing is added and the board says how many it needs and how many are free.
 - All of a template's frames appear at once, already at their sizes and with their title styles, for you and everyone else in the room. While a template is being added, the template tiles are off.
 - If the relay refuses part of a template (for example someone else filled the board's last frame slots at the same moment), the frames already added stay, and the board says the template was only partly added. Delete any you don't want.
 - Templates can be added during a silent round: they're only frames, and frames can still be added then.
