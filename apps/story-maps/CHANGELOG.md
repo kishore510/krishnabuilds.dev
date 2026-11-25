@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.120.1
+
+- End card: “Follow another story” now stays on the reader’s subject. It offers stories from the same section first, or from the same shelf when they sit next to this story on the timeline or share its years; then the rest of the shelf; then other shelves. Before, it ranked only by shared years, so Missions to the Moon offered the Portuguese and British Empires, and The Gene offered the Roman Republic.
+
 ## 0.120.0
 
 - New story map in Universe: Missions to the Sun. From the Helios probes inside Mercury’s orbit and Ulysses over the Sun’s poles through SOHO and Genesis at L1, to Parker Solar Probe’s Venus passes and dives through the corona, Solar Orbiter at the poles and India’s Aditya-L1. 13 chapters on the `solar-system` sky basemap (the closest passes and L1 drawn off scale, and a spot above the Sun standing for its poles), 1 people card (Parker), no new glyphs.

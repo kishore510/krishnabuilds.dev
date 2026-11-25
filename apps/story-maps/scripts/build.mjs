@@ -308,9 +308,21 @@ function storyLinks(entry) {
     const n = neighbourStories.indexOf(s.id);
     return n < 0 ? neighbourStories.length : n;
   };
+  // Stay on the reader's subject: first stories in the same section, or on the same
+  // shelf and next to this one on the timeline or sharing its years; then the rest of
+  // the shelf; then everything else. Without this a moon mission leads on to an
+  // empire that merely ran into the 1990s.
+  /** @param {string} id */
+  const shelfOf = (id) => manifest.sections.find((x) => x.id === id)?.shelf;
+  /** @param {Story} s @param {number} years */
+  const closeness = (s, years) => {
+    if (s.section === entry.section) return 0;
+    if (shelfOf(s.section) !== shelfOf(entry.section)) return 2;
+    return neighbourStories.includes(s.id) || years > 0 ? 0 : 1;
+  };
   const next = inOrder
     .map((s, i) => ({ s, i, years: shared(s) }))
-    .sort((a, b) => rank(a.s) - rank(b.s) || b.years - a.years || a.i - b.i)
+    .sort((a, b) => closeness(a.s, a.years) - closeness(b.s, b.years) || rank(a.s) - rank(b.s) || b.years - a.years || a.i - b.i)
     .map((x) => x.s);
   return {
     stories: inOrder.map((s) => ({ title: s.title, href: `/${s.id}/` })),
