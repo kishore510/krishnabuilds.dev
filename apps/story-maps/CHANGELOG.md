@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.121.0
+
+- End card: "Follow another story" now also counts stories that name each other in their cards: 3 mentions or more, including short names such as "Chola" or "Mughal" on the same shelf. So The Maurya Empire now leads to Ashoka, and The Spanish Empire to the Aztec Empire. The ranking moved to `scripts/next.mjs`. The same picks are the first Related links on each story page and `/read/` page.
+- `manifest.json`: an optional `next` on a story names one or two stories its end card offers first. 46 stories set it, where the rules picked poorly (Marie Curie → Radioactivity, Pala → Gurjara-Pratiharas, Maya → Aztec Empire) or to give a story its first link from another (Ahom Kingdom, Sikh Empire, Nayakas of Madurai, Yellapragada Subbarow and others).
+- `pnpm story:check` prints what a story's end card offers and which stories offer it, and warns when either is weak. `test/next.test.js` fails when a story is offered only for sharing a shelf, or when no other story offers a built story. The new-story-map skill now reviews these links.
+- End card: "Around this story" lists empires of the same years only for stories on the Humankind shelf. A Nature or Science story keeps its own entries, so Missions to the Moon no longer shows the Portuguese Empire.
+
 ## 0.120.1
 
 - End card: “Follow another story” now stays on the reader’s subject. It offers stories from the same section first, or from the same shelf when they sit next to this story on the timeline or share its years; then the rest of the shelf; then other shelves. Before, it ranked only by shared years, so Missions to the Moon offered the Portuguese and British Empires, and The Gene offered the Roman Republic.

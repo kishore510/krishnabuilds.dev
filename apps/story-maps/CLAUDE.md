@@ -19,7 +19,7 @@ From the repo root: `pnpm turbo run build lint typecheck test --filter=@krishnab
 Adding a story: use the `new-story-map` skill (`.claude/skills/new-story-map/SKILL.md` at the repo root). It needs no engine or hub code read. From `apps/story-maps`:
 
 - `pnpm story:ref` prints what a story's data may refer to: basemap extents, glyph and traveller ids, lanes, taken ids.
-- `pnpm story:check <id>` runs the build's data checks on one story, plus layout warnings (`scripts/layout.mjs`): in each chapter, pins hiding each other, labels over pins and more than 5 places shown in full; labels off the map, cameras that miss their place, unused data. Warnings don't fail the build; older stories carry some.
+- `pnpm story:check <id>` runs the build's data checks on one story, plus layout warnings (`scripts/layout.mjs`): in each chapter, pins hiding each other, labels over pins and more than 5 places shown in full; labels off the map, cameras that miss their place, unused data. Warnings don't fail the build; older stories carry some. It also prints what the story's end card offers next and which stories offer it (see Next stories below).
 - `pnpm story:shots <id> [steps]` saves phone screenshots of chosen chapters to `.work/<id>/` (ignored by git). It needs Playwright, which is not a dependency here; Claude Code cloud sessions have it.
 
 ## Layout
@@ -51,6 +51,7 @@ engine/src/        @krishnabuilds/story-maps-engine: map.js (pure: data to SVG, 
 scripts/build.mjs  the build; stops on any manifest, catalogue or story data problem
 scripts/seo.mjs    sitemap.xml, robots.txt, JSON-LD, the short hidden copy on a story page and the story's text page at /<id>/read/ (pure; test/seo.test.js)
 scripts/layout.mjs layout warnings for a story's data; scripts/story-*.mjs are the three commands above
+scripts/next.mjs   which stories a story's end card offers next (see Next stories; test/next.test.js)
 ```
 
 ## Catalogue
@@ -82,7 +83,15 @@ The front page has three shelves, fixed in `scripts/manifest.mjs`: **Nature** (w
 - What happened goes on Nature and how it was found out goes on Science: evolution is Life, Darwin is Biology.
 - Every subject also has its own page at `/<subject>/`: all its story maps, newest first, grouped by collection, with a Share button (`hub/front.js`). Stories and subjects share the top-level paths, so the build refuses a story id equal to a section id or to `explore`, `fonts` or `api`.
 
-`manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). A `built` story also needs `added`: when its map was finished, as `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM` in UTC (set it when the story is built). The hub's "New story maps" row lists every finished map, newest first by `added`, however old; the New pill marks those from the last 45 days. Placeholder entries and coming-soon stories are never listed there. A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
+`manifest.json` story fields: `id` (lowercase slug, unique across all sections; also the page path `/<id>/`), `section`, optional `collection`, `title`, `status` (`built` or `coming-soon`), `era` (a broad tag such as "Epic tradition" or "Bronze Age", never a made-up date). Optional `next`: one or two built story ids its end card offers first (see Next stories below). A `built` story also needs `added`: when its map was finished, as `YYYY-MM-DD` or `YYYY-MM-DDTHH:MM` in UTC (set it when the story is built). The hub's "New story maps" row lists every finished map, newest first by `added`, however old; the New pill marks those from the last 45 days. Placeholder entries and coming-soon stories are never listed there. A story's folder must exist; a `built` story also needs a valid `story.json`, and its `title` must match the manifest.
+
+## Next stories
+
+A story's end card offers two stories to "Follow another story", and the same two are the first Related links on its page and its `/read/` page, which search engines follow. `scripts/next.mjs` picks them: first the story's own `next` in `manifest.json`; then close stories (the same subject; a story either one names in its cards at least 3 times, from any shelf; or, from the same shelf, a timeline neighbour or one that shares its years); then the rest of the shelf; then everything else. Stories named 10 times or more come first among the close ones. A short name counts on the same shelf ("Chola" for The Chola Empire), but not before another capitalised word ("British Museum").
+
+- **Every new story:** run `pnpm story:check <id>` and read "End card offers" and "Offered at the end of". If the picks are not where a reader would go next, set `next`. If no story offers the new one, add its id to the `next` of the story readers should arrive from (an existing story's `next` may be changed for this).
+- `test/next.test.js` fails when a built story's end card offers a story only for sharing its shelf (or not even that), or when no other story offers a built story. Fix either with `next`, never by loosening the test.
+- Only set `next` to a link the stories' own text supports.
 
 ## Engine and data
 

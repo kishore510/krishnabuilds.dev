@@ -17,6 +17,7 @@ import { checkStory, loadEngineAssets, loadMapFunctions, loadStoryData } from ".
 import { breadcrumb, ldScript, robots, sitemap, storyRead, storyText, webPage, webSite } from "./seo.mjs";
 import { loadCatalogue, loadExplore, validateCatalogue } from "./catalogue.mjs";
 import { APP_DIR, loadManifest, validateManifest } from "./manifest.mjs";
+import { nextProblems, nextStories, storyWords } from "./next.mjs";
 
 /** @typedef {import("./manifest.mjs").Story} Story */
 /** @typedef {import("./catalogue.mjs").Entry} Entry */
@@ -51,7 +52,7 @@ function esc(text) {
 // --- check the manifest first ------------------------------------------------
 
 const manifest = loadManifest();
-const problems = validateManifest(manifest);
+const problems = [...validateManifest(manifest), ...nextProblems(manifest.stories)];
 if (problems.length) {
   console.error(`manifest.json has problems:\n- ${problems.join("\n- ")}`);
   process.exit(1);
@@ -263,67 +264,41 @@ const KIND = { civilisation: "Civilisation", dynasty: "Dynasty or empire", event
 
 const builtStories = manifest.stories.filter((s) => s.status === "built");
 
+// Each built story's card text, for nextStories to find the stories it names.
+const storyWordsById = new Map(builtStories.map((s) => [s.id, storyWords(loadStoryData(s).story)]));
+
 /**
  * Where a story's last chapter and its text can send the reader: the other
- * built stories, the ones to offer next (stories about its neighbours first)
- * and the catalogue entries around it.
+ * built stories, the ones to offer next (scripts/next.mjs) and the catalogue
+ * entries around it.
  * @param {Story} entry
  */
 function storyLinks(entry) {
   const mine = catalogue.entries.filter((e) => e.story === entry.id);
   /** @type {Map<string, Entry>} */
   const related = new Map(mine.map((e) => [e.id, e]));
-  // Stories about the entries that come straight after (then before) this one's are offered first.
-  /** @type {string[]} */
-  const neighbourStories = [];
-  // The story's own entry (the one without a chapter) comes first.
+  // The story's own entry (the one without a chapter) first.
   const own = [...mine].sort((a, b) => (a.chapter === undefined ? 0 : 1) - (b.chapter === undefined ? 0 : 1));
   for (const e of own) {
     const { before, after } = X.neighbours(e, catalogue.entries);
-    for (const x of [after, before]) {
-      if (!x) continue;
-      related.set(x.id, x);
-      if (x.story && x.story !== entry.id && !neighbourStories.includes(x.story)) neighbourStories.push(x.story);
-    }
+    for (const x of [after, before]) if (x) related.set(x.id, x);
   }
-  for (const e of mine) {
-    for (const m of X.meanwhile(e, catalogue.entries, 2)) related.set(m.entry.id, m.entry);
+  // Empires that ran at the same time are context for a history story, not for a moon mission.
+  const shelf = manifest.sections.find((x) => x.id === entry.section)?.shelf;
+  if (shelf === "humankind") {
+    for (const e of mine) {
+      for (const m of X.meanwhile(e, catalogue.entries, 2)) related.set(m.entry.id, m.entry);
+    }
   }
   const at = builtStories.indexOf(entry);
   const inOrder = [...builtStories.slice(at + 1), ...builtStories.slice(0, Math.max(at, 0))];
-  // Offer first the stories that share the most years with this one; then the rest in manifest order.
-  /** @param {Story} s */
-  const shared = (s) => {
-    let years = 0;
-    for (const a of mine) {
-      for (const b of catalogue.entries) {
-        if (b.story !== s.id || a.from === undefined || a.to === undefined || b.from === undefined || b.to === undefined) continue;
-        years = Math.max(years, Math.min(a.to, b.to) - Math.max(a.from, b.from));
-      }
-    }
-    return years;
-  };
-  /** @param {Story} s */
-  const rank = (s) => {
-    const n = neighbourStories.indexOf(s.id);
-    return n < 0 ? neighbourStories.length : n;
-  };
-  // Stay on the reader's subject: first stories in the same section, or on the same
-  // shelf and next to this one on the timeline or sharing its years; then the rest of
-  // the shelf; then everything else. Without this a moon mission leads on to an
-  // empire that merely ran into the 1990s.
-  /** @param {string} id */
-  const shelfOf = (id) => manifest.sections.find((x) => x.id === id)?.shelf;
-  /** @param {Story} s @param {number} years */
-  const closeness = (s, years) => {
-    if (s.section === entry.section) return 0;
-    if (shelfOf(s.section) !== shelfOf(entry.section)) return 2;
-    return neighbourStories.includes(s.id) || years > 0 ? 0 : 1;
-  };
-  const next = inOrder
-    .map((s, i) => ({ s, i, years: shared(s) }))
-    .sort((a, b) => closeness(a.s, a.years) - closeness(b.s, b.years) || rank(a.s) - rank(b.s) || b.years - a.years || a.i - b.i)
-    .map((x) => x.s);
+  const next = nextStories(entry, {
+    stories: builtStories,
+    sections: manifest.sections,
+    entries: catalogue.entries,
+    words: storyWordsById,
+    neighbours: /** @type {any} */ (X.neighbours),
+  }).map((p) => p.story);
   return {
     stories: inOrder.map((s) => ({ title: s.title, href: `/${s.id}/` })),
     next: next.slice(0, 2).map((s) => ({ title: s.title, href: `/${s.id}/`, era: s.era })),
