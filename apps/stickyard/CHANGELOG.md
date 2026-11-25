@@ -2,6 +2,15 @@
 
 All notable changes to Stickyard, newest first. The format follows Keep a Changelog. Versions are 0.x: a minor bump for each slice and a patch bump for each follow-up fix. This file is shown in the app under **What’s new**, so entries are written for the people using it.
 
+## [0.49.0] - 2026-11-25
+
+### Added
+- **Eleven more templates**, so there are now forty-eight.
+- **Strategy and product**: Business Model Canvas, Lean Canvas, Value proposition canvas, Customer journey map, User story map and Fishbone (cause and effect).
+- **Architecture and analysis**: C4 context, Build vs buy, Options appraisal, Dependency map and Incident post-mortem.
+- The two nine-box canvases have more frames than there are frame colours, so a colour can appear twice, never on frames next to each other.
+- Search the palette for them by name or by what's in them, for example "canvas", "journey", "ishikawa" or "postmortem".
+
 ## [0.48.0] - 2026-11-25
 
 ### Added

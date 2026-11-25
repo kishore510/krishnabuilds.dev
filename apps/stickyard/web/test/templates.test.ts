@@ -58,7 +58,7 @@ const byId = (id: string): Template => {
 };
 
 describe("template registry", () => {
-  it("has the thirty-seven templates, in group order, with unique ids and names", () => {
+  it("has the forty-eight templates, in group order, with unique ids and names", () => {
     expect(TEMPLATES.map((t) => t.label)).toEqual([
       "Retro",
       "Start Stop Continue",
@@ -91,12 +91,23 @@ describe("template registry", () => {
       "Technology radar",
       "RAID",
       "Architecture decision",
+      "C4 context",
+      "Build vs buy",
+      "Options appraisal",
+      "Dependency map",
+      "Incident post-mortem",
       "Empathy map",
       "Persona",
       "PESTLE",
       "Five whys",
       "Stakeholder map",
       "Risk heatmap",
+      "Business Model Canvas",
+      "Lean Canvas",
+      "Value proposition canvas",
+      "Customer journey map",
+      "User story map",
+      "Fishbone",
     ]);
     expect(new Set(TEMPLATES.map((t) => t.id)).size).toBe(TEMPLATES.length);
     expect(new Set(TEMPLATES.map((t) => t.label.toLowerCase())).size).toBe(TEMPLATES.length);
@@ -116,8 +127,14 @@ describe("template registry", () => {
     const members = (group: string) => TEMPLATES.filter((t) => t.group === group).map((t) => t.label);
     expect(members("Retros")).toEqual(["Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat", "Rose Thorn Bud", "KALM", "DAKI", "Hot air balloon", "Speedcar", "Three little pigs"]);
     expect(members("Planning and facilitation")).toEqual(["Sprint planning", "2x2 Impact and Effort", "Lean coffee", "Kanban", "MoSCoW", "Now Next Later", "Eisenhower matrix", "Check-in", "Brainstorm", "Parking lot", "Meeting agenda and actions", "OKRs", "Quarterly planning"]);
-    expect(members("Architecture and analysis")).toEqual(["SWOT", "TIME", "Migration strategy", "Technology radar", "RAID", "Architecture decision"]);
-    expect(members("Strategy and product")).toEqual(["Empathy map", "Persona", "PESTLE", "Five whys", "Stakeholder map", "Risk heatmap"]);
+    expect(members("Architecture and analysis")).toEqual([
+      "SWOT", "TIME", "Migration strategy", "Technology radar", "RAID", "Architecture decision",
+      "C4 context", "Build vs buy", "Options appraisal", "Dependency map", "Incident post-mortem",
+    ]);
+    expect(members("Strategy and product")).toEqual([
+      "Empathy map", "Persona", "PESTLE", "Five whys", "Stakeholder map", "Risk heatmap",
+      "Business Model Canvas", "Lean Canvas", "Value proposition canvas", "Customer journey map", "User story map", "Fishbone",
+    ]);
   });
 
   it.each(TEMPLATES.map((t) => [t.label, t] as const))("%s validates against the shared constants", (_label, t) => {
@@ -150,9 +167,21 @@ describe("template registry", () => {
     for (const [i, a] of t.frames.entries()) for (const b of t.frames.slice(i + 1)) expect(overlaps(a, b), `${a.title} / ${b.title}`).toBe(false);
   });
 
+  /** Frames that touch: side by side or one above the other, a gap apart (corners count too). */
+  const touching = (a: Frame | Template["frames"][number], b: Frame | Template["frames"][number], gap = 40) =>
+    overlaps({ x: a.x - gap, y: a.y - gap, w: a.w + 2 * gap, h: a.h + 2 * gap }, b);
+
   it("uses a different colour per column where it helps, and a styled (bold, centred, larger) title", () => {
     for (const t of TEMPLATES) {
-      expect(new Set(t.frames.map((f) => f.color)).size, t.label).toBe(t.frames.length);
+      if (t.frames.length <= FRAME_COLORS.length) {
+        expect(new Set(t.frames.map((f) => f.color)).size, t.label).toBe(t.frames.length);
+      } else {
+        // The stated exception: a template with more frames than colours (the two nine-box canvases)
+        // uses every colour, and frames that touch never share one.
+        expect(new Set(t.frames.map((f) => f.color)).size, t.label).toBe(FRAME_COLORS.length);
+        for (const [i, a] of t.frames.entries())
+          for (const b of t.frames.slice(i + 1)) if (touching(a, b)) expect(a.color, `${t.label}: ${a.title} / ${b.title}`).not.toBe(b.color);
+      }
       for (const f of t.frames) expect(f.style).toMatchObject({ titleBold: true, titleAlign: "center" });
       expect(t.frames.some((f) => f.style.titleFontSize === "l" || f.style.titleFontSize === "xl"), t.label).toBe(true);
     }
@@ -192,6 +221,25 @@ describe("template registry", () => {
     expect(byId("persona").frames.map((f) => f.title)).toEqual(["Name and role", "About them", "Goals", "Frustrations", "What they need from us"]);
     expect(byId("pestle").frames.map((f) => f.title)).toEqual(["Political", "Economic", "Social", "Technological", "Legal", "Environmental"]);
     expect(byId("five-whys").frames.map((f) => f.title)).toEqual(["Problem", "Why? 1", "Why? 2", "Why? 3", "Why? 4", "Why? 5", "Root cause and fix"]);
+    expect(byId("business-model-canvas").frames.map((f) => f.title)).toEqual([
+      "Key partners", "Key activities", "Key resources", "Value propositions", "Customer relationships", "Channels", "Customer segments", "Cost structure", "Revenue streams",
+    ]);
+    expect(byId("lean-canvas").frames.map((f) => f.title)).toEqual([
+      "Problem", "Solution", "Key metrics", "Unique value proposition", "Unfair advantage", "Channels", "Customer segments", "Cost structure", "Revenue streams",
+    ]);
+    expect(byId("value-proposition-canvas").frames.map((f) => f.title)).toEqual(["Gain creators", "Products and services", "Pain relievers", "Gains", "Customer jobs", "Pains"]);
+    expect(byId("customer-journey-map").frames.map((f) => f.title)).toEqual([
+      "Who they are and what they want", "Awareness", "Consideration", "Purchase", "Use", "Loyalty", "Pain points and opportunities",
+    ]);
+    expect(byId("user-story-map").frames.map((f) => f.title)).toEqual(["User goal", "Activities, in order (the backbone)", "Release 1: the smallest useful version", "Release 2", "Later"]);
+    expect(byId("fishbone").frames.map((f) => f.title)).toEqual(["People", "Process", "Tools and technology", "Environment", "Measurement", "Materials and inputs", "Problem (the effect)"]);
+    expect(byId("c4-context").frames.map((f) => f.title)).toEqual(["People: users and roles", "Systems that send to it", "The system (in scope)", "Systems it sends to", "Key relationships and data"]);
+    expect(byId("build-vs-buy").frames.map((f) => f.title)).toEqual(["What we need", "Build: in house", "Buy: off the shelf", "Reuse or partner", "Decision and why"]);
+    expect(byId("options-appraisal").frames.map((f) => f.title)).toEqual(["Objectives and criteria", "Option 1: do nothing", "Option 2", "Option 3", "Option 4", "Recommendation"]);
+    expect(byId("dependency-map").frames.map((f) => f.title)).toEqual(["Upstream: we depend on", "Our team or system", "Downstream: depends on us", "At risk: blocked or late, with owners"]);
+    expect(byId("post-mortem").frames.map((f) => f.title)).toEqual([
+      "Summary and who was affected", "Timeline", "What went well", "What went wrong", "Root causes", "Actions (who, by when)",
+    ]);
     // Power up, interest to the right.
     expect(byId("stakeholder-map").frames.map((f) => f.title)).toEqual([
       "Keep satisfied: high power, low interest",
@@ -264,6 +312,46 @@ describe("template registry", () => {
     const goal = sailboat.frames[0]!;
     expect(goal.w).toBe(templateBounds(sailboat).width);
     expect(sailboat.frames.slice(1).every((f) => f.y > goal.y + goal.h && f.y === sailboat.frames[1]!.y)).toBe(true);
+  });
+
+  it("lays out the canvases and the other uneven templates as asked", () => {
+    // The nine-box canvases: five columns, the 2nd and 4th split in two, two wide frames along the bottom.
+    for (const id of ["business-model-canvas", "lean-canvas"]) {
+      const t = byId(id);
+      const { width, height } = templateBounds(t);
+      const top = t.frames.slice(0, 7);
+      const bottom = t.frames.slice(7);
+      expect(new Set(top.map((f) => f.x)).size, id).toBe(5);
+      const tall = top.filter((f) => f.y === 0 && f.h > 400);
+      expect(tall.map((f) => f.x), id).toEqual([...new Set(top.map((f) => f.x))].filter((_, i) => i % 2 === 0));
+      // Tall columns are as tall as the two halves beside them, gap included: everything in the top part ends level.
+      expect(top.filter((f) => f.y + f.h === tall[0]!.h).length, id).toBe(5);
+      expect(Math.max(...top.map((f) => f.y + f.h)), id).toBe(tall[0]!.h);
+      expect(bottom.map((f) => f.y)).toEqual([tall[0]!.h + 40, tall[0]!.h + 40]);
+      expect(bottom[0]!.x).toBe(0);
+      expect(bottom[1]!.x + bottom[1]!.w).toBe(width);
+      expect(bottom[0]!.w).toBe(bottom[1]!.w);
+      expect(bottom[0]!.y + bottom[0]!.h).toBe(height);
+    }
+    // Value proposition canvas: each row of the value map faces its match in the customer profile.
+    const vpc = byId("value-proposition-canvas");
+    for (const [left, right] of [["Gain creators", "Gains"], ["Products and services", "Customer jobs"], ["Pain relievers", "Pains"]] as const) {
+      expect(grid(vpc, left).col).toBe(0);
+      expect(grid(vpc, right).col).toBe(1);
+      expect(grid(vpc, left).row).toBe(grid(vpc, right).row);
+    }
+    // Fishbone: three causes above, three below, the problem on the right as tall as both rows.
+    const fishbone = byId("fishbone");
+    const head = grid(fishbone, "Problem");
+    expect(head.col).toBe(3);
+    expect(head.frame.y).toBe(0);
+    expect(head.frame.h).toBe(templateBounds(fishbone).height);
+    // User story map: full-width bands, one above the other.
+    const story = byId("user-story-map");
+    expect(story.frames.every((f) => f.x === 0 && f.w === templateBounds(story).width)).toBe(true);
+    // C4 context: the system sits in the middle, between what sends to it and what it sends to.
+    const c4 = byId("c4-context");
+    expect([grid(c4, "Systems that send").col, grid(c4, "The system").col, grid(c4, "Systems it sends").col]).toEqual([0, 1, 2]);
   });
 });
 
@@ -409,7 +497,7 @@ describe("session: applying a template", () => {
       expect((t.out()[0]!.message.frames as unknown[]).length).toBe(template.frames.length);
     }
     const largest = Math.max(...TEMPLATES.map((t) => t.frames.length));
-    expect(largest).toBe(7);
+    expect(largest).toBe(9);
     expect(largest).toBeLessThanOrEqual(MAX_FRAMES_PER_ROOM);
   });
 
@@ -536,7 +624,7 @@ describe("palette: Templates", () => {
   });
 
   it.each([
-    ["template", [["Retros", 12], ["Planning and facilitation", 13], ["Architecture and analysis", 6], ["Strategy and product", 6]]],
+    ["template", [["Retros", 12], ["Planning and facilitation", 13], ["Architecture and analysis", 11], ["Strategy and product", 12]]],
     ["retro", [["Retros", 12]]],
     ["kanban", [["Planning and facilitation", 3]]],
     ["matrix", [["Planning and facilitation", 2], ["Architecture and analysis", 2], ["Strategy and product", 2]]],
@@ -555,7 +643,16 @@ describe("palette: Templates", () => {
     ["rose thorn", ["Rose Thorn Bud"]],
     ["icebreaker", ["Check-in"]],
     ["okr", ["OKRs"]],
-    ["root cause", ["Five whys"]],
+    ["root cause", ["Incident post-mortem", "Five whys", "Fishbone"]],
+    ["canvas", ["Business Model Canvas", "Lean Canvas", "Value proposition canvas"]],
+    ["ishikawa", ["Fishbone"]],
+    ["journey", ["Customer journey map"]],
+    ["story map", ["User story map"]],
+    ["c4", ["C4 context"]],
+    ["make or buy", ["Build vs buy"]],
+    ["appraisal", ["Options appraisal"]],
+    ["upstream", ["Dependency map"]],
+    ["postmortem", ["Incident post-mortem"]],
     ["pestle", ["PESTLE"]],
     ["stakeholder", ["Stakeholder map"]],
     ["empathy", ["Empathy map"]],
