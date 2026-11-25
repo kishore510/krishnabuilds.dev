@@ -4,7 +4,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { SETTLE_MS } from '@/components/StickyResult'
 import { formatGBP, formatGBPDelta, formatPence, formatPercentFixed } from '@/lib/format'
 import { MAX_CAR_OPTIONS, SENSITIVITY_SHIFTS } from '@/lib/inputLimits'
-import { APR_DISPLAY_DIGITS, exact, exactMul, fromPounds, type Money, ratio, roundExact, roundRatio, subtract, toPence } from '@/lib/money'
+import {
+  APR_DISPLAY_DIGITS,
+  exact,
+  exactMul,
+  fromPence,
+  fromPounds,
+  type Money,
+  ratio,
+  roundExact,
+  roundRatio,
+  subtract,
+  toPence,
+} from '@/lib/money'
 import { percentRatio } from '@/lib/parse'
 import { STORAGE_KEYS } from '@/lib/storageKeys'
 import { scenarioStore } from '@/scenarios/index'
@@ -66,7 +78,8 @@ const editor = (index: number) => editors()[index]!
 const field = (index: number, suffix: string) => $(`[id$="-${suffix}"]`, editor(index)) as HTMLInputElement
 const choose = (within: ParentNode, name: string, label: string) =>
   click($$(`input[name$="${name}"]`, within).find((input) => text(input.closest('label')) === label))
-const chooseCase = (label: 'Low' | 'Expected' | 'High') => choose($('[data-shared-controls]')!, 'cd-case', label)
+// The case choice sits in "How sure is this" once an option has a range (CD10).
+const chooseCase = (label: 'Low' | 'Expected' | 'High') => choose(view.host, 'cd-case', label)
 
 function expectCard(index: number, result: OwnershipResult, valueCase: ValueCase) {
   const c = result.cases[valueCase]
@@ -74,8 +87,9 @@ function expectCard(index: number, result: OwnershipResult, valueCase: ValueCase
   expect(text($('[data-headline]', el))).toBe(money(c.netCostPerCoverageMonth))
   expect(text($('[data-total]', el))).toBe(money(c.netCost))
   expect(text($('[data-cash-out]', el))).toBe(money(c.cashOut))
-  expect(text($('[data-opportunity]', el))).toBe(money(c.breakdown.opportunityCost))
-  expect(text($('[data-coverage]', el))).toContain(`${result.coverageMonths} of ${result.horizonMonths} months`)
+  // Coverage is said only when an option covers less than the horizon (CD7).
+  if (result.fullCoverage) expect($('[data-coverage]', el)).toBeNull()
+  else expect(text($('[data-coverage]', el))).toContain(`${result.coverageMonths} of ${result.horizonMonths} months`)
   if (result.fullCoverage) expect(text($('[data-equity]', el))).toBe(money(c.months.at(-1)!.equity))
 }
 
@@ -117,7 +131,7 @@ describe('the page', () => {
     expect($('[data-coverage-flag]', card(1))).not.toBeNull()
     expect($('[data-coverage-flag]', card(0))).toBeNull()
     set({ horizonMonths: 36 })
-    expect(text($('[data-coverage]', card(1)))).toContain('36 of 36 months')
+    expect($('[data-coverage]', card(1))).toBeNull()
     expect($('[data-coverage-flag]', card(1))).toBeNull()
   })
 
@@ -140,10 +154,9 @@ describe('ordering', () => {
     const order = cards().map((c) => Number(c.getAttribute('data-option-index')))
     expect(order).toEqual([...ranking.full.map((e) => e.option), ...ranking.partial.map((e) => e.option)])
     expect(order.at(-1)).toBe(1)
-    const rule = text($('[data-ordering-rule]'))
-    expect(rule).toMatch(/average cost per month owned, lowest first/i)
-    expect(rule).toMatch(/not ordered against/i)
-    expect(rule).toMatch(/under these assumptions/i)
+    // The answer's bars (CD5) follow the same order; the partial option says it isn't compared by total.
+    expect($$('[data-rank-row]').map((r) => Number(r.getAttribute('data-rank-row')))).toEqual(order)
+    expect(text($('[data-rank-row="1"]'))).toMatch(/covers 36 of 48 months: not compared by total/i)
   })
 
   it('a partial option with the lowest net cost per month still comes after every full-coverage option', () => {
@@ -175,7 +188,8 @@ describe('ordering', () => {
 
   it('states ties', () => {
     set(inputs([cash({ name: 'Red' }), cash({ name: 'Blue' })]))
-    expect(text($('[data-ties]'))).toMatch(/Red and Blue.*tied/)
+    expect(text($('[data-verdict]'))).toMatch(/Red and Blue have the same net cost/)
+    expect(text($('[data-verdict-panel] [data-headline]'))).toBe('The same cost')
   })
 
   it('the sticky figure is the verdict: the lowest net cost under these assumptions and its gap to the next (3d-1)', () => {
@@ -192,29 +206,29 @@ describe('ordering', () => {
 })
 
 describe('cards', () => {
-  it('the breakdown has every part, each the engine’s, and the parts add up to the net cost', () => {
+  it('the cost parts (CD6) are the engine’s breakdown, running costs together, and add up to the net cost', () => {
     set(inputs([cash(), loan(), pcp({ pcpEnd: 'hand-back', term: 36 })]))
     const result = engine()
-    result.options.forEach((option, index) => {
-      const b = option.cases.expected.breakdown
-      const rows = $$('table tbody tr', card(index)).map((tr) => [text(tr.querySelector('th')), text(tr.querySelector('td'))])
-      const expected: [string, Money][] = [
-        ['Interest and fees', b.interestAndFees],
-        ['Depreciation', b.depreciation],
-        ['Equity handed back', b.equityHandedBack],
-        ['Fuel or energy', b.fuel],
-        ['Insurance', b.insurance],
-        ['Maintenance', b.maintenance],
-        ['VED', b.ved],
-        ['Other', b.other],
-        ['Opportunity cost', b.opportunityCost],
-      ]
-      expect(rows).toEqual(expected.filter(([, v]) => toPence(v) !== 0).map(([l, v]) => [l, money(v)]))
-      const sum = expected.reduce((total, [, v]) => total + toPence(v), 0)
-      expect(sum).toBe(toPence(option.cases.expected.netCost))
-      const drawn = $$('[data-segment]', card(index)).map((g) => Number(g.getAttribute('data-value')))
-      if (drawn.length > 0) expect(drawn.reduce((a, v) => a + v, 0)).toBe(toPence(option.cases.expected.netCost))
-    })
+    const table = $('[data-parts-table]')!
+    const cardOrder = cards().map((c) => Number(c.getAttribute('data-option-index')))
+    expect($$('thead th', table).slice(1).map(text)).toEqual(cardOrder.map((k) => session.get().inputs.options[k]!.name))
+    const rows = $$('tbody tr', table).map((tr) => [text(tr.querySelector('th')), ...$$('td', tr).map(text)])
+    type Parts = OwnershipResult['cases']['expected']['breakdown']
+    const expected = (label: string, pick: (b: Parts) => number) => [
+      label,
+      ...cardOrder.map((k) => money(fromPence(pick(result.options[k]!.cases.expected.breakdown)))),
+    ]
+    expect(rows).toEqual([
+      expected('Depreciation', (b) => toPence(b.depreciation)),
+      expected('Interest and fees', (b) => toPence(b.interestAndFees)),
+      expected('Equity handed back', (b) => toPence(b.equityHandedBack)),
+      expected('Fuel or energy', (b) => toPence(b.fuel)),
+      expected('Running costs', (b) => toPence(b.insurance) + toPence(b.maintenance) + toPence(b.ved) + toPence(b.other)),
+      expected('Interest your cash could have earned', (b) => toPence(b.opportunityCost)),
+      ['Total net cost', ...cardOrder.map((k) => money(result.options[k]!.cases.expected.netCost))],
+    ])
+    // Each bar is drawn for the option, in the cards' order.
+    expect($$('[data-cost-bar]').map((b) => Number(b.getAttribute('data-cost-bar')))).toEqual(cardOrder)
   })
 
   it('shows equity at the horizon, and flags negative equity', () => {
@@ -237,14 +251,30 @@ describe('cards', () => {
     expect(text($('[data-equity]', card(0)))).toMatch(/handed back/i)
   })
 
-  it('cards are in a row that scrolls on phones, focusable by keyboard, with a visible hint, each card reachable', () => {
+  it('cards are slim (CD6): a region named by its option, its three largest parts, each the engine’s', () => {
     set(example)
-    const row = $('[data-cards]')!
-    expect(row.getAttribute('tabindex')).toBe('0')
-    expect(row.className).toMatch(/snap-x/)
-    expect(row.getAttribute('aria-labelledby') ?? row.getAttribute('aria-label')).toBeTruthy()
-    expect(text($('[data-scroll-hint]'))).toMatch(/scroll/i)
-    for (const c of cards()) expect(c.getAttribute('tabindex')).toBe('0')
+    const result = engine()
+    const partSelector = ['depreciation', 'finance', 'handedBack', 'fuel', 'running', 'lostInterest']
+      .map((id) => `[data-part-${id}]`)
+      .join(', ')
+    for (const c of cards()) {
+      const index = Number(c.getAttribute('data-option-index'))
+      const heading = view.host.querySelector(`#${CSS.escape(c.getAttribute('aria-labelledby')!)}`)
+      expect(text(heading)).toBe(example.options[index]!.name)
+      const b = result.options[index]!.cases.expected.breakdown
+      const parts = [
+        toPence(b.depreciation),
+        toPence(b.interestAndFees),
+        toPence(b.equityHandedBack),
+        toPence(b.fuel),
+        toPence(b.insurance) + toPence(b.maintenance) + toPence(b.ved) + toPence(b.other),
+        toPence(b.opportunityCost),
+      ]
+        .filter((v) => v > 0)
+        .sort((x, y) => y - x)
+        .slice(0, 3)
+      expect($$(partSelector, c).map(text)).toEqual(parts.map((v) => money(fromPence(v))))
+    }
   })
 
   it('a comparison table below holds the same figures, as the accessible equivalent', () => {
@@ -272,7 +302,7 @@ describe('rates', () => {
     expect(text(loanRate)).toMatch(/APR/)
     const pcpRate = $('[data-rate]', card(2))!
     expect(pcpRate.getAttribute('data-rate-kind')).toBe('effective')
-    expect(text(pcpRate)).toMatch(/effective interest rate, not the lender’s APR/i)
+    expect(text(pcpRate)).toMatch(/effective rate with every fee, not the lender’s APR/i)
     expect($('[data-rate]', card(0))).toBeNull()
   })
 
@@ -338,7 +368,8 @@ describe('refusals and input errors', () => {
     set(inputs([cash(), blank('cash')]))
     expect(text($('[data-card-missing]', card(1)))).toMatch(/Price/)
     const lines = $$('[data-card-missing] li', card(1)).map(text)
-    expect(lines).toHaveLength(8)
+    // Low and high end values are optional since inputs version 4 (CD10).
+    expect(lines).toHaveLength(6)
     expect(lines[0]).toMatch(/^Price: needed/)
     expect($('[data-headline]', card(0))).not.toBeNull()
   })
@@ -487,7 +518,12 @@ describe('empty optional boxes (3c-2)', () => {
     act(() => scenarioStore.reload())
     act(() => session.startNew())
     act(() => session.load(scenarioStore.get().scenarios[0]!))
-    expect(session.get().inputs).toEqual(example)
+    // Version 4 shares the first entered mileage (CD11); every option drove the same, so none keeps its own.
+    expect(session.get().inputs).toEqual({
+      ...example,
+      annualMileage: 8_000,
+      options: example.options.map((o) => ({ ...o, ownMileage: false })),
+    })
     for (const [i, option] of engine(example).options.entries()) expectCard(i, option, 'expected')
     expect(blankV1('cash').insurance).toBeNull()
   })
@@ -563,7 +599,7 @@ describe('the selected month and readout (3c-2)', () => {
 
   function expectReadout(month: number, i = handBack) {
     const result = engine(i)
-    expect(text($('[data-readout] h3, [data-readout] h2'))).toContain(`month ${month}`)
+    expect(text($('[data-readout] h3'))).toContain(`month ${month}`)
     result.options.forEach((option, k) => {
       const point = option.cases[i.valueCase].months[month]
       const row = readoutOf(k)
@@ -732,7 +768,7 @@ describe('sensitivity (3c-2)', () => {
       })
       for (let k = 1; k < largest.length; k++) expect(largest[k - 1]!).toBeGreaterThanOrEqual(largest[k]!)
     })
-    expect(text($('[data-sensitivity]'))).toMatch(/what moves the answer most/i)
+    expect(text($('[data-sensitivity]'))).toMatch(/what moves each option’s cost most/i)
     expect(text($('[data-sensitivity]'))).toMatch(/one at a time.*held at (their|its) current value/i)
   })
 
@@ -752,13 +788,15 @@ describe('sensitivity (3c-2)', () => {
 })
 
 describe('layout (3c-2)', () => {
-  it('has a one-line “how to read this page” under the title, and the sections in order', () => {
+  it('has the options first, then what every option shares, the answer, and the result sections in order (CD2, CD8)', () => {
     vi.useFakeTimers()
     set(example)
     act(() => vi.advanceTimersByTime(SETTLE_MS))
-    expect(text($('[data-how-to-read]')).length).toBeGreaterThan(0)
     const order = [
+      '[data-option-row]',
       '[data-shared-controls]',
+      '[data-verdict-panel]',
+      '[data-cost-section]',
       '[data-cards]',
       '[data-crossover]',
       '[data-flips]',
@@ -768,6 +806,5 @@ describe('layout (3c-2)', () => {
     for (let k = 1; k < order.length; k++) {
       expect(order[k - 1]!.compareDocumentPosition(order[k]!) & Node.DOCUMENT_POSITION_FOLLOWING, `${k}`).toBeTruthy()
     }
-    expect(byText(view.host, 'button', 'Go to the cards')).toBeDefined()
   })
 })

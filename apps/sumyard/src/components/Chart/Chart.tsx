@@ -70,7 +70,10 @@ const STYLES: Record<ChartStyle, { stroke: string; fill: string; dash: string | 
 /** The style a series takes by its place when it names none (the first three as before 3c-2). */
 const ORDER: readonly ChartStyle[] = ['accent', 'contrast', 'neutral', 'secondary']
 
-const styleOf = (series: ChartSeries, index: number) => STYLES[series.style ?? ORDER[index % ORDER.length]!]
+const styleOf = (series: ChartSeries, index: number) => {
+  const style = STYLES[series.style ?? ORDER[index % ORDER.length]!]
+  return series.colour ? { ...style, stroke: series.colour.stroke, fill: series.colour.fill } : style
+}
 
 /**
  * A point marker of a shape, centred on (cx, cy). A diamond is a square turned and a triangle fills the same box, so

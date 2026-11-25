@@ -73,8 +73,9 @@ function expectCard(index: number, result: OwnershipResult, valueCase: ValueCase
   expect(text($('[data-headline]', el))).toBe(money(c.netCostPerCoverageMonth))
   expect(text($('[data-total]', el))).toBe(money(c.netCost))
   expect(text($('[data-cash-out]', el))).toBe(money(c.cashOut))
-  expect(text($('[data-opportunity]', el))).toBe(money(c.breakdown.opportunityCost))
-  expect(text($('[data-coverage]', el))).toContain(`${result.coverageMonths} of ${result.horizonMonths} months`)
+  // Coverage is said only when an option covers less than the horizon (CD7).
+  if (result.fullCoverage) expect($('[data-coverage]', el)).toBeNull()
+  else expect(text($('[data-coverage]', el))).toContain(`${result.coverageMonths} of ${result.horizonMonths} months`)
   if (result.fullCoverage) expect(text($('[data-equity]', el))).toBe(money(c.months.at(-1)!.equity))
 }
 
@@ -84,7 +85,7 @@ describe('scenarios', () => {
     click(byText(view.host, 'button', 'Save'))
     click(byText(view.host, 'form button', 'Save'))
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.scenarios.key)!)
-    expect(stored.scenarios[0]).toMatchObject({ calculatorId: 'car-decision', inputsVersion: 3, inputs: example })
+    expect(stored.scenarios[0]).toMatchObject({ calculatorId: 'car-decision', inputsVersion: 4, inputs: example })
     expect(Object.hasOwn(stored.scenarios[0], 'taxYear')).toBe(false)
     act(() => session.startNew())
     expect(session.get().inputs).toEqual(carDecisionCalculator.defaultInputs())
@@ -220,18 +221,13 @@ describe('words', () => {
 })
 
 describe('the answer first (3d-1)', () => {
-  it('the results column opens with the verdict, then the bottom line, the three cases, then the order', () => {
+  it('the results column is the answer (CD5): the verdict as the headline, the bars, the switch cost', () => {
     set(ownerPage())
     const results = $('[data-results]')!
-    const panels = [...results.querySelectorAll('section[aria-labelledby]')].filter((el) => el.parentElement?.closest('section') === null)
-    expect(panels.map((el) => el.getAttribute('aria-labelledby'))).toEqual([
-      'cd-verdict-title',
-      'cd-bottom-title',
-      'cd-scenarios-title',
-      // 3d-2: where the difference comes from, under the verdict's panels.
-      'cd-bridge-title',
-      'cd-order-title',
-    ])
+    expect(results.firstElementChild!.hasAttribute('data-verdict-panel')).toBe(true)
+    expect(text($('[data-verdict-panel] [data-headline]'))).toBe('£182.26 a month less')
+    expect(text($('[data-verdict-panel]'))).toContain('£8,748.56 less over 48 months')
+    expect($$('[data-rank-row]', results).map((r) => Number(r.getAttribute('data-rank-row')))).toEqual([0, 1])
     expect(text($('[data-verdict]'))).toBe(
       'Current car has the lowest net cost under these assumptions: £182.26 a month less than New car PCP, £8,748.56 over 48 months. ' +
         'It uses a savings return of 0% a year, so tying up cash costs nothing in this comparison.',
@@ -239,20 +235,18 @@ describe('the answer first (3d-1)', () => {
     expect($$('[data-switch-cost]').map(text)).toEqual([
       'Switching to New car PCP costs £182.26 a month more than keeping Current car: £8,748.56 more over 48 months.',
     ])
-    // The switch line names the same pair, so the bottom line leaves the alternative out (3d-1.1).
-    expect($('[data-bottom-row="alternative"]')).toBeNull()
     expect(text($('[data-scenario-sentence]'))).toBe('Current car has the lowest net cost in all three end-value cases.')
     // The phone bar carries the verdict in short.
     expect(text($('[data-sticky-value]'))).toBe('Current car, £182.26 a month less than New car PCP')
   })
 
-  it('cards keep their detail, headed by the average cost per month owned, its largest part and the money in and out', () => {
+  it('cards are slim (CD6): the average cost per month owned, the total, its largest parts and the money in and out', () => {
     set(ownerPage())
     const [keepCard, pcpCard] = [card(0), card(1)]
     expect(keepCard.textContent).toContain('Average cost per month owned')
     expect(text($('[data-headline]', keepCard))).toBe('£379.85')
     expect(text($('[data-headline]', pcpCard))).toBe('£562.11')
-    expect(text($('[data-largest]', pcpCard))).toBe('Largest part of the cost: Depreciation (£21,000.00 of £26,981.20)')
+    expect(text($('[data-part-depreciation]', pcpCard))).toBe('£21,000.00')
     expect(text($('[data-upfront]', pcpCard))).toBe('£13,000.00')
     expect(text($('[data-monthly]', pcpCard))).toBe('£208.33 a month')
     expect(text($('[data-final]', pcpCard))).toBe('£20,000.00')
@@ -261,8 +255,10 @@ describe('the answer first (3d-1)', () => {
     expect($('[data-monthly]', keepCard)).toBeNull()
     expect($('[data-final]', keepCard)).toBeNull()
     // The detail stays below.
-    for (const marker of ['[data-total]', '[data-coverage]', '[data-equity]', '[data-cash-out]', '[data-opportunity]'])
-      expect($(marker, pcpCard), marker).not.toBeNull()
+    for (const marker of ['[data-total]', '[data-equity]', '[data-cash-out]']) expect($(marker, pcpCard), marker).not.toBeNull()
+    // Coverage only when short of the horizon; no order row (CD7).
+    expect($('[data-coverage]', pcpCard)).toBeNull()
+    expect(pcpCard.textContent).not.toMatch(/Order/)
   })
 
   it('the effective rate says which fees it includes', () => {
@@ -338,10 +334,8 @@ describe('3d-1.1 fixes', () => {
     const measures: [string, string][] = [
       ['Average cost per month owned', '[data-headline]'],
       ['Total net cost', '[data-total]'],
-      ['Coverage', '[data-coverage]'],
-      ['Equity at the horizon', '[data-equity]'],
-      ['Cash out', '[data-cash-out]'],
-      ['Opportunity cost', '[data-opportunity]'],
+      ['Yours at the end', '[data-equity]'],
+      ['Cash paid out', '[data-cash-out]'],
     ]
     for (const [label, marker] of measures) {
       const cells = $$('td', row(label))
@@ -354,8 +348,12 @@ describe('3d-1.1 fixes', () => {
       const shown = $('[data-rate-value]', card(index))
       if (shown) expect(text($('[data-rate-value]', rates[k]!)), `rate, option ${index}`).toBe(text(shown))
     })
+    // Coverage: the table has every option's; a card says it only when short (CD7).
+    const coverage = $$('td', row('Coverage'))
+    expect(text(coverage[order.indexOf(2)])).toBe('24 of 121 months')
     expect(text($('[data-coverage]', card(2)))).toBe('24 of 121 months')
-    expect(text($('[data-coverage]', card(0)))).toBe('121 of 121 months')
+    expect(text(coverage[order.indexOf(0)])).toBe('121 of 121 months')
+    expect($('[data-coverage]', card(0))).toBeNull()
   })
 
   it('the side-by-side table: its first column stays opaque and wraps, the other columns keep a minimum width', () => {

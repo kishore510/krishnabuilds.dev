@@ -83,7 +83,7 @@ const PART_LABELS: readonly [keyof Breakdown, string][] = [
   ['maintenance', 'Maintenance'],
   ['ved', 'VED'],
   ['other', 'Other'],
-  ['opportunityCost', 'Opportunity cost'],
+  ['opportunityCost', 'Interest your cash could have earned'],
 ]
 
 /** The engine's breakdown (F26) as labelled parts, in the page's order; they add up to the net cost. */

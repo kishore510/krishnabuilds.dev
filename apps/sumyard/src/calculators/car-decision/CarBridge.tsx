@@ -66,15 +66,14 @@ export function BridgeSection({
       data-bridge
       aria-labelledby="cd-bridge-title"
       // A long unbroken option name wraps instead of widening the page.
-      className="flex min-w-0 flex-col gap-3 rounded-lg border border-border bg-surface p-5 text-sm text-text shadow-sm [overflow-wrap:anywhere]"
+      className="flex min-w-0 flex-col gap-3 text-sm text-text [overflow-wrap:anywhere]"
     >
-      <h2 id="cd-bridge-title" className="text-base font-semibold">
+      <h3 id="cd-bridge-title" className="text-sm font-semibold">
         Where the difference comes from
-      </h2>
+      </h3>
       {picker}
       <p className="text-text-muted">
-        The first option’s average cost per month owned less the second’s, in the {caseWord} case, split into the parts each card shows. The
-        same pair as in “What changes the answer”: choosing here changes both.
+        The first option’s average cost per month owned less the second’s, in the {caseWord} case, split into the parts each card shows.
       </p>
       {body}
     </section>

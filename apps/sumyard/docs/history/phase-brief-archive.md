@@ -963,3 +963,21 @@ Engine, tax config, inputs and storage changes; a per-pay-period payroll view, c
 | With a tax code | Both payslip lines in the headline; the shared copy says which take-home it shows |
 | Scottish region, a Child Benefit charge, salary sacrifice benefits | Each part appears with its own colour and label, in the ring, rows and share |
 | Period | Year and Month give the same ring proportions within rounding; the sticky bar and breakdown share one choice (U4) |
+
+## Mortgage page redesign brief (0.37.0, PR #191; moved here 24 November 2026)
+
+#### Goal
+
+Bring `#/c/mortgage` into the look of the budget (0.33.0) and take-home (0.36.0) pages. UI only: no engine, `inputsVersion`, storage key or saved scenario change; every input and result from 0.36.0 stays. The page still shows "Uses no tax rules" and calls nothing best (G13). Built in one PR (0.37.0); the owner approved the proposal in chat on 24 November 2026.
+
+#### Decisions (MD1 to MD5, approved by the owner as proposed, 24 November 2026; detail in `docs/ui-patterns.md`)
+
+- **MD1.** Three new tokens `mortgage-capital`, `-interest`, `-charge` on existing palette steps (not the take-home's); Lucide icons on sections and result rows.
+- **MD2.** Interest saved as the emphasised headline, the warnings after it (changes U44's order), in full.
+- **The ring.** The shared `Donut` of the total paid with overpaying: amount borrowed paid off, interest, the charge. Interest-only: what is still owed is said beside it, not drawn.
+- **MD3.** Share (image, PDF, CSV, text), amounts on by default; amounts off is shares and times only, no pound figure.
+- **MD4.** The what-if stays one monthly overpayment slider. **MD5.** Sign-off from screenshots of the built page.
+
+#### Differs from the proposal
+
+- No row of three small figure tiles under the headline: they would repeat the rows that follow (cleared in, total paid, the charge). The headline's sentence gives the interest with and without overpaying instead.

@@ -18,7 +18,7 @@ import type { Acquisition } from '../car-ownership/types'
  */
 
 export const APR_LABEL = 'APR'
-export const EFFECTIVE_LABEL = 'Effective interest rate, not the lender’s APR'
+export const EFFECTIVE_LABEL = 'Effective rate with every fee, not the lender’s APR'
 export const IMPLIED_LABEL = 'Implied rate from your figures, not the lender’s APR'
 
 export type RateShown =

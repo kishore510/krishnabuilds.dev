@@ -64,7 +64,10 @@ export interface OptionInputs {
   readonly endLow: Money | null
   readonly endExpected: Money | null
   readonly endHigh: Money | null
+  /** Its own whole miles a year, used only while ownMileage is on; else the shared mileage applies (CD11). */
   readonly annualMileage: number | null
+  /** Inputs version 4 (CD11): this option drives a different distance from the shared mileage. */
+  readonly ownMileage: boolean
   readonly fuelMode: FuelMode
   readonly milesPerGallon: string | null
   readonly pencePerLitre: string | null
@@ -117,6 +120,8 @@ export interface CarDecisionInputs {
   readonly savingsReturn: string | null
   /** The yearly increase in insurance, maintenance, VED and other costs, the same for every option (F21). */
   readonly generalIncrease: string | null
+  /** Inputs version 4 (CD11): whole miles a year for every option without its own. */
+  readonly annualMileage: number | null
   readonly options: readonly OptionInputs[]
 }
 
@@ -148,6 +153,7 @@ export const FIELD_LABELS: Record<OptionField, string> = {
   endExpected: 'Expected value at the end',
   endHigh: 'High value at the end',
   annualMileage: 'Annual mileage',
+  ownMileage: 'Drives a different distance',
   fuelMode: 'Fuel type',
   milesPerGallon: 'Miles per gallon',
   pencePerLitre: 'Price per litre',
@@ -189,6 +195,7 @@ export const SHARED_LABELS: Record<SharedField, string> = {
   valueCase: 'End-value case',
   savingsReturn: 'Savings return (after tax, a year)',
   generalIncrease: 'Yearly increase in running costs',
+  annualMileage: 'Annual mileage',
 }
 
 export const MONEY_FIELDS: readonly OptionField[] = [
@@ -249,6 +256,7 @@ export const LIMITS: Record<Exclude<OptionField, 'name'>, { readonly kind: 'mone
   endExpected: { kind: 'money' },
   endHigh: { kind: 'money' },
   annualMileage: { kind: 'whole', min: 0, max: MAX_ANNUAL_MILEAGE },
+  ownMileage: { kind: 'switch' },
   fuelMode: { kind: 'choice', options: FUEL_MODES },
   milesPerGallon: { kind: 'decimal', min: NOTHING, max: MAX_MILES_PER_GALLON, minExclusive: true },
   pencePerLitre: { kind: 'decimal', min: NOTHING, max: MAX_PENCE_PER_UNIT },
@@ -290,6 +298,7 @@ export const SHARED_LIMITS = {
   horizonMonths: { min: 1, max: MAX_HORIZON_MONTHS },
   savingsReturn: { min: NOTHING, max: MAX_SAVINGS_RETURN },
   generalIncrease: { min: negate(PRICE_CHANGE_BOUND), max: PRICE_CHANGE_BOUND },
+  annualMileage: { min: 0, max: MAX_ANNUAL_MILEAGE },
 } as const
 
 export const AMOUNT_LIMITS = { min: ZERO, max: MAX_INPUT_AMOUNT }
@@ -337,6 +346,10 @@ function sharedFieldProblem(field: SharedField, value: unknown): string | undefi
         : `${label} must be a whole number of months, from one up to the longest Sumyard models.`
     case 'valueCase':
       return VALUE_CASES.includes(value as ValueCase) ? undefined : `${label} must be low, expected or high.`
+    case 'annualMileage':
+      return value === null || isWhole(value, SHARED_LIMITS.annualMileage.min, SHARED_LIMITS.annualMileage.max)
+        ? undefined
+        : `${label} must be whole miles a year, from nothing up to the most Sumyard models, or empty.`
     default:
       return value === null || isCanonicalPercent(value, { ...SHARED_LIMITS[field], maxDecimals: DECIMALS })
         ? undefined
@@ -373,6 +386,7 @@ function validate(raw: unknown) {
     valueCase: raw.valueCase as ValueCase,
     savingsReturn: raw.savingsReturn as string | null,
     generalIncrease: raw.generalIncrease as string | null,
+    annualMileage: raw.annualMileage as number | null,
     options: options.map((option: Record<string, unknown>) => {
       const fresh: Record<string, unknown> = {}
       for (const field of OPTION_FIELDS) {
@@ -395,6 +409,7 @@ export function blankOption(acquisition: AcquisitionKind): OptionInputs {
     endExpected: null,
     endHigh: null,
     annualMileage: null,
+    ownMileage: false,
     fuelMode: 'fuel',
     milesPerGallon: null,
     pencePerLitre: null,
@@ -466,8 +481,29 @@ function fromVersion2(old: unknown): unknown {
   }
 }
 
+/**
+ * Inputs version 3 to 4 (CD11): the shared mileage is the first option's that is entered (or empty); an option whose
+ * own mileage differs from it, an empty one included, keeps its own, so every option is costed on the same miles as
+ * before and one still missing its mileage is still missing it. What isn't a set of inputs is passed on for validation.
+ */
+function fromVersion3(old: unknown): unknown {
+  if (!isRecord(old) || Array.isArray(old) || !Array.isArray(old.options)) return old
+  const entered = old.options.find(
+    (option: unknown) => isRecord(option) && option.annualMileage !== null && option.annualMileage !== undefined,
+  )
+  const shared = isRecord(entered) ? entered.annualMileage : null
+  return {
+    ...old,
+    annualMileage: shared,
+    options: old.options.map((option: unknown) => {
+      if (!isRecord(option) || Array.isArray(option)) return option
+      return { ...option, ownMileage: option.annualMileage !== shared }
+    }),
+  }
+}
+
 /** Each version's step up to the next, in order: the inputs version is one past the last. */
-const MIGRATIONS = [fromVersion1, fromVersion2] as const
+const MIGRATIONS = [fromVersion1, fromVersion2, fromVersion3] as const
 
 /** Option sections (docs/ui-patterns.md, U1): the car, its finance (loan, HP, PCP only) and running costs with fuel. */
 export type SectionId = 'car' | 'finance' | 'running'
@@ -488,7 +524,7 @@ export const hasFinanceSection = (kind: AcquisitionKind) => isFinance(kind) || k
 
 /** The fields an option's section shows, for its kind, fuel type and pricing. */
 export function sectionFields(id: SectionId, option: OptionInputs): readonly OptionField[] {
-  if (id === 'car') return ['value', 'endLow', 'endExpected', 'endHigh', 'annualMileage']
+  if (id === 'car') return ['value', 'endExpected', 'endLow', 'endHigh', 'annualMileage']
   if (id === 'running') return ['insurance', 'maintenance', 'ved', 'other', ...FUEL_FIELDS[option.fuelMode], 'fuelPriceChange']
   const price: OptionField = option.pricing === 'rate' ? 'rate' : 'payment'
   switch (option.acquisition) {
@@ -505,10 +541,32 @@ export function sectionFields(id: SectionId, option: OptionInputs): readonly Opt
   }
 }
 
-/** The fields an option still needs before it can be costed: empty boxes it shows, in the page's order. */
+/** Low and high end values are optional (CD10): an empty one reads as the expected value. */
+const RANGE_FIELDS: readonly OptionField[] = ['endLow', 'endHigh']
+
+/** Whether an option has a low or a high end value entered (CD10). */
+export const hasRange = (option: OptionInputs) => option.endLow !== null || option.endHigh !== null
+
+/**
+ * The option as it is costed: the shared mileage unless it has its own (CD11), and an empty low or high end value read
+ * as the expected one (CD10). The stored option is unchanged.
+ */
+export function resolveOption(option: OptionInputs, sharedMileage: number | null): OptionInputs {
+  return {
+    ...option,
+    annualMileage: option.ownMileage ? option.annualMileage : sharedMileage,
+    endLow: option.endLow ?? option.endExpected,
+    endHigh: option.endHigh ?? option.endExpected,
+  }
+}
+
+/**
+ * The fields an option still needs before it can be costed: empty boxes it shows, in the page's order, never the
+ * optional low or high end value. Pass the resolved option (resolveOption) for the shared mileage to count.
+ */
 export function missingFields(option: OptionInputs): OptionField[] {
   const shown = [...sectionFields('car', option), ...sectionFields('running', option), ...sectionFields('finance', option)]
-  return shown.filter((field) => option[field] === null)
+  return shown.filter((field) => !RANGE_FIELDS.includes(field) && option[field] === null)
 }
 
 const need = <T>(value: T | null): T => {
@@ -535,13 +593,14 @@ export function fuelCost(o: OptionInputs): FuelCost | null {
   return { kind: 'per-mile', pencePerMile: decimalRatio(need(o.pencePerMile)) }
 }
 
-/** The engine's option for a complete option (missingFields empty), with the shared yearly increase. */
+/** The engine's option for a complete, resolved option (resolveOption; missingFields empty), with the shared yearly increase. */
 export function toEngineOption(option: OptionInputs, generalIncrease: Ratio): CarOption {
   const o = option
   const fuel = need(fuelCost(o))
+  const expected = need(o.endExpected)
   const car = {
     value: need(o.value),
-    horizonValue: { low: need(o.endLow), expected: need(o.endExpected), high: need(o.endHigh) },
+    horizonValue: { low: o.endLow ?? expected, expected, high: o.endHigh ?? expected },
     annualMileage: need(o.annualMileage),
     fuel,
     fuelPriceChange: percentRatio(need(o.fuelPriceChange)),
@@ -715,14 +774,13 @@ export function calculate(inputs: CarDecisionInputs, held: ReadonlySet<number> =
   if (missingShared.length > 0) return { kind: 'missing-shared', missing: missingShared }
   const shared = toEngineShared(inputs)
   const increase = percentRatio(need(inputs.generalIncrease))
-  const statuses: (OptionStatus | null)[] = inputs.options.map((option, index) => {
+  const resolved = inputs.options.map((option) => resolveOption(option, inputs.annualMileage))
+  const statuses: (OptionStatus | null)[] = resolved.map((option, index) => {
     if (held.has(index)) return { kind: 'held' }
     const missing = missingFields(option)
     return missing.length > 0 ? { kind: 'missing', missing } : null
   })
-  const built = new Map(
-    inputs.options.flatMap((option, index) => (statuses[index] ? [] : [[index, toEngineOption(option, increase)] as const])),
-  )
+  const built = new Map(resolved.flatMap((option, index) => (statuses[index] ? [] : [[index, toEngineOption(option, increase)] as const])))
   const refuse = (index: number, problems: readonly OwnershipProblem[]) => {
     statuses[index] = { kind: 'refused', refusal: inputRefusal(problems, inputs.options[index]!.acquisition) }
     built.delete(index)
@@ -801,6 +859,7 @@ export const carDecisionCalculator: CalculatorDefinition<CarDecisionInputs> = de
     valueCase: 'expected',
     savingsReturn: null,
     generalIncrease: null,
+    annualMileage: null,
     options: [blankOption('keep'), blankOption('cash')],
   }),
   validateInputs: validate,
@@ -821,6 +880,9 @@ export const carDecisionCalculator: CalculatorDefinition<CarDecisionInputs> = de
       text(SHARED_LABELS.valueCase, CASE_LABELS[inputs.valueCase]),
       percentRow(SHARED_LABELS.savingsReturn, inputs.savingsReturn),
       percentRow(SHARED_LABELS.generalIncrease, inputs.generalIncrease),
+      inputs.annualMileage === null
+        ? text(SHARED_LABELS.annualMileage, 'Not entered')
+        : { label: SHARED_LABELS.annualMileage, value: { kind: 'count', count: inputs.annualMileage } },
       ...inputs.options.flatMap((option, index) => [
         text(names[index]!, ACQUISITION_LABELS[option.acquisition]),
         ...(option.acquisition === 'keep' && option.owesFinance ? owingRows(names[index]!, option) : []),

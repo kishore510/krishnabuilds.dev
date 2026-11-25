@@ -75,6 +75,9 @@ export const DEFAULT_HORIZON_MONTHS = 48
  */
 export const SENSITIVITY_SHIFTS: readonly number[] = [-20, -10, 10, 20]
 
+/** Car decision page: how many of an option's largest cost parts its card lists (the redesign, CD6). A display count. */
+export const CARD_LARGEST_PARTS = 3
+
 /** Car ownership: a horizon value may be at most this times the starting value (F17, F30): zero depreciation and a modest rise are allowed. */
 export const MAX_HORIZON_VALUE_RATIO = ratio(3, 2)
 

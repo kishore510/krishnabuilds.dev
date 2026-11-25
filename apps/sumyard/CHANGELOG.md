@@ -4,6 +4,20 @@ All notable changes to Sumyard are listed here, newest first. The format follows
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-11-24
+
+### Added
+- **Car decision: Start from and Copy the car.** Set up a common comparison in one tap (**Keep or replace**, **Cash or finance**, **Compare finance offers**), then fill in one car and use **Copy the car from** to bring its price, end values, mileage and running costs into the other options, so comparing finance on the same car no longer means typing it three times. Both can be undone.
+- **One annual mileage for every option.** Enter your mileage once under **For every option**; an option that drives a different distance can have its own.
+- **Share your car decision**: an image card, a PDF (print to PDF), a spreadsheet (CSV) or text to paste, with the lowest cost a month, the gap to the next option and where the money goes. Turn **Show amounts** off to share each option as a percentage above the lowest, with no pound figure, and **Show option names** off to name options by how the car is had. Made on your device; nothing is uploaded.
+- **Cash paid so far** on the month-by-month chart, beside the net cost.
+
+### Changed
+- **The car decision page has a new look and is much shorter**, in line with the budget, take-home and mortgage pages. Each option is a coloured row you tap to fill in, one at a time. The answer leads: how much less a month the lowest option costs than the next, with a bar for each option in its colour. **Where the money goes** splits each option's cost into parts in their own colours, and each option's card now shows its three largest parts. The chart, what changes the answer and how sure it is are sections you open.
+- **Only the expected end value is needed.** A low and high end value are optional (**Add a low and high end value**); the low, expected and high cases appear once an option has them.
+- Plainer words: **Yours at the end** for equity, **Interest your cash could have earned** for opportunity cost, and an effective rate that says it includes every fee.
+- Car decision scenarios saved before open with the same figures: the first mileage entered becomes the shared one, and an option that drove a different distance keeps its own.
+
 ## [0.37.0] - 2026-11-24
 
 ### Added

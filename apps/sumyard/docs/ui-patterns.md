@@ -274,3 +274,39 @@ The shared `Donut` of the total paid with overpaying: the amount borrowed paid o
 ### MD4, MD5
 
 The what-if stays a single monthly overpayment slider (MD4). The owner signs off from screenshots of the built page (MD5). The home card's figure is unchanged.
+
+## Car decision redesign (0.38.0)
+
+Owner decisions CD1 to CD12 (24 November 2026, as proposed; the input changes in the same PR, sign-off from screenshots, shares with amounts off as a percentage above the lowest). CD10 and CD11 change the inputs (version 4) and are in `docs/modelling-decisions-car.md`. These replace U16, U17, U31 and the order summary of 3c-1; U29, U30, U32 to U39 stand, moved as below.
+
+### CD1. A colour and an icon per option
+
+Each option takes a colour by its place in the editor (`car-1` to `car-4`, `docs/design-tokens.md`), so it keeps it when the order changes, and an icon for how the car is had (`style.ts`). The colour is on its row, its bar in the answer, its cost bar, its card and its chart line (the shared Chart's optional `colour`, which keeps the style's dash and marker). The cost parts have their own colours from hues no option uses. Colour is never the only cue.
+
+### CD2. Options as compact rows
+
+"Your options" lists each option as a row (a native button with `aria-expanded`): icon tile, name, a one-line summary from the inputs (`optionSummary`), and its average cost a month once costed (or how many boxes it needs). Tapping opens its editor under it; one open at a time; a closed editor stays mounted. A fresh page opens the first option still needing boxes. Copy the car, Duplicate and Remove sit at the foot of the editor. Hints are shorter. The horizon and the shared annual mileage follow in "For every option", then Shared assumptions (open while either is empty, U42).
+
+### CD3, CD4. Start from and Copy the car
+
+Start from: three chips (Keep or replace, Cash or finance, Compare finance offers, `setup.ts`) that replace the options with fresh ones of those kinds and names, no figures, with Undo. Copy the car from (a Select in the editor): another option's price, end values, mileage, fuel and running costs (`CAR_FIELDS`), never its name, kind or finance, with Undo.
+
+### CD5. The answer
+
+The results column holds one card: the verdict's gap a month as the emphasised headline ("£44 a month less"), the pair named above it and the total and savings return under it (the full verdict sentence stays as the screen reader's text); a tie or no verdict says so in full. Then a bar per option in its colour, in the engine's order (U36's rule: partial coverage after, never compared by total), with "Show as a table" for the side-by-side table (U36); the empty-boxes line (U34) and the switch cost (U30). The bottom line (U31) and the order summary are dropped: the bars and the headline give the same answers.
+
+### CD6, CD7. Where the money goes; plain labels
+
+A results section, open on load: a bar per costed option split into six parts (`costParts`: depreciation, interest and fees, equity handed back, fuel or energy, running costs as insurance, maintenance, VED and other together, and the interest your cash could have earned), on one scale so bars compare, parts below nothing said under the bar, a key, and a table of every part and the total. Then a slim card per option: the average cost per month owned, the total, its three largest parts (`CARD_LARGEST_PARTS`) with icons, Yours at the end, the coverage only when short, warnings, the rate, empty boxes, and money in and out (with cash paid out). Labels: "Yours at the end" (equity at the horizon), "Interest your cash could have earned" (opportunity cost), "Cash paid out"; no Order row. The effective rate is labelled "Effective rate with every fee, not the lender’s APR" (CD7 asked for a rate under a tenth of a percent to be said with its fees; a threshold would be a figure in page code, so every effective rate says it).
+
+### CD8. Results in sections
+
+Below the columns: Where the money goes (open), Month by month, What changes the answer, How sure is this, each with a live one-line summary (`Section`), closed sections mounted. Month by month: a choice of net cost or cash paid so far (`crossover`'s `measure`), the chart, and the readout as one small table. What changes the answer: one pair picker (F56's two places become one), the bridge (U38), then the thresholds. How sure is this: the case choice and the three-case table (U32) only once an option has a range (CD10), else how to add one; then the sensitivity (U21, still worked out only while open).
+
+### CD9. Share
+
+Share beside the title, off until there is a comparison. The shared dialog (`src/components/share/`, with a new optional `namesLabel`) with Show amounts and Show option names, both on by default. Shared: the lowest and the gap (a month and in all), each option's average cost a month and total, the lowest option's parts beside the others' figures, the switch cost. Not shared: prices, finance terms, running costs, thresholds, the chart. Amounts off: each option as a percentage above the lowest a month, parts as shares of their option's total; no pound figure. Names off: each option by how the car is had, numbered when repeated. Nothing stored; no new storage key.
+
+### CD12
+
+The owner signs off from screenshots of the built page at 360 and 1280 px, light and dark. The home card's figure is unchanged.

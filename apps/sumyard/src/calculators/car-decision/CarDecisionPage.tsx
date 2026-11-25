@@ -1,6 +1,7 @@
-import { Plus } from 'lucide-react'
-import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { Share2 } from 'lucide-react'
+import { lazy, type ReactNode, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { AssumptionsPanel } from '@/components/AssumptionsPanel'
+import { IconTile } from '@/components/IconTile'
 import { Field } from '@/components/inputs/Field'
 import { NumberInput } from '@/components/inputs/NumberInput'
 import { PercentInput } from '@/components/inputs/PercentInput'
@@ -15,58 +16,55 @@ import { InlineNotice } from '@/components/states'
 import { Button } from '@/components/ui/button'
 import { useItemKeys } from '@/hooks/useItemKeys'
 import { formatGBP, formatPercent } from '@/lib/format'
-import { MAX_CAR_OPTIONS, MAX_HORIZON_MONTHS, MAX_ITEM_NAME_LENGTH } from '@/lib/inputLimits'
-import type { Money } from '@/lib/money'
+import { MAX_ANNUAL_MILEAGE, MAX_CAR_OPTIONS, MAX_HORIZON_MONTHS } from '@/lib/inputLimits'
+import { compare, type Money } from '@/lib/money'
 import { percentRatio } from '@/lib/parse'
 import { MONTHS_PER_YEAR } from '@/lib/periods'
 import { useStore } from '@/lib/store'
 import { settingsStore } from '@/settings/settings'
 import { DISCLAIMER } from '@/sheets/parts'
-import { toasts } from '@/toast/toasts'
 import type { ValueCase } from '../car-ownership/types'
 import { sessionFor } from '../session'
-import { BottomLine, ScenarioTable, VerdictPanel } from './CarAnswer'
+import { AnswerCard, type RankRow, ScenarioTable } from './CarAnswer'
 import { BridgeSection, type BridgeState } from './CarBridge'
-import { type CardData, CompareTable, type FlipState, OptionCards, OrderSummary, positions, WhatChanges } from './CarResults'
+import { CarOptions } from './CarOptions'
+import { type CardData, CompareTable, CostSection, type FlipState, WhatChanges } from './CarResults'
 import { CrossoverView, SensitivityView, useSensitivity } from './CarViews'
 import {
-  blankOption,
   CASE_LABELS,
   type CarDecisionInputs,
   calculate,
   carDecisionCalculator,
   DECIMALS,
+  hasRange,
   type OptionField,
-  type OptionInputs,
-  type OptionStatus,
   optionName,
   SHARED_LABELS,
   SHARED_LIMITS,
   type SharedField,
-  sectionFields,
   toEngineShared,
   uniqueNames,
   VALUE_CASES,
 } from './definition'
-import { emptyCostsDiffer, emptyRunningCosts, engineNames, type NoVerdict, verdict } from './narrative'
-import { fieldName, OptionEditor } from './OptionEditor'
-import { bridgeFor, bridgeUnavailable, cardOrder, flipPair, flipsFor, fuelFlipFor, pairChoices, pairNames } from './results'
+import { emptyCostsDiffer, emptyRunningCosts, engineNames, type NoVerdict, scenarioTable, verdict } from './narrative'
+import { bridgeFor, bridgeUnavailable, cardOrder, flipPair, flipSentences, flipsFor, fuelFlipFor, pairChoices, pairNames } from './results'
+import { costParts } from './setup'
+import type { CarShare } from './share'
+import { SECTION_SWATCHES } from './style'
+
+const ShareCar = lazy(() => import('./ShareCar'))
 
 /*
- * The car decision page (slice 3c-1) at #/c/car-decision, on the 3a and 3b
- * engines, laid out as docs/ui-patterns.md: the horizon and the end-value
- * case always visible, the shared assumptions in a section, then each
- * option's editor (add, duplicate, remove with Undo; up to the most
- * compared). Results first (StickyResult): the verdict in the phone bar;
- * in the results column (3d-1) the verdict sentence and switch cost, the
- * bottom line, the low, expected and high table, then the order; below the columns, a card per option (columns from md, a
- * snapping row on a phone) and the comparison table, then (3c-2) the
- * crossover chart with the readout at the selected month, "What changes the
- * answer" for a pair of options, and the sensitivity view. The selected
- * month and the pair are the page's only, never stored; (3d-2) the pair's cost bridge sits in the results under the
- * verdict, sharing the pair. Uses no tax rules. Every figure is the engine's (compareOptions,
- * flipPoints, fuelPriceFlip, costBridge, costPerMile, apr) through ./definition.ts, ./results.ts and
- * ./rates.ts; the page writes none and does no arithmetic on money.
+ * The car decision page (slice 3c-1; the car decision redesign, CD1 to CD12) at #/c/car-decision, on the 3a and 3b engines.
+ * Inputs: the options as compact rows, one editor open at a time, with Start from and Copy the car (./CarOptions.tsx);
+ * then the horizon and the shared annual mileage, and the shared assumptions in a section. Results first (StickyResult):
+ * the verdict in the phone bar; in the results column the answer (the verdict's gap as the headline, a bar per option,
+ * the switch cost). Below the columns, sections with live summaries: where the money goes (cost bars and slim cards),
+ * month by month (the chart, net cost or cash paid so far), what changes the answer (the pair's bridge and thresholds,
+ * one pair picker) and how sure this is (the three cases, shown once an option has a range, and the sensitivity). Share
+ * beside the title. The selected month, the pair, the open row and which sections are open are the page's only, never
+ * stored. Uses no tax rules. Every figure is the engine's (compareOptions, flipPoints, fuelPriceFlip, costBridge,
+ * costPerMile, apr) through ./definition.ts, ./results.ts, ./setup.ts and ./rates.ts; the page writes none.
  */
 
 const session = sessionFor(carDecisionCalculator)
@@ -82,11 +80,11 @@ const UNIT_OPTIONS: { value: Unit; label: string }[] = [
 const MAX_YEARS = Math.floor(MAX_HORIZON_MONTHS / MONTHS_PER_YEAR)
 
 const SHARED_HINTS = {
-  horizon: 'Every option is costed over this same stretch of time.',
-  valueCase: 'Which of each car’s three end values the cards use. Switch to see the others.',
-  savingsReturn:
-    'What your money would earn a year if it weren’t spent on the car, after any tax on it: your own assumption. It gives the opportunity cost.',
-  generalIncrease: 'How much insurance, maintenance, VED and other costs rise each year, for every option. It can be negative.',
+  horizon: 'Every option is costed over the same time.',
+  mileage: 'Miles a year for every option, unless an option drives a different distance.',
+  valueCase: 'Which end value the results use. Shown once an option has a low and high value.',
+  savingsReturn: 'What your money would earn a year after tax if it weren’t spent on the car: your own assumption.',
+  generalIncrease: 'How much insurance, maintenance, VED and other costs rise each year. It can be negative.',
 } as const
 
 /** The phone bar's words when there is no verdict; the reason in full is in the results. */
@@ -115,24 +113,27 @@ const PAGE_ASSUMPTIONS = [
   'Average cost per month owned is the engine’s net cost per month of coverage: the net cost divided by the months the option covers.',
   'The verdict, the bottom line and the switch cost compare only options that cover the whole horizon. An option that covers less is never compared by total.',
   'Money in and out on each card is the cash that changes hands (upfront, each month, at the end), apart from the net cost.',
+  'An option without a low and high end value uses its expected end value in all three cases.',
+  'Every option drives the shared annual mileage unless it is set to drive a different distance.',
+  'The cost bars put insurance, maintenance, VED and other costs together as running costs; the table under them lists each part the engine gives.',
   'Uses no tax rules: nothing here depends on the tax rules of any year.',
   'Illustrative only, not financial advice.',
 ]
 
-const SHARED_FIELDS: readonly SharedField[] = ['horizonMonths', 'savingsReturn', 'generalIncrease']
+const SHARED_FIELDS: readonly SharedField[] = ['horizonMonths', 'savingsReturn', 'generalIncrease', 'annualMileage']
 
 const set = (patch: Partial<CarDecisionInputs>) => session.setInputs(patch)
 const forget = (...fields: string[]) => {
   for (const field of fields) session.setFieldValid(field, true)
 }
 
-/** A duplicate's name: the name and "(copy)", kept within the longest name. */
-const copyName = (name: string) => (name ? Array.from(`${name} (copy)`).slice(0, MAX_ITEM_NAME_LENGTH).join('') : '')
-
 export default function CarDecisionPage() {
   const state = useStore(session)
   const amounts = useStore(settingsStore, (s) => s.amounts)
-  const inputs = state.inputs
+  const stored = state.inputs
+  // Three cases only once an option has a range (CD10): until then every case is the expected one, so it is the one said.
+  const anyRange = stored.options.some(hasRange)
+  const inputs: CarDecisionInputs = useMemo(() => (anyRange ? stored : { ...stored, valueCase: 'expected' }), [stored, anyRange])
   const gbp: Gbp = (amount) => formatGBP(amount, amounts)
   const { keys, inserted, removed } = useItemKeys(inputs.options.length)
   const sharedInvalid = state.invalid.some((field) => (SHARED_FIELDS as readonly string[]).includes(field))
@@ -150,9 +151,9 @@ export default function CarDecisionPage() {
   const [picked, setPicked] = useState<{ revision: number; month: number } | null>(null)
   const month = picked && picked.revision === state.revision ? Math.min(picked.month, inputs.horizonMonths) : inputs.horizonMonths
   const [chosenPair, setChosenPair] = useState<{ revision: number; pair: [number, number] } | null>(null)
-  const okOutcome = outcome?.kind === 'ok' ? outcome : null
-  const choices = okOutcome ? pairChoices(okOutcome, inputs.valueCase) : []
-  const defaultPair = okOutcome ? flipPair(okOutcome, inputs.valueCase) : null
+  const ok = outcome?.kind === 'ok' ? outcome : null
+  const choices = ok ? pairChoices(ok, inputs.valueCase) : []
+  const defaultPair = ok ? flipPair(ok, inputs.valueCase) : null
   const pair: readonly [number, number] | null =
     chosenPair && chosenPair.revision === state.revision && chosenPair.pair.every((i) => choices.includes(i))
       ? chosenPair.pair
@@ -160,22 +161,22 @@ export default function CarDecisionPage() {
   const flips = useFlips(outcome, inputs, pair)
   // Sensitivity is worked out only while its section is open: it reruns the engine many times (docs/performance.md).
   const [sensitivityOpen, setSensitivityOpen] = useState(false)
-  const sensitivity = useSensitivity(okOutcome, inputs, sensitivityOpen)
+  const sensitivity = useSensitivity(ok, inputs, sensitivityOpen)
+  const [sharing, setSharing] = useState(false)
   const uniques = uniqueNames(inputs.options)
   const pickPair = (which: 0 | 1, index: number) => {
     const next: [number, number] = [pair?.[0] ?? index, pair?.[1] ?? index]
     next[which] = index
     setChosenPair({ revision: state.revision, pair: next })
   }
-  // One pair, two places to choose it (F56): the bridge in the results and "What changes the answer" below the cards.
-  const pairPicker = (prefix: 'cd-pair' | 'cd-bridge') =>
-    choices.length >= 2 &&
-    pair && (
+  // One pair for the bridge and the thresholds, chosen in one place (F56, CD8).
+  const pairPicker =
+    choices.length >= 2 && pair ? (
       <div data-pair-picker className="grid min-w-0 gap-3 sm:grid-cols-2 [&>*]:min-w-0">
         {([0, 1] as const).map((which) => (
           <Select
             key={which}
-            id={`${prefix}-${which === 0 ? 'first' : 'second'}`}
+            id={`cd-pair-${which === 0 ? 'first' : 'second'}`}
             label={which === 0 ? 'First option' : 'Second option'}
             value={String(pair[which])}
             options={choices.map((index) => ({ value: String(index), label: uniques[index]! }))}
@@ -183,21 +184,20 @@ export default function CarDecisionPage() {
           />
         ))}
       </div>
-    )
-  const bridge: BridgeState | null = !okOutcome
+    ) : null
+  const bridge: BridgeState | null = !ok
     ? null
     : choices.length < 2 || !pair
-      ? { kind: 'no-pair', reason: bridgeUnavailable(okOutcome, uniques) }
+      ? { kind: 'no-pair', reason: bridgeUnavailable(ok, uniques) }
       : pair[0] === pair[1]
         ? { kind: 'same' }
         : (() => {
-            const found = bridgeFor(okOutcome, inputs, pair)
+            const found = bridgeFor(ok, inputs, pair)
             return found
               ? { kind: 'ready', names: pairNames(inputs, pair), bridge: found }
-              : { kind: 'no-pair', reason: bridgeUnavailable(okOutcome, uniques) }
+              : { kind: 'no-pair', reason: bridgeUnavailable(ok, uniques) }
           })()
 
-  const ok = outcome?.kind === 'ok' ? outcome : null
   const names = inputs.options.map(optionName)
   const order = ok ? cardOrder(ok, inputs.valueCase, inputs.options.length) : []
   const cards: CardData[] = ok
@@ -209,10 +209,12 @@ export default function CarDecisionPage() {
         inputs: inputs.options[index]!,
       }))
     : []
-  // The answer first (3d-1): the verdict from the engine's full-coverage ordering, in words, by engine index.
+  const rankRows: RankRow[] = cards.map(({ index, name, kind, status }) => ({ index, name, kind, status }))
+  // The answer first (3d-1, CD5): the verdict from the engine's full-coverage ordering, in words, by engine index.
   const comparison = ok?.comparison ?? null
   const answerNames = ok ? engineNames(ok.statuses, uniques) : []
-  const said = comparison ? verdict(comparison, inputs.valueCase, answerNames, toEngineShared(inputs).savingsReturn, gbp) : null
+  const savingsReturn = outcome?.kind === 'ok' ? toEngineShared(inputs).savingsReturn : null
+  const said = comparison && savingsReturn ? verdict(comparison, inputs.valueCase, answerNames, savingsReturn, gbp) : null
   // Costed options that differ in which running-cost boxes are left empty: one line under the verdict (3d-1 fix).
   const emptyNote = ok
     ? emptyCostsDiffer(
@@ -230,7 +232,12 @@ export default function CarDecisionPage() {
         ? 'Enter the shared assumptions'
         : said?.kind === 'none'
           ? NO_VERDICT_SHORT[said.reason]
-          : 'No option covers the whole horizon yet'
+          : 'Fill in two options to compare'
+  // What is shown is what is shared (CD9).
+  const share: CarShare | null = useMemo(
+    () => (ok && comparison && said ? { outcome: ok, inputs, verdict: said, names: answerNames } : null),
+    [ok, comparison, said, inputs, answerNames],
+  )
 
   const assumptions = [
     ...new Set([
@@ -250,22 +257,42 @@ export default function CarDecisionPage() {
       ...PAGE_ASSUMPTIONS,
     ]),
   ]
+  const caseControl = (id: string) =>
+    anyRange && (
+      <Segmented
+        id={id}
+        label="End value"
+        hint={id === 'cd-case' ? SHARED_HINTS.valueCase : undefined}
+        value={inputs.valueCase}
+        options={CASE_OPTIONS}
+        onChange={(valueCase: ValueCase) => set({ valueCase })}
+      />
+    )
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
-          {carDecisionCalculator.name}
-        </h1>
-        <p className="text-text-muted">{carDecisionCalculator.summary}</p>
-        <p data-how-to-read className="text-sm text-text">
-          How to read this page: fill in each option, then compare the cards; the chart below them shows how each option’s cost builds up
-          month by month, and the sections after it show what would change the order.
-        </p>
-        {/* On a phone the badge is in the sticky bar instead. */}
-        <div className="hidden md:flex">
-          <NoTaxRulesBadge />
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-2">
+          <h1 id="main-title" tabIndex={-1} className="text-2xl font-semibold tracking-tight outline-none">
+            {carDecisionCalculator.name}
+          </h1>
+          <p className="text-text-muted">{PAGE_SUMMARY}</p>
+          {/* On a phone the badge is in the sticky bar instead. */}
+          <div className="hidden md:flex">
+            <NoTaxRulesBadge />
+          </div>
         </div>
+        <Button
+          id="cd-share"
+          variant="primary"
+          disabled={!share}
+          aria-haspopup="dialog"
+          onClick={() => setSharing(true)}
+          className="h-auto min-h-touch py-2"
+        >
+          <Share2 />
+          Share
+        </Button>
       </div>
 
       <StickyResult
@@ -275,13 +302,7 @@ export default function CarDecisionPage() {
         announcement={said ? said.text : null}
         controls={
           <>
-            <Segmented
-              id="cd-case-bar"
-              label="End value"
-              value={inputs.valueCase}
-              options={CASE_OPTIONS}
-              onChange={(valueCase: ValueCase) => set({ valueCase })}
-            />
+            {caseControl('cd-case-bar')}
             <div className="flex">
               <NoTaxRulesBadge />
             </div>
@@ -297,32 +318,26 @@ export default function CarDecisionPage() {
             </Waiting>
           ) : outcome.kind === 'refused' ? (
             <RefusalNotice refusal={outcome.refusal} />
+          ) : comparison && said && savingsReturn ? (
+            <AnswerCard
+              verdict={said}
+              emptyNote={emptyNote}
+              comparison={comparison}
+              valueCase={inputs.valueCase}
+              names={answerNames}
+              rows={rankRows}
+              savingsReturn={savingsReturn}
+              table={<CompareTable cards={cards} valueCase={inputs.valueCase} gbp={gbp} />}
+              gbp={gbp}
+            />
           ) : (
-            <>
-              {comparison && said && (
-                <>
-                  <VerdictPanel
-                    verdict={said}
-                    emptyNote={emptyNote}
-                    comparison={comparison}
-                    valueCase={inputs.valueCase}
-                    names={answerNames}
-                    gbp={gbp}
-                  />
-                  <BottomLine comparison={comparison} valueCase={inputs.valueCase} names={answerNames} gbp={gbp} />
-                  <ScenarioTable comparison={comparison} valueCase={inputs.valueCase} names={answerNames} gbp={gbp} />
-                </>
-              )}
-              {bridge && <BridgeSection state={bridge} valueCase={inputs.valueCase} gbp={gbp} picker={pairPicker('cd-bridge')} />}
-              <OrderSummary comparison={outcome.comparison} cards={cards} valueCase={inputs.valueCase} gbp={gbp} />
-            </>
+            <Waiting>Fill in at least one option to see results. Each option says what it still needs.</Waiting>
           )
         }
       >
         <ScenarioBar calculator={carDecisionCalculator} session={session} />
-        {/* Keyed by revision: a loaded scenario or a fresh start resets every box and which sections are open. */}
-        <SharedControls key={`shared-${state.revision}`} inputs={inputs} invalid={state.invalid} />
-        <Options
+        {/* Keyed by revision: a loaded scenario or a fresh start resets every box, the open row and which sections are open. */}
+        <CarOptions
           key={`options-${state.revision}`}
           inputs={inputs}
           keys={keys}
@@ -331,35 +346,132 @@ export default function CarDecisionPage() {
           invalidFor={invalidFor}
           statuses={ok?.statuses ?? null}
           gbp={gbp}
+          set={set}
+          forget={forget}
+          setValid={(field, valid) => session.setFieldValid(field, valid)}
+          revision={state.revision}
+          getRevision={() => session.get().revision}
+          getOptions={() => session.get().inputs.options}
         />
+        <SharedControls key={`shared-${state.revision}`} inputs={inputs} invalid={state.invalid} />
       </StickyResult>
 
       {ok && cards.length > 0 && (
-        <>
-          <OptionCards
-            cards={cards}
-            valueCase={inputs.valueCase}
-            positions={positions(ok.comparison, ok.statuses, inputs.valueCase)}
-            gbp={gbp}
-          />
-          <CompareTable cards={cards} valueCase={inputs.valueCase} gbp={gbp} />
-          <CrossoverView
-            outcome={ok}
-            inputs={inputs}
-            month={month}
-            onMonth={(next) => setPicked({ revision: state.revision, month: next })}
-            gbp={gbp}
-          />
-          <WhatChanges state={flips} inputs={inputs} gbp={gbp} picker={pairPicker('cd-pair')} />
-          <SensitivityView state={sensitivity} inputs={inputs} amounts={amounts} onOpenChange={setSensitivityOpen} />
-        </>
+        <div data-result-sections className="flex min-w-0 flex-col gap-4">
+          <Section
+            id="cd-section-money"
+            title="Where the money goes"
+            summary={moneySummary(cards, inputs.valueCase)}
+            icon={<IconTile swatch={SECTION_SWATCHES.money} size="sm" />}
+            defaultOpen
+          >
+            <CostSection cards={cards} valueCase={inputs.valueCase} gbp={gbp} />
+          </Section>
+          <Section
+            id="cd-section-month"
+            title="Month by month"
+            summary={`Net cost and cash paid so far, each month to month ${inputs.horizonMonths}`}
+            icon={<IconTile swatch={SECTION_SWATCHES.month} size="sm" />}
+          >
+            <CrossoverView
+              outcome={ok}
+              inputs={inputs}
+              month={month}
+              onMonth={(next) => setPicked({ revision: state.revision, month: next })}
+              gbp={gbp}
+            />
+          </Section>
+          <Section
+            id="cd-section-changes"
+            title="What changes the answer"
+            summary={changesSummary(flips, inputs, gbp)}
+            icon={<IconTile swatch={SECTION_SWATCHES.changes} size="sm" />}
+          >
+            {pairPicker}
+            {pairPicker && <p className="text-xs text-text-muted">Both parts below use this pair; by default the two lowest.</p>}
+            {bridge && <BridgeSection state={bridge} valueCase={inputs.valueCase} gbp={gbp} />}
+            <WhatChanges state={flips} inputs={inputs} gbp={gbp} />
+          </Section>
+          <Section
+            id="cd-section-sure"
+            title="How sure is this"
+            summary={sureSummary(anyRange, comparison, answerNames)}
+            icon={<IconTile swatch={SECTION_SWATCHES.sure} size="sm" />}
+          >
+            {anyRange && comparison ? (
+              <>
+                {caseControl('cd-case')}
+                <ScenarioTable comparison={comparison} valueCase={inputs.valueCase} names={answerNames} gbp={gbp} />
+              </>
+            ) : (
+              <p data-no-range className="text-sm text-text">
+                What a car is worth at the end is usually the most uncertain figure. Turn on “{RANGE_SWITCH}” in an option to see the low,
+                expected and high cases side by side.
+              </p>
+            )}
+            <SensitivityView state={sensitivity} inputs={inputs} amounts={amounts} onOpenChange={setSensitivityOpen} />
+          </Section>
+        </div>
       )}
 
       <AssumptionsPanel items={assumptions}>
         <p className="text-text-muted">Illustrative only, not financial advice. {DISCLAIMER}</p>
       </AssumptionsPanel>
+
+      {sharing && share && (
+        <Suspense fallback={null}>
+          <ShareCar
+            share={share}
+            onClose={() => {
+              setSharing(false)
+              document.getElementById('cd-share')?.focus()
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   )
+}
+
+/** The page's one line under the title (shorter than the calculator's summary, which the home page and compare use). */
+const PAGE_SUMMARY =
+  'Keep your car, or buy with cash, a loan, HP or PCP: what each really costs a month over the same time, and what would change the answer.'
+
+/** The range switch's label, named in "How sure is this". */
+const RANGE_SWITCH = 'Add a low and high end value'
+
+/** "Where the money goes" in one line: the part that is largest for most options. */
+function moneySummary(cards: readonly CardData[], valueCase: ValueCase): string {
+  const largest = cards.flatMap((card) => {
+    if (card.status.kind !== 'ok') return []
+    const parts = costParts(card.status.result.cases[valueCase].breakdown)
+    const top = parts.reduce((a, b) => (compare(b.value, a.value) > 0 ? b : a))
+    return [top.label]
+  })
+  if (largest.length === 0) return 'No option has figures yet'
+  const counts = new Map<string, number>()
+  for (const part of largest) counts.set(part, (counts.get(part) ?? 0) + 1)
+  const [part, count] = [...counts.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))
+  return largest.length === 1
+    ? `The largest part is ${part.toLowerCase()}`
+    : `${part} is the largest part for ${count === largest.length ? 'every option' : `${count} of ${largest.length} options`}`
+}
+
+/** "What changes the answer" in one line. */
+function changesSummary(flips: FlipState, inputs: CarDecisionInputs, gbp: Gbp): string {
+  if (flips.kind === 'no-pair') return 'Needs two options that cover the whole horizon'
+  if (flips.kind === 'same') return 'Choose two different options'
+  if (flips.kind === 'pending') return 'Working out once the inputs settle'
+  if (flips.kind === 'refused') return 'Can’t be worked out for these inputs'
+  const [a, b] = pairNames(inputs, flips.pair)
+  const count = flipSentences(flips.flips, [a, b], gbp).length + (flips.fuel ? 1 : 0)
+  return `${a} and ${b}: where the difference comes from, and ${count} threshold${count === 1 ? '' : 's'}`
+}
+
+/** "How sure is this" in one line. */
+function sureSummary(anyRange: boolean, comparison: Parameters<typeof scenarioTable>[0] | null, names: readonly string[]): string {
+  if (!anyRange || !comparison) return 'Add a low and high end value to an option to see three cases; what moves each cost most'
+  return scenarioTable(comparison, names).sentence
 }
 
 function Waiting({ children }: { children: ReactNode }) {
@@ -447,10 +559,11 @@ function useFlips(
 
 const validShared = (field: SharedField) => (ok: boolean) => session.setFieldValid(field, ok)
 
-/** The horizon and the end-value case (always visible), then the shared assumptions in a section (U1 to U3). */
+/** The horizon and the shared annual mileage (always visible), then the shared assumptions in a section (U1 to U3). */
 function SharedControls({ inputs, invalid }: { inputs: CarDecisionInputs; invalid: readonly string[] }) {
   const [unit, setUnit] = useState<Unit>('months')
-  const [openOnMount] = useState(() => inputs.savingsReturn !== null || inputs.generalIncrease !== null)
+  // Open while the results still need one of its boxes (U42); once both are entered its summary says them.
+  const [openOnMount] = useState(() => inputs.savingsReturn === null || inputs.generalIncrease === null)
   const months = inputs.horizonMonths
   const years = Math.floor(months / MONTHS_PER_YEAR)
   const rest = months % MONTHS_PER_YEAR
@@ -464,7 +577,8 @@ function SharedControls({ inputs, invalid }: { inputs: CarDecisionInputs; invali
     if (invalid.includes('savingsReturn') || invalid.includes('generalIncrease')) return 'Fix the highlighted input'
     const part = (field: 'savingsReturn' | 'generalIncrease', what: string) =>
       inputs[field] === null ? `${what} not entered` : `${what} ${formatPercent(percentRatio(inputs[field]!))} a year`
-    if (inputs.savingsReturn === null && inputs.generalIncrease === null) return 'Not set: both are needed for results'
+    if (inputs.savingsReturn === null && inputs.generalIncrease === null)
+      return 'Needed for results: a savings return and a yearly increase'
     return `${part('savingsReturn', 'Savings return')}; ${part('generalIncrease', 'costs rise')}`
   })()
   return (
@@ -474,21 +588,24 @@ function SharedControls({ inputs, invalid }: { inputs: CarDecisionInputs; invali
         aria-labelledby="cd-shared-title"
         className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-surface p-4 shadow-sm"
       >
-        <h2 id="cd-shared-title" className="text-base font-semibold">
-          Horizon and end value
+        <h2 id="cd-shared-title" className="flex items-center gap-2 text-base font-semibold">
+          <IconTile swatch={SECTION_SWATCHES.horizon} size="sm" />
+          For every option
         </h2>
-        <Segmented id="cd-horizon-unit" label="Horizon in" value={unit} options={UNIT_OPTIONS} onChange={changeUnit} />
-        <NumberInput
-          id="cd-horizon"
-          label={unit === 'months' ? 'Horizon in months' : 'Horizon in years'}
-          hint={SHARED_HINTS.horizon}
-          value={unit === 'months' ? months : years}
-          min={unit === 'months' ? SHARED_LIMITS.horizonMonths.min : 1}
-          max={unit === 'months' ? SHARED_LIMITS.horizonMonths.max : MAX_YEARS}
-          suffix={unit}
-          onChange={(n) => set({ horizonMonths: unit === 'months' ? n : n * MONTHS_PER_YEAR })}
-          onValidityChange={validShared('horizonMonths')}
-        />
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2 [&>*]:min-w-0">
+          <NumberInput
+            id="cd-horizon"
+            label={unit === 'months' ? 'Over how many months?' : 'Over how many years?'}
+            hint={SHARED_HINTS.horizon}
+            value={unit === 'months' ? months : years}
+            min={unit === 'months' ? SHARED_LIMITS.horizonMonths.min : 1}
+            max={unit === 'months' ? SHARED_LIMITS.horizonMonths.max : MAX_YEARS}
+            suffix={unit}
+            onChange={(n) => set({ horizonMonths: unit === 'months' ? n : n * MONTHS_PER_YEAR })}
+            onValidityChange={validShared('horizonMonths')}
+          />
+          <Segmented id="cd-horizon-unit" label="In" value={unit} options={UNIT_OPTIONS} onChange={changeUnit} />
+        </div>
         <Field id="cd-horizon-range" label="Horizon slider">
           <input
             id="cd-horizon-range"
@@ -509,16 +626,26 @@ function SharedControls({ inputs, invalid }: { inputs: CarDecisionInputs; invali
             {inWords}
           </p>
         </Field>
-        <Segmented
-          id="cd-case"
-          label="End value"
-          hint={SHARED_HINTS.valueCase}
-          value={inputs.valueCase}
-          options={CASE_OPTIONS}
-          onChange={(valueCase) => set({ valueCase })}
+        <NumberInput
+          id="cd-mileage"
+          label="Annual mileage"
+          hint={SHARED_HINTS.mileage}
+          allowEmpty
+          value={inputs.annualMileage}
+          min={0}
+          max={MAX_ANNUAL_MILEAGE}
+          suffix="miles"
+          onChange={(annualMileage: number | null) => set({ annualMileage })}
+          onValidityChange={validShared('annualMileage')}
         />
       </section>
-      <Section id="cd-section-shared" title="Shared assumptions" summary={summary} defaultOpen={openOnMount}>
+      <Section
+        id="cd-section-shared"
+        title="Shared assumptions"
+        summary={summary}
+        defaultOpen={openOnMount}
+        icon={<IconTile swatch={SECTION_SWATCHES.shared} size="sm" />}
+      >
         <PercentInput
           id="cd-savings"
           label={SHARED_LABELS.savingsReturn}
@@ -545,127 +672,5 @@ function SharedControls({ inputs, invalid }: { inputs: CarDecisionInputs; invali
         />
       </Section>
     </>
-  )
-}
-
-/** Every field an option shows for its kind, fuel type and pricing. */
-const shownFields = (option: OptionInputs): OptionField[] => [
-  'name',
-  ...sectionFields('car', option),
-  ...sectionFields('finance', option),
-  ...sectionFields('running', option),
-]
-
-/** The option editors with Add, Duplicate and Remove (with Undo), up to the most compared (U9's pattern for a list). */
-function Options({
-  inputs,
-  keys,
-  inserted,
-  removed,
-  invalidFor,
-  statuses,
-  gbp,
-}: {
-  inputs: CarDecisionInputs
-  keys: readonly number[]
-  inserted: (index: number) => number
-  removed: (index: number) => void
-  invalidFor: (key: number) => OptionField[]
-  statuses: readonly OptionStatus[] | null
-  gbp: Gbp
-}) {
-  const options = inputs.options
-  const full = options.length >= MAX_CAR_OPTIONS
-  // What takes focus after the next render: a new option's name, a restored option's Remove, or Add after a removal.
-  const [focus, setFocus] = useState<string | null>(null)
-  const latest = useRef({ inserted, setFocus })
-  latest.current = { inserted, setFocus }
-  useEffect(() => {
-    if (focus === null) return
-    document.getElementById(focus)?.focus()
-    setFocus(null)
-  }, [focus])
-
-  const setOptions = (next: readonly OptionInputs[]) => set({ options: next })
-  const update = (index: number, key: number, patch: Partial<OptionInputs>) => {
-    const next = { ...options[index]!, ...patch }
-    // Boxes no longer shown (another kind, fuel type or pricing) can't stay "to fix": they would hold the option back unseen.
-    const shown = shownFields(next)
-    forget(...invalidFor(key).flatMap((field) => (shown.includes(field) ? [] : [fieldName(key, field)])))
-    setOptions(options.map((option, i) => (i === index ? next : option)))
-  }
-  const add = () => {
-    const key = inserted(options.length)
-    setOptions([...options, blankOption('cash')])
-    setFocus(`cd-o${key}-name`)
-  }
-  const duplicate = (index: number) => {
-    const key = inserted(index + 1)
-    const source = options[index]!
-    setOptions([...options.slice(0, index + 1), { ...source, name: copyName(source.name) }, ...options.slice(index + 1)])
-    setFocus(`cd-o${key}-name`)
-  }
-  const remove = (index: number, key: number) => {
-    const option = options[index]!
-    const label = optionName(option, index)
-    const revision = session.get().revision
-    forget(...invalidFor(key).map((field) => fieldName(key, field)))
-    removed(index)
-    setOptions(options.filter((_, i) => i !== index))
-    setFocus('cd-add')
-    toasts.show({
-      message: `Removed “${label}”.`,
-      undo: {
-        blocked: () =>
-          session.get().revision !== revision
-            ? 'Couldn’t undo: other inputs have been loaded since.'
-            : session.get().inputs.options.length >= MAX_CAR_OPTIONS
-              ? 'Couldn’t undo: there are already as many options as Sumyard compares.'
-              : undefined,
-        run: () => {
-          const now = session.get().inputs.options
-          const at = Math.min(index, now.length)
-          const restored = latest.current.inserted(at)
-          session.setInputs({ options: [...now.slice(0, at), option, ...now.slice(at)] })
-          latest.current.setFocus(`cd-o${restored}-remove`)
-        },
-        done: `Restored “${label}”.`,
-      },
-    })
-  }
-
-  return (
-    <section aria-labelledby="cd-options-title" className="flex min-w-0 flex-col gap-3">
-      <h2 id="cd-options-title" className="text-base font-semibold text-text">
-        Options
-      </h2>
-      <p className="-mt-2 text-xs text-text-muted">
-        Up to {MAX_CAR_OPTIONS}. Every amount starts empty; an option shows results once its boxes are filled.
-      </p>
-      {options.map((option, index) => {
-        const key = keys[index] ?? index
-        return (
-          <OptionEditor
-            key={key}
-            option={option}
-            index={index}
-            optionKey={key}
-            status={statuses?.[index] ?? null}
-            invalid={invalidFor(key)}
-            full={full}
-            only={options.length === 1}
-            gbp={gbp}
-            update={(patch) => update(index, key, patch)}
-            setValid={(field, ok) => session.setFieldValid(fieldName(key, field), ok)}
-            duplicate={() => duplicate(index)}
-            remove={() => remove(index, key)}
-          />
-        )
-      })}
-      <Button id="cd-add" variant="secondary" disabled={full} onClick={add} className="self-start">
-        <Plus aria-hidden="true" />
-        Add an option
-      </Button>
-    </section>
   )
 }

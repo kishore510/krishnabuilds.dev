@@ -375,3 +375,15 @@ The page names the largest part by its shown size: "Most of the difference is X:
 ### F56. The bridge's pair
 
 The bridge uses the same pair as "What changes the answer" (F42): the same two choices, by default the two lowest in the engine's order; choosing either in one place changes both. Its own two Selects sit in the bridge's section (the pair Selects were below the cards; the bridge is with the results), labelled the same and saying the pair is shared.
+
+## Car decision redesign (0.38.0): inputs version 4
+
+Owner decisions CD10 and CD11 from the redesign proposal (24 November 2026, as proposed; the rest of CD1 to CD12 are page patterns in `docs/ui-patterns.md`). No engine change: the page resolves each option (`resolveOption`, `definition.ts`) before the engine sees it.
+
+### CD10. Only the expected end value is required (owner)
+
+An option is costed once its expected end value is entered; the low and high end values are optional. An empty one reads as the expected value, so an option with neither has the same figures in all three cases. The low, expected and high choice and the three-case table show only while some option has a low or high value entered (`hasRange`). Stored as before (null is empty), so no migration: a saved option keeps the three values it had.
+
+### CD11. One shared annual mileage (owner)
+
+The inputs hold one annual mileage for every option; an option with **Drives a different distance** on (`ownMileage`) uses its own instead. Inputs version 4. Version 3 migrates with the first option's mileage that is entered as the shared one (or none), and every option whose own mileage differs from it, an empty one included, keeps its own with the switch on: each option is costed on the same miles as before, and one still missing its mileage is still missing it. An option on the shared mileage while it is empty is listed as needing the annual mileage. The thresholds' "as one driver" mileage and the sensitivity still move each option's resolved mileage, as before.
