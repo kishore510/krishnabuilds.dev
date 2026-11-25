@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
  * @typedef {{ id: string, title: string, blurb: string }} Shelf
  * @typedef {{ id: string, shelf: string, title: string, blurb: string }} Section
  * @typedef {{ id: string, section: string, title: string }} Collection
- * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string, added?: string }} Story
+ * @typedef {{ id: string, section: string, collection?: string, title: string, status: string, era: string, added?: string, next?: string[] }} Story
  * @typedef {{ shelves: Shelf[], sections: Section[], collections: Collection[], stories: Story[] }} Manifest
  */
 

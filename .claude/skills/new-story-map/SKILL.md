@@ -48,6 +48,7 @@ You wrote the content, so do not reread `story.json` end to end. Look at:
 - the subagent's report and the remaining warnings;
 - the screenshots: realm outlines against the coastline and each other, route bends, crowded corners, native-script labels rendering;
 - the coordinates it flagged, and a spot check of a few others;
+- the end card's links, from `pnpm story:check <id>`: "End card offers" should be the two stories a reader would go to next, and "Offered at the end of" must name at least one story. Where either is wrong, set `next` in `manifest.json` (on this story, or add this story to the `next` of the story readers should arrive from), using only links the stories' text supports. These are also the Related links search engines follow. See Next stories in the app's `CLAUDE.md`;
 - `git diff --stat`, to see that only the story's files, `manifest.json`, `catalogue.json`, `CHANGELOG.md`, `BACKLOG.md`, `package.json` and `docs/plan.md` changed.
 
 Fix small things directly and rerun `pnpm story:check <id>`. Then commit as `Story Maps: <title> (<version>)` and follow the repo's branch and PR rules.
