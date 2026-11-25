@@ -58,7 +58,7 @@ const byId = (id: string): Template => {
 };
 
 describe("template registry", () => {
-  it("has the fifteen templates, in group order, with unique ids and names", () => {
+  it("has the twenty-five templates, in group order, with unique ids and names", () => {
     expect(TEMPLATES.map((t) => t.label)).toEqual([
       "Retro",
       "Start Stop Continue",
@@ -66,9 +66,19 @@ describe("template registry", () => {
       "4Ls",
       "Starfish",
       "Sailboat",
+      "Rose Thorn Bud",
+      "KALM",
+      "DAKI",
+      "Hot air balloon",
+      "Speedcar",
+      "Three little pigs",
       "Sprint planning",
       "2x2 Impact and Effort",
       "Lean coffee",
+      "Kanban",
+      "MoSCoW",
+      "Now Next Later",
+      "Eisenhower matrix",
       "SWOT",
       "TIME",
       "Migration strategy",
@@ -92,8 +102,8 @@ describe("template registry", () => {
     expect(order).toEqual([...order].sort((a, b) => a - b));
     expect(new Set(order).size).toBe(allowed.length);
     const members = (group: string) => TEMPLATES.filter((t) => t.group === group).map((t) => t.label);
-    expect(members("Retros")).toEqual(["Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat"]);
-    expect(members("Planning and facilitation")).toEqual(["Sprint planning", "2x2 Impact and Effort", "Lean coffee"]);
+    expect(members("Retros")).toEqual(["Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat", "Rose Thorn Bud", "KALM", "DAKI", "Hot air balloon", "Speedcar", "Three little pigs"]);
+    expect(members("Planning and facilitation")).toEqual(["Sprint planning", "2x2 Impact and Effort", "Lean coffee", "Kanban", "MoSCoW", "Now Next Later", "Eisenhower matrix"]);
     expect(members("Architecture and analysis")).toEqual(["SWOT", "TIME", "Migration strategy", "Technology radar", "RAID", "Architecture decision"]);
   });
 
@@ -150,6 +160,22 @@ describe("template registry", () => {
     expect(byId("starfish").frames.map((f) => f.title)).toEqual(["Keep", "Less of", "More of", "Start", "Stop"]);
     expect(byId("sailboat").frames.map((f) => f.title)).toEqual(["Goal", "Wind (helps us)", "Anchors (slow us)", "Rocks (risks)"]);
     expect(byId("lean-coffee").frames.map((f) => f.title)).toEqual(["To discuss", "Discussing", "Discussed"]);
+    expect(byId("rose-thorn-bud").frames.map((f) => f.title)).toEqual(["Rose (went well)", "Thorn (was hard)", "Bud (could grow)"]);
+    expect(byId("kalm").frames.map((f) => f.title)).toEqual(["Keep", "Add", "Less", "More"]);
+    expect(byId("daki").frames.map((f) => f.title)).toEqual(["Drop", "Add", "Keep", "Improve"]);
+    expect(byId("hot-air-balloon").frames.map((f) => f.title)).toEqual(["Hot air (lifts us)", "Sandbags (hold us down)", "Storms (risks ahead)", "Sunny skies (what's ahead)"]);
+    expect(byId("speedcar").frames.map((f) => f.title)).toEqual(["Engine (speeds us up)", "Parachute (slows us)", "Abyss (risks ahead)"]);
+    expect(byId("three-little-pigs").frames.map((f) => f.title)).toEqual(["Straw (fragile)", "Sticks (could be stronger)", "Bricks (solid)"]);
+    expect(byId("kanban").frames.map((f) => f.title)).toEqual(["To do", "Doing", "Done"]);
+    expect(byId("moscow").frames.map((f) => f.title)).toEqual(["Must have", "Should have", "Could have", "Won't have (this time)"]);
+    expect(byId("now-next-later").frames.map((f) => f.title)).toEqual(["Now", "Next", "Later"]);
+    // Important on top, urgent on the left.
+    expect(byId("eisenhower").frames.map((f) => f.title)).toEqual([
+      "Do: urgent, important",
+      "Schedule: not urgent, important",
+      "Delegate: urgent, not important",
+      "Delete: not urgent, not important",
+    ]);
     expect(byId("swot").frames.map((f) => f.title)).toEqual([
       "Strengths: internal, helpful",
       "Weaknesses: internal, harmful",
@@ -473,10 +499,10 @@ describe("palette: Templates", () => {
   });
 
   it.each([
-    ["template", [["Retros", 6], ["Planning and facilitation", 3], ["Architecture and analysis", 6]]],
-    ["retro", [["Retros", 6]]],
-    ["kanban", [["Planning and facilitation", 2]]],
-    ["matrix", [["Planning and facilitation", 1], ["Architecture and analysis", 2]]],
+    ["template", [["Retros", 12], ["Planning and facilitation", 7], ["Architecture and analysis", 6]]],
+    ["retro", [["Retros", 12]]],
+    ["kanban", [["Planning and facilitation", 3]]],
+    ["matrix", [["Planning and facilitation", 2], ["Architecture and analysis", 2]]],
     ["swot", [["Architecture and analysis", 1]]],
     ["zzz-nothing", []],
   ] as const)("search %s works across groups, and a group with no matches hides its heading", (query, expected) => {
@@ -484,8 +510,12 @@ describe("palette: Templates", () => {
   });
 
   it.each([
-    ["retro", ["Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat"]],
-    ["kanban", ["Sprint planning", "Lean coffee"]],
+    ["retro", ["Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat", "Rose Thorn Bud", "KALM", "DAKI", "Hot air balloon", "Speedcar", "Three little pigs"]],
+    ["kanban", ["Sprint planning", "Lean coffee", "Kanban"]],
+    ["moscow", ["MoSCoW"]],
+    ["urgent", ["Eisenhower matrix"]],
+    ["roadmap", ["Now Next Later"]],
+    ["rose thorn", ["Rose Thorn Bud"]],
     ["impact", ["2x2 Impact and Effort"]],
     ["sprint goal", ["Sprint planning"]],
     ["rationalisation", ["TIME"]],
