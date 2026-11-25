@@ -2,7 +2,7 @@
 title: Notes
 order: 3
 summary: Add notes from the palette, export the board as a picture, a Markdown file or a board file, import a board file or text, duplicate them, undo and redo your changes, clear the board, edit, colour, style and resize them in Properties, bring them to the front or send them to the back, group them in frames, start from a template, select several notes and frames to move, arrange or delete together; pan, zoom and fit the board, zoom to the selection and use the overview map.
-keywords: export, import, paste, upload, text, lines, download, png, picture, image, markdown, json, board file, share, save, file, undo, redo, history, duplicate, copy, clear, clear board, empty, restore, ctrl+z, ctrl+y, ctrl+d, tick, outline, template, templates, retro, retrospective, start stop continue, mad sad glad, 4ls, starfish, sailboat, rose thorn bud, kalm, daki, hot air balloon, speedcar, three little pigs, lean coffee, kanban, moscow, must have, now next later, roadmap, eisenhower, urgent, important, swot, time, tolerate, invest, migrate, eliminate, rationalisation, migration, rehost, replatform, refactor, repurchase, retire, retain, technology radar, radar, raid, risks, assumptions, issues, dependencies, architecture decision, adr, axes, 2x2, matrix, impact, effort, sprint, planning, kanban, frame, frames, area, section, title, carry, front, back, order, stack, overlap, behind, top, bottom, inline, place, double-click, marquee, multi, several, many, group, arrange, align, distribute, grid, columns, rows, tidy, layout, match, right-click, middle, note, notes, sticky, board, add, edit, move, drag, delete, colour, color, text, title, body, size, width, height, bigger, smaller, handle, corner, font, bold, italic, align, alignment, left, centre, center, right, style, palette, tile, properties, panel, select, selection, collapse, resize, pan, hand, zoom, pinch, wheel, fit, overview, map, minimap, zoom to selection, out of view, show all, cluster, navigate, shortcut, full, saved
+keywords: export, import, paste, upload, text, lines, download, png, picture, image, markdown, json, board file, share, save, file, undo, redo, history, duplicate, copy, clear, clear board, empty, restore, ctrl+z, ctrl+y, ctrl+d, tick, outline, template, templates, retro, retrospective, start stop continue, mad sad glad, 4ls, starfish, sailboat, rose thorn bud, kalm, daki, hot air balloon, speedcar, three little pigs, lean coffee, kanban, moscow, must have, now next later, roadmap, eisenhower, urgent, important, check-in, icebreaker, brainstorm, parking lot, meeting, agenda, okr, okrs, objective, key results, quarterly, empathy map, persona, pestle, five whys, root cause, stakeholder, power, interest, risk heatmap, likelihood, strategy, product, swot, time, tolerate, invest, migrate, eliminate, rationalisation, migration, rehost, replatform, refactor, repurchase, retire, retain, technology radar, radar, raid, risks, assumptions, issues, dependencies, architecture decision, adr, axes, 2x2, matrix, impact, effort, sprint, planning, kanban, frame, frames, area, section, title, carry, front, back, order, stack, overlap, behind, top, bottom, inline, place, double-click, marquee, multi, several, many, group, arrange, align, distribute, grid, columns, rows, tidy, layout, match, right-click, middle, note, notes, sticky, board, add, edit, move, drag, delete, colour, color, text, title, body, size, width, height, bigger, smaller, handle, corner, font, bold, italic, align, alignment, left, centre, center, right, style, palette, tile, properties, panel, select, selection, collapse, resize, pan, hand, zoom, pinch, wheel, fit, overview, map, minimap, zoom to selection, out of view, show all, cluster, navigate, shortcut, full, saved
 ---
 Every session has one shared **board**. Everyone in the session sees the same notes, and changes show up for everyone as they happen. The board fills the screen; its edge is the outline around the dotted area, and notes always stay inside it.
 
@@ -157,6 +157,12 @@ A template adds a ready-made set of frames, with their titles, colours and sizes
 - **MoSCoW**: four columns, Must have, Should have, Could have and Won't have (this time).
 - **Now Next Later**: three columns for a simple roadmap, Now, Next and Later.
 - **Eisenhower matrix**: four squares, Do (urgent and important), Schedule (important, not urgent), Delegate (urgent, not important) and Delete (neither). Important is on top, urgent on the left.
+- **Check-in**: three columns to start a meeting, How are you arriving?, What's on your mind? and What do you need today?
+- **Brainstorm**: a wide frame for the question or challenge on top, then Ideas, Themes and Next steps.
+- **Parking lot**: three columns, Parked, Follow up (who, when) and Resolved.
+- **Meeting agenda and actions**: a wide Meeting goal frame on top, then Agenda, Decisions, and Actions (who, by when).
+- **OKRs**: a wide Objective frame on top, then Key result 1, 2 and 3.
+- **Quarterly planning**: a wide Quarter goals frame on top, then Month 1, Month 2, Month 3, and Risks and dependencies.
 
 **Architecture and analysis**
 
@@ -167,6 +173,15 @@ A template adds a ready-made set of frames, with their titles, colours and sizes
 - **RAID**: four columns, Risks, Assumptions, Issues and Dependencies.
 - **Architecture decision**: four columns, Context, Options, Decision and Consequences.
 
+**Strategy and product**
+
+- **Empathy map**: a wide Who is the user? frame on top, then four squares, Says, Thinks, Does and Feels.
+- **Persona**: a wide Name and role frame on top, then four squares, About them, Goals, Frustrations and What they need from us.
+- **PESTLE**: six frames in two rows, Political, Economic, Social, Technological, Legal and Environmental.
+- **Five whys**: a wide Problem frame on top, five Why? columns to ask why in turn, and a wide Root cause and fix frame at the bottom.
+- **Stakeholder map**: four squares, Keep satisfied, Manage closely, Monitor and Keep informed.
+- **Risk heatmap**: four squares, Watch, Act now, Accept and Plan for.
+
 ### Reading the 2 x 2 templates
 
 Each square's title names it and says where it sits on the two axes.
@@ -174,12 +189,15 @@ Each square's title names it and says where it sits on the two axes.
 - **2x2 Impact and Effort**: impact goes up, effort goes to the right. Quick wins (high impact, low effort) are top left, Major projects top right, Fill-ins bottom left and Thankless tasks bottom right.
 - **SWOT**: the top row is internal (about you), the bottom row external (around you); the left column helps, the right column harms. Strengths are top left, Weaknesses top right, Opportunities bottom left and Threats bottom right.
 - **TIME**: business value goes up, technical fit goes to the right. Invest (high value, good fit) is top right, Migrate (high value, poor fit) top left, Tolerate (low value, good fit) bottom right and Eliminate (low value, poor fit) bottom left.
+- **Eisenhower matrix**: the top row is important, the bottom row not; the left column is urgent, the right column not. Do is top left, Schedule top right, Delegate bottom left and Delete bottom right.
+- **Stakeholder map**: power goes up, interest goes to the right. Manage closely (high power, high interest) is top right, Keep satisfied top left, Keep informed bottom right and Monitor bottom left.
+- **Risk heatmap**: likelihood goes up, impact goes to the right. Act now (likely, high impact) is top right, Watch top left, Plan for bottom right and Accept bottom left.
 
 ### Adding a template
 
-- On a wider screen, find them in the palette under their group's heading: **Retros**, **Planning and facilitation** and **Architecture and analysis**. Search finds them across all groups (for example "template", "retro", "matrix" or "radar"); a group with nothing matching hides its heading. Click a template to place it in the middle of the part of the board you can see, or drag it onto the board to centre it where you let go. It always lands fully on the board.
+- On a wider screen, find them in the palette under their group's heading: **Retros**, **Planning and facilitation**, **Architecture and analysis** and **Strategy and product**. Search finds them across all groups (for example "template", "retro", "matrix" or "radar"); a group with nothing matching hides its heading. Click a template to place it in the middle of the part of the board you can see, or drag it onto the board to centre it where you let go. It always lands fully on the board.
 - Nothing already on the board is moved, resized or deleted, so there's nothing to confirm. When it's done, the view fits the new frames and the first one is selected.
-- A template needs one free frame slot per frame (a board holds up to 30 frames; the largest template, Migration strategy, has six). If there aren't enough, nothing is added and the board says how many it needs and how many are free.
+- A template needs one free frame slot per frame (a board holds up to 30 frames; the largest template, Five whys, has seven). If there aren't enough, nothing is added and the board says how many it needs and how many are free.
 - All of a template's frames appear at once, already at their sizes and with their title styles, for you and everyone else in the room. While a template is being added, the template tiles are off.
 - If the relay refuses part of a template (for example someone else filled the board's last frame slots at the same moment), the frames already added stay, and the board says the template was only partly added. Delete any you don't want.
 - Templates can be added during a silent round: they're only frames, and frames can still be added then.

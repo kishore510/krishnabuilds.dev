@@ -58,7 +58,7 @@ const byId = (id: string): Template => {
 };
 
 describe("template registry", () => {
-  it("has the twenty-five templates, in group order, with unique ids and names", () => {
+  it("has the thirty-seven templates, in group order, with unique ids and names", () => {
     expect(TEMPLATES.map((t) => t.label)).toEqual([
       "Retro",
       "Start Stop Continue",
@@ -79,19 +79,31 @@ describe("template registry", () => {
       "MoSCoW",
       "Now Next Later",
       "Eisenhower matrix",
+      "Check-in",
+      "Brainstorm",
+      "Parking lot",
+      "Meeting agenda and actions",
+      "OKRs",
+      "Quarterly planning",
       "SWOT",
       "TIME",
       "Migration strategy",
       "Technology radar",
       "RAID",
       "Architecture decision",
+      "Empathy map",
+      "Persona",
+      "PESTLE",
+      "Five whys",
+      "Stakeholder map",
+      "Risk heatmap",
     ]);
     expect(new Set(TEMPLATES.map((t) => t.id)).size).toBe(TEMPLATES.length);
     expect(new Set(TEMPLATES.map((t) => t.label.toLowerCase())).size).toBe(TEMPLATES.length);
   });
 
   it("every template has a group from the allowed list, and the groups come in the stated order", () => {
-    expect(TEMPLATE_GROUPS.map((g) => g.label)).toEqual(["Retros", "Planning and facilitation", "Architecture and analysis"]);
+    expect(TEMPLATE_GROUPS.map((g) => g.label)).toEqual(["Retros", "Planning and facilitation", "Architecture and analysis", "Strategy and product"]);
     const allowed = TEMPLATE_GROUPS.map((g) => g.label);
     for (const t of TEMPLATES) {
       expect(t.group, t.label).toBeDefined();
@@ -103,8 +115,9 @@ describe("template registry", () => {
     expect(new Set(order).size).toBe(allowed.length);
     const members = (group: string) => TEMPLATES.filter((t) => t.group === group).map((t) => t.label);
     expect(members("Retros")).toEqual(["Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat", "Rose Thorn Bud", "KALM", "DAKI", "Hot air balloon", "Speedcar", "Three little pigs"]);
-    expect(members("Planning and facilitation")).toEqual(["Sprint planning", "2x2 Impact and Effort", "Lean coffee", "Kanban", "MoSCoW", "Now Next Later", "Eisenhower matrix"]);
+    expect(members("Planning and facilitation")).toEqual(["Sprint planning", "2x2 Impact and Effort", "Lean coffee", "Kanban", "MoSCoW", "Now Next Later", "Eisenhower matrix", "Check-in", "Brainstorm", "Parking lot", "Meeting agenda and actions", "OKRs", "Quarterly planning"]);
     expect(members("Architecture and analysis")).toEqual(["SWOT", "TIME", "Migration strategy", "Technology radar", "RAID", "Architecture decision"]);
+    expect(members("Strategy and product")).toEqual(["Empathy map", "Persona", "PESTLE", "Five whys", "Stakeholder map", "Risk heatmap"]);
   });
 
   it.each(TEMPLATES.map((t) => [t.label, t] as const))("%s validates against the shared constants", (_label, t) => {
@@ -169,6 +182,30 @@ describe("template registry", () => {
     expect(byId("kanban").frames.map((f) => f.title)).toEqual(["To do", "Doing", "Done"]);
     expect(byId("moscow").frames.map((f) => f.title)).toEqual(["Must have", "Should have", "Could have", "Won't have (this time)"]);
     expect(byId("now-next-later").frames.map((f) => f.title)).toEqual(["Now", "Next", "Later"]);
+    expect(byId("check-in").frames.map((f) => f.title)).toEqual(["How are you arriving?", "What's on your mind?", "What do you need today?"]);
+    expect(byId("brainstorm").frames.map((f) => f.title)).toEqual(["The question or challenge", "Ideas", "Themes", "Next steps"]);
+    expect(byId("parking-lot").frames.map((f) => f.title)).toEqual(["Parked", "Follow up (who, when)", "Resolved"]);
+    expect(byId("meeting").frames.map((f) => f.title)).toEqual(["Meeting goal", "Agenda", "Decisions", "Actions (who, by when)"]);
+    expect(byId("okrs").frames.map((f) => f.title)).toEqual(["Objective", "Key result 1", "Key result 2", "Key result 3"]);
+    expect(byId("quarterly-planning").frames.map((f) => f.title)).toEqual(["Quarter goals", "Month 1", "Month 2", "Month 3", "Risks and dependencies"]);
+    expect(byId("empathy-map").frames.map((f) => f.title)).toEqual(["Who is the user?", "Says", "Thinks", "Does", "Feels"]);
+    expect(byId("persona").frames.map((f) => f.title)).toEqual(["Name and role", "About them", "Goals", "Frustrations", "What they need from us"]);
+    expect(byId("pestle").frames.map((f) => f.title)).toEqual(["Political", "Economic", "Social", "Technological", "Legal", "Environmental"]);
+    expect(byId("five-whys").frames.map((f) => f.title)).toEqual(["Problem", "Why? 1", "Why? 2", "Why? 3", "Why? 4", "Why? 5", "Root cause and fix"]);
+    // Power up, interest to the right.
+    expect(byId("stakeholder-map").frames.map((f) => f.title)).toEqual([
+      "Keep satisfied: high power, low interest",
+      "Manage closely: high power, high interest",
+      "Monitor: low power, low interest",
+      "Keep informed: low power, high interest",
+    ]);
+    // Likelihood up, impact to the right.
+    expect(byId("risk-heatmap").frames.map((f) => f.title)).toEqual([
+      "Watch: likely, low impact",
+      "Act now: likely, high impact",
+      "Accept: unlikely, low impact",
+      "Plan for: unlikely, high impact",
+    ]);
     // Important on top, urgent on the left.
     expect(byId("eisenhower").frames.map((f) => f.title)).toEqual([
       "Do: urgent, important",
@@ -372,7 +409,7 @@ describe("session: applying a template", () => {
       expect((t.out()[0]!.message.frames as unknown[]).length).toBe(template.frames.length);
     }
     const largest = Math.max(...TEMPLATES.map((t) => t.frames.length));
-    expect(largest).toBe(6);
+    expect(largest).toBe(7);
     expect(largest).toBeLessThanOrEqual(MAX_FRAMES_PER_ROOM);
   });
 
@@ -490,7 +527,7 @@ describe("palette: Templates", () => {
   it("is one category per template group on the panel (md and up) only, headed by the group's name, entries in registry order", () => {
     const panel = paletteSections(PALETTE_CATEGORIES, "add", state, "", "panel");
     const drawer = paletteSections(PALETTE_CATEGORIES, "add", state, "", "drawer");
-    expect(panel.map((s) => s.category.label)).toEqual(["Notes", "Frames", "Shapes", "Connectors", "Retros", "Planning and facilitation", "Architecture and analysis"]);
+    expect(panel.map((s) => s.category.label)).toEqual(["Notes", "Frames", "Shapes", "Connectors", "Retros", "Planning and facilitation", "Architecture and analysis", "Strategy and product"]);
     for (const group of TEMPLATE_GROUPS) {
       expect(panel.find((s) => s.category.id === group.categoryId)?.items.map((i) => i.label)).toEqual(TEMPLATES.filter((t) => t.group === group.label).map((t) => t.label));
     }
@@ -499,10 +536,10 @@ describe("palette: Templates", () => {
   });
 
   it.each([
-    ["template", [["Retros", 12], ["Planning and facilitation", 7], ["Architecture and analysis", 6]]],
+    ["template", [["Retros", 12], ["Planning and facilitation", 13], ["Architecture and analysis", 6], ["Strategy and product", 6]]],
     ["retro", [["Retros", 12]]],
     ["kanban", [["Planning and facilitation", 3]]],
-    ["matrix", [["Planning and facilitation", 2], ["Architecture and analysis", 2]]],
+    ["matrix", [["Planning and facilitation", 2], ["Architecture and analysis", 2], ["Strategy and product", 2]]],
     ["swot", [["Architecture and analysis", 1]]],
     ["zzz-nothing", []],
   ] as const)("search %s works across groups, and a group with no matches hides its heading", (query, expected) => {
@@ -516,7 +553,13 @@ describe("palette: Templates", () => {
     ["urgent", ["Eisenhower matrix"]],
     ["roadmap", ["Now Next Later"]],
     ["rose thorn", ["Rose Thorn Bud"]],
-    ["impact", ["2x2 Impact and Effort"]],
+    ["icebreaker", ["Check-in"]],
+    ["okr", ["OKRs"]],
+    ["root cause", ["Five whys"]],
+    ["pestle", ["PESTLE"]],
+    ["stakeholder", ["Stakeholder map"]],
+    ["empathy", ["Empathy map"]],
+    ["impact", ["2x2 Impact and Effort", "Risk heatmap"]],
     ["sprint goal", ["Sprint planning"]],
     ["rationalisation", ["TIME"]],
     ["cloud migration", ["Migration strategy"]],
