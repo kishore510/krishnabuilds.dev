@@ -80,7 +80,7 @@ describe("palette registry", () => {
       ],
     };
     const sections = paletteSections([...PALETTE_CATEGORIES, shapes], "add", state, "");
-    expect(sections.map((s) => s.category.label)).toEqual(["Test shapes", "Notes", "Frames", "Shapes", "Connectors", "Retros", "Planning and facilitation", "Architecture and analysis"]);
+    expect(sections.map((s) => s.category.label)).toEqual(["Test shapes", "Notes", "Frames", "Shapes", "Connectors", "Retros", "Planning and facilitation", "Architecture and analysis", "Strategy and product"]);
   });
 
   it("a category with no items (static or from the room) is hidden", () => {
@@ -93,12 +93,13 @@ describe("palette registry", () => {
       "templates-retros",
       "templates-planning",
       "templates-architecture",
+      "templates-strategy",
     ]);
   });
 
   it("search hides empty groups: a template group with no matching entry loses its heading, the others keep theirs", () => {
     const labels = (query: string) => paletteSections(PALETTE_CATEGORIES, "add", state, query).map((s) => s.category.label);
-    expect(labels("template")).toEqual(["Retros", "Planning and facilitation", "Architecture and analysis"]);
+    expect(labels("template")).toEqual(["Retros", "Planning and facilitation", "Architecture and analysis", "Strategy and product"]);
     expect(labels("starfish")).toEqual(["Retros"]);
     expect(labels("lean coffee")).toEqual(["Planning and facilitation"]);
     expect(labels("raid")).toEqual(["Architecture and analysis"]);

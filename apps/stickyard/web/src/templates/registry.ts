@@ -34,6 +34,7 @@ export const TEMPLATE_GROUPS = [
   { label: "Retros", categoryId: "templates-retros" },
   { label: "Planning and facilitation", categoryId: "templates-planning" },
   { label: "Architecture and analysis", categoryId: "templates-architecture" },
+  { label: "Strategy and product", categoryId: "templates-strategy" },
 ] as const;
 
 export type TemplateGroup = (typeof TEMPLATE_GROUPS)[number]["label"];
@@ -62,13 +63,13 @@ const columns = (y: number, h: number, cols: readonly [title: string, color: Fra
 
 const QUADRANT_W = 600;
 const QUADRANT_H = 440;
-/** A 2 x 2 matrix: top left, top right, bottom left, bottom right. */
-const quadrants = (cells: readonly [title: string, color: FrameColor][]): TemplateFrame[] =>
+/** A 2 x 2 matrix: top left, top right, bottom left, bottom right, starting at `y` (0 unless a banner sits above). */
+const quadrants = (cells: readonly [title: string, color: FrameColor][], y = 0): TemplateFrame[] =>
   cells.map(([title, color], i) => ({
     title,
     color,
     x: (i % 2) * (QUADRANT_W + GAP),
-    y: Math.floor(i / 2) * (QUADRANT_H + GAP),
+    y: y + Math.floor(i / 2) * (QUADRANT_H + GAP),
     w: QUADRANT_W,
     h: QUADRANT_H,
     style: HEADING,
@@ -76,6 +77,17 @@ const quadrants = (cells: readonly [title: string, color: FrameColor][]): Templa
 
 /** The width of three columns and their gaps: a banner over them spans this. */
 const THREE_W = 3 * COLUMN_W + 2 * GAP;
+/** The same for four columns (Quarterly planning). */
+const FOUR_W = 4 * COLUMN_W + 3 * GAP;
+/** Five whys: five narrower columns, so a banner over them stays within FRAME_MAX_W (2400). */
+const WHY_W = 440;
+const FIVE_W = 5 * WHY_W + 4 * GAP;
+/** The width of a 2 x 2: a banner over one spans this. */
+const TWO_BY_TWO_W = 2 * QUADRANT_W + GAP;
+/** A banner's height, and where what sits under it starts. */
+const BANNER_H = 200;
+const UNDER_BANNER = BANNER_H + GAP;
+const banner = (title: string, color: FrameColor, w: number, y = 0): TemplateFrame => ({ title, color, x: 0, y, w, h: BANNER_H, style: BANNER });
 /** A row of `cols` column-wide frames, `QUADRANT_H` tall, at `y`, shifted right by `x`. */
 const row = (x: number, y: number, cols: readonly [title: string, color: FrameColor][]): TemplateFrame[] =>
   cols.map(([title, color], i) => ({ title, color, x: x + i * (COLUMN_W + GAP), y, w: COLUMN_W, h: QUADRANT_H, style: HEADING }));
@@ -313,6 +325,85 @@ export const TEMPLATES: readonly Template[] = [
       ["Delete: not urgent, not important", "pink"],
     ]),
   },
+  {
+    id: "check-in",
+    group: "Planning and facilitation",
+    label: "Check-in",
+    keywords: ["check-in", "check in", "icebreaker", "ice breaker", "warm up", "start", "meeting", "workshop", "mood", "columns"],
+    frames: columns(0, 720, [
+      ["How are you arriving?", "yellow"],
+      ["What's on your mind?", "blue"],
+      ["What do you need today?", "green"],
+    ]),
+  },
+  {
+    id: "brainstorm",
+    group: "Planning and facilitation",
+    label: "Brainstorm",
+    keywords: ["brainstorm", "ideas", "ideation", "themes", "affinity", "cluster", "workshop", "challenge", "next steps"],
+    frames: [
+      banner("The question or challenge", "yellow", THREE_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Ideas", "blue"],
+        ["Themes", "purple"],
+        ["Next steps", "green"],
+      ]),
+    ],
+  },
+  {
+    id: "parking-lot",
+    group: "Planning and facilitation",
+    label: "Parking lot",
+    keywords: ["parking lot", "parked", "later", "follow up", "off topic", "questions", "meeting", "columns"],
+    frames: columns(0, 720, [
+      ["Parked", "yellow"],
+      ["Follow up (who, when)", "blue"],
+      ["Resolved", "green"],
+    ]),
+  },
+  {
+    id: "meeting",
+    group: "Planning and facilitation",
+    label: "Meeting agenda and actions",
+    keywords: ["meeting", "agenda", "minutes", "decisions", "actions", "owner", "goal", "notes"],
+    frames: [
+      banner("Meeting goal", "yellow", THREE_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Agenda", "neutral"],
+        ["Decisions", "green"],
+        ["Actions (who, by when)", "blue"],
+      ]),
+    ],
+  },
+  {
+    id: "okrs",
+    group: "Planning and facilitation",
+    label: "OKRs",
+    keywords: ["okr", "okrs", "objective", "objectives", "key results", "goals", "targets", "measures", "strategy"],
+    frames: [
+      banner("Objective", "yellow", THREE_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Key result 1", "blue"],
+        ["Key result 2", "green"],
+        ["Key result 3", "purple"],
+      ]),
+    ],
+  },
+  {
+    id: "quarterly-planning",
+    group: "Planning and facilitation",
+    label: "Quarterly planning",
+    keywords: ["quarter", "quarterly", "planning", "plan", "pi planning", "months", "goals", "risks", "dependencies", "columns"],
+    frames: [
+      banner("Quarter goals", "yellow", FOUR_W),
+      ...columns(UNDER_BANNER, 560, [
+        ["Month 1", "blue"],
+        ["Month 2", "green"],
+        ["Month 3", "purple"],
+        ["Risks and dependencies", "orange"],
+      ]),
+    ],
+  },
   /* ── Architecture and analysis ── */
   {
     id: "swot",
@@ -392,6 +483,106 @@ export const TEMPLATES: readonly Template[] = [
       ["Options", "blue"],
       ["Decision", "green"],
       ["Consequences", "orange"],
+    ]),
+  },
+  /* ── Strategy and product ── */
+  {
+    id: "empathy-map",
+    group: "Strategy and product",
+    label: "Empathy map",
+    keywords: ["empathy", "map", "user", "customer", "says", "thinks", "does", "feels", "research", "design", "2x2"],
+    frames: [
+      banner("Who is the user?", "yellow", TWO_BY_TWO_W),
+      ...quadrants(
+        [
+          ["Says", "blue"],
+          ["Thinks", "purple"],
+          ["Does", "green"],
+          ["Feels", "pink"],
+        ],
+        UNDER_BANNER,
+      ),
+    ],
+  },
+  {
+    id: "persona",
+    group: "Strategy and product",
+    label: "Persona",
+    keywords: ["persona", "user", "customer", "profile", "goals", "frustrations", "needs", "research", "design"],
+    frames: [
+      banner("Name and role", "yellow", TWO_BY_TWO_W),
+      ...quadrants(
+        [
+          ["About them", "blue"],
+          ["Goals", "green"],
+          ["Frustrations", "pink"],
+          ["What they need from us", "purple"],
+        ],
+        UNDER_BANNER,
+      ),
+    ],
+  },
+  {
+    id: "pestle",
+    group: "Strategy and product",
+    label: "PESTLE",
+    keywords: ["pestle", "pest", "political", "economic", "social", "technological", "legal", "environmental", "external", "analysis", "strategy"],
+    frames: [
+      ...row(0, 0, [
+        ["Political", "pink"],
+        ["Economic", "green"],
+        ["Social", "yellow"],
+      ]),
+      ...row(0, QUADRANT_H + GAP, [
+        ["Technological", "blue"],
+        ["Legal", "purple"],
+        ["Environmental", "orange"],
+      ]),
+    ],
+  },
+  {
+    id: "five-whys",
+    group: "Strategy and product",
+    label: "Five whys",
+    keywords: ["five whys", "5 whys", "why", "root cause", "problem", "analysis", "incident"],
+    frames: [
+      banner("Problem", "yellow", FIVE_W),
+      ...(
+        [
+          ["Why? 1", "neutral"],
+          ["Why? 2", "blue"],
+          ["Why? 3", "purple"],
+          ["Why? 4", "orange"],
+          ["Why? 5", "pink"],
+        ] as const
+      ).map(([title, color], i): TemplateFrame => ({ title, color, x: i * (WHY_W + GAP), y: UNDER_BANNER, w: WHY_W, h: QUADRANT_H, style: HEADING })),
+      banner("Root cause and fix", "green", FIVE_W, UNDER_BANNER + QUADRANT_H + GAP),
+    ],
+  },
+  {
+    id: "stakeholder-map",
+    group: "Strategy and product",
+    label: "Stakeholder map",
+    keywords: ["stakeholder", "stakeholders", "power", "interest", "influence", "manage", "inform", "map", "2x2", "matrix", "quadrant"],
+    // Power up, interest to the right.
+    frames: quadrants([
+      ["Keep satisfied: high power, low interest", "yellow"],
+      ["Manage closely: high power, high interest", "pink"],
+      ["Monitor: low power, low interest", "neutral"],
+      ["Keep informed: low power, high interest", "blue"],
+    ]),
+  },
+  {
+    id: "risk-heatmap",
+    group: "Strategy and product",
+    label: "Risk heatmap",
+    keywords: ["risk", "risks", "heatmap", "heat map", "likelihood", "impact", "probability", "severity", "2x2", "matrix", "quadrant"],
+    // Likelihood up, impact to the right.
+    frames: quadrants([
+      ["Watch: likely, low impact", "yellow"],
+      ["Act now: likely, high impact", "pink"],
+      ["Accept: unlikely, low impact", "green"],
+      ["Plan for: unlikely, high impact", "orange"],
     ]),
   },
 ];

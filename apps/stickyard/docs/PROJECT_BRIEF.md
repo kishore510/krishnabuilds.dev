@@ -1,6 +1,6 @@
 # Project Brief: Stickyard
 
-Last updated: 25 November 2026 (template batch 1 of 5, v0.47.0). Update the status table and session log at the end of every thread, then re-upload.
+Last updated: 25 November 2026 (template batches 2 and 3 of 5, v0.48.0). Update the status table and session log at the end of every thread, then re-upload.
 
 ## 1. Purpose
 
@@ -138,6 +138,7 @@ Keep tsc, tests and build green. Stop for review with a summary of what was buil
 | Shared theme (monorepo) | The theme is shared with the other krishnabuilds.dev apps through the `kb-theme` cookie; an older local choice is moved across once | Done (v0.45.0, web only, PR #52, merged and deployed 5 November 2026) |
 | Open session creation | Anyone can start 5 sessions a day without the create passcode; with it, no per-person limit (a 200-a-day ceiling across everyone) | Done (v0.46.0, relay and web, PR #158, merged and deployed 22 November 2026) |
 | Template batch 1 of 5 | Ten more templates (six retros, Kanban, MoSCoW, Now Next Later, Eisenhower matrix), twenty-five in all; four more batches planned | Done (v0.47.0, web only, PR #194, merged and deployed 25 November 2026) |
+| Template batches 2 and 3 of 5 | Twelve more templates (six for planning and facilitation, six in a new Strategy and product group), thirty-seven in all; two more batches planned | Done (v0.48.0, web only, PR #PRNUM, merged and deployed 25 November 2026) |
 | Next | Anonymous notes mode is the next candidate and Host recovery is higher priority (backlog); the hardening backlog items | Not started; see PHASE_PLAN.md |
 | 3 onwards | See PHASE_PLAN.md | See PHASE_PLAN.md |
 
@@ -212,6 +213,7 @@ Start a thread with the slice and what I want (for example "Slice 1, write the C
 - 5 November 2026 (monorepo, not a thread): shared theme (v0.45.0, web only, PR #52, no protocol, relay or stored-schema change). The theme now lives in the shared `kb-theme` cookie on .krishnabuilds.dev via `getTheme`/`setTheme` in `@krishnabuilds/ui`, as Chalkline and Sumyard do; `stickyard:theme` is read once, moved into the cookie unless another app already set one, and removed once the cookie holds it. The pre-paint script reads the cookie first.
 - 22 November 2026 (monorepo, not a thread): open session creation (v0.46.0, relay and web, PR #158, merged and deployed 22 November 2026, no protocol or stored-schema change). `POST /rooms` accepts `{}`; the limiter takes a credential (`passcode`, `wrong`, `none`) instead of a boolean. No passcode: `openPerClientPerDay` 5 (`OPEN_CREATIONS_PER_CLIENT_PER_DAY` in shared, also shown on the start page) and `openPerDay` 50, counted in a new `open_creations` table. The right passcode: no per-client cap, `passcodePerDay` 200. A wrong passcode is a failure as before, and a lockout or the global failure cap refuses every kind of attempt (so the passcode can't be confirmed during one). The start page's passcode field is optional, and over the limit without a passcode the message points to it.
 - 25 November 2026 (monorepo, not a thread): template batch 1 of 5 (v0.47.0, web only, PR #194, merged and deployed 25 November 2026, no protocol, relay or stored-schema change). The owner asked for many more templates in at most five build sessions; 33 planned in five batches (PHASE_PLAN.md "More templates in five batches"). Batch 1 adds ten as data: six retros (Rose Thorn Bud, KALM, DAKI, Hot air balloon, Speedcar, Three little pigs) and Kanban, MoSCoW, Now Next Later and the Eisenhower matrix. Twenty-five templates in all. Next: batch 2.
+- 25 November 2026 (monorepo, not a thread): template batches 2 and 3 of 5, built together at the owner's request (v0.48.0, web only, PR #PRNUM, merged and deployed 25 November 2026, no protocol, relay or stored-schema change). Twelve templates: Check-in, Brainstorm, Parking lot, Meeting agenda and actions, OKRs, Quarterly planning, and a new Strategy and product group (Empathy map, Persona, PESTLE, Five whys, Stakeholder map, Risk heatmap). Thirty-seven in all. Found on the way: Five whys at the usual 480-wide columns made a 2,560-wide banner, over `FRAME_MAX_W` 2,400, so its columns are 440. Five whys (7 frames, 1,428 bytes) is the new largest template. Next: batch 4, the canvases.
 
 ## 10. One-time manual setup
 

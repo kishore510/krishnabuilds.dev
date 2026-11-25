@@ -2,6 +2,14 @@
 
 All notable changes to Stickyard, newest first. The format follows Keep a Changelog. Versions are 0.x: a minor bump for each slice and a patch bump for each follow-up fix. This file is shown in the app under **What’s new**, so entries are written for the people using it.
 
+## [0.48.0] - 2026-11-25
+
+### Added
+- **Twelve more templates**, so there are now thirty-seven, and a new group in the palette, **Strategy and product**.
+- **Planning and facilitation**: Check-in (an icebreaker to start a meeting), Brainstorm, Parking lot, Meeting agenda and actions, OKRs (an objective and three key results) and Quarterly planning (goals, three months, and risks and dependencies).
+- **Strategy and product**: Empathy map, Persona, PESTLE, Five whys, Stakeholder map (power and interest) and Risk heatmap (likelihood and impact).
+- Search the palette for them by name or by what's in them, for example "icebreaker", "okr", "root cause" or "stakeholder".
+
 ## [0.47.0] - 2026-11-25
 
 ### Added
