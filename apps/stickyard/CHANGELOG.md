@@ -2,6 +2,14 @@
 
 All notable changes to Stickyard, newest first. The format follows Keep a Changelog. Versions are 0.x: a minor bump for each slice and a patch bump for each follow-up fix. This file is shown in the app under **What’s new**, so entries are written for the people using it.
 
+## [0.47.0] - 2026-11-25
+
+### Added
+- **Ten more templates**, so there are now twenty-five. In the palette, under the group headings:
+- **Retros**: Rose Thorn Bud, KALM (Keep, Add, Less, More), DAKI (Drop, Add, Keep, Improve), Hot air balloon, Speedcar and Three little pigs.
+- **Planning and facilitation**: Kanban (To do, Doing, Done), MoSCoW (Must, Should, Could and Won't have), Now Next Later, and the Eisenhower matrix (Do, Schedule, Delegate, Delete).
+- Search the palette for a template's name or its columns, for example "urgent", "roadmap" or "must have".
+
 ## [0.46.0] - 2026-11-22
 
 ### Changed

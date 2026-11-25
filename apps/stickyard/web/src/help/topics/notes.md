@@ -2,7 +2,7 @@
 title: Notes
 order: 3
 summary: Add notes from the palette, export the board as a picture, a Markdown file or a board file, import a board file or text, duplicate them, undo and redo your changes, clear the board, edit, colour, style and resize them in Properties, bring them to the front or send them to the back, group them in frames, start from a template, select several notes and frames to move, arrange or delete together; pan, zoom and fit the board, zoom to the selection and use the overview map.
-keywords: export, import, paste, upload, text, lines, download, png, picture, image, markdown, json, board file, share, save, file, undo, redo, history, duplicate, copy, clear, clear board, empty, restore, ctrl+z, ctrl+y, ctrl+d, tick, outline, template, templates, retro, retrospective, start stop continue, mad sad glad, 4ls, starfish, sailboat, lean coffee, swot, time, tolerate, invest, migrate, eliminate, rationalisation, migration, rehost, replatform, refactor, repurchase, retire, retain, technology radar, radar, raid, risks, assumptions, issues, dependencies, architecture decision, adr, axes, 2x2, matrix, impact, effort, sprint, planning, kanban, frame, frames, area, section, title, carry, front, back, order, stack, overlap, behind, top, bottom, inline, place, double-click, marquee, multi, several, many, group, arrange, align, distribute, grid, columns, rows, tidy, layout, match, right-click, middle, note, notes, sticky, board, add, edit, move, drag, delete, colour, color, text, title, body, size, width, height, bigger, smaller, handle, corner, font, bold, italic, align, alignment, left, centre, center, right, style, palette, tile, properties, panel, select, selection, collapse, resize, pan, hand, zoom, pinch, wheel, fit, overview, map, minimap, zoom to selection, out of view, show all, cluster, navigate, shortcut, full, saved
+keywords: export, import, paste, upload, text, lines, download, png, picture, image, markdown, json, board file, share, save, file, undo, redo, history, duplicate, copy, clear, clear board, empty, restore, ctrl+z, ctrl+y, ctrl+d, tick, outline, template, templates, retro, retrospective, start stop continue, mad sad glad, 4ls, starfish, sailboat, rose thorn bud, kalm, daki, hot air balloon, speedcar, three little pigs, lean coffee, kanban, moscow, must have, now next later, roadmap, eisenhower, urgent, important, swot, time, tolerate, invest, migrate, eliminate, rationalisation, migration, rehost, replatform, refactor, repurchase, retire, retain, technology radar, radar, raid, risks, assumptions, issues, dependencies, architecture decision, adr, axes, 2x2, matrix, impact, effort, sprint, planning, kanban, frame, frames, area, section, title, carry, front, back, order, stack, overlap, behind, top, bottom, inline, place, double-click, marquee, multi, several, many, group, arrange, align, distribute, grid, columns, rows, tidy, layout, match, right-click, middle, note, notes, sticky, board, add, edit, move, drag, delete, colour, color, text, title, body, size, width, height, bigger, smaller, handle, corner, font, bold, italic, align, alignment, left, centre, center, right, style, palette, tile, properties, panel, select, selection, collapse, resize, pan, hand, zoom, pinch, wheel, fit, overview, map, minimap, zoom to selection, out of view, show all, cluster, navigate, shortcut, full, saved
 ---
 Every session has one shared **board**. Everyone in the session sees the same notes, and changes show up for everyone as they happen. The board fills the screen; its edge is the outline around the dotted area, and notes always stay inside it.
 
@@ -141,12 +141,22 @@ A template adds a ready-made set of frames, with their titles, colours and sizes
 - **4Ls**: four columns, Liked, Learned, Lacked and Longed for.
 - **Starfish**: Keep, Less of and More of in a row, with Start and Stop below.
 - **Sailboat**: a wide Goal frame on top, then Wind (what helps us), Anchors (what slows us) and Rocks (risks ahead).
+- **Rose Thorn Bud**: three columns, Rose (what went well), Thorn (what was hard) and Bud (what could grow).
+- **KALM**: four columns, Keep, Add, Less and More.
+- **DAKI**: four columns, Drop, Add, Keep and Improve.
+- **Hot air balloon**: four columns, Hot air (what lifts us), Sandbags (what holds us down), Storms (risks ahead) and Sunny skies (what's ahead).
+- **Speedcar**: three columns, Engine (what speeds us up), Parachute (what slows us) and Abyss (risks ahead).
+- **Three little pigs**: three columns, Straw (fragile), Sticks (could be stronger) and Bricks (solid).
 
 **Planning and facilitation**
 
 - **Sprint planning**: a wide Sprint goal frame on top, then Candidates, Committed, and Risks and questions.
 - **2x2 Impact and Effort**: four squares, Quick wins, Major projects, Fill-ins and Thankless tasks.
 - **Lean coffee**: three columns for the topics, To discuss, Discussing and Discussed.
+- **Kanban**: three columns, To do, Doing and Done.
+- **MoSCoW**: four columns, Must have, Should have, Could have and Won't have (this time).
+- **Now Next Later**: three columns for a simple roadmap, Now, Next and Later.
+- **Eisenhower matrix**: four squares, Do (urgent and important), Schedule (important, not urgent), Delegate (urgent, not important) and Delete (neither). Important is on top, urgent on the left.
 
 **Architecture and analysis**
 

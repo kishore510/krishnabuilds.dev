@@ -159,6 +159,75 @@ export const TEMPLATES: readonly Template[] = [
       ]),
     ],
   },
+  {
+    id: "rose-thorn-bud",
+    group: "Retros",
+    label: "Rose Thorn Bud",
+    keywords: ["rose", "thorn", "bud", "highlights", "challenges", "potential", "retro", "retrospective", "columns"],
+    frames: columns(0, 720, [
+      ["Rose (went well)", "pink"],
+      ["Thorn (was hard)", "orange"],
+      ["Bud (could grow)", "green"],
+    ]),
+  },
+  {
+    id: "kalm",
+    group: "Retros",
+    label: "KALM",
+    keywords: ["kalm", "keep", "add", "less", "more", "retro", "retrospective", "columns"],
+    frames: columns(0, 720, [
+      ["Keep", "green"],
+      ["Add", "blue"],
+      ["Less", "orange"],
+      ["More", "purple"],
+    ]),
+  },
+  {
+    id: "daki",
+    group: "Retros",
+    label: "DAKI",
+    keywords: ["daki", "drop", "add", "keep", "improve", "retro", "retrospective", "columns"],
+    frames: columns(0, 720, [
+      ["Drop", "pink"],
+      ["Add", "blue"],
+      ["Keep", "green"],
+      ["Improve", "yellow"],
+    ]),
+  },
+  {
+    id: "hot-air-balloon",
+    group: "Retros",
+    label: "Hot air balloon",
+    keywords: ["hot air", "balloon", "sandbags", "storms", "sunny skies", "lifts", "holds", "risks", "retro", "retrospective", "columns"],
+    frames: columns(0, 720, [
+      ["Hot air (lifts us)", "green"],
+      ["Sandbags (hold us down)", "orange"],
+      ["Storms (risks ahead)", "pink"],
+      ["Sunny skies (what's ahead)", "yellow"],
+    ]),
+  },
+  {
+    id: "speedcar",
+    group: "Retros",
+    label: "Speedcar",
+    keywords: ["speedcar", "speed car", "car", "engine", "parachute", "abyss", "risks", "retro", "retrospective", "columns"],
+    frames: columns(0, 720, [
+      ["Engine (speeds us up)", "green"],
+      ["Parachute (slows us)", "orange"],
+      ["Abyss (risks ahead)", "pink"],
+    ]),
+  },
+  {
+    id: "three-little-pigs",
+    group: "Retros",
+    label: "Three little pigs",
+    keywords: ["three little pigs", "pigs", "straw", "sticks", "bricks", "house", "fragile", "solid", "retro", "retrospective", "columns"],
+    frames: columns(0, 720, [
+      ["Straw (fragile)", "yellow"],
+      ["Sticks (could be stronger)", "orange"],
+      ["Bricks (solid)", "green"],
+    ]),
+  },
   /* ── Planning and facilitation ── */
   {
     id: "sprint-planning",
@@ -195,6 +264,53 @@ export const TEMPLATES: readonly Template[] = [
       ["To discuss", "yellow"],
       ["Discussing", "blue"],
       ["Discussed", "green"],
+    ]),
+  },
+  {
+    id: "kanban",
+    group: "Planning and facilitation",
+    label: "Kanban",
+    keywords: ["kanban", "board", "to do", "todo", "doing", "in progress", "done", "workflow", "tasks", "columns"],
+    frames: columns(0, 720, [
+      ["To do", "yellow"],
+      ["Doing", "blue"],
+      ["Done", "green"],
+    ]),
+  },
+  {
+    id: "moscow",
+    group: "Planning and facilitation",
+    label: "MoSCoW",
+    keywords: ["moscow", "must", "should", "could", "won't", "wont", "have", "prioritise", "prioritize", "priority", "requirements", "scope", "columns"],
+    frames: columns(0, 720, [
+      ["Must have", "pink"],
+      ["Should have", "orange"],
+      ["Could have", "blue"],
+      ["Won't have (this time)", "neutral"],
+    ]),
+  },
+  {
+    id: "now-next-later",
+    group: "Planning and facilitation",
+    label: "Now Next Later",
+    keywords: ["now", "next", "later", "roadmap", "plan", "planning", "horizons", "columns"],
+    frames: columns(0, 720, [
+      ["Now", "green"],
+      ["Next", "blue"],
+      ["Later", "purple"],
+    ]),
+  },
+  {
+    id: "eisenhower",
+    group: "Planning and facilitation",
+    label: "Eisenhower matrix",
+    keywords: ["eisenhower", "urgent", "important", "do", "schedule", "delegate", "delete", "2x2", "matrix", "quadrant", "prioritise", "prioritize", "priority"],
+    // Rows: important on top, not important below. Columns: urgent on the left, not urgent on the right.
+    frames: quadrants([
+      ["Do: urgent, important", "green"],
+      ["Schedule: not urgent, important", "blue"],
+      ["Delegate: urgent, not important", "yellow"],
+      ["Delete: not urgent, not important", "pink"],
     ]),
   },
   /* ── Architecture and analysis ── */

@@ -1000,7 +1000,8 @@ describe("the palette (md up)", () => {
       "Arrow", "Line", "Elbow arrow",
       // Slice templates: then the templates, one heading per group (v0.29.0).
       "Retro", "Start Stop Continue", "Mad Sad Glad", "4Ls", "Starfish", "Sailboat",
-      "Sprint planning", "2x2 Impact and Effort", "Lean coffee",
+      "Rose Thorn Bud", "KALM", "DAKI", "Hot air balloon", "Speedcar", "Three little pigs",
+      "Sprint planning", "2x2 Impact and Effort", "Lean coffee", "Kanban", "MoSCoW", "Now Next Later", "Eisenhower matrix",
       "SWOT", "TIME", "Migration strategy", "Technology radar", "RAID", "Architecture decision",
     ]);
     expect(tiles()[1]?.querySelector('[data-preview]')?.className).toContain("bg-note-pink");
