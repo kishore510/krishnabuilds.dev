@@ -430,3 +430,12 @@ Slice 3 (Arcade 1.77.0) adds the daily limit as decided above, in a `WildcardLim
 The owner wanted an action game whose visuals look clean and real, and shape-drawn canvas characters didn't get there. Nightrunner is 3D instead: three.js with free, professionally made, animated low-poly models (Quaternius and Kenney, both CC0, so they are safe in a public repo). A playable prototype was checked on a private page before it came here.
 
 That breaks the arcade's "one self-contained HTML file" rule in two ways, accepted for this game only. three.js loads from jsDelivr, pinned to 0.170.0, through an import map rather than being vendored or bundled, so there is still no build step. The models live beside the page in `games/nightrunner/models/` (about 1.9 MB of .glb, with a LICENSE.txt naming every source). They came from the `@netforge/asset-library-files` npm package, whose NOTICE records each pack's CC0 licence, and were decoded from meshopt compression so the page needs no WebAssembly decoder. Quaternius's own downloads (Google Drive) and kenney.nl refused automated downloads.
+
+## 2026-11-27 — Arcade: Coral Drift, a 3D dive built from real models and scans
+
+The owner asked for a realistic scuba dive: real buoyancy and air physics, water sounds and a bright, colourful reef to explore. A first version drew everything in code and was judged too cartoonish, so the reef was rebuilt from free models and 3D scans of real coral, fish, a turtle, a ray and a sunken boat.
+
+Coral Drift follows Nightrunner's exception to the single-file rule (three.js 0.170.0 by import map from jsDelivr, models beside the page in `games/coral-drift/models/`, about 3.4 MB). Sources: Sketchfab (CC-BY and CC0 only; non-commercial models were skipped, which is why there is no manta), Smithsonian scans and a Poly Haven texture (CC0). Every file is credited in `models/LICENSE.txt`. CC-BY needs that credit to stay with the files.
+
+The raw downloads were up to 80 MB per model, so they were reduced with gltf-transform and meshoptimizer. Photogrammetry scans had their textures baked into vertex colours before simplifying, which kept them looking right at 300-6,000 triangles; each coral has a detailed and a light version, switched by distance. To download, the session's environment was allowed to reach Poly Haven and Sketchfab, with the owner's Sketchfab API token stored as an environment secret (never in the repo).
+
