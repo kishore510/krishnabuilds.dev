@@ -1,6 +1,6 @@
 # Krishnabuilds Arcade
 
-A small games hub at `arcade.krishnabuilds.dev`: 37 quick browser games,
+A small games hub at `arcade.krishnabuilds.dev`: 38 quick browser games,
 each one a single self-contained HTML file under `games/<slug>/`. Static
 site, no build step. The only backend is a small Cloudflare Worker
 (`src/worker.js`) for the "Played N times" counter and Wildcard's online
@@ -15,9 +15,9 @@ History lives in [`BACKLOG.md`](BACKLOG.md) and [`changelog.html`](changelog.htm
 ## Games
 
 The landing page is generated from the `GAMES` array in `index.html`; that
-array is the source of truth. As of 1.67.0, by category, oldest first:
+array is the source of truth. As of 1.79.0, by category, oldest first:
 
-**Arcade** (14)
+**Arcade** (15)
 
 - **Fin Dash** (`games/fin-dash/`, 2026-07-06): Swim a fish through coral, rock, and kelp. Easy or Hard.
 - **Burrow Bash** (`games/burrow-bash/`, 2026-07-06): Whack the moles before they duck back down. Easy or Hard.
@@ -33,6 +33,7 @@ array is the source of truth. As of 1.67.0, by category, oldest first:
 - **Drumfront** (`games/drumfront/`, 2026-07-17): Tap two drums in rhythm to command your squad's Attack.
 - **Slice Master** (`games/slice-master/`, 2026-09-13): Tap to keep the knife airborne, slice fruit, then gamble it on the multiplier tower.
 - **Dojo Duel** (`games/dojo-duel/`, 2026-11-05): Beat REN in a best-of-3 dojo duel: punch, kick, block and throw fireballs.
+- **Nightrunner** (`games/nightrunner/`, 2026-11-27): Run the dark wood in 3D while your spells fire on their own. Pick your upgrades and outlast the Horned King.
 
 **Racing** (2)
 
