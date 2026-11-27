@@ -645,7 +645,8 @@ the name, logo or look of any commercial card game.
 
 The arcade's only 3D game (`games/nightrunner/`, 1.79.0; Easy/Hard, weapons,
 relics, evolutions and chests 1.80.0; new monsters and a three-boss night
-1.81.0; potions, campfire healing and Heartwood regen 1.82.0): a top-down arena survival shooter in
+1.81.0; potions, campfire healing and Heartwood regen 1.82.0; the Ember
+Shop 1.83.0): a top-down arena survival shooter in
 three.js. You move; weapons aim and fire on their own. Gems from kills fill
 the XP bar (`xpNeed(lv)`), and each level offers 3 cards: a ready evolution
 always comes first, a new weapon is always offered up to level 5, and the
@@ -677,6 +678,23 @@ time a new monster type appears.
   the first two bosses (2). Standing within `FIRE_R` of a campfire
   (`firePos`) heals `FIRE_HEAL` a second, and Heartwood regenerates
   `HEART_REGEN` a second per level; both run in `update()`.
+- **Ember Shop (meta progression):** embers drop as coins (`dropCoin`,
+  `EMBER_DROP`: a chance per ordinary kill, handfuls from elites and
+  bosses) and a run pays `embersFor(t, bossKills, won)` on top, times Greed
+  and x1.5 on Hard (`endGame`). Quitting from pause pays nothing. Everything
+  lives in one `localStorage` key, `nightrunnerSave`
+  (`{embers, up, own, eq}`), read by `loadSave()`, which clamps levels and
+  drops anything unknown or not owned, and written by `persist()`.
+  `SHOP_UP` rows are permanent upgrades read through `U(id)` (Vitality in
+  `maxHp`, Might in `hurtEnemy`, Swiftness and Magnetism in `moveSpeed` /
+  `magnetR`, Fate in `freshState` rerolls, Greed in the payout; Guardian
+  Ward and Second Wind in `hitPlayer`, with the ward bubble `wardMesh`).
+  The Arsenal unlocks a starting weapon for `WEAPON_UNLOCK` (`eq.weapon`
+  becomes the run's first weapon). `LOOKS` holds the cosmetics: hero skins
+  (other CC0 heroes with the same rig, loaded on demand by `loadSkin`; the
+  hero is `makeChar(heroKey())`), spell colours (recolour `boltMat` /
+  `trailMat`) and lantern colours (`applyLook`). The screen is
+  `#shopScreen`, built by `renderShop()` with three tabs.
 - **Difficulty:** `DIFF.easy` / `DIFF.hard` (spawn ramp and cap, alive cap,
   enemy hp and damage multipliers, hp growth over time, boss hp, elite timing,
   rerolls, potion drop chance). The choice and best times are in `localStorage`
@@ -718,8 +736,9 @@ time a new monster type appears.
 - **Controls:** a floating joystick wherever you touch the stage, a DASH
   button (2.6 s cooldown, brief invulnerability), WASD / arrows and Space;
   P / Escape or the HUD button pauses, and a hidden tab or `pagehide` pauses.
-- **Test handle:** `window.nightrunner` (`S`, `enemies`, `hero`,
-  `spawnEnemy`, `gainXp`, `apply`, `openLevelUp`, the tables). Nothing in
+- **Test handle:** `window.nightrunner` (`S`, `enemies`, `hero`, `SAVE`,
+  `persist`, `renderShop`, `embersFor`, `hitPlayer`, `spawnEnemy`,
+  `dropPotion`, `firePos`, `gainXp`, `apply`, `openLevelUp`, the tables). Nothing in
   the game uses it.
 
 ## Mobile-first constraints learned the hard way
