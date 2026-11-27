@@ -10,6 +10,9 @@ page is a single self-contained HTML file with inline `<style>`/`<script>`
 (one exception: a game whose logic needs headless tests may split it into a
 pure, DOM-free script next to its `index.html`; Tennis's and Wildcard's
 `engine.js` are the two so far, see `docs/decisions.md`, 2026-11-08).
+A second exception: Nightrunner is 3D, so it loads three.js from jsDelivr
+(pinned) and its CC0 models from `games/nightrunner/models/`; see
+"Nightrunner notes" and `docs/decisions.md`, 2026-11-27.
 Live at `arcade.krishnabuilds.dev`. Arcade now lives in the krishnabuilds.dev
 monorepo and follows the root `CLAUDE.md`: work on a branch, open a PR,
 squash merge; deploys run from GitHub Actions on merge to `main`.
@@ -63,6 +66,8 @@ games/tennis/index.html       — Tennis (canvas, landscape fullscreen like Dojo
 games/tennis/engine.js        — Tennis's pure logic (physics, swing, swipe gestures, rules, CPU, surfaces, tour; CONFIG tables at the top), tested by scripts/tennis.test.js
 games/wildcard/index.html     — Wildcard (DOM, portrait card game vs 3 bots; see "Wildcard notes" below)
 games/wildcard/engine.js      — Wildcard's pure rules, seeded deal and bots, tested by scripts/wildcard.test.js; also runs in the Worker for online tables
+games/nightrunner/index.html  — Nightrunner (three.js 3D arena survival shooter; see "Nightrunner notes")
+games/nightrunner/models/     — its CC0 glTF models (Quaternius, Kenney) and LICENSE.txt
 src/worker.js                 — the Worker: static assets, play counts, Wildcard table routes
 src/wildcard-room.js          — Wildcard online room rules (seats, host, bots, who is sent what), tested by scripts/wildcard-room.test.mjs
 src/wildcard-table.js         — the WildcardTable Durable Object around wildcard-room.js (WebSockets, storage, alarms)
@@ -71,7 +76,7 @@ games/<slug>/index.html       — next game goes here
 ```
 
 This list is not every game. The `GAMES` array in `index.html` is the source
-of truth, and `README.md` lists all 37 with their folders and taglines.
+of truth, and `README.md` lists all 38 with their folders and taglines.
 
 ## Adding a new game
 
@@ -635,6 +640,38 @@ the name, logo or look of any commercial card game.
     lost connection" and bubbles "<name> is back" from `room` changes.
     The table's `webSocketClose` closes its side too, so a page's own
     close completes at once.
+
+## Nightrunner notes
+
+The arcade's only 3D game (`games/nightrunner/`, 1.79.0): a top-down arena
+survival shooter in three.js. You move; Ember Bolt aims and fires itself at
+the nearest enemies. Gems from kills fill the XP bar, and each level offers
+3 of the `UPS` upgrades (more/faster/piercing bolts, Orbit Blades, Frost
+Nova, speed, pickup range, health; a new weapon is always offered up to
+level 4). Waves come from a spawn director in `update()` (rate capped at
+5.5/s and 70 alive), an orc elite every 35 s, the demon boss at `BOSS_AT`
+(150 s); killing it wins the run.
+
+- **Stack:** three.js 0.170.0 by import map from jsDelivr (GLTFLoader,
+  SkeletonUtils, EffectComposer + UnrealBloomPass + OutputPass). No build
+  step and nothing vendored.
+- **Models:** `models/*.glb`, CC0 (sources in `models/LICENSE.txt`), plain
+  glTF with no meshopt, so no WebAssembly decoder. `MODELS` maps a key to
+  a file and a target height; `loadAll` scales each to that height.
+  Animated ones are cloned per enemy with `SkeletonUtils.clone`, each with
+  its own mixer and its own cloned materials, so the white hit flash
+  (`emissive`) is per enemy. Clip names drop the armature prefix
+  (`CharacterArmature|Run` becomes `Run`).
+- **Tuning:** `ETYPES` (enemy hp, speed, contact damage, XP, radius),
+  `freshState()` (player and weapon numbers), `UPS` (upgrades), the bloom
+  pass (strength .5, threshold .92) and exposure 1.15. Bloom and flashes
+  were toned down once already because they washed the scene out.
+- **Layout:** `#stage` sits between the nav bar and the guide link
+  (`--kb-navbar-h` / `--kb-bottom-reserve`) and `resize()` reruns on
+  `kb-navbar-ready`; screen-space HUD bits (health bar, damage numbers) are
+  projected relative to the stage's rect.
+- **Controls:** a floating joystick wherever you touch the stage, a DASH
+  button (2.6 s cooldown, brief invulnerability), WASD / arrows and Space.
 
 ## Mobile-first constraints learned the hard way
 

@@ -2,5 +2,5 @@
 // game nav bar, so it's obvious at a glance whether you're looking at a
 // stale cached copy. Bump both values whenever you ship a change worth
 // noting.
-window.KB_VERSION = '1.78.0';
-window.KB_UPDATED = '2026-11-24';
+window.KB_VERSION = '1.79.0';
+window.KB_UPDATED = '2026-11-27';
