@@ -644,15 +644,20 @@ the name, logo or look of any commercial card game.
 ## Nightrunner notes
 
 The arcade's only 3D game (`games/nightrunner/`, 1.79.0; Easy/Hard, weapons,
-relics, evolutions and chests 1.80.0): a top-down arena survival shooter in
+relics, evolutions and chests 1.80.0; new monsters and a three-boss night
+1.81.0): a top-down arena survival shooter in
 three.js. You move; weapons aim and fire on their own. Gems from kills fill
 the XP bar (`xpNeed(lv)`), and each level offers 3 cards: a ready evolution
 always comes first, a new weapon is always offered up to level 5, and the
 rest are random from `offers()`. Reroll (3 on Easy, 2 on Hard) and Skip
 (heal 15) sit under the cards. Waves come from a spawn director in
-`update()` (rate `min(rateCap, rate0 + t/rateK)`, capped alive count), an orc
-elite every `eliteEvery` s that drops a chest, and the demon boss at
-`BOSS_AT` (150 s); killing it wins the run.
+`update()` (rate `min(rateCap, rate0 + t/rateK)`, capped alive count, halved
+while a boss is up) drawing types from `WAVES` by time, an orc elite every
+`eliteEvery` s (paused during a boss) that drops a chest, and the bosses in
+`NIGHT`: Orc Warlord at 150 s, Frost Yeti at 300 s, Horned King at 480 s.
+Each waits for the one before it to die; the first two drop a chest, and
+killing the last (`final`) wins the run. `INTRO` toasts a hint the first
+time a new monster type appears.
 
 - **Build:** up to `MAX_WEAPONS` (4) weapons and `MAX_RELICS` (4) relics,
   each to level 5. `WEAPONS` holds per-level stat arrays (index 0 is level 1,
@@ -670,9 +675,21 @@ elite every `eliteEvery` s that drops a chest, and the demon boss at
   enemy hp and damage multipliers, hp growth over time, boss hp, elite timing,
   rerolls). The choice and best times are in `localStorage`
   (`nightrunnerLevel`, `nightrunnerBest_easy|hard`, `nightrunnerMuted`).
-- **Fair hits:** enemies never hurt on contact. In reach (`r + reach`) and
-  off cooldown they stop and glow red for `windup` seconds, then hit only if
-  you are still in reach (+0.15). Elites show a health bar (`.ebar`).
+- **Fair hits:** enemies never hurt on contact. Every attack is a move
+  (`startMove` → wind-up → `resolveMove`, run by `enemyAct`): the enemy
+  stops and glows red for its wind-up, and area moves also draw a red disc
+  (`teleDisc`: slam, explode) or lane (`teleLane`: charge) that brightens as
+  the hit nears. `melee` hits only if you're still in reach (+0.15); `spit`
+  and `volley` fire slow orbs (`fireShot`, dodgeable, dash-proof); `charge`
+  locks its lane at the start of the wind-up, then dashes and hits once;
+  `explode` bursts in its disc and kills the slime (killing it first
+  defuses it). Nova stuns interrupt normal enemies' wind-ups; bosses can't
+  be stunned. `ETYPES` rows carry `ai` (`spit` / `charge` / `explode`,
+  default melee) and their numbers; boss rows carry `moves`, `slamR`,
+  `shots`, `name`, `tint`, and `model` / `scale` when they reuse a model
+  (the Warlord is a scaled orc). Boss hp and rest time are per difficulty
+  (`DIFF.bosses`, `bossCd`). Elites show a health bar (`.ebar`); the
+  current boss uses the top bar, and the camera pulls back (`camZoom`).
 
 - **Stack:** three.js 0.170.0 by import map from jsDelivr (GLTFLoader,
   SkeletonUtils, EffectComposer + UnrealBloomPass + OutputPass). No build

@@ -111,7 +111,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--ink);overflow
       <button class="iconbtn" id="pauseBtn" type="button" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
     </div>
   </div>
-  <div class="boss" id="boss"><b>THE HORNED KING</b><div class="bar"><i id="bossbar"></i></div></div>
+  <div class="boss" id="boss"><b id="bossName">THE HORNED KING</b><div class="bar"><i id="bossbar"></i></div></div>
 </div>
 <div class="hpfloat" id="hpf" hidden><i id="hpfi"></i></div>
 <div class="toast" id="toast" hidden></div>
@@ -184,11 +184,17 @@ const ARENA=40;
 
 // ================= tuning =================
 // Difficulty: spawn rate = min(rateCap, rate0 + t/rateK) enemies a second; enemy hp grows by t/hpRamp.
+// bosses: hp per boss; bossCd: seconds a boss rests between moves.
 const DIFF={
-  easy:{label:'Easy',rate0:.55,rateK:75,rateCap:3.6,hp:.8,dmg:.65,hpRamp:170,alive:55,boss:1100,eliteEvery:42,eliteFirst:45,rerolls:3},
-  hard:{label:'Hard',rate0:.9,rateK:40,rateCap:5.5,hp:1,dmg:1,hpRamp:100,alive:75,boss:1700,eliteEvery:32,eliteFirst:35,rerolls:2},
+  easy:{label:'Easy',rate0:.55,rateK:75,rateCap:3.6,hp:.8,dmg:.65,hpRamp:220,alive:55,bosses:{warlord:700,yeti:1300,demon:2200},bossCd:2.3,eliteEvery:42,eliteFirst:45,rerolls:3},
+  hard:{label:'Hard',rate0:.9,rateK:40,rateCap:5.5,hp:1,dmg:1,hpRamp:140,alive:75,bosses:{warlord:1100,yeti:2000,demon:3400},bossCd:1.6,eliteEvery:32,eliteFirst:35,rerolls:2},
 };
-const BOSS_AT=150;
+// The night: each boss arrives at its time (or once the one before it is dead); the last one ends the run.
+const NIGHT=[{at:150,type:'warlord'},{at:300,type:'yeti'},{at:480,type:'demon'}];
+// What the spawn director draws from, by time; weights add up to anything.
+const WAVES=[{until:25,mix:{imp:6,slime:4}},{until:70,mix:{imp:35,slime:40,skel:25}},{until:150,mix:{imp:25,slime:25,skel:22,ghost:16,wolf:12}},
+  {until:300,mix:{imp:18,slime:18,skel:20,ghost:14,wolf:14,boomer:16}},{until:1e9,mix:{imp:12,slime:14,skel:20,ghost:16,wolf:18,boomer:20}}];
+const INTRO={ghost:['Ghosts spit from range','Keep moving and their shots miss'],wolf:['Wolves charge in a line','Step out of the red lane'],boomer:['Pink slimes explode','Get out of the red circle']};
 const MAX_WEAPONS=4, MAX_RELICS=4, MAX_LV=5;
 const xpNeed=lv=>Math.round(4+(lv-1)*3.2+(lv-1)*(lv-1)*.3);
 // windup: seconds an enemy telegraphs (glows red, stops) before its hit lands; reach: how far the hit lands from its edge.
@@ -197,7 +203,14 @@ const ETYPES={
   slime:{hp:16, spd:2.4,dmg:8, xp:1, r:.5, walk:'Walk',atk:'Bite_Front',windup:.36,reach:.95,col:[.5,1,.4]},
   skel: {hp:34, spd:2.8,dmg:10,xp:2, r:.5, walk:'Run', atk:'Attack',    windup:.34,reach:1.05,col:[.9,.9,1]},
   orc:  {hp:260,spd:2.1,dmg:20,xp:12,r:.95,walk:'Walk',atk:'Punch',     windup:.6, reach:1.3,col:[1,.4,.3],elite:true},
-  demon:{hp:0,  spd:2.5,dmg:32,xp:40,r:1.2,walk:'Run', atk:'Punch',     windup:.7, reach:1.6,col:[1,.2,.2],boss:true},
+  // ai: spit keeps its distance (keep) and fires slow shots; charge locks a lane then dashes down it; explode swells, then bursts (blast radius)
+  ghost:{hp:22, spd:2.7,dmg:9, xp:2, r:.5, walk:'Flying_Idle',atk:'Punch',windup:.5,reach:0,col:[.6,1,.6],ai:'spit',keep:6.5,shotSpd:6.5,shotCol:[.7,2.4,.5],cdMax:2.6},
+  wolf: {hp:40, spd:2.9,dmg:14,xp:3, r:.6, walk:'Walk',atk:'Attack',run:'Gallop',windup:.75,reach:0,col:[.8,.8,.9],ai:'charge',chargeSpd:15,chargeT:.55,cdMax:3},
+  boomer:{hp:20,spd:3.2,dmg:22,xp:2, r:.5, walk:'Walk',atk:'Jump',windup:.9,reach:1.1,blast:2.4,col:[1,.5,.8],ai:'explode'},
+  // bosses: moves they pick from (slam: red circle, then a shockwave; charge: red lane, then a dash; volley: a fan of shots)
+  warlord:{model:'orc',scale:1.35,spd:2.3,dmg:26,xp:30,r:1.3,walk:'Walk',atk:'Punch',run:'Run',windup:.9,reach:1.6,col:[1,.5,.2],boss:true,name:'THE ORC WARLORD',moves:['slam','charge'],slamR:4.2,tint:[.35,.12,0]},
+  yeti: {spd:2.4,dmg:28,xp:35,r:1.3,walk:'Walk',atk:'Punch',run:'Run',windup:.8,reach:1.6,col:[.6,.9,1],boss:true,name:'THE FROST YETI',moves:['charge','volley','slam'],slamR:4.4,shots:5,shotSpd:7,shotCol:[.8,1.8,3],tint:[0,.15,.35]},
+  demon:{spd:2.5,dmg:32,xp:40,r:1.2,walk:'Run',atk:'Punch',run:'Run',windup:.7,reach:1.6,col:[1,.2,.2],boss:true,final:true,name:'THE HORNED KING',moves:['volley','slam','charge'],slamR:4.8,shots:7,shotSpd:8,shotCol:[3,.8,.3],tint:[.3,0,0]},
 };
 // Weapons: per-level stat arrays (index 0 = level 1). Each evolves at level 5 with its partner relic.
 const WEAPONS={
@@ -300,7 +313,7 @@ const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64
 
 // ================= assets =================
 const loader=new GLTFLoader();
-const MODELS={hero:['hooded_adventurer',1.75],slime:['slime_spiky',1.0],imp:['mushroom_imp',.85],skel:['skeleton_grunt',1.7],orc:['orc_brute',2.7],demon:['demon',3.6],
+const MODELS={hero:['hooded_adventurer',1.75],slime:['slime_spiky',1.0],imp:['mushroom_imp',.85],skel:['skeleton_grunt',1.7],orc:['orc_brute',2.7],demon:['demon',3.6],ghost:['ghost',1.5],wolf:['wolf',1.25],boomer:['slime_pink',1.0],yeti:['yeti',3.6],
   tree:['tree_dark',6.5],pine:['tree_pine',7.5],pine2:['tree_pine_tall',9],rock:['rock_large',1.1],crystal:['crystal_rock',1.0],stump:['stump',.7],bush:['bush',.5],fire:['campfire',.8],chest:['chest',.9]};
 const T={};
 async function loadAll(){
@@ -377,6 +390,17 @@ const bolts=pool(()=>{const m=new THREE.Mesh(boltGeo,boltMat);m.add(new THREE.Me
 // rings: nova pulses and meteor blasts
 const ringGeo=new THREE.RingGeometry(.94,1,96);ringGeo.rotateX(-Math.PI/2);
 const rings=pool(()=>{const m=new THREE.Mesh(ringGeo,addMat(1,1,1,0));m.position.y=.08;scene.add(m);return{m};});
+// ground warnings: a red disc (slams, explosions) or lane (charges) that brightens as the hit nears
+const discGeo=new THREE.CircleGeometry(1,48);discGeo.rotateX(-Math.PI/2);
+const laneGeo=new THREE.PlaneGeometry(1,1);laneGeo.rotateX(-Math.PI/2);laneGeo.translate(0,0,.5);
+const teles=pool(()=>{const m=new THREE.Mesh(discGeo,addMat(1.6,.12,.08,0));m.renderOrder=1;scene.add(m);return{m};});
+function teleDisc(x,z,r){const o=teles.get();o.m.geometry=discGeo;o.m.visible=true;o.m.position.set(x,.07,z);o.m.scale.set(r,1,r);o.m.rotation.set(0,0,0);o.m.material.opacity=.1;return o;}
+function teleLane(x,z,dir,len,w){const o=teles.get();o.m.geometry=laneGeo;o.m.visible=true;o.m.position.set(x,.07,z);o.m.scale.set(w,1,len);o.m.rotation.set(0,Math.atan2(dir.x,dir.z),0);o.m.material.opacity=.1;return o;}
+function dropTele(e){if(e.tele){e.tele.alive=false;e.tele.m.visible=false;e.tele=null;}}
+// enemy shots: slow glowing orbs you can outrun or dash through
+const shotGeo=new THREE.SphereGeometry(.24,12,8);
+const shots=pool(()=>{const m=new THREE.Mesh(shotGeo,new THREE.MeshBasicMaterial({color:new THREE.Color()}));scene.add(m);return{m};});
+function fireShot(from,dir,spd,dmg,col){const o=shots.get();o.m.visible=true;o.m.position.set(from.x,1,from.z);o.v=dir.clone().setY(0).normalize().multiplyScalar(spd);o.life=4.5;o.dmg=dmg;o.m.material.color.setRGB(...col);}
 function ringFx(x,z,r,col,dur=.45){const o=rings.get();o.m.visible=true;o.m.position.x=x;o.m.position.z=z;o.r=r;o.t=0;o.dur=dur;o.m.material.color.setRGB(...col);}
 // gems
 const gemGeo=new THREE.OctahedronGeometry(.2,0);gemGeo.scale(1,1.4,1);
@@ -429,7 +453,7 @@ const keys={};const joy={x:0,y:0,id:null,ox:0,oy:0};
 function freshState(){return{t:0,hp:100,lv:1,xp:0,need:xpNeed(1),kills:0,
   w:{bolt:1},evo:new Set(),p:{},rerolls:diff.rerolls,pendingLv:0,
   timers:{bolt:0,nova:2,chain:1,glaive:1,trail:0},bladeA:0,bladeHit:new Map(),
-  dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossSpawned:false,won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
+  dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossIdx:0,boss:null,seen:new Set(),warned:-1,won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
 // derived numbers from relic levels
 const P=k=>S.p[k]||0;
 const maxHp=()=>100+15*P('heart');
@@ -442,7 +466,7 @@ const wl=k=>S.w[k]-1; // index into a weapon's per-level arrays
 
 function reset(){
   for(const e of enemies)scene.remove(e.ch.g);enemies=[];
-  [bolts,rings,gems,zaps,patches,glaives,chests].forEach(p=>p.clear());
+  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots].forEach(p=>p.clear());
   for(const b of ebars)b.el.remove();ebars.length=0;
   if(hero)scene.remove(hero.g);
   S=freshState();hero=makeChar('hero');hero.g.position.set(0,0,0);play(hero,'Idle',0);
@@ -450,14 +474,17 @@ function reset(){
 }
 
 // ================= enemies =================
+const titleOf=et=>et.name.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()); // THE ORC WARLORD -> The Orc Warlord
+function pickType(t){const mix=WAVES.find(w=>t<w.until).mix;let sum=0;for(const k in mix)sum+=mix[k];let r=Math.random()*sum;for(const k in mix){r-=mix[k];if(r<0)return k;}return 'imp';}
 function spawnEnemy(type,near){
   const a=Math.random()*6.28,d=near?rand(11,13):rand(12,16);
   let x=hero.g.position.x+Math.cos(a)*d,z=hero.g.position.z+Math.sin(a)*d;
   x=THREE.MathUtils.clamp(x,-ARENA,ARENA);z=THREE.MathUtils.clamp(z,-ARENA,ARENA);
-  const ch=makeChar(type);const et=ETYPES[type];
+  const et=ETYPES[type];const ch=makeChar(et.model||type);if(et.scale)ch.g.scale.setScalar(et.scale);
   ch.g.position.set(x,0,z);play(ch,et.walk,0);ch.cur.time=Math.random()*ch.cur.getClip().duration;
-  const hp=et.boss?diff.boss:et.hp*diff.hp*(1+S.t/diff.hpRamp);
-  const e={ch,type,et,hp,max:hp,flash:0,kb:new THREE.Vector3(),dead:false,deadT:0,cd:rand(0,.4),wind:0,stun:0,slow:0,base:new THREE.Color(et.elite||et.boss?.25:0,0,0)};
+  const hp=et.boss?diff.bosses[type]:et.hp*diff.hp*(1+S.t/diff.hpRamp);
+  const base=et.tint?new THREE.Color(...et.tint):new THREE.Color(et.elite?.25:0,0,0);
+  const e={ch,type,et,hp,max:hp,flash:0,kb:new THREE.Vector3(),dead:false,deadT:0,cd:et.boss?1.5:rand(0,.4),wind:0,stun:0,slow:0,charging:0,move:null,tele:null,base};
   ch.mats.forEach(m=>m.emissive.copy(e.base));
   if(et.elite){const el=document.createElement('div');el.className='ebar';el.innerHTML='<i></i>';document.body.appendChild(el);e.bar={el,i:el.firstChild,e};ebars.push(e.bar);}
   enemies.push(e);return e;
@@ -466,15 +493,17 @@ function hurtEnemy(e,dmg,from,knock=4,opts={}){
   if(e.dead)return;const crit=opts.crit||Math.random()<critChance();if(crit)dmg*=2;
   e.hp-=dmg;e.flash=.09;floatText(e.ch.g.position,Math.round(dmg)+(crit?'!':''),crit?'crit':'');sfx.hit();
   if(from&&!e.et.boss){const k=tmp3.copy(e.ch.g.position).sub(from).setY(0).normalize().multiplyScalar(knock*(e.et.elite?.25:1));e.kb.add(k);}
-  if(e.et.boss)$('bossbar').style.width=Math.max(0,e.hp/e.max*100)+'%';
+  if(e===S.boss)$('bossbar').style.width=Math.max(0,e.hp/e.max*100)+'%';
   if(e.hp<=0)killEnemy(e);
 }
 function killEnemy(e){
-  e.dead=true;e.deadT=0;play(e.ch,'Death',.1,true);S.kills++;sfx.kill();
+  e.dead=true;e.deadT=0;dropTele(e);e.wind=0;e.charging=0;play(e.ch,'Death',.1,true);S.kills++;sfx.kill();
   const p=e.ch.g.position.clone();p.y=.6;burst(p,e.et.boss?80:e.et.elite?40:14,e.et.col,e.et.boss?9:5);
   if(e.bar){e.bar.el.remove();ebars.splice(ebars.indexOf(e.bar),1);e.bar=null;}
   if(e.et.elite){for(let i=0;i<4;i++)dropGem(p.x+rand(-.8,.8),p.z+rand(-.8,.8),5);dropChest(p.x,p.z);S.shake=.5;}
-  else if(e.et.boss){S.shake=.6;S.won=true;setTimeout(()=>endGame(true),1600);}
+  else if(e.et.boss){S.shake=.7;if(e===S.boss){S.boss=null;$('boss').style.display='none';}
+    if(e.et.final){S.won=true;setTimeout(()=>endGame(true),1600);}
+    else{for(let i=0;i<8;i++)dropGem(p.x+rand(-1.2,1.2),p.z+rand(-1.2,1.2),5);dropChest(p.x,p.z);toast(titleOf(e.et)+' falls','Grab its chest');}}
   else dropGem(p.x,p.z,e.et.xp);
 }
 function dropChest(x,z){const c=chests.get();c.m.visible=true;c.m.position.set(x,-T.chest.minY*T.chest.s,z);c.m.rotation.y=Math.random()*6;c.t=0;}
@@ -606,7 +635,7 @@ function updateWeapons(dt,hp,moving){
   // Frost Nova / Glacier Heart
   if(S.w.nova){const i=wl('nova'),W=WEAPONS.nova,evo=S.evo.has('nova');S.timers.nova-=dt;
     if(S.timers.nova<=0&&S.hp>0){S.timers.nova=W.cd[i]*cm;sfx.nova();const R=evo?8:W.r[i];ringFx(hp.x,hp.z,R,evo?[1.2,2.2,3.6]:[.8,1.4,2.6]);let healed=0;
-      for(const e of enemies){if(e.dead)continue;if(e.ch.g.position.distanceTo(hp)<R+e.et.r){hurtEnemy(e,W.dmg[i]*(evo?1.3:1),hp,evo?4:9);e.stun=Math.max(e.stun,evo?1.6:.4);if(evo&&healed<8){healed++;}}}
+      for(const e of enemies){if(e.dead)continue;if(e.ch.g.position.distanceTo(hp)<R+e.et.r){hurtEnemy(e,W.dmg[i]*(evo?1.3:1),hp,evo?4:9);if(!e.et.boss)e.stun=Math.max(e.stun,evo?1.6:.4);if(evo&&healed<8){healed++;}}}
       if(healed)heal(healed);}}
   // Chain Lightning / Thunder Crown
   if(S.w.chain){const i=wl('chain'),W=WEAPONS.chain,evo=S.evo.has('chain');S.timers.chain-=dt;
@@ -635,6 +664,59 @@ function updateWeapons(dt,hp,moving){
     for(const e of enemies){if(e.dead||g.hit.has(e))continue;const p=e.ch.g.position;if((g.m.position.x-p.x)**2+(g.m.position.z-p.z)**2<(e.et.r+.6*g.m.scale.x)**2){g.hit.add(e);hurtEnemy(e,g.dmg,g.m.position,4,{crit:g.crit});burst(g.m.position,4,[1.4,1.8,2.4],3,2);}}});
 }
 
+// One enemy's turn. Every attack telegraphs (red glow, plus a red disc or lane for area hits) before it lands.
+function startMove(e,move,t,hp){
+  const et=e.et,p=e.ch.g.position;e.move=move;e.wind=e.windT=t;
+  if(move==='charge'){e.cdir=new THREE.Vector3(hp.x-p.x,0,hp.z-p.z).normalize();const len=(et.boss?16:et.chargeSpd)*(et.boss?.7:et.chargeT)+1;e.tele=teleLane(p.x,p.z,e.cdir,len,et.r*2+.6);}
+  else if(move==='slam')e.tele=teleDisc(p.x,p.z,et.slamR);
+  else if(move==='explode')e.tele=teleDisc(p.x,p.z,et.blast);
+  play(e.ch,e.ch.acts[et.atk]?et.atk:et.walk,.08,true);
+}
+function resolveMove(e,d,hp){
+  const et=e.et,p=e.ch.g.position,mv=e.move;dropTele(e);e.move=null;
+  if(mv==='melee'){if(d<et.r+et.reach+.15)hitPlayer(et.dmg);}
+  else if(mv==='spit'){sfx.zap();fireShot(p,tmp3.set(hp.x-p.x,0,hp.z-p.z),et.shotSpd,et.dmg,et.shotCol);}
+  else if(mv==='volley'){sfx.boom();const base=Math.atan2(hp.x-p.x,hp.z-p.z),n=et.shots;for(let k=0;k<n;k++){const a=base+(k-(n-1)/2)*.22;fireShot(p,tmp3.set(Math.sin(a),0,Math.cos(a)),et.shotSpd,et.dmg*.6,et.shotCol);}}
+  else if(mv==='slam'){sfx.boom();S.shake=Math.max(S.shake,.35);ringFx(p.x,p.z,et.slamR,[2.2,.6,.3],.4);burst(tmp3.set(p.x,.3,p.z),30,[1.4,.8,.4],7,3);if(d<et.slamR+.3)hitPlayer(et.dmg);}
+  else if(mv==='charge'){e.charging=et.boss?.7:et.chargeT;e.chargeSpd=et.boss?16:et.chargeSpd;e.chargeHit=false;play(e.ch,et.run&&e.ch.acts[et.run]?et.run:et.walk,.08);return;}
+  else if(mv==='explode'){sfx.boom();ringFx(p.x,p.z,et.blast,[2.4,.6,1.2],.35);burst(tmp3.set(p.x,.5,p.z),30,[2,.6,1.2],7,4);if(d<et.blast+.3)hitPlayer(et.dmg);e.ch.g.scale.setScalar(1);e.hp=0;killEnemy(e);return;}
+  e.cd=et.boss?diff.bossCd:(et.cdMax||1);play(e.ch,et.walk,.15);
+}
+function enemyAct(e,dt,p,dx,dz,d,hp){
+  const et=e.et,ai=et.boss?'boss':(et.ai||'melee');
+  if(e.stun>0&&e.wind>0&&!et.boss){e.wind=0;e.move=null;dropTele(e);e.ch.g.scale.setScalar(1);play(e.ch,et.walk,.15);} // a freeze or nova interrupts
+  if(e.charging>0){ // dashing down the locked lane; hits once
+    e.charging-=dt;p.x+=e.cdir.x*e.chargeSpd*dt;p.z+=e.cdir.z*e.chargeSpd*dt;
+    if(!e.chargeHit&&Math.hypot(hp.x-p.x,hp.z-p.z)<et.r+.6){e.chargeHit=true;hitPlayer(et.dmg);}
+    if(e.charging<=0){e.cd=et.boss?diff.bossCd:et.cdMax;play(e.ch,et.walk,.2);}
+    return;
+  }
+  if(e.wind>0){e.wind-=dt;const k=1-e.wind/e.windT;
+    if(e.tele)e.tele.m.material.opacity=.06+.26*k*k;
+    if(e.move==='explode')e.ch.g.scale.setScalar(1+.5*k);
+    if(e.wind<=0&&S.hp>0)resolveMove(e,d,hp);else if(e.wind<=0){e.move=null;dropTele(e);}
+    return;
+  }
+  if(S.hp<=0)return;
+  const sp=e.stun>0?0:et.spd*(1+Math.min(.5,S.t/400))*(e.slow>0?.6:1);
+  let mx=dx/d,mz=dz/d,go=d>et.r+.35;
+  if(ai==='spit'){ // hold at range: back off when close, strafe in the band
+    if(d<et.keep-1.5){mx=-mx;mz=-mz;}else if(d<et.keep+1){const s=(e.side=e.side||(Math.random()<.5?1:-1));const tx=-mz*s,tz=mx*s;mx=tx;mz=tz;}
+    go=true;}
+  if(go){p.x+=mx*sp*dt;p.z+=mz*sp*dt;}
+  if(e.cd>0||e.stun>0)return;
+  if(ai==='melee'&&d<et.r+et.reach)startMove(e,'melee',et.windup,hp);
+  else if(ai==='spit'&&d<10)startMove(e,'spit',et.windup,hp);
+  else if(ai==='charge'&&d<8)startMove(e,'charge',et.windup,hp);
+  else if(ai==='explode'&&d<et.r+et.reach)startMove(e,'explode',et.windup,hp);
+  else if(ai==='boss'){const mv=et.moves;let pick=null;
+    if(d<et.slamR*.8&&mv.includes('slam'))pick='slam';
+    else if(d>5&&mv.includes('charge')&&Math.random()<.5)pick='charge';
+    else if(mv.includes('volley')&&d<14)pick='volley';
+    else if(mv.includes('charge')&&d>4)pick='charge';
+    if(pick)startMove(e,pick,pick==='slam'?et.windup*1.1:pick==='volley'?et.windup:et.windup*1.05,hp);}
+}
+
 function update(dt){
   S.t+=dt;const hp=hero.g.position;
   let mx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+joy.x;
@@ -654,12 +736,20 @@ function update(dt){
   if(!S.won){
     const rate=Math.min(diff.rateCap,diff.rate0+S.t/diff.rateK);S.spawnT+=dt*rate;
     let alive=0;for(const e of enemies)if(!e.dead)alive++;
-    while(S.spawnT>1){S.spawnT-=1;if(alive<diff.alive){const r=Math.random(),t=S.t;alive++;
-      spawnEnemy(t<25?(r<.6?'imp':'slime'):t<70?(r<.35?'imp':r<.75?'slime':'skel'):(r<.25?'imp':r<.55?'slime':'skel'));}}
-    S.eliteT-=dt;if(S.eliteT<=0&&S.t<BOSS_AT){S.eliteT=diff.eliteEvery;spawnEnemy('orc',true);toast('An orc brute approaches','Kill it for a chest');}
-    if(S.t>=BOSS_AT&&!S.bossSpawned){S.bossSpawned=true;spawnEnemy('demon',true);$('boss').style.display='block';$('bossbar').style.width='100%';S.shake=.6;sfx.nova();toast('The Horned King','Survive the night');}
+    const cap=S.boss?Math.round(diff.alive*.5):diff.alive; // fewer adds while a boss is up
+    while(S.spawnT>1){S.spawnT-=1;if(alive<cap){alive++;const type=pickType(S.t);spawnEnemy(type);
+      if(INTRO[type]&&!S.seen.has(type)){S.seen.add(type);toast(...INTRO[type]);}}}
+    if(!S.boss){S.eliteT-=dt;if(S.eliteT<=0){S.eliteT=diff.eliteEvery;spawnEnemy('orc',true);toast('An orc brute approaches','Kill it for a chest');}}
+    const nb=NIGHT[S.bossIdx];
+    if(nb&&!S.boss&&S.warned!==S.bossIdx&&S.t>=nb.at-10){S.warned=S.bossIdx;toast(titleOf(ETYPES[nb.type]),'arrives in 10 seconds');}
+    if(nb&&!S.boss&&S.t>=nb.at){S.bossIdx++;const b=spawnEnemy(nb.type,true);S.boss=b;S.eliteT=Math.max(S.eliteT,20);
+      $('bossName').textContent=b.et.name;$('boss').style.display='block';$('bossbar').style.width='100%';S.shake=.6;sfx.nova();
+      toast(b.et.name,b.et.final?'Defeat him to end the night':'Boss '+S.bossIdx+' of '+NIGHT.length);}
   }
   updateWeapons(dt,hp,moving);
+  shots.each(o=>{o.life-=dt;o.m.position.addScaledVector(o.v,dt);
+    if(S.hp>0&&Math.hypot(o.m.position.x-hp.x,o.m.position.z-hp.z)<.6){if(S.inv<=0){hitPlayer(o.dmg);o.life=0;}}
+    if(o.life<=0){o.alive=false;o.m.visible=false;burst(o.m.position,5,[1.2,1,.8],2,1);}});
   rings.each(o=>{o.t+=dt;const k=o.t/o.dur;o.m.scale.setScalar(.5+k*o.r);o.m.material.opacity=Math.max(0,.8-k*.8);if(k>=1){o.alive=false;o.m.visible=false;}});
 
   // enemies: chase, telegraph, strike
@@ -668,22 +758,16 @@ function update(dt){
     if(e.dead){e.deadT+=dt;if(e.deadT>1.1)p.y-=dt*1.2;if(e.deadT>2){scene.remove(e.ch.g);enemies.splice(i,1);S.bladeHit.delete(e);}continue;}
     const dx=hp.x-p.x,dz=hp.z-p.z,d=Math.hypot(dx,dz)||1;
     e.stun=Math.max(0,e.stun-dt);e.slow=Math.max(0,e.slow-dt);e.cd-=dt;
-    const reach=et.r+et.reach;
-    if(e.wind>0){ // winding up: stand still, glow red, then strike whoever is still in reach
-      e.wind-=dt;
-      if(e.wind<=0){e.cd=et.boss?1.2:1;if(d<reach+.15&&S.hp>0)hitPlayer(et.dmg);play(e.ch,et.walk,.15);}
-    }else{
-      const sp=e.stun>0?0:et.spd*(1+Math.min(.5,S.t/400))*(e.slow>0?.6:1);
-      if(d>et.r+.35){p.x+=dx/d*sp*dt;p.z+=dz/d*sp*dt;}
-      if(d<reach&&e.cd<=0&&e.stun<=0&&S.hp>0){e.wind=et.windup;play(e.ch,e.ch.acts[et.atk]?et.atk:et.walk,.08,true);}
-    }
+    enemyAct(e,dt,p,dx,dz,d,hp);
+    if(e.charging>0)e.kb.set(0,0,0);
     p.x+=e.kb.x*dt;p.z+=e.kb.z*dt;e.kb.multiplyScalar(Math.pow(.0015,dt));
-    e.ch.g.rotation.y=Math.atan2(dx,dz);
+    p.x=THREE.MathUtils.clamp(p.x,-ARENA-4,ARENA+4);p.z=THREE.MathUtils.clamp(p.z,-ARENA-4,ARENA+4);
+    e.ch.g.rotation.y=e.charging>0||(e.wind>0&&e.move==='charge')?Math.atan2(e.cdir.x,e.cdir.z):Math.atan2(dx,dz);
     for(let j=i-1;j>=0;j--){const o=enemies[j];if(o.dead)continue;const q=o.ch.g.position;const sx=p.x-q.x,sz=p.z-q.z,sd=sx*sx+sz*sz,rr=(et.r+o.et.r)*.9;
       if(sd<rr*rr&&sd>1e-4){const s=Math.sqrt(sd),push=(rr-s)*.5;p.x+=sx/s*push;p.z+=sz/s*push;q.x-=sx/s*push;q.z-=sz/s*push;}}
     // one tint per frame: hit flash, then wind-up glow, then frozen, else the type's base
     if(e.flash>0){e.flash-=dt;EM.setRGB(.55,.5,.45);}
-    else if(e.wind>0){const k=1-e.wind/et.windup;EM.setRGB(.25+.9*k,.05,.05);}
+    else if(e.wind>0){const k=1-e.wind/e.windT;EM.setRGB(.25+.9*k,.05,.05);}
     else if(e.stun>0&&S.evo.has('nova'))EM.setRGB(.1,.3,.6);
     else EM.copy(e.base);
     if(!e.em||!e.em.equals(EM)){e.em=(e.em||new THREE.Color()).copy(EM);for(const m of e.ch.mats)m.emissive.copy(EM);}
@@ -704,9 +788,11 @@ function update(dt){
   hero.root.visible=!(S.inv>0&&S.dashT<=0&&Math.floor(S.t*20)%2);
 }
 
+let camZoom=1;
 function render(dt,now){
   const hp=hero.g.position;
-  const portrait=stage.clientHeight>stage.clientWidth;const camY=portrait?10.5:9,camZ=portrait?8:7.5;
+  const portrait=stage.clientHeight>stage.clientWidth;camZoom+=((S.boss?1.28:1)-camZoom)*Math.min(1,(dt||.016)*1.5); // pull back while a boss is up
+  const camY=(portrait?10.5:9)*camZoom,camZ=(portrait?8:7.5)*camZoom;
   const sh=S.shake>0?(S.shake-=dt,S.shake*.35):0;
   camera.position.lerp(tmp.set(hp.x+rand(-sh,sh),camY+rand(-sh,sh),hp.z+camZ),Math.min(1,dt*6||1));
   camera.lookAt(camera.position.x,0,camera.position.z-camZ);
@@ -767,7 +853,7 @@ function showMenu(){
 function endGame(won){
   if(!running||S.over)return;S.over=true;running=false;
   $('endTitle').textContent=won?'Dawn breaks':'You fell';
-  $('endText').textContent=won?'The Horned King is down. You held out through the night.':'The dark wood claimed you. Try a different build and go again.';
+  $('endText').textContent=won?'All three bosses are down and the Horned King has fallen. You held out through the night.':'The dark wood claimed you. Try a different build and go again.';
   const m=Math.floor(S.t/60),s=Math.floor(S.t%60);$('sTime').textContent=m+':'+String(s).padStart(2,'0');$('sKills').textContent=S.kills;$('sLv').textContent=S.lv;
   $('endBuild').innerHTML=buildChips();
   const bk='nightrunnerBest_'+diffKey;const best=+(store.get(bk)||0);
