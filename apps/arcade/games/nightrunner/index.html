@@ -93,6 +93,26 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--ink);overflow
 .buildlist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:420px}
 .buildlist span{font-size:13px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid currentColor}
 .flash{position:fixed;inset:0;z-index:3;pointer-events:none;transition:box-shadow .25s}
+#shopBtn b,#endShopBtn b{color:var(--gold)}
+.earn{font-size:16px!important;color:var(--gold)!important;font-weight:700}
+.purse{font-size:18px;font-weight:700;color:var(--gold)}
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.06);padding:4px;border-radius:999px}
+.tab{font:700 14px var(--ui);letter-spacing:.06em;color:var(--dim);background:none;border:none;padding:8px 14px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--gold);color:#2a1800}
+.shoplist{display:flex;flex-direction:column;gap:8px;width:min(440px,100%);max-height:min(52vh,460px);overflow-y:auto;padding:2px 4px 2px 2px}
+.shoplist h3{margin:8px 0 0;text-align:left;font:700 12px var(--ui);letter-spacing:.2em;color:var(--dim)}
+.item{display:flex;gap:12px;align-items:center;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);background:rgba(20,18,38,.92)}
+.item .ic{flex:none;width:42px;height:42px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c)}
+.item .ic svg{width:24px;height:24px}
+.item .sw{width:26px;height:26px;border-radius:50%;box-shadow:0 0 12px var(--c);background:var(--c)}
+.item .txt{flex:1;min-width:0}
+.item b{display:block;font-size:16px}
+.item span{display:block;color:#cfc9e2;font-size:13px;line-height:1.3}
+.pips{display:flex;gap:3px;margin-top:4px}.pips i{width:12px;height:5px;border-radius:2px;background:rgba(255,255,255,.15)}.pips i.on{background:var(--c)}
+.buy{flex:none;font:700 14px var(--ui);padding:8px 12px;border-radius:999px;border:none;cursor:pointer;background:var(--gold);color:#2a1800;min-width:78px}
+.buy.eq{background:rgba(255,255,255,.12);color:var(--ink)}
+.buy:disabled{background:rgba(255,255,255,.08);color:#7d7895;cursor:default}
+.buy:focus-visible,.tab:focus-visible{outline:3px solid var(--xp);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.xpbar i,.toast{transition:none}}
 </style>
 </head>
@@ -127,6 +147,7 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--ink);overflow
     <button class="btn" id="easyBtn" type="button" disabled data-kb-play>LOADING…</button>
     <button class="btn alt" id="hardBtn" type="button" disabled data-kb-play>HARD</button>
   </div>
+  <button class="btn ghost" id="shopBtn" type="button">Shop · <b>✦ <span id="emberCount">0</span></b></button>
   <p class="diffnote" id="diffNote">Easy: a gentler night with fewer monsters. Hard: faster waves, tougher hits.</p>
   <p style="font-size:13px">Phone: drag to run, tap DASH · Keyboard: WASD / arrows, Space to dash, P to pause</p>
   <div class="credit">3D models: Quaternius &amp; Kenney (CC0)</div>
@@ -156,11 +177,25 @@ html,body{height:100%;margin:0;background:var(--night);color:var(--ink);overflow
   <p id="endText"></p>
   <div class="stats"><div><b id="sTime">0:00</b>survived</div><div><b id="sKills">0</b>kills</div><div><b id="sLv">1</b>level</div></div>
   <div class="buildlist" id="endBuild"></div>
+  <p id="emberLine" class="earn"></p>
   <p id="bestLine" style="font-size:14px"></p>
   <div class="btnrow">
     <button class="btn" id="againBtn" type="button" data-kb-play>PLAY AGAIN</button>
+    <button class="btn ghost" id="endShopBtn" type="button">Shop · <b>✦ <span id="emberCount2">0</span></b></button>
     <button class="btn ghost" id="menuBtn" type="button">Change difficulty</button>
   </div>
+</div>
+
+<div class="overlay" id="shopScreen" hidden>
+  <h2>The Ember Shop</h2>
+  <div class="purse">✦ <span id="shopEmbers">0</span> embers</div>
+  <div class="tabs" role="tablist">
+    <button class="tab" type="button" role="tab" data-tab="up" aria-selected="true">Upgrades</button>
+    <button class="tab" type="button" role="tab" data-tab="arsenal" aria-selected="false">Arsenal</button>
+    <button class="tab" type="button" role="tab" data-tab="look" aria-selected="false">Cosmetics</button>
+  </div>
+  <div class="shoplist" id="shopList"></div>
+  <button class="btn" id="shopBack" type="button">BACK</button>
 </div>
 
 <script type="importmap">
@@ -197,6 +232,27 @@ const WAVES=[{until:25,mix:{imp:6,slime:4}},{until:70,mix:{imp:35,slime:40,skel:
 const INTRO={ghost:['Ghosts spit from range','Keep moving and their shots miss'],wolf:['Wolves charge in a line','Step out of the red lane'],boomer:['Pink slimes explode','Get out of the red circle']};
 // Healing: potions heal POTION_HEAL; standing within FIRE_R of a campfire heals FIRE_HEAL a second; Heartwood regenerates HEART_REGEN a second per level.
 const POTION_HEAL=30,POTION_LIFE=30,FIRE_R=2.8,FIRE_HEAL=4,HEART_REGEN=.5;
+// The Ember Shop. Embers drop as coins in a run (EMBER_DROP), plus an end-of-run bonus (embersFor); all saved in localStorage.
+const EMBER_DROP={chance:.06,elite:[5,2],boss:[10,3]}; // ordinary kill chance of a 1-ember coin; elites / bosses drop [coins, each worth]
+const SHOP_UP=[
+  {id:'vit',   name:'Vitality',     ic:'heart',    c:'#ff7a95',desc:'+10 max health per level',max:5,cost:[40,80,140,220,320]},
+  {id:'might', name:'Might',        ic:'bolt',     c:'#ffbf5a',desc:'+5% damage per level',max:5,cost:[60,110,180,270,380]},
+  {id:'swift', name:'Swiftness',    ic:'boot',     c:'#7dffb0',desc:'+4% move speed per level',max:3,cost:[50,110,200]},
+  {id:'reach', name:'Magnetism',    ic:'magnet',   c:'#5fe3ff',desc:'+15% pickup range per level',max:3,cost:[40,90,160]},
+  {id:'greed', name:'Greed',        ic:'coin',     c:'#ffd166',desc:'+15% embers from every run per level',max:3,cost:[80,160,280]},
+  {id:'reroll',name:'Fate',         ic:'star',     c:'#b28cff',desc:'+1 reroll every run per level',max:2,cost:[90,200]},
+  {id:'ward',  name:'Guardian Ward',ic:'shield',   c:'#9cc4ff',desc:'A shield that blocks one hit, then recharges (45 s, 35 s at level 2, 25 s at level 3)',max:3,cost:[150,260,400]},
+  {id:'revive',name:'Second Wind',  ic:'heart',    c:'#ffd166',desc:'Once a run, get back up with half your health',max:1,cost:[450]},
+];
+const WEAPON_UNLOCK=150; // embers to unlock starting with any weapon besides Ember Bolt
+const LOOKS={
+  skin:{label:'Heroes',list:[{id:'hooded',name:'Hooded Wanderer',file:'hooded_adventurer',cost:0},{id:'ranger',name:'Ranger',file:'adventurer',cost:200},
+    {id:'rogue',name:'Young Rogue',file:'rogue',cost:250},{id:'monarch',name:'The Monarch',file:'monarch',cost:500}]},
+  spell:{label:'Spell colour',list:[{id:'ember',name:'Ember',hex:'#ffbf5a',col:[2.4,1.5,.6],cost:0},{id:'frost',name:'Frost',hex:'#8fd0ff',col:[.7,1.6,2.8],cost:120},
+    {id:'venom',name:'Venom',hex:'#8dff6a',col:[.8,2.6,.6],cost:120},{id:'void',name:'Void',hex:'#d28cff',col:[2,.7,2.8],cost:180}]},
+  lantern:{label:'Lantern',list:[{id:'warm',name:'Warm lantern',hex:'#ffb45e',cost:0},{id:'moon',name:'Moonlight lantern',hex:'#9cc4ff',cost:80},
+    {id:'witch',name:'Witchfire lantern',hex:'#7dff9a',cost:80},{id:'rose',name:'Rose lantern',hex:'#ff7ab0',cost:100}]},
+};
 const MAX_WEAPONS=4, MAX_RELICS=4, MAX_LV=5;
 const xpNeed=lv=>Math.round(4+(lv-1)*3.2+(lv-1)*(lv-1)*.3);
 // windup: seconds an enemy telegraphs (glows red, stops) before its hit lands; reach: how far the hit lands from its edge.
@@ -315,8 +371,8 @@ const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64
 
 // ================= assets =================
 const loader=new GLTFLoader();
-const MODELS={hero:['hooded_adventurer',1.75],slime:['slime_spiky',1.0],imp:['mushroom_imp',.85],skel:['skeleton_grunt',1.7],orc:['orc_brute',2.7],demon:['demon',3.6],ghost:['ghost',1.5],wolf:['wolf',1.25],boomer:['slime_pink',1.0],yeti:['yeti',3.6],
-  tree:['tree_dark',6.5],pine:['tree_pine',7.5],pine2:['tree_pine_tall',9],rock:['rock_large',1.1],crystal:['crystal_rock',1.0],stump:['stump',.7],bush:['bush',.5],fire:['campfire',.8],chest:['chest',.9]};
+const MODELS={slime:['slime_spiky',1.0],imp:['mushroom_imp',.85],skel:['skeleton_grunt',1.7],orc:['orc_brute',2.7],demon:['demon',3.6],ghost:['ghost',1.5],wolf:['wolf',1.25],boomer:['slime_pink',1.0],yeti:['yeti',3.6],
+  tree:['tree_dark',6.5],pine:['tree_pine',7.5],pine2:['tree_pine_tall',9],rock:['rock_large',1.1],crystal:['crystal_rock',1.0],stump:['stump',.7],bush:['bush',.5],fire:['campfire',.8],chest:['chest',.9],coin:['coin',.55]};
 const T={};
 async function loadAll(){
   let done=0;const keys=Object.keys(MODELS);
@@ -327,7 +383,12 @@ async function loadAll(){
     T[k]={scene:g.scene,clips:g.animations,s:h/size.y,minY:box.min.y};
     done++;$('easyBtn').textContent='LOADING '+Math.round(done/keys.length*100)+'%';
   }));
+  await loadSkin(SAVE.eq.skin);
 }
+const heroKey=()=>'hero_'+SAVE.eq.skin;
+async function loadSkin(id){const k='hero_'+id;if(T[k])return;const sk=LOOKS.skin.list.find(x=>x.id===id)||LOOKS.skin.list[0];
+  const g=await loader.loadAsync('models/'+sk.file+'.glb');g.scene.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(g.scene,true);T[k]={scene:g.scene,clips:g.animations,s:1.75/box.getSize(new THREE.Vector3()).y,minY:box.min.y};}
 function makeChar(k){
   const t=T[k];const root=SkeletonUtils.clone(t.scene);root.scale.setScalar(t.s);root.position.y=-t.minY*t.s;
   const mats=[];
@@ -438,6 +499,9 @@ const potions=pool(()=>{const m=new THREE.Group();
   const cork=new THREE.Mesh(new THREE.CylinderGeometry(.08,.07,.08,10),potionCork);cork.position.y=.64;
   const glow=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({map:glowTex,color:new THREE.Color(1.6,.2,.4),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));glow.position.y=.04;
   body.castShadow=true;m.add(body,neck,cork,glow);scene.add(m);return{m};});
+const coins=pool(()=>{const m=T.coin.scene.clone();m.scale.setScalar(T.coin.s);m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.material=o.material.clone();o.material.emissive=new THREE.Color(.5,.32,0);}});scene.add(m);return{m};});
+function dropCoin(x,z,val){const o=coins.get();o.m.visible=true;o.m.position.set(x,.35,z);o.val=val;o.t=0;o.pull=false;}
+const wardMesh=new THREE.Mesh(new THREE.SphereGeometry(1.05,24,16),addMat(.45,.8,1.7,.14));wardMesh.visible=false;scene.add(wardMesh);
 function dropPotion(x,z){const o=potions.get();o.m.visible=true;o.m.position.set(x,0,z);o.t=0;}
 const chests=pool(()=>{const m=T.chest.scene.clone();m.scale.setScalar(T.chest.s);m.traverse(o=>{if(o.isMesh)o.castShadow=true;});
   const glow=new THREE.Mesh(new THREE.PlaneGeometry(3,3).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({map:glowTex,color:new THREE.Color(2.2,1.6,.4),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
@@ -459,18 +523,34 @@ const ebars=[];
 let toastT=0;
 function toast(title,sub){const el=$('toast');el.innerHTML=title+(sub?'<small>'+sub+'</small>':'');el.hidden=false;el.style.opacity=1;toastT=2.6;}
 
+// ================= save (embers, shop) =================
+const SAVE_KEY='nightrunnerSave';
+const DEFAULT_EQ={weapon:'bolt',skin:'hooded',spell:'ember',lantern:'warm'};
+function loadSave(){let v=null;try{v=JSON.parse(store.get(SAVE_KEY)||'null');}catch(e){}
+  if(!v||typeof v!=='object')v={};
+  const sv={embers:Math.max(0,Math.floor(+v.embers||0)),up:{},own:{},eq:{...DEFAULT_EQ}};
+  for(const u of SHOP_UP)sv.up[u.id]=Math.min(u.max,Math.max(0,Math.floor(+((v.up||{})[u.id])||0)));
+  if(v.own&&typeof v.own==='object')for(const k in v.own)if(v.own[k]===true)sv.own[k]=true;
+  for(const k in DEFAULT_EQ){const want=(v.eq||{})[k];if(typeof want==='string'&&ownsLook(sv,k,want))sv.eq[k]=want;}
+  return sv;}
+function ownsLook(sv,kind,id){if(kind==='weapon')return id==='bolt'?true:!!(WEAPONS[id]&&sv.own['w_'+id]);
+  const it=LOOKS[kind]&&LOOKS[kind].list.find(x=>x.id===id);return !!it&&(it.cost===0||!!sv.own[kind+'_'+id]);}
+let SAVE=loadSave();
+const persist=()=>store.set(SAVE_KEY,JSON.stringify(SAVE));
+const U=k=>SAVE.up[k]||0;
+
 // ================= state =================
 let S,hero,enemies=[],running=false,paused=false,diff=DIFF[store.get('nightrunnerLevel')==='hard'?'hard':'easy'],diffKey='easy';
 const keys={};const joy={x:0,y:0,id:null,ox:0,oy:0};
 function freshState(){return{t:0,hp:100,lv:1,xp:0,need:xpNeed(1),kills:0,
-  w:{bolt:1},evo:new Set(),p:{},rerolls:diff.rerolls,pendingLv:0,
+  w:{[SAVE.eq.weapon]:1},evo:new Set(),p:{},rerolls:diff.rerolls+U('reroll'),pendingLv:0,embers:0,bossKills:0,ward:U('ward')>0,wardT:0,revive:U('revive'),
   timers:{bolt:0,nova:2,chain:1,glaive:1,trail:0},bladeA:0,bladeHit:new Map(),
   dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossIdx:0,boss:null,seen:new Set(),warned:-1,fireT:0,won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
 // derived numbers from relic levels
 const P=k=>S.p[k]||0;
-const maxHp=()=>100+15*P('heart');
-const moveSpeed=()=>5.6*(1+.1*P('speed'));
-const magnetR=()=>2.6*(1+.4*P('magnet'));
+const maxHp=()=>100+15*P('heart')+10*U('vit');
+const moveSpeed=()=>5.6*(1+.1*P('speed'))*(1+.04*U('swift'));
+const magnetR=()=>2.6*(1+.4*P('magnet'))*(1+.15*U('reach'));
 const cdMul=()=>1-.08*P('hourglass');
 const armor=()=>2*P('bark');
 const critChance=()=>.08+.07*P('luck');
@@ -478,10 +558,10 @@ const wl=k=>S.w[k]-1; // index into a weapon's per-level arrays
 
 function reset(){
   for(const e of enemies)scene.remove(e.ch.g);enemies=[];
-  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots,potions].forEach(p=>p.clear());
+  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots,potions,coins].forEach(p=>p.clear());
   for(const b of ebars)b.el.remove();ebars.length=0;
   if(hero)scene.remove(hero.g);
-  S=freshState();hero=makeChar('hero');hero.g.position.set(0,0,0);play(hero,'Idle',0);
+  S=freshState();S.hp=maxHp();hero=makeChar(heroKey());hero.g.position.set(0,0,0);play(hero,'Idle',0);
   bladeMeshes.forEach(m=>m.visible=false);$('boss').style.display='none';updateHud();
 }
 
@@ -502,7 +582,7 @@ function spawnEnemy(type,near){
   enemies.push(e);return e;
 }
 function hurtEnemy(e,dmg,from,knock=4,opts={}){
-  if(e.dead)return;const crit=opts.crit||Math.random()<critChance();if(crit)dmg*=2;
+  if(e.dead)return;dmg*=1+.05*U('might');const crit=opts.crit||Math.random()<critChance();if(crit)dmg*=2;
   e.hp-=dmg;e.flash=.09;floatText(e.ch.g.position,Math.round(dmg)+(crit?'!':''),crit?'crit':'');sfx.hit();
   if(from&&!e.et.boss){const k=tmp3.copy(e.ch.g.position).sub(from).setY(0).normalize().multiplyScalar(knock*(e.et.elite?.25:1));e.kb.add(k);}
   if(e===S.boss)$('bossbar').style.width=Math.max(0,e.hp/e.max*100)+'%';
@@ -512,11 +592,11 @@ function killEnemy(e){
   e.dead=true;e.deadT=0;dropTele(e);e.wind=0;e.charging=0;play(e.ch,'Death',.1,true);S.kills++;sfx.kill();
   const p=e.ch.g.position.clone();p.y=.6;burst(p,e.et.boss?80:e.et.elite?40:14,e.et.col,e.et.boss?9:5);
   if(e.bar){e.bar.el.remove();ebars.splice(ebars.indexOf(e.bar),1);e.bar=null;}
-  if(e.et.elite){for(let i=0;i<4;i++)dropGem(p.x+rand(-.8,.8),p.z+rand(-.8,.8),5);dropChest(p.x,p.z);dropPotion(p.x+1,p.z);S.shake=.5;}
-  else if(e.et.boss){S.shake=.7;if(e===S.boss){S.boss=null;$('boss').style.display='none';}
+  if(e.et.elite){for(let i=0;i<4;i++)dropGem(p.x+rand(-.8,.8),p.z+rand(-.8,.8),5);for(let i=0;i<EMBER_DROP.elite[0];i++)dropCoin(p.x+rand(-1,1),p.z+rand(-1,1),EMBER_DROP.elite[1]);dropChest(p.x,p.z);dropPotion(p.x+1,p.z);S.shake=.5;}
+  else if(e.et.boss){S.shake=.7;S.bossKills++;for(let i=0;i<EMBER_DROP.boss[0];i++)dropCoin(p.x+rand(-1.6,1.6),p.z+rand(-1.6,1.6),EMBER_DROP.boss[1]);if(e===S.boss){S.boss=null;$('boss').style.display='none';}
     if(e.et.final){S.won=true;setTimeout(()=>endGame(true),1600);}
     else{for(let i=0;i<8;i++)dropGem(p.x+rand(-1.2,1.2),p.z+rand(-1.2,1.2),5);dropChest(p.x,p.z);dropPotion(p.x+1.2,p.z);dropPotion(p.x-1.2,p.z);toast(titleOf(e.et)+' falls','Grab its chest');}}
-  else{dropGem(p.x,p.z,e.et.xp);if(Math.random()<diff.potion*(S.hp<maxHp()*.35?3:1))dropPotion(p.x+rand(-.4,.4),p.z+rand(-.4,.4));}
+  else{dropGem(p.x,p.z,e.et.xp);if(Math.random()<EMBER_DROP.chance)dropCoin(p.x+rand(-.5,.5),p.z+rand(-.5,.5),1);if(Math.random()<diff.potion*(S.hp<maxHp()*.35?3:1))dropPotion(p.x+rand(-.4,.4),p.z+rand(-.4,.4));}
 }
 function dropChest(x,z){const c=chests.get();c.m.visible=true;c.m.position.set(x,-T.chest.minY*T.chest.s,z);c.m.rotation.y=Math.random()*6;c.t=0;}
 
@@ -614,8 +694,12 @@ function nearestEnemies(p,n,range,skip){const list=[];for(const e of enemies){if
   list.sort((a,b)=>a[0]-b[0]);return list.slice(0,n).map(x=>x[1]);}
 function hitPlayer(dmg){
   if(S.inv>0||S.hp<=0)return;
+  if(S.ward){S.ward=false;S.wardT=[45,35,25][U('ward')-1];S.inv=.6;sfx.nova();const p=hero.g.position;ringFx(p.x,p.z,2.2,[.6,1.2,2.6],.35);burst(tmp3.set(p.x,1,p.z),20,[.6,1,2.2],5,3);floatText(p,'Blocked','heal');return;}
   dmg=Math.max(1,Math.round(dmg*diff.dmg-armor()));S.hp-=dmg;S.inv=.45;S.shake=.25;sfx.hurt();
   $('flash').style.boxShadow='inset 0 0 140px rgba(255,30,60,.55)';setTimeout(()=>$('flash').style.boxShadow='',180);
+  if(S.hp<=0&&S.revive>0){S.revive--;S.hp=Math.round(maxHp()*.5);S.inv=2.5;sfx.evo();const p=hero.g.position;ringFx(p.x,p.z,7,[2.4,1.8,.6],.6);burst(tmp3.set(p.x,1,p.z),60,[2,1.6,.5],8,6);
+    for(const e of enemies)if(!e.dead&&e.ch.g.position.distanceTo(p)<7){if(!e.et.boss)e.kb.add(tmp2.copy(e.ch.g.position).sub(p).setY(0).normalize().multiplyScalar(12));hurtEnemy(e,40,null,0);}
+    toast('Second Wind!','Back on your feet');return;}
   if(S.hp<=0){S.hp=0;play(hero,'Death',.1,true);setTimeout(()=>endGame(false),1500);}
 }
 
@@ -795,6 +879,12 @@ function update(dt){
     o.m.visible=!(o.t>POTION_LIFE-5&&Math.floor(o.t*6)%2);
     if(o.t>POTION_LIFE){o.alive=false;o.m.visible=false;return;}
     if(S.hp>0&&Math.hypot(hp.x-o.m.position.x,hp.z-o.m.position.z)<1.1){o.alive=false;o.m.visible=false;heal(POTION_HEAL);sfx.gem();burst(tmp3.set(o.m.position.x,.5,o.m.position.z),14,[1.6,.3,.5],3,4);}});
+  // ember coins: pulled in like gems
+  const cmag=magnetR();
+  coins.each(o=>{const p=o.m.position;o.t+=dt;o.m.rotation.y+=dt*4;const d=Math.hypot(hp.x-p.x,hp.z-p.z);if(d<cmag)o.pull=true;
+    if(o.pull){const sp=Math.max(9,20-d*2)*dt;p.x+=(hp.x-p.x)/d*sp;p.z+=(hp.z-p.z)/d*sp;}
+    if(d<.6&&S.hp>0){o.alive=false;o.m.visible=false;S.embers+=o.val;if(throttle('c',50))tone(rand(1700,1900),.08,'triangle',.05,1.3);}});
+  if(U('ward')&&!S.ward&&S.hp>0){S.wardT-=dt;if(S.wardT<=0){S.ward=true;floatText(hp,'Ward ready','heal');}}
   // gems and chests
   const mag=magnetR();
   gems.each(g=>{const p=g.m.position;g.m.rotation.y+=dt*3;const d=Math.hypot(hp.x-p.x,hp.z-p.z);
@@ -820,6 +910,7 @@ function render(dt,now){
   camera.position.lerp(tmp.set(hp.x+rand(-sh,sh),camY+rand(-sh,sh),hp.z+camZ),Math.min(1,dt*6||1));
   camera.lookAt(camera.position.x,0,camera.position.z-camZ);
   moon.position.set(hp.x-8,22,hp.z+6);moon.target.position.set(hp.x,0,hp.z);
+  wardMesh.visible=running&&!!S.ward&&S.hp>0;if(wardMesh.visible){wardMesh.position.set(hp.x,.95,hp.z);wardMesh.scale.setScalar(1+Math.sin(now*.004)*.04);}
   lantern.position.set(hp.x+.4,2.1,hp.z+.3);lantern.intensity=28+Math.sin(now*.011)*3+Math.sin(now*.023)*2;
   fires.forEach((f,i)=>f.intensity=24+Math.sin(now*.013+i)*5+Math.sin(now*.031+i*2)*3);
   composer.render(dt);
@@ -846,7 +937,7 @@ let hudTick=0;
 function updateHud(){
   $('xp').style.width=Math.min(100,S.xp/S.need*100)+'%';$('lv').textContent='LV '+S.lv;
   const m=Math.floor(S.t/60),s=Math.floor(S.t%60);$('time').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-  $('kills').textContent=S.kills.toLocaleString()+' kills';
+  $('kills').textContent=S.kills.toLocaleString()+' kills · ✦ '+S.embers;
   $('loadout').innerHTML=hudChips();
 }
 function frame(now){
@@ -862,11 +953,48 @@ function resize(){const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clien
 addEventListener('resize',resize);addEventListener('kb-navbar-ready',resize);resize();
 
 // ================= flow =================
+// End-of-run ember bonus: 5 a minute survived, 25 a boss, 100 for winning.
+const embersFor=(t,bosses,won)=>Math.floor(t/60*5)+bosses*25+(won?100:0);
+function refreshEmbers(){$('emberCount').textContent=SAVE.embers;$('emberCount2').textContent=SAVE.embers;$('shopEmbers').textContent=SAVE.embers;}
+function applyLook(){const sp=LOOKS.spell.list.find(x=>x.id===SAVE.eq.spell)||LOOKS.spell.list[0];
+  boltMat.color.setRGB(...sp.col);trailMat.color.setRGB(sp.col[0]*1.05,sp.col[1]*.8,sp.col[2]*.75);
+  lantern.color.set((LOOKS.lantern.list.find(x=>x.id===SAVE.eq.lantern)||LOOKS.lantern.list[0]).hex);}
+// ---- shop screen ----
+let shopTab='up',shopFrom='startScreen';
+function openShop(from){shopFrom=from;$(from).hidden=true;$('shopScreen').hidden=false;renderShop();}
+function buyBtn(cost,label){return SAVE.embers>=cost?`<button class="buy" type="button" data-cost="${cost}">${label||'✦ '+cost}</button>`:`<button class="buy" type="button" disabled>✦ ${cost}</button>`;}
+function renderShop(){
+  refreshEmbers();document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.tab===shopTab)));
+  let h='';
+  if(shopTab==='up')for(const u of SHOP_UP){const lv=U(u.id);
+    h+=`<div class="item" style="--c:${u.c}" data-buy="up:${u.id}"><div class="ic">${ICONS[u.ic]}</div><div class="txt"><b>${u.name}</b><span>${u.desc}</span><div class="pips">${Array.from({length:u.max},(_,i)=>`<i class="${i<lv?'on':''}"></i>`).join('')}</div></div>${lv>=u.max?'<button class="buy eq" type="button" disabled>MAX</button>':buyBtn(u.cost[lv])}</div>`;}
+  if(shopTab==='arsenal'){h+='<h3>START EACH RUN WITH</h3>';for(const k in WEAPONS){const W=WEAPONS[k],own=ownsLook(SAVE,'weapon',k),on=SAVE.eq.weapon===k;
+    h+=`<div class="item" style="--c:${W.c}" data-buy="weapon:${k}"><div class="ic">${ICONS[W.ic]}</div><div class="txt"><b>${W.name}</b><span>${W.start}. Evolves with ${RELICS[W.evo.relic].name}.</span></div>${on?'<button class="buy eq" type="button" disabled>Starting</button>':own?'<button class="buy eq" type="button">Use</button>':buyBtn(WEAPON_UNLOCK)}</div>`;}}
+  if(shopTab==='look')for(const kind in LOOKS){h+=`<h3>${LOOKS[kind].label.toUpperCase()}</h3>`;for(const it of LOOKS[kind].list){const own=ownsLook(SAVE,kind,it.id),on=SAVE.eq[kind]===it.id;
+    const pic=kind==='skin'?`<div class="ic">${ICONS.star}</div>`:`<div class="ic"><div class="sw"></div></div>`;
+    h+=`<div class="item" style="--c:${it.hex||'#ffd166'}" data-buy="${kind}:${it.id}">${pic}<div class="txt"><b>${it.name}</b><span>${kind==='skin'?'Play as this hero':kind==='spell'?'Recolours your Ember Bolts':'Recolours the light around you'}</span></div>${on?'<button class="buy eq" type="button" disabled>Equipped</button>':own?'<button class="buy eq" type="button">Equip</button>':buyBtn(it.cost)}</div>`;}}
+  $('shopList').innerHTML=h;
+}
+async function shopAction(kind,id){
+  if(kind==='up'){const u=SHOP_UP.find(x=>x.id===id),lv=U(id);if(lv>=u.max||SAVE.embers<u.cost[lv])return;SAVE.embers-=u.cost[lv];SAVE.up[id]=lv+1;}
+  else if(kind==='weapon'){if(!ownsLook(SAVE,'weapon',id)){if(SAVE.embers<WEAPON_UNLOCK)return;SAVE.embers-=WEAPON_UNLOCK;SAVE.own['w_'+id]=true;}SAVE.eq.weapon=id;}
+  else{const it=LOOKS[kind].list.find(x=>x.id===id);if(!ownsLook(SAVE,kind,id)){if(SAVE.embers<it.cost)return;SAVE.embers-=it.cost;SAVE.own[kind+'_'+id]=true;}
+    SAVE.eq[kind]=id;
+    if(kind==='skin'){await loadSkin(id);if(!running){scene.remove(hero.g);hero=makeChar(heroKey());play(hero,'Idle',0);}}
+    else applyLook();}
+  persist();sfx.level();renderShop();
+}
+$('shopList').addEventListener('click',e=>{const b=e.target.closest('.buy');if(!b||b.disabled)return;const row=b.closest('[data-buy]');const [kind,id]=row.dataset.buy.split(':');
+  if(!AC)audioInit();shopAction(kind,id).catch(err=>{console.error(err);toast('Could not load that hero','Check your connection');});});
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{shopTab=t.dataset.tab;renderShop();});
+$('shopBtn').onclick=()=>openShop('startScreen');$('endShopBtn').onclick=()=>openShop('endScreen');
+$('shopBack').onclick=()=>{$('shopScreen').hidden=true;$(shopFrom).hidden=false;refreshEmbers();};
+refreshEmbers();
 function start(key){
   diffKey=key;diff=DIFF[key];store.set('nightrunnerLevel',key);
   if(!AC)audioInit();else AC.resume?.();
   reset();running=true;paused=false;last=performance.now();
-  ['startScreen','endScreen','levelScreen','pauseScreen'].forEach(id=>$(id).hidden=true);
+  ['startScreen','endScreen','levelScreen','pauseScreen','shopScreen'].forEach(id=>$(id).hidden=true);
   ['hud','dash','hpf','hint'].forEach(id=>$(id).hidden=false);$('hint').style.opacity=1;
 }
 function showMenu(){
@@ -879,6 +1007,9 @@ function endGame(won){
   $('endText').textContent=won?'All three bosses are down and the Horned King has fallen. You held out through the night.':'The dark wood claimed you. Try a different build and go again.';
   const m=Math.floor(S.t/60),s=Math.floor(S.t%60);$('sTime').textContent=m+':'+String(s).padStart(2,'0');$('sKills').textContent=S.kills;$('sLv').textContent=S.lv;
   $('endBuild').innerHTML=buildChips();
+  const bonus=embersFor(S.t,S.bossKills,won),total=Math.round((S.embers+bonus)*(1+.15*U('greed'))*(diffKey==='hard'?1.5:1));
+  SAVE.embers+=total;persist();refreshEmbers();
+  $('emberLine').textContent='+'+total+' embers ('+S.embers+' picked up, '+bonus+' for surviving'+(diffKey==='hard'?', ×1.5 on Hard':'')+')';
   const bk='nightrunnerBest_'+diffKey;const best=+(store.get(bk)||0);
   if(S.t>best){store.set(bk,String(Math.floor(S.t)));$('bestLine').textContent=best?'New best on '+diff.label+'!':'';}
   else{const bm=Math.floor(best/60),bs=best%60;$('bestLine').textContent='Best on '+diff.label+': '+bm+':'+String(bs).padStart(2,'0');}
@@ -889,10 +1020,10 @@ $('againBtn').onclick=()=>start(diffKey);$('menuBtn').onclick=showMenu;
 setMuted(muted);
 
 // test handle for headless checks; nothing in the game uses it
-window.nightrunner={get S(){return S},get enemies(){return enemies},get hero(){return hero},spawnEnemy,dropPotion,firePos,gainXp,apply,openLevelUp,WEAPONS,RELICS,DIFF};
+window.nightrunner={get S(){return S},get enemies(){return enemies},get hero(){return hero},get SAVE(){return SAVE},set SAVE(v){SAVE=v},persist,renderShop,embersFor,hitPlayer,spawnEnemy,dropPotion,firePos,gainXp,apply,openLevelUp,WEAPONS,RELICS,DIFF};
 
 try{
-  await loadAll();buildWorld();S=freshState();hero=makeChar('hero');play(hero,'Idle',0);
+  await loadAll();buildWorld();S=freshState();hero=makeChar(heroKey());play(hero,'Idle',0);applyLook();
   for(let i=0;i<6;i++){const e=spawnEnemy(['imp','slime','skel'][i%3]);e.ch.g.position.set(rand(-6,6),0,rand(-7,-3));play(e.ch,'Idle',0);}
   diffKey=store.get('nightrunnerLevel')==='hard'?'hard':'easy';
   $('easyBtn').disabled=$('hardBtn').disabled=false;$('easyBtn').textContent='EASY';
