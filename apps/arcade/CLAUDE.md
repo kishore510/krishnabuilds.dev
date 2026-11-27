@@ -10,9 +10,9 @@ page is a single self-contained HTML file with inline `<style>`/`<script>`
 (one exception: a game whose logic needs headless tests may split it into a
 pure, DOM-free script next to its `index.html`; Tennis's and Wildcard's
 `engine.js` are the two so far, see `docs/decisions.md`, 2026-11-08).
-A second exception: Nightrunner is 3D, so it loads three.js from jsDelivr
-(pinned) and its CC0 models from `games/nightrunner/models/`; see
-"Nightrunner notes" and `docs/decisions.md`, 2026-11-27.
+A second exception: the 3D games (Nightrunner, Coral Drift) load three.js
+from jsDelivr (pinned) and their models from `games/<slug>/models/`; see
+"Nightrunner notes", "Coral Drift notes" and `docs/decisions.md`, 2026-11-27.
 Live at `arcade.krishnabuilds.dev`. Arcade now lives in the krishnabuilds.dev
 monorepo and follows the root `CLAUDE.md`: work on a branch, open a PR,
 squash merge; deploys run from GitHub Actions on merge to `main`.
@@ -68,6 +68,8 @@ games/wildcard/index.html     — Wildcard (DOM, portrait card game vs 3 bots; s
 games/wildcard/engine.js      — Wildcard's pure rules, seeded deal and bots, tested by scripts/wildcard.test.js; also runs in the Worker for online tables
 games/nightrunner/index.html  — Nightrunner (three.js 3D arena survival shooter; see "Nightrunner notes")
 games/nightrunner/models/     — its CC0 glTF models (Quaternius, Kenney) and LICENSE.txt
+games/coral-drift/index.html  — Coral Drift (three.js 3D scuba dive; see "Coral Drift notes")
+games/coral-drift/models/     — its reduced CC0 / CC-BY models and scans, a sand texture, and LICENSE.txt (credits)
 src/worker.js                 — the Worker: static assets, play counts, Wildcard table routes
 src/wildcard-room.js          — Wildcard online room rules (seats, host, bots, who is sent what), tested by scripts/wildcard-room.test.mjs
 src/wildcard-table.js         — the WildcardTable Durable Object around wildcard-room.js (WebSockets, storage, alarms)
@@ -76,7 +78,7 @@ games/<slug>/index.html       — next game goes here
 ```
 
 This list is not every game. The `GAMES` array in `index.html` is the source
-of truth, and `README.md` lists all 38 with their folders and taglines.
+of truth, and `README.md` lists all 39 with their folders and taglines.
 
 ## Adding a new game
 
@@ -739,6 +741,66 @@ time a new monster type appears.
 - **Test handle:** `window.nightrunner` (`S`, `enemies`, `hero`, `SAVE`,
   `persist`, `renderShop`, `embersFor`, `hitPlayer`, `spawnEnemy`,
   `dropPotion`, `firePos`, `gainXp`, `apply`, `openLevelUp`, the tables). Nothing in
+  the game uses it.
+
+## Coral Drift notes
+
+A first-person 3D scuba dive (`games/coral-drift/`, 1.84.0), the arcade's
+second three.js game. Not a reflex game, so instead of Easy/Hard it has
+**Relaxed** (the BCD trims you to neutral, air lasts longer) and
+**Realistic** (you trim the BCD yourself). The goal is the logbook: hold a
+creature in the middle of the view (`updateSpotting`, a 20° cone within the
+species' `r`) for 1.1 s to photograph it, and swim near the three `PLACES`.
+Logged ids persist in `localStorage` `coralDriftSave` (`{seen, places,
+dives, deepest}`, validated by `loadSave`); also `coralDriftMode`,
+`coralDriftMuted`.
+
+- **Physics** (`PHYS`, `updateDiver`): forces in newtons on an effective
+  110 kg. Lift in kg = BCD gas / P + wetsuit / P + lungs − weights, where
+  P = 1 + depth/10 (Boyle's law: the BCD and wetsuit shrink as you go
+  down, so buoyancy runs away in both directions). `S.bc` is BCD gas in
+  surface litres; inflating takes it from the tank. Drag is linear plus
+  quadratic, heavier vertically. Air use is SAC 14 L/min × (1 + 1.3 ×
+  effort) × P × `airF` (the mode's speed-up, so a dive lasts minutes, not an
+  hour); 12 L × 200 bar tank. Warnings: ascent faster than `PHYS.ASCENT`
+  (0.4 m/s, scaled up from the real 9 m/min to suit the game's swim speed),
+  low air (70 bar), reserve (30 bar); out of air ends the dive gently. A
+  dive below 10 m earns a 30 s safety stop at 3-6 m. Breathing (a 4-phase
+  cycle, faster with effort) drives the lung term, the sounds and the
+  regulator bubbles. `coralDrift.simulate(sec)` steps the physics without
+  rendering, for headless checks.
+- **World:** a fixed seed, so the reef is the same every dive. `seabedExact`
+  (sand + Gaussian bommies + a reef crest at z ≈ -58 + the wall past
+  x ≈ 55) builds a 240 m heightfield; `seabed` samples it bilinearly at
+  runtime. The arch is code (a noisy half torus); the wreck is a scan with a
+  height grid (`wreckTop`) for collisions.
+- **Models** (`models/`, credits in `LICENSE.txt`): Sketchfab CC-BY and CC0
+  models, Smithsonian / museum scans and a Poly Haven sand texture, reduced
+  with gltf-transform + meshoptimizer. Photogrammetry scans had their
+  texture baked into vertex colours before simplifying (their UV atlases
+  fall apart when simplified), so they carry no textures. Fish keep a small
+  WebP texture and lose their rigs; the tail wiggle is in the shader
+  (`FISH`), so a school is one instanced draw. `modelParts` turns, centres
+  and scales a model at load (head to +z; `FISHM` holds each fish's head
+  direction, length and tail-beat speed). Not used, because nothing real and
+  freely licensed was found: manta (all non-commercial), moray, giant clam,
+  sea star (the scan is a dried specimen; the star is drawn in code), and a
+  good jellyfish (still drawn in code). Blue chromis and anthias are also
+  still drawn in code (they are 13 cm specks).
+- **Coral detail:** each coral type has a detailed and a light model
+  (`name` / `name_lo`); `updateCoralLOD` re-sorts instances into the two
+  every 2 m you move: detailed within `HI_R` (14 m), light out to `FAR_R`
+  (60 m, where fog hides the rest). About 2,100 corals, ~0.7M triangles in
+  view. Grass and sea stars are instanced in 40 m chunks.
+- **Look:** `patch()` extends every material with optional sway, fish
+  wiggle, ray wing flap, caustics (`CAUS`), a triplanar photo sand grain
+  (`DETAIL`) and a little glow. The fog chunk is replaced so water absorbs
+  red first, then green. Fog, sky dome, light shafts and lights darken with
+  camera depth (`updateEnv`).
+- **Sound** is all Web Audio: filtered-noise inhale, exhale rumble with
+  rising "blub" bubbles, snapping-shrimp crackle, BCD hiss.
+- **Test handle:** `window.coralDrift` (`S`, `startDive`, `endDive`,
+  `simulate`, `input`, `logSpecies`, `groups`, `CORAL_MESH`, ...). Nothing in
   the game uses it.
 
 ## Mobile-first constraints learned the hard way
