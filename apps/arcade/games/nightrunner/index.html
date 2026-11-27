@@ -186,8 +186,8 @@ const ARENA=40;
 // Difficulty: spawn rate = min(rateCap, rate0 + t/rateK) enemies a second; enemy hp grows by t/hpRamp.
 // bosses: hp per boss; bossCd: seconds a boss rests between moves.
 const DIFF={
-  easy:{label:'Easy',rate0:.55,rateK:75,rateCap:3.6,hp:.8,dmg:.65,hpRamp:220,alive:55,bosses:{warlord:700,yeti:1300,demon:2200},bossCd:2.3,eliteEvery:42,eliteFirst:45,rerolls:3},
-  hard:{label:'Hard',rate0:.9,rateK:40,rateCap:5.5,hp:1,dmg:1,hpRamp:140,alive:75,bosses:{warlord:1100,yeti:2000,demon:3400},bossCd:1.6,eliteEvery:32,eliteFirst:35,rerolls:2},
+  easy:{label:'Easy',rate0:.55,rateK:75,rateCap:3.6,hp:.8,dmg:.65,hpRamp:220,alive:55,bosses:{warlord:700,yeti:1300,demon:2200},bossCd:2.3,eliteEvery:42,eliteFirst:45,rerolls:3,potion:.022},
+  hard:{label:'Hard',rate0:.9,rateK:40,rateCap:5.5,hp:1,dmg:1,hpRamp:140,alive:75,bosses:{warlord:1100,yeti:2000,demon:3400},bossCd:1.6,eliteEvery:32,eliteFirst:35,rerolls:2,potion:.013},
 };
 // The night: each boss arrives at its time (or once the one before it is dead); the last one ends the run.
 const NIGHT=[{at:150,type:'warlord'},{at:300,type:'yeti'},{at:480,type:'demon'}];
@@ -195,6 +195,8 @@ const NIGHT=[{at:150,type:'warlord'},{at:300,type:'yeti'},{at:480,type:'demon'}]
 const WAVES=[{until:25,mix:{imp:6,slime:4}},{until:70,mix:{imp:35,slime:40,skel:25}},{until:150,mix:{imp:25,slime:25,skel:22,ghost:16,wolf:12}},
   {until:300,mix:{imp:18,slime:18,skel:20,ghost:14,wolf:14,boomer:16}},{until:1e9,mix:{imp:12,slime:14,skel:20,ghost:16,wolf:18,boomer:20}}];
 const INTRO={ghost:['Ghosts spit from range','Keep moving and their shots miss'],wolf:['Wolves charge in a line','Step out of the red lane'],boomer:['Pink slimes explode','Get out of the red circle']};
+// Healing: potions heal POTION_HEAL; standing within FIRE_R of a campfire heals FIRE_HEAL a second; Heartwood regenerates HEART_REGEN a second per level.
+const POTION_HEAL=30,POTION_LIFE=30,FIRE_R=2.8,FIRE_HEAL=4,HEART_REGEN=.5;
 const MAX_WEAPONS=4, MAX_RELICS=4, MAX_LV=5;
 const xpNeed=lv=>Math.round(4+(lv-1)*3.2+(lv-1)*(lv-1)*.3);
 // windup: seconds an enemy telegraphs (glows red, stops) before its hit lands; reach: how far the hit lands from its edge.
@@ -242,7 +244,7 @@ const WEAPONS={
 const RELICS={
   speed:    {name:'Fleet Boots',c:'#7dffb0',ic:'boot',  desc:'+10% move speed'},
   magnet:   {name:'Lodestone',  c:'#5fe3ff',ic:'magnet',desc:'Gems fly to you from 40% further away'},
-  heart:    {name:'Heartwood',  c:'#ff7a95',ic:'heart', desc:'+15 max health and heal 30'},
+  heart:    {name:'Heartwood',  c:'#ff7a95',ic:'heart', desc:'+15 max health, heal 30, and slowly regenerate health'},
   hourglass:{name:'Hourglass',  c:'#e8d48a',ic:'hourglass',desc:'Weapons recharge 8% faster'},
   bark:     {name:'Bark Skin',  c:'#c79a63',ic:'shield',desc:'Take 2 less damage from every hit'},
   luck:     {name:'Lucky Coin', c:'#ffd166',ic:'coin',  desc:'+7% critical hit chance'},
@@ -347,7 +349,7 @@ function placeProp(k,x,z,scaleJitter=.25){
   o.position.set(x,-t.minY*s,z);o.rotation.y=Math.random()*6.28;
   o.traverse(m=>{if(m.isMesh){m.castShadow=true;m.receiveShadow=true;}});scene.add(o);return o;
 }
-const blockers=[],fires=[];
+const blockers=[],fires=[],firePos=[];
 function buildWorld(){
   const avoid=(x,z)=>Math.hypot(x,z)<7;
   const ring=(n,keys,rMin,rMax,block)=>{for(let i=0;i<n;i++){let x,z;do{x=rand(-rMax,rMax);z=rand(-rMax,rMax);}while(avoid(x,z)||Math.max(Math.abs(x),Math.abs(z))<rMin);
@@ -357,7 +359,7 @@ function buildWorld(){
   ring(50,['rock','stump'],0,ARENA,{rock:.9,stump:.4});
   ring(160,['bush','bush','bush','crystal'],0,ARENA);
   for(let i=0;i<5;i++){const a=i/5*6.28+.6,d=i?rand(16,36):9;const x=Math.cos(a)*d,z=Math.sin(a)*d;placeProp('fire',x,z,0);
-    const L=new THREE.PointLight(0xff7a2a,26,10,1.6);L.position.set(x,1.1,z);scene.add(L);fires.push(L);}
+    const L=new THREE.PointLight(0xff7a2a,26,10,1.6);L.position.set(x,1.1,z);scene.add(L);fires.push(L);firePos.push({x,z});}
 }
 
 // ================= audio =================
@@ -427,6 +429,16 @@ const glaiveGeo=new THREE.TorusGeometry(.42,.06,6,24,Math.PI*1.35);glaiveGeo.rot
 const glaiveMat=bright(1.1,1.5,2.1),eclipseMat=bright(2,1.2,.45);
 const glaives=pool(()=>{const m=new THREE.Mesh(glaiveGeo,glaiveMat);scene.add(m);return{m};});
 // chests
+const potionGlass=new THREE.MeshStandardMaterial({color:0xff2d55,emissive:0xff1040,emissiveIntensity:1.6,roughness:.15,transparent:true,opacity:.92});
+const potionCork=new THREE.MeshStandardMaterial({color:0x8a5a32,roughness:.9});
+const potionNeck=new THREE.MeshStandardMaterial({color:0xe8e4f5,roughness:.3});
+const potions=pool(()=>{const m=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.SphereGeometry(.24,16,12),potionGlass);body.position.y=.24;
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,.16,10),potionNeck);neck.position.y=.52;
+  const cork=new THREE.Mesh(new THREE.CylinderGeometry(.08,.07,.08,10),potionCork);cork.position.y=.64;
+  const glow=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.2).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({map:glowTex,color:new THREE.Color(1.6,.2,.4),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));glow.position.y=.04;
+  body.castShadow=true;m.add(body,neck,cork,glow);scene.add(m);return{m};});
+function dropPotion(x,z){const o=potions.get();o.m.visible=true;o.m.position.set(x,0,z);o.t=0;}
 const chests=pool(()=>{const m=T.chest.scene.clone();m.scale.setScalar(T.chest.s);m.traverse(o=>{if(o.isMesh)o.castShadow=true;});
   const glow=new THREE.Mesh(new THREE.PlaneGeometry(3,3).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({map:glowTex,color:new THREE.Color(2.2,1.6,.4),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
   glow.position.y=.05/T.chest.s;glow.scale.setScalar(1/T.chest.s);m.add(glow);scene.add(m);return{m};});
@@ -453,7 +465,7 @@ const keys={};const joy={x:0,y:0,id:null,ox:0,oy:0};
 function freshState(){return{t:0,hp:100,lv:1,xp:0,need:xpNeed(1),kills:0,
   w:{bolt:1},evo:new Set(),p:{},rerolls:diff.rerolls,pendingLv:0,
   timers:{bolt:0,nova:2,chain:1,glaive:1,trail:0},bladeA:0,bladeHit:new Map(),
-  dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossIdx:0,boss:null,seen:new Set(),warned:-1,won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
+  dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossIdx:0,boss:null,seen:new Set(),warned:-1,fireT:0,won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
 // derived numbers from relic levels
 const P=k=>S.p[k]||0;
 const maxHp=()=>100+15*P('heart');
@@ -466,7 +478,7 @@ const wl=k=>S.w[k]-1; // index into a weapon's per-level arrays
 
 function reset(){
   for(const e of enemies)scene.remove(e.ch.g);enemies=[];
-  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots].forEach(p=>p.clear());
+  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots,potions].forEach(p=>p.clear());
   for(const b of ebars)b.el.remove();ebars.length=0;
   if(hero)scene.remove(hero.g);
   S=freshState();hero=makeChar('hero');hero.g.position.set(0,0,0);play(hero,'Idle',0);
@@ -500,11 +512,11 @@ function killEnemy(e){
   e.dead=true;e.deadT=0;dropTele(e);e.wind=0;e.charging=0;play(e.ch,'Death',.1,true);S.kills++;sfx.kill();
   const p=e.ch.g.position.clone();p.y=.6;burst(p,e.et.boss?80:e.et.elite?40:14,e.et.col,e.et.boss?9:5);
   if(e.bar){e.bar.el.remove();ebars.splice(ebars.indexOf(e.bar),1);e.bar=null;}
-  if(e.et.elite){for(let i=0;i<4;i++)dropGem(p.x+rand(-.8,.8),p.z+rand(-.8,.8),5);dropChest(p.x,p.z);S.shake=.5;}
+  if(e.et.elite){for(let i=0;i<4;i++)dropGem(p.x+rand(-.8,.8),p.z+rand(-.8,.8),5);dropChest(p.x,p.z);dropPotion(p.x+1,p.z);S.shake=.5;}
   else if(e.et.boss){S.shake=.7;if(e===S.boss){S.boss=null;$('boss').style.display='none';}
     if(e.et.final){S.won=true;setTimeout(()=>endGame(true),1600);}
-    else{for(let i=0;i<8;i++)dropGem(p.x+rand(-1.2,1.2),p.z+rand(-1.2,1.2),5);dropChest(p.x,p.z);toast(titleOf(e.et)+' falls','Grab its chest');}}
-  else dropGem(p.x,p.z,e.et.xp);
+    else{for(let i=0;i<8;i++)dropGem(p.x+rand(-1.2,1.2),p.z+rand(-1.2,1.2),5);dropChest(p.x,p.z);dropPotion(p.x+1.2,p.z);dropPotion(p.x-1.2,p.z);toast(titleOf(e.et)+' falls','Grab its chest');}}
+  else{dropGem(p.x,p.z,e.et.xp);if(Math.random()<diff.potion*(S.hp<maxHp()*.35?3:1))dropPotion(p.x+rand(-.4,.4),p.z+rand(-.4,.4));}
 }
 function dropChest(x,z){const c=chests.get();c.m.visible=true;c.m.position.set(x,-T.chest.minY*T.chest.s,z);c.m.rotation.y=Math.random()*6;c.t=0;}
 
@@ -731,6 +743,12 @@ function update(dt){
   hero.g.rotation.y+=Math.atan2(Math.sin(targetYaw-hero.g.rotation.y),Math.cos(targetYaw-hero.g.rotation.y))*Math.min(1,dt*14);
   if(S.hp>0&&S.dashT<=0&&!(hero.cur===hero.acts.Roll&&hero.cur.isRunning()))play(hero,moving?'Run':'Idle');
   S.dashCd=Math.max(0,S.dashCd-dt);S.inv=Math.max(0,S.inv-dt);
+  if(S.hp>0&&S.hp<maxHp()){ // healing over time: Heartwood regen, plus campfires
+    let rate=HEART_REGEN*P('heart');
+    const atFire=firePos.some(f=>Math.hypot(hp.x-f.x,hp.z-f.z)<FIRE_R);
+    if(atFire){rate+=FIRE_HEAL;S.fireT-=dt;if(S.fireT<=0){S.fireT=.5;burst(tmp3.set(hp.x,.4,hp.z),3,[.4,1.6,.6],1.5,3);
+      if(!S.seen.has('fire')){S.seen.add('fire');toast('The campfire heals you','Stand close to recover');}}}
+    S.hp=Math.min(maxHp(),S.hp+rate*dt);}
 
   // spawn director
   if(!S.won){
@@ -772,6 +790,11 @@ function update(dt){
     else EM.copy(e.base);
     if(!e.em||!e.em.equals(EM)){e.em=(e.em||new THREE.Color()).copy(EM);for(const m of e.ch.mats)m.emissive.copy(EM);}
   }
+  // potions: bob, blink before they fade, heal on touch
+  potions.each(o=>{o.t+=dt;o.m.position.y=Math.abs(Math.sin(o.t*2.5))*.12;o.m.rotation.y+=dt*1.5;
+    o.m.visible=!(o.t>POTION_LIFE-5&&Math.floor(o.t*6)%2);
+    if(o.t>POTION_LIFE){o.alive=false;o.m.visible=false;return;}
+    if(S.hp>0&&Math.hypot(hp.x-o.m.position.x,hp.z-o.m.position.z)<1.1){o.alive=false;o.m.visible=false;heal(POTION_HEAL);sfx.gem();burst(tmp3.set(o.m.position.x,.5,o.m.position.z),14,[1.6,.3,.5],3,4);}});
   // gems and chests
   const mag=magnetR();
   gems.each(g=>{const p=g.m.position;g.m.rotation.y+=dt*3;const d=Math.hypot(hp.x-p.x,hp.z-p.z);
@@ -866,7 +889,7 @@ $('againBtn').onclick=()=>start(diffKey);$('menuBtn').onclick=showMenu;
 setMuted(muted);
 
 // test handle for headless checks; nothing in the game uses it
-window.nightrunner={get S(){return S},get enemies(){return enemies},get hero(){return hero},spawnEnemy,gainXp,apply,openLevelUp,WEAPONS,RELICS,DIFF};
+window.nightrunner={get S(){return S},get enemies(){return enemies},get hero(){return hero},spawnEnemy,dropPotion,firePos,gainXp,apply,openLevelUp,WEAPONS,RELICS,DIFF};
 
 try{
   await loadAll();buildWorld();S=freshState();hero=makeChar('hero');play(hero,'Idle',0);
