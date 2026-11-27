@@ -645,7 +645,7 @@ the name, logo or look of any commercial card game.
 
 The arcade's only 3D game (`games/nightrunner/`, 1.79.0; Easy/Hard, weapons,
 relics, evolutions and chests 1.80.0; new monsters and a three-boss night
-1.81.0): a top-down arena survival shooter in
+1.81.0; potions, campfire healing and Heartwood regen 1.82.0): a top-down arena survival shooter in
 three.js. You move; weapons aim and fire on their own. Gems from kills fill
 the XP bar (`xpNeed(lv)`), and each level offers 3 cards: a ready evolution
 always comes first, a new weapon is always offered up to level 5, and the
@@ -671,9 +671,15 @@ time a new monster type appears.
   Evolved numbers are inline in `updateWeapons()`. `RELICS` effects are the
   small functions after `freshState()` (`moveSpeed`, `magnetR`, `cdMul`,
   `armor`, `critChance`, `maxHp`).
+- **Healing:** potions (`dropPotion`, heal `POTION_HEAL`, gone after
+  `POTION_LIFE` s, blinking for the last 5) drop from ordinary kills at
+  `DIFF.potion` (tripled below 35% health), always from orc brutes (1) and
+  the first two bosses (2). Standing within `FIRE_R` of a campfire
+  (`firePos`) heals `FIRE_HEAL` a second, and Heartwood regenerates
+  `HEART_REGEN` a second per level; both run in `update()`.
 - **Difficulty:** `DIFF.easy` / `DIFF.hard` (spawn ramp and cap, alive cap,
   enemy hp and damage multipliers, hp growth over time, boss hp, elite timing,
-  rerolls). The choice and best times are in `localStorage`
+  rerolls, potion drop chance). The choice and best times are in `localStorage`
   (`nightrunnerLevel`, `nightrunnerBest_easy|hard`, `nightrunnerMuted`).
 - **Fair hits:** enemies never hurt on contact. Every attack is a move
   (`startMove` → wind-up → `resolveMove`, run by `enemyAct`): the enemy
