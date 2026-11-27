@@ -643,14 +643,36 @@ the name, logo or look of any commercial card game.
 
 ## Nightrunner notes
 
-The arcade's only 3D game (`games/nightrunner/`, 1.79.0): a top-down arena
-survival shooter in three.js. You move; Ember Bolt aims and fires itself at
-the nearest enemies. Gems from kills fill the XP bar, and each level offers
-3 of the `UPS` upgrades (more/faster/piercing bolts, Orbit Blades, Frost
-Nova, speed, pickup range, health; a new weapon is always offered up to
-level 4). Waves come from a spawn director in `update()` (rate capped at
-5.5/s and 70 alive), an orc elite every 35 s, the demon boss at `BOSS_AT`
-(150 s); killing it wins the run.
+The arcade's only 3D game (`games/nightrunner/`, 1.79.0; Easy/Hard, weapons,
+relics, evolutions and chests 1.80.0): a top-down arena survival shooter in
+three.js. You move; weapons aim and fire on their own. Gems from kills fill
+the XP bar (`xpNeed(lv)`), and each level offers 3 cards: a ready evolution
+always comes first, a new weapon is always offered up to level 5, and the
+rest are random from `offers()`. Reroll (3 on Easy, 2 on Hard) and Skip
+(heal 15) sit under the cards. Waves come from a spawn director in
+`update()` (rate `min(rateCap, rate0 + t/rateK)`, capped alive count), an orc
+elite every `eliteEvery` s that drops a chest, and the demon boss at
+`BOSS_AT` (150 s); killing it wins the run.
+
+- **Build:** up to `MAX_WEAPONS` (4) weapons and `MAX_RELICS` (4) relics,
+  each to level 5. `WEAPONS` holds per-level stat arrays (index 0 is level 1,
+  read with `wl(k)`), the card text for each level (`up`), and `evo`: the
+  partner relic and the evolved weapon. A level-5 weapon plus any level of
+  its relic offers the evolution card; a chest gives a ready evolution, or a
+  random level-up of something you own. Pairs: Ember Bolt + Lodestone →
+  Meteor Storm, Orbit Blades + Fleet Boots → Storm Halo, Frost Nova +
+  Heartwood → Glacier Heart, Chain Lightning + Hourglass → Thunder Crown,
+  Fire Trail + Bark Skin → Phoenix Path, Moon Glaive + Lucky Coin → Eclipse.
+  Evolved numbers are inline in `updateWeapons()`. `RELICS` effects are the
+  small functions after `freshState()` (`moveSpeed`, `magnetR`, `cdMul`,
+  `armor`, `critChance`, `maxHp`).
+- **Difficulty:** `DIFF.easy` / `DIFF.hard` (spawn ramp and cap, alive cap,
+  enemy hp and damage multipliers, hp growth over time, boss hp, elite timing,
+  rerolls). The choice and best times are in `localStorage`
+  (`nightrunnerLevel`, `nightrunnerBest_easy|hard`, `nightrunnerMuted`).
+- **Fair hits:** enemies never hurt on contact. In reach (`r + reach`) and
+  off cooldown they stop and glow red for `windup` seconds, then hit only if
+  you are still in reach (+0.15). Elites show a health bar (`.ebar`).
 
 - **Stack:** three.js 0.170.0 by import map from jsDelivr (GLTFLoader,
   SkeletonUtils, EffectComposer + UnrealBloomPass + OutputPass). No build
@@ -662,8 +684,8 @@ level 4). Waves come from a spawn director in `update()` (rate capped at
   its own mixer and its own cloned materials, so the white hit flash
   (`emissive`) is per enemy. Clip names drop the armature prefix
   (`CharacterArmature|Run` becomes `Run`).
-- **Tuning:** `ETYPES` (enemy hp, speed, contact damage, XP, radius),
-  `freshState()` (player and weapon numbers), `UPS` (upgrades), the bloom
+- **Tuning:** `ETYPES` (enemy hp, speed, damage, XP, radius, windup,
+  reach), `DIFF`, `WEAPONS`, `RELICS`, `xpNeed`, the bloom
   pass (strength .5, threshold .92) and exposure 1.15. Bloom and flashes
   were toned down once already because they washed the scene out.
 - **Layout:** `#stage` sits between the nav bar and the guide link
@@ -671,7 +693,11 @@ level 4). Waves come from a spawn director in `update()` (rate capped at
   `kb-navbar-ready`; screen-space HUD bits (health bar, damage numbers) are
   projected relative to the stage's rect.
 - **Controls:** a floating joystick wherever you touch the stage, a DASH
-  button (2.6 s cooldown, brief invulnerability), WASD / arrows and Space.
+  button (2.6 s cooldown, brief invulnerability), WASD / arrows and Space;
+  P / Escape or the HUD button pauses, and a hidden tab or `pagehide` pauses.
+- **Test handle:** `window.nightrunner` (`S`, `enemies`, `hero`,
+  `spawnEnemy`, `gainXp`, `apply`, `openLevelUp`, the tables). Nothing in
+  the game uses it.
 
 ## Mobile-first constraints learned the hard way
 
