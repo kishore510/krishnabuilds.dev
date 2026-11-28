@@ -148,11 +148,11 @@ const DIFF={
 const MOVE={walk:4.6,accel:22,airAccel:15,gravity:22,jumpV:7.6,step:.42,coyote:.12,buffer:.14,radius:.35};
 const WATER_Y=-.55;
 const HIT={invuln:1.3,knock:6,lift:4.5,stun:.35};
-const CAM={dist:6.4,height:2.7,look:1.2,follow:1.6,dragK:.006};
+const CAM={dist:7.4,height:4.6,look:.5,ahead:2.2,portDist:8.6,portHeight:5.8,follow:1.6,dragK:.006};
 
 // ---------------------------------------------------------------- renderer
 const stage=$('stage');
-let quality=store.get('forestExplorerQuality')==='medium'?'medium':'high';
+let quality=['medium','low'].includes(store.get('forestExplorerQuality'))?store.get('forestExplorerQuality'):'high';
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=.95;
@@ -164,11 +164,16 @@ const sun=new THREE.DirectionalLight(0xfff0d8,3.1);sun.castShadow=true;
 Object.assign(sun.shadow.camera,{left:-24,right:24,top:24,bottom:-24,near:1,far:110});sun.shadow.bias=-.0004;sun.shadow.normalBias=.03;
 scene.add(sun,sun.target);
 const SUN_OFF=new THREE.Vector3(-30,40,18);
-function applyQuality(){
-  renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='high'?2:1));
-  const m=quality==='high'?4096:2048;if(sun.shadow.mapSize.x!==m){sun.shadow.mapSize.set(m,m);sun.shadow.map?.dispose();sun.shadow.map=null;}
-  if(grass)grass.count=quality==='high'?grassN:Math.floor(grassN*.45);
-  $('qualityBtn').textContent='Graphics: '+(quality==='high'?'High':'Medium');
+// High: sharp and fully shadowed. Medium: lower resolution, trees cast no shadows, less grass. Low: no shadows at all, sparse grass.
+const QUAL={high:{label:'High',dpr:1.75,shadow:4096,grass:1,treeShadow:true,shadows:true},
+  medium:{label:'Medium',dpr:1,shadow:2048,grass:.45,treeShadow:false,shadows:true},
+  low:{label:'Low',dpr:.8,shadow:1024,grass:.2,treeShadow:false,shadows:false}};
+function applyQuality(){const Q=QUAL[quality];
+  renderer.setPixelRatio(Math.min(devicePixelRatio,Q.dpr));
+  if(sun.shadow.mapSize.x!==Q.shadow){sun.shadow.mapSize.set(Q.shadow,Q.shadow);sun.shadow.map?.dispose();sun.shadow.map=null;}
+  sun.castShadow=Q.shadows;for(const im of treeIMs)im.castShadow=Q.treeShadow;
+  if(grass)grass.count=Math.floor(grassN*Q.grass);
+  $('qualityBtn').textContent='Graphics: '+Q.label;
   resize();
 }
 function resize(){const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.fov=w<h?68:55;camera.updateProjectionMatrix();}
@@ -186,6 +191,8 @@ const BOUNDS={x0:-24,x1:31,z0:-23,z1:22};
 // south-bank thickets that split the bank into three pockets (west, start, east)
 const WALLS=[{x0:-6.7,x1:-5.3,z0:riverZ(-6)+3.4,z1:30},{x0:9.3,x1:10.7,z0:riverZ(10)+3.4,z1:30}];
 const STONES=[[.2,3.0],[-.5,1.0],[.5,-1.0],[-.2,-3.0]].map(([x,dz])=>({x,z:riverZ(x)+dz,r:.8,top:.02}));
+// jump assist: from the bank or a stone, JUMP towards one of these lands you on it
+const HOPS=[{x:.2,z:riverZ(.2)+5},...STONES,{x:-.1,z:riverZ(-.1)-5}];
 const LOG={x:-12,z:riverZ(-12),len:11.5,hw:.45,top:.1,rot:.08};
 const BRIDGE={x:22,z:riverZ(22),len:9.6,hw:1.1,top:.12};
 const VINES={x:10,z:-11.75};
@@ -226,16 +233,16 @@ function play(g,clip,fade=.18,once=false,speed=1){const a=g.clips.find(c=>c.name
 // ---------------------------------------------------------------- world
 let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
 const solids=[];          // {x,z,r} circles you can't walk through
-let grass=null,grassN=0,water=null,waterTex=null,bridgeG=null,leverArm=null,gateGlow=null;
+let grass=null,grassN=0,water=null,waterTex=null,foamTex=null,treeIMs=[],bridgeG=null,leverArm=null,gateGlow=null;
 const coins=[],chests=[];
 function place(o,x,z,ry=0,y=null,s=1){o.position.set(x,y??groundH(x,z),z);o.rotation.y=ry;o.scale.multiplyScalar(s);scene.add(o);return o}
 // many copies of one model become one InstancedMesh per sub-mesh: a few draw calls instead of thousands
 const _m=new THREE.Matrix4(),_q=new THREE.Quaternion(),_e=new THREE.Euler(),_v=new THREE.Vector3(),_s=new THREE.Vector3();
 function placeM(x,z,ry=0,y=null,sx=1,sy=sx,sz=sx){return new THREE.Matrix4().compose(_v.set(x,y??groundH(x,z),z),_q.setFromEuler(_e.set(0,ry,0)),_s.set(sx,sy,sz))}
-function instance(proto,mats,cast=true){if(!mats.length)return;proto.updateMatrixWorld(true);
+function instance(proto,mats,cast=true,out=null){if(!mats.length)return;proto.updateMatrixWorld(true);
   const chunks={};for(const m of mats){const k=Math.floor(m.elements[12]/18)+','+Math.floor(m.elements[14]/18);(chunks[k]||=[]).push(m)} // 18 m chunks, so off-screen ones are culled
   for(const list of Object.values(chunks))proto.traverse(o=>{if(!o.isMesh)return;const im=new THREE.InstancedMesh(o.geometry,o.material,list.length);
-    list.forEach((m,i)=>im.setMatrixAt(i,_m.multiplyMatrices(m,o.matrixWorld)));im.castShadow=cast;im.receiveShadow=true;im.computeBoundingSphere();scene.add(im)})}
+    list.forEach((m,i)=>im.setMatrixAt(i,_m.multiplyMatrices(m,o.matrixWorld)));im.castShadow=cast;im.receiveShadow=true;im.computeBoundingSphere();scene.add(im);out?.push(im)})}
 function rockGeo(sv,top){const g=new THREE.IcosahedronGeometry(1,3);const p=g.attributes.position,v=new THREE.Vector3();
   for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);const n=Math.sin(v.x*3.1+sv)*Math.cos(v.z*2.7-sv)*.12+Math.sin(v.y*5+v.x*4+sv*2)*.05;v.multiplyScalar(1+n);if(v.y>top)v.y=top+(v.y-top)*.12;p.setXYZ(i,v.x,v.y,v.z)}
   g.computeVertexNormals();return g}
@@ -269,7 +276,7 @@ function buildWorld(){
     im.data[k]=(n.x*.5+.5)*255;im.data[k+1]=(n.y*.5+.5)*255;im.data[k+2]=(n.z*.5+.5)*255;im.data[k+3]=255}
   cx.putImageData(im,0,0);waterTex=new THREE.CanvasTexture(cv);waterTex.wrapS=waterTex.wrapT=THREE.RepeatWrapping;waterTex.repeat.set(16,2);
   const wg=new THREE.PlaneGeometry(150,11,150,8);wg.rotateX(-Math.PI/2);wg.translate(3,0,0);{const p=wg.attributes.position;for(let i=0;i<p.count;i++)p.setZ(i,p.getZ(i)+riverZ(p.getX(i)))}
-  water=new THREE.Mesh(wg,new THREE.MeshPhysicalMaterial({color:0x1d3a33,roughness:.07,metalness:0,normalMap:waterTex,normalScale:new THREE.Vector2(.4,.4),transparent:true,opacity:.64,ior:1.33,envMapIntensity:1.5}));
+  water=new THREE.Mesh(wg,new THREE.MeshPhysicalMaterial({color:0x2b6f86,roughness:.06,metalness:0,normalMap:waterTex,normalScale:new THREE.Vector2(.45,.45),transparent:true,opacity:.74,ior:1.33,envMapIntensity:1.5}));
   water.position.y=WATER_Y;water.receiveShadow=true;scene.add(water);
 
   // trees: every tree in the birch and beech packs, scattered outside the paths and thick around the edges
@@ -299,14 +306,14 @@ function buildWorld(){
   // ferns and fallen branches
   const fern=prep(norm(M.fern.scene,.55));
   const fernM=[];
-  for(let i=0;i<340;i++){const x=BOUNDS.x0+rnd()*(BOUNDS.x1-BOUNDS.x0),z=BOUNDS.z0+rnd()*(BOUNDS.z1-BOUNDS.z0);if(Math.abs(z-riverZ(x))<5.2||nearKey(x,z,1.6))continue;fernM.push(placeM(x,z,rnd()*6,null,.8+rnd()*1.3))}
+  for(let i=0;i<340;i++){const x=BOUNDS.x0+rnd()*(BOUNDS.x1-BOUNDS.x0),z=BOUNDS.z0+rnd()*(BOUNDS.z1-BOUNDS.z0);if(Math.abs(z-riverZ(x))<8||nearKey(x,z,1.6))continue;fernM.push(placeM(x,z,rnd()*6,null,.8+rnd()*1.3))}
   for(const c of CHESTS)for(let i=0;i<6;i++){const a=i/6*Math.PI*2,x=c.x+Math.cos(a)*1.3,z=c.z+Math.sin(a)*1.3;fernM.push(placeM(x,z,rnd()*6,null,1.6+rnd()))}
   for(const w of WALLS)for(let z=w.z0+.5;z<BOUNDS.z1+2;z+=.9)for(const sx of[-1.2,1.2]){const x=(w.x0+w.x1)/2+sx+(rnd()-.5)*.5;fernM.push(placeM(x,z,rnd()*6,null,2+rnd()*1.2))}
   instance(fern,fernM,false);
   const stick=prep(norm(M.trunk.scene,.25));
   const stickM=[];for(let i=0;i<22;i++){const x=BOUNDS.x0+rnd()*(BOUNDS.x1-BOUNDS.x0),z=BOUNDS.z0+rnd()*(BOUNDS.z1-BOUNDS.z0);if(Math.abs(z-riverZ(x))<5.5||nearKey(x,z,3))continue;stickM.push(placeM(x,z,rnd()*6,null,.8+rnd()))}
   instance(stick,stickM);
-  proto.forEach((p,i)=>instance(p,treeM[i]));RV.forEach((r,i)=>instance(r,rockM[i]));
+  proto.forEach((p,i)=>instance(p,treeM[i],true,treeIMs));RV.forEach((r,i)=>instance(r,rockM[i]));
   // the fallen log across the river
   {const lg=prep(norm(M.trunk.scene.clone(),.3));const b=new THREE.Box3().setFromObject(lg);lg.scale.multiplyScalar(LOG.len/(b.max.x-b.min.x));
    lg.rotation.y=Math.PI/2+LOG.rot;lg.position.set(LOG.x,LOG.top-1.0,LOG.z);scene.add(lg)}
@@ -338,8 +345,17 @@ function buildWorld(){
    grassN=130000;grass=new THREE.InstancedMesh(bg,gmat,grassN);const m=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sc=new THREE.Vector3();let k=0;
    for(let i=0;i<grassN*4&&k<grassN;i++){const x=BOUNDS.x0-3+rnd()*(BOUNDS.x1-BOUNDS.x0+6),z=BOUNDS.z0-3+rnd()*(BOUNDS.z1-BOUNDS.z0+6);const d=Math.abs(z-riverZ(x));if(d<4.9)continue;
      if(rnd()>THREE.MathUtils.smoothstep(d,4.9,6.5))continue;const pf=plateauF(x,z);if(pf>0&&pf<.97)continue;
-     e.set((rnd()-.5)*.5,rnd()*6,(rnd()-.5)*.5);q.setFromEuler(e);const s=.6+rnd()*1.1;m.compose(v.set(x,groundH(x,z)-.02,z),q,sc.set(s,s*(.8+rnd()*.6),s));grass.setMatrixAt(k++,m)}
+     e.set((rnd()-.5)*.5,rnd()*6,(rnd()-.5)*.5);q.setFromEuler(e);const s=(.5+rnd()*.9)*(d<8?.55:1);m.compose(v.set(x,groundH(x,z)-.02,z),q,sc.set(s,s*(.8+rnd()*.6),s));grass.setMatrixAt(k++,m)}
    grassN=k;grass.count=k;grass.receiveShadow=true;scene.add(grass)}
+  // jump-assist ring and the hero's blob shadow
+  ring=new THREE.Mesh(new THREE.RingGeometry(.55,.8,40),new THREE.MeshBasicMaterial({color:0xfff1a8,transparent:true,opacity:.85,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.renderOrder=2;ring.visible=false;scene.add(ring);
+  blob=new THREE.Mesh(new THREE.CircleGeometry(.42,24),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.45,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.visible=false;scene.add(blob);
+  // foam along both banks so the river's edge is easy to see
+  {const c=document.createElement('canvas');c.width=64;c.height=256;const g=c.getContext('2d');for(let i=0;i<900;i++){g.fillStyle=`rgba(255,255,255,${Math.random()*.5})`;g.fillRect(Math.random()*64,Math.random()*256,2+Math.random()*5,1+Math.random()*2)}
+   foamTex=new THREE.CanvasTexture(c);foamTex.wrapS=foamTex.wrapT=THREE.RepeatWrapping;foamTex.repeat.set(1,30);
+   for(const side of[-1,1]){const fg=new THREE.PlaneGeometry(150,.7,150,1);fg.rotateX(-Math.PI/2);fg.translate(3,0,0);const p=fg.attributes.position;
+     for(let i=0;i<p.count;i++){const x=p.getX(i);p.setZ(i,riverZ(x)+side*(3.95+(p.getZ(i)>0?.35:-.35)*side))}
+     const f=new THREE.Mesh(fg,new THREE.MeshBasicMaterial({map:foamTex,transparent:true,opacity:.7,depthWrite:false}));f.position.y=WATER_Y+.02;f.renderOrder=1;scene.add(f)}}
   // coins and chests
   const coinP=prep(norm(M.coin.scene,.45));coinP.traverse(o=>{if(o.isMesh){o.material=o.material.clone();o.material.emissive=new THREE.Color(0x553300)}});
   for(const c of COINS){const o=coinP.clone();const y=c.y??groundH(c.x,c.z)+.75;place(o,c.x,c.z,0,y);coins.push({o,x:c.x,z:c.z,y,got:false})}
@@ -370,7 +386,7 @@ function supportAt(x,z,y){ // highest surface under (x,z) that you can stand on 
 // ---------------------------------------------------------------- state
 let S=null,diffKey='easy',diff=DIFF.easy,running=false,paused=false,last=performance.now();
 function freshState(){return {t:0,hearts:diff.hearts,coins:0,chests:0,x:2,z:14,y:groundH(2,14),vx:0,vz:0,vy:0,face:Math.PI,grounded:true,coyote:0,buffer:0,
-  inv:0,stun:0,check:0,bridge:0,lever:false,climb:null,act:null,busy:0,over:false,fall:null,camYaw:0,dragT:9,won:false}}
+  inv:0,stun:0,check:0,hop:null,bridge:0,lever:false,climb:null,act:null,busy:0,over:false,fall:null,camYaw:0,dragT:9,won:false}}
 function resetLevel(){
   S=freshState();
   for(const c of coins){c.got=false;c.o.visible=true}
@@ -426,13 +442,13 @@ let hintT=0;function hint(s,dur=5){const h=$('hint');h.textContent=s;h.hidden=fa
 const fmt=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
 
 // ---------------------------------------------------------------- gameplay
-function hurt(fromX,fromZ){if(S.inv>0||S.over)return;S.hearts--;S.inv=HIT.invuln;S.stun=HIT.stun;sfx.hurt();
+function hurt(fromX,fromZ){if(S.inv>0||S.over)return;S.hop=null;S.hearts--;S.inv=HIT.invuln;S.stun=HIT.stun;sfx.hurt();
   const dx=S.x-fromX,dz=S.z-fromZ,L=Math.hypot(dx,dz)||1;S.vx=dx/L*HIT.knock;S.vz=dz/L*HIT.knock;S.vy=HIT.lift;S.grounded=false;
   $('flash').style.background='rgba(255,40,40,.35)';setTimeout(()=>$('flash').style.background='rgba(255,40,40,0)',160);
   play(hero,'HitRecieve',.08,true);hud();if(S.hearts<=0)lose();}
 function fellIn(){if(S.fall)return;sfx.splash();S.hearts--;hud();S.fall=.9;S.vx=S.vz=0;
   if(S.hearts<=0){lose();return}toast('Splash!','Back to the last safe spot');}
-function respawn(){const c=CHECKS[S.check];S.x=c.x;S.z=c.z;S.y=groundH(c.x,c.z)+.05;S.vx=S.vz=S.vy=0;S.inv=1;S.fall=null;S.climb=null;hero.visible=true;}
+function respawn(){S.hop=null;const c=CHECKS[S.check];S.x=c.x;S.z=c.z;S.y=groundH(c.x,c.z)+.05;S.vx=S.vz=S.vy=0;S.inv=1;S.fall=null;S.climb=null;hero.visible=true;}
 function lose(){S.over=true;play(hero,'Death',.1,true);setTimeout(()=>end(false),1400)}
 function nearest(){ // what the ACT button would do right now
   if(!S.grounded||S.climb)return null;
@@ -447,8 +463,13 @@ function doAct(a){
   if(a.k==='lever'){S.lever=true;S.busy=1;sfx.lever();play(hero,'Interact',.1,true);toast('The bridge is lowering','Head east to the river');}
   if(a.k==='climb'){S.climb={t:0,x0:S.x,z0:S.z,y0:S.y};S.face=Math.PI;hint('Climbing…',1.5)}
 }
+function hopTarget(dx,dz){let best=null,bs=1e9;
+  for(const t of HOPS){const ex=t.x-S.x,ez=t.z-S.z,d=Math.hypot(ex,ez);if(d<.9||d>3.7)continue;const c=(ex*dx+ez*dz)/d;if(c<.55)continue;const sc=d*(2.2-c);if(sc<bs){bs=sc;best=t}}
+  return best&&{x:best.x,z:best.z,top:best.top??groundH(best.x,best.z)}}
+let ring=null,blob=null;
+function showRing(t){if(!ring)return;ring.visible=!!t;if(t){ring.position.set(t.x,t.top+.04,t.z);const k=1+Math.sin(performance.now()/180)*.08;ring.scale.set(k,k,k)}}
 function update(dt){
-  S.t+=dt;windU.value+=dt;waterTex.offset.x+=dt*.035;
+  S.t+=dt;windU.value+=dt;waterTex.offset.x+=dt*.035;foamTex.offset.y-=dt*.5;
   S.inv=Math.max(0,S.inv-dt);S.stun=Math.max(0,S.stun-dt);S.busy=Math.max(0,S.busy-dt);S.dragT+=dt;
   if(toastT>0&&(toastT-=dt)<=0)$('toast').style.opacity=0;if(hintT>0&&(hintT-=dt)<=0)$('hint').style.opacity=0;
   // lever and bridge
@@ -467,11 +488,15 @@ function update(dt){
   const sy=Math.sin(S.camYaw),cy=Math.cos(S.camYaw);
   const wx=ix*cy+iy*sy,wz=-ix*sy+iy*cy;           // camera right * ix + camera back * iy
   const tvx=wx*MOVE.walk,tvz=wz*MOVE.walk,acc=(S.grounded?MOVE.accel:MOVE.airAccel)*dt;
-  if(S.stun<=0){S.vx+=THREE.MathUtils.clamp(tvx-S.vx,-acc,acc);S.vz+=THREE.MathUtils.clamp(tvz-S.vz,-acc,acc)}
-  if(Math.hypot(wx,wz)>.1){S.face=Math.atan2(wx,wz);if(S.dragT>1.2){const target=Math.atan2(-wx,-wz);let d=target-S.camYaw;d=Math.atan2(Math.sin(d),Math.cos(d));S.camYaw+=d*Math.min(1,dt*CAM.follow*Math.min(1,Math.abs(iy)+.3))}}
-  // jump (with coyote time and a short input buffer)
+  if(S.stun<=0&&!S.hop){S.vx+=THREE.MathUtils.clamp(tvx-S.vx,-acc,acc);S.vz+=THREE.MathUtils.clamp(tvz-S.vz,-acc,acc)}
+  if(Math.hypot(wx,wz)>.1&&!S.hop){S.face=Math.atan2(wx,wz);if(S.dragT>1.2){const target=Math.atan2(-wx,-wz);let d=target-S.camYaw;d=Math.atan2(Math.sin(d),Math.cos(d));S.camYaw+=d*Math.min(1,dt*CAM.follow*Math.min(1,Math.abs(iy)+.3))}}
+  // jump (with coyote time and a short input buffer); near the stones it aims for you
+  let aim=null;if(S.grounded&&!S.hop){const L=Math.hypot(wx,wz);aim=L>.2?hopTarget(wx/L,wz/L):hopTarget(Math.sin(S.face),Math.cos(S.face))}
   S.coyote=S.grounded?MOVE.coyote:Math.max(0,S.coyote-dt);if(jumpQ){S.buffer=MOVE.buffer;jumpQ=false}else S.buffer=Math.max(0,S.buffer-dt);
-  if(S.buffer>0&&S.coyote>0&&S.stun<=0&&S.busy<=0){S.vy=MOVE.jumpV;S.grounded=false;S.coyote=0;S.buffer=0;sfx.jump()}
+  if(S.buffer>0&&S.coyote>0&&S.stun<=0&&S.busy<=0){S.vy=MOVE.jumpV;S.grounded=false;S.coyote=0;S.buffer=0;sfx.jump();
+    if(aim){const T=(MOVE.jumpV+Math.sqrt(MOVE.jumpV**2+2*MOVE.gravity*Math.max(-1,S.y-aim.top)))/MOVE.gravity;S.vx=(aim.x-S.x)/T;S.vz=(aim.z-S.z)/T;S.hop=aim;S.face=Math.atan2(S.vx,S.vz)}}
+  if(S.hop){if(S.grounded&&S.vy===0)S.hop=null}
+  showRing(S.hop||aim);
   // horizontal move with walls: bounds, thickets, solids, and slopes too steep to walk up
   let nx=S.x+S.vx*dt,nz=S.z+S.vz*dt;
   nx=THREE.MathUtils.clamp(nx,BOUNDS.x0,BOUNDS.x1);nz=THREE.MathUtils.clamp(nz,BOUNDS.z0,BOUNDS.z1);
@@ -483,7 +508,7 @@ function update(dt){
   S.x=nx;S.z=nz;
   // vertical
   S.vy-=MOVE.gravity*dt;S.y+=S.vy*dt;const s2=supportAt(S.x,S.z,S.y);
-  if(S.y<=s2.h){if(!S.grounded&&S.vy<-4)sfx.land();S.y=s2.h;S.vy=0;S.grounded=true}else if(S.y>s2.h+.05)S.grounded=false;
+  if(S.y<=s2.h){if(!S.grounded&&S.vy<-4)sfx.land();S.y=s2.h;S.vy=0;S.grounded=true;S.hop=null}else if(S.y>s2.h+.05)S.grounded=false;
   if(S.y<WATER_Y+.1&&s2.h<WATER_Y&&Math.abs(S.z-riverZ(S.x))<5.2){fellIn();return}
   // checkpoints
   for(let i=1;i<CHECKS.length;i++){const c=CHECKS[i];if(i!==S.check&&S.grounded&&Math.hypot(S.x-c.x,S.z-c.z)<c.r){S.check=i;if(S.t>1)hint('Checkpoint',1.5)}}
@@ -514,6 +539,7 @@ function update(dt){
   placeHero(dt);
 }
 function placeHero(dt){
+  if(blob){const g=supportAt(S.x,S.z,S.y).h,h=S.y-g;blob.visible=!S.grounded&&h>.05&&S.fall===null;blob.position.set(S.x,Math.max(g,WATER_Y)+.03,S.z);const k=Math.max(.45,1-h*.25);blob.scale.set(k,k,k);blob.material.opacity=.45*k}
   hero.position.set(S.x,S.y,S.z);let d=S.face-hero.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));hero.rotation.y+=d*Math.min(1,dt*12);
   hero.visible=!(S.inv>0&&S.inv<HIT.invuln-.3&&Math.floor(S.inv*12)%2);
   if(S.climb||S.over||S.busy>0||(hero.cur&&hero.cur.loop===THREE.LoopOnce&&hero.cur.isRunning()&&!S.grounded===false&&S.stun>0))return;
@@ -525,9 +551,10 @@ function placeHero(dt){
 }
 const camPos=new THREE.Vector3(),camLook=new THREE.Vector3();
 function updateCamera(dt,snap){
-  const tx=S.x+Math.sin(S.camYaw)*CAM.dist,tz=S.z+Math.cos(S.camYaw)*CAM.dist;let ty=S.y+CAM.height;ty=Math.max(ty,groundH(tx,tz)+.8);
+  const port=camera.aspect<1,dist=port?CAM.portDist:CAM.dist,fx=-Math.sin(S.camYaw),fz=-Math.cos(S.camYaw);
+  const tx=S.x-fx*dist,tz=S.z-fz*dist;let ty=S.y+(port?CAM.portHeight:CAM.height);ty=Math.max(ty,groundH(tx,tz)+1.2);
   const k=snap?1:Math.min(1,dt*6);camPos.lerp(new THREE.Vector3(tx,ty,tz),k);if(snap)camPos.set(tx,ty,tz);
-  camLook.lerp(new THREE.Vector3(S.x,S.y+CAM.look,S.z),snap?1:Math.min(1,dt*10));
+  camLook.lerp(new THREE.Vector3(S.x+fx*CAM.ahead,S.y+CAM.look,S.z+fz*CAM.ahead),snap?1:Math.min(1,dt*8));
   camera.position.copy(camPos);camera.lookAt(camLook);
   sun.position.set(S.x+SUN_OFF.x,S.y+SUN_OFF.y,S.z+SUN_OFF.z);sun.target.position.set(S.x,S.y,S.z);
 }
@@ -535,10 +562,11 @@ function updateCamera(dt,snap){
 // ---------------------------------------------------------------- flow
 function start(key){
   diffKey=key;diff=DIFF[key];store.set('forestExplorerLevel',key);audioWake();
-  resetLevel();running=true;paused=false;last=performance.now();fpsT=0;fpsN=0;autoQ=quality==='high'&&!store.get('forestExplorerQuality');
+  resetLevel();running=true;paused=false;last=performance.now();fpsT=0;fpsN=0;autoQ=!store.get('forestExplorerQuality');
   ['startScreen','endScreen','pauseScreen'].forEach(id=>$(id).hidden=true);['hud','ctl'].forEach(id=>$(id).hidden=false);
-  hint(matchMedia('(pointer:coarse)').matches?'Left thumb to walk · drag on the right to look · JUMP across the stones':'WASD to walk · Space to jump · drag to look · E to act',6);
+  hint(matchMedia('(pointer:coarse)').matches?'Left thumb to walk · drag on the right to look · aim at a stone and JUMP: the ring shows where you\'ll land':'WASD to walk · Space to jump (aim at a stone: the ring shows where you\'ll land) · drag to look · E to act',6);
   updateCamera(0,true);
+  if(stage.clientHeight>stage.clientWidth)setTimeout(()=>{if(running&&S.t<8)toast('Tip: turn your phone sideways','for a wider view of the forest')},6500);
 }
 function end(won){running=false;$('hud').hidden=$('ctl').hidden=true;$('stick').style.display='none';$('toast').hidden=$('hint').hidden=true;
   $('endTitle').textContent=won?'Through the gate!':'Lost in the woods';
@@ -553,12 +581,12 @@ function pauseGame(){if(!running||paused)return;paused=true;$('pauseScreen').hid
 function resume(){paused=false;$('pauseScreen').hidden=true;last=performance.now()}
 function showMenu(){$('endScreen').hidden=true;$('pauseScreen').hidden=true;['hud','ctl'].forEach(id=>$(id).hidden=true);running=false;paused=false;$('startScreen').hidden=false}
 $('pauseBtn').onclick=pauseGame;$('resumeBtn').onclick=resume;$('restartBtn').onclick=()=>start(diffKey);$('quitBtn').onclick=showMenu;
-$('qualityBtn').onclick=()=>{quality=quality==='high'?'medium':'high';store.set('forestExplorerQuality',quality);applyQuality()};
+$('qualityBtn').onclick=()=>{quality={high:'medium',medium:'low',low:'high'}[quality];store.set('forestExplorerQuality',quality);autoQ=false;applyQuality()};
 $('easyBtn').onclick=()=>start('easy');$('hardBtn').onclick=()=>start('hard');$('againBtn').onclick=()=>start(diffKey);$('menuBtn').onclick=showMenu;
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseGame();last=performance.now()});addEventListener('pagehide',pauseGame);
 
 // frame loop, with a frame-rate readout and a one-time drop to Medium if High runs slowly
-let fpsT=0,fpsN=0,autoQ=false,idleT=0;
+let fpsT=0,fpsN=0,autoQ=false,idleT=0,qDrop=0;
 let manual=false;            // test handle only: freeze the loop and step it by hand
 function tick(dt){if(running&&!paused){update(dt);updateCamera(dt)}
   if(!paused){hero?.mixer.update(dt);for(const c of creatures)c.g.mixer.update(dt);elk?.mixer.update(dt);frog?.mixer.update(dt);for(const c of chests)c.o.mixer.update(dt);}}
@@ -570,7 +598,8 @@ function frame(now){
   if(!paused){hero?.mixer.update(dt);for(const c of creatures)c.g.mixer.update(dt);elk?.mixer.update(dt);frog?.mixer.update(dt);for(const c of chests)c.o.mixer.update(dt);}
   renderer.render(scene,camera);
   fpsT+=dt;fpsN++;if(fpsT>=1){const f=Math.round(fpsN/fpsT);$('fps').textContent=f+' fps';
-    if(autoQ&&running&&S.t>3&&S.t<12&&f<40){autoQ=false;quality='medium';applyQuality();toast('Graphics set to Medium','for a smoother game · change it in Pause')}fpsT=0;fpsN=0}
+    if(autoQ&&running&&S.t>3&&S.t<25&&now-qDrop>4000){const next=quality==='high'&&f<45?'medium':quality==='medium'&&f<30?'low':null;
+      if(next){quality=next;qDrop=now;applyQuality();toast('Graphics set to '+QUAL[next].label,'for a smoother game · change it in Pause')}}fpsT=0;fpsN=0}
   if(running&&!paused&&S){$('time').textContent=fmt(S.t)}
 }
 
