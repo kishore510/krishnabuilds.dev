@@ -840,22 +840,45 @@ phone, not the smallest download (about 8 MB of models and textures).
   under you: terrain, stones (discs), the log and bridge (rotated boxes, the
   bridge only once lowered). `solids` are circles you can't walk through.
   Below `WATER_Y` near the river is a fall: lose a heart, back to the checkpoint.
+- **Jump assist (1.86.1):** `HOPS` is the stones plus a landing point on each
+  bank. When you're grounded, `hopTarget` picks the closest one 0.9-3.7 m away
+  within about 55° of the stick (or your facing); JUMP then sets the speed that
+  lands the arc on its centre and ignores steering until you land (`S.hop`).
+  A ring (`showRing`) marks the target and a blob shadow shows where you'll
+  come down. Added after the owner kept falling in on a phone.
+- **Sword (1.86.1):** `sword.glb` (Quaternius, CC0) hangs from the hero's
+  `WristR` bone (`SWORD.len`, `pos`, `rot`). ACT swings it whenever nothing
+  is in reach to open, pull or climb (the button reads SWING): `swing()` plays
+  `Sword_Slash`, and `strike()` lands `hitAt` s later on creatures within
+  `reach` and the front `arc`. A hit stuns and pushes the creature; at 0 hp
+  (foxes 1 on Easy, 2 on Hard via `DIFF.foxHp`, the bee 1) it plays `Death`,
+  shrinks away and pays `bounty` coins. Stunned or defeated creatures can't hurt.
 - **Creatures:** two foxes patrol the north bank (on Hard they chase you
   within `foxChase` while near home), a bee circles the east pocket. A touch
   costs a heart with knock-back and `HIT.invuln` s of flashing invulnerability.
   The elk and frog are scenery. `DIFF`: Easy 5 hearts and slower animals,
   Hard 3 hearts, chasing foxes and a faster bee.
+- **Camera (`CAM`):** behind and well above the hero, looking `ahead` of
+  them, higher and further back in portrait, so the river reads from the start
+  pocket. Ferns stay 8 m from the river and grass is shorter near it.
 - **Look and speed:** the sky is one equirect JPEG used as background and
   environment light. Terrain is one mesh with a `splat` attribute painting
   grass / pebbles / mud / leaves in `onBeforeCompile`; grass blades are one
   `InstancedMesh` swaying in the vertex shader; trees, ferns, sticks and rocks
   go through `instance()`, which makes one InstancedMesh per sub-mesh per
   18 m chunk so the camera and the hero-following shadow camera cull them.
-  About 300 draw calls and 2M triangles a frame on High. **Quality:** High
-  (pixel ratio up to 2, 4096 shadow map, all grass) or Medium (1, 2048, 45%
-  of the grass), set in Pause and saved; if High runs under 40 fps between 3
-  and 12 s into the first play it drops to Medium once by itself. The HUD
+  About 300 draw calls and 2M triangles a frame on High. **Quality** (`QUAL`):
+  High (pixel ratio up to 1.75, 4096 shadow map, all grass), Medium (1, 2048,
+  45% grass, trees cast no shadows), Low (0.8, no shadows, 20% grass). Pause
+  cycles them and saves the pick; until you pick, each play steps down by
+  itself between 3 and 25 s in (High under 45 fps, Medium under 30). The HUD
   shows the frame rate.
+- **Fullscreen:** the embed script carries `data-fullscreen="landscape"` like
+  Dojo Duel and Tennis, so there is no navbar; EASY / HARD / PLAY AGAIN call
+  `kbEnterFullscreen` (fullscreen plus landscape lock where the browser allows;
+  iOS Safari has neither). During play `body.playing` hides the corner back
+  button (it sits where the left thumb walks) and `kbSetChromeHidden(true)`
+  hides the guide link and pill; pause, results and the title show them.
 - **Controls:** left half of the screen is a floating joystick, dragging on
   the right half turns the camera (it also drifts behind you while you walk),
   JUMP and ACT buttons (ACT is labelled OPEN / PULL / CLIMB when something is
