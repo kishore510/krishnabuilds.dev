@@ -10,7 +10,7 @@ page is a single self-contained HTML file with inline `<style>`/`<script>`
 (one exception: a game whose logic needs headless tests may split it into a
 pure, DOM-free script next to its `index.html`; Tennis's and Wildcard's
 `engine.js` are the two so far, see `docs/decisions.md`, 2026-11-08).
-A second exception: the 3D games (Nightrunner, Coral Drift) load three.js
+A second exception: the 3D games (Nightrunner, Coral Drift, Forest Explorer) load three.js
 from jsDelivr (pinned) and their models from `games/<slug>/models/`; see
 "Nightrunner notes", "Coral Drift notes" and `docs/decisions.md`, 2026-11-27.
 Live at `arcade.krishnabuilds.dev`. Arcade now lives in the krishnabuilds.dev
@@ -70,6 +70,8 @@ games/nightrunner/index.html  — Nightrunner (three.js 3D arena survival shoote
 games/nightrunner/models/     — its CC0 glTF models (Quaternius, Kenney) and LICENSE.txt
 games/coral-drift/index.html  — Coral Drift (three.js 3D scuba dive; see "Coral Drift notes")
 games/coral-drift/models/     — its reduced CC0 / CC-BY models and scans, a sand texture, and LICENSE.txt (credits)
+games/forest-explorer/index.html — Forest Explorer (three.js third-person 3D adventure level; see "Forest Explorer notes")
+games/forest-explorer/models/ — its reduced CC0 / CC-BY models, Poly Haven textures and sky, and LICENSE.txt (credits)
 src/worker.js                 — the Worker: static assets, play counts, Wildcard table routes
 src/wildcard-room.js          — Wildcard online room rules (seats, host, bots, who is sent what), tested by scripts/wildcard-room.test.mjs
 src/wildcard-table.js         — the WildcardTable Durable Object around wildcard-room.js (WebSockets, storage, alarms)
@@ -78,7 +80,7 @@ games/<slug>/index.html       — next game goes here
 ```
 
 This list is not every game. The `GAMES` array in `index.html` is the source
-of truth, and `README.md` lists all 39 with their folders and taglines.
+of truth, and `README.md` lists all 40 with their folders and taglines.
 
 ## Adding a new game
 
@@ -811,6 +813,61 @@ dives, deepest}`, validated by `loadSave`); also `coralDriftMode`,
 - **Test handle:** `window.coralDrift` (`S`, `startDive`, `endDive`,
   `simulate`, `input`, `logSpecies`, `groups`, `CORAL_MESH`, ...). Nothing in
   the game uses it.
+
+## Forest Explorer notes
+
+A third-person 3D adventure (`games/forest-explorer/`, 1.86.0), the third
+three.js game: one hand-made level, Mossy Ford, about 2-4 minutes. Realistic
+scenery (Poly Haven scans and photo textures, Sketchfab CC-BY trees and elk)
+with Quaternius's stylised hero, animals, chest and coins; the mix was the
+owner's pick from mock-ups (2026-11-28). Built for the best look on a good
+phone, not the smallest download (about 8 MB of models and textures).
+
+- **Level** (constants near the top of the script): the river runs along x
+  (`riverZ(x)`), water at `WATER_Y`. Start on the south bank; thickets
+  (`WALLS`) split that bank into a west pocket, the start and an east pocket.
+  Route: `STONES` (jump between them) to the north bank, west over `LOG` to
+  the west pocket's chest and back, climb the `VINES` up the ledge (`PLAT`,
+  terrain raised 3 m by `plateauF`, only reachable by the vines), open the
+  ledge chest, pull `LEVER` to lower `BRIDGE`, drop off the ledge's east end,
+  cross the bridge to the east pocket's chest and walk through `GATE` to win.
+  Chests are optional (each +5 coins); the gate ends the level. `CHECKS` are
+  checkpoints, the latest one touched is where a fall into the river sends you.
+- **Movement** (`MOVE`): camera-relative walking with acceleration,
+  `jumpV` / `gravity` (about 3 m at full speed), coyote time and a jump
+  buffer, `step` (the highest ledge you can walk up; anything higher is a
+  wall, which is how the cliff works). `supportAt(x, z, y)` is the surface
+  under you: terrain, stones (discs), the log and bridge (rotated boxes, the
+  bridge only once lowered). `solids` are circles you can't walk through.
+  Below `WATER_Y` near the river is a fall: lose a heart, back to the checkpoint.
+- **Creatures:** two foxes patrol the north bank (on Hard they chase you
+  within `foxChase` while near home), a bee circles the east pocket. A touch
+  costs a heart with knock-back and `HIT.invuln` s of flashing invulnerability.
+  The elk and frog are scenery. `DIFF`: Easy 5 hearts and slower animals,
+  Hard 3 hearts, chasing foxes and a faster bee.
+- **Look and speed:** the sky is one equirect JPEG used as background and
+  environment light. Terrain is one mesh with a `splat` attribute painting
+  grass / pebbles / mud / leaves in `onBeforeCompile`; grass blades are one
+  `InstancedMesh` swaying in the vertex shader; trees, ferns, sticks and rocks
+  go through `instance()`, which makes one InstancedMesh per sub-mesh per
+  18 m chunk so the camera and the hero-following shadow camera cull them.
+  About 300 draw calls and 2M triangles a frame on High. **Quality:** High
+  (pixel ratio up to 2, 4096 shadow map, all grass) or Medium (1, 2048, 45%
+  of the grass), set in Pause and saved; if High runs under 40 fps between 3
+  and 12 s into the first play it drops to Medium once by itself. The HUD
+  shows the frame rate.
+- **Controls:** left half of the screen is a floating joystick, dragging on
+  the right half turns the camera (it also drifts behind you while you walk),
+  JUMP and ACT buttons (ACT is labelled OPEN / PULL / CLIMB when something is
+  in reach). Keyboard WASD / arrows, Space, E, mouse drag or Q / R, P / Escape.
+- **Storage:** `forestExplorerLevel`, `forestExplorerQuality`,
+  `forestExplorerMuted`, `forestExplorerBest_easy|hard` (best time).
+- **Test handle:** `window.forestExplorer` (`S`, `start`, `manual(on)` to stop
+  the loop and `step(n, dt, draw)` to run it by hand, `setJoy`, `press`,
+  `keys`, `info` (renderer stats), the level constants). Headless Chromium
+  renders this scene in seconds per frame, so drive it with `manual(true)`
+  and `step(n, 1/60, false)`. A scripted run of the whole route on Easy
+  finishes in about 56 s of game time. Nothing in the game uses the handle.
 
 ## Mobile-first constraints learned the hard way
 
