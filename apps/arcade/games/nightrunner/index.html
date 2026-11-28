@@ -253,6 +253,11 @@ const LOOKS={
   lantern:{label:'Lantern',list:[{id:'warm',name:'Warm lantern',hex:'#ffb45e',cost:0},{id:'moon',name:'Moonlight lantern',hex:'#9cc4ff',cost:80},
     {id:'witch',name:'Witchfire lantern',hex:'#7dff9a',cost:80},{id:'rose',name:'Rose lantern',hex:'#ff7ab0',cost:100}]},
 };
+// Late game: on top of the linear ramp, enemy hp gains LATE_HP*(t/300)^2 (x1.5 more at 5:00, about x3.8 more at 8:00).
+const LATE_HP=1.5;
+// Lingering: stay within LINGER_R of one spot for LINGER_T seconds (after the first LINGER_FROM) and a shadow pool forms there.
+// It warns for SHADE_WARN s, then lasts SHADE_LIFE s and hurts SHADE_DMG every half second while you stand in it.
+const LINGER_R=3,LINGER_T=4,LINGER_FROM=40,SHADE_R=2.8,SHADE_WARN=1.3,SHADE_LIFE=6,SHADE_DMG=9;
 const MAX_WEAPONS=4, MAX_RELICS=4, MAX_LV=5;
 const xpNeed=lv=>Math.round(4+(lv-1)*3.2+(lv-1)*(lv-1)*.3);
 // windup: seconds an enemy telegraphs (glows red, stops) before its hit lands; reach: how far the hit lands from its edge.
@@ -502,6 +507,10 @@ const potions=pool(()=>{const m=new THREE.Group();
 const coins=pool(()=>{const m=T.coin.scene.clone();m.scale.setScalar(T.coin.s);m.traverse(o=>{if(o.isMesh){o.castShadow=true;o.material=o.material.clone();o.material.emissive=new THREE.Color(.5,.32,0);}});scene.add(m);return{m};});
 function dropCoin(x,z,val){const o=coins.get();o.m.visible=true;o.m.position.set(x,.35,z);o.val=val;o.t=0;o.pull=false;}
 const wardMesh=new THREE.Mesh(new THREE.SphereGeometry(1.05,24,16),addMat(.45,.8,1.7,.14));wardMesh.visible=false;scene.add(wardMesh);
+const shadeGeo=new THREE.CircleGeometry(1,48);shadeGeo.rotateX(-Math.PI/2);
+const shades=pool(()=>{const m=new THREE.Mesh(shadeGeo,new THREE.MeshBasicMaterial({color:0x14051f,transparent:true,opacity:0,depthWrite:false}));
+  const rim=new THREE.Mesh(new THREE.RingGeometry(.93,1,64).rotateX(-Math.PI/2),addMat(1.2,.3,2,0));rim.position.y=.01;m.add(rim);m.renderOrder=1;scene.add(m);return{m,rim};});
+function spawnShade(x,z){const o=shades.get();o.m.visible=true;o.m.position.set(x,.075,z);o.m.scale.set(SHADE_R,1,SHADE_R);o.t=0;o.tick=0;}
 function dropPotion(x,z){const o=potions.get();o.m.visible=true;o.m.position.set(x,0,z);o.t=0;}
 const chests=pool(()=>{const m=T.chest.scene.clone();m.scale.setScalar(T.chest.s);m.traverse(o=>{if(o.isMesh)o.castShadow=true;});
   const glow=new THREE.Mesh(new THREE.PlaneGeometry(3,3).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({map:glowTex,color:new THREE.Color(2.2,1.6,.4),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
@@ -545,7 +554,7 @@ const keys={};const joy={x:0,y:0,id:null,ox:0,oy:0};
 function freshState(){return{t:0,hp:100,lv:1,xp:0,need:xpNeed(1),kills:0,
   w:{[SAVE.eq.weapon]:1},evo:new Set(),p:{},rerolls:diff.rerolls+U('reroll'),pendingLv:0,embers:0,bossKills:0,ward:U('ward')>0,wardT:0,revive:U('revive'),
   timers:{bolt:0,nova:2,chain:1,glaive:1,trail:0},bladeA:0,bladeHit:new Map(),
-  dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossIdx:0,boss:null,seen:new Set(),warned:-1,fireT:0,won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
+  dashCd:0,dashT:0,inv:0,spawnT:0,eliteT:diff.eliteFirst,bossIdx:0,boss:null,seen:new Set(),warned:-1,fireT:0,anchor:{x:0,z:0,t:0},won:false,over:false,shake:0,dir:new THREE.Vector3(0,0,1)}}
 // derived numbers from relic levels
 const P=k=>S.p[k]||0;
 const maxHp=()=>100+15*P('heart')+10*U('vit');
@@ -558,7 +567,7 @@ const wl=k=>S.w[k]-1; // index into a weapon's per-level arrays
 
 function reset(){
   for(const e of enemies)scene.remove(e.ch.g);enemies=[];
-  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots,potions,coins].forEach(p=>p.clear());
+  [bolts,rings,gems,zaps,patches,glaives,chests,teles,shots,potions,coins,shades].forEach(p=>p.clear());
   for(const b of ebars)b.el.remove();ebars.length=0;
   if(hero)scene.remove(hero.g);
   S=freshState();S.hp=maxHp();hero=makeChar(heroKey());hero.g.position.set(0,0,0);play(hero,'Idle',0);
@@ -574,7 +583,7 @@ function spawnEnemy(type,near){
   x=THREE.MathUtils.clamp(x,-ARENA,ARENA);z=THREE.MathUtils.clamp(z,-ARENA,ARENA);
   const et=ETYPES[type];const ch=makeChar(et.model||type);if(et.scale)ch.g.scale.setScalar(et.scale);
   ch.g.position.set(x,0,z);play(ch,et.walk,0);ch.cur.time=Math.random()*ch.cur.getClip().duration;
-  const hp=et.boss?diff.bosses[type]:et.hp*diff.hp*(1+S.t/diff.hpRamp);
+  const hp=et.boss?diff.bosses[type]:et.hp*diff.hp*(1+S.t/diff.hpRamp+LATE_HP*(S.t/300)**2);
   const base=et.tint?new THREE.Color(...et.tint):new THREE.Color(et.elite?.25:0,0,0);
   const e={ch,type,et,hp,max:hp,flash:0,kb:new THREE.Vector3(),dead:false,deadT:0,cd:et.boss?1.5:rand(0,.4),wind:0,stun:0,slow:0,charging:0,move:null,tele:null,base};
   ch.mats.forEach(m=>m.emissive.copy(e.base));
@@ -690,7 +699,10 @@ addEventListener('pagehide',pauseGame);
 
 // ================= loop =================
 let last=performance.now();
-function nearestEnemies(p,n,range,skip){const list=[];for(const e of enemies){if(e.dead||(skip&&skip.has(e)))continue;const d=e.ch.g.position.distanceToSquared(p);if(d<range*range)list.push([d,e]);}
+// Weapons only aim at enemies you can see: an enemy counts as on screen while its feet project inside the view (with a small margin).
+const vtmp=new THREE.Vector3();
+function markVisible(){for(const e of enemies){if(e.dead){e.vis=false;continue;}vtmp.copy(e.ch.g.position);vtmp.y=.5;vtmp.project(camera);e.vis=Math.abs(vtmp.x)<.98&&vtmp.y>-.98&&vtmp.y<.86&&vtmp.z<1;}}
+function nearestEnemies(p,n,range,skip){const list=[];for(const e of enemies){if(e.dead||!e.vis||(skip&&skip.has(e)))continue;const d=e.ch.g.position.distanceToSquared(p);if(d<range*range)list.push([d,e]);}
   list.sort((a,b)=>a[0]-b[0]);return list.slice(0,n).map(x=>x[1]);}
 function hitPlayer(dmg){
   if(S.inv>0||S.hp<=0)return;
@@ -708,20 +720,20 @@ function updateWeapons(dt,hp,moving){
   // Ember Bolt / Meteor Storm
   if(S.w.bolt){const i=wl('bolt'),W=WEAPONS.bolt,evo=S.evo.has('bolt');S.timers.bolt-=dt;
     if(S.timers.bolt<=0){const targets=nearestEnemies(hp,evo?4:W.n[i],14);
-      if(targets.length){S.timers.bolt=(evo?.36:W.cd[i])*cm;sfx.shoot();
+      if(targets.length){S.timers.bolt=(evo?.46:W.cd[i])*cm;sfx.shoot();
         for(const e of targets){const tp=tmp2.copy(e.ch.g.position);tp.y=e.et.r*1.1+.2;const dir=tp.sub(chest).normalize();
           const b=bolts.get();b.m.visible=true;b.m.material=evo?meteorMat:boltMat;b.m.scale.setScalar(evo?1.6:1);b.m.position.copy(chest);b.v=dir.clone().multiplyScalar(20);b.life=.9;
-          b.dmg=W.dmg[i]*(evo?1.4:1);b.pierce=evo?0:W.pierce[i];b.hit=new Set();b.boom=evo;b.m.lookAt(tmp3.copy(chest).add(dir));}
+          b.dmg=W.dmg[i]*(evo?1.15:1);b.pierce=evo?0:W.pierce[i];b.hit=new Set();b.boom=evo;b.m.lookAt(tmp3.copy(chest).add(dir));}
         if(!moving)S.dir.copy(targets[0].ch.g.position).sub(hp).setY(0).normalize();}}}
   bolts.each(b=>{b.life-=dt;b.m.position.addScaledVector(b.v,dt);if(b.life<=0){b.alive=false;b.m.visible=false;return;}
     for(const e of enemies){if(e.dead||b.hit.has(e))continue;const p=e.ch.g.position;const dx=b.m.position.x-p.x,dz=b.m.position.z-p.z;
       if(dx*dx+dz*dz<(e.et.r+.25)**2){b.hit.add(e);hurtEnemy(e,b.dmg,hp,3.5);burst(b.m.position,5,[1.6,.9,.3],3,2);
-        if(b.boom){sfx.boom();ringFx(b.m.position.x,b.m.position.z,2.4,[2.4,1,.3],.35);burst(b.m.position,16,[2,.8,.2],6,3);
-          for(const o of enemies)if(o!==e&&!o.dead&&o.ch.g.position.distanceTo(b.m.position)<2.4+o.et.r)hurtEnemy(o,b.dmg*.7,b.m.position,5);}
+        if(b.boom){sfx.boom();ringFx(b.m.position.x,b.m.position.z,1.8,[2.4,1,.3],.35);burst(b.m.position,16,[2,.8,.2],6,3);
+          for(const o of enemies)if(o!==e&&!o.dead&&o.ch.g.position.distanceTo(b.m.position)<1.8+o.et.r)hurtEnemy(o,b.dmg*.45,b.m.position,4);}
         if(b.pierce--<=0){b.alive=false;b.m.visible=false;break;}}}});
   // Orbit Blades / Storm Halo
-  const bn=S.w.blades?(S.evo.has('blades')?8:WEAPONS.blades.n[wl('blades')]):0;
-  if(bn){const evo=S.evo.has('blades'),i=wl('blades'),R=evo?3.4:WEAPONS.blades.r[i],dmg=evo?24:WEAPONS.blades.dmg[i];
+  const bn=S.w.blades?(S.evo.has('blades')?6:WEAPONS.blades.n[wl('blades')]):0;
+  if(bn){const evo=S.evo.has('blades'),i=wl('blades'),R=evo?3.2:WEAPONS.blades.r[i],dmg=evo?18:WEAPONS.blades.dmg[i];
     S.bladeA+=dt*(evo?5:3.4);
     bladeMeshes.forEach((m,k)=>{m.visible=k<bn&&S.hp>0;if(!m.visible)return;m.material=evo?haloMat:bladeMat;const a=S.bladeA+k/bn*6.283;
       m.position.set(hp.x+Math.cos(a)*R,.9,hp.z+Math.sin(a)*R);m.rotation.set(0,-a,0);
@@ -730,30 +742,30 @@ function updateWeapons(dt,hp,moving){
   else bladeMeshes.forEach(m=>m.visible=false);
   // Frost Nova / Glacier Heart
   if(S.w.nova){const i=wl('nova'),W=WEAPONS.nova,evo=S.evo.has('nova');S.timers.nova-=dt;
-    if(S.timers.nova<=0&&S.hp>0){S.timers.nova=W.cd[i]*cm;sfx.nova();const R=evo?8:W.r[i];ringFx(hp.x,hp.z,R,evo?[1.2,2.2,3.6]:[.8,1.4,2.6]);let healed=0;
-      for(const e of enemies){if(e.dead)continue;if(e.ch.g.position.distanceTo(hp)<R+e.et.r){hurtEnemy(e,W.dmg[i]*(evo?1.3:1),hp,evo?4:9);if(!e.et.boss)e.stun=Math.max(e.stun,evo?1.6:.4);if(evo&&healed<8){healed++;}}}
+    if(S.timers.nova<=0&&S.hp>0){S.timers.nova=W.cd[i]*cm;sfx.nova();const R=evo?7.5:W.r[i];ringFx(hp.x,hp.z,R,evo?[1.2,2.2,3.6]:[.8,1.4,2.6]);let healed=0;
+      for(const e of enemies){if(e.dead)continue;if(e.ch.g.position.distanceTo(hp)<R+e.et.r){hurtEnemy(e,W.dmg[i]*(evo?1.15:1),hp,evo?4:9);if(!e.et.boss)e.stun=Math.max(e.stun,evo?1:.4);if(evo&&healed<4){healed++;}}}
       if(healed)heal(healed);}}
   // Chain Lightning / Thunder Crown
   if(S.w.chain){const i=wl('chain'),W=WEAPONS.chain,evo=S.evo.has('chain');S.timers.chain-=dt;
     if(S.timers.chain<=0&&S.hp>0){const first=nearestEnemies(hp,1,10)[0];
-      if(first){S.timers.chain=W.cd[i]*(evo?.5:1)*cm;sfx.zap();const hitSet=new Set([first]);let from=tmp2.copy(chest).clone(),cur=first;
-        for(let j=0;j<=(evo?10:W.jumps[i])&&cur;j++){const to=cur.ch.g.position.clone();to.y=cur.et.r+.3;zapLine(from,to);hurtEnemy(cur,W.dmg[i]*(evo?1.3:1),null,0);burst(to,4,[1,1.8,3],3,2);
+      if(first){S.timers.chain=W.cd[i]*(evo?.7:1)*cm;sfx.zap();const hitSet=new Set([first]);let from=tmp2.copy(chest).clone(),cur=first;
+        for(let j=0;j<=(evo?7:W.jumps[i])&&cur;j++){const to=cur.ch.g.position.clone();to.y=cur.et.r+.3;zapLine(from,to);hurtEnemy(cur,W.dmg[i]*(evo?1.15:1),null,0);burst(to,4,[1,1.8,3],3,2);
           from=to;const nx=nearestEnemies(cur.ch.g.position,1,6,hitSet)[0];if(nx)hitSet.add(nx);cur=nx;}}}}
   zaps.each(z=>{z.t-=dt;if(z.t<=0){z.alive=false;z.m.visible=false;}});
   // Fire Trail / Phoenix Path
   if(S.w.trail){const i=wl('trail'),W=WEAPONS.trail,evo=S.evo.has('trail');S.timers.trail-=dt;
     if(S.timers.trail<=0&&moving){S.timers.trail=.22;const f=patches.get();f.m.visible=true;f.m.position.x=hp.x;f.m.position.z=hp.z;
-      f.r=evo?1.9:W.r[i];f.life=f.max=evo?3.5:W.life[i];f.dps=evo?45:W.dps[i];f.slow=evo;f.tick=0;f.m.scale.setScalar(f.r);}}
+      f.r=evo?1.9:W.r[i];f.life=f.max=evo?3.5:W.life[i];f.dps=evo?32:W.dps[i];f.slow=evo;f.tick=0;f.m.scale.setScalar(f.r);}}
   patches.each(f=>{f.life-=dt;if(f.life<=0){f.alive=false;f.m.visible=false;return;}
     f.m.material.opacity=Math.min(1,f.life/f.max*1.6)*(.75+Math.sin(S.t*20+f.r*9)*.25);f.tick-=dt;
     if(f.tick<=0){f.tick=.3;for(const e of enemies){if(e.dead)continue;if(e.ch.g.position.distanceTo(f.m.position)<f.r+e.et.r*.6){hurtEnemy(e,f.dps*.3,null,0);if(f.slow)e.slow=.6;}}}});
   // Moon Glaive / Eclipse
   if(S.w.glaive){const i=wl('glaive'),W=WEAPONS.glaive,evo=S.evo.has('glaive');S.timers.glaive-=dt;
-    if(S.timers.glaive<=0&&S.hp>0){const targets=nearestEnemies(hp,evo?4:W.n[i],12);
+    if(S.timers.glaive<=0&&S.hp>0){const targets=nearestEnemies(hp,evo?3:W.n[i],12);
       if(targets.length){S.timers.glaive=W.cd[i]*cm;sfx.glaive();
-        for(let k=0;k<(evo?4:W.n[i]);k++){const e=targets[k%targets.length];const g=glaives.get();g.m.visible=true;g.m.material=evo?eclipseMat:glaiveMat;g.m.scale.setScalar(evo?1.5:1);
+        for(let k=0;k<(evo?3:W.n[i]);k++){const e=targets[k%targets.length];const g=glaives.get();g.m.visible=true;g.m.material=evo?eclipseMat:glaiveMat;g.m.scale.setScalar(evo?1.5:1);
           const dir=e.ch.g.position.clone().sub(hp).setY(0).normalize();if(k>=targets.length)dir.applyAxisAngle(new THREE.Vector3(0,1,0),k*1.2);
-          g.dir=dir;g.t=0;g.m.position.set(hp.x,.9,hp.z);g.dmg=W.dmg[i]*(evo?1.5:1);g.crit=evo;g.hit=new Set();g.back=false;}}}}
+          g.dir=dir;g.t=0;g.m.position.set(hp.x,.9,hp.z);g.dmg=W.dmg[i]*(evo?1.2:1);g.crit=evo;g.hit=new Set();g.back=false;}}}}
   glaives.each(g=>{g.t+=dt;g.m.rotation.y+=dt*18;const out=.5;
     if(g.t<out)g.m.position.addScaledVector(g.dir,dt*15*(1-g.t/out*.6));
     else{if(!g.back){g.back=true;g.hit.clear();}const to=tmp2.set(hp.x,.9,hp.z).sub(g.m.position);const d=to.length();if(d<.6||g.t>2.5){g.alive=false;g.m.visible=false;return;}g.m.position.addScaledVector(to.normalize(),dt*Math.min(22,8+g.t*12));}
@@ -827,6 +839,15 @@ function update(dt){
   hero.g.rotation.y+=Math.atan2(Math.sin(targetYaw-hero.g.rotation.y),Math.cos(targetYaw-hero.g.rotation.y))*Math.min(1,dt*14);
   if(S.hp>0&&S.dashT<=0&&!(hero.cur===hero.acts.Roll&&hero.cur.isRunning()))play(hero,moving?'Run':'Idle');
   S.dashCd=Math.max(0,S.dashCd-dt);S.inv=Math.max(0,S.inv-dt);
+  // lingering: a shadow pool forms where you stand still too long
+  if(Math.hypot(hp.x-S.anchor.x,hp.z-S.anchor.z)>LINGER_R){S.anchor.x=hp.x;S.anchor.z=hp.z;S.anchor.t=S.t;}
+  else if(S.t>LINGER_FROM&&S.t-S.anchor.t>LINGER_T&&S.hp>0&&!S.won){S.anchor.t=S.t;spawnShade(hp.x,hp.z);
+    if(!S.seen.has('shade')){S.seen.add('shade');toast('The dark gathers where you linger','Keep moving');}}
+  shades.each(o=>{o.t+=dt;const warn=o.t<SHADE_WARN,k=warn?o.t/SHADE_WARN:1,end=SHADE_WARN+SHADE_LIFE;
+    o.m.material.opacity=(warn?.15+.45*k:.6)*Math.min(1,(end-o.t)/.6);o.rim.material.opacity=(warn?.3+.5*Math.abs(Math.sin(o.t*10)):.55)*Math.min(1,(end-o.t)/.6);
+    if(!warn){o.tick-=dt;if(o.tick<=0){o.tick=.5;if(Math.hypot(hp.x-o.m.position.x,hp.z-o.m.position.z)<SHADE_R)hitPlayer(SHADE_DMG);}
+      if(Math.random()<dt*8)burst(tmp3.set(o.m.position.x+rand(-2,2),.2,o.m.position.z+rand(-2,2)),1,[.6,.15,1],.5,2);}
+    if(o.t>end){o.alive=false;o.m.visible=false;}});
   if(S.hp>0&&S.hp<maxHp()){ // healing over time: Heartwood regen, plus campfires
     let rate=HEART_REGEN*P('heart');
     const atFire=firePos.some(f=>Math.hypot(hp.x-f.x,hp.z-f.z)<FIRE_R);
@@ -848,7 +869,7 @@ function update(dt){
       $('bossName').textContent=b.et.name;$('boss').style.display='block';$('bossbar').style.width='100%';S.shake=.6;sfx.nova();
       toast(b.et.name,b.et.final?'Defeat him to end the night':'Boss '+S.bossIdx+' of '+NIGHT.length);}
   }
-  updateWeapons(dt,hp,moving);
+  markVisible();updateWeapons(dt,hp,moving);
   shots.each(o=>{o.life-=dt;o.m.position.addScaledVector(o.v,dt);
     if(S.hp>0&&Math.hypot(o.m.position.x-hp.x,o.m.position.z-hp.z)<.6){if(S.inv<=0){hitPlayer(o.dmg);o.life=0;}}
     if(o.life<=0){o.alive=false;o.m.visible=false;burst(o.m.position,5,[1.2,1,.8],2,1);}});
@@ -1020,7 +1041,7 @@ $('againBtn').onclick=()=>start(diffKey);$('menuBtn').onclick=showMenu;
 setMuted(muted);
 
 // test handle for headless checks; nothing in the game uses it
-window.nightrunner={get S(){return S},get enemies(){return enemies},get hero(){return hero},get SAVE(){return SAVE},set SAVE(v){SAVE=v},persist,renderShop,embersFor,hitPlayer,spawnEnemy,dropPotion,firePos,gainXp,apply,openLevelUp,WEAPONS,RELICS,DIFF};
+window.nightrunner={get S(){return S},get enemies(){return enemies},get hero(){return hero},get shades(){return shades},markVisible,get SAVE(){return SAVE},set SAVE(v){SAVE=v},persist,renderShop,embersFor,hitPlayer,spawnEnemy,dropPotion,firePos,gainXp,apply,openLevelUp,WEAPONS,RELICS,DIFF};
 
 try{
   await loadAll();buildWorld();S=freshState();hero=makeChar(heroKey());play(hero,'Idle',0);applyLook();
