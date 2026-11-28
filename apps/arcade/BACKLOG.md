@@ -2,6 +2,19 @@
 
 Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
 
+- [ ] New game: a daylight 3D forest explorer (picked 2026-11-28, not started).
+      A third-person adventure in a sunny forest, built like Nightrunner
+      (three.js, CC0 models, phone controls) but nothing like it to play:
+      short hand-made levels (3-5 minutes each) where you cross a river on
+      stepping stones, fallen logs and rafts, climb ledges, find hidden
+      chests, pull levers to lower bridges and dodge a few creatures.
+      Chosen over a river-rafting runner, which would have played too much
+      like Regatta and Lane Racer, and a top-down forest ranger game (fires,
+      poachers, animal rescue), the quicker fallback. Biggest pieces of work:
+      a jumping and climbing character, a follow camera, and a simple way to
+      lay out levels. Start with screenshot mock-ups for the owner, as
+      Nightrunner did.
+
 - [x] Wildcard online, room codes only, one PR per slice (notes in CLAUDE.md,
       "Wildcard notes"; decision in `docs/decisions.md`, 2026-11-23):
   - [x] Slice 1: rules engine with tests, single player vs 1, 2 or 3 bots
