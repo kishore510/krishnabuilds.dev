@@ -439,3 +439,9 @@ Coral Drift follows Nightrunner's exception to the single-file rule (three.js 0.
 
 The raw downloads were up to 80 MB per model, so they were reduced with gltf-transform and meshoptimizer. Photogrammetry scans had their textures baked into vertex colours before simplifying, which kept them looking right at 300-6,000 triangles; each coral has a detailed and a light version, switched by distance. To download, the session's environment was allowed to reach Poly Haven and Sketchfab, with the owner's Sketchfab API token stored as an environment secret (never in the repo).
 
+
+## 2026-11-28 — Arcade: Forest Explorer, realistic scenery with a stylised hero
+
+The owner wanted a daylight 3D forest adventure that looks as real as Coral Drift. Mock-ups were made first: an all low-poly version, then a realistic one. The realistic hero was the problem: freely licensed realistic people on Sketchfab either have no animations or one, and the one model with run and jump ("Girl explorer") falls apart in three.js. The owner chose realistic scenery (Poly Haven CC0 scans and textures, Sketchfab CC-BY trees and elk) with Quaternius's stylised, fully animated hero and animals.
+
+It follows the 3D games' exception to the single-file rule (three.js 0.170.0 from jsDelivr, models beside the page in `games/forest-explorer/models/`, credits in its `LICENSE.txt`). At about 8 MB it is the heaviest game; the owner said the target is the best experience on broadband and good phones, so assets were only stripped of what isn't seen (unused animations, the packs' extra meshes, quantized geometry, smaller texture files) and the game protects frame rate instead, with a Medium graphics setting it falls back to by itself.

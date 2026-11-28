@@ -2,7 +2,7 @@
 
 Simple ordered list, top = next. Items are `[ ]` pending or `[x]` done.
 
-- [ ] New game: a daylight 3D forest explorer (picked 2026-11-28, not started).
+- [x] New game: a daylight 3D forest explorer (picked 2026-11-28; Level 1, Mossy Ford, shipped as Forest Explorer 1.86.0).
       A third-person adventure in a sunny forest, built like Nightrunner
       (three.js, CC0 models, phone controls) but nothing like it to play:
       short hand-made levels (3-5 minutes each) where you cross a river on

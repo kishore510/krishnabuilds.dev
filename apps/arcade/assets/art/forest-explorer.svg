@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 92" width="240" height="92">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7fb34d"/>
+      <stop offset="0.55" stop-color="#3f7a3a"/>
+      <stop offset="1" stop-color="#1f4d2b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff4c2" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#fff4c2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5fa6a0"/>
+      <stop offset="1" stop-color="#2d5f58"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="92" fill="url(#bg)"/>
+  <!-- sun shafts through the canopy -->
+  <g fill="#fff6cf" opacity="0.13">
+    <path d="M40 0 L54 0 L30 92 L18 92Z M118 0 L128 0 L112 92 L102 92Z M190 0 L204 0 L190 92 L178 92Z"/>
+  </g>
+  <!-- background trunks -->
+  <g fill="#1d3a20" opacity="0.55">
+    <rect x="14" y="0" width="7" height="70"/><rect x="34" y="0" width="5" height="66"/><rect x="200" y="0" width="8" height="70"/><rect x="222" y="0" width="5" height="66"/>
+  </g>
+  <ellipse cx="120" cy="50" rx="60" ry="30" fill="url(#glow)"/>
+  <!-- river -->
+  <path d="M0 62 Q60 56 120 62 T240 60 L240 80 Q180 74 120 80 T0 78Z" fill="url(#river)"/>
+  <g stroke="#d8f3ee" stroke-width="1" opacity="0.6" stroke-linecap="round">
+    <path d="M20 68 h14 M70 72 h10 M150 70 h12 M196 66 h14"/>
+  </g>
+  <!-- bank -->
+  <path d="M0 78 Q60 74 120 80 T240 78 L240 92 L0 92Z" fill="#4f8a35"/>
+  <!-- stepping stones -->
+  <g fill="#9aa08c">
+    <ellipse cx="78" cy="70" rx="10" ry="4"/><ellipse cx="104" cy="66" rx="9" ry="3.6"/><ellipse cx="146" cy="68" rx="10" ry="4"/>
+  </g>
+  <g fill="#7fae4a"><ellipse cx="78" cy="68.6" rx="6" ry="1.8"/><ellipse cx="146" cy="66.6" rx="6" ry="1.8"/></g>
+  <!-- chest -->
+  <ellipse cx="166" cy="86" rx="12" ry="2.5" fill="#123018" opacity="0.4"/>
+  <rect x="156" y="74" width="20" height="12" rx="1.5" fill="#8a5a2b"/>
+  <path d="M156 75 Q166 66 176 75Z" fill="#a8703a"/>
+  <rect x="156" y="77" width="20" height="2" fill="#ffd166"/>
+  <rect x="164" y="76" width="4" height="5" rx="1" fill="#ffd166"/>
+  <!-- explorer mid-jump -->
+  <ellipse cx="124" cy="67" rx="8" ry="2" fill="#123018" opacity="0.35"/>
+  <g transform="translate(124 34)">
+    <path d="M-5 14 L-12 22 M4 14 L11 19" stroke="#6b4a2a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M-12 22 L-14 25 M11 19 L14 21" stroke="#2a1d12" stroke-width="4" stroke-linecap="round"/>
+    <rect x="-6" y="0" width="12" height="15" rx="3" fill="#5e6b34"/>
+    <rect x="3" y="1" width="7" height="11" rx="2" fill="#3f4a22"/>
+    <path d="M-5 3 L-13 -4 M5 3 L12 -2" stroke="#e0b48a" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="0" cy="-5" r="5" fill="#e0b48a"/>
+    <path d="M-5 -6 Q0 -13 5 -6 Q2 -8 -5 -6Z" fill="#5a3a22"/>
+  </g>
+  <!-- coin -->
+  <circle cx="104" cy="44" r="4" fill="#ffd166"/><circle cx="104" cy="44" r="2.2" fill="none" stroke="#c99a2e" stroke-width="1"/>
+</svg>

@@ -1,6 +1,6 @@
 # Krishnabuilds Arcade
 
-A small games hub at `arcade.krishnabuilds.dev`: 39 quick browser games,
+A small games hub at `arcade.krishnabuilds.dev`: 40 quick browser games,
 each one a single self-contained HTML file under `games/<slug>/`. Static
 site, no build step. The only backend is a small Cloudflare Worker
 (`src/worker.js`) for the "Played N times" counter and Wildcard's online
@@ -17,7 +17,7 @@ History lives in [`BACKLOG.md`](BACKLOG.md) and [`changelog.html`](changelog.htm
 The landing page is generated from the `GAMES` array in `index.html`; that
 array is the source of truth. As of 1.79.0, by category, oldest first:
 
-**Arcade** (16)
+**Arcade** (17)
 
 - **Fin Dash** (`games/fin-dash/`, 2026-07-06): Swim a fish through coral, rock, and kelp. Easy or Hard.
 - **Burrow Bash** (`games/burrow-bash/`, 2026-07-06): Whack the moles before they duck back down. Easy or Hard.
@@ -35,6 +35,7 @@ array is the source of truth. As of 1.79.0, by category, oldest first:
 - **Dojo Duel** (`games/dojo-duel/`, 2026-11-05): Beat REN in a best-of-3 dojo duel: punch, kick, block and throw fireballs.
 - **Nightrunner** (`games/nightrunner/`, 2026-11-27): Run the dark wood in 3D while your spells fire on their own. Pick your upgrades and outlast the Horned King.
 - **Coral Drift** (`games/coral-drift/`, 2026-11-27): Scuba dive a sunlit coral reef in 3D. Manage your buoyancy and air, and photograph its sea life for your logbook.
+- **Forest Explorer** (`games/forest-explorer/`, 2026-11-28): Explore a sunlit forest in 3D. Hop the stepping stones, climb the vines, find three hidden chests and reach the old gate.
 
 **Racing** (2)
 
