@@ -846,6 +846,13 @@ phone, not the smallest download (about 8 MB of models and textures).
   lands the arc on its centre and ignores steering until you land (`S.hop`).
   A ring (`showRing`) marks the target and a blob shadow shows where you'll
   come down. Added after the owner kept falling in on a phone.
+- **Sword (1.86.1):** `sword.glb` (Quaternius, CC0) hangs from the hero's
+  `WristR` bone (`SWORD.len`, `pos`, `rot`). ACT swings it whenever nothing
+  is in reach to open, pull or climb (the button reads SWING): `swing()` plays
+  `Sword_Slash`, and `strike()` lands `hitAt` s later on creatures within
+  `reach` and the front `arc`. A hit stuns and pushes the creature; at 0 hp
+  (foxes 1 on Easy, 2 on Hard via `DIFF.foxHp`, the bee 1) it plays `Death`,
+  shrinks away and pays `bounty` coins. Stunned or defeated creatures can't hurt.
 - **Creatures:** two foxes patrol the north bank (on Hard they chase you
   within `foxChase` while near home), a bee circles the east pocket. A touch
   costs a heart with knock-back and `HIT.invuln` s of flashing invulnerability.
@@ -866,6 +873,12 @@ phone, not the smallest download (about 8 MB of models and textures).
   cycles them and saves the pick; until you pick, each play steps down by
   itself between 3 and 25 s in (High under 45 fps, Medium under 30). The HUD
   shows the frame rate.
+- **Fullscreen:** the embed script carries `data-fullscreen="landscape"` like
+  Dojo Duel and Tennis, so there is no navbar; EASY / HARD / PLAY AGAIN call
+  `kbEnterFullscreen` (fullscreen plus landscape lock where the browser allows;
+  iOS Safari has neither). During play `body.playing` hides the corner back
+  button (it sits where the left thumb walks) and `kbSetChromeHidden(true)`
+  hides the guide link and pill; pause, results and the title show them.
 - **Controls:** left half of the screen is a floating joystick, dragging on
   the right half turns the camera (it also drifts behind you while you walk),
   JUMP and ACT buttons (ACT is labelled OPEN / PULL / CLIMB when something is
