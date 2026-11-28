@@ -648,7 +648,8 @@ the name, logo or look of any commercial card game.
 The arcade's only 3D game (`games/nightrunner/`, 1.79.0; Easy/Hard, weapons,
 relics, evolutions and chests 1.80.0; new monsters and a three-boss night
 1.81.0; potions, campfire healing and Heartwood regen 1.82.0; the Ember
-Shop 1.83.0): a top-down arena survival shooter in
+Shop 1.83.0; on-screen targeting, evolution and late-game rebalance and
+shadow pools 1.85.0): a top-down arena survival shooter in
 three.js. You move; weapons aim and fire on their own. Gems from kills fill
 the XP bar (`xpNeed(lv)`), and each level offers 3 cards: a ready evolution
 always comes first, a new weapon is always offered up to level 5, and the
@@ -674,6 +675,14 @@ time a new monster type appears.
   Evolved numbers are inline in `updateWeapons()`. `RELICS` effects are the
   small functions after `freshState()` (`moveSpeed`, `magnetR`, `cdMul`,
   `armor`, `critChance`, `maxHp`).
+- **Balance against standing still (1.85.0):** weapons only pick targets
+  with `e.vis`, set every frame by `markVisible()` (the enemy's feet
+  projected inside the view), so nothing is killed off screen; a winning
+  fully evolved run used to clear waves before they appeared. Enemy hp also
+  gains `LATE_HP*(t/300)^2` on top of the linear ramp. Lingering: staying
+  within `LINGER_R` of one spot for `LINGER_T` s (after `LINGER_FROM`)
+  spawns a shadow pool (`spawnShade`, `shades`) that warns for `SHADE_WARN`
+  s, then hits for `SHADE_DMG` every half second for `SHADE_LIFE` s.
 - **Healing:** potions (`dropPotion`, heal `POTION_HEAL`, gone after
   `POTION_LIFE` s, blinking for the last 5) drop from ordinary kills at
   `DIFF.potion` (tripled below 35% health), always from orc brutes (1) and
